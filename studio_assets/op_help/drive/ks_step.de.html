@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ks_step — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>運動学単線(KS)モデルを区分一定入力 u = (δ̇, a) で dt だけ RK4 で進める。参照点 = 後軸中心。</p>
+<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ</p>
+<p>(commonroad-vehicle-models `<code style="color:#22d3bf">vehicle_dynamics_ks</code><code style="color:#22d3bf">、入力の飽和 </code><code style="color:#22d3bf">steering_constraints</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">acceleration_constraints</code>` も同じ)。</p>
+<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば</p>
+<p>`<code style="color:#22d3bf">vehicle_dynamics_ks</code>` の odeint と 1 step で 1e-6 一致。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">commonroad</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cr_synthetic">cr_synthetic</a> · <a style="color:#22d3bf" href="opdrive:cr_read">cr_read</a> · <a style="color:#22d3bf" href="opdrive:cr_route">cr_route</a> · <a style="color:#22d3bf" href="opdrive:cr_drive">cr_drive</a> · <a style="color:#22d3bf" href="opdrive:cr_drive_sweep">cr_drive_sweep</a> · <a style="color:#22d3bf" href="opdrive:cr_feasible">cr_feasible</a> · <a style="color:#22d3bf" href="opdrive:cr_collision">cr_collision</a> · <a style="color:#22d3bf" href="opdrive:cr_solution_xml">cr_solution_xml</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecommonroad.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

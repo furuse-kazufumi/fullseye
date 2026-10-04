@@ -1,0 +1,6 @@
+判定	正の走行: 自前	正の走行: 公式	負の対照: 自前	負の対照: 公式
+goal_reached	True	True	True	True
+feasible	True	True	True	True
+obstacle_collision	False	False	True	True
+boundary_collision	False	False	False	False
+valid	True	True	False	False

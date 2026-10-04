@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**他人の場面 × 自分の運転手 × 他人の採点器**(新モジュール `drivecommonroad` 10 op、台帳 `commonroad`、PoC `poc_driving_commonroad`、wing_geometry):
+  ユーザーの「自分でトラップ作って自分で攻略する形は限界がある」→ 真値・門・被験者の 1 つを外から持ち込む第 1 弾。場面 = CommonRoad(TUM、BSD-3)の
+  公開シナリオ、採点器 = TUM drivability-checker(WSL、`tools/check_solution_json.py` が合否を JSON に)、自分のものは運転手(縦 IDM + pure-pursuit +
+  停止線、KS 運動学 後軸・RK4・BMW_320i)だけ。2020a XML の自前読み書き、採点器の第 2 実装(実現可能性 2 cm・SAT 衝突・道路境界)。門 22 本。
+  ZAM_Tjunction は IDM の既定では対向車と衝突し、gap acceptance の sweep 14 回目で公式 valid true(148 state)、負の対照は公式も衝突 → 自前と公式が
+  正負で一致。正直に: 譲る運転なし、a_lat 8 は高い、公開 2020a に信号・停止線が無く規則の採点は合成のみ、公式の合否は WSL の JSON が正。
 - ★**実在の日本の町を自前の世界に建てる**(新モジュール `drivejapan` 15 op + `driveplateau` 7 op、台帳 `japan`、PoC `poc_driving_japan_town`、
   wing_geometry): ユーザーの「出来れば日本のマップでやりたい」。外部シミュレータの同梱マップは欧米の町なので、**道は OpenStreetMap、建物は
   国交省 PLATEAU、道具立てと規則は日本のもの**で自前に組む。道路の形は幅つき線分のラスタ和集合を `contours_xld` の境界追跡でループにし

@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: boundary
-examples: [gallery2d_region, poc_complex_plane_fields, voxel_labels_color]
+examples: [gallery2d_region, poc_complex_plane_fields, poc_driving_commonroad, voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -68,6 +68,7 @@ boundary 0.50 0.50
 
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 - [poc_complex_plane_fields](../../../../examples/poc_complex_plane_fields.py) — `py -3.11 examples/poc_complex_plane_fields.py`
+- [poc_driving_commonroad](../../../../examples/poc_driving_commonroad.py) — `py -3.11 examples/poc_driving_commonroad.py`
 - [voxel_labels_color](../../../../examples/voxel_labels_color.py) — `py -3.11 examples/voxel_labels_color.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

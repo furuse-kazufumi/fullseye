@@ -3217,6 +3217,68 @@ def _b_polygon_arg(pool, rng):
     return (_fuzz_japan()["square"],), {}
 
 
+_FUZZ_CR = {}
+
+
+def _fuzz_cr():
+    """CommonRoad の合成 T 字路(drivecommonroad.cr_synthetic)と、その走行。計算は 1 回だけ。"""
+    if "scene" not in _FUZZ_CR:
+        import drivecommonroad as CR
+        xml = CR.cr_synthetic("tjunction")
+        scene = CR.cr_read(xml)
+        run = CR.cr_drive(scene)
+        _FUZZ_CR.update({"xml": xml, "scene": scene, "run": run, "lanelets": sorted(scene["lanelets"])})
+    return _FUZZ_CR
+
+
+def _b_cr_synthetic(pool, rng):
+    import drivecommonroad as CR
+    return (str(rng.choice(CR.SYNTHETIC_KINDS)),), {}
+
+
+def _b_cr_read(pool, rng):
+    return (_fuzz_cr()["xml"],), {}
+
+
+def _b_cr_scene_arg(pool, rng):
+    return (_fuzz_cr()["scene"],), {}
+
+
+def _b_cr_route(pool, rng):
+    t = _fuzz_cr()
+    return (t["scene"], t["lanelets"][0]), {"goal": t["scene"]["planning_problems"][0]["goal"][0]}
+
+
+def _b_ks_step(pool, rng):
+    return ([0.0, 0.0, float(rng.uniform(-0.3, 0.3)), float(rng.uniform(0.0, 10.0)), 0.0], [0.0, float(rng.uniform(-1.0, 1.0))], 0.1), {}
+
+
+def _b_cr_drive(pool, rng):
+    return (_fuzz_cr()["scene"],), {"v_cruise": float(rng.uniform(4.0, 10.0))}
+
+
+def _b_cr_feasible(pool, rng):
+    return (_fuzz_cr()["run"],), {}
+
+
+def _b_cr_scene_run(pool, rng):
+    t = _fuzz_cr()
+    return (t["scene"], t["run"]), {}
+
+
+def _b_cr_checker_result(pool, rng):
+    import json
+    import os
+    import tempfile
+    import drivecommonroad as CR
+    d = {k: (True if k in ("valid", "goal_reached", "feasible") else False) for k in CR.CHECKER_KEYS}
+    d.update({"scenario": "ZAM_SyntheticTjunction-1_1_T-1", "solution": "fuzz.xml", "checker_version": "fuzz"})
+    fd, path = tempfile.mkstemp(suffix=".json")
+    with os.fdopen(fd, "w", encoding="utf-8") as f:
+        json.dump(d, f)
+    return (path,), {}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4113,6 +4175,9 @@ OP_ARG_BUILDERS = {
     "jp_mirror_mesh": _b_jp_mesh, "jp_stop_marking_mesh": _b_jp_mesh, "jp_stop_marking_length": _b_jp_mesh,
     "citygml_synthetic": _b_citygml_synthetic, "plateau_parse": _b_plateau_parse, "buildings_in_box": _b_buildings_in_box,
     "building_prisms": _b_building_prisms, "prism_mesh": _b_prism_mesh, "triangulate_polygon": _b_polygon_arg, "polygon_area": _b_polygon_arg,
+    "cr_synthetic": _b_cr_synthetic, "cr_read": _b_cr_read, "cr_route": _b_cr_route, "ks_step": _b_ks_step, "cr_drive": _b_cr_drive,
+    "cr_drive_sweep": _b_cr_scene_arg, "cr_feasible": _b_cr_feasible, "cr_collision": _b_cr_scene_run, "cr_solution_xml": _b_cr_scene_run,
+    "cr_checker_result": _b_cr_checker_result,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

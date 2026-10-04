@@ -4,6 +4,7 @@
 卓球の球の力学・追跡・真値つきの台・ラケット(ballistics / balltrack / ballworld / racket)/
 日本の信号灯器と道路標識(roadjp、公表寸法をそのまま頂点に持つ)/
 けん玉の定理と閉ループの捕球・真値つきのけんの世界(kendama / kendamaworld)。
+他人の場面で自分の運転手を走らせ他人の採点器に出す(drivecommonroad: CommonRoad 2020a の自前読み書き、KS 運動学の第 2 実装、IDM + pure-pursuit、TUM drivability-checker の合否 JSON)。
 実在の日本の町(drivejapan / driveplateau: OSM の道路網をラスタ和集合と輪郭追跡で街区にし、PLATEAU の建物を柱で立て、一時停止・「止まれ」・踏切警標・日本式の横断歩道を規格の寸法で置き、最短路を左の車線で通して走る)。
 町を 1 つに組む(drivetown: 教習所の要素を自動で継いで 1 本の道にし、縦だけの通し走行を停止線ごとに採点、教則 159 場面の台帳の集計)。
 外部の高写実シミュレータ(CARLA 0.9.16)の撮影記録を自前の世界の規約に写す橋(carlabridge: 左手系の鏡映・カメラの向き・主点の 0.5 画素・24 bit の深度・29 タグ → 14 ラベル、往復の門つき、numpy だけ)。
@@ -53,6 +54,7 @@ import carlabridge
 import drivetown
 import drivejapan
 import driveplateau
+import drivecommonroad
 import driveworld
 import kendama
 import kendamaworld
@@ -65,7 +67,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -400,6 +402,22 @@ _CATALOG = {
         ("prism_mesh", "driveplateau", ["any"], "any"),
         ("triangulate_polygon", "driveplateau", ["any"], "any"),
         ("polygon_area", "driveplateau", ["any"], "scalar"),
+    ],
+    # 他人の場面 × 自分の運転手 × 他人の採点器(2026-10-04、「自作の罠を自分で解くのは限界」→ 真値・門・被験者の 1 つを外から): CommonRoad(TUM、BSD-3)の
+    # 2020a シナリオを自前で読み、縦 IDM + pure-pursuit の運転手を KS 運動学(後軸、RK4、BMW_320i = parameters_vehicle2 の値)で走らせ、公式の solution XML を書き、
+    # TUM drivability-checker(WSL、tools/check_solution_json.py)の合否 JSON を読む。真値 = KS の閉形式(直進・円 R = l_wb/tan δ)、採点器の第 2 実装(feasibility 2 cm・
+    # SAT 衝突・道路境界)と公式の合否が正負の対照で一致。
+    "commonroad": [
+        ("cr_synthetic", "drivecommonroad", [], "any"),
+        ("cr_read", "drivecommonroad", ["any"], "table"),
+        ("cr_route", "drivecommonroad", ["table"], "table"),
+        ("ks_step", "drivecommonroad", ["any", "any"], "any"),
+        ("cr_drive", "drivecommonroad", ["table"], "table"),
+        ("cr_drive_sweep", "drivecommonroad", ["table"], "table"),
+        ("cr_feasible", "drivecommonroad", ["table"], "table"),
+        ("cr_collision", "drivecommonroad", ["table", "table"], "table"),
+        ("cr_solution_xml", "drivecommonroad", ["table", "table"], "any"),
+        ("cr_checker_result", "drivecommonroad", ["any"], "table"),
     ],
     # 車の縦の運動: m dv/dt = 駆動 − 制動 − m g sin θ − c_rr m g cos θ − ½ρC_dA v|v|(止まっている間はブレーキの保持の範囲で動かない)。
     # 真値 = 停止距離の閉形式 vρ + (1/2k)ln(1 + k v²/A)(A = b ± g sin θ + c_rr g cos θ)、rsssafety との一致、坂道発進のずり下がりの閉形式、

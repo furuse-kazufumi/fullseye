@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**71 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**72 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -1278,7 +1278,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 10 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 11 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -1539,6 +1539,42 @@ Source: [examples/poc_driving_japan_town.py](https://github.com/furuse-kazufumi/
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_japan_town)
 
 Ops used (notes): [`citygml_synthetic`](https://furuse.work/ops/drive/japan/citygml_synthetic.html) · [`intersection`](https://furuse.work/ops/2d/nary/intersection.html) · [`japan_stats`](https://furuse.work/ops/drive/japan/japan_stats.html) · [`japan_world`](https://furuse.work/ops/drive/japan/japan_world.html) · [`jp_sign_stop_mesh`](https://furuse.work/ops/drive/japan/jp_sign_stop_mesh.html) · [`jp_stop_marking_mesh`](https://furuse.work/ops/drive/japan/jp_stop_marking_mesh.html) · [`latlon_to_local`](https://furuse.work/ops/drive/japan/latlon_to_local.html) · [`osm_parse`](https://furuse.work/ops/drive/japan/osm_parse.html) · [`osm_road_graph`](https://furuse.work/ops/drive/japan/osm_road_graph.html) · [`osm_road_loops`](https://furuse.work/ops/drive/japan/osm_road_loops.html) · [`osm_road_mask`](https://furuse.work/ops/drive/japan/osm_road_mask.html) · [`osm_route`](https://furuse.work/ops/drive/japan/osm_route.html) · [`osm_synthetic`](https://furuse.work/ops/drive/japan/osm_synthetic.html) · [`plateau_parse`](https://furuse.work/ops/drive/japan/plateau_parse.html) · [`town_checks`](https://furuse.work/ops/drive/town/town_checks.html) · [`town_run`](https://furuse.work/ops/drive/town/town_run.html) · [`world_camera`](https://furuse.work/ops/drive/world/world_camera.html)
+
+## No.2026.193 —— Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker
+
+[![Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/01_commonroad_scene.png)
+
+*↑ **Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker** ―― The user's remark "setting your own traps and clearing them yourself has its limits" led to a new rule: bring at least one of the truth, the gate or the subject in from outside. Earlier driving PoCs planted their own ground truth in a synthetic world, wrote their own gates and scored their own driver. Here the scenario is a public CommonRoad (TUM) scenario (BSD-3), the judge is TUM's drivability-checker (it does not install on Windows, so it runs in WSL and tools/check_solution_json.py writes the verdict as JSON), and only the driver is ours. The new module drivecommonroad (10 ops) reads 2020a XML itself (lanelet boundaries, dynamic obstacles, planning problem, sign 274 speed limits, stopLine), chains lanelets by successor, drives with IDM longitudinally and pure pursuit laterally under kinematic single-track (KS) dynamics (rear-axle reference, RK4, BMW_320i parameters copied from commonroad-vehicle-models' parameters_vehicle2), stops at stop lines and writes the official solution XML (ksTrajectory). It also carries a second implementation of the judge (feasibility by re-integrating the recorded inputs to 2 cm / 0.03 rad, collision by separating axes, road boundary by point-in-polygon) to set beside the official JSON. Figures: a bird's-eye view (lanelets, obstacle tracks, ego, goal lanelet), speed and acceleration, gaps to each obstacle, six frames (start, before the junction, turning left, closest to oncoming, entering the goal lanelet, stopped), a table of our verdicts against the official ones, and the sweep table. 22 gates: on the synthetic T-junction the reader (4 lanelets, 1 obstacle, 274 → 13.89 m/s), route 98.84 m = Σ centrelines (1e-6), KS straight line to 1e-9 and circle radius l_wb/tan δ (1e-6), goal reached with |a| ≤ 3 and v ≤ limit, stop 0.90 m short of the stop line, feasible (max_pos_err 0), no collision, a driver that ignores the car ahead collides at (step 52, obstacle 2), the blocked scene stops short, 201 ksStates = steps with positions = rear axle + b (1e-12). On the real ZAM_Tjunction-1_1_T-1 (12 lanelets, 5 obstacles, limit 14.0, route 347.6 m) the default IDM hits oncoming car 1; the 14th gap-acceptance setting (a_lat 8.0, lookahead 5.0) yields a 148-state run (v_max 9.82 m/s, 0.83 m lateral error) that the official checker accepts: valid, goal reached, feasible, no collision, n_states 148. The negative control (the gentle default driver) collides at (68, 1) in our check and the official checker also reports obstacle_collision true and valid false (feasible true), so our five verdicts agree with the official ones for both runs. Honestly: ZAM is not solvable by IDM alone and was solved by the sweep (no yielding behaviour; waiting would miss the goal time window); 8 m/s² lateral is uncomfortable though inside the checker's friction circle (8.1 < 11.5); the public 2020a scenarios contain no traffic lights, stop lines or stop signs 206, so rule scoring is synthetic only; the official verdict is the WSL JSON (our feasibility re-integrates the recorded inputs with the same RK4, hence zero error); a longitudinal-only driver still collides in Speyer and Moabit. Source: CommonRoad scenarios (TUM, BSD-3). The data are not committed (FULLSEYE_COMMONROAD_DATA).*
+
+[![IDM の希望速度 v₀ = min(制限, 曲率の許容 √(a_lat/|κ|))。a は区分一定(RK4 の 1 step ごと)。|a| ≤ max(a_max 1.5, b_max 3.0)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/02_commonroad_speed.png)
+
+*↑ The measurement ―― IDM の希望速度 v₀ = min(制限, 曲率の許容 √(a_lat/|κ|))。a は区分一定(RK4 の 1 step ごと)。|a| ≤ max(a_max 1.5, b_max 3.0)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![近似(中心間距離 − 両車の半長)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/03_commonroad_gap.png)
+
+*↑ 近似(中心間距離 − 両車の半長)。*
+
+[![俯瞰の 6 コマ(matplotlib で描いた PNG)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/04_commonroad_frames.png)
+
+*↑ 俯瞰の 6 コマ(matplotlib で描いた PNG)。*
+
+[![公式 = commonroad-drivability-checker 2025.4.0。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/05_commonroad_checks.png)
+
+*↑ 公式 = commonroad-drivability-checker 2025.4.0。*
+
+[![IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_driving_commonroad/06_commonroad_sweep.png)
+
+*↑ IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。*
+
+```
+py -3.11 examples/poc_driving_commonroad.py
+```
+
+Source: [examples/poc_driving_commonroad.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_driving_commonroad.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_driving_commonroad)
+
+Ops used (notes): [`boundary`](https://furuse.work/ops/2d/region/boundary.html) · [`cr_checker_result`](https://furuse.work/ops/drive/commonroad/cr_checker_result.html) · [`cr_collision`](https://furuse.work/ops/drive/commonroad/cr_collision.html) · [`cr_drive`](https://furuse.work/ops/drive/commonroad/cr_drive.html) · [`cr_drive_sweep`](https://furuse.work/ops/drive/commonroad/cr_drive_sweep.html) · [`cr_feasible`](https://furuse.work/ops/drive/commonroad/cr_feasible.html) · [`cr_read`](https://furuse.work/ops/drive/commonroad/cr_read.html) · [`cr_route`](https://furuse.work/ops/drive/commonroad/cr_route.html) · [`cr_solution_xml`](https://furuse.work/ops/drive/commonroad/cr_solution_xml.html) · [`cr_synthetic`](https://furuse.work/ops/drive/commonroad/cr_synthetic.html) · [`ks_step`](https://furuse.work/ops/drive/commonroad/ks_step.html)
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 

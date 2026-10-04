@@ -1,8 +1,8 @@
 {
- "n_ops": 2732,
+ "n_ops": 2742,
  "tiers": {
   "color": 12,
-  "ledger": 1779,
+  "ledger": 1789,
   "nary": 17,
   "registry": 924
  },
@@ -3927,6 +3927,123 @@
    "in_sorts": [
     "cpoints"
    ]
+  },
+  {
+   "name": "cr_checker_result",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "cr_collision",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "cr_drive",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "cr_drive_sweep",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "cr_feasible",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "cr_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "cr_route",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "cr_solution_xml",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "cr_synthetic",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "any",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
   },
   {
    "name": "create_funct_1d_array",
@@ -9976,6 +10093,20 @@
     "any",
     "any",
     "scalar",
+    "any"
+   ]
+  },
+  {
+   "name": "ks_step",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "any",
+   "category": "commonroad",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
     "any"
    ]
   },

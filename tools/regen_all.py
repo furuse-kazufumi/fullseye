@@ -137,6 +137,7 @@ NOT_A_GENERATOR = {
     "tools/bench_realtime.py": "ベンチ(実時間)。",
     "tools/bench_soak.py": "ベンチ(長時間)。",
     "tools/chain_fuzz.py": "ファザー。out/ に結果を落とす。",
+    "tools/check_solution_json.py": "外部の採点器(TUM drivability-checker、WSL)を呼んで合否を JSON に書く。生成物は repo の外(FULLSEYE_COMMONROAD_DATA)。",
     "tools/chain_mine.py": "連鎖の探索(実験)。",
     "tools/ci_wheel_check.py": "門(wheel の完全性を配布物の側から数える)。",
     "tools/evolve_loop.py": "進化ループ(実験)。",

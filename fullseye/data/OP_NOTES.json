@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2732,
- "n_notes": 2738,
+ "n_ops": 2742,
+ "n_notes": 2748,
  "notes": {
   "vol_dilate": [
    {
@@ -16223,6 +16223,105 @@
     "in": "matrix",
     "out": "any",
     "path": "docs/ops/drive/carla/world_pose_to_carla.md"
+   }
+  ],
+  "cr_checker_result": [
+   {
+    "op": "cr_checker_result",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_checker_result.md"
+   }
+  ],
+  "cr_collision": [
+   {
+    "op": "cr_collision",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_collision.md"
+   }
+  ],
+  "cr_drive": [
+   {
+    "op": "cr_drive",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_drive.md"
+   }
+  ],
+  "cr_drive_sweep": [
+   {
+    "op": "cr_drive_sweep",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_drive_sweep.md"
+   }
+  ],
+  "cr_feasible": [
+   {
+    "op": "cr_feasible",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_feasible.md"
+   }
+  ],
+  "cr_read": [
+   {
+    "op": "cr_read",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_read.md"
+   }
+  ],
+  "cr_route": [
+   {
+    "op": "cr_route",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/commonroad/cr_route.md"
+   }
+  ],
+  "cr_solution_xml": [
+   {
+    "op": "cr_solution_xml",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "table × table",
+    "out": "any",
+    "path": "docs/ops/drive/commonroad/cr_solution_xml.md"
+   }
+  ],
+  "cr_synthetic": [
+   {
+    "op": "cr_synthetic",
+    "dim": "drive",
+    "category": "commonroad",
+    "out": "any",
+    "path": "docs/ops/drive/commonroad/cr_synthetic.md"
+   }
+  ],
+  "ks_step": [
+   {
+    "op": "ks_step",
+    "dim": "drive",
+    "category": "commonroad",
+    "in": "any × any",
+    "out": "any",
+    "path": "docs/ops/drive/commonroad/ks_step.md"
    }
   ],
   "course_contains": [

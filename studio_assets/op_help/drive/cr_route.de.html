@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cr_route — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cr_route&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>successor の BFS(hop 数最小)で lanelet の列を出し、中心線を継いで `<code style="color:#22d3bf">step</code>` m で再標本化する。</p>
+<p>`<code style="color:#22d3bf">lanelet_to</code><code style="color:#22d3bf"> が None なら </code><code style="color:#22d3bf">goal[&quot;position_lanelets&quot;]</code>` を終点にする(どちらも無ければ ValueError)。</p>
+<p>返り値 ``{&quot;lanelets&quot;, &quot;polyline&quot; (K,2), &quot;cum&quot; (K,), &quot;length&quot;, &quot;speed_limit_mps&quot; (経路上の最小 | None),</p>
+<p>&quot;lanelet_s&quot; (各 lanelet が始まる弧長), &quot;lanelet_len&quot;, &quot;polygons&quot; [多角形]}`<code style="color:#22d3bf">。</code><code style="color:#22d3bf">length</code>` = 継いだ中心線の折線長</p>
+<p>(継ぎ目で重なる頂点は 1 つに潰す)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の lanelet、到達不能、終点が無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">commonroad</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cr_synthetic">cr_synthetic</a> · <a style="color:#22d3bf" href="opdrive:cr_read">cr_read</a> · <a style="color:#22d3bf" href="opdrive:ks_step">ks_step</a> · <a style="color:#22d3bf" href="opdrive:cr_drive">cr_drive</a> · <a style="color:#22d3bf" href="opdrive:cr_drive_sweep">cr_drive_sweep</a> · <a style="color:#22d3bf" href="opdrive:cr_feasible">cr_feasible</a> · <a style="color:#22d3bf" href="opdrive:cr_collision">cr_collision</a> · <a style="color:#22d3bf" href="opdrive:cr_solution_xml">cr_solution_xml</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecommonroad.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

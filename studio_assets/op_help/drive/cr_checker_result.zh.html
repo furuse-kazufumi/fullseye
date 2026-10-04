@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cr_checker_result — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_checker_result(path) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cr_checker_result&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>WSL の公式チェッカー(tools/check_solution_json.py)が書いた JSON を読む。</p>
+<p>必須キー :data:<code style="color:#22d3bf">CHECKER_KEYS</code>(`<code style="color:#22d3bf">valid</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">goal_reached</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">feasible</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">obstacle_collision</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">boundary_collision</code>`</p>
+<p>は bool、`<code style="color:#22d3bf">scenario</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">solution</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">checker_version</code><code style="color:#22d3bf"> は文字列)。それ以外のキー(</code><code style="color:#22d3bf">details</code>` 等)はそのまま返す。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: ファイルが無い、JSON でない、必須キーの欠落、型違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">commonroad</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cr_synthetic">cr_synthetic</a> · <a style="color:#22d3bf" href="opdrive:cr_read">cr_read</a> · <a style="color:#22d3bf" href="opdrive:cr_route">cr_route</a> · <a style="color:#22d3bf" href="opdrive:ks_step">ks_step</a> · <a style="color:#22d3bf" href="opdrive:cr_drive">cr_drive</a> · <a style="color:#22d3bf" href="opdrive:cr_drive_sweep">cr_drive_sweep</a> · <a style="color:#22d3bf" href="opdrive:cr_feasible">cr_feasible</a> · <a style="color:#22d3bf" href="opdrive:cr_collision">cr_collision</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecommonroad.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

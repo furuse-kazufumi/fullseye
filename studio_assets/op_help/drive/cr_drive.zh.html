@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cr_drive — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_drive(scene, pp_index: &#x27;int&#x27; = 0, *, route=None, v_cruise=None, a_max: &#x27;float&#x27; = 1.5, b_max: &#x27;float&#x27; = 3.0, lookahead: &#x27;float&#x27; = 5.0, dt=None, stop_lines=None, hold_s: &#x27;float&#x27; = 2.0, goal_inset: &#x27;float&#x27; = 0.2, idm_T: &#x27;float&#x27; = 1.2, stop_margin: &#x27;float&#x27; = 0.6, a_lat: &#x27;float&#x27; = 2.5, k_v: &#x27;float&#x27; = 0.6, follow_width: &#x27;float&#x27; = 2.0, follow_obstacles: &#x27;bool&#x27; = True, curvature_window: &#x27;float&#x27; = 10.0, horizon=None, params=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_drive(scene, pp_index: &#x27;int&#x27; = 0, *, route=None, v_cruise=None, a_max: &#x27;float&#x27; = 1.5, b_max: &#x27;float&#x27; = 3.0, lookahead: &#x27;float&#x27; = 5.0, dt=None, stop_lines=None, hold_s: &#x27;float&#x27; = 2.0, goal_inset: &#x27;float&#x27; = 0.2, idm_T: &#x27;float&#x27; = 1.2, stop_margin: &#x27;float&#x27; = 0.6, a_lat: &#x27;float&#x27; = 2.5, k_v: &#x27;float&#x27; = 0.6, follow_width: &#x27;float&#x27; = 2.0, follow_obstacles: &#x27;bool&#x27; = True, curvature_window: &#x27;float&#x27; = 10.0, horizon=None, params=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cr_drive&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>自分の運転手(縦 IDM + pure pursuit)を CommonRoad の planning problem で走らせる。</p>
+<p>縦: IDM(a_max, b_max, idm_T, s₀ = stop_margin)で、目標 = 経路終点(ゴール lanelet の `<code style="color:#22d3bf">goal_inset</code>` 地点、止まった先行車と</p>
+<p>見なす)・`<code style="color:#22d3bf">stop_lines</code><code style="color:#22d3bf">(経路の弧長の列、または </code><code style="color:#22d3bf">&quot;scene&quot;</code><code style="color:#22d3bf"> で lanelet の stopLine を経路に射影。止まったら </code><code style="color:#22d3bf">hold_s</code>` 秒で発進)・</p>
+<p>経路上の先行障害物(`<code style="color:#22d3bf">follow_obstacles</code><code style="color:#22d3bf">、中心が経路から </code><code style="color:#22d3bf">follow_width</code>` 以内で前にある物)。希望速度 v₀ = min(v_cruise, 経路の</p>
+<p>制限, 曲率の許容 √(a_lat/|κ|)、κ は `<code style="color:#22d3bf">curvature_window</code>` m の移動平均)。横: 見通し L_d = max(lookahead, k_v·v) の pure pursuit、</p>
+<p>δ̇ ∈ ±0.4。各 step は :func:<code style="color:#22d3bf">ks_step</code>(RK4)。`<code style="color:#22d3bf">horizon</code>` = step 数(既定 = ゴール time_step 区間の上端 − 初期 time_step)。</p>
+<p>返り値 ``{&quot;kind&quot;: &quot;commonroad_run&quot;, &quot;t&quot;, &quot;time_step&quot;, &quot;x&quot;, &quot;y&quot; (車両中心), &quot;x_rear&quot;, &quot;y_rear&quot;, &quot;delta&quot;, &quot;v&quot;, &quot;psi&quot;,</p>
+<p>&quot;u&quot; (T−1, 2), &quot;s&quot; (中心の弧長), &quot;s_front&quot;, &quot;lat_err&quot;, &quot;v_allow&quot;, &quot;stops&quot;: [(time_step, s_front, kind, target_s)], &quot;events&quot;,</p>
+<p>&quot;route&quot;, &quot;goal_reached&quot;, &quot;goal_index&quot;, &quot;params&quot;, &quot;dt&quot;, &quot;pp_id&quot;, &quot;initial_time_step&quot;, &quot;v_limit&quot;}``。</p>
+<p>門: |a| ≤ max(a_max, b_max)、0 ≤ v ≤ v_limit、停止線の前端が 0〜1 m 手前で止まる、cr_feasible が feasible、ゴール到達。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: scene / route が不正、pp_index 範囲外、速度の上限が決まらない(制限も v_cruise も無い)、</p>
+<p>初期位置がどの lanelet にも無い、stop_lines が経路の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">commonroad</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cr_synthetic">cr_synthetic</a> · <a style="color:#22d3bf" href="opdrive:cr_read">cr_read</a> · <a style="color:#22d3bf" href="opdrive:cr_route">cr_route</a> · <a style="color:#22d3bf" href="opdrive:ks_step">ks_step</a> · <a style="color:#22d3bf" href="opdrive:cr_drive_sweep">cr_drive_sweep</a> · <a style="color:#22d3bf" href="opdrive:cr_feasible">cr_feasible</a> · <a style="color:#22d3bf" href="opdrive:cr_collision">cr_collision</a> · <a style="color:#22d3bf" href="opdrive:cr_solution_xml">cr_solution_xml</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecommonroad.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

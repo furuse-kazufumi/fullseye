@@ -1,0 +1,66 @@
+[
+ {
+  "file": "01_commonroad_scene.png",
+  "name": "commonroad_scene",
+  "caption": "lanelet の左右境界(灰)、動的障害物の軌跡(破線、番号)、自車の軌跡(実線)、ゴール lanelet(ハッチ)、停止位置(点)。自車の運転手は縦 IDM + pure pursuit、車両は KS(BMW 320i)。出典: CommonRoad scenarios (TUM, BSD-3-Clause)",
+  "shape": [
+   760,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "02_commonroad_speed.png",
+  "name": "commonroad_speed",
+  "caption": "IDM の希望速度 v₀ = min(制限, 曲率の許容 √(a_lat/|κ|))。a は区分一定(RK4 の 1 step ごと)。|a| ≤ max(a_max 1.5, b_max 3.0)。",
+  "shape": [
+   360,
+   698,
+   3
+  ]
+ },
+ {
+  "file": "03_commonroad_gap.png",
+  "name": "commonroad_gap",
+  "caption": "近似(中心間距離 − 両車の半長)。厳密な衝突判定は cr_collision の分離軸判定(SAT)。負の対照は既定の運転手(a_lat 2.5)で obs 1 と t ≈ 6.8 s に接触。",
+  "shape": [
+   360,
+   773,
+   3
+  ]
+ },
+ {
+  "file": "04_commonroad_frames.png",
+  "name": "commonroad_frames",
+  "caption": "俯瞰の 6 コマ(matplotlib で描いた PNG)。灰 = lanelet、緑 = ゴール lanelet、赤 = 障害物(番号)、青 = 自車と軌跡、点線 = 経路。出典: CommonRoad scenarios (TUM, BSD-3-Clause)",
+  "shape": [
+   814,
+   1120,
+   3
+  ]
+ },
+ {
+  "file": "05_commonroad_checks.png",
+  "name": "commonroad_checks",
+  "caption": "公式 = commonroad-drivability-checker 2025.4.0。自前 = cr_feasible(記録入力で RK4、位置 2 cm・向き 0.03 rad・入力制限・摩擦円)+ cr_collision(SAT・点包含)。",
+  "shape": [
+   200,
+   537,
+   3
+  ],
+  "csv": "05_commonroad_checks.csv",
+  "tsv": "05_commonroad_checks.tsv"
+ },
+ {
+  "file": "06_commonroad_sweep.png",
+  "name": "commonroad_sweep",
+  "caption": "IDM だけでは対向車 obs 1 より先に左折できず、曲がりの許容横加速度と見通しを順に上げた。採用 = 最初に全門を通った設定。",
+  "shape": [
+   416,
+   424,
+   3
+  ],
+  "csv": "06_commonroad_sweep.csv",
+  "tsv": "06_commonroad_sweep.tsv"
+ }
+]
