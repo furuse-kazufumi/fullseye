@@ -1,4 +1,4 @@
-# IMGMETRICS operator help — 35 ops in 7 categories
+# IMGMETRICS operator help — 42 ops in 8 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/imgmetrics/<category>/<op>.md` を走査。
 
@@ -31,6 +31,10 @@
 ### iqa (11)
 
 [luma_limited_u8](iqa/luma_limited_u8.md) · [rank_data](iqa/rank_data.md) · [rank_kendall_b](iqa/rank_kendall_b.md) · [rank_spearman](iqa/rank_spearman.md) · [tid2013_by_distortion](iqa/tid2013_by_distortion.md) · [tid2013_compare](iqa/tid2013_compare.md) · [tid2013_evaluate](iqa/tid2013_evaluate.md) · [tid2013_index](iqa/tid2013_index.md) · [tid2013_metric_values](iqa/tid2013_metric_values.md) · [tid2013_published](iqa/tid2013_published.md) · [tid2013_root](iqa/tid2013_root.md)
+
+### perceptual (7)
+
+[fsim](perceptual/fsim.md) · [fsim_pair](perceptual/fsim_pair.md) · [fsimc](perceptual/fsimc.md) · [gmsd](perceptual/gmsd.md) · [gmsd_map](perceptual/gmsd_map.md) · [phase_congruency_pc](perceptual/phase_congruency_pc.md) · [vifp](perceptual/vifp.md)
 
 ### report (4)
 

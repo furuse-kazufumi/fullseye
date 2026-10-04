@@ -1,0 +1,5 @@
+metric	input convention	max |row diff|	truth grade	SROCC / KROCC here	paper Table 4/5	readme
+FSIMC	RGB → YIQ full	5.0e-05	author file, 4 digits	0.8510 / 0.6665	0.8510 / 0.6669	0.851 / 0.667
+FSIM	Y′ limited gray	5.0e-05	author file, 4 digits	0.8008 / 0.6295	0.8007 / 0.6300	0.801 / 0.630
+VIFP	Y′ limited gray	6.8e-05	author file, 4 digits	0.6080 / 0.4560	0.6084 / 0.4567	0.608 / 0.457
+GMSD (|ρ|)	RGB → Y full	no author file	secondary source*	0.8038 / 0.6334	0.8044 / 0.6339*	—

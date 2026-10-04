@@ -7,6 +7,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**知覚指標 FSIM / FSIMc / GMSD / VIF を外から来た真値で 4 桁一致させる**(新モジュール `iqafsim` 7 op、台帳 `perceptual`(opsimgmetrics)、
+  PoC `poc_iqa_fsim_gmsd_vif`、wing_imaging): IQA 第 2 弾。第 1 弾(2026.194)が「未実装で公表値だけ表に」していた FSIM / FSIMc / VIFP を numpy + scipy
+  だけで実装し、配布物に無い GMSD も足した。一次情報 = Zhang, Zhang, Mou, Zhang 2011(FSIM、DOI 10.1109/TIP.2011.2109730)、Kovesi 1999(位相一致。公開コードは
+  MIT なので雑音しきい値の経験則はそこから)、Xue, Zhang, Mou, Bovik 2014(GMSD、10.1109/TIP.2013.2293423)、Sheikh & Bovik 2006(VIF、10.1109/TIP.2005.859378)。
+  FSIM 作者コードは研究・教育目的のみなので移植せず論文の式から(定数が §IV-A と同じことは確認)。真値 3 段: 作者値ファイル 3,000 行と行ごと
+  **max |差| 5.0e-5 / 5.0e-5 / 6.8e-5**(4 桁の丸め幅内)、論文 Table 4/5 の順位相関 4 桁(Full と 7 部分集合 —— 作者と同じ 4 桁丸めで Δ 0.0000、
+  丸めない値で FSIM 0.8008 / 0.6295・FSIMc 0.8510 / 0.6665・VIFP 0.6080 / 0.4560)、GMSD は二次資料(Nafchi ほか 2016, arXiv:1608.07433v4)の
+  |ρ| 0.8044 / 0.6339 に 0.0006 / 0.0005。**入力の規約は実測で特定**: FSIM.txt と VIFP.txt は Y′ limited(16–235)の灰色画像、FSIMc.txt は色 → YIQ
+  full range —— FSIM.txt は FSIMc 計算の中の FSIM 成分ではない(色画像の Y で測ると max 0.0318 ずれる)。`metriccontract.DIRECTIONS` に fsim / fsimc /
+  vifp = higher、**gmsd = lower**。既存 `phase_congruency`(モノジェニック版)と区別して `phase_congruency_pc`(第 2 実装として相関 0.66 を門に)。
+  正直に: 4 桁一致は規約を同じにしたからで性能の話ではない、GMSD は作者値が無く二次資料との照合だけ(1 段低い等級)、steerable 版 VIF(論文の「VIF」
+  0.677)は未実装、歪み 16–18 は 4 指標とも弱く彩度変化では輝度だけの 3 指標が崩れる。踏んだ罠: scipy の `convolve2d(..., 'same')` は偶数核で半画素
+  ずれる(2×2 平均が別の答え)、F = round(1.5) は 0 から遠い側、PC の ε は単位ベクトル化だけに入れる(分母に足すと利得不変が 3e-5 崩れる)、GMSD は
+  MOS と負の相関(公表表は |ρ|)、論文の 4 桁表は作者の 4 桁丸めの txt から計算されている(丸めで歪み 18 の 106〜122 組が同順位になり New / Color が動く)。
 - ★**視触覚センサ(弾性膜 + カメラ)の合成と逆算**(新モジュール `tacsim` 14 op、台帳 `tacsim`(opsdrive)、PoC `poc_tacsim_elastic_membrane`、
   wing_metrology): 物理シミュ × Fullseye 系列の第 2 弾。真値は閉形式 2 系統 —— 弾性接触 = Hertz(Johnson, *Contact Mechanics* 1985: a³ = 3FR/4E*、
   δ = a²/R、p = p0√(1−r²/a²)、半空間の表面変位は内側 δ − r²/2R・外側 式 3.42a)、光学 = Woodham 1980 のフォトメトリックステレオ N = L⁻¹I +

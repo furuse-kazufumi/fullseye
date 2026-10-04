@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **74 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **75 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 撮像品質・復元ウィング ―― 絵が良くなることと真値に近づくことは別
 
-手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 17 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
+手ブレを戻す、拡大する、霞を剥がす、深度合成する、投影から再構成する、光子を数えて距離を出す。復元の分野は「見た目が良くなった」と「真値に近づいた」が最も混ざりやすい場所です。この部屋の 18 点は、核・深度・大気光・PSD・投影・到達時刻をこちらが決めた合成で、その 2 つを分けて採点しています。
 
 見た目の指標は真値を最大値としません。霞んだ入力の対比が真値より高い、アンシャープで勾配は真値に一致するのに PSNR は落ちる、雑音を足すと PSNR が上がる。逆に、ナイキストより細かい縞を戻したのに PSNR が -0.01 dB しか動かない場面もあります。
 
@@ -387,6 +387,42 @@ py -3.11 examples/poc_iqa_tid2013.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_iqa_tid2013)
 
 使用 op(ノートへ): [`luma_limited_u8`](https://furuse.work/ops/imgmetrics/iqa/luma_limited_u8.html) · [`psnr`](https://furuse.work/ops/imgmetrics/fidelity/psnr.html) · [`rank_data`](https://furuse.work/ops/imgmetrics/iqa/rank_data.html) · [`rank_kendall_b`](https://furuse.work/ops/imgmetrics/iqa/rank_kendall_b.html) · [`rank_spearman`](https://furuse.work/ops/imgmetrics/iqa/rank_spearman.html) · [`ssim`](https://furuse.work/ops/imgmetrics/fidelity/ssim.html) · [`ssim_map`](https://furuse.work/ops/imgmetrics/fidelity/ssim_map.html) · [`tid2013_by_distortion`](https://furuse.work/ops/imgmetrics/iqa/tid2013_by_distortion.html) · [`tid2013_compare`](https://furuse.work/ops/imgmetrics/iqa/tid2013_compare.html) · [`tid2013_evaluate`](https://furuse.work/ops/imgmetrics/iqa/tid2013_evaluate.html) · [`tid2013_index`](https://furuse.work/ops/imgmetrics/iqa/tid2013_index.html) · [`tid2013_metric_values`](https://furuse.work/ops/imgmetrics/iqa/tid2013_metric_values.html) · [`tid2013_published`](https://furuse.work/ops/imgmetrics/iqa/tid2013_published.html) · [`tid2013_root`](https://furuse.work/ops/imgmetrics/iqa/tid2013_root.html)
+
+## No.2026.197 —— 知覚指標 FSIM / FSIMc / GMSD / VIF を外から来た真値で 4 桁一致させる ―― TID2013 の作者値ファイル 3 本と公表の順位相関表
+
+[![知覚指標 FSIM / FSIMc / GMSD / VIF を外から来た真値で 4 桁一致させる ―― TID2013 の作者値ファイル 3 本と公表の順位相関表](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/01_iqa_tid2013_mos_vs_fsim.png)
+
+*↑ **知覚指標 FSIM / FSIMc / GMSD / VIF を外から来た真値で 4 桁一致させる ―― TID2013 の作者値ファイル 3 本と公表の順位相関表** ―― IQA 系列の第 2 弾(第 1 弾 = PSNR / SSIM)。第 1 弾が「未実装で公表値だけ表に」していた FSIM / FSIMc / VIFP を numpy + scipy だけで実装し(新モジュール iqafsim 7 op: fsim / fsimc / fsim_pair / gmsd / gmsd_map / vifp / phase_congruency_pc)、配布物に無い GMSD も足した。一次情報は論文 4 本: FSIM = Zhang, Zhang, Mou, Zhang, IEEE TIP 2011(位相一致は Kovesi 1999、公開コードは MIT なので雑音しきい値の経験則はそこから)、GMSD = Xue, Zhang, Mou, Bovik, IEEE TIP 2014、VIF = Sheikh & Bovik, IEEE TIP 2006 の画素領域版(TID2013 論文の「VIFP」。steerable 版の「VIF」は別行で未実装)。FSIM 作者コードは研究・教育目的のみなので移植せず、論文の式から書いて定数が §IV-A と同じことだけ確かめた。真値は 3 段。(1) 作者値ファイル FSIMc.txt / FSIM.txt / VIFP.txt(3,000 行 × 4 桁)と行ごと: max |差| 5.0e-5 / 5.0e-5 / 6.8e-5 ―― 4 桁の丸め幅の中。(2) TID2013 論文 Table 4/5 の順位相関 4 桁: 丸めない自前の値で FSIM 0.8008 / 0.6295(論文 0.8007 / 0.6300)、FSIMc 0.8510 / 0.6665(0.8510 / 0.6669)、VIFP 0.6080 / 0.4560(0.6084 / 0.4567)、作者と同じ 4 桁丸めをすると 3 本とも Full と 7 部分集合(Noise / Actual / Simple / Exotic / New / Color / Full)で Δ 0.0000。(3) GMSD は作者値が無く(配布物 2013 年、GMSD 2014 年)、二次資料(Nafchi ほか 2016)の |ρ| 0.8044 / 0.6339 に 0.0006 / 0.0005 ―― 1 段低い等級として表に明記。入力の規約は実測で特定(どのページにも書かれていない): FSIM.txt と VIFP.txt は PSNR / SSIM と同じ Y′ limited(16–235 の整数)の灰色画像、FSIMc.txt は色 BMP → YIQ full range。つまり FSIM.txt は FSIMc 計算の中の FSIM 成分ではない(色画像の Y で FSIM を測ると max 0.0318 ずれる ―― 反例を門に)。図は MOS 散布 4 枚(題に SROCC と公表値)、歪み種 24 の SROCC の棒(18 彩度変化で輝度だけの 3 指標が崩れ FSIMc だけ残る)、真値の等級を列にした表。門 26 本(合成 10 + 既定の実データ 6 + --full の 10): 恒等 FSIM = FSIMc = 1・GMSD = 0・VIF = 1、雑音 σ で単調(順位相関 ∓1)、FSIM / GMSD の対称と VIF の非対称(参照の情報量で割る)、位相一致の利得不変(ε = 1e-12 で 1e-10、既定 ε = 1e-4 の残差 2.8e-5 は ε に厳密比例)、偶数核の 'same' の規約、round(1.5) = 2、第 2 実装(既存のモノジェニック位相一致)との相関 0.66、GMS 値域と VIF > 1(コントラスト強調、作者値の最大 1.1379 も歪み 17)、fail-closed、公表表の 4 桁と 3 桁の整合、実データの行ごと 3 本・反例・GMSD の負の相関・歪み種別。既定は先頭 120 組(参照 I01 の 24 種 × 5 段)30 s、--full で 3,000 組 11 分。正直に: 4 桁一致は規約を同じにしたからで性能の話ではない(FSIMc 0.851 が 1 位、VIFP 0.608 は 13 位)、GMSD は二次資料との照合だけ、steerable 版 VIF は未実装、歪み 16–18 は 4 指標とも弱い。踏んだ罠: scipy の偶数核 'same' は半画素ずれる(2×2 平均が別の答え)、round(1.5) は 0 から遠い側、ε は単位ベクトル化だけ(分母に足すと利得不変が 3e-5 崩れる)、GMSD の符号(公表表は |ρ|、1 回目は −1.6 の FAIL)、論文の 4 桁表は作者の 4 桁丸めの txt から計算されている(丸めで歪み 18 の 106〜122 組が同順位になり New / Color が 4 桁目で動く)。*
+
+[![FSIMC と 971 人の MOS(3,000 組)。作者値 FSIMc.txt と 4 桁一致(色画像 → YIQ full range)。TID2013 全体で 1 位の指標。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/02_iqa_tid2013_mos_vs_fsimc.png)
+
+*↑ 測定の図 ―― FSIMC と 971 人の MOS(3,000 組)。作者値 FSIMc.txt と 4 桁一致(色画像 → YIQ full range)。TID2013 全体で 1 位の指標。*
+
+[![VIFP と 971 人の MOS(3,000 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/03_iqa_tid2013_mos_vs_vifp.png)
+
+*↑ VIFP と 971 人の MOS(3,000 組)。*
+
+[![GMSD と 971 人の MOS(3,000 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/04_iqa_tid2013_mos_vs_gmsd.png)
+
+*↑ GMSD と 971 人の MOS(3,000 組)。*
+
+[![歪み種ごとの順位相関。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/05_iqa_tid2013_srocc_by_distortion.png)
+
+*↑ 歪み種ごとの順位相関。*
+
+[![真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif/06_iqa_tid2013_published_vs_reproduced.png)
+
+*↑ 真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。*
+
+```
+py -3.11 examples/poc_iqa_fsim_gmsd_vif.py
+```
+
+ソース: [examples/poc_iqa_fsim_gmsd_vif.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_iqa_fsim_gmsd_vif.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_iqa_fsim_gmsd_vif)
+
+使用 op(ノートへ): [`fsim`](https://furuse.work/ops/imgmetrics/perceptual/fsim.html) · [`fsim_pair`](https://furuse.work/ops/imgmetrics/perceptual/fsim_pair.html) · [`fsimc`](https://furuse.work/ops/imgmetrics/perceptual/fsimc.html) · [`gmsd`](https://furuse.work/ops/imgmetrics/perceptual/gmsd.html) · [`gmsd_map`](https://furuse.work/ops/imgmetrics/perceptual/gmsd_map.html) · [`phase_congruency_pc`](https://furuse.work/ops/imgmetrics/perceptual/phase_congruency_pc.html) · [`rank_kendall_b`](https://furuse.work/ops/imgmetrics/iqa/rank_kendall_b.html) · [`rank_spearman`](https://furuse.work/ops/imgmetrics/iqa/rank_spearman.html) · [`tf_phase_congruency`](https://furuse.work/ops/2d/edges/tf_phase_congruency.html) · [`tid2013_by_distortion`](https://furuse.work/ops/imgmetrics/iqa/tid2013_by_distortion.html) · [`tid2013_compare`](https://furuse.work/ops/imgmetrics/iqa/tid2013_compare.html) · [`tid2013_evaluate`](https://furuse.work/ops/imgmetrics/iqa/tid2013_evaluate.html) · [`tid2013_index`](https://furuse.work/ops/imgmetrics/iqa/tid2013_index.html) · [`tid2013_metric_values`](https://furuse.work/ops/imgmetrics/iqa/tid2013_metric_values.html) · [`tid2013_published`](https://furuse.work/ops/imgmetrics/iqa/tid2013_published.html) · [`tid2013_root`](https://furuse.work/ops/imgmetrics/iqa/tid2013_root.html) · [`vifp`](https://furuse.work/ops/imgmetrics/perceptual/vifp.html)
 
 ## No.2026.135 —— ハエの視葉だけで進路を立て直す ―― ラミナから操舵まで、学習なしで
 

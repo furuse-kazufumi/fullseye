@@ -113,6 +113,10 @@ DIRECTIONS = {
     "ms_ssim": "higher",
     "rank_spearman": "higher",        # 指標の値と MOS の順位相関(iqatid)。1 に近いほど人の評価に沿う
     "rank_kendall_b": "higher",
+    "fsim": "higher",                 # iqafsim —— 1 = 同一(TID2013 作者値と 4 桁一致)
+    "fsimc": "higher",
+    "vifp": "higher",                 # 1 を超えうる(コントラスト強調)が向きは同じ
+    "gmsd": "lower",                  # 0 = 同一。向きを間違えると測れなかった候補が勝つ
     "mutual_information": "higher",
     "normalized_mutual_information": "higher",
     "image_entropy": "higher",

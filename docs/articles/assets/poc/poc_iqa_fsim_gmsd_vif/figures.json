@@ -1,0 +1,64 @@
+[
+ {
+  "file": "01_iqa_tid2013_mos_vs_fsim.png",
+  "name": "iqa_tid2013_mos_vs_fsim",
+  "caption": "FSIM と 971 人の MOS(3,000 組)。作者値 FSIM.txt と行ごと 4 桁一致(Y′ limited の灰色画像を渡したとき)。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "02_iqa_tid2013_mos_vs_fsimc.png",
+  "name": "iqa_tid2013_mos_vs_fsimc",
+  "caption": "FSIMC と 971 人の MOS(3,000 組)。作者値 FSIMc.txt と 4 桁一致(色画像 → YIQ full range)。TID2013 全体で 1 位の指標。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "03_iqa_tid2013_mos_vs_vifp.png",
+  "name": "iqa_tid2013_mos_vs_vifp",
+  "caption": "VIFP と 971 人の MOS(3,000 組)。作者値 VIFP.txt(画素領域版)と 4 桁一致。1 を超える点はコントラスト強調(歪み 17)。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_iqa_tid2013_mos_vs_gmsd.png",
+  "name": "iqa_tid2013_mos_vs_gmsd",
+  "caption": "GMSD と 971 人の MOS(3,000 組)。作者値ファイルは無い(配布物 2013 年、GMSD 2014 年)。小さいほど良いので相関は負、二次資料の |ρ| 0.8044 と比べる。",
+  "shape": [
+   420,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "05_iqa_tid2013_srocc_by_distortion.png",
+  "name": "iqa_tid2013_srocc_by_distortion",
+  "caption": "歪み種ごとの順位相関。18 彩度変化は輝度しか見ない FSIM / VIFP / GMSD が崩れ、彩度を持つ FSIMc だけ残る。17 コントラスト変化・16 平均シフトは 4 指標とも弱い。",
+  "shape": [
+   420,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "06_iqa_tid2013_published_vs_reproduced.png",
+  "name": "iqa_tid2013_published_vs_reproduced",
+  "caption": "真値の等級を列にした: FSIM / FSIMc / VIFP は作者値ファイル(4 桁)と行ごとに比べられる。GMSD は作者値が無く、二次資料(* = Nafchi+ 2016 arXiv:1608.07433v4 Table I)の |ρ| との照合だけ —— 1 段低い等級。 順位相関の列は丸めない自前の値(作者と同じ 4 桁丸めをすると論文の 4 桁に乗る)。",
+  "shape": [
+   176,
+   807,
+   3
+  ],
+  "csv": "06_iqa_tid2013_published_vs_reproduced.csv",
+  "tsv": "06_iqa_tid2013_published_vs_reproduced.tsv"
+ }
+]

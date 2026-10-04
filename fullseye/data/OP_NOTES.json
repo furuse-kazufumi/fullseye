@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2785,
- "n_notes": 2791,
+ "n_ops": 2792,
+ "n_notes": 2798,
  "notes": {
   "vol_dilate": [
    {
@@ -21147,6 +21147,76 @@
     "category": "iqa",
     "out": "any",
     "path": "docs/ops/imgmetrics/iqa/tid2013_root.md"
+   }
+  ],
+  "fsim": [
+   {
+    "op": "fsim",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "image2d × image2d",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/perceptual/fsim.md"
+   }
+  ],
+  "fsim_pair": [
+   {
+    "op": "fsim_pair",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "rgbimage × rgbimage",
+    "out": "table",
+    "path": "docs/ops/imgmetrics/perceptual/fsim_pair.md"
+   }
+  ],
+  "fsimc": [
+   {
+    "op": "fsimc",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "rgbimage × rgbimage",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/perceptual/fsimc.md"
+   }
+  ],
+  "gmsd": [
+   {
+    "op": "gmsd",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "image2d × image2d",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/perceptual/gmsd.md"
+   }
+  ],
+  "gmsd_map": [
+   {
+    "op": "gmsd_map",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/imgmetrics/perceptual/gmsd_map.md"
+   }
+  ],
+  "phase_congruency_pc": [
+   {
+    "op": "phase_congruency_pc",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "image2d",
+    "out": "image2d",
+    "path": "docs/ops/imgmetrics/perceptual/phase_congruency_pc.md"
+   }
+  ],
+  "vifp": [
+   {
+    "op": "vifp",
+    "dim": "imgmetrics",
+    "category": "perceptual",
+    "in": "image2d × image2d",
+    "out": "scalar",
+    "path": "docs/ops/imgmetrics/perceptual/vifp.md"
    }
   ],
   "compare_images": [

@@ -3314,6 +3314,38 @@ def _fuzz_tid():
     return _FUZZ_TID
 
 
+_FUZZ_IQA = {}
+
+
+def _fuzz_iqa():
+    """知覚指標用の構造のある 96×128 の組(0–255、勾配 + 円 + 縞 + 雑音の歪み)を 1 回だけ作る(iqafsim)。乱数だけの絵は対称性の破れを隠す。"""
+    if "g" not in _FUZZ_IQA:
+        rng = np.random.default_rng(0)
+        yy, xx = np.mgrid[0:96, 0:128].astype(np.float64)
+        g = 60.0 + 100.0 * xx / 128 + 80.0 * (((yy - 48) ** 2 + (xx - 64) ** 2) < 24 ** 2) + 30.0 * np.sin(2 * np.pi * yy / 12.0) * (xx > 90)
+        g = np.clip(g + rng.normal(0, 1.5, g.shape), 0, 255)
+        d = np.clip(g + rng.normal(0, 8.0, g.shape), 0, 255)
+        rgb = np.stack([np.clip(g * 1.1, 0, 255), g, np.clip(g * 0.8 + 20, 0, 255)], axis=-1)
+        rgbd = np.stack([np.clip(d * 1.1, 0, 255), d, np.clip(d * 0.8 + 20, 0, 255)], axis=-1)
+        _FUZZ_IQA.update({"g": g, "d": d, "rgb": rgb, "rgbd": rgbd})
+    return _FUZZ_IQA
+
+
+def _b_iqa_gray_pair(pool, rng):
+    f = _fuzz_iqa()
+    d = np.clip(f["g"] + rng.normal(0, float(rng.uniform(1.0, 30.0)), f["g"].shape), 0, 255)
+    return (f["g"], d), {}
+
+
+def _b_iqa_rgb_pair(pool, rng):
+    f = _fuzz_iqa()
+    return (f["rgb"], f["rgbd"] if rng.uniform() < 0.5 else f["rgb"]), {}
+
+
+def _b_iqa_gray(pool, rng):
+    return (_fuzz_iqa()["g"] * float(rng.uniform(0.5, 2.0)),), {}
+
+
 def _b_luma_limited_u8(pool, rng):
     return (rng.integers(0, 256, (16, 20, 3), dtype=np.uint8),), {}
 
@@ -4455,6 +4487,8 @@ OP_ARG_BUILDERS = {
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
+    "fsim": _b_iqa_gray_pair, "fsimc": _b_iqa_rgb_pair, "fsim_pair": _b_iqa_rgb_pair, "gmsd": _b_iqa_gray_pair, "gmsd_map": _b_iqa_gray_pair,
+    "vifp": _b_iqa_gray_pair, "phase_congruency_pc": _b_iqa_gray,
     "sign_params": _b_sign_kind, "sign_image": _b_sign_img, "plate_mesh_from_image": _b_plate_mesh,
     "sign_mesh": _b_sign_mesh, "add_sign": _b_add_sign, "signal_jp_mesh": _b_signal_jp,
     "add_signal_jp": _b_add_signal_jp,

@@ -20,6 +20,8 @@ op                            答え合わせの出所
 ``mutual_information``        恒等式 ``I(X;X) = H(X)``(実測: 誤差 <1e-12)
 ``psnr`` / ``mse``            閉じた形(一定差 0.1・幅 1.0 で厳密に 20 dB)
 ``rgb_to_lab``                白色点の定義(白 → L*=100、実測 100.0000039)
+``fsim`` / ``fsimc`` / ``vifp``  TID2013 の作者値ファイル 3,000 行(実測: 行ごと max 7e-5)
+``gmsd``                      二次資料の順位相関のみ(作者値無し、1 段低い等級)
 ============================  ==========================================
 
 ## 型を新しく 2 つ作った理由
@@ -57,8 +59,9 @@ op                            答え合わせの出所
 """
 import imgmetrics
 import iqatid
+import iqafsim
 
-_MOD = {"imgmetrics": imgmetrics, "iqatid": iqatid}
+_MOD = {"imgmetrics": imgmetrics, "iqatid": iqatid, "iqafsim": iqafsim}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -127,6 +130,19 @@ _CATALOG = {
         ("tid2013_compare", "iqatid", ["any", "any", "any"], "table"),
         ("tid2013_by_distortion", "iqatid", ["any", "table"], "table"),
     ],
+    # 知覚指標(2026-10-04、IQA 第 2 弾): FSIM / FSIMc / VIF(画素領域版)は TID2013 の作者値ファイル 3,000 行と 4 桁一致(max |差| 5.0e-5 / 5.0e-5 /
+    # 6.8e-5)、GMSD は作者値が無く二次資料の |SROCC| 0.8044 に ±0.005。入力の規約は実測で特定: FSIM.txt と VIFP.txt は Y′ limited の灰色画像、
+    # FSIMc.txt は色 → YIQ full range(FSIM.txt は FSIMc 計算の中の FSIM 成分ではない)。gmsd だけ lower is better(DIRECTIONS)。
+    # phase_congruency_pc は既存 phase_congruency(モノジェニック版)と別物なので接尾つき。
+    "perceptual": [
+        ("fsim", "iqafsim", ["image2d", "image2d"], "scalar"),
+        ("fsimc", "iqafsim", ["rgbimage", "rgbimage"], "scalar"),
+        ("fsim_pair", "iqafsim", ["rgbimage", "rgbimage"], "table"),
+        ("gmsd", "iqafsim", ["image2d", "image2d"], "scalar"),
+        ("gmsd_map", "iqafsim", ["image2d", "image2d"], "image2d"),
+        ("vifp", "iqafsim", ["image2d", "image2d"], "scalar"),
+        ("phase_congruency_pc", "iqafsim", ["image2d"], "image2d"),
+    ],
     "report": [
         ("compare_images", "imgmetrics", ["image2d", "image2d"], "metrics"),
         ("measure_with", "imgmetrics", ["metrics", "image2d", "image2d"], "metrics"),
@@ -180,6 +196,26 @@ VERIFIED_AGAINST = {
         "source": "CIE 1976 L*a*b* と D65 白色点の定義",
         "kind": "definition",
         "measured": "白 → L* = 100.0000039(公表定数どうしの 7 桁目の不一致ぶん)",
+    },
+    "fsimc": {
+        "source": "TID2013 配布物の作者値 FSIMc.txt(3,000 行、4 桁)と行ごと。色 BMP → YIQ full range",
+        "kind": "author-computed values of the public database",
+        "measured": "max |差| 5.0e-5(4 桁の丸め幅内)、Full SROCC 0.8510 = 論文 Table 4 の 0.8510",
+    },
+    "fsim": {
+        "source": "TID2013 配布物の作者値 FSIM.txt。入力は Y′ limited(16–235)の灰色画像(色画像の Y だと max 0.0318 ずれる、実測で特定)",
+        "kind": "author-computed values of the public database",
+        "measured": "max |差| 5.0e-5、Full SROCC 0.8008(論文 0.8007、4 桁丸め後 0.8007)",
+    },
+    "vifp": {
+        "source": "TID2013 配布物の作者値 VIFP.txt(画素領域版、steerable 版とは別行)。入力は Y′ limited の灰色画像",
+        "kind": "author-computed values of the public database",
+        "measured": "max |差| 6.8e-5、Full SROCC 0.6080(論文 0.6084、4 桁丸め後 0.6084)",
+    },
+    "gmsd": {
+        "source": "作者値ファイル無し(配布物 2013 年、GMSD 2014 年)。二次資料 Nafchi ほか 2016 arXiv:1608.07433v4 Table I の TID2013 行",
+        "kind": "secondary-source rank correlation (one grade below an author file)",
+        "measured": "|SROCC| 0.8038 / |KROCC| 0.6334 vs 0.8044 / 0.6339(Δ 0.0006 / 0.0005、門 ±0.005)",
     },
 }
 

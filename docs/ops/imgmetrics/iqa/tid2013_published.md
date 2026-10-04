@@ -4,7 +4,7 @@ dim: imgmetrics
 category: iqa
 in: 
 out: table
-examples: [poc_iqa_tid2013]
+examples: [poc_iqa_fsim_gmsd_vif, poc_iqa_tid2013]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -37,6 +37,7 @@ Spearman / Kendall correlation with MOS」、配布物 readme の TABLE III / IV
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_iqa_fsim_gmsd_vif](../../../../examples/poc_iqa_fsim_gmsd_vif.py) — `py -3.11 examples/poc_iqa_fsim_gmsd_vif.py`
 - [poc_iqa_tid2013](../../../../examples/poc_iqa_tid2013.py) — `py -3.11 examples/poc_iqa_tid2013.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

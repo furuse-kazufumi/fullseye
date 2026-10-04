@@ -1,8 +1,8 @@
 {
- "n_ops": 2785,
+ "n_ops": 2792,
  "tiers": {
   "color": 12,
-  "ledger": 1832,
+  "ledger": 1839,
   "nary": 17,
   "registry": 924
  },
@@ -7643,6 +7643,48 @@
    ]
   },
   {
+   "name": "fsim",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "fsim_pair",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "table",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
+   "name": "fsimc",
+   "halcon": "",
+   "in_sort": "rgbimage",
+   "out_sort": "scalar",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "rgbimage",
+    "rgbimage"
+   ]
+  },
+  {
    "name": "funct_1d_to_pairs",
    "halcon": "",
    "in_sort": "signal",
@@ -8045,6 +8087,34 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "gmsd",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "gmsd_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
   },
   {
    "name": "gradient3d",
@@ -14555,6 +14625,19 @@
    "ledger": "opsgenerative",
    "dim": "generative",
    "in_sorts": []
+  },
+  {
+   "name": "phase_congruency_pc",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "image2d"
+   ]
   },
   {
    "name": "phase_displacement",
@@ -22269,6 +22352,20 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "vifp",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "perceptual",
+   "tier": "ledger",
+   "ledger": "opsimgmetrics",
+   "dim": "imgmetrics",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {

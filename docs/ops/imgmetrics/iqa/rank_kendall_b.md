@@ -4,7 +4,7 @@ dim: imgmetrics
 category: iqa
 in: any × any
 out: scalar
-examples: [poc_iqa_tid2013]
+examples: [poc_iqa_fsim_gmsd_vif, poc_iqa_tid2013]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ C / D = 一致 / 不一致の対の数、n0 = n(n−1)/2、n1 / n2 = x 側 / y �
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_iqa_fsim_gmsd_vif](../../../../examples/poc_iqa_fsim_gmsd_vif.py) — `py -3.11 examples/poc_iqa_fsim_gmsd_vif.py`
 - [poc_iqa_tid2013](../../../../examples/poc_iqa_tid2013.py) — `py -3.11 examples/poc_iqa_tid2013.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

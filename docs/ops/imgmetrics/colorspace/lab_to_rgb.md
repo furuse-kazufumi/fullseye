@@ -52,7 +52,7 @@ CIE L\*a\*b\* → sRGB ``[0, 1]``。**色域外は切り詰められる**ので
 
 ## 型が繋がる次の op(`rgbimage` を入力に取れる)
 
-[rgb_to_lab](rgb_to_lab.md) · [rgb_to_xyz](rgb_to_xyz.md) · [delta_e_map](../colordiff/delta_e_map.md) · [luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md)
+[rgb_to_lab](rgb_to_lab.md) · [rgb_to_xyz](rgb_to_xyz.md) · [delta_e_map](../colordiff/delta_e_map.md) · [luma_limited_u8](../iqa/luma_limited_u8.md) · [rank_data](../iqa/rank_data.md) · [tid2013_index](../iqa/tid2013_index.md) · [fsimc](../perceptual/fsimc.md) · [fsim_pair](../perceptual/fsim_pair.md)
 
 ## 同カテゴリ(`colorspace`)
 
