@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">insertion_stall_detect — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegfail; pegfail.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;insertion_stall_detect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>深さの時系列 [m] から停滞を検出する(各刻 i で depth[i] − depth[i − window] &lt; min_advance なら stalled)。</p>
+<p>降下が始まる前(構えている間)は深さが一定で、素朴な検出器は鳴る —— `<code style="color:#22d3bf">arm_advance</code>` だけ進んでから <b>武装</b>する(onset はそれ以後の</p>
+<p>最初の stalled)。返り: `<code style="color:#22d3bf">stalled</code><code style="color:#22d3bf">(bool の列、同じ長さ)、</code><code style="color:#22d3bf">onset</code><code style="color:#22d3bf">(最初の停滞の添字、無ければ −1)、</code><code style="color:#22d3bf">armed_at</code>`(武装した添字、</p>
+<p>−1 なら武装せず = 一度も進まなかった)、`<code style="color:#22d3bf">n_stalled</code>`。単調降下(速度 ≥ min_advance/window)では鳴らない(門)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: window &lt; 1、min_advance ≤ 0、系列が空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pegfail</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:insertion_failure_table">insertion_failure_table</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_validate">insertion_failure_validate</a> · <a style="color:#22d3bf" href="opdrive:insertion_signature">insertion_signature</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_classify">insertion_failure_classify</a> · <a style="color:#22d3bf" href="opdrive:insertion_recovery_primitive">insertion_recovery_primitive</a> · <a style="color:#22d3bf" href="opdrive:jamming_parallelogram_planar">jamming_parallelogram_planar</a> · <a style="color:#22d3bf" href="opdrive:jamming_force_check">jamming_force_check</a> · <a style="color:#22d3bf" href="opdrive:wedging_risk">wedging_risk</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegfail.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

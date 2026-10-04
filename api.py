@@ -688,6 +688,10 @@ import puck  # noqa: E402  (エアホッケーのパック追跡・予測・打�
 from puck import (  # noqa: E402,F401
     puck_challenge_mjcf, puck_mujoco_run,
 )
+import pegfail  # noqa: E402  (ペグ挿入の失敗検出と回復: 規則の分類表 × 接触計測、真値は Whitney と MuJoCo。台帳は opsdrive "pegfail")
+from pegfail import (  # noqa: E402,F401
+    pegfail_scene_build, pegfail_episode_run, pegfail_failure_grid,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1195,6 +1199,9 @@ __all__ = [
     "peg_insertion_grid",
     "puck_challenge_mjcf",
     "puck_mujoco_run",
+    "pegfail_scene_build",
+    "pegfail_episode_run",
+    "pegfail_failure_grid",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

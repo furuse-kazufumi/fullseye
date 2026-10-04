@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2855,
- "n_notes": 2861,
+ "n_ops": 2871,
+ "n_notes": 2877,
  "notes": {
   "vol_dilate": [
    {
@@ -18208,6 +18208,165 @@
     "in": "any",
     "out": "table",
     "path": "docs/ops/drive/pass/roundabout_signal_point.md"
+   }
+  ],
+  "failure_confusion": [
+   {
+    "op": "failure_confusion",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "any × any",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/failure_confusion.md"
+   }
+  ],
+  "insertion_episode_summary": [
+   {
+    "op": "insertion_episode_summary",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_episode_summary.md"
+   }
+  ],
+  "insertion_failure_classify": [
+   {
+    "op": "insertion_failure_classify",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_failure_classify.md"
+   }
+  ],
+  "insertion_failure_presets": [
+   {
+    "op": "insertion_failure_presets",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_failure_presets.md"
+   }
+  ],
+  "insertion_failure_table": [
+   {
+    "op": "insertion_failure_table",
+    "dim": "drive",
+    "category": "pegfail",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_failure_table.md"
+   }
+  ],
+  "insertion_failure_validate": [
+   {
+    "op": "insertion_failure_validate",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_failure_validate.md"
+   }
+  ],
+  "insertion_recovery_primitive": [
+   {
+    "op": "insertion_recovery_primitive",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_recovery_primitive.md"
+   }
+  ],
+  "insertion_signature": [
+   {
+    "op": "insertion_signature",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_signature.md"
+   }
+  ],
+  "insertion_stall_detect": [
+   {
+    "op": "insertion_stall_detect",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/insertion_stall_detect.md"
+   }
+  ],
+  "jamming_force_check": [
+   {
+    "op": "jamming_force_check",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/jamming_force_check.md"
+   }
+  ],
+  "jamming_parallelogram_planar": [
+   {
+    "op": "jamming_parallelogram_planar",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/jamming_parallelogram_planar.md"
+   }
+  ],
+  "pegfail_scene_mjcf": [
+   {
+    "op": "pegfail_scene_mjcf",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/pegfail/pegfail_scene_mjcf.md"
+   }
+  ],
+  "tip_force_ratios": [
+   {
+    "op": "tip_force_ratios",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/tip_force_ratios.md"
+   }
+  ],
+  "vision_boundary_flip": [
+   {
+    "op": "vision_boundary_flip",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/vision_boundary_flip.md"
+   }
+  ],
+  "wedging_risk": [
+   {
+    "op": "wedging_risk",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/wedging_risk.md"
+   }
+  ],
+  "wrist_load_from_deflection": [
+   {
+    "op": "wrist_load_from_deflection",
+    "dim": "drive",
+    "category": "pegfail",
+    "in": "table × signal × signal × signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegfail/wrist_load_from_deflection.md"
    }
   ],
   "camera_world_to_cv": [

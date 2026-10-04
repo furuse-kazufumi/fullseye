@@ -1,0 +1,70 @@
+[
+ {
+  "file": "01_pegfail_where_it_breaks_offset_flip.png",
+  "name": "pegfail_where_it_breaks_offset_flip",
+  "caption": "視覚のずれに σ = 0.05 mm の雑音を足すと、境目 W + c_r = 1.2 mm の ±0.1 mm では missed_hole と chamfer_sliding の欄が反転する(境目ちょうどで 0.508、±1σ で 0.168 / 0.157)。破線は正規雑音の理論値 Φ(−|z|)。",
+  "shape": [
+   360,
+   810,
+   3
+  ]
+ },
+ {
+  "file": "02_pegfail_failure_confusion.png",
+  "name": "pegfail_failure_confusion",
+  "caption": "注入した失敗 6 クラスと表の分類(真値署名): 対角 6 / 6。右列は視覚のずれ(構え時の RGB-D + エンコーダ積分)で作った署名の正答 6 / 6。",
+  "shape": [
+   224,
+   690,
+   3
+  ],
+  "csv": "02_pegfail_failure_confusion.csv",
+  "tsv": "02_pegfail_failure_confusion.tsv"
+ },
+ {
+  "file": "03_pegfail_jamming_diagram_measured.png",
+  "name": "pegfail_jamming_diagram_measured",
+  "caption": "手首ばねのたわみから推定した先端の力の比。停滞を検出した点は自分の深さの平行四辺形の外(余裕 -0.50)、正常な二点滑りは自分の深さ(より深い = 広い)の内側(min 0.18)。深さで平行四辺形が広がるので 1 枚に 2 つ描く。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "04_pegfail_depth_vs_tick_stall_detection.png",
+  "name": "pegfail_depth_vs_tick_stall_detection",
+  "caption": "μ = 0.8・θ₀ = 4.5° のくさび。深さが止まってから窓 30 刻で停滞、同じ刻に表が wedging を出し、退避 + 傾き戻しで再降下して成功(回復 1 回、最終深さ 15.0 mm)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_pegfail_wrist_camera_wedging_detect_recover.gif",
+  "name": "pegfail_wrist_camera_wedging_detect_recover",
+  "caption": "手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。",
+  "shape": [
+   480,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 48,
+  "fps": 8.0
+ },
+ {
+  "file": "06_pegfail_release_probe_wedge_vs_jam.png",
+  "name": "pegfail_release_probe_wedge_vs_jam",
+  "caption": "くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— Whitney の区別を MuJoCo で。",
+  "shape": [
+   128,
+   1044,
+   3
+  ],
+  "csv": "06_pegfail_release_probe_wedge_vs_jam.csv",
+  "tsv": "06_pegfail_release_probe_wedge_vs_jam.tsv"
+ }
+]

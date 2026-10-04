@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">insertion_signature — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_signature(obs, kp=None, stall=None, lateral_tol: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_signature(obs, kp=None, stall=None, lateral_tol: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_signature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>連続の観測を表の語彙の署名に離散化する。</p>
+<p>`<code style="color:#22d3bf">obs</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">contact_kind</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">&quot;none&quot;|&quot;plate&quot;|&quot;chamfer&quot;|&quot;one_point&quot;|&quot;two_point&quot;|&quot;floor&quot;</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">depth</code>` [m] (口の面から、負は空中)、</p>
+<p>`<code style="color:#22d3bf">stalled</code><code style="color:#22d3bf">(bool、:func:</code>insertion_stall_detect<code style="color:#22d3bf">)、</code><code style="color:#22d3bf">theta_onset</code><code style="color:#22d3bf">(二点接触が始まった時の傾き [rad]、無ければ </code><code style="color:#22d3bf">tilt</code>`)、</p>
+<p>`<code style="color:#22d3bf">fx_over_fz</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">m_over_rfz</code><code style="color:#22d3bf">(先端の力の比、F_z ≤ 0 なら None)、</code><code style="color:#22d3bf">depth_l</code>`(Whitney の l = 最狭部からの深さ、省略時 depth − W)、</p>
+<p>`<code style="color:#22d3bf">offset</code>` [m] (先端の穴中心からの面内ずれ)。欄の境目: zone は depth &lt; 0 → above、&lt; W → mouth、&lt; hole_depth − 1 mm → hole、</p>
+<p>それ以上 → bottom。wedge は θ_onset &gt; c/μ → over。jam は two_point なら :func:<code style="color:#22d3bf">jamming_force_check</code> の `<code style="color:#22d3bf">inside</code>`、one_point なら</p>
+<p>|F_x/F_z| ≤ 1/μ、それ以外・力が無い → na。offset は |ε| &gt; W + c_r → large(:func:<code style="color:#22d3bf">pegsim.chamfer_capture</code>)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 未知の contact_kind、depth が無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pegfail</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:insertion_failure_table">insertion_failure_table</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_validate">insertion_failure_validate</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_classify">insertion_failure_classify</a> · <a style="color:#22d3bf" href="opdrive:insertion_recovery_primitive">insertion_recovery_primitive</a> · <a style="color:#22d3bf" href="opdrive:jamming_parallelogram_planar">jamming_parallelogram_planar</a> · <a style="color:#22d3bf" href="opdrive:jamming_force_check">jamming_force_check</a> · <a style="color:#22d3bf" href="opdrive:wedging_risk">wedging_risk</a> · <a style="color:#22d3bf" href="opdrive:insertion_stall_detect">insertion_stall_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegfail.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

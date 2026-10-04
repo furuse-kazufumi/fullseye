@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">insertion_failure_table — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>失敗分類表(データ): 各行 = {`<code style="color:#22d3bf">cls</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">when</code><code style="color:#22d3bf">(欄 → 許す値の集合、</code><code style="color:#22d3bf">&quot;*&quot;</code><code style="color:#22d3bf"> = 何でも), </code><code style="color:#22d3bf">recovery</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">basis</code>`}。</p>
+<p>行の根拠(`<code style="color:#22d3bf">basis</code>`)は Whitney 1982(OCW スライドの頁)か接触形成の幾何。順番に意味は無い —— 署名に当たる行は <b>高々 1 行</b></p>
+<p>(:func:<code style="color:#22d3bf">insertion_failure_validate</code> が全ペアで確かめる)。回復プリミティブの語彙は :func:<code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>
+<p>表(接触 / 深さの帯 / 進み / くさび / かじり / ずれ → クラス → 回復):</p>
+<p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → `<code style="color:#22d3bf">missed_hole</code>` → lift_recentre(先端が面取りに乗れない |ε₀| &gt; W + c_r、導出 (4))</p>
+<p style="margin:2px 0 2px 12px">• chamfer, above|mouth, *, *, *, small → `<code style="color:#22d3bf">chamfer_sliding</code>` → continue(面取り通過は正常な過程、OCW p.26)</p>
+<p style="margin:2px 0 2px 12px">• plate, above|mouth, advancing, *, *, * → `<code style="color:#22d3bf">nominal</code>` → continue(板に触れたがまだ進んでいる = 柔らかい接触の過渡)</p>
+<p style="margin:2px 0 2px 12px">• chamfer|one_point|two_point|floor, *, *, *, *, large → `<code style="color:#22d3bf">wrong_hole</code>` → lift_reapproach(接触はあるが治具の目標穴から W + c_r 以上離れている)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, advancing, *, *, small → `<code style="color:#22d3bf">nominal</code>` → continue(一点接触で進む、p.26)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, advancing, *, *, small → `<code style="color:#22d3bf">nominal</code>` → continue(二点接触で進む = 平行四辺形の中、p.34)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, over, *, small → `<code style="color:#22d3bf">wedging</code>` → retract_reduce_tilt(θ &gt; c/μ、p.28)</p>
+<p style="margin:2px 0 2px 12px">• two_point, hole, stalled, below, outside, small → `<code style="color:#22d3bf">jamming</code>` → steer_force(力の比が平行四辺形の外、p.34)</p>
+<p style="margin:2px 0 2px 12px">• one_point, mouth|hole, stalled, *, outside, small → `<code style="color:#22d3bf">jamming</code>` → steer_force(一点接触の摩擦限界 |F_x/F_z| &gt; 1/μ = 縦の辺)</p>
+<p style="margin:2px 0 2px 12px">• floor, hole, *, *, *, small → `<code style="color:#22d3bf">blocked_hole</code>` → lift_abort(底に届く前に硬い物に当たった)</p>
+<p style="margin:2px 0 2px 12px">• floor, bottom, *, *, *, small → `<code style="color:#22d3bf">seated</code>` → stop(底着 = 完了)</p>
+<p style="margin:2px 0 2px 12px">• none, *, advancing, *, *, * → `<code style="color:#22d3bf">nominal</code>` → continue(空中で降下中)</p>
+<p>当たらない例(わざと unknown): plate・stalled・small(面取りの内側で板に乗って止まるのは幾何的に不可能 = 計測の矛盾)、</p>
+<p>two_point・stalled・below・inside(Whitney なら滑るはずの停滞 = 模型の外)、none・stalled・small(押していないのに止まる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pegfail</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:insertion_failure_validate">insertion_failure_validate</a> · <a style="color:#22d3bf" href="opdrive:insertion_signature">insertion_signature</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_classify">insertion_failure_classify</a> · <a style="color:#22d3bf" href="opdrive:insertion_recovery_primitive">insertion_recovery_primitive</a> · <a style="color:#22d3bf" href="opdrive:jamming_parallelogram_planar">jamming_parallelogram_planar</a> · <a style="color:#22d3bf" href="opdrive:jamming_force_check">jamming_force_check</a> · <a style="color:#22d3bf" href="opdrive:wedging_risk">wedging_risk</a> · <a style="color:#22d3bf" href="opdrive:insertion_stall_detect">insertion_stall_detect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegfail.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

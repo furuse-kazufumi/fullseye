@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tip_force_ratios — DRIVE <code style="color:#22d3bf">pegfail</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegfail; pegfail.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;tip_force_ratios&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>先端の荷重 (F⃗, M⃗) を Whitney の比に: x = F⃗·e_x / F_z、y = M⃗·(e_x × ẑ) / (r F_z)、F_z = −F⃗·ẑ(押し込み正)。</p>
+<p>F_z ≤ 1e-6 N なら比は None(割れない)。`<code style="color:#22d3bf">e_x</code><code style="color:#22d3bf"> は水平の単位ベクトル(:func:</code>jamming_force_check` の規約)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: e_x に水平成分が無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pegfail</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:insertion_failure_table">insertion_failure_table</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_validate">insertion_failure_validate</a> · <a style="color:#22d3bf" href="opdrive:insertion_signature">insertion_signature</a> · <a style="color:#22d3bf" href="opdrive:insertion_failure_classify">insertion_failure_classify</a> · <a style="color:#22d3bf" href="opdrive:insertion_recovery_primitive">insertion_recovery_primitive</a> · <a style="color:#22d3bf" href="opdrive:jamming_parallelogram_planar">jamming_parallelogram_planar</a> · <a style="color:#22d3bf" href="opdrive:jamming_force_check">jamming_force_check</a> · <a style="color:#22d3bf" href="opdrive:wedging_risk">wedging_risk</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegfail.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3994,6 +3994,99 @@ def _b_pk_mjcf(pool, rng):
     return (f["tb"],), {}
 
 
+_FUZZ_PF = {}
+
+
+def _fuzz_pf():
+    """ペグ挿入の失敗検出の小さな種(寸法・表・署名・合成の走行記録)を 1 回だけ作る(pegfail、numpy だけ)。"""
+    if "kp" not in _FUZZ_PF:
+        import pegfail as PF
+        import pegsim as PS
+        kp = PS.peg_params()
+        n = 60
+        ep = {"injected": "wedging", "rec": {"depth": np.linspace(0, 6e-3, n), "cls_truth": ["nominal"] * 30 + ["wedging"] * 30,
+                                            "detected": [False] * 30 + [True] * 30, "force": [1.0] * n},
+              "failing_onset_tick": 10, "recoveries": [{"cls": "wedging"}], "success": True, "status": "success"}
+        _FUZZ_PF.update({"kp": kp, "table": PF.insertion_failure_table(), "ep": ep,
+                         "obs": {"contact_kind": "two_point", "depth": 6e-3, "stalled": True, "fx_over_fz": 0.3, "m_over_rfz": -0.5, "offset": 0.3e-3}})
+    return _FUZZ_PF
+
+
+def _b_pf_none(pool, rng):
+    return (), {}
+
+
+def _b_pf_validate(pool, rng):
+    return (_fuzz_pf()["table"],), {}
+
+
+def _b_pf_signature(pool, rng):
+    f = _fuzz_pf()
+    obs = dict(f["obs"], contact_kind=str(rng.choice(["none", "plate", "chamfer", "one_point", "two_point", "floor"])),
+               depth=float(rng.uniform(-2e-3, 20e-3)), stalled=bool(rng.uniform() < 0.5), offset=float(rng.uniform(0, 3e-3)))
+    return (obs, f["kp"]), {}
+
+
+def _b_pf_classify(pool, rng):
+    f = _fuzz_pf()
+    fields = {"contact": ["none", "plate", "chamfer", "one_point", "two_point", "floor"], "zone": ["above", "mouth", "hole", "bottom"],
+              "progress": ["advancing", "stalled"], "wedge": ["below", "over"], "jam": ["inside", "outside", "na"], "offset": ["small", "large"]}
+    return ({k: str(rng.choice(v)) for k, v in fields.items()},), {"table": f["table"]}
+
+
+def _b_pf_primitive(pool, rng):
+    return (str(rng.choice(["lift_recentre", "lift_reapproach", "retract_reduce_tilt", "steer_force", "lift_abort", "continue", "stop"])),), {}
+
+
+def _b_pf_parallelogram(pool, rng):
+    return (_fuzz_pf()["kp"], float(rng.uniform(0.0, 0.015))), {}
+
+
+def _b_pf_force_check(pool, rng):
+    return (_fuzz_pf()["kp"], float(rng.uniform(0.0, 0.015)), float(rng.uniform(-4, 4)), float(rng.uniform(-6, 6))), {"side": int(rng.choice([-1, 0, 1]))}
+
+
+def _b_pf_wedging(pool, rng):
+    return (_fuzz_pf()["kp"], float(rng.uniform(0.0, 0.2))), {}
+
+
+def _b_pf_stall(pool, rng):
+    z = np.concatenate([np.arange(120) * 3e-5, np.full(80, 119 * 3e-5)]) + rng.normal(0, 5e-6, 200)
+    return (z,), {"window": int(rng.choice([10, 30]))}
+
+
+def _b_pf_wrist(pool, rng):
+    return (_fuzz_pf()["kp"], rng.normal(0, 1e-3, 3), rng.normal(0, 0.02, 3), np.zeros(3), np.array([0.0, 0.0, 0.01]), np.array([0.0, 0.0, 1.0])), {}
+
+
+def _b_pf_ratios(pool, rng):
+    return (_fuzz_pf()["kp"], np.array([float(rng.uniform(-2, 2)), 0.0, -float(rng.uniform(0.5, 5))]), rng.normal(0, 0.01, 3), np.array([1.0, 0.0, 0.0])), {}
+
+
+def _b_pf_summary(pool, rng):
+    return (_fuzz_pf()["ep"],), {}
+
+
+def _b_pf_confusion(pool, rng):
+    cls = ["wedging", "jamming", "missed_hole", "unknown"]
+    t = [str(c) for c in rng.choice(cls, 6)]
+    p = [str(c) for c in rng.choice(cls, 6)]
+    return (t, p), {}
+
+
+def _b_pf_flip(pool, rng):
+    return (_fuzz_pf()["kp"], np.linspace(1.0e-3, 1.4e-3, 5), float(rng.uniform(0.02e-3, 0.1e-3))), {"n": 200}
+
+
+def _b_pf_presets(pool, rng):
+    return (_fuzz_pf()["kp"],), {}
+
+
+def _b_pf_mjcf(pool, rng):
+    k = int(rng.choice([0, 1, 2]))
+    return (_fuzz_pf()["kp"],), {"blocked_depth": 6e-3 if k == 1 else None, "decoy_xy": (26e-3, 0.0) if k == 2 else None}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -4924,6 +5017,12 @@ OP_ARG_BUILDERS = {
     "puck_mu_from_decel": _b_pk_mu, "puck_restitution_from_wall": _b_pk_restitution, "fivebar_link": _b_pk_link, "fivebar_fk": _b_pk_fk,
     "fivebar_ik": _b_pk_ik, "fivebar_workspace": _b_pk_workspace, "fivebar_reach_interval": _b_pk_reach, "striker_plan": _b_pk_plan,
     "fivebar_trajectory": _b_pk_traj, "puck_scene_mjcf": _b_pk_mjcf,
+    "insertion_failure_table": _b_pf_none, "insertion_failure_validate": _b_pf_validate, "insertion_signature": _b_pf_signature,
+    "insertion_failure_classify": _b_pf_classify, "insertion_recovery_primitive": _b_pf_primitive, "jamming_parallelogram_planar": _b_pf_parallelogram,
+    "jamming_force_check": _b_pf_force_check, "wedging_risk": _b_pf_wedging, "insertion_stall_detect": _b_pf_stall,
+    "wrist_load_from_deflection": _b_pf_wrist, "tip_force_ratios": _b_pf_ratios, "insertion_episode_summary": _b_pf_summary,
+    "failure_confusion": _b_pf_confusion, "vision_boundary_flip": _b_pf_flip, "insertion_failure_presets": _b_pf_presets,
+    "pegfail_scene_mjcf": _b_pf_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

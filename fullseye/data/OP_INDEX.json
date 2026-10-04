@@ -1,8 +1,8 @@
 {
- "n_ops": 2855,
+ "n_ops": 2871,
  "tiers": {
   "color": 12,
-  "ledger": 1902,
+  "ledger": 1918,
   "nary": 17,
   "registry": 924
  },
@@ -6590,6 +6590,20 @@
    ]
   },
   {
+   "name": "failure_confusion",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
    "name": "farthest_point_sampling",
    "halcon": "",
    "in_sort": "points",
@@ -9924,6 +9938,69 @@
    ]
   },
   {
+   "name": "insertion_episode_summary",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "insertion_failure_classify",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "insertion_failure_presets",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "insertion_failure_table",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "insertion_failure_validate",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "insertion_grid_summary",
    "halcon": "",
    "in_sort": "table",
@@ -9934,6 +10011,46 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "insertion_recovery_primitive",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "insertion_signature",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "insertion_stall_detect",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -10232,6 +10349,36 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "jamming_force_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "jamming_parallelogram_planar",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
    ]
   },
   {
@@ -14839,6 +14986,19 @@
     "rgb",
     "image2d",
     "matrix"
+   ]
+  },
+  {
+   "name": "pegfail_scene_mjcf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -22436,6 +22596,22 @@
    "in_sorts": []
   },
   {
+   "name": "tip_force_ratios",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "to_points",
    "halcon": "",
    "in_sort": "voxel",
@@ -23328,6 +23504,21 @@
    "dim": "gfx2d",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "vision_boundary_flip",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "scalar"
    ]
   },
   {
@@ -24767,6 +24958,20 @@
    ]
   },
   {
+   "name": "wedging_risk",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
    "name": "weighting_response",
    "halcon": "",
    "in_sort": "signal",
@@ -25006,6 +25211,24 @@
    "dim": "3d",
    "in_sorts": [
     "images"
+   ]
+  },
+  {
+   "name": "wrist_load_from_deflection",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegfail",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "signal",
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {

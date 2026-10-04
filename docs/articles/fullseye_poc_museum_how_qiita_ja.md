@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **76 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **77 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1350,7 +1350,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 13 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 14 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1719,6 +1719,42 @@ py -3.11 examples/poc_air_hockey_intercept.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_air_hockey_intercept)
 
 使用 op(ノートへ): [`crosshair`](https://furuse.work/ops/annotate/pointer/crosshair.html) · [`fivebar_fk`](https://furuse.work/ops/drive/puck/fivebar_fk.html) · [`fivebar_ik`](https://furuse.work/ops/drive/puck/fivebar_ik.html) · [`fivebar_link`](https://furuse.work/ops/drive/puck/fivebar_link.html) · [`fivebar_reach_interval`](https://furuse.work/ops/drive/puck/fivebar_reach_interval.html) · [`fivebar_trajectory`](https://furuse.work/ops/drive/puck/fivebar_trajectory.html) · [`fivebar_workspace`](https://furuse.work/ops/drive/puck/fivebar_workspace.html) · [`kalman_ca`](https://furuse.work/ops/drive/balltrack/kalman_ca.html) · [`puck_camera`](https://furuse.work/ops/drive/puck/puck_camera.html) · [`puck_crossing_point`](https://furuse.work/ops/drive/puck/puck_crossing_point.html) · [`puck_detect`](https://furuse.work/ops/drive/puck/puck_detect.html) · [`puck_mirror_path`](https://furuse.work/ops/drive/puck/puck_mirror_path.html) · [`puck_mu_from_decel`](https://furuse.work/ops/drive/puck/puck_mu_from_decel.html) · [`puck_pinhole_camera`](https://furuse.work/ops/drive/puck/puck_pinhole_camera.html) · [`puck_render_frame`](https://furuse.work/ops/drive/puck/puck_render_frame.html) · [`puck_restitution_from_wall`](https://furuse.work/ops/drive/puck/puck_restitution_from_wall.html) · [`puck_scene_mjcf`](https://furuse.work/ops/drive/puck/puck_scene_mjcf.html) · [`puck_slide_predict`](https://furuse.work/ops/drive/puck/puck_slide_predict.html) · [`puck_state_at`](https://furuse.work/ops/drive/puck/puck_state_at.html) · [`puck_stop_distance`](https://furuse.work/ops/drive/puck/puck_stop_distance.html) · [`puck_synth_frames`](https://furuse.work/ops/drive/puck/puck_synth_frames.html) · [`puck_table`](https://furuse.work/ops/drive/puck/puck_table.html) · [`puck_track`](https://furuse.work/ops/drive/puck/puck_track.html) · [`puck_velocity_estimate`](https://furuse.work/ops/drive/puck/puck_velocity_estimate.html) …(他 5)
+
+## No.2026.201 —— ペグ挿入の失敗を規則の表で見つけて回復する ―― VLM の代わりに Whitney の接触状態、真値は MuJoCo
+
+[![ペグ挿入の失敗を規則の表で見つけて回復する ―― VLM の代わりに Whitney の接触状態、真値は MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/01_pegfail_where_it_breaks_offset_flip.png)
+
+*↑ **ペグ挿入の失敗を規則の表で見つけて回復する ―― VLM の代わりに Whitney の接触状態、真値は MuJoCo** ―― 物理シミュ × Fullseye 系列、pegsim(柔らかい手首のペグ挿入、2026.195)の集大成。先行研究(Shirasaka, Beltran-Hernandez, Hamaya, Ushiku, arXiv:2509.17666、ICRA 2026 予定、コードは未公開)は柔らかい手首の挿入を「接触形成 = 自由度を順に縛る接触状態列」として構造化し、終端姿勢と画像から VLM が失敗モードを判定して回復スキルを選ぶ。ここではその VLM を規則の分類表に置き換える: 観測(接触の種別 none / plate / chamfer / one_point / two_point / floor、深さの帯 above / mouth / hole / bottom、停滞、二点接触が始まった時の傾きが c/μ の上か下か、力の比がかじりの平行四辺形の内か外か、先端の穴中心からのずれが W + c_r の内か外か)を 6 欄の署名に離散化し、12 行の表を引く。当たる行は高々 1 つ(検証器が全ペアの排他と 8 クラスの到達性を先に確かめる)、無ければ unknown で止まる(語彙 576 署名のうち 362 を表が決め、残りは推測しない = fail-closed)。真値は 2 つ外から。(1) 定理 = Whitney 1982(原著は有料で未読、式は著者本人の MIT OCW 2.875 Class 3 スライド本文): くさび θ > c/μ(p.28)、かじりの平行四辺形 λ = l/(2rμ)(p.34)。平行四辺形の 4 頂点を二点接触の平面静力学(両点が下へ滑る Coulomb 摩擦の釣り合い F_x = f₂ − f₁、F_z = μ(f₁ + f₂)、M = μrf₁ − (μr + l)f₂)から導き直し、pegsim の頂点(OCW の値)と 2.2e-16 で一致 —— 力の比の符号の規約(e_x = 先端が触れている壁から反対側の口の縁へ、F_z = 押し込み正、M = M⃗·(e_x × ẑ))はこの導出で固定した。(2) 物理エンジン = MuJoCo の接触点・法線力・手首の力センサ(--full)。手首ばねのたわみから先端の荷重 (F⃗, M⃗_tip) を読む(外部の F/T センサ無しの規則): 停滞中 = 準静的な 3,458 刻で、推定した荷重 + 重力と接触力の和が 0.35 N 以内に釣り合い、手首の力センサ(site 系 → 世界)とは 0.026 N。失敗はわざと注入する: 面取りに乗れないずれ 2.5 mm(> W + c_r = 1.2 mm)、μ 0.8 で θ₀ 4.5°(> c/μ = 2.76°)のくさび、θ₀ 3° で先端が 4 mm 入ってから横目標を傾きの側へ +3 mm ずらす詰まり、深さ 6 mm の栓、26 mm 横の囮の穴。鎖 = 降下(力 2.5 N で減速、12 N 上限)→ 停滞(窓 30 刻で進み < 0.05 mm、0.5 mm 進んでから武装)→ 署名 → 表 → 回復プリミティブ(6 mm 上げて手首 RGB-D で寄せ直す / 10 mm 上げて治具の目標へ戻す / 4 mm 退避して測った傾きを戻す / 平行四辺形の余裕が最大になる搬送台 0.5 mm × 手首 0.5° の組を線形模型で選ぶ / 退避して中止)。図: 境目 W + c_r = 1.2 mm に σ = 0.05 mm の雑音を足したときの欄の反転確率(境目で 0.508、±1σ で 0.168 / 0.157 = Φ(−1) の 0.03 以内、破線は理論値)、注入 6 クラスの混同行列(真値署名 6 / 6、視覚の署名 6 / 6)、かじりの図に手首荷重から推定した力の比の軌跡(詰まりの停滞を検出した点は自分の深さ l = 5.3 mm の平行四辺形の外で余裕 −0.50、正常な二点滑り 321 刻は内側で min 0.18・中央値 0.20 —— 深さで図が広がるので 2 つの深さの平行四辺形を描く)、深さ vs 刻(くさび: 停滞 → 同じ刻に wedging → 退避 + 傾き戻し → 再降下で成功)、手首カメラの GIF 48 コマ('detected: wedging -> retract_reduce_tilt' が出て再降下)、力を抜く探針の表。★力を抜く探針が Whitney の区別を物理で見せる: くさび(μ 0.8、θ 4.7°)は押す力を抜き(F_z 2.03 → 0.64 N)さらに 2 mm 引いても(F_z −0.39 N)深さ 5.90 mm のまま動かない = 内部に圧縮が溜まっている; 詰まり(μ 0.3、θ 4.4°、F_x 1.3 N)は横の力も抜くと自重で 6.25 → 7.21 mm 進み、引くと 5.30 mm まで戻る = 力の向きの問題。門 12 本(numpy だけ、0.6 s)+ --full 8 本(MuJoCo、14 s、図込み 35 s): 表の完全性と排他、平行四辺形の頂点 2.2e-16、くさびの境目 c/μ ∓ 1e-9 rad(μ 0.3 → 7.353°、0.8 → 2.755°)、停滞の検出(単調降下 3 速度 + 構える平面で誤報 0、真の停止から 27 刻で onset、武装は刻 17)、全行の全署名 362 個の分類 100 %、unknown 3 署名と綴り壊し 4 本、手首荷重の閉形式 1e-12、視覚の境目の反転 = Φ(−|z|)、合成 RGB-D(解析的レイキャスト、mujoco 不要)4 姿勢のずれの誤差 0.002 mm → 欄 → 分類 = 真値、離散化の境目、要約の遅れ 30 刻と混同行列、MJCF(力・トルクセンサ 2、栓、囮 109 個 + 枠 4 個、栓が穴の外 / 囮が重なる → ValueError); --full: 力の閉じ、注入格子 6 クラス × {回復なし, あり} で真値署名でも視覚の署名でも 6 / 6・回復なし 0/5 → 回復あり 5/5(blocked は正しく中止 = 成功)、検出の遅れ 32〜33 刻(= 窓 30 + 確認 ≤ 10)・栓 9・囮 18 刻、力を抜く探針、かじりの図の余裕(「内側」の閾値 0.15 は停滞 −0.50 と滑り 0.18 の間に置いた —— MuJoCo の滑りの境目は Whitney の線より ≈ 0.15 内側: 36 角形の壁と柔らかい接触)、くさびは境目の上だけ(μ 0.8・θ₀ 2.0° は入る、μ 0.3・θ₀ 4.5° はくさびでなく詰まり)、視覚の錨(穴 1 つの場面 0.016 mm、囮があると当てはめが 0.47 mm 乱れる、正直に)、記録つき走行。正直に: VLM との比較は作らない(無いものを並べない)。5/5 は各クラス 1 条件ずつで、論文の実機の成功率とは条件が違うので並べない。「視覚の署名」は構えた時の手首 RGB-D の錨 + エンコーダ積分(穴に入った先端はカメラに写らない)。かじりの判定は停滞中・F_z ≥ 1 N でだけ有効(動いている間は比が悪条件で、進んでいるのに余裕が −1.6 まで出る)。横目標 +1.6 mm では力の上限で止まり比は内側 = unknown(表は推測せず黙る)。回復プリミティブは脚本(退避量 4 / 6 / 10 mm、反復 ≤ 6、走行あたり ≤ 3 回)。詰まりの向きは 1 配置(反対側は滑って入る)。コンプライアント支持でくさびを避ける条件(S = L_g/(L_g² + K_θ/K_x))は不等式の形がスライドから読めず使っていない。触覚(tacslip)は未使用。*
+
+[![注入した失敗 6 クラスと表の分類(真値署名): 対角 6 / 6。右列は視覚のずれ(構え時の RGB-D + エンコーダ積分)で作った署名の正答 6 / 6。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/02_pegfail_failure_confusion.png)
+
+*↑ 測定の図 ―― 注入した失敗 6 クラスと表の分類(真値署名): 対角 6 / 6。右列は視覚のずれ(構え時の RGB-D + エンコーダ積分)で作った署名の正答 6 / 6。*
+
+[![手首ばねのたわみから推定した先端の力の比。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/03_pegfail_jamming_diagram_measured.png)
+
+*↑ 手首ばねのたわみから推定した先端の力の比。*
+
+[![μ = 0.8・θ₀ = 4.5° のくさび。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/04_pegfail_depth_vs_tick_stall_detection.png)
+
+*↑ μ = 0.8・θ₀ = 4.5° のくさび。*
+
+[![くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/06_pegfail_release_probe_wedge_vs_jam.png)
+
+*↑ くさびは力を抜いても引いても動かない(深さ 5.90 → 5.90 mm、内部圧縮)、詰まりは横の力を抜くと自重で進み(6.25 → 7.21 mm)引けば戻る(5.30 mm、力の向きの問題)—— Whitney の区別を MuJoCo で。*
+
+[![手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_failure_recovery/05_pegfail_wrist_camera_wedging_detect_recover.gif)
+
+*↑ 動く図 ―― 手首カメラ(640×480、0.1 s ごと、48 コマ): 降下 → くさびで止まる → 'detected: wedging' → 退避して傾きを戻す → 再降下で成功。*
+
+```
+py -3.11 examples/poc_peg_failure_recovery.py
+```
+
+ソース: [examples/poc_peg_failure_recovery.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_peg_failure_recovery.py)
+
+この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_failure_recovery)
+
+使用 op(ノートへ): [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamfer_capture.html) · [`failure_confusion`](https://furuse.work/ops/drive/pegfail/failure_confusion.html) · [`insertion_episode_summary`](https://furuse.work/ops/drive/pegfail/insertion_episode_summary.html) · [`insertion_failure_classify`](https://furuse.work/ops/drive/pegfail/insertion_failure_classify.html) · [`insertion_failure_presets`](https://furuse.work/ops/drive/pegfail/insertion_failure_presets.html) · [`insertion_failure_table`](https://furuse.work/ops/drive/pegfail/insertion_failure_table.html) · [`insertion_failure_validate`](https://furuse.work/ops/drive/pegfail/insertion_failure_validate.html) · [`insertion_recovery_primitive`](https://furuse.work/ops/drive/pegfail/insertion_recovery_primitive.html) · [`insertion_signature`](https://furuse.work/ops/drive/pegfail/insertion_signature.html) · [`insertion_stall_detect`](https://furuse.work/ops/drive/pegfail/insertion_stall_detect.html) · [`jamming_diagram`](https://furuse.work/ops/drive/pegsim/jamming_diagram.html) · [`jamming_force_check`](https://furuse.work/ops/drive/pegfail/jamming_force_check.html) · [`jamming_parallelogram_planar`](https://furuse.work/ops/drive/pegfail/jamming_parallelogram_planar.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`pegfail_scene_mjcf`](https://furuse.work/ops/drive/pegfail/pegfail_scene_mjcf.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tip_force_ratios`](https://furuse.work/ops/drive/pegfail/tip_force_ratios.html) · [`vision_boundary_flip`](https://furuse.work/ops/drive/pegfail/vision_boundary_flip.html) · [`wedging_risk`](https://furuse.work/ops/drive/pegfail/wedging_risk.html) · [`whitney_clearance`](https://furuse.work/ops/drive/pegsim/whitney_clearance.html) · [`wrist_load_from_deflection`](https://furuse.work/ops/drive/pegfail/wrist_load_from_deflection.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

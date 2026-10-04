@@ -1,0 +1,7 @@
+injected \ classified	nominal	missed_hole	wrong_hole	wedging	jamming	blocked_hole	(vision)
+nominal	1	0	0	0	0	0	1/1
+missed_hole	0	1	0	0	0	0	1/1
+wrong_hole	0	0	1	0	0	0	1/1
+wedging	0	0	0	1	0	0	1/1
+jamming	0	0	0	0	1	0	1/1
+blocked_hole	0	0	0	0	0	1	1/1

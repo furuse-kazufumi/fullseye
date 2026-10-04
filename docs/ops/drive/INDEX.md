@@ -1,4 +1,4 @@
-# DRIVE operator help — 471 ops in 34 categories
+# DRIVE operator help — 487 ops in 35 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -87,6 +87,10 @@
 ### pass (17)
 
 [convex_mirror_image](pass/convex_mirror_image.md) · [convex_mirror_misjudge](pass/convex_mirror_misjudge.md) · [crest_safe_speed](pass/crest_safe_speed.md) · [crest_sight_distance](pass/crest_sight_distance.md) · [hill_meeting_yield](pass/hill_meeting_yield.md) · [lane_change_follower_decel](pass/lane_change_follower_decel.md) · [lane_change_permitted](pass/lane_change_permitted.md) · [mirror_image_side](pass/mirror_image_side.md) · [mirror_road_coverage](pass/mirror_road_coverage.md) · [no_overtaking_zones](pass/no_overtaking_zones.md) · [overtake_permitted](pass/overtake_permitted.md) · [overtake_requirement](pass/overtake_requirement.md) · [overtake_return_gap](pass/overtake_return_gap.md) · [overtaken_conduct_check](pass/overtaken_conduct_check.md) · [roundabout_entry_check](pass/roundabout_entry_check.md) · [roundabout_signal_check](pass/roundabout_signal_check.md) · [roundabout_signal_point](pass/roundabout_signal_point.md)
+
+### pegfail (16)
+
+[failure_confusion](pegfail/failure_confusion.md) · [insertion_episode_summary](pegfail/insertion_episode_summary.md) · [insertion_failure_classify](pegfail/insertion_failure_classify.md) · [insertion_failure_presets](pegfail/insertion_failure_presets.md) · [insertion_failure_table](pegfail/insertion_failure_table.md) · [insertion_failure_validate](pegfail/insertion_failure_validate.md) · [insertion_recovery_primitive](pegfail/insertion_recovery_primitive.md) · [insertion_signature](pegfail/insertion_signature.md) · [insertion_stall_detect](pegfail/insertion_stall_detect.md) · [jamming_force_check](pegfail/jamming_force_check.md) · [jamming_parallelogram_planar](pegfail/jamming_parallelogram_planar.md) · [pegfail_scene_mjcf](pegfail/pegfail_scene_mjcf.md) · [tip_force_ratios](pegfail/tip_force_ratios.md) · [vision_boundary_flip](pegfail/vision_boundary_flip.md) · [wedging_risk](pegfail/wedging_risk.md) · [wrist_load_from_deflection](pegfail/wrist_load_from_deflection.md)
 
 ### pegsim (18)
 
