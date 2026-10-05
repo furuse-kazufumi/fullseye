@@ -5229,6 +5229,78 @@ def _b_db_mjcf(pool, rng):
     return (_fuzz_db()["P"],), {"wrap_axle": bool(rng.uniform() < 0.5)}
 
 
+_FUZZ_TDOME = {}
+
+
+def _fuzz_tdome():
+    """大変形接触の小さな種(半球 R = L = 8 mm の線形解 3 形状、80 px の接触像 1 枚)を 1 回だけ作る(tacdome)。"""
+    if "img" not in _FUZZ_TDOME:
+        import tacdome as TD
+        L, Es = 8e-3, 4e5
+        lins = [TD.powerlaw_linear_contact("sphere", L, Es), TD.powerlaw_linear_contact("cone", 1.0, Es),
+                TD.powerlaw_linear_contact("punch", L, Es)]
+        _FUZZ_TDOME.update({"L": L, "Es": Es, "lins": lins, "pitch": 0.2e-3,
+                            "img": TD.dome_contact_image(5e-3, 0.2e-3, 80, footprint=7e-3)})
+    return _FUZZ_TDOME
+
+
+def _b_td_lin(pool, rng):
+    k = str(rng.choice(["sphere", "cone", "punch"]))
+    return (k, float(rng.uniform(1e-3, 2e-2)) if k != "cone" else float(rng.uniform(0.3, 3.0)), float(rng.uniform(1e5, 1e6))), {}
+
+
+def _b_td_d(pool, rng):
+    return (np.sort(rng.uniform(0.0, 0.85, int(rng.integers(3, 12)))), float(rng.choice([1.0, 1.25, 1.5, 2.0]))), {}
+
+
+def _b_td_ratio(pool, rng):
+    return (np.sort(rng.uniform(0.0, 0.85, int(rng.integers(3, 12)))), float(rng.choice([1.0, 1.5, 2.0, 7.0, np.inf]))), {}
+
+
+def _b_td_univ(pool, rng):
+    return (np.sort(rng.uniform(0.0, 0.85, int(rng.integers(3, 12)))),), {}
+
+
+def _b_td_fwd(pool, rng):
+    f = _fuzz_tdome()
+    d = rng.uniform(0.02, 0.7, int(rng.integers(1, 6)))
+    return (d * f["L"] if d.size > 1 else float(d[0] * f["L"]), f["L"], f["lins"][int(rng.integers(0, 3))]), {}
+
+
+def _b_td_inv(pool, rng):
+    import tacdome as TD
+    f = _fuzz_tdome()
+    lin = f["lins"][int(rng.integers(0, 3))]
+    a = TD.large_deformation_contact(float(rng.uniform(0.02, 0.7)) * f["L"], f["L"], lin)["a"]
+    return (float(a), f["L"], lin), {}
+
+
+def _b_td_bed(pool, rng):
+    f = _fuzz_tdome()
+    return (float(rng.uniform(0.02, 0.7)) * f["L"], f["L"], f["lins"][int(rng.integers(0, 3))]), {"n_springs": int(rng.integers(64, 600))}
+
+
+def _b_td_cyl(pool, rng):
+    return (np.sort(rng.uniform(0.0, 0.9, int(rng.integers(3, 12)))),), {}
+
+
+def _b_td_err(pool, rng):
+    return (np.sort(rng.uniform(0.0, 0.85, int(rng.integers(3, 12)))), float(rng.choice([1.0, 2.0, 3.0, np.inf]))), {}
+
+
+def _b_td_img(pool, rng):
+    return (float(rng.uniform(1e-3, 6e-3)), 0.2e-3), {"n": 80, "noise": float(rng.choice([0.0, 0.02])), "seed": int(rng.integers(0, 99))}
+
+
+def _b_td_c1(pool, rng):
+    return (float(rng.choice([1.0, 1.25, 1.5, 2.0, 3.0])),), {"reading": str(rng.choice(["derived", "printed", "memo"]))}
+
+
+def _b_td_read(pool, rng):
+    f = _fuzz_tdome()
+    return (f["img"] + rng.normal(0, float(rng.choice([0.0, 0.02])), f["img"].shape), f["pitch"]), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5575,6 +5647,10 @@ OP_ARG_BUILDERS = {
     "diabolo_throw_catch_truth": _b_db_catch, "string_tension_static": _b_db_tension_static, "string_tension_from_sag": _b_db_tension_sag,
     "diabolo_camera": _b_db_none, "diabolo_render": _b_db_render, "diabolo_axis_from_image": _b_db_axis, "diabolo_marker_phase": _b_db_phase,
     "diabolo_spin_from_markers": _b_db_spin, "diabolo_track": _b_db_track, "diabolo_scene_mjcf": _b_db_mjcf,
+    "powerlaw_linear_contact": _b_td_lin, "largedef_correction": _b_td_d, "largedef_radius_ratio": _b_td_ratio,
+    "largedef_universal_correction": _b_td_univ, "large_deformation_contact": _b_td_fwd, "large_deformation_inverse": _b_td_inv,
+    "mdr_spring_bed": _b_td_bed, "neohookean_cylinder_exact": _b_td_cyl, "hertz_small_strain_error": _b_td_err,
+    "dome_contact_image": _b_td_img, "contact_patch_radius": _b_td_read, "largedef_c1_coefficient": _b_td_c1,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2957,
- "n_notes": 2963,
+ "n_ops": 2969,
+ "n_notes": 2975,
  "notes": {
   "vol_dilate": [
    {
@@ -19803,6 +19803,126 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
+   }
+  ],
+  "contact_patch_radius": [
+   {
+    "op": "contact_patch_radius",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/contact_patch_radius.md"
+   }
+  ],
+  "dome_contact_image": [
+   {
+    "op": "dome_contact_image",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "scalar × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/tacdome/dome_contact_image.md"
+   }
+  ],
+  "hertz_small_strain_error": [
+   {
+    "op": "hertz_small_strain_error",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/hertz_small_strain_error.md"
+   }
+  ],
+  "large_deformation_contact": [
+   {
+    "op": "large_deformation_contact",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "any × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/large_deformation_contact.md"
+   }
+  ],
+  "large_deformation_inverse": [
+   {
+    "op": "large_deformation_inverse",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "scalar × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/large_deformation_inverse.md"
+   }
+  ],
+  "largedef_c1_coefficient": [
+   {
+    "op": "largedef_c1_coefficient",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/tacdome/largedef_c1_coefficient.md"
+   }
+  ],
+  "largedef_correction": [
+   {
+    "op": "largedef_correction",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/tacdome/largedef_correction.md"
+   }
+  ],
+  "largedef_radius_ratio": [
+   {
+    "op": "largedef_radius_ratio",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/tacdome/largedef_radius_ratio.md"
+   }
+  ],
+  "largedef_universal_correction": [
+   {
+    "op": "largedef_universal_correction",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "signal",
+    "out": "signal",
+    "path": "docs/ops/drive/tacdome/largedef_universal_correction.md"
+   }
+  ],
+  "mdr_spring_bed": [
+   {
+    "op": "mdr_spring_bed",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "scalar × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/mdr_spring_bed.md"
+   }
+  ],
+  "neohookean_cylinder_exact": [
+   {
+    "op": "neohookean_cylinder_exact",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "signal",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/neohookean_cylinder_exact.md"
+   }
+  ],
+  "powerlaw_linear_contact": [
+   {
+    "op": "powerlaw_linear_contact",
+    "dim": "drive",
+    "category": "tacdome",
+    "in": "text × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacdome/powerlaw_linear_contact.md"
    }
   ],
   "calib_pack_load": [

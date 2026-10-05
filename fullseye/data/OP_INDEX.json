@@ -1,8 +1,8 @@
 {
- "n_ops": 2957,
+ "n_ops": 2969,
  "tiers": {
   "color": 12,
-  "ledger": 2004,
+  "ledger": 2016,
   "nary": 17,
   "registry": 924
  },
@@ -3536,6 +3536,20 @@
    ]
   },
   {
+   "name": "contact_patch_radius",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
    "name": "contact_radius_fit",
    "halcon": "",
    "in_sort": "normalmap",
@@ -6159,6 +6173,20 @@
    "in_sorts": [
     "points",
     "keypoints"
+   ]
+  },
+  {
+   "name": "dome_contact_image",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "image2d",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -9946,6 +9974,20 @@
    ]
   },
   {
+   "name": "hertz_small_strain_error",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "hertz_sphere",
    "halcon": "",
    "in_sort": "scalar",
@@ -11791,6 +11833,90 @@
    ]
   },
   {
+   "name": "large_deformation_contact",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "table"
+   ]
+  },
+  {
+   "name": "large_deformation_inverse",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "table"
+   ]
+  },
+  {
+   "name": "largedef_c1_coefficient",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "largedef_correction",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "largedef_radius_ratio",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "largedef_universal_correction",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
+   ]
+  },
+  {
    "name": "largest_component",
    "halcon": "",
    "in_sort": "voxel",
@@ -13146,6 +13272,21 @@
    "dim": "segmentation",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "mdr_spring_bed",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "table"
    ]
   },
   {
@@ -14618,6 +14759,19 @@
    "dim": "math",
    "in_sorts": [
     "pairs"
+   ]
+  },
+  {
+   "name": "neohookean_cylinder_exact",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal"
    ]
   },
   {
@@ -17201,6 +17355,21 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "powerlaw_linear_contact",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "tacdome",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "text",
+    "scalar",
     "scalar"
    ]
   },

@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_tacdome_press_sweep.gif",
+  "name": "tacdome_press_sweep",
+  "caption": "半球の指先(R = L = 8 mm、μ = 0.1 MPa、仮定)を平らな物に δ/L = 0 → 0.55 押す(23 コマ)。左 = 内側カメラの接触像(192 px、0.117 mm/px を 2 倍、赤 = 面積法で読んだ円)、中 = 1D のばね列(各ばね = 長さ L − g(x) の neo-Hookean 円柱、平らな物の線まで縮み幅が λ^{−1/2} 倍、色 = ひずみ)、右 = 力の曲線(破線 = Hertz、実線 = 大変形、点 = 像の半径から逆算した力)。",
+  "shape": [
+   384,
+   1184,
+   3
+  ],
+  "animated": true,
+  "frames": 23,
+  "frames_written": 23,
+  "fps": 3.0
+ },
+ {
+  "file": "02_tacdome_force_three_shapes.png",
+  "name": "tacdome_force_three_shapes",
+  "caption": "球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。破線 = 線形解(球は Hertz)、実線 = 大変形 F = κₙ F_L。δ/L = 0.3 を超えると開き、平頭が最も大きく外れる(全ばねが最大ひずみ)。",
+  "shape": [
+   420,
+   680,
+   3
+  ]
+ },
+ {
+  "file": "03_tacdome_kappa_band_readings.png",
+  "name": "tacdome_kappa_band_readings",
+  "caption": "導出した κₙ⁻¹(実線、n = 1 / 1.5 / 2)は n = 2 が上 = 論文の図 4B の挿入図と同じ並び。普遍形(破線)は n = 1 の線に沿い(d ≤ 0.5 で 3.6 % 以内)、d < 0.35 では帯の少し下。点線 = 棄却した読み: メモ 2/(1+n) は並びが逆(κ₂ > κ₁ = 定理違反)、活字 (4+2n)/(1+n) は 1 を超えて増え d ≈ 0.4 で発散(力が負へ)。",
+  "shape": [
+   420,
+   680,
+   3
+  ]
+ },
+ {
+  "file": "04_tacdome_radius_ratio.png",
+  "name": "tacdome_radius_ratio",
+  "caption": "式 (4) の a/a_L(積分の形で計算、不完全ベータの形と 1e-12 で一致)。平頭は非圧縮の円柱の半径の伸び λ^{−1/2}(点 = 連続体の厳密解)に重なる。Hertz は a/a_L = 1 の水平線で、球なら d = 0.3 で 11.7 % 小さい。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "05_tacdome_hertz_error.png",
+  "name": "tacdome_hertz_error",
+  "caption": "小変形の Hertz を大変形に当てた誤差(寸法・弾性率に依らない)。押し込みから読む力は d = 0.3 で -27.8 %、半径は -11.7 %。接触半径から力を読む(視触覚センサの読み方)と球は max +5.4 %(κ と半径の伸びがほぼ打ち消す)、円錐は d = 0.5 で -18.9 %。点線 = 論文の検証範囲の端 0.5。",
+  "shape": [
+   420,
+   680,
+   3
+  ]
+ },
+ {
+  "file": "06_tacdome_contact_edge_crop.png",
+  "name": "tacdome_contact_edge_crop",
+  "caption": "左 = d = 0.3 の内側カメラの接触像(192 px、0.117 mm/px、画素を 2 倍、赤 = 面積法で読んだ円、黄 = 右の範囲)。右 = 上の縁 16 × 16 px を 24 倍(最近傍)。緑 = 真の接触円(a = 42.53 px)、赤 = 面積法(-0.002 %、緑と重なる)、青 = 縁の画素に measure.fit_circle(-0.91 %、縁の画素は円の内側に乗るので約 0.5 px 小さい)。縁の灰色の画素が被覆率で、面積法はこれを線形に足す。",
+  "shape": [
+   384,
+   768,
+   3
+  ]
+ },
+ {
+  "file": "07_tacdome_flex_vs_neohookean.png",
+  "name": "tacdome_flex_vs_neohookean",
+  "caption": "MuJoCo の柔体(線形弾性、ν 0.3)の立方体を摩擦なしで圧縮した剛性比。小ひずみは 1(両模型の線形極限)だが、ひずみが増えても neo-Hookean のように硬くならず、最後の押し込み(ε = 0.31)では 0.18 まで落ちる(要素がつぶれる)—— 大変形の真値には使えない(門 15 は小ひずみだけ)。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ }
+]

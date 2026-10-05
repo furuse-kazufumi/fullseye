@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする**(新モジュール `tacdome` 12 op、台帳 `tacdome`(opsdrive)、
+  PoC `poc_tacdome_large_deformation`、wing_metrology): 一次情報は arXiv:2509.18581 の PDF。★原文の式 (3) の 1 次の係数は活字 (4+2n)/(1+n) だと円柱で力が負 ——
+  本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)を積分して 2n/(1+n) を導いた(2 次と式 (4) は活字と一致)。真値 = 非圧縮 neo-Hookean の円柱の厳密解(1.9e-15)、
+  Hertz の小変形極限(tacsim)、普遍形 k = 10/9(最小二乗 1.1060)、第 2 実装 = ばね列の中点則。押し込みから読む Hertz は δ/L = 0.3 で力 −27.8 %、接触半径から読むと
+  max +5.4 %(円錐は −19.0 %)。内側カメラの像の面積法で半径 0.004 %、力の逆算 0.013 %。門 13 本 + `--full` 2 本(MuJoCo の柔体は小ひずみだけ)。正直に: 図 5C と
+  「普遍形の狭い帯」は再現しない、付録は未読、摩擦なし・照明は理想化。
 - ★**ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む**(新モジュール `diabolo` 16 op + mujoco の facade 1、台帳 `diabolo`
   (opsdrive)、PoC `poc_diabolo_model_and_vision`、wing_xyt): 一次情報は arXiv:2011.09068 の LaTeX 原文。★原文の式 (1b) は次元が合わず実機寸法で NaN
   (a² = b² + c² に直した)、状態遷移の帯が重なる、公開実装の回転則は刻みに反比例(比 2.02)。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・受けの時刻)、

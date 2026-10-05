@@ -988,7 +988,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 28 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 29 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1847,6 +1847,42 @@ py -3.11 examples/poc_food_cutting_measure.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_food_cutting_measure)
 
 使用 op(ノートへ): [`cut_depth_from_side`](https://furuse.work/ops/drive/cutting/cut_depth_from_side.html) · [`cut_force_atkins`](https://furuse.work/ops/drive/cutting/cut_force_atkins.html) · [`cut_force_csv_load`](https://furuse.work/ops/drive/cutting/cut_force_csv_load.html) · [`cut_force_fit`](https://furuse.work/ops/drive/cutting/cut_force_fit.html) · [`cut_surface_roughness`](https://furuse.work/ops/drive/cutting/cut_surface_roughness.html) · [`cutting_edge_render`](https://furuse.work/ops/drive/cutting/cutting_edge_render.html) · [`cutting_episode_synth`](https://furuse.work/ops/drive/cutting/cutting_episode_synth.html) · [`cutting_face_render`](https://furuse.work/ops/drive/cutting/cutting_face_render.html) · [`cutting_scene`](https://furuse.work/ops/drive/cutting/cutting_scene.html) · [`cutting_wrist_mjcf`](https://furuse.work/ops/drive/cutting/cutting_wrist_mjcf.html) · [`food_cut_width`](https://furuse.work/ops/drive/cutting/food_cut_width.html) · [`force_from_wrist_displacement`](https://furuse.work/ops/drive/cutting/force_from_wrist_displacement.html) · [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`knife_edge_track`](https://furuse.work/ops/drive/cutting/knife_edge_track.html) · [`profile_params`](https://furuse.work/ops/roughness/measure/profile_params.html) · [`slice_push_from_track`](https://furuse.work/ops/drive/cutting/slice_push_from_track.html) · [`slice_push_ratio`](https://furuse.work/ops/drive/cutting/slice_push_ratio.html) · [`slice_thickness_profile`](https://furuse.work/ops/drive/cutting/slice_thickness_profile.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`zoom_inset`](https://furuse.work/ops/annotate/compose/zoom_inset.html)
+
+## No.2026.207 —— ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた
+
+[![ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/01_tacdome_press_sweep.gif)
+
+*↑ **ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする ―― 原文の式 (3) の 1 次の係数は活字どおりだと円柱で力が負、本文の模型から 2n/(1+n) を導いた** ―― 物理シミュ × Fullseye 系列(視触覚)、tacsim(Hertz の膜、小変形)の先。一次情報は T. Mu ほか "A scaling law for large-deformation contact in soft materials"(arXiv:2509.18581、2025)の PDF。ドーム状の柔らかい指先センサ(半球、高さ L = 半径 R = 8 mm、μ = 0.1 MPa は設計の仮定)が平らな物に押される形で成り立たせた。枠組みは断面 f = c rᵖ の線形解 F_L = C δⁿ(n = 1 + 1/p)、大変形 F = κₙ(δ/L) F_L、接触半径の式 (4)(不完全ベータ)、普遍形 κ = (1 − 10/9·δ/L)⁻¹。新モジュール tacdome 12 op、全部 numpy。★式 (3) の 1 次の係数: 原文の頁を 400 dpi の画像にして読んだ活字 (4+2n)/(1+n) では円柱で κ₁(0.5) = −1.667(力が負)。本文の模型(1D 断面の各点に長さ L − g の neo-Hookean 円柱ばね)を積分すると c₁ = 2n/(1+n)・c₂ = n/(2+n)、接触半径は式 (4) と一字一句同じ —— 2 次と式 (4) は活字と一致し、1 次だけが違う。ばねの長さを全部 L にした別の模型は係数 (1.008, 0.258) でどちらの読みにも合わない。付録は arXiv に無く未読。外から来る真値は 3 系統: 非圧縮 neo-Hookean の円柱の一軸圧縮の厳密解(導出した κ₁ と 1.9e-15)、Hertz の小変形極限(被験者 tacsim と 1e-12)、論文の普遍形 k = 10/9(導出した κ₁⁻¹ の最小二乗 1.1060、0.5 % 差)。第 2 実装 = ばね列の中点則(閉形式と 8.5e-9)、式 (4) は 3 経路が 1e-15 で一致。導出した κ⁻¹(0.5) = 0.429 / 0.493 / 0.545(n = 1 / 1.5 / 2)は論文の図 4B の挿入図と同じ並び。被験者の結果 —— 観測量で外れ方が変わる: 半球の指先で押し込みから読む Hertz の力は δ/L = 0.05 / 0.3 / 0.5 で −4.10 / −27.79 / −50.70 %、半径は −1.71 / −11.70 / −22.20 %。ところが接触半径から Hertz で力を読む(視触覚センサの読み方)と κ と半径の伸びがほぼ打ち消して max +5.39 %(d = 0.4)。円錐は打ち消さず d = 0.5 で −18.95 %、平頭は半径が δ を決めないので読めない。内側カメラの接触像(192 px、0.117 mm/px)から面積法(被覆率を切らずに線形和)で半径 max 0.004 %、力の逆算 max 0.013 %、雑音 σ = 0.03 で 0.411 %。縁の画素に measure.fit_circle を当てると −0.61〜−2.51 %。--full: 512 px の 20 点で半径 0.0049 %・力 0.0146 %、MuJoCo の柔体(線形弾性の立方体を摩擦なしで圧縮)は小ひずみの剛性比 0.98〜0.99 で線形極限だけ合い、ε = 0.31 で 0.18 につぶれる = 大変形の真値には使えない(門は小ひずみだけ)。図: 押し込みの GIF(内側カメラの像・ばね列・力の曲線)、3 形状の力、κ⁻¹ の帯と 3 つの読み、a/a_L と円柱の厳密解、Hertz の誤差、接触像の縁の 24 倍; --full: 柔体の剛性比。門 13 本(既定 0.2 s)+ --full 2 本(図込み 41 s)。正直に: 図 5C(半径 vs 力)は再現できない(導出では同じ力の半径の差 0〜1.7 %、付録のセンサ寸法が未読)。「全形状が普遍形の狭い帯に入る」も導出では再現しない(普遍形が球より 10.9 %・円錐より 22.7 % 高い)。円柱の実験値は摩擦込みなので門にしていない。半球は放物線で近似、摩擦なし・準静的・非圧縮、照明は理想化。踏んだ罠: 図の説明文の画素ピッチを m の値のまま mm と書いていた(0.000 mm/px、組み込みの検分で直した)。*
+
+[![球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。破線 = 線形解(球は Hertz)、実線 = 大変形 F = κₙ F_L。δ/L ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/02_tacdome_force_three_shapes.png)
+
+*↑ 測定の図 ―― 球(p = 2、n = 1.5)・円錐(p = 1、n = 2、傾き 1)・平頭の円柱(p = ∞、n = 1、半径 = L)の力(無次元、縦軸は対数)。破線 = 線形解(球は Hertz)、実線 = 大変形 F = κₙ F_L。δ/L = 0.3 を超えると開き、平頭が最も大きく外れる(全ばねが最大ひずみ)。*
+
+[![導出した κₙ⁻¹(実線、n = 1 / 1.5 / 2)は n = 2 が上 = 論文の図 4B の挿入図と同じ並び。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/03_tacdome_kappa_band_readings_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/03_tacdome_kappa_band_readings.png)
+
+*↑ 導出した κₙ⁻¹(実線、n = 1 / 1.5 / 2)は n = 2 が上 = 論文の図 4B の挿入図と同じ並び。*
+
+[![式 (4) の a/a_L(積分の形で計算、不完全ベータの形と 1e-12 で一致)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/04_tacdome_radius_ratio_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/04_tacdome_radius_ratio.png)
+
+*↑ 式 (4) の a/a_L(積分の形で計算、不完全ベータの形と 1e-12 で一致)。*
+
+[![小変形の Hertz を大変形に当てた誤差(寸法・弾性率に依らない)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/05_tacdome_hertz_error_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/05_tacdome_hertz_error.png)
+
+*↑ 小変形の Hertz を大変形に当てた誤差(寸法・弾性率に依らない)。*
+
+[![左 = d = 0.3 の内側カメラの接触像(192 px、0.117 mm/px、画素を 2 倍、赤 = 面積法で読んだ円、黄 = 右の範囲)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/06_tacdome_contact_edge_crop_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacdome_large_deformation/06_tacdome_contact_edge_crop.png)
+
+*↑ 左 = d = 0.3 の内側カメラの接触像(192 px、0.117 mm/px、画素を 2 倍、赤 = 面積法で読んだ円、黄 = 右の範囲)。*
+
+```
+py -3.11 examples/poc_tacdome_large_deformation.py
+```
+
+ソース: [examples/poc_tacdome_large_deformation.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tacdome_large_deformation.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacdome_large_deformation)
+
+使用 op(ノートへ): [`contact_patch_radius`](https://furuse.work/ops/drive/tacdome/contact_patch_radius.html) · [`dome_contact_image`](https://furuse.work/ops/drive/tacdome/dome_contact_image.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`hertz_small_strain_error`](https://furuse.work/ops/drive/tacdome/hertz_small_strain_error.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`large_deformation_contact`](https://furuse.work/ops/drive/tacdome/large_deformation_contact.html) · [`large_deformation_inverse`](https://furuse.work/ops/drive/tacdome/large_deformation_inverse.html) · [`largedef_correction`](https://furuse.work/ops/drive/tacdome/largedef_correction.html) · [`largedef_radius_ratio`](https://furuse.work/ops/drive/tacdome/largedef_radius_ratio.html) · [`largedef_universal_correction`](https://furuse.work/ops/drive/tacdome/largedef_universal_correction.html) · [`mdr_spring_bed`](https://furuse.work/ops/drive/tacdome/mdr_spring_bed.html) · [`neohookean_cylinder_exact`](https://furuse.work/ops/drive/tacdome/neohookean_cylinder_exact.html) · [`powerlaw_linear_contact`](https://furuse.work/ops/drive/tacdome/powerlaw_linear_contact.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

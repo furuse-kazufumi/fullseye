@@ -15,7 +15,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
                                           "ball", "balltrack", "ballworld", "racket", "roadjp",
                                           "kendama", "kendamaworld", "gsplat", "long", "env", "inf", "traffic", "decide", "lateral", "crossing", "pass",
-                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo"}
+                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome"}
     # 288 → 292: gs_read_file + 動きのデータの入口 3(read_bvh / read_events / events_to_frames、2026-10-03)
     # 292 → 296: 歩くヒューマノイド 4(humanoid_clip_mesh / world_pose_humanoid / humanoid_impostors / world_camera_impostors)
     # 296 → 309: 工場・倉庫の AGV の群れ 13(agvfleet: 格子・CBS / 焦点探索 / 結合 A* / 優先度付き・ADG・VDA 5050)
@@ -35,7 +35,9 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 520 → 541: ペグ挿入を 2 本指の膜で読む 21(pegtactile 19: パッドと静力学 5・膜の合成と読み 3・接触状態 6・手首 2・対称性 3 + 既存へ 2: tacsim.contact_radius_fit_pixelwise / tacslip.mindlin_fit_vector、2026-10-05。全部 numpy + scipy)
     # 541 → 557: 食材の切断を画像で測る 16(cutting: 合成世界 5・刃と深さ 2・厚みと粗さ 2・力 6・CSV 1、2026-10-05。全部 numpy + scipy)
     # 557 → 573: ディアボロの解析模型と視覚 16(diabolo: 寸法と楕円体 3・論文の 1 ステップと走行と状態 3・投げの真値 1・張力 2・合成映像と軸と回転と追跡 6・MJCF 1、2026-10-05。numpy + scipy.ndimage)
-    assert len(opsdrive.OPSDRIVE) == 573
+    # 573 → 585: ドーム状の柔らかい指先の大変形接触 12(tacdome: 線形解 1・式 (3) の係数と補正と半径比と普遍形 4・順と逆 2・ばね列 1・
+    #            円柱の厳密解 1・Hertz の誤差 1・接触像と半径 2、2026-10-05。全部 numpy)
+    assert len(opsdrive.OPSDRIVE) == 585
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -68,6 +70,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import pegtactile
     import cutting
     import diabolo
+    import tacdome
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
@@ -75,7 +78,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
            | set(driveenv.__all__) | set(driveinf.__all__) | set(drivetraffic.__all__)
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
-           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__))
+           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -92,7 +95,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 573
+    assert len(rows) == 585
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 

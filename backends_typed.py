@@ -228,6 +228,10 @@ _OP_BRIDGE_SKIP = {
     # 2026-10-03: 特殊関数は「数の列 → 数の列」で、画像の明るさに erf や Bessel を当てる意味が無い
     #   (order / kind も knob a/b に写らない)。台帳(fs.ledger.erf ほか)と fs.<名前> から使う。
     "erf", "erfc", "bessel",
+    # 2026-10-05: tacdome の普遍形 κ = (1 − 10/9·d)⁻¹ は「無次元の押し込み d = δ/L の列 → 補正の列」。signal→signal で
+    #   自動的に橋が架かるが、橋の探針(正弦・負値を含む)は d ∈ [0, 0.9) の外で fail-closed に拒否され、fallback が
+    #   恒等の顔をする(test_no_new_bridge_op_is_a_pass_through が摘発)。画像の op ではない。台帳(fs.ledger)から使う。
+    "largedef_universal_correction",
     # 2026-10-03: アレイのスナップショットを「作る」生成器(到来角の列 → 複素行列)。画像を受けない。
     "ula_snapshots",
     # 2026-10-03: 行列の指数・対数と SE(3) の exp/log は「行列 ↔ 行列/ベクトル」の代数で、画像を受けない

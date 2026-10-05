@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">largedef_correction — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.largedef_correction(d, n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;largedef_correction&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>大変形の補正 κₙ(d) = [1 − c₁·d + n/(2+n)·d²]/(1 − d)²(式 3、c₁ は :func:<code style="color:#22d3bf">largedef_c1_coefficient</code>)。F = κₙ·F_L。</p>
+<p>`<code style="color:#22d3bf">d</code>` はスカラーか配列(0 ≤ d &lt; 1)。既定の読みは導出した c₁ = 2n/(1+n)。d → 0 で 1 + 2d/(1+n)、n = 1 で neo-Hookean の円柱の</p>
+<p>厳密解 [(1 − d)⁻² − (1 − d)]/(3d) に一致する。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: d が [0, 1) の外、n が [1, 3] の外、読みの綴り違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacdome_large_deformation">poc_tacdome_large_deformation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacdome_large_deformation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">signal</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tacdome</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:powerlaw_linear_contact">powerlaw_linear_contact</a> · <a style="color:#22d3bf" href="opdrive:largedef_radius_ratio">largedef_radius_ratio</a> · <a style="color:#22d3bf" href="opdrive:largedef_universal_correction">largedef_universal_correction</a> · <a style="color:#22d3bf" href="opdrive:large_deformation_contact">large_deformation_contact</a> · <a style="color:#22d3bf" href="opdrive:large_deformation_inverse">large_deformation_inverse</a> · <a style="color:#22d3bf" href="opdrive:mdr_spring_bed">mdr_spring_bed</a> · <a style="color:#22d3bf" href="opdrive:neohookean_cylinder_exact">neohookean_cylinder_exact</a> · <a style="color:#22d3bf" href="opdrive:hertz_small_strain_error">hertz_small_strain_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacdome.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -14,7 +14,7 @@
   * 弾性膜 + 色つき多方向照明で 1 枚の画像から法線を読む原理(M. K. Johnson, E. H. Adelson, "Retrographic sensing for the
     measurement of surface texture and shape", CVPR 2009, DOI 10.1109/CVPR.2009.5206534)。
   * 直近の大変形解(T. Mu ほか, "A scaling law for large-deformation contact in soft materials", arXiv:2509.18581, 2025)は
-    本モジュールの小変形 Hertz の先にある差し替え先(未実装)。
+    本モジュールの小変形 Hertz の先 —— :mod:`tacdome` に実装した(式 (3) の 1 次の係数は活字と違う、tacdome の docstring)。
 
 被験者(第 2 実装 = Fullseye の既存 op): :mod:`photometric` の ``photometric_stereo`` / ``integrate_normals`` / ``surface_normals`` /
 ``render_lambertian`` / ``normals_to_gradients``、:func:`measure.fit_circle`。``tac_*``(backends_tactile、単画像の擬似参照)は別物。

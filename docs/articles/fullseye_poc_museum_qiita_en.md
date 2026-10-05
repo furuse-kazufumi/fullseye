@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 106 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 107 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 80 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
@@ -65,9 +65,9 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-10-05 — No.2026.204 Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
 - 2026-10-05 — No.2026.205 Measuring Food Cutting from Images — Knife Tracking, Slice Thickness, Cut-Surface Roughness and Cutting Force from Wrist Deflection, with Closed Forms and MuJoCo as the Truth
 - 2026-10-05 — No.2026.206 Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth
+- 2026-10-05 — No.2026.207 Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a Scaling Law and an Exact Continuum Solution — As Printed, the Linear Coefficient of Eq. (3) Makes the Force of a Cylinder Negative; 2n/(1+n) Is Derived from the Paper's Own Model
 - 2026-10-04 — No.2026.190 One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World
 - 2026-10-04 — No.2026.191 Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way
-- 2026-10-04 — No.2026.192 Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules
 
 ## Applying it to your own problem
 

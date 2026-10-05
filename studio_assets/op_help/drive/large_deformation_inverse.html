@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">large_deformation_inverse — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import tacdome; tacdome.large_deformation_inverse(a: &#x27;float&#x27;, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;, tol: &#x27;float&#x27; = 1e-14) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;large_deformation_inverse&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>測った接触半径 a から押し込みと力を逆に読む(式 4 を d について解き、式 2 で力)。センサの読み出しの本体。</p>
+<p>平頭は閉形式 d = 1 − (a0/a)²。それ以外は a(d) = (a/a_L)(d)·D·(dL)^{1/p} が d の単調増加なので二分法(相対 `<code style="color:#22d3bf">tol</code>`)。</p>
+<p>返り: `<code style="color:#22d3bf">d</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">delta</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F_L</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">kappa</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">F_hertz_from_radius</code>`(同じ a を線形解 = Hertz で読んだ力)・</p>
+<p>`<code style="color:#22d3bf">err_hertz_pct</code><code style="color:#22d3bf">(Hertz で読んだ力の誤差)・</code><code style="color:#22d3bf">beyond_validated</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">iterations</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: a ≤ 0、平頭で a ≤ a0、d が 1 に届いても a に足りない(数値の範囲外)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacdome_large_deformation">poc_tacdome_large_deformation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacdome_large_deformation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">tacdome</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:powerlaw_linear_contact">powerlaw_linear_contact</a> · <a style="color:#22d3bf" href="opdrive:largedef_correction">largedef_correction</a> · <a style="color:#22d3bf" href="opdrive:largedef_radius_ratio">largedef_radius_ratio</a> · <a style="color:#22d3bf" href="opdrive:largedef_universal_correction">largedef_universal_correction</a> · <a style="color:#22d3bf" href="opdrive:large_deformation_contact">large_deformation_contact</a> · <a style="color:#22d3bf" href="opdrive:mdr_spring_bed">mdr_spring_bed</a> · <a style="color:#22d3bf" href="opdrive:neohookean_cylinder_exact">neohookean_cylinder_exact</a> · <a style="color:#22d3bf" href="opdrive:hertz_small_strain_error">hertz_small_strain_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacdome.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

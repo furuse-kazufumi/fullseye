@@ -28,6 +28,7 @@
 ペグ挿入を 2 本指の膜で読む(pegtactile: 指先の弾性膜のせん断の像から、ペグが穴から受ける接触レンチ・Whitney の接触状態(一点 / 二点、止まった時のくさび / かじり)・壁の摩擦・手首剛性を学習なしの規則で。真値 = Whitney 1982 の二点接触の深さ l₂(θ) とくさびの境目 c/μ、Hertz・Cattaneo–Mindlin・Cerruti・無滑りねじりの閉形式、群の作用(同変性)、MuJoCo の接触と手首の力・トルクセンサ。膜は MuJoCo に無いのでパッド荷重は静力学の写像(把持の左右分配は対称の仮定)。くさびの境目ではレンチだけの規則が二点を口の一点と読む死角があり幾何の検査で解く。mujoco が要る 4 本は facade)。
 食材の切断を画像で測る(cutting: 刃の追跡・切り込み深さ・切片の厚み・切断面の粗さ・柔らかい手首のたわみからの切断力を規則だけで。真値 = Atkins 2016 の摩擦なし slice/push の閉形式(H = ξV、H/Rw は ξ = 1 で最大 0.5、ξ = tan i)と Williams & Patel 2016 のくさび + 摩擦(μ = 0.2 で θo = 79°・最小 1.24)、合成の被覆率描画、MuJoCo の正射影カメラと手首の拘束力。厚みは画素を背景・食材・刃の 3 色に線形分解し、2 つの段の窓をぼけの推定で広げる。摩擦と刃角を含む slice/push の式は未読なので組み合わせは ValueError。合成の力も当てはめも同じ模型 = 配管の検査(自己申告)。mujoco が要る 1 本は facade)。
 ディアボロの解析模型と視覚(diabolo: ロボット学習用の解析模型(arXiv:2011.09068)を LaTeX 原文から写し、原文どおりでは成り立たない所(式 1b の次元・状態遷移の帯の重なり・回転則の刻み依存)を直す。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・放物線)、厳密な糸の模型(片側拘束の RATTLE)、第 2 実装 = MuJoCo の空間テンドン。視覚は学習なし: 光線追跡の合成映像から縁と底の板の 2 円の透視モーメントで軸、マーカーの位相と回転ぶれの弧で回転数、V 字で張力。棒の組は matrix (2, 3)、棒の時系列 (N, 2, 3) と棒の動きの指定(名前 / dict / 呼べる物)は any。mujoco が要る 1 本は facade)。
+ドーム状の柔らかい指先センサを平らな物に押す大変形接触(tacdome: べき乗則断面のスケーリング則(arXiv:2509.18581)の補正 κₙ・接触半径の式 (4)・普遍形、式 (3) の 1 次の係数は活字 (4+2n)/(1+n) では円柱で力が負になるので本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)から導いた 2n/(1+n)、真値 = 非圧縮 neo-Hookean の円柱の厳密解と Hertz の極限、第 2 実装 = ばね列の中点則、内側カメラの接触像と面積法の半径 → 力の逆算。全部 numpy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -81,6 +82,7 @@ import pegtactile
 import granular
 import cutting
 import diabolo
+import tacdome
 import racket
 import roadjp
 import rsssafety
@@ -89,7 +91,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -893,6 +895,25 @@ _CATALOG = {
         ("diabolo_spin_from_markers", "diabolo", ["signal", "signal", "scalar", "scalar"], "table"),
         ("diabolo_track", "diabolo", ["any", "table", "table"], "table"),
         ("diabolo_scene_mjcf", "diabolo", ["table"], "any"),
+    ],
+    # ドーム状の柔らかい指先を平板で押す大変形接触(2026-10-05、物理シミュ × Fullseye 系列 視触覚 (b)、tacsim の Hertz の先): 真値 = 論文の
+    # スケーリング則(arXiv:2509.18581: F = κₙ(δ/L) F_L、接触半径の式 (4)、普遍形 k = 10/9)+ 非圧縮 neo-Hookean の円柱の一軸圧縮の厳密解 +
+    # Hertz の小変形極限(tacsim)。原文の式 (3) の 1 次の係数は活字 (4+2n)/(1+n) だと円柱で κ < 0 —— 本文の模型(MDR の 1D 断面に長さ L − g の
+    # neo-Hookean 円柱ばね)を積分して 2n/(1+n) を導いた(2 次 n/(2+n) と式 (4) は活字と一致)。自分で作ったのはこの導出、ばね列の中点則
+    # (閉形式の第 2 実装)、内側カメラの接触像、被覆率の線形和の半径、半径 → 力の逆算。d = δ/L の列は signal(スカラーも可)、δ は any。全部 numpy。
+    "tacdome": [
+        ("powerlaw_linear_contact", "tacdome", ["text", "scalar", "scalar"], "table"),
+        ("largedef_correction", "tacdome", ["signal", "scalar"], "signal"),
+        ("largedef_radius_ratio", "tacdome", ["signal", "scalar"], "signal"),
+        ("largedef_universal_correction", "tacdome", ["signal"], "signal"),
+        ("large_deformation_contact", "tacdome", ["any", "scalar", "table"], "table"),
+        ("large_deformation_inverse", "tacdome", ["scalar", "scalar", "table"], "table"),
+        ("mdr_spring_bed", "tacdome", ["scalar", "scalar", "table"], "table"),
+        ("neohookean_cylinder_exact", "tacdome", ["signal"], "table"),
+        ("hertz_small_strain_error", "tacdome", ["signal", "scalar"], "table"),
+        ("dome_contact_image", "tacdome", ["scalar", "scalar"], "image2d"),
+        ("contact_patch_radius", "tacdome", ["image2d", "scalar"], "table"),
+        ("largedef_c1_coefficient", "tacdome", ["scalar"], "scalar"),
     ],
 }
 
