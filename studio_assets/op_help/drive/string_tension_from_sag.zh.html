@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">string_tension_from_sag — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.string_tension_from_sag(p_left, p_right, p_diabolo, mass: &#x27;float&#x27;, *, accel=None, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_from_sag&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>糸の V 字(棒の先 2 点と軸の位置)から張力を出す(摩擦のない滑車 = 両側の張力が等しい)。</p>
+<p>T (û_L + û_R) = m (a − g⃗) の最小二乗: T = m (a − g⃗)·n / |n|²、n = û_L + û_R(û は軸 → 棒の単位ベクトル)。静止(accel = None)</p>
+<p>なら T = m g / (sin α_L + sin α_R)(α = 糸の水平からの角)と同じ。残差(釣り合いの破れ)も返す —— 大きければ「加速度の入れ忘れ /</p>
+<p>摩擦 / 弾性」の警報。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形、質量 ≤ 0、軸が棒と重なる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">diabolo</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:diabolo_params">diabolo_params</a> · <a style="color:#22d3bf" href="opdrive:diabolo_spheroid">diabolo_spheroid</a> · <a style="color:#22d3bf" href="opdrive:spheroid_closest">spheroid_closest</a> · <a style="color:#22d3bf" href="opdrive:diabolo_dynamics_step">diabolo_dynamics_step</a> · <a style="color:#22d3bf" href="opdrive:diabolo_simulate">diabolo_simulate</a> · <a style="color:#22d3bf" href="opdrive:diabolo_state_sequence">diabolo_state_sequence</a> · <a style="color:#22d3bf" href="opdrive:diabolo_throw_catch_truth">diabolo_throw_catch_truth</a> · <a style="color:#22d3bf" href="opdrive:string_tension_static">string_tension_static</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: diabolo.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

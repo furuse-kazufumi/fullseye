@@ -5132,6 +5132,103 @@ def _b_cut_csv(pool, rng):
     return (p, "CC-BY-NC-4.0"), {}
 
 
+_FUZZ_DB = {}
+
+
+def _fuzz_db():
+    """ディアボロの小さな種(寸法・小さいカメラ・1 コマ・姿勢・投げの短い軌跡)を 1 回だけ作る(diabolo、numpy + scipy.ndimage)。"""
+    if "P" not in _FUZZ_DB:
+        import diabolo as DB
+        P = DB.diabolo_params()
+        cam = DB.diabolo_camera(position=(1.2, 0, 0.6), look_at=(0, 0, 0.6), shape=(120, 160), fovy_deg=16)
+        a = np.array([0.94, 0.17, 0.30])
+        img = DB.diabolo_render(cam, P, center=[0, 0.005, 0.6], axis=a, phase=0.5)
+        sticks = np.array([[0.0, 0.55, 1.0], [0.0, -0.55, 1.0]])
+        sph = DB.diabolo_spheroid(sticks[0], sticks[1], P["string_length"])
+        x_hang = sph["center"] - np.array([0.0, 0.0, sph["b"]])
+        tr = DB.diabolo_simulate(x_hang, [0, 0, 0], "throw", 0.05, 1e-3, P)
+        _FUZZ_DB.update({"P": P, "cam": cam, "img": img, "pose": DB.diabolo_axis_from_image(img, cam, P), "sticks": sticks,
+                         "sph": sph, "x_hang": x_hang, "traj": tr})
+    return _FUZZ_DB
+
+
+def _b_db_none(pool, rng):
+    return (), {}
+
+
+def _b_db_spheroid(pool, rng):
+    gap = float(rng.uniform(0.2, 1.4))
+    return (np.array([0.0, gap / 2, 1.0]), np.array([0.0, -gap / 2, 1.0]), 1.45), {}
+
+
+def _b_db_closest(pool, rng):
+    f = _fuzz_db()
+    return (f["sph"]["center"] + rng.normal(0, 0.4, 3), f["sph"]), {}
+
+
+def _b_db_step(pool, rng):
+    f = _fuzz_db()
+    mode = str(rng.choice(["on_string", "off_string_loose", "flying"]))
+    st = {"x": f["x_hang"] + rng.normal(0, 0.02, 3), "v": rng.normal(0, 0.5, 3), "omega": 0.0, "mode": mode}
+    return (st, f["sticks"], f["sticks"] + np.array([[0, 0, 0.001], [0, 0, -0.001]]), 1e-3, f["P"]), {
+        "plane_rule": str(rng.choice(["paper", "code"])), "rotation": str(rng.choice(["paper", "code"]))}
+
+
+def _b_db_simulate(pool, rng):
+    f = _fuzz_db()
+    return (f["x_hang"], np.zeros(3), str(rng.choice(["fixed", "linear_accel", "swing", "throw"])), 0.02, 1e-3, f["P"]), {
+        "model": str(rng.choice(["paper", "exact"]))}
+
+
+def _b_db_states(pool, rng):
+    f = _fuzz_db()
+    return (f["traj"]["x"], f["traj"]["sticks"], f["P"]), {}
+
+
+def _b_db_catch(pool, rng):
+    f = _fuzz_db()
+    st = np.array([[0.0, 0.715, 1.1], [0.0, -0.715, 1.1]])
+    return (np.array([0.0, 0.0, 0.9]), np.array([0.0, 0.0, float(rng.uniform(1.0, 4.0))]), st, f["P"]), {"t_max": 2.0, "n_grid": 401}
+
+
+def _b_db_tension_static(pool, rng):
+    return (float(rng.uniform(0.1, 1.4)), _fuzz_db()["P"]), {}
+
+
+def _b_db_tension_sag(pool, rng):
+    f = _fuzz_db()
+    return (f["sticks"][0], f["sticks"][1], f["x_hang"] + rng.normal(0, 0.01, 3), f["P"]["mass"]), {}
+
+
+def _b_db_render(pool, rng):
+    f = _fuzz_db()
+    return (f["cam"], f["P"]), {"phase": float(rng.uniform(0, 6.28)), "ss": 2}
+
+
+def _b_db_axis(pool, rng):
+    f = _fuzz_db()
+    return (f["img"], f["cam"], f["P"]), {}
+
+
+def _b_db_phase(pool, rng):
+    f = _fuzz_db()
+    return (f["img"], f["cam"], f["P"], f["pose"]), {}
+
+
+def _b_db_spin(pool, rng):
+    w = float(rng.uniform(20, 700))
+    return (np.mod(0.3 + w / 120 * np.arange(5), 2 * np.pi), np.full(5, w * 2e-3), 1 / 120, 2e-3), {}
+
+
+def _b_db_track(pool, rng):
+    f = _fuzz_db()
+    return ([f["img"], np.full_like(f["img"], 0.55)], f["cam"], f["P"]), {}
+
+
+def _b_db_mjcf(pool, rng):
+    return (_fuzz_db()["P"],), {"wrap_axle": bool(rng.uniform() < 0.5)}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5473,6 +5570,11 @@ OP_ARG_BUILDERS = {
     "force_from_wrist_displacement": _b_cut_wrist, "cut_force_atkins": _b_cut_atkins, "slice_push_ratio": _b_cut_ratio,
     "slice_push_from_track": _b_cut_from_track, "food_cut_width": _b_cut_width, "cut_force_fit": _b_cut_fit,
     "cut_force_csv_load": _b_cut_csv,
+    "diabolo_params": _b_db_none, "diabolo_spheroid": _b_db_spheroid, "spheroid_closest": _b_db_closest,
+    "diabolo_dynamics_step": _b_db_step, "diabolo_simulate": _b_db_simulate, "diabolo_state_sequence": _b_db_states,
+    "diabolo_throw_catch_truth": _b_db_catch, "string_tension_static": _b_db_tension_static, "string_tension_from_sag": _b_db_tension_sag,
+    "diabolo_camera": _b_db_none, "diabolo_render": _b_db_render, "diabolo_axis_from_image": _b_db_axis, "diabolo_marker_phase": _b_db_phase,
+    "diabolo_spin_from_markers": _b_db_spin, "diabolo_track": _b_db_track, "diabolo_scene_mjcf": _b_db_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

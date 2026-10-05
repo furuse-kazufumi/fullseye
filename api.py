@@ -704,6 +704,10 @@ import cutting  # noqa: E402  (食材の切断を画像で測る: 刃・厚み�
 from cutting import (  # noqa: E402,F401
     cutting_mujoco_wrist,
 )
+import diabolo  # noqa: E402  (ディアボロの解析模型と視覚: 原文から写して直した模型を閉形式・厳密な糸・MuJoCo で確かめ、合成映像から軸・回転・張力。台帳は opsdrive "diabolo")
+from diabolo import (  # noqa: E402,F401
+    diabolo_mujoco_simulate,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1221,6 +1225,7 @@ __all__ = [
     "pegtactile_process_episode",
     "pegtactile_cutaway_xml",
     "cutting_mujoco_wrist",
+    "diabolo_mujoco_simulate",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

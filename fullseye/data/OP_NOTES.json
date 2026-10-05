@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2941,
- "n_notes": 2947,
+ "n_ops": 2957,
+ "n_notes": 2963,
  "notes": {
   "vol_dilate": [
    {
@@ -16940,6 +16940,164 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/decide/yield_maneuver_check.md"
+   }
+  ],
+  "diabolo_axis_from_image": [
+   {
+    "op": "diabolo_axis_from_image",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "rgb × table × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_axis_from_image.md"
+   }
+  ],
+  "diabolo_camera": [
+   {
+    "op": "diabolo_camera",
+    "dim": "drive",
+    "category": "diabolo",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_camera.md"
+   }
+  ],
+  "diabolo_dynamics_step": [
+   {
+    "op": "diabolo_dynamics_step",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "table × matrix × matrix × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_dynamics_step.md"
+   }
+  ],
+  "diabolo_marker_phase": [
+   {
+    "op": "diabolo_marker_phase",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "rgb × table × table × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_marker_phase.md"
+   }
+  ],
+  "diabolo_params": [
+   {
+    "op": "diabolo_params",
+    "dim": "drive",
+    "category": "diabolo",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_params.md"
+   }
+  ],
+  "diabolo_render": [
+   {
+    "op": "diabolo_render",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "table × table",
+    "out": "rgb",
+    "path": "docs/ops/drive/diabolo/diabolo_render.md"
+   }
+  ],
+  "diabolo_scene_mjcf": [
+   {
+    "op": "diabolo_scene_mjcf",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "table",
+    "out": "any",
+    "path": "docs/ops/drive/diabolo/diabolo_scene_mjcf.md"
+   }
+  ],
+  "diabolo_simulate": [
+   {
+    "op": "diabolo_simulate",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × signal × any × scalar × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_simulate.md"
+   }
+  ],
+  "diabolo_spheroid": [
+   {
+    "op": "diabolo_spheroid",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_spheroid.md"
+   }
+  ],
+  "diabolo_spin_from_markers": [
+   {
+    "op": "diabolo_spin_from_markers",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × signal × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_spin_from_markers.md"
+   }
+  ],
+  "diabolo_state_sequence": [
+   {
+    "op": "diabolo_state_sequence",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "matrix × any × table",
+    "out": "signal",
+    "path": "docs/ops/drive/diabolo/diabolo_state_sequence.md"
+   }
+  ],
+  "diabolo_throw_catch_truth": [
+   {
+    "op": "diabolo_throw_catch_truth",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × signal × matrix × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_throw_catch_truth.md"
+   }
+  ],
+  "diabolo_track": [
+   {
+    "op": "diabolo_track",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "any × table × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/diabolo_track.md"
+   }
+  ],
+  "spheroid_closest": [
+   {
+    "op": "spheroid_closest",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/spheroid_closest.md"
+   }
+  ],
+  "string_tension_from_sag": [
+   {
+    "op": "string_tension_from_sag",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "signal × signal × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/string_tension_from_sag.md"
+   }
+  ],
+  "string_tension_static": [
+   {
+    "op": "string_tension_static",
+    "dim": "drive",
+    "category": "diabolo",
+    "in": "scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/diabolo/string_tension_static.md"
    }
   ],
   "beta_from_mor": [

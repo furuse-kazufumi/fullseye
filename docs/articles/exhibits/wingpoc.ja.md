@@ -4030,7 +4030,7 @@ py -3.11 examples/poc_graph_hierarchy_segmentation.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 19 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 20 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -4503,6 +4503,46 @@ py -3.11 examples/poc_live4d.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_live4d)
 
 使用 op(ノートへ): [`blend`](https://furuse.work/ops/shape2d/morph/blend.html) · [`focus_sweep_height_video`](https://furuse.work/ops/live4d/render/focus_sweep_height_video.html) · [`focus_sweep_surface_video`](https://furuse.work/ops/live4d/render/focus_sweep_surface_video.html) · [`vol_flow_3d`](https://furuse.work/ops/live4d/flow/vol_flow_3d.html) · [`volseq_interpolate_flow`](https://furuse.work/ops/live4d/time/volseq_interpolate_flow.html) · [`volseq_magnify_motion`](https://furuse.work/ops/live4d/time/volseq_magnify_motion.html) · [`volseq_pathline_orbit`](https://furuse.work/ops/live4d/flow/volseq_pathline_orbit.html) · [`volseq_pathline_render`](https://furuse.work/ops/live4d/flow/volseq_pathline_render.html) · [`volseq_render_orbit`](https://furuse.work/ops/live4d/render/volseq_render_orbit.html) · [`volseq_synth_beating`](https://furuse.work/ops/live4d/synth/volseq_synth_beating.html) · [`volseq_synth_dividing`](https://furuse.work/ops/live4d/synth/volseq_synth_dividing.html)
+
+## No.2026.206 —— ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む ―― 原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo
+
+[![ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む ―― 原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/01_diabolo_throw_axis_from_image.gif)
+
+*↑ **ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む ―― 原文の式 (1b) は次元が合わず実機寸法で NaN、真値は閉形式・厳密な糸・MuJoCo** ―― 物理シミュ × Fullseye 系列。一次情報はロボット学習用のディアボロ解析模型(von Drigalski ほか、ICRA 2021、arXiv:2011.09068)の LaTeX 原文(状態遷移の条件は図にしか無いので画像にして読んだ)。公開実装(BSD-3)は読んで比べただけでコードは写していない。模型は「ディアボロ = 質点 + 糸が作る補助の回転楕円体 + 重力」、1 ステップ = 前進 Euler → 楕円体の外に出たら戻す → 回転は式 (2) ω_t = ω_{t−1} + μ Δ_string。学習なし、全部ルール。新モジュール diabolo 16 op + mujoco の facade 1。★原文どおりでは成り立たない所(写して門を立てたら出た): (1) 式 (1b) b = √(a² − |x_L − x_R|/2) は長さと長さの 2 乗の差で次元が合わず、論文の実機寸法(糸 1.45 m、棒の間隔 1.10 m)では根の中が負 = NaN。楕円の恒等式 a² = b² + c² に直した(0.3 m では原文 0.613 m・正しくは 0.709 m)。(2) 状態遷移の LOOSE → ON が図のとおり s < c_F だと ON → LOOSE の帯と重なって毎ステップ行き来する → s ≤ c_L と読んだ。(3) 回転の式 (2) は望遠鏡和で刻みに依らない(刻み 2 → 1 ms で 16.57 → 16.59 rad/s)が、公開実装の回転則は刻みに反比例する(比 2.02)。μ = 1/r で式 (2) は滑らない転がりと一致。(4) 公開実装の法線は勾配でなく最大 12.2° ずれる —— ここでは本文どおり最近点と真の法線で書いた。外から来る真値は 3 系統。(1) 閉形式: 焦点の恒等式 d_L + d_R = l(7.5e-16)、飛行中の前進 Euler のずれ g t dt/2、振り子の周期 横 2π√(b/g) = 1.379 s・縦 2π√(a²/(bg)) = 2.116 s、静止張力 m g a/(2b)、放物線 × 楕円体 × 棒を結ぶ面の受けの時刻(閉形式 0.7214 s、論文の模型 0.7230 s)。(2) 厳密な糸の模型(こちらで足した物): 伸びない糸の片側拘束 d_L + d_R ≤ l を RATTLE で、エネルギーの幅 5.3e-6、仕事率の収支 1.1e-4、張力の乗数 = 閉形式 3.6e-11。(3) 第 2 実装 = MuJoCo の空間テンドン(--full): 直線加速 / 振り / 投げで厳密な糸と max 0.62 / 1.15 / 3.10 mm(受けの直後 0.3 s を除く —— MuJoCo の柔らかい拘束は 40 mm 跳ねる)、静止張力 3.5e-7。視覚は学習なし(光線追跡の合成映像): 手前のカップの縁の円と底の板の円の厳密な透視投影の多角形モーメントをマスクのモーメントに合わせて軸と中心(視線から 0〜38° × 方位 6 = 42 姿勢で max 0.295°・中央値 0.059°、中心 0.7 mm)、45° は底の板が壁に隠れて残差 2.80 px で警報。回転は内面のマーカーの位相 + 回転ぶれの弧の幅で枝を選ぶ(120 fps・露光 2 ms で 10〜110 rev/s を max 0.81 %、位相だけではナイキスト 60 rev/s を超えた 70 / 90 / 110 rev/s が −50 / −30 / −10 に折り返す = 車輪の錯視)。張力は棒の先の印と軸の V 字から(閉形式と 0.46 %)。投げの映像の追跡(3 m 先、41 コマ)は中心 RMS 8.9 mm・軸 中央値 1.71°、追跡した位置に状態遷移を回すと真の状態と 100 % 一致。図: 投げの映像に画像から読んだ軸と真の軸・状態・3 倍の拡大を重ねた GIF、垂れ(直した式 vs 原文の式、NaN の境目)、張力(閉形式・厳密な糸・画像・MuJoCo)、3 つの模型の高さと差、回転則の刻み依存; --full: 回転の錯視の GIF(位相だけ vs ぶれの弧で枝を選ぶ)、軸の誤差の表(傾き × 方位)、壊れる場所の表。門 18 本(既定、3.1 s)+ --full 7 本(42 s)。正直に: 外の真値は論文の式・閉形式・MuJoCo だけで、実写や公開データとは合わせていない(式の誤りは見つけたが、模型が実物に合うかは確かめていない)。回転の式の μ・減衰係数・姿勢(傾きと首振り)は論文にも模型にも無く、画像から読む軸は描いた時に与えた姿勢であって力学の結果ではない。描画は理想化(塗り分けた色・Lambert の陰影・無地の背景)、軸の推定には手前のカップの内側が見えること(38° まで)が要る。糸は点で、軸への巻き付き・糸の質量と伸びは入れていない。踏んだ罠: 投げの追跡の中心誤差を m のまま mm と表示していた(近い距離より 100 倍良いのは異常で気づいた)、明るさの閾値のマーカー検出は回転ぶれで 30 rev/s 以上が 0 になった、厳密模型と MuJoCo を最初「糸が軸に通った数珠」にしていて頂点で跳ね返った。*
+
+[![式 (1b) の原文 √(a² − d/2) は長さと長さの 2 乗の差で次元が合わず、d > 2a² = 1.051 m で NaN(論文の実機の間隔 1.10 m は NaN の側)。直した √(a² − c²)(楕円の恒等式)が実線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/02_diabolo_sag_corrected_vs_printed.png)
+
+*↑ 測定の図 ―― 式 (1b) の原文 √(a² − d/2) は長さと長さの 2 乗の差で次元が合わず、d > 2a² = 1.051 m で NaN(論文の実機の間隔 1.10 m は NaN の側)。直した √(a² − c²)(楕円の恒等式)が実線。*
+
+[![閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/03_diabolo_tension_closed_form_vs_image.png)
+
+*↑ 閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。*
+
+[![同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/04_diabolo_throw_height_three_models.png)
+
+*↑ 同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。*
+
+[![式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/06_diabolo_spin_law_step_dependence.png)
+
+*↑ 式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。*
+
+[![視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/08_diabolo_axis_error_table.png)
+
+*↑ 視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。*
+
+[![回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。位相だけの読みはナイキスト 60 rev/s で折り返し、回転ぶれの弧の幅で枝を選んだ読みは真値に付いていく(320 × 240、等倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_diabolo_model_and_vision/07_diabolo_spin_aliasing_and_smear.gif)
+
+*↑ 動く図 ―― 回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。位相だけの読みはナイキスト 60 rev/s で折り返し、回転ぶれの弧の幅で枝を選んだ読みは真値に付いていく(320 × 240、等倍)。*
+
+```
+py -3.11 examples/poc_diabolo_model_and_vision.py
+```
+
+ソース: [examples/poc_diabolo_model_and_vision.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_diabolo_model_and_vision.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_diabolo_model_and_vision)
+
+使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`diabolo_axis_from_image`](https://furuse.work/ops/drive/diabolo/diabolo_axis_from_image.html) · [`diabolo_camera`](https://furuse.work/ops/drive/diabolo/diabolo_camera.html) · [`diabolo_dynamics_step`](https://furuse.work/ops/drive/diabolo/diabolo_dynamics_step.html) · [`diabolo_marker_phase`](https://furuse.work/ops/drive/diabolo/diabolo_marker_phase.html) · [`diabolo_params`](https://furuse.work/ops/drive/diabolo/diabolo_params.html) · [`diabolo_render`](https://furuse.work/ops/drive/diabolo/diabolo_render.html) · [`diabolo_scene_mjcf`](https://furuse.work/ops/drive/diabolo/diabolo_scene_mjcf.html) · [`diabolo_simulate`](https://furuse.work/ops/drive/diabolo/diabolo_simulate.html) · [`diabolo_spheroid`](https://furuse.work/ops/drive/diabolo/diabolo_spheroid.html) · [`diabolo_spin_from_markers`](https://furuse.work/ops/drive/diabolo/diabolo_spin_from_markers.html) · [`diabolo_state_sequence`](https://furuse.work/ops/drive/diabolo/diabolo_state_sequence.html) · [`diabolo_throw_catch_truth`](https://furuse.work/ops/drive/diabolo/diabolo_throw_catch_truth.html) · [`diabolo_track`](https://furuse.work/ops/drive/diabolo/diabolo_track.html) · [`measure_text`](https://furuse.work/ops/annotate/text/measure_text.html) · [`spheroid_closest`](https://furuse.work/ops/drive/diabolo/spheroid_closest.html) · [`string_tension_from_sag`](https://furuse.work/ops/drive/diabolo/string_tension_from_sag.html) · [`string_tension_static`](https://furuse.work/ops/drive/diabolo/string_tension_static.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`zoom_inset`](https://furuse.work/ops/annotate/compose/zoom_inset.html)
 
 ## No.2026.170 —— 卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する
 

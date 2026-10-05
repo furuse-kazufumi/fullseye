@@ -1,4 +1,4 @@
-# DRIVE operator help — 557 ops in 39 categories
+# DRIVE operator help — 573 ops in 40 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -43,6 +43,10 @@
 ### decide (18)
 
 [aliased_frequency](decide/aliased_frequency.md) · [bus_departure_yield_check](decide/bus_departure_yield_check.md) · [check_sequence_score](decide/check_sequence_score.md) · [convex_mirror_fov](decide/convex_mirror_fov.md) · [dilemma_zone](decide/dilemma_zone.md) · [doppler_shift](decide/doppler_shift.md) · [doppler_track](decide/doppler_track.md) · [flash_frequency](decide/flash_frequency.md) · [mirror_aim_normal](decide/mirror_aim_normal.md) · [mirror_blind_zone](decide/mirror_blind_zone.md) · [mirror_reflection_matrix](decide/mirror_reflection_matrix.md) · [mirror_virtual_camera](decide/mirror_virtual_camera.md) · [predict_amber_onset](decide/predict_amber_onset.md) · [signal_phase_plan](decide/signal_phase_plan.md) · [signal_state](decide/signal_state.md) · [siren_signal](decide/siren_signal.md) · [tdoa_bearing](decide/tdoa_bearing.md) · [yield_maneuver_check](decide/yield_maneuver_check.md)
+
+### diabolo (16)
+
+[diabolo_axis_from_image](diabolo/diabolo_axis_from_image.md) · [diabolo_camera](diabolo/diabolo_camera.md) · [diabolo_dynamics_step](diabolo/diabolo_dynamics_step.md) · [diabolo_marker_phase](diabolo/diabolo_marker_phase.md) · [diabolo_params](diabolo/diabolo_params.md) · [diabolo_render](diabolo/diabolo_render.md) · [diabolo_scene_mjcf](diabolo/diabolo_scene_mjcf.md) · [diabolo_simulate](diabolo/diabolo_simulate.md) · [diabolo_spheroid](diabolo/diabolo_spheroid.md) · [diabolo_spin_from_markers](diabolo/diabolo_spin_from_markers.md) · [diabolo_state_sequence](diabolo/diabolo_state_sequence.md) · [diabolo_throw_catch_truth](diabolo/diabolo_throw_catch_truth.md) · [diabolo_track](diabolo/diabolo_track.md) · [spheroid_closest](diabolo/spheroid_closest.md) · [string_tension_from_sag](diabolo/string_tension_from_sag.md) · [string_tension_static](diabolo/string_tension_static.md)
 
 ### env (16)
 

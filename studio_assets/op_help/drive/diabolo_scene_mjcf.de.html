@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_scene_mjcf — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_scene_mjcf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>第 2 実装の場面の MJCF 文字列(mujoco 不要): 空間テンドン 棒の先 → ディアボロ → 棒の先、長さの上限 = 糸(片側拘束 =</p>
+<p>伸びた時だけ引く = 摩擦のない滑車の厳密模型と同じ物理を、柔らかい拘束と暗黙の速度更新という別の解法で解く)。棒の先は</p>
+<p>mocap(各ステップで位置を書き込む)。ディアボロは自由関節の剛体(質量 = 論文の表 I、慣性は仮定。回転は糸と結合しない)。</p>
+<p>`<code style="color:#22d3bf">wrap_axle</code>` = True なら軸(半径 r)の円柱にテンドンを巻き付ける形(下側を通す、未検証)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: params の形、timestep ≤ 0、solref が 2 つの正の数でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">diabolo</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:diabolo_params">diabolo_params</a> · <a style="color:#22d3bf" href="opdrive:diabolo_spheroid">diabolo_spheroid</a> · <a style="color:#22d3bf" href="opdrive:spheroid_closest">spheroid_closest</a> · <a style="color:#22d3bf" href="opdrive:diabolo_dynamics_step">diabolo_dynamics_step</a> · <a style="color:#22d3bf" href="opdrive:diabolo_simulate">diabolo_simulate</a> · <a style="color:#22d3bf" href="opdrive:diabolo_state_sequence">diabolo_state_sequence</a> · <a style="color:#22d3bf" href="opdrive:diabolo_throw_catch_truth">diabolo_throw_catch_truth</a> · <a style="color:#22d3bf" href="opdrive:string_tension_static">string_tension_static</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: diabolo.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

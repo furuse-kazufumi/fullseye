@@ -4,7 +4,7 @@ dim: annotate
 category: compose
 in: image2d
 out: image2d
-examples: [annotate_gallery, poc_food_cutting_measure]
+examples: [annotate_gallery, poc_diabolo_model_and_vision, poc_food_cutting_measure]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -56,6 +56,7 @@ ValueError
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
+- [poc_diabolo_model_and_vision](../../../../examples/poc_diabolo_model_and_vision.py) — `py -3.11 examples/poc_diabolo_model_and_vision.py`
 - [poc_food_cutting_measure](../../../../examples/poc_food_cutting_measure.py) — `py -3.11 examples/poc_food_cutting_measure.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

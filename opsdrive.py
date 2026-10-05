@@ -27,6 +27,7 @@
 視触覚センサの照明を実機の較正球で較正する(tacscalib: 既知球の法線の閉形式と手当ての接触円を真値に、線形 12 パラメタの照明模型(逆算は photometric_stereo = 被験者)と example-based の勾配 LUT(位置の 2 次式つき、行の少ないビンは近いビンの位置の項を借りて傾き 0〜15° の不感帯を消す、粗 → 細の逆引き)を 2 つの独立な経路にする。外部の位置 2 次 LUT の書式を読むアダプタつき。全部 numpy)。
 ペグ挿入を 2 本指の膜で読む(pegtactile: 指先の弾性膜のせん断の像から、ペグが穴から受ける接触レンチ・Whitney の接触状態(一点 / 二点、止まった時のくさび / かじり)・壁の摩擦・手首剛性を学習なしの規則で。真値 = Whitney 1982 の二点接触の深さ l₂(θ) とくさびの境目 c/μ、Hertz・Cattaneo–Mindlin・Cerruti・無滑りねじりの閉形式、群の作用(同変性)、MuJoCo の接触と手首の力・トルクセンサ。膜は MuJoCo に無いのでパッド荷重は静力学の写像(把持の左右分配は対称の仮定)。くさびの境目ではレンチだけの規則が二点を口の一点と読む死角があり幾何の検査で解く。mujoco が要る 4 本は facade)。
 食材の切断を画像で測る(cutting: 刃の追跡・切り込み深さ・切片の厚み・切断面の粗さ・柔らかい手首のたわみからの切断力を規則だけで。真値 = Atkins 2016 の摩擦なし slice/push の閉形式(H = ξV、H/Rw は ξ = 1 で最大 0.5、ξ = tan i)と Williams & Patel 2016 のくさび + 摩擦(μ = 0.2 で θo = 79°・最小 1.24)、合成の被覆率描画、MuJoCo の正射影カメラと手首の拘束力。厚みは画素を背景・食材・刃の 3 色に線形分解し、2 つの段の窓をぼけの推定で広げる。摩擦と刃角を含む slice/push の式は未読なので組み合わせは ValueError。合成の力も当てはめも同じ模型 = 配管の検査(自己申告)。mujoco が要る 1 本は facade)。
+ディアボロの解析模型と視覚(diabolo: ロボット学習用の解析模型(arXiv:2011.09068)を LaTeX 原文から写し、原文どおりでは成り立たない所(式 1b の次元・状態遷移の帯の重なり・回転則の刻み依存)を直す。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・放物線)、厳密な糸の模型(片側拘束の RATTLE)、第 2 実装 = MuJoCo の空間テンドン。視覚は学習なし: 光線追跡の合成映像から縁と底の板の 2 円の透視モーメントで軸、マーカーの位相と回転ぶれの弧で回転数、V 字で張力。棒の組は matrix (2, 3)、棒の時系列 (N, 2, 3) と棒の動きの指定(名前 / dict / 呼べる物)は any。mujoco が要る 1 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -79,6 +80,7 @@ import pegfail
 import pegtactile
 import granular
 import cutting
+import diabolo
 import racket
 import roadjp
 import rsssafety
@@ -87,7 +89,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -869,6 +871,28 @@ _CATALOG = {
         ("food_cut_width", "cutting", ["scalar", "scalar", "scalar", "scalar"], "scalar"),
         ("cut_force_fit", "cutting", ["signal", "signal", "scalar"], "table"),
         ("cut_force_csv_load", "cutting", ["any", "any"], "table"),
+    ],
+    # ディアボロの解析模型と視覚(2026-10-05、物理シミュ × Fullseye 系列): 解析模型(arXiv:2011.09068、ICRA 2021)を原文から写して直し、
+    # 閉形式・厳密な糸(RATTLE)・MuJoCo の空間テンドン(--full)で確かめる。合成映像から軸・回転・張力を読む(学習なし)。寸法・楕円体・状態・
+    # 結果は table(dict)、点と速度は signal(3-vector)、棒の組は matrix (2, 3)、軌跡は matrix (N, 3)、棒の時系列と棒の動きの指定とコマの列は any、
+    # 画像は rgb(float [0, 1])、MJCF は文字列(any)。mujoco が要る diabolo_mujoco_simulate は facade だけで台帳には載せない。
+    "diabolo": [
+        ("diabolo_params", "diabolo", [], "table"),
+        ("diabolo_spheroid", "diabolo", ["signal", "signal", "scalar"], "table"),
+        ("spheroid_closest", "diabolo", ["signal", "table"], "table"),
+        ("diabolo_dynamics_step", "diabolo", ["table", "matrix", "matrix", "scalar", "table"], "table"),
+        ("diabolo_simulate", "diabolo", ["signal", "signal", "any", "scalar", "scalar", "table"], "table"),
+        ("diabolo_state_sequence", "diabolo", ["matrix", "any", "table"], "signal"),
+        ("diabolo_throw_catch_truth", "diabolo", ["signal", "signal", "matrix", "table"], "table"),
+        ("string_tension_static", "diabolo", ["scalar", "table"], "table"),
+        ("string_tension_from_sag", "diabolo", ["signal", "signal", "signal", "scalar"], "table"),
+        ("diabolo_camera", "diabolo", [], "table"),
+        ("diabolo_render", "diabolo", ["table", "table"], "rgb"),
+        ("diabolo_axis_from_image", "diabolo", ["rgb", "table", "table"], "table"),
+        ("diabolo_marker_phase", "diabolo", ["rgb", "table", "table", "table"], "table"),
+        ("diabolo_spin_from_markers", "diabolo", ["signal", "signal", "scalar", "scalar"], "table"),
+        ("diabolo_track", "diabolo", ["any", "table", "table"], "table"),
+        ("diabolo_scene_mjcf", "diabolo", ["table"], "any"),
     ],
 }
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 2941,
+ "n_ops": 2957,
  "tiers": {
   "color": 12,
-  "ledger": 1988,
+  "ledger": 2004,
   "nary": 17,
   "registry": 924
  },
@@ -5684,6 +5684,198 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "diabolo_axis_from_image",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_camera",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "diabolo_dynamics_step",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix",
+    "scalar",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_marker_phase",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "table",
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "diabolo_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "rgb",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_scene_mjcf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_simulate",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "any",
+    "scalar",
+    "scalar",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_spheroid",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "diabolo_spin_from_markers",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "diabolo_state_sequence",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "signal",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "any",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_throw_catch_truth",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "matrix",
+    "table"
+   ]
+  },
+  {
+   "name": "diabolo_track",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "table",
+    "table"
    ]
   },
   {
@@ -21676,6 +21868,20 @@
    ]
   },
   {
+   "name": "spheroid_closest",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table"
+   ]
+  },
+  {
    "name": "spin_from_marker_sequence",
    "halcon": "",
    "in_sort": "any",
@@ -22282,6 +22488,36 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "string_tension_from_sag",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "string_tension_static",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "diabolo",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
     "table"
    ]
   },

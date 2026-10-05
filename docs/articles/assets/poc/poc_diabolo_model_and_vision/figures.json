@@ -1,0 +1,104 @@
+[
+ {
+  "file": "01_diabolo_throw_axis_from_image.gif",
+  "name": "diabolo_throw_axis_from_image",
+  "caption": "投げ → 飛行 → 受けの合成映像(論文の模型の軌跡、480 × 360・2.2 m 先、0.06 s ごと)。各コマで画像だけから読んだ軸(緑の矢印)と描いた時の真の軸(紫の破線)、状態遷移を真の位置と推定の位置で回した結果。軸の誤差 中央値 1.18°・中心 中央値 5.1 mm(右上は 3 倍の最近傍拡大)。",
+  "shape": [
+   468,
+   480,
+   3
+  ],
+  "animated": true,
+  "frames": 32,
+  "frames_written": 32,
+  "fps": 10.0
+ },
+ {
+  "file": "02_diabolo_sag_corrected_vs_printed.png",
+  "name": "diabolo_sag_corrected_vs_printed",
+  "caption": "式 (1b) の原文 √(a² − d/2) は長さと長さの 2 乗の差で次元が合わず、d > 2a² = 1.051 m で NaN(論文の実機の間隔 1.10 m は NaN の側)。直した √(a² − c²)(楕円の恒等式)が実線。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_diabolo_tension_closed_form_vs_image.png",
+  "name": "diabolo_tension_closed_form_vs_image",
+  "caption": "閉形式 T = m g a/(2b)(破線)に、厳密な糸の模型の乗数と、合成映像の棒の先と軸の V 字から読んだ張力(最大 0.46 % 差)を重ねる。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "04_diabolo_throw_height_three_models.png",
+  "name": "diabolo_throw_height_three_models",
+  "caption": "同じ棒の動き(0.30〜0.50 s で開いて持ち上げ、張りつめたまま受ける)での高さ。頂点 1.668 m、受け 1.207 s(閉形式)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "05_diabolo_throw_position_difference.png",
+  "name": "diabolo_throw_position_difference",
+  "caption": "論文の模型は厳密な糸と最大 2.9 mm で一致する(前進 Euler のずれ g t dt/2 と、楕円体の内 5 cm で FLYING に入る規則)。MuJoCo は受けの瞬間だけ跳ねる(1.223 s 付近)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_diabolo_spin_law_step_dependence.png",
+  "name": "diabolo_spin_law_step_dependence",
+  "caption": "式 (2) は望遠鏡和なので刻み 1 ms と 0.5 ms の線が重なる。公開実装の回転則(50 倍して表示)は刻みを半分にすると 2 倍になる。",
+  "shape": [
+   360,
+   803,
+   3
+  ]
+ },
+ {
+  "file": "07_diabolo_spin_aliasing_and_smear.gif",
+  "name": "diabolo_spin_aliasing_and_smear",
+  "caption": "回転を上げると 120 fps の像ではマーカーが止まり、逆に回って見える(車輪の錯視)。位相だけの読みはナイキスト 60 rev/s で折り返し、回転ぶれの弧の幅で枝を選んだ読みは真値に付いていく(320 × 240、等倍)。",
+  "shape": [
+   340,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 42,
+  "frames_written": 42,
+  "fps": 5.0
+ },
+ {
+  "file": "08_diabolo_axis_error_table.png",
+  "name": "diabolo_axis_error_table",
+  "caption": "視線からの傾き × 像の上の方位で、画像だけから読んだ軸と描いた時の軸の角(縁の半径 ≈ 48 px)。",
+  "shape": [
+   248,
+   487,
+   3
+  ],
+  "csv": "08_diabolo_axis_error_table.csv",
+  "tsv": "08_diabolo_axis_error_table.tsv"
+ },
+ {
+  "file": "09_diabolo_where_axis_breaks.png",
+  "name": "diabolo_where_axis_breaks",
+  "caption": "ぼけ・雑音・縁の大きさを悪くしていくと壊れる所。縁の半径が 6 px では分割できず推定しない(fail-closed)。",
+  "shape": [
+   344,
+   377,
+   3
+  ],
+  "csv": "09_diabolo_where_axis_breaks.csv",
+  "tsv": "09_diabolo_where_axis_breaks.tsv"
+ }
+]

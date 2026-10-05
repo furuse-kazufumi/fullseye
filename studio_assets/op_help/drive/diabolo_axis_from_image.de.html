@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_axis_from_image — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_axis_from_image(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, *, refine: &#x27;bool&#x27; = True, iters: &#x27;int&#x27; = 15) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.diabolo_axis_from_image(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, *, refine: &#x27;bool&#x27; = True, iters: &#x27;int&#x27; = 15) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_axis_from_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>1 コマから手前のカップの縁の中心 `<code style="color:#22d3bf">center_rim</code><code style="color:#22d3bf"> と軸 </code><code style="color:#22d3bf">axis</code><code style="color:#22d3bf">(カメラ側を向く)を出す。ディアボロの中心 </code><code style="color:#22d3bf">center</code>` =</p>
+<p>center_rim − (L/2) axis。学習なし。</p>
+<p>初期値(弱透視): 縁の楕円の長半径 → 深度、短 / 長 = cos θ、底の板の中心のずれ = (L/2 − z_h) sin θ、θ = atan2(sin, cos)</p>
+<p>(acos の床を避ける)、ずれの向き = 軸の像の向き。仕上げ: 縁の円(半径 R、中心 C)と底の板(半径 r_h、中心 C − (L/2 − z_h) a)の</p>
+<p>厳密な透視投影の多角形モーメント(面積・重心・2 次)を、マスクのモーメントに Gauss–Newton で合わせる(5 自由度、8 残差)。</p>
+<p>残差 `<code style="color:#22d3bf">residual_px</code><code style="color:#22d3bf"> が 0.15 px を超えたら </code><code style="color:#22d3bf">ok = False</code>`(底の板が壁に隠れた等。視線から 45° で 2.8 px、38° まで ≤ 0.02 px)。</p>
+<p>返り `<code style="color:#22d3bf">{&quot;center&quot;, &quot;center_rim&quot;, &quot;axis&quot;, &quot;axis_init&quot;, &quot;tilt_init_deg&quot;, &quot;a_px&quot;, &quot;b_px&quot;, &quot;residual_px&quot;, &quot;ok&quot;, &quot;seg&quot;}</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 画像の形、カップの内側か底の板が見えない(推定不能)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">diabolo</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:diabolo_params">diabolo_params</a> · <a style="color:#22d3bf" href="opdrive:diabolo_spheroid">diabolo_spheroid</a> · <a style="color:#22d3bf" href="opdrive:spheroid_closest">spheroid_closest</a> · <a style="color:#22d3bf" href="opdrive:diabolo_dynamics_step">diabolo_dynamics_step</a> · <a style="color:#22d3bf" href="opdrive:diabolo_simulate">diabolo_simulate</a> · <a style="color:#22d3bf" href="opdrive:diabolo_state_sequence">diabolo_state_sequence</a> · <a style="color:#22d3bf" href="opdrive:diabolo_throw_catch_truth">diabolo_throw_catch_truth</a> · <a style="color:#22d3bf" href="opdrive:string_tension_static">string_tension_static</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: diabolo.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

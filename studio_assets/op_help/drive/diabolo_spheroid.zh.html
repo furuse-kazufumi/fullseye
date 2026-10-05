@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">diabolo_spheroid — DRIVE <code style="color:#22d3bf">diabolo</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>棒の先 2 点(焦点)と糸の長さ → 補助の回転楕円体: a = l/2、c = |x_L − x_R|/2、b = √(a² − c²)(式 1 の正しい形)。</p>
+<p>★原文の (1b) は b = √(a² − |x_L − x_R|/2) で、長さと長さの 2 乗の差なので次元が合わない。論文の実機寸法(糸 1.45 m、棒の間隔</p>
+<p>1.10 m)を入れると根の中が負になる(NaN)。楕円の恒等式 a² = b² + c² の形に直した(公開実装も 2 乗で書いている)。原文の値は</p>
+<p>`<code style="color:#22d3bf">b_paper_literal</code>` に残す。原文の前文は「半長軸 b と半短軸 a」と名前が逆(a = l/2 が半長軸)で、式の側に従う。</p>
+<p>返り `<code style="color:#22d3bf">{&quot;center&quot;, &quot;axis&quot;(x_L − x_R の単位ベクトル), &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b_paper_literal&quot;}</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 間隔 ≥ 糸、棒が重なる、有限でない入力。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">diabolo</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:diabolo_params">diabolo_params</a> · <a style="color:#22d3bf" href="opdrive:spheroid_closest">spheroid_closest</a> · <a style="color:#22d3bf" href="opdrive:diabolo_dynamics_step">diabolo_dynamics_step</a> · <a style="color:#22d3bf" href="opdrive:diabolo_simulate">diabolo_simulate</a> · <a style="color:#22d3bf" href="opdrive:diabolo_state_sequence">diabolo_state_sequence</a> · <a style="color:#22d3bf" href="opdrive:diabolo_throw_catch_truth">diabolo_throw_catch_truth</a> · <a style="color:#22d3bf" href="opdrive:string_tension_static">string_tension_static</a> · <a style="color:#22d3bf" href="opdrive:string_tension_from_sag">string_tension_from_sag</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: diabolo.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

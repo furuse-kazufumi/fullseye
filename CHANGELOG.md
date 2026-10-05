@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**ディアボロの解析模型を原文から写して確かめ、合成映像から軸・回転・張力を読む**(新モジュール `diabolo` 16 op + mujoco の facade 1、台帳 `diabolo`
+  (opsdrive)、PoC `poc_diabolo_model_and_vision`、wing_xyt): 一次情報は arXiv:2011.09068 の LaTeX 原文。★原文の式 (1b) は次元が合わず実機寸法で NaN
+  (a² = b² + c² に直した)、状態遷移の帯が重なる、公開実装の回転則は刻みに反比例(比 2.02)。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・受けの時刻)、
+  厳密な糸(片側拘束の RATTLE)、MuJoCo の空間テンドン(`--full`、厳密な糸と max 3.10 mm)。視覚は学習なし: 2 円の透視モーメントで軸(42 姿勢で max 0.295°)、
+  マーカーの位相 + ぶれの弧で回転数(10〜110 rev/s を 0.81 %、位相だけでは車輪の錯視)、V 字で張力(0.46 %)。門 18 本 + `--full` 7 本。正直に: 実写・公開データ
+  とは合わせていない、姿勢(傾き・首振り)は模型に無い、描画は理想化。
 - ★**食材の切断を画像で測る**(新モジュール `cutting` 16 op + mujoco の facade 1、台帳 `cutting`(opsdrive)、PoC `poc_food_cutting_measure`、wing_metrology):
   題材はロボットの食材スライス(arXiv:2404.02569)。規則だけで「画像 → 刃の高さ → 手首のたわみ → 力 → 靱性」を閉じる。真値 = Atkins 2016 / Williams & Patel 2016 の
   閉形式と本文の数、MuJoCo の描画と手首の拘束力(`--full`)、有限要素の力の CSV(arXiv:2105.12244、CC BY-NC 4.0、repo に入れず `FULLSEYE_CUT_FORCE_DATA`)。
