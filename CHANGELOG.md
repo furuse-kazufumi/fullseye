@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**何分すり潰せば 1 回分の薬の量が揃うか**(新モジュール `doseunif` 3 op、facade なし、台帳 `doseunif`(opsdrive)、PoC `poc_dose_uniformity_from_grinding`、wing_metrology): grind の続き。
+  粒径から含量の CV を閉形式(CV² = (πρ/6)·D63³/D、対数正規と体積基準の表の恒等式 D63³ = E_v[d³])と Monte Carlo で出し、粉砕則で CV が目標まで下がる時間と第 1 段の合格の確率を逆算する。
+  画像の粒の標本は縁の取りこぼし(−5 %)と d⁶ の重い裾で低く出る —— Miles–Lantuéjoul の重みと対数正規で直し区間を返す(試走の「一貫して −6 %」は同じ 12 枚を縮尺違いで測っていた見かけ)。
+  外の真値は Monte Carlo と公開のレーザー回折(repo の外・`FULLSEYE_GRIND_DATA`、無い CI では numpy の 11 門)。正直に: 粒の数の揺らぎだけの下限、受入値の数は二次資料。
 ## 0.4.0 — 2026-10-06
 
 ### 破壊的変更(Breaking)

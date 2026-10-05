@@ -988,7 +988,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 33 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 34 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2039,6 +2039,42 @@ py -3.11 examples/poc_pxrd_phase_peel.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pxrd_phase_peel)
 
 使用 op(ノートへ): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`azimuthal_integrate`](https://furuse.work/ops/drive/pxrd/azimuthal_integrate.html) · [`cif_read`](https://furuse.work/ops/drive/pxrd/cif_read.html) · [`cubic_index`](https://furuse.work/ops/drive/pxrd/cubic_index.html) · [`cubic_prototype`](https://furuse.work/ops/drive/pxrd/cubic_prototype.html) · [`debye_ring_image`](https://furuse.work/ops/drive/pxrd/debye_ring_image.html) · [`detector_calibrate`](https://furuse.work/ops/drive/pxrd/detector_calibrate.html) · [`detector_two_theta`](https://furuse.work/ops/drive/pxrd/detector_two_theta.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`diffraction_peaks`](https://furuse.work/ops/drive/pxrd/diffraction_peaks.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`phase_dictionary`](https://furuse.work/ops/drive/pxrd/phase_dictionary.html) · [`phase_fractions`](https://furuse.work/ops/drive/pxrd/phase_fractions.html) · [`phase_peel`](https://furuse.work/ops/drive/pxrd/phase_peel.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`powder_reflections`](https://furuse.work/ops/drive/pxrd/powder_reflections.html) · [`scherrer_size`](https://furuse.work/ops/drive/pxrd/scherrer_size.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unexplained_peaks`](https://furuse.work/ops/drive/pxrd/unexplained_peaks.html)
+
+## No.2026.215 —— 何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い
+
+[![何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition.png)
+
+*↑ **何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い** ―― grind(乳鉢の粉砕を測る)の続き。よく混ざった粉から 1 回分を取ると、薬の粒の数が Poisson で揺らぐだけで含量がばらつく。複合 Poisson から CV² = (πρ/6)·D63³/D を導出し(D63 = 個数基準の 6 次 / 3 次モーメントの比の 3 乗根)、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに出す。粉砕則を D63 に当てて、CV が目標(受入値 15 相当の 6.25 %、または第 1 段の合格の確率)まで下がる時間を逆算する。閉形式 vs Monte Carlo(径を引いて足すだけ)は 8 条件で差 / 標準誤差 最大 1.72、恒等式は 1e-16。★試走の「写真から出した CV が 4 つの径で一貫して −6 %」は、4 つの径が画素の単位で同じ 12 枚の画像だったための見かけ(門 4)。独立な束に分けると主因は縁に触れる粒の取りこぼし(0.956)、Miles–Lantuéjoul の重み + 対数正規で 1.001・散らばりは ±0.102 → ±0.060。「AV ≤ 15 相当」の CV 6.25 % の粉は第 1 段を約半分しか通らない(χ² 0.563、平均のずれの項込みで 0.501)。実データ(公開のレーザー回折、repo の外・FULLSEYE_GRIND_DATA)では D16/D50/D84 の対数正規が CV を中央値 1,336 倍に見積もる(二峰)ので使えず、5 mg で CV 6.25 % に要る時間は NaCl 24 min・クエン酸 28 min・MSG 31 min(後 2 つは外挿)、0.1 mg は 96〜206 min。正直に: CV は粒の数の揺らぎだけの下限、受入値の数は二次資料、粉砕則を D63 に当てるのは仮定。門 13 本(データ無しの CI は 11 本、2.3 s)、既定は Monte Carlo 1,000 回・画像 30 束、--full は 8,000 回・200 束。*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl.png)
+
+*↑ 測定の図 ―― レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大きく開く。*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/03_cv_vs_grinding_Citricacid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/03_cv_vs_grinding_Citricacid.png)
+
+*↑ レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/04_cv_vs_grinding_MSG_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/04_cv_vs_grinding_MSG.png)
+
+*↑ レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。*
+
+[![同じ粉を挽く時間だけ変えて 5 mg を 10 個取った含量(粒の数の揺らぎだけ、正規近似の 1 回の模擬)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/05_ten_units_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/05_ten_units_NaCl.png)
+
+*↑ 同じ粉を挽く時間だけ変えて 5 mg を 10 個取った含量(粒の数の揺らぎだけ、正規近似の 1 回の模擬)。*
+
+[![最良の則で、CV 6.25 % に要る粉砕時間 [min)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/06_grinding_time_by_dose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/06_grinding_time_by_dose.png)
+
+*↑ 最良の則で、CV 6.25 % に要る粉砕時間 [min]。*
+
+```
+py -3.11 examples/poc_dose_uniformity_from_grinding.py
+```
+
+ソース: [examples/poc_dose_uniformity_from_grinding.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dose_uniformity_from_grinding.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding)
+
+使用 op(ノートへ): [`comminution_energy`](https://furuse.work/ops/drive/grind/comminution_energy.html) · [`dose_cv_from_sizes`](https://furuse.work/ops/drive/doseunif/dose_cv_from_sizes.html) · [`dose_cv_lognormal`](https://furuse.work/ops/drive/doseunif/dose_cv_lognormal.html) · [`grind_time_for_dose_cv`](https://furuse.work/ops/drive/doseunif/grind_time_for_dose_cv.html) · [`particle_image_d50`](https://furuse.work/ops/drive/grind/particle_image_d50.html) · [`particle_image_synth`](https://furuse.work/ops/drive/grind/particle_image_synth.html) · [`particle_size_read`](https://furuse.work/ops/drive/grind/particle_size_read.html) · [`particle_size_synth`](https://furuse.work/ops/drive/grind/particle_size_synth.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

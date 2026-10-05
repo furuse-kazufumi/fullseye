@@ -36,6 +36,7 @@
 点の順に依らない FP64 の縮約(ozaki: Ozaki スキームの行列積。正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット。Ozaki-I(固定小数点の切り出し、分割数は誤差の保証上界から自動で選ぶ)と Ozaki-II(中国剰余定理、定数倍で壊れない拡大)、打ち切りの上界、Kabsch / ICP の相互共分散と剛体の R・t、GPU の FP64 エミュレーションの有無の探針(ctypes だけ、例外なし)。真値は Python の整数で計算した正確な積。CPU では DGEMM の 15〜83 倍遅く、効くのは再現性と精度の保証だけ。numpy だけ)。
 流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する(swarmflow: SPH の 3 次スプライン核(∫W dV = 1)と密度・圧力、障害物のある周期の流路を流れる群れの模擬、俯瞰映像の合成、個体の検出(blob2d)と追跡 / 相互相関の PIV(pivops)から速度場、自由流からの欠損の地図、中心線の 1/√d の直線化と二重湧き出しの 2 次元の当てはめで衝突点・障害物の中心と半径と「障害物あり」の判定、Ritter のダム崩壊解と 1 次元 SPH の浅水)。
 粉末 X 線回折を測る(pxrd: 2-D 検出器のデバイ環 → 検出器の較正(中心・距離・傾き、標準 Si の環)→ 方位積分(マスク・立体角・偏光)→ 山の検出と立方晶の指数付け(P / I / F / diamond、de Wolff 型の性能指数)→ CIF の結晶構造から作った参照パターンの辞書と NNLS の重量分率(Hill–Howard の ZMV と同じ形)・相を 1 つずつ剥がす前進選択・残差の未知相・Scherrer の結晶子径。外の真値は NIST SRM 640g の証明書(a と線の位置の表 A1)と COD の CIF(CC0、repo の外・環境変数)。全部 numpy + scipy)。
+粉の粒径から 1 回分の含量のばらつきと必要な粉砕時間(doseunif: grind の続き。よく混ざった粉から 1 回分を取ると薬の粒の数がPoisson で揺らぐだけで含量がばらつく —— CV² = (πρ/6)·D63³/D を自分で導出し、対数正規の閉形式と Monte Carlo、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに。画像の標本の偏り(縁の粒の取りこぼし・d⁶ の重い裾)を Miles–Lantuéjoul の重みと対数正規の当てはめで直し区間を返す。粉砕則で CV が目標(受入値 15 相当、または第 1 段の合格の確率)まで下がる時間を逆算。外の真値は Monte Carlo と公開データのレーザー回折(Zenodo 10.5281/zenodo.18064323、CC BY 4.0、repo の外)。numpy + scipy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -97,6 +98,7 @@ import grind
 import ozakimm
 import swarmflow
 import pxrd
+import doseunif
 import racket
 import roadjp
 import rsssafety
@@ -105,7 +107,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1055,6 +1057,14 @@ _CATALOG = {
         ("phase_fractions", "pxrd", ["signal", "signal", "table"], "table"),
         ("unexplained_peaks", "pxrd", ["table"], "table"),
         ("phase_peel", "pxrd", ["signal", "signal", "table"], "table"),
+    ],
+    # 粉の粒径から含量の CV と粉砕時間(2026-10-06、grind の続き): 径・量・密度は scalar、粒の直径の標本か粒度分布の表は any
+    # (配列 / dict の 2 通り)、時系列は signal、返りは table。外の真値 = Monte Carlo(式を使わない経路)と公開データの
+    # レーザー回折(repo の外、環境変数 FULLSEYE_GRIND_DATA)。受入値の数は二次資料(公定の本文と照合していない、引数で変えられる)。
+    "doseunif": [
+        ("dose_cv_lognormal", "doseunif", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("dose_cv_from_sizes", "doseunif", ["any", "scalar", "scalar"], "table"),
+        ("grind_time_for_dose_cv", "doseunif", ["signal", "signal", "scalar", "scalar"], "table"),
     ],
 }
 

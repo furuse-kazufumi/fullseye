@@ -2307,6 +2307,17 @@
    "run": "py -3.11 examples/poc_pxrd_phase_peel.py"
   },
   {
+   "id": "poc_dose_uniformity_from_grinding",
+   "wing": "wing_metrology",
+   "added": "2026-10-06",
+   "numbers_source": "log",
+   "title_ja": "何分すり潰せば 1 回分の薬の量が揃うか ―― 粒径から含量のばらつきを閉形式と Monte Carlo で、粉砕則で必要な時間を逆算。写真の CV が低く出た正体は同じ 12 枚の縮尺違い",
+   "title_en": "How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales",
+   "caption_ja": "grind(乳鉢の粉砕を測る)の続き。よく混ざった粉から 1 回分を取ると、薬の粒の数が Poisson で揺らぐだけで含量がばらつく。複合 Poisson から CV² = (πρ/6)·D63³/D を導出し(D63 = 個数基準の 6 次 / 3 次モーメントの比の 3 乗根)、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに出す。粉砕則を D63 に当てて、CV が目標(受入値 15 相当の 6.25 %、または第 1 段の合格の確率)まで下がる時間を逆算する。閉形式 vs Monte Carlo(径を引いて足すだけ)は 8 条件で差 / 標準誤差 最大 1.72、恒等式は 1e-16。★試走の「写真から出した CV が 4 つの径で一貫して −6 %」は、4 つの径が画素の単位で同じ 12 枚の画像だったための見かけ(門 4)。独立な束に分けると主因は縁に触れる粒の取りこぼし(0.956)、Miles–Lantuéjoul の重み + 対数正規で 1.001・散らばりは ±0.102 → ±0.060。「AV ≤ 15 相当」の CV 6.25 % の粉は第 1 段を約半分しか通らない(χ² 0.563、平均のずれの項込みで 0.501)。実データ(公開のレーザー回折、repo の外・FULLSEYE_GRIND_DATA)では D16/D50/D84 の対数正規が CV を中央値 1,336 倍に見積もる(二峰)ので使えず、5 mg で CV 6.25 % に要る時間は NaCl 24 min・クエン酸 28 min・MSG 31 min(後 2 つは外挿)、0.1 mg は 96〜206 min。正直に: CV は粒の数の揺らぎだけの下限、受入値の数は二次資料、粉砕則を D63 に当てるのは仮定。門 13 本(データ無しの CI は 11 本、2.3 s)、既定は Monte Carlo 1,000 回・画像 30 束、--full は 8,000 回・200 束。",
+   "caption_en": "The sequel to grind (measuring mortar grinding). Take one dose from a well-mixed powder and its content varies just because the number of drug particles fluctuates as Poisson. From the compound Poisson process we derive CV² = (πρ/6)·D63³/D (D63 = cube root of the ratio of the 6th to the 3rd number-weighted moment); from a volume-basis size distribution the identity D63³ = E_v[d³] gives it without assuming a shape. Fitting a comminution law to D63 inverts to the grinding time at which the CV reaches a target (6.25 %, equivalent to an acceptance value of 15, or a stage-1 pass probability). Closed form vs Monte Carlo (drawing diameters and summing, no formula): max difference / standard error 1.72 over 8 conditions; identities to 1e-16. ★The pilot run's \"CV from photos is consistently −6 % at four sizes\" was an artefact: the four sizes were the same 12 images in pixel units (gate 4). With independent batches the main cause is dropping particles that touch the frame edge (0.956); Miles–Lantuéjoul weights plus a lognormal fit give 1.001 and halve the spread (±0.102 → ±0.060). A powder at CV 6.25 % passes stage 1 only about half the time (chi-square 0.563, 0.501 with the mean-offset term). On published laser-diffraction data (outside the repo, FULLSEYE_GRIND_DATA) a lognormal from D16/D50/D84 overestimates the CV by a median 1,336× (bimodal powders), so it is unusable; reaching CV 6.25 % at 5 mg takes NaCl 24 min, citric acid 28 min and MSG 31 min (the last two extrapolated), and 0.1 mg needs 96–206 min. Honestly: the CV is only the particle-count floor, the acceptance numbers come from secondary sources, and fitting the law to D63 is an assumption. 13 gates (11 on CI without data, 2.3 s); default 1,000 Monte Carlo draws and 30 image batches, --full 8,000 and 200.",
+   "run": "py -3.11 examples/poc_dose_uniformity_from_grinding.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

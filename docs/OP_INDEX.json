@@ -1,8 +1,8 @@
 {
- "n_ops": 3057,
+ "n_ops": 3060,
  "tiers": {
   "color": 12,
-  "ledger": 2104,
+  "ledger": 2107,
   "nary": 17,
   "registry": 924
  },
@@ -6470,6 +6470,37 @@
    ]
   },
   {
+   "name": "dose_cv_from_sizes",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "doseunif",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "dose_cv_lognormal",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "doseunif",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "drag_coefficient_sphere",
    "halcon": "",
    "in_sort": "signal",
@@ -9820,6 +9851,22 @@
    "in_sorts": [
     "image2d",
     "axes"
+   ]
+  },
+  {
+   "name": "grind_time_for_dose_cv",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "doseunif",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar",
+    "scalar"
    ]
   },
   {

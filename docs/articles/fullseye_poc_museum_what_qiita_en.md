@@ -4,7 +4,7 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**111 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**112 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
@@ -996,7 +996,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 33 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 34 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2047,6 +2047,42 @@ Source: [examples/poc_pxrd_phase_peel.py](https://github.com/furuse-kazufumi/ful
 This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pxrd_phase_peel)
 
 Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`azimuthal_integrate`](https://furuse.work/ops/drive/pxrd/azimuthal_integrate.html) · [`cif_read`](https://furuse.work/ops/drive/pxrd/cif_read.html) · [`cubic_index`](https://furuse.work/ops/drive/pxrd/cubic_index.html) · [`cubic_prototype`](https://furuse.work/ops/drive/pxrd/cubic_prototype.html) · [`debye_ring_image`](https://furuse.work/ops/drive/pxrd/debye_ring_image.html) · [`detector_calibrate`](https://furuse.work/ops/drive/pxrd/detector_calibrate.html) · [`detector_two_theta`](https://furuse.work/ops/drive/pxrd/detector_two_theta.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`diffraction_peaks`](https://furuse.work/ops/drive/pxrd/diffraction_peaks.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`phase_dictionary`](https://furuse.work/ops/drive/pxrd/phase_dictionary.html) · [`phase_fractions`](https://furuse.work/ops/drive/pxrd/phase_fractions.html) · [`phase_peel`](https://furuse.work/ops/drive/pxrd/phase_peel.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`powder_reflections`](https://furuse.work/ops/drive/pxrd/powder_reflections.html) · [`scherrer_size`](https://furuse.work/ops/drive/pxrd/scherrer_size.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unexplained_peaks`](https://furuse.work/ops/drive/pxrd/unexplained_peaks.html)
+
+## No.2026.215 —— How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales
+
+[![How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/01_cv_bias_decomposition.png)
+
+*↑ **How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales** ―― The sequel to grind (measuring mortar grinding). Take one dose from a well-mixed powder and its content varies just because the number of drug particles fluctuates as Poisson. From the compound Poisson process we derive CV² = (πρ/6)·D63³/D (D63 = cube root of the ratio of the 6th to the 3rd number-weighted moment); from a volume-basis size distribution the identity D63³ = E_v[d³] gives it without assuming a shape. Fitting a comminution law to D63 inverts to the grinding time at which the CV reaches a target (6.25 %, equivalent to an acceptance value of 15, or a stage-1 pass probability). Closed form vs Monte Carlo (drawing diameters and summing, no formula): max difference / standard error 1.72 over 8 conditions; identities to 1e-16. ★The pilot run's "CV from photos is consistently −6 % at four sizes" was an artefact: the four sizes were the same 12 images in pixel units (gate 4). With independent batches the main cause is dropping particles that touch the frame edge (0.956); Miles–Lantuéjoul weights plus a lognormal fit give 1.001 and halve the spread (±0.102 → ±0.060). A powder at CV 6.25 % passes stage 1 only about half the time (chi-square 0.563, 0.501 with the mean-offset term). On published laser-diffraction data (outside the repo, FULLSEYE_GRIND_DATA) a lognormal from D16/D50/D84 overestimates the CV by a median 1,336× (bimodal powders), so it is unusable; reaching CV 6.25 % at 5 mg takes NaCl 24 min, citric acid 28 min and MSG 31 min (the last two extrapolated), and 0.1 mg needs 96–206 min. Honestly: the CV is only the particle-count floor, the acceptance numbers come from secondary sources, and fitting the law to D63 is an assumption. 13 gates (11 on CI without data, 2.3 s); default 1,000 Monte Carlo draws and 30 image batches, --full 8,000 and 200.*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/02_cv_vs_grinding_NaCl.png)
+
+*↑ The measurement ―― レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大きく開く。 (figure labels are in Japanese; the numbers are the same)*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/03_cv_vs_grinding_Citricacid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/03_cv_vs_grinding_Citricacid.png)
+
+*↑ レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。*
+
+[![レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/04_cv_vs_grinding_MSG_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/04_cv_vs_grinding_MSG.png)
+
+*↑ レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。*
+
+[![同じ粉を挽く時間だけ変えて 5 mg を 10 個取った含量(粒の数の揺らぎだけ、正規近似の 1 回の模擬)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/05_ten_units_NaCl_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/05_ten_units_NaCl.png)
+
+*↑ 同じ粉を挽く時間だけ変えて 5 mg を 10 個取った含量(粒の数の揺らぎだけ、正規近似の 1 回の模擬)。*
+
+[![最良の則で、CV 6.25 % に要る粉砕時間 [min)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/06_grinding_time_by_dose_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding/06_grinding_time_by_dose.png)
+
+*↑ 最良の則で、CV 6.25 % に要る粉砕時間 [min]。*
+
+```
+py -3.11 examples/poc_dose_uniformity_from_grinding.py
+```
+
+Source: [examples/poc_dose_uniformity_from_grinding.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_dose_uniformity_from_grinding.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding)
+
+Ops used (notes): [`comminution_energy`](https://furuse.work/ops/drive/grind/comminution_energy.html) · [`dose_cv_from_sizes`](https://furuse.work/ops/drive/doseunif/dose_cv_from_sizes.html) · [`dose_cv_lognormal`](https://furuse.work/ops/drive/doseunif/dose_cv_lognormal.html) · [`grind_time_for_dose_cv`](https://furuse.work/ops/drive/doseunif/grind_time_for_dose_cv.html) · [`particle_image_d50`](https://furuse.work/ops/drive/grind/particle_image_d50.html) · [`particle_image_synth`](https://furuse.work/ops/drive/grind/particle_image_synth.html) · [`particle_size_read`](https://furuse.work/ops/drive/grind/particle_size_read.html) · [`particle_size_synth`](https://furuse.work/ops/drive/grind/particle_size_synth.html)
 
 ## No.2026.142 —— How Much of That Number Is Your Measuring - Gauge R&R and Measurement Uncertainty
 

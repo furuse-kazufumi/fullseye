@@ -1,4 +1,4 @@
-# DRIVE operator help — 673 ops in 48 categories
+# DRIVE operator help — 676 ops in 49 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -47,6 +47,10 @@
 ### diabolo (16)
 
 [diabolo_axis_from_image](diabolo/diabolo_axis_from_image.md) · [diabolo_camera](diabolo/diabolo_camera.md) · [diabolo_dynamics_step](diabolo/diabolo_dynamics_step.md) · [diabolo_marker_phase](diabolo/diabolo_marker_phase.md) · [diabolo_params](diabolo/diabolo_params.md) · [diabolo_render](diabolo/diabolo_render.md) · [diabolo_scene_mjcf](diabolo/diabolo_scene_mjcf.md) · [diabolo_simulate](diabolo/diabolo_simulate.md) · [diabolo_spheroid](diabolo/diabolo_spheroid.md) · [diabolo_spin_from_markers](diabolo/diabolo_spin_from_markers.md) · [diabolo_state_sequence](diabolo/diabolo_state_sequence.md) · [diabolo_throw_catch_truth](diabolo/diabolo_throw_catch_truth.md) · [diabolo_track](diabolo/diabolo_track.md) · [spheroid_closest](diabolo/spheroid_closest.md) · [string_tension_from_sag](diabolo/string_tension_from_sag.md) · [string_tension_static](diabolo/string_tension_static.md)
+
+### doseunif (3)
+
+[dose_cv_from_sizes](doseunif/dose_cv_from_sizes.md) · [dose_cv_lognormal](doseunif/dose_cv_lognormal.md) · [grind_time_for_dose_cv](doseunif/grind_time_for_dose_cv.md)
 
 ### env (16)
 

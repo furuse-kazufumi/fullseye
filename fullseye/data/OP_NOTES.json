@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3057,
- "n_notes": 3063,
+ "n_ops": 3060,
+ "n_notes": 3066,
  "notes": {
   "vol_dilate": [
    {
@@ -17098,6 +17098,36 @@
     "in": "scalar × table",
     "out": "table",
     "path": "docs/ops/drive/diabolo/string_tension_static.md"
+   }
+  ],
+  "dose_cv_from_sizes": [
+   {
+    "op": "dose_cv_from_sizes",
+    "dim": "drive",
+    "category": "doseunif",
+    "in": "any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/doseunif/dose_cv_from_sizes.md"
+   }
+  ],
+  "dose_cv_lognormal": [
+   {
+    "op": "dose_cv_lognormal",
+    "dim": "drive",
+    "category": "doseunif",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/doseunif/dose_cv_lognormal.md"
+   }
+  ],
+  "grind_time_for_dose_cv": [
+   {
+    "op": "grind_time_for_dose_cv",
+    "dim": "drive",
+    "category": "doseunif",
+    "in": "signal × signal × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/doseunif/grind_time_for_dose_cv.md"
    }
   ],
   "beta_from_mor": [

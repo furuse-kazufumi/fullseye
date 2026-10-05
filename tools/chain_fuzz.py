@@ -5813,6 +5813,37 @@ def _b_px_peel(pool, rng):
     return (f["x"], f["y"], f["dic"]), {"min_gain": float(rng.uniform(0.0, 0.2))}
 
 
+_FUZZ_DU = {}
+
+
+def _fuzz_du():
+    """含量の CV の小さな種(対数正規の粒径の標本・装置の区間の粒度分布・Bond 則の D63(t))を 1 回だけ作る(doseunif、numpy だけ)。"""
+    if "psd" not in _FUZZ_DU:
+        import grind as GR
+        r = np.random.default_rng(3)
+        t = np.array([0.0, 5.0, 10.0, 20.0, 40.0])
+        d63 = np.array([GR.comminution_energy(400.0, law="bond", energy=0.004 * x)["x_product"] for x in t])
+        _FUZZ_DU.update({"psd": GR.particle_size_synth(60.0, 0.45), "sample": np.exp(r.normal(np.log(20.0), 0.35, 300)), "t": t, "d63": d63})
+    return _FUZZ_DU
+
+
+def _b_du_logn(pool, rng):
+    return (float(rng.uniform(5, 80)), float(rng.uniform(0.2, 0.6)), float(rng.uniform(0.01, 5.0)), float(rng.uniform(1.0, 3.0))), \
+        {"basis": ("number", "volume")[int(rng.integers(0, 2))]}
+
+
+def _b_du_sizes(pool, rng):
+    f = _fuzz_du()
+    src = f["psd"] if rng.integers(0, 2) else f["sample"]
+    return (src, float(rng.uniform(0.05, 5.0)), float(rng.uniform(1.0, 3.0))), ({"n_boot": 60} if isinstance(src, np.ndarray) else {})
+
+
+def _b_du_time(pool, rng):
+    f = _fuzz_du()
+    return (f["t"], f["d63"] * np.exp(rng.normal(0, 0.03, f["t"].size)), float(rng.uniform(1.0, 20.0)), float(rng.uniform(1.0, 3.0))), \
+        {"n_mc": 2000}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6192,6 +6223,7 @@ OP_ARG_BUILDERS = {
     "detector_calibrate": _b_px_calib, "azimuthal_integrate": _b_px_integ, "diffraction_peaks": _b_px_peaks,
     "cubic_index": _b_px_index, "phase_dictionary": _b_px_dict, "phase_fractions": _b_px_frac,
     "unexplained_peaks": _b_px_unexp, "phase_peel": _b_px_peel,
+    "dose_cv_lognormal": _b_du_logn, "dose_cv_from_sizes": _b_du_sizes, "grind_time_for_dose_cv": _b_du_time,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

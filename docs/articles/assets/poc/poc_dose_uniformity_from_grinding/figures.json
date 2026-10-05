@@ -1,0 +1,74 @@
+[
+ {
+  "file": "01_cv_bias_decomposition.png",
+  "name": "cv_bias_decomposition",
+  "caption": "1 点 = 独立な 12 枚の束(約 600 粒)。縁に触れる粒を捨てると大きい粒ほど抜けて低く出る(赤)。縁の重みで平均は戻るが散らばりは大きいまま(橙)。対数正規を当てると散らばりが半分(緑)。",
+  "shape": [
+   460,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "02_cv_vs_grinding_NaCl.png",
+  "name": "cv_vs_grinding_NaCl",
+  "caption": "レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 24〜24 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(100〜206 min)のような遠い外挿では則で大きく開く。",
+  "shape": [
+   460,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "03_cv_vs_grinding_Citricacid.png",
+  "name": "cv_vs_grinding_Citricacid",
+  "caption": "レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 27〜29 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(83〜188 min)のような遠い外挿では則で大きく開く。",
+  "shape": [
+   460,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "04_cv_vs_grinding_MSG.png",
+  "name": "cv_vs_grinding_MSG",
+  "caption": "レーザー回折の粒度分布から形を仮定せずに出した CV(粒の数の揺らぎだけ = 下限)。3 則の必要時間 31〜35 min。目標が測った範囲の近くなので則はほぼ同じ答えを返す。0.1 mg(96〜226 min)のような遠い外挿では則で大きく開く。",
+  "shape": [
+   460,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "05_ten_units_NaCl.png",
+  "name": "ten_units_NaCl",
+  "caption": "同じ粉を挽く時間だけ変えて 5 mg を 10 個取った含量(粒の数の揺らぎだけ、正規近似の 1 回の模擬)。第 1 段に通る確率は 3 min 1 %、10 min 8 %、25 min 39 %。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_grinding_time_by_dose.png",
+  "name": "grinding_time_by_dose",
+  "caption": "最良の則で、CV 6.25 % に要る粉砕時間 [min]。* は測った 25 min を超える外挿。乳鉢で挽いた塩・有機酸は 0.1〜1 mg の低用量には届かない(粗い裾が残る)。低用量はこの粉砕では作れない、という答え。",
+  "shape": [
+   152,
+   331,
+   3
+  ],
+  "csv": "06_grinding_time_by_dose.csv",
+  "tsv": "06_grinding_time_by_dose.tsv"
+ },
+ {
+  "file": "07_pass_probability_vs_cv.png",
+  "name": "pass_probability_vs_cv",
+  "caption": "10 個の標準偏差は標本ごとに揺らぐので、「AV ≤ 15 相当」の CV 6.25 % の粉は第 1 段を約半分しか通らない(χ² の閉形式 0.56、平均のずれの項も入れた模擬 0.50)。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ }
+]

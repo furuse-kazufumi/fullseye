@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grind_time_for_dose_cv — DRIVE <code style="color:#22d3bf">doseunif</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grind_time_for_dose_cv(t, d63, dose_mg: &#x27;float&#x27;, density: &#x27;float&#x27;, target_cv: &#x27;float | None&#x27; = None, pass_probability: &#x27;float | None&#x27; = None, law: &#x27;str&#x27; = &#x27;best&#x27;, k_accept: &#x27;float&#x27; = 2.4, limit_av: &#x27;float&#x27; = 15.0, n_units: &#x27;int&#x27; = 10, ref_range=(98.5, 101.5), n_mc: &#x27;int&#x27; = 20000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import doseunif; doseunif.grind_time_for_dose_cv(t, d63, dose_mg: &#x27;float&#x27;, density: &#x27;float&#x27;, target_cv: &#x27;float | None&#x27; = None, pass_probability: &#x27;float | None&#x27; = None, law: &#x27;str&#x27; = &#x27;best&#x27;, k_accept: &#x27;float&#x27; = 2.4, limit_av: &#x27;float&#x27; = 15.0, n_units: &#x27;int&#x27; = 10, ref_range=(98.5, 101.5), n_mc: &#x27;int&#x27; = 20000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;grind_time_for_dose_cv&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>モーメント径 D63 の時間変化に粉砕則を当て、含量の CV が目標まで下がるのに要る粉砕時間を逆算する。</p>
+<p>`<code style="color:#22d3bf">t</code><code style="color:#22d3bf">: 粉砕時間(エネルギーの代わり、:mod:</code>grind<code style="color:#22d3bf"> の約束)、</code><code style="color:#22d3bf">d63</code><code style="color:#22d3bf">: その時点の D63 [µm] (:func:</code>dose_cv_from_sizes<code style="color:#22d3bf"> の </code><code style="color:#22d3bf">d63</code>`。</p>
+<p>D50 でなく D63 を使うのは、CV が D63 だけで決まり分布の形の仮定が要らないから —— 粉砕則を D63 に当てるのは D50 に当てるのと同じく仮定)。</p>
+<p>目標: `<code style="color:#22d3bf">target_cv</code><code style="color:#22d3bf"> を直接、または </code><code style="color:#22d3bf">pass_probability</code>` = 10 個の第 1 段に合格する確率(χ² の閉形式、平均のずれを無視した上限)から</p>
+<p>`<code style="color:#22d3bf">CV = (L1/k) √((n−1)/χ²_p(n−1)) / 100</code><code style="color:#22d3bf">。どちらも無ければ </code><code style="color:#22d3bf">L1/k/100</code>`(= 0.0625、「AV ≤ 15 相当」の目安、合格はおよそ半分)。</p>
+<p>必要な D63 は `<code style="color:#22d3bf">(CV² D / c)^{1/3}</code><code style="color:#22d3bf">(Poisson、c = πρ/6)。3 則(kick / bond / rittinger)全部で時間を出し、</code><code style="color:#22d3bf">law=&quot;best&quot;</code>` は</p>
+<p>log の rms が最小の則、名前を渡せばその則。則による違いは `<code style="color:#22d3bf">t_req_by_law</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">t_req_spread</code>` に(模型の不確かさとして読む)。</p>
+<p>返り: `<code style="color:#22d3bf">t_req</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">law</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">d63_req</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">target_cv</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_req_by_law</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">t_req_spread</code><code style="color:#22d3bf">(min, max)、</code><code style="color:#22d3bf">extrapolated</code>`(t_req が測った範囲を超える)・</p>
+<p>`<code style="color:#22d3bf">extrap_ratio</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">already_met</code><code style="color:#22d3bf">(最初の点で既に目標以下)、</code><code style="color:#22d3bf">cv_observed</code><code style="color:#22d3bf">(各点の CV)、</code><code style="color:#22d3bf">pass_probability_chi2</code>`(目標の CV での</p>
+<p>上限)・`<code style="color:#22d3bf">pass_probability_mc</code><code style="color:#22d3bf">(平均のずれの項も入れた Monte Carlo、正規近似)、</code><code style="color:#22d3bf">fits</code><code style="color:#22d3bf">(:func:</code>grind.comminution_law_fit` の要約)。</p>
+<p><b>Raises</b> ValueError: 点が 3 未満・非正・長さ違い、target と pass_probability の両方、範囲外の確率・CV、綴り違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dose_uniformity_from_grinding">poc_dose_uniformity_from_grinding</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dose_uniformity_from_grinding.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">doseunif</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:dose_cv_lognormal">dose_cv_lognormal</a> · <a style="color:#22d3bf" href="opdrive:dose_cv_from_sizes">dose_cv_from_sizes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: doseunif.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
