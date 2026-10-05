@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_size_read — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_read(path) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import grind; grind.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_read&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>レーザー回折の粒度分布 CSV(ヘッダの `<code style="color:#22d3bf">key,value</code><code style="color:#22d3bf"> 行 + </code><code style="color:#22d3bf">SizeClasses</code>` で始まる表)を読む。</p>
+<p>返り: `<code style="color:#22d3bf">edges</code><code style="color:#22d3bf"> [µm] (表の 1 列目 = 区間の端)、</code><code style="color:#22d3bf">volume</code><code style="color:#22d3bf">(2 列目 = 端 i と i+1 の間の体積 %)、</code><code style="color:#22d3bf">header</code>`</p>
+<p>(文字列の dict)、`<code style="color:#22d3bf">dx50_reported</code><code style="color:#22d3bf">(ヘッダの </code><code style="color:#22d3bf">Dx (50)</code><code style="color:#22d3bf">、無ければ None)、</code><code style="color:#22d3bf">total_percent</code>`(体積の総和)、</p>
+<p>`<code style="color:#22d3bf">n_rows</code><code style="color:#22d3bf">。読み込んだパスは返り値に残さない。表が無い・数値でない・最後の行が 0 でない → </code><code style="color:#22d3bf">ValueError</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_grinding_ae">poc_powder_grinding_ae</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_grinding_ae.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">grind</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:particle_size_dx">particle_size_dx</a> · <a style="color:#22d3bf" href="opdrive:particle_size_oversize">particle_size_oversize</a> · <a style="color:#22d3bf" href="opdrive:particle_size_synth">particle_size_synth</a> · <a style="color:#22d3bf" href="opdrive:comminution_energy">comminution_energy</a> · <a style="color:#22d3bf" href="opdrive:comminution_law_fit">comminution_law_fit</a> · <a style="color:#22d3bf" href="opdrive:breakage_first_order_fit">breakage_first_order_fit</a> · <a style="color:#22d3bf" href="opdrive:replicate_compare">replicate_compare</a> · <a style="color:#22d3bf" href="opdrive:ae_read_csv">ae_read_csv</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: grind.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

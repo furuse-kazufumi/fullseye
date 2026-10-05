@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3012,
- "n_notes": 3018,
+ "n_ops": 3025,
+ "n_notes": 3031,
  "notes": {
   "vol_dilate": [
    {
@@ -17487,6 +17487,136 @@
     "in": "scalar × scalar × scalar × scalar",
     "out": "table",
     "path": "docs/ops/drive/granular/spoon_tilt_dispense.md"
+   }
+  ],
+  "ae_band_power": [
+   {
+    "op": "ae_band_power",
+    "dim": "drive",
+    "category": "grind",
+    "in": "signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/grind/ae_band_power.md"
+   }
+  ],
+  "ae_read_csv": [
+   {
+    "op": "ae_read_csv",
+    "dim": "drive",
+    "category": "grind",
+    "in": "any",
+    "out": "signal",
+    "path": "docs/ops/drive/grind/ae_read_csv.md"
+   }
+  ],
+  "ae_size_correspondence": [
+   {
+    "op": "ae_size_correspondence",
+    "dim": "drive",
+    "category": "grind",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/grind/ae_size_correspondence.md"
+   }
+  ],
+  "breakage_first_order_fit": [
+   {
+    "op": "breakage_first_order_fit",
+    "dim": "drive",
+    "category": "grind",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/grind/breakage_first_order_fit.md"
+   }
+  ],
+  "comminution_energy": [
+   {
+    "op": "comminution_energy",
+    "dim": "drive",
+    "category": "grind",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/grind/comminution_energy.md"
+   }
+  ],
+  "comminution_law_fit": [
+   {
+    "op": "comminution_law_fit",
+    "dim": "drive",
+    "category": "grind",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/grind/comminution_law_fit.md"
+   }
+  ],
+  "particle_image_d50": [
+   {
+    "op": "particle_image_d50",
+    "dim": "drive",
+    "category": "grind",
+    "in": "image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/grind/particle_image_d50.md"
+   }
+  ],
+  "particle_image_synth": [
+   {
+    "op": "particle_image_synth",
+    "dim": "drive",
+    "category": "grind",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/grind/particle_image_synth.md"
+   }
+  ],
+  "particle_size_dx": [
+   {
+    "op": "particle_size_dx",
+    "dim": "drive",
+    "category": "grind",
+    "in": "table × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/grind/particle_size_dx.md"
+   }
+  ],
+  "particle_size_oversize": [
+   {
+    "op": "particle_size_oversize",
+    "dim": "drive",
+    "category": "grind",
+    "in": "table × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/grind/particle_size_oversize.md"
+   }
+  ],
+  "particle_size_read": [
+   {
+    "op": "particle_size_read",
+    "dim": "drive",
+    "category": "grind",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/grind/particle_size_read.md"
+   }
+  ],
+  "particle_size_synth": [
+   {
+    "op": "particle_size_synth",
+    "dim": "drive",
+    "category": "grind",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/grind/particle_size_synth.md"
+   }
+  ],
+  "replicate_compare": [
+   {
+    "op": "replicate_compare",
+    "dim": "drive",
+    "category": "grind",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/grind/replicate_compare.md"
    }
   ],
   "gs_from_world": [

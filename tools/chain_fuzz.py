@@ -5544,6 +5544,86 @@ def _b_sc_pour_mjcf(pool, rng):
     return (float(rng.uniform(0.04, 0.08)), float(rng.uniform(0.02, 0.04)), float(rng.uniform(0.008, 0.02)), 0.002), {}
 
 
+_FUZZ_GD = {}
+
+
+def _fuzz_gd():
+    """粉砕の小さな種(対数正規の粒度分布・合成の粒子画像・短い AE・装置の形の CSV 2 本)を 1 回だけ作る(grind、numpy だけ)。"""
+    if "psd" not in _FUZZ_GD:
+        import grind as GR
+        psd = GR.particle_size_synth(80.0, 0.45)
+        im = GR.particle_image_synth(30, 12.0, 0.3, (128, 128), seed=1)
+        d = tempfile.gettempdir()
+        p_psd = os.path.join(d, "chain_fuzz_gdind_psd.csv")
+        with open(p_psd, "w", encoding="utf-8") as fh:
+            fh.write("Sample Name,synthetic,,\nDx (50),%.17g,,\nSizeClasses(um),VolumeDensity(%%),q,I\n" % GR.particle_size_dx(psd))
+            for e, v in zip(psd["edges"], psd["volume"]):
+                fh.write("%.17g,%.17g,0,0\n" % (float(e), float(v)))
+        p_ae = os.path.join(d, "chain_fuzz_gdind_ae.csv")
+        with open(p_ae, "w", encoding="utf-8") as fh:
+            fh.write("".join("h,%d\n" % k for k in range(12)))
+            fh.write("".join("%d\n" % v for v in (32768 + np.round(8000 * np.sin(np.arange(2000) / 3.0))).astype(int)))
+        _FUZZ_GD.update({"psd": psd, "img": im["image"], "p_psd": p_psd, "p_ae": p_ae,
+                         "t": np.repeat([0.8, 1.4, 1.8, 2.6, 4.0, 5.4, 6.6], 3)})
+    return _FUZZ_GD
+
+
+def _b_gd_read(pool, rng):
+    return (_fuzz_gd()["p_psd"],), {}
+
+
+def _b_gd_dx(pool, rng):
+    return (_fuzz_gd()["psd"], float(rng.uniform(5, 95))), {}
+
+
+def _b_gd_over(pool, rng):
+    return (_fuzz_gd()["psd"], float(rng.uniform(10, 400))), {}
+
+
+def _b_gd_synth(pool, rng):
+    return (float(rng.uniform(20, 150)), float(rng.uniform(0.2, 0.5))), {}
+
+
+def _b_gd_energy(pool, rng):
+    x1 = float(rng.uniform(200, 800))
+    return (x1, x1 * float(rng.uniform(0.05, 0.8))), {"law": ("kick", "bond", "rittinger")[int(rng.integers(0, 3))]}
+
+
+def _b_gd_lawfit(pool, rng):
+    t = _fuzz_gd()["t"]
+    return (t, 400.0 * np.exp(-float(rng.uniform(0.1, 0.4)) * t) * np.exp(rng.normal(0, 0.05, t.size))), {}
+
+
+def _b_gd_first(pool, rng):
+    t = np.array([0.8, 1.4, 1.8, 2.6, 4.0, 5.4, 6.6])
+    return (t, 0.6 * np.exp(-float(rng.uniform(0.05, 0.3)) * t)), {}
+
+
+def _b_gd_rep(pool, rng):
+    return ({"a": 100 * np.exp(rng.normal(0, 0.05, (3, 7))), "b": 40 * np.exp(rng.normal(0, 0.05, (3, 7)))},), {}
+
+
+def _b_gd_aeread(pool, rng):
+    return (_fuzz_gd()["p_ae"],), {}
+
+
+def _b_gd_band(pool, rng):
+    return (rng.normal(0, 0.01, 20000), 2e6), {"win": 1024}
+
+
+def _b_gd_corr(pool, rng):
+    d = np.sort(rng.uniform(10, 300, 6))
+    return (d ** float(rng.uniform(0.5, 2.0)), d), {}
+
+
+def _b_gd_imsynth(pool, rng):
+    return (int(rng.integers(5, 30)), float(rng.uniform(8, 16)), float(rng.uniform(0.2, 0.4))), {"shape": (96, 96), "seed": int(rng.integers(0, 99))}
+
+
+def _b_gd_imd50(pool, rng):
+    return (_fuzz_gd()["img"], float(rng.uniform(0.5, 2.0))), {"basis": ("volume", "number")[int(rng.integers(0, 2))]}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5907,6 +5987,11 @@ OP_ARG_BUILDERS = {
     "scoop_volume_read": _b_sc_read, "scoop_count": _b_sc_count, "scoop_image_limit": _b_sc_limit, "tilt_wedge_retained": _b_sc_wedge,
     "tilt_pour_rate": _b_sc_rate, "tilted_surface_read": _b_sc_tilted, "stream_synth": _b_sc_stream, "stream_areal_density": _b_sc_density,
     "stream_flux_read": _b_sc_flux, "scoop_scene_mjcf": _b_sc_scoop_mjcf, "pour_scene_mjcf": _b_sc_pour_mjcf,
+    "particle_size_read": _b_gd_read, "particle_size_dx": _b_gd_dx, "particle_size_oversize": _b_gd_over,
+    "particle_size_synth": _b_gd_synth, "comminution_energy": _b_gd_energy, "comminution_law_fit": _b_gd_lawfit,
+    "breakage_first_order_fit": _b_gd_first, "replicate_compare": _b_gd_rep, "ae_read_csv": _b_gd_aeread,
+    "ae_band_power": _b_gd_band, "ae_size_correspondence": _b_gd_corr, "particle_image_synth": _b_gd_imsynth,
+    "particle_image_d50": _b_gd_imd50,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

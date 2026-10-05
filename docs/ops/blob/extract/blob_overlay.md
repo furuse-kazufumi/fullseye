@@ -4,7 +4,7 @@ dim: blob
 category: extract
 in: image2d × labels2d
 out: rgb
-examples: [poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_weld_radiograph_porosity]
+examples: [poc_bump_coplanarity, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_leaf_disease_area, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_powder_grinding_ae, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -41,6 +41,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 - [poc_metal_grain_size](../../../../examples/poc_metal_grain_size.py) — `py -3.11 examples/poc_metal_grain_size.py`
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
+- [poc_powder_grinding_ae](../../../../examples/poc_powder_grinding_ae.py) — `py -3.11 examples/poc_powder_grinding_ae.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 
 ## 型が繋がる次の op(`rgb` を入力に取れる)

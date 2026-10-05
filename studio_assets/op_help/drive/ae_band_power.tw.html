@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ae_band_power — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.ae_band_power(x, rate: &#x27;float&#x27;, f_lo: &#x27;float&#x27; = 100000.0, f_hi: &#x27;float&#x27; = 1000000.0, start: &#x27;int&#x27; = 0, stop: &#x27;int | None&#x27; = None, win: &#x27;int&#x27; = 4096) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ae_band_power&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>AE の帯域電力を 2 通りで出す(一方は公開の解析コードの定義、他方は `<code style="color:#22d3bf">acoustics.stft</code>` の密度スペクトル)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">power_fft</code><code style="color:#22d3bf">: 窓なし FFT の振幅 </code><code style="color:#22d3bf">2|X|/N</code><code style="color:#22d3bf"> の二乗を </code><code style="color:#22d3bf">f_lo ≤ f ≤ f_hi</code>` で足した値 [V²] (解析コードと同じ。正弦波の振幅 A なら A²)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">power_stft</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">acoustics.stft(scaling=&quot;density&quot;)</code>` の内側のコマの PSD を帯域で積分した平均 [V²] (= 帯域の平均二乗)。</p>
+<p>Parseval で `<code style="color:#22d3bf">power_fft ≈ 2 · power_stft</code><code style="color:#22d3bf">(振幅² は平均二乗の 2 倍)。比 </code><code style="color:#22d3bf">ratio = power_fft / (2 power_stft)</code>` を返す。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">band_series</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">times</code><code style="color:#22d3bf">: コマごとの帯域電力(スペクトログラムの帯の時間変化)、</code><code style="color:#22d3bf">spectrogram_db</code>` は表示用(帯に関係なく全帯域)。</p>
+<p>`<code style="color:#22d3bf">start</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">stop</code>` は標本の切り出し(解析コードは雑音の区間を飛ばすため 200013 から)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_grinding_ae">poc_powder_grinding_ae</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_grinding_ae.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">grind</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:particle_size_read">particle_size_read</a> · <a style="color:#22d3bf" href="opdrive:particle_size_dx">particle_size_dx</a> · <a style="color:#22d3bf" href="opdrive:particle_size_oversize">particle_size_oversize</a> · <a style="color:#22d3bf" href="opdrive:particle_size_synth">particle_size_synth</a> · <a style="color:#22d3bf" href="opdrive:comminution_energy">comminution_energy</a> · <a style="color:#22d3bf" href="opdrive:comminution_law_fit">comminution_law_fit</a> · <a style="color:#22d3bf" href="opdrive:breakage_first_order_fit">breakage_first_order_fit</a> · <a style="color:#22d3bf" href="opdrive:replicate_compare">replicate_compare</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: grind.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

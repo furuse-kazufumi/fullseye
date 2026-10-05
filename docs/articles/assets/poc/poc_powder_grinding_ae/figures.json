@@ -1,0 +1,142 @@
+[
+ {
+  "file": "01_synthetic_particles_labels.png",
+  "name": "synthetic_particles_labels",
+  "caption": "",
+  "shape": [
+   733,
+   1310,
+   3
+  ]
+ },
+ {
+  "file": "02_image_volume_vs_number_basis.png",
+  "name": "image_volume_vs_number_basis",
+  "caption": "同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。レーザー回折は体積基準。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_law_identifiability_synthetic.png",
+  "name": "law_identifiability_synthetic",
+  "caption": "縮みが小さいと、雑音 5 % でも 3 則の区別がつかない(200 回ずつ)。",
+  "shape": [
+   152,
+   367,
+   3
+  ],
+  "csv": "03_law_identifiability_synthetic.csv",
+  "tsv": "03_law_identifiability_synthetic.tsv"
+ },
+ {
+  "file": "04_d50_vs_time_NaCl.png",
+  "name": "d50_vs_time_NaCl",
+  "caption": "NaCl の D50(独立 3 回)と 3 則の当てはめ。最良 rittinger。緑の点は粉砕前の実測(当てはめに使っていない)。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "05_d50_vs_time_Citricacid.png",
+  "name": "d50_vs_time_Citricacid",
+  "caption": "citric acid の D50(独立 3 回)と 3 則の当てはめ。最良 bond。緑の点は粉砕前の実測(当てはめに使っていない)。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_d50_vs_time_MSG.png",
+  "name": "d50_vs_time_MSG",
+  "caption": "MSG の D50(独立 3 回)と 3 則の当てはめ。最良 bond。緑の点は粉砕前の実測(当てはめに使っていない)。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_psd_fining_during_grinding.gif",
+  "name": "psd_fining_during_grinding",
+  "caption": "1st の試行の累積粒度分布が、粉砕前 → 3 → 25 min で左(細かい側)へ動く。",
+  "shape": [
+   440,
+   720,
+   3
+  ],
+  "animated": true,
+  "frames": 8,
+  "frames_written": 8,
+  "fps": 1.5
+ },
+ {
+  "file": "08_ae_spectrogram_NaCl.png",
+  "name": "ae_spectrogram_NaCl",
+  "caption": "",
+  "shape": [
+   1161,
+   1972,
+   3
+  ]
+ },
+ {
+  "file": "09_ae_power_vs_d50.png",
+  "name": "ae_power_vs_d50",
+  "caption": "各材料 2 点しか取っていない(データ量の上限)ので、傾き α は 2 点の比。材料で水準が桁で違う。",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "10_ae_band_power_in_time.png",
+  "name": "ae_band_power_in_time",
+  "caption": "",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "11_first_order_oversize_200um.png",
+  "name": "first_order_oversize_200um",
+  "caption": "",
+  "shape": [
+   440,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "12_where_the_laws_break_60min.png",
+  "name": "where_the_laws_break_60min",
+  "caption": "クエン酸は 60 min で 25 min より粗い(凝集)。単調に細かくなる則はどれも表せない。60 min は装置の設定も違う。",
+  "shape": [
+   152,
+   534,
+   3
+  ],
+  "csv": "12_where_the_laws_break_60min.csv",
+  "tsv": "12_where_the_laws_break_60min.tsv"
+ },
+ {
+  "file": "13_law_identifiability_real_design.png",
+  "name": "law_identifiability_real_design",
+  "caption": "その材料の時点・縮み・残差で 3 則を作り直して当てたとき、正しい則が勝つ割合(200 回)。",
+  "shape": [
+   152,
+   347,
+   3
+  ],
+  "csv": "13_law_identifiability_real_design.csv",
+  "tsv": "13_law_identifiability_real_design.tsv"
+ }
+]

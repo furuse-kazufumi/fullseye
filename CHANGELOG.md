@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**乳鉢の粉砕を測る**(新モジュール `grind` 13 op、facade なし、台帳 `grind`(opsdrive)、PoC `poc_powder_grinding_ae`、wing_metrology): 粉体の 3 本目。
+  公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)のレーザー回折の粒度分布 117 本と AE 6 本を外の真値に(repo の外、環境変数 `FULLSEYE_GRIND_DATA`、
+  無い CI では numpy の 12 門)。D50 は装置の Dx(50) と同じ log 補間で 3.2e-15、解析コードの下の端の累積は 1 区間分 −12 % の偏り。粉砕則の当てはめと、
+  モンテカルロで「則が見分けられるかはデータの縮みの幅で決まる」(NaCl 58〜78 %)。独立 3 回の cv 5.2〜13.2 %、AE の帯域電力は解析コードと差 0.0、
+  STFT と Parseval で 0.982〜1.052。60 min のクエン酸は凝集で粗くなる。門 12 本 + データ 10 本。正直に: エネルギー ∝ 時間は仮定、AE は材料ごとに 2 点。
 - ★**挙動の変更: `granular.spoon_tilt_critical` / `spoon_tilt_dispense` の楔を厳密版に**。床と粉の表面の楔の傾きを小角の近似 `tan φ − tan θ` から
   厳密な `tan(φ − θ)` に直した(奥壁は床に垂直、唇を通る斜面は水平から φ = 床から φ − θ)。旧式 θ_c = atan(tan φ − 2h₀/L) → 新式 θ_c = φ − atan(2h₀/L)
   (atan2 で)。差の例: θ = 10°・φ = 30° で旧式の楔の傾きは厳密の 1.102 倍(約 10 %)、L 50 mm・h₀ 5 mm で θ_c が 20.67° → 18.69°。小角では一致する

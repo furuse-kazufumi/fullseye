@@ -988,7 +988,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 31 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 32 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1963,6 +1963,46 @@ py -3.11 examples/poc_powder_scoop_pour.py
 この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_powder_scoop_pour)
 
 使用 op(ノートへ): [`beverloo_rate`](https://furuse.work/ops/drive/granular/beverloo_rate.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`heap_volume_cone`](https://furuse.work/ops/drive/granular/heap_volume_cone.html) · [`pour_scene_mjcf`](https://furuse.work/ops/drive/scoop/pour_scene_mjcf.html) · [`revolution_volume_side`](https://furuse.work/ops/drive/scoop/revolution_volume_side.html) · [`scoop_count`](https://furuse.work/ops/drive/scoop/scoop_count.html) · [`scoop_image_limit`](https://furuse.work/ops/drive/scoop/scoop_image_limit.html) · [`scoop_scene_mjcf`](https://furuse.work/ops/drive/scoop/scoop_scene_mjcf.html) · [`scoop_synth_side`](https://furuse.work/ops/drive/scoop/scoop_synth_side.html) · [`scoop_volume_read`](https://furuse.work/ops/drive/scoop/scoop_volume_read.html) · [`spheres_render_shaded`](https://furuse.work/ops/drive/granular/spheres_render_shaded.html) · [`spheres_to_silhouette`](https://furuse.work/ops/drive/granular/spheres_to_silhouette.html) · [`spoon_bowl_volume`](https://furuse.work/ops/drive/scoop/spoon_bowl_volume.html) · [`stream_flux_read`](https://furuse.work/ops/drive/scoop/stream_flux_read.html) · [`stream_synth`](https://furuse.work/ops/drive/scoop/stream_synth.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tilt_pour_rate`](https://furuse.work/ops/drive/scoop/tilt_pour_rate.html) · [`tilt_wedge_retained`](https://furuse.work/ops/drive/scoop/tilt_wedge_retained.html) · [`tilted_surface_read`](https://furuse.work/ops/drive/scoop/tilted_surface_read.html) · [`two_view_volume`](https://furuse.work/ops/drive/scoop/two_view_volume.html)
+
+## No.2026.211 —— 乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り
+
+[![乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/01_synthetic_particles_labels.png)
+
+*↑ **乳鉢の粉砕を測る ―― 粒度分布の D50、粉砕則、独立 3 回のばらつき、AE の帯域電力。真値は公開されたレーザー回折の実測、D50 の定義の違いが 1 区間 = 12 % の偏り** ―― 物理シミュ × Fullseye 系列、粉体の 3 本目(granular / scoop の続き)。題材はロボットが乳鉢で粉を挽き、音響放射(AE)で挽き具合を見張る研究。その公開データ(Zenodo 概念 DOI 10.5281/zenodo.18064323、CC BY 4.0)のレーザー回折の粒度分布(NaCl / クエン酸 / グルタミン酸ナトリウム × 独立 3 回 × 粉砕 3〜25 min の 7 時点、+ 粉砕前・60 min・手作業)と AE の生波形 6 本を外の真値にした。データは repo に入れない(粒度分布 117 本と AE 6 本だけを抜き、環境変数 FULLSEYE_GRIND_DATA で渡す。無い CI では numpy の 12 門だけ走る)。新モジュール grind 13 op、facade なし。(1) D50 の定義: 装置の CSV の区間の端と体積の行の対応を読み、ヘッダの Dx(50) は「端の累積を log(径) で線形補間」と全 117 本で一致(最大差 3.2e-15)。公開の解析コードのある段は累積を区間の下の端に置くので 1 区間分(比 1.136)小さい: −11.80〜−11.98 %。(2) 粉砕則(Reddy の式 (1)・(5)〜(7)、dE = −C dx/xⁿ、Kick n = 1・Bond 1.5・Rittinger 2)を正味の粉砕時間に当てはめると(log D50 の rms、21 点)NaCl は Rittinger 0.050、クエン酸は Bond 0.100、MSG は Bond 0.156。Kick はどの材料でも最良にならない。ところが、その材料の時点・縮み・残差で 3 則を作り直したモンテカルロで正しい則が勝つ割合はクエン酸 92〜100 %(縮み 20 倍)、MSG 70〜92 %、NaCl 58〜78 %(縮み 2.7 倍)—— NaCl の「Rittinger が最良」は当てにならない。粉砕前への外挿(当てはめに使っていない測定)は最良の則で −6 / −18 / −11 %、n を自由にすると +34 / +57 % と悪化(当てはめ過ぎ)。(3) 独立 3 回のばらつき(D50 の cv、7 時点の二乗平均)は NaCl 5.2 %・クエン酸 6.5 %・MSG 13.2 %。同じ粉の繰り返し測定の cv は 0.8〜17.1 % で、独立試行より小さいとは限らない。25 min の D50 は全ての組で標準誤差の 12 倍以上離れる。(4) 篩上 R(200 µm) の見かけの一次の速度(Deniz 2004 の式、出典 Austin)は 0.17〜0.20 /min、前半より後半が遅い(一次から外れる)。(5) AE の帯域電力(0.1〜1 MHz)は公開の解析コードの定義を同じ 6 本で走らせた値と差 0.0、acoustics.stft の密度の帯域積分とは Parseval で 0.982〜1.052。3 min → 25 min で NaCl 185 → 31 mV²、クエン酸 806 → 7.1、MSG 2209 → 184、どれも D50 と同じ向き。(6) 60 min のクエン酸は 25 min の 11.4 µm より粗い 39.9 µm(凝集)で、単調に細かくなる則はどれも表せない。図: 合成の粒子と体積基準 vs 個数基準、則の見分け(合成)、3 材料の D50 の曲線と 3 則、粒度分布が細かくなる GIF、AE のスペクトログラム(挽き始めと挽き終わりを同じ色の尺度で)、AE の帯域電力 vs D50、コマごとの帯域電力、篩上の一次の速度、60 min で則が破れる表、実データの設計での見分けの表。門 12 本(numpy、0.6 s)+ データ 10 本、--full はモンテカルロ 10 倍(図込み 25 s)。正直に: エネルギー ∝ 正味の時間は仮定(則どうしの比較にしか使っていない)。AE は材料ごとに 2 点なので単調性も指数も 2 点の比で、相関の強さは言えない。論文本文は未読、Bond 1952 と Austin の原著も未読。60 min と粉砕前の測定は装置の設定が違う。画像からの D50 は合成の門だけ。*
+
+[![同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。レーザー回折は体積基準。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/02_image_volume_vs_number_basis.png)
+
+*↑ 測定の図 ―― 同じ画像の同じ粒子でも、体積基準の D50 は個数基準の 1.39 倍。レーザー回折は体積基準。*
+
+[![縮みが小さいと、雑音 5 % でも 3 則の区別がつかない(200 回ずつ)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/03_law_identifiability_synthetic_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/03_law_identifiability_synthetic.png)
+
+*↑ 縮みが小さいと、雑音 5 % でも 3 則の区別がつかない(200 回ずつ)。*
+
+[![citric acid の D50(独立 3 回)と 3 則の当てはめ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/05_d50_vs_time_Citricacid_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/05_d50_vs_time_Citricacid.png)
+
+*↑ citric acid の D50(独立 3 回)と 3 則の当てはめ。*
+
+[![各材料 2 点しか取っていない(データ量の上限)ので、傾き α は 2 点の比。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/09_ae_power_vs_d50_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/09_ae_power_vs_d50.png)
+
+*↑ 各材料 2 点しか取っていない(データ量の上限)ので、傾き α は 2 点の比。*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/11_first_order_oversize_200um_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/11_first_order_oversize_200um.png)
+
+*↑ この回の図*
+
+[![1st の試行の累積粒度分布が、粉砕前 → 3 → 25 min で左(細かい側)へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/07_psd_fining_during_grinding.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_grinding_ae/07_psd_fining_during_grinding.gif)
+
+*↑ 動く図 ―― 1st の試行の累積粒度分布が、粉砕前 → 3 → 25 min で左(細かい側)へ動く。*
+
+```
+py -3.11 examples/poc_powder_grinding_ae.py
+```
+
+ソース: [examples/poc_powder_grinding_ae.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_powder_grinding_ae.py)
+
+この回が作った図は全部で **13 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_powder_grinding_ae)
+
+使用 op(ノートへ): [`ae_band_power`](https://furuse.work/ops/drive/grind/ae_band_power.html) · [`ae_read_csv`](https://furuse.work/ops/drive/grind/ae_read_csv.html) · [`ae_size_correspondence`](https://furuse.work/ops/drive/grind/ae_size_correspondence.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`breakage_first_order_fit`](https://furuse.work/ops/drive/grind/breakage_first_order_fit.html) · [`comminution_energy`](https://furuse.work/ops/drive/grind/comminution_energy.html) · [`comminution_law_fit`](https://furuse.work/ops/drive/grind/comminution_law_fit.html) · [`particle_image_d50`](https://furuse.work/ops/drive/grind/particle_image_d50.html) · [`particle_image_synth`](https://furuse.work/ops/drive/grind/particle_image_synth.html) · [`particle_size_dx`](https://furuse.work/ops/drive/grind/particle_size_dx.html) · [`particle_size_oversize`](https://furuse.work/ops/drive/grind/particle_size_oversize.html) · [`particle_size_read`](https://furuse.work/ops/drive/grind/particle_size_read.html) · [`particle_size_synth`](https://furuse.work/ops/drive/grind/particle_size_synth.html) · [`replicate_compare`](https://furuse.work/ops/drive/grind/replicate_compare.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

@@ -1,8 +1,8 @@
 {
- "n_ops": 3012,
+ "n_ops": 3025,
  "tiers": {
   "color": 12,
-  "ledger": 2059,
+  "ledger": 2072,
   "nary": 17,
   "registry": 924
  },
@@ -578,6 +578,47 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "ae_band_power",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "ae_read_csv",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "signal",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "ae_size_correspondence",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
    ]
   },
   {
@@ -2272,6 +2313,20 @@
    ]
   },
   {
+   "name": "breakage_first_order_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "brewster_angle_deg",
    "halcon": "",
    "in_sort": null,
@@ -3425,6 +3480,34 @@
    "in_sorts": [
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "comminution_energy",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "comminution_law_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
    ]
   },
   {
@@ -15830,6 +15913,35 @@
    "in_sorts": []
   },
   {
+   "name": "particle_image_d50",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
+   "name": "particle_image_synth",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "particle_render",
    "halcon": "",
    "in_sort": "table",
@@ -15840,6 +15952,61 @@
    "dim": "gfx2d",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "particle_size_dx",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "particle_size_oversize",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "scalar",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
+   ]
+  },
+  {
+   "name": "particle_size_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "particle_size_synth",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -19624,6 +19791,19 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "replicate_compare",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "grind",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {

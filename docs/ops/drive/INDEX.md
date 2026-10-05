@@ -1,4 +1,4 @@
-# DRIVE operator help — 628 ops in 44 categories
+# DRIVE operator help — 641 ops in 45 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -55,6 +55,10 @@
 ### granular (23)
 
 [beverloo_fit](granular/beverloo_fit.md) · [beverloo_rate](granular/beverloo_rate.md) · [cone_profile_px](granular/cone_profile_px.md) · [container_fill_level](granular/container_fill_level.md) · [container_synth](granular/container_synth.md) · [datum_tilt_check](granular/datum_tilt_check.md) · [discharge_synth](granular/discharge_synth.md) · [dispense_mass_from_video](granular/dispense_mass_from_video.md) · [heap_mass](granular/heap_mass.md) · [heap_scene_mjcf](granular/heap_scene_mjcf.md) · [heap_spheres_select](granular/heap_spheres_select.md) · [heap_synth_cone](granular/heap_synth_cone.md) · [heap_volume_cone](granular/heap_volume_cone.md) · [heap_volume_heightmap](granular/heap_volume_heightmap.md) · [hopper_discharge_rate](granular/hopper_discharge_rate.md) · [powder_flowability_class](granular/powder_flowability_class.md) · [repose_angle_heightmap](granular/repose_angle_heightmap.md) · [repose_angle_silhouette](granular/repose_angle_silhouette.md) · [spheres_render_shaded](granular/spheres_render_shaded.md) · [spheres_to_heightmap](granular/spheres_to_heightmap.md) · [spheres_to_silhouette](granular/spheres_to_silhouette.md) · [spoon_tilt_critical](granular/spoon_tilt_critical.md) · [spoon_tilt_dispense](granular/spoon_tilt_dispense.md)
+
+### grind (13)
+
+[ae_band_power](grind/ae_band_power.md) · [ae_read_csv](grind/ae_read_csv.md) · [ae_size_correspondence](grind/ae_size_correspondence.md) · [breakage_first_order_fit](grind/breakage_first_order_fit.md) · [comminution_energy](grind/comminution_energy.md) · [comminution_law_fit](grind/comminution_law_fit.md) · [particle_image_d50](grind/particle_image_d50.md) · [particle_image_synth](grind/particle_image_synth.md) · [particle_size_dx](grind/particle_size_dx.md) · [particle_size_oversize](grind/particle_size_oversize.md) · [particle_size_read](grind/particle_size_read.md) · [particle_size_synth](grind/particle_size_synth.md) · [replicate_compare](grind/replicate_compare.md)
 
 ### gsplat (5)
 
