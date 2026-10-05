@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1207. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1208. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2053,6 +2053,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L945** — ★`setDefaultFormat` wirkt nur auf den argumentlosen Konstruktor, und Studios `QSettings("Fullseye", "Studio")` war fest auf die Registry gesetzt —— diese fixture isolierte nichts (2026-09-05; pytests Pfade blieben in der Registry). Den hauptseitigen Einstieg `studio._settings()` per Umgebungsvariable auf eine ini richten.
 - **L2054** — ★Ein direktes `QSettings("Fullseye", "Studio")` umgeht die Isolierung und schreibt in **die Registry des Nutzers** (im Audit vom 2026-09-05 als realer Schaden bestaetigt). Halte den Einstiegspunkt fuer Einstellungen bei genau einem.
+
+## `tests/test_studio_ledger_runner.py`
+
+- **L137** _(ja)_ — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
 
 ## `tests/test_studio_logic.py`
 

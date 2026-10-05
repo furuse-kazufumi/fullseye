@@ -2052,6 +2052,10 @@
 - **L945** — ★`setDefaultFormat` は引数なしコンストラクタにしか効かず、Studio の `QSettings("Fullseye", "Studio")` はレジストリ固定だった —— この fixture は 何も隔離していなかった(2026-09-05、レジストリに pytest のパスが残っていた)。 本体側の入口 `studio._settings()` を環境変数で ini に向ける。
 - **L2054** — ★`QSettings("Fullseye", "Studio")` を直に組むと隔離を迂回して**利用者の レジストリ**に書く(2026-09-05 の監査で実害を確認)。設定入口は 1 つに保つ。
 
+## `tests/test_studio_ledger_runner.py`
+
+- **L137** — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
+
 ## `tests/test_studio_logic.py`
 
 - **L22** — ★旧 setDefaultFormat 方式は Studio の QSettings(org, app) に効かなかった。 本体の入口 studio._settings() を ini に向ける(session 全体)。

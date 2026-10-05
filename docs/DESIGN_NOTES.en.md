@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1207. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1208. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2053,6 +2053,10 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L945** — ★`setDefaultFormat` only affects the no-argument constructor, and Studio's `QSettings("Fullseye", "Studio")` was fixed to the registry —— this fixture isolated nothing (2026-09-05; pytest's paths were left in the registry). Point the main-side entry `studio._settings()` at an ini via an environment variable.
 - **L2054** — ★Building `QSettings("Fullseye", "Studio")` directly bypasses the isolation and writes into **the user's registry** (real harm confirmed in the 2026-09-05 audit). Keep the settings entry point to one.
+
+## `tests/test_studio_ledger_runner.py`
+
+- **L137** _(ja)_ — ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも 「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
 
 ## `tests/test_studio_logic.py`
 
