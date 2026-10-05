@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**ペグの対称性で回転の探索を 1/n に絞る**(新モジュール `pegsym` 15 op + mujoco の facade 6、台帳 `pegsym`(opsdrive)、PoC `poc_peg_symmetry_search`、
+  wing_geometry): 題材は arXiv:2402.18002(Symmetry-aware RL)を学習なしで。輪郭の複素フーリエ位相で向きを 2π/n を法として読み(2 次モーメントは n ≥ 3 で等方)、
+  回転の窓の閉形式(三角 4.75°・四角 8.72°・六角 20.85°)= 線形計画と 2.8e-11 rad。★六角形は摩擦で窓が縮む(導出 sin²β > (√(1 + 8μ²) − 1)/2、μ = 0.3 で 6.76°、
+  MuJoCo 7.25°)。期待試行回数は格子と 3 % 以内、MuJoCo の盲目の探索は予言と 47 / 48 一致、画像の読みで 16 / 16 が 1 回目。多角形の二点接触は厳密解を
+  Whitney の式と Goli 2024 の式 (2.28) で挟む。門 10 本 + `--full` 7 本。正直に: 摩擦の限界は準静的の導出、Sturges は未読。
 - ★**ドーム状の柔らかい指先を平らな物に押す大変形接触を、スケーリング則と連続体の厳密解で門にする**(新モジュール `tacdome` 12 op、台帳 `tacdome`(opsdrive)、
   PoC `poc_tacdome_large_deformation`、wing_metrology): 一次情報は arXiv:2509.18581 の PDF。★原文の式 (3) の 1 次の係数は活字 (4+2n)/(1+n) だと円柱で力が負 ——
   本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)を積分して 2n/(1+n) を導いた(2 次と式 (4) は活字と一致)。真値 = 非圧縮 neo-Hookean の円柱の厳密解(1.9e-15)、

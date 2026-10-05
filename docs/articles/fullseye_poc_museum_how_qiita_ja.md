@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **80 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **81 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1390,7 +1390,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 16 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 17 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1879,6 +1879,46 @@ py -3.11 examples/poc_peg_insertion_tactile.py
 この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_insertion_tactile)
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`contact_radius_fit`](https://furuse.work/ops/drive/tacsim/contact_radius_fit.html) · [`contact_radius_fit_pixelwise`](https://furuse.work/ops/drive/tacsim/contact_radius_fit_pixelwise.html) · [`contact_state_from_wrench`](https://furuse.work/ops/drive/pegtactile/contact_state_from_wrench.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`equivariance_check`](https://furuse.work/ops/drive/pegtactile/equivariance_check.html) · [`friction_from_single_contact`](https://furuse.work/ops/drive/pegtactile/friction_from_single_contact.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`membrane_recover`](https://furuse.work/ops/drive/tacsim/membrane_recover.html) · [`pad_context`](https://furuse.work/ops/drive/pegtactile/pad_context.html) · [`pad_loads_to_peg_wrench`](https://furuse.work/ops/drive/pegtactile/pad_loads_to_peg_wrench.html) · [`pad_params`](https://furuse.work/ops/drive/pegtactile/pad_params.html) · [`pad_tactile_frame`](https://furuse.work/ops/drive/pegtactile/pad_tactile_frame.html) · [`pad_tactile_read`](https://furuse.work/ops/drive/pegtactile/pad_tactile_read.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`peg_wrench_to_pad_loads`](https://furuse.work/ops/drive/pegtactile/peg_wrench_to_pad_loads.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`stall_verdict`](https://furuse.work/ops/drive/pegtactile/stall_verdict.html) · [`symmetric_peg_shape`](https://furuse.work/ops/drive/pegtactile/symmetric_peg_shape.html) · [`symmetry_order_contour`](https://furuse.work/ops/drive/pegtactile/symmetry_order_contour.html) …(他 7)
+
+## No.2026.208 —— ペグの対称性で回転の探索を 1/n に絞る ―― 角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で、六角形の面取りは摩擦で窓が 20.9° → 6.8° に縮む
+
+[![ペグの対称性で回転の探索を 1/n に絞る ―― 角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で、六角形の面取りは摩擦で窓が 20.9° → 6.8° に縮む](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif)
+
+*↑ **ペグの対称性で回転の探索を 1/n に絞る ―― 角・六角・キー付きペグの挿入を群の恒等式と閉形式と MuJoCo で、六角形の面取りは摩擦で窓が 20.9° → 6.8° に縮む** ―― 物理シミュ × Fullseye 系列(柔らかい手首のペグ挿入・失敗の分類・2 本指の膜)の続き。題材は対称性を学習に使う研究(Symmetry-aware RL、ICRA 2024、arXiv:2402.18002、abstract を一次情報として読んだ)で、こちらは群の恒等式そのものを門にして学習なしで残る部品を作った。正 n 角柱(n = 3, 4, 6)と、角を 1.8 mm 落としたキー付きの正方形(対称は n = 1)を、同じ形を外へ 0.2 mm ずらした穴(45° の面取り 0.5 mm)へ入れる。新モジュール pegsym 15 op + mujoco の facade 6。(1) 向きの読み: 画像を平面の上から見た図に打ち直し(手首カメラで穴の口、上向きカメラでペグの端面)、輪郭の複素フーリエ位相で 2π/n を法として読む。2 次モーメントは n ≥ 3 で等方になり向きを持たない(罠)。合成の同変性は 1 周期 40 角で正多角形 0.054°・キー付き 0.19°、MuJoCo の画像から向きの差は正多角形 0.05° 以内・キー付き 0.70°(穴が相似でない分の偏り)。(2) 回転の窓(導出): φ = π/n − arccos((A + δ + W)cos(π/n)/A)(atan2 で書く)が平行移動も自由な線形計画(第 2 実装)と 2.8e-11 rad、窓は三角 4.75°・四角 8.72°・六角 20.85°。(3) 摩擦の限界(導出、MuJoCo で発見): 六角形だけ MuJoCo が 7.25° しか捕まえない。口に載った頂点が面取りを滑り下りるにはペグが回る必要があり、軸まわりのモーメントの釣り合いから回るのは sin²β > (√(1 + 8μ²) − 1)/2。μ = 0〜0.5 の 6 点で MuJoCo の窓と 0.5° 以内(μ = 0.3 で閉形式 6.76°・MuJoCo 7.25°)。(4) 探索回数: 1 周期を窓の 2 倍以下の刻みで掃く期待回数の閉形式が口への線形計画で判定した格子と 3 % 以内(三角 6.97 / 6.96、四角 3.36 / 3.29、六角 1.31 / 1.29、キー付き 10.98 / 11.02)。MuJoCo の盲目の探索(12 の穴の向き × 4 形)は試行回数が予言と 47 / 48 で一致、平均は正方形 3.50・キー付き 11.00。画像の読みを推定値にすると 16 / 16 が 1 回目で入る。穴を 2πk/n 余分に回して組み直しても試行回数は同じ(6 / 6)。(5) 多角形の二点接触: 閉形式は見つからず、凸包の頂点の線形計画 + 二分法の厳密解を作った。面に平行な軸で傾けた正方形は円柱の Whitney の式と 3.4e-11 m、Goli ほか 2024(R. Soc. Open Sci.)の式 (2.28) の小角の極限に 1.00000。MuJoCo の距離関数による第 2 実装と横の隙間で 6.5 µm 以内。(6) らせん: 最初は中心の近くの巻きを飛び越えて覆いに 64 / 11,285 の穴が開いた → 弧長を細かい格子で積む形に直した。十分条件を満たす刻みで穴 0、期待点数は掃いた面積の近似と 3.6 %。図: 回る 3 形の読みの GIF、期待回数と対称、窓の余裕、二点接触の深さと傾ける向き、らせんの覆い; --full: MuJoCo の盲目の探索の GIF、窓と摩擦、手首と上向きカメラの打ち直し。門 10 本(既定 1.8 s)+ --full 7 本(図込み 42 s)。正直に: ペグの向きは工程の途中の固定の上向きカメラで読む(手首カメラだけでは端面が見えない)。摩擦の限界は 45° の面取り・準静的・軸まわりのばねが弱い仮定の導出で、正方形の μ ≥ 0.5 は MuJoCo の方が 0.7° 広い(内訳として出す)。Sturges の正方形ペグのくさびは未読。横ずれと回転を同時に探す入れ子の回数は独立の近似で門にしていない。*
+
+[![線 = 窓 5° を共通にした時の閉形式 E(n)、破線 = 対称を知らない探索の E を n で割ったもの。点 = この装置(窓は形ごとに違う)の閉形式と、一様な誤差の格子で口への線形計画が判定した平均。キー付きは n = 1。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/02_pegsym_expected_tries_vs_symmetry.png)
+
+*↑ 測定の図 ―― 線 = 窓 5° を共通にした時の閉形式 E(n)、破線 = 対称を知らない探索の E を n で割ったもの。点 = この装置(窓は形ごとに違う)の閉形式と、一様な誤差の格子で口への線形計画が判定した平均。キー付きは n = 1。*
+
+[![平行移動も自由にした時の口の中の最良の余裕(線形計画)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/03_pegsym_rotation_window_margin.png)
+
+*↑ 平行移動も自由にした時の口の中の最良の余裕(線形計画)。*
+
+[![傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/04_pegsym_two_point_depth_vs_tilt_direction.png)
+
+*↑ 傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。*
+
+[![Archimedes のらせん。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/05_pegsym_spiral_search_cover.png)
+
+*↑ Archimedes のらせん。*
+
+[![面取りが回して入れる最大の向きの誤差。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/07_pegsym_capture_window_vs_friction.png)
+
+*↑ 面取りが回して入れる最大の向きの誤差。*
+
+[![正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。候補は 90° の 1 周期を 6 等分(刻み 15.0°、面取りの窓 ±8.72°)。下の帯 = 試行(赤 = 面取りか襟で止まった、緑 = 入った)。6 回目で入り、予言](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_symmetry_search/06_pegsym_mujoco_blind_rotation_search.gif)
+
+*↑ 動く図 ―― 正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。候補は 90° の 1 周期を 6 等分(刻み 15.0°、面取りの窓 ±8.72°)。下の帯 = 試行(赤 = 面取りか襟で止まった、緑 = 入った)。6 回目で入り、予言も 6 回。*
+
+```
+py -3.11 examples/poc_peg_symmetry_search.py
+```
+
+ソース: [examples/poc_peg_symmetry_search.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_peg_symmetry_search.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_symmetry_search)
+
+使用 op(ノートへ): [`pegsym_scene_mjcf`](https://furuse.work/ops/drive/pegsym/pegsym_scene_mjcf.html) · [`plane_topview`](https://furuse.work/ops/drive/pegsym/plane_topview.html) · [`polygon_coverage_image`](https://furuse.work/ops/drive/pegsym/polygon_coverage_image.html) · [`polygon_fit_check`](https://furuse.work/ops/drive/pegsym/polygon_fit_check.html) · [`polygon_offset`](https://furuse.work/ops/drive/pegsym/polygon_offset.html) · [`polygon_peg`](https://furuse.work/ops/drive/pegsym/polygon_peg.html) · [`polygon_two_point_depth`](https://furuse.work/ops/drive/pegsym/polygon_two_point_depth.html) · [`polygon_yaw_read`](https://furuse.work/ops/drive/pegsym/polygon_yaw_read.html) · [`relative_yaw_from_images`](https://furuse.work/ops/drive/pegsym/relative_yaw_from_images.html) · [`rotation_search_plan`](https://furuse.work/ops/drive/pegsym/rotation_search_plan.html) · [`rotation_window`](https://furuse.work/ops/drive/pegsym/rotation_window.html) · [`search_expected_tries`](https://furuse.work/ops/drive/pegsym/search_expected_tries.html) · [`spiral_expected_tries`](https://furuse.work/ops/drive/pegsym/spiral_expected_tries.html) · [`spiral_search_points`](https://furuse.work/ops/drive/pegsym/spiral_search_points.html) · [`symmetry_fold`](https://furuse.work/ops/drive/pegsym/symmetry_fold.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

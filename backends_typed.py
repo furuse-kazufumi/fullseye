@@ -232,6 +232,9 @@ _OP_BRIDGE_SKIP = {
     #   自動的に橋が架かるが、橋の探針(正弦・負値を含む)は d ∈ [0, 0.9) の外で fail-closed に拒否され、fallback が
     #   恒等の顔をする(test_no_new_bridge_op_is_a_pass_through が摘発)。画像の op ではない。台帳(fs.ledger)から使う。
     "largedef_universal_correction",
+    # 2026-10-05: pegsym の polygon_coverage_image は「多角形の頂点列 (V, 2)(画素座標)→ 被覆率の画像」を描く生成側。matrix→image2d で
+    #   自動的に橋が架かるが、橋が渡す行列は画像を行列と読んだもので頂点列ではない(意味のある出力にならない)。台帳から使う。
+    "polygon_coverage_image",
     # 2026-10-03: アレイのスナップショットを「作る」生成器(到来角の列 → 複素行列)。画像を受けない。
     "ula_snapshots",
     # 2026-10-03: 行列の指数・対数と SE(3) の exp/log は「行列 ↔ 行列/ベクトル」の代数で、画像を受けない

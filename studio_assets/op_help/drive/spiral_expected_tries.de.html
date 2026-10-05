@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spiral_expected_tries — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsym; pegsym.spiral_expected_tries(points, capture: &#x27;float&#x27;, rho: &#x27;float&#x27;, grid: &#x27;int&#x27; = 161) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;spiral_expected_tries&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>横ずれが半径 `<code style="color:#22d3bf">rho</code><code style="color:#22d3bf"> の円板に一様のとき、点列 </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf"> を順に試して初めて(距離 ≤ </code><code style="color:#22d3bf">capture</code>`)捕まえるまでの期待試行回数。</p>
+<p>`<code style="color:#22d3bf">measured</code><code style="color:#22d3bf"> = 円板内の格子(grid × grid、円の外は捨てる)の平均。</code><code style="color:#22d3bf">closed</code>` = 掃いた面積の近似: k 点で面積 k·p·s を掃くので、半径 r に</p>
+<p>達するのは k = πr²/(ps)、r が円板に一様なら E = πρ²/(2ps) + 1/2(p・s は点列から推定: s = 隣の点の距離の中央値、p = 外周の点の半径の</p>
+<p>巻きあたりの増分)。どの点でも捕まらない格子点があれば `<code style="color:#22d3bf">uncovered</code>` &gt; 0(覆いの穴)。</p>
+<p><b>Raises</b> ValueError: 点が (N ≥ 3, 2) でない、capture・rho ≤ 0、grid &lt; 11。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pegsym</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polygon_peg">polygon_peg</a> · <a style="color:#22d3bf" href="opdrive:polygon_offset">polygon_offset</a> · <a style="color:#22d3bf" href="opdrive:polygon_fit_check">polygon_fit_check</a> · <a style="color:#22d3bf" href="opdrive:rotation_window">rotation_window</a> · <a style="color:#22d3bf" href="opdrive:polygon_two_point_depth">polygon_two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:polygon_coverage_image">polygon_coverage_image</a> · <a style="color:#22d3bf" href="opdrive:plane_topview">plane_topview</a> · <a style="color:#22d3bf" href="opdrive:polygon_yaw_read">polygon_yaw_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsym.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

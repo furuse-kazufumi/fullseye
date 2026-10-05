@@ -1,4 +1,4 @@
-# DRIVE operator help — 585 ops in 41 categories
+# DRIVE operator help — 600 ops in 42 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -107,6 +107,10 @@
 ### pegsim (18)
 
 [camera_world_to_cv](pegsim/camera_world_to_cv.md) · [chamfer_capture](pegsim/chamfer_capture.md) · [circle_fit_known_radius](pegsim/circle_fit_known_radius.md) · [contact_state_predict](pegsim/contact_state_predict.md) · [coverage_edge_points](pegsim/coverage_edge_points.md) · [cylinder_fit_known_radius](pegsim/cylinder_fit_known_radius.md) · [hole_centre_from_rgbd](pegsim/hole_centre_from_rgbd.md) · [insertion_grid_summary](pegsim/insertion_grid_summary.md) · [jamming_diagram](pegsim/jamming_diagram.md) · [peg_measure_overlay](pegsim/peg_measure_overlay.md) · [peg_offset_from_rgbd](pegsim/peg_offset_from_rgbd.md) · [peg_params](pegsim/peg_params.md) · [peg_scene_mjcf](pegsim/peg_scene_mjcf.md) · [peg_synthetic_rgbd](pegsim/peg_synthetic_rgbd.md) · [peg_tip_from_rgbd](pegsim/peg_tip_from_rgbd.md) · [two_point_depth](pegsim/two_point_depth.md) · [wedging_check](pegsim/wedging_check.md) · [whitney_clearance](pegsim/whitney_clearance.md)
+
+### pegsym (15)
+
+[pegsym_scene_mjcf](pegsym/pegsym_scene_mjcf.md) · [plane_topview](pegsym/plane_topview.md) · [polygon_coverage_image](pegsym/polygon_coverage_image.md) · [polygon_fit_check](pegsym/polygon_fit_check.md) · [polygon_offset](pegsym/polygon_offset.md) · [polygon_peg](pegsym/polygon_peg.md) · [polygon_two_point_depth](pegsym/polygon_two_point_depth.md) · [polygon_yaw_read](pegsym/polygon_yaw_read.md) · [relative_yaw_from_images](pegsym/relative_yaw_from_images.md) · [rotation_search_plan](pegsym/rotation_search_plan.md) · [rotation_window](pegsym/rotation_window.md) · [search_expected_tries](pegsym/search_expected_tries.md) · [spiral_expected_tries](pegsym/spiral_expected_tries.md) · [spiral_search_points](pegsym/spiral_search_points.md) · [symmetry_fold](pegsym/symmetry_fold.md)
 
 ### pegtactile (19)
 

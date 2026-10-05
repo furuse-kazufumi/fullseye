@@ -708,6 +708,10 @@ import diabolo  # noqa: E402  (ディアボロの解析模型と視覚: 原文�
 from diabolo import (  # noqa: E402,F401
     diabolo_mujoco_simulate,
 )
+import pegsym  # noqa: E402  (ペグの対称性で回転の探索を 1/n に絞る: 角・六角・キー付きペグの MuJoCo 挿入。台帳は opsdrive "pegsym")
+from pegsym import (  # noqa: E402,F401
+    pegsym_scene_build, pegsym_views, pegsym_insert_try, pegsym_search_run, pegsym_two_point_depth_sim, pegsym_scene_close,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1226,6 +1230,12 @@ __all__ = [
     "pegtactile_cutaway_xml",
     "cutting_mujoco_wrist",
     "diabolo_mujoco_simulate",
+    "pegsym_scene_build",
+    "pegsym_views",
+    "pegsym_insert_try",
+    "pegsym_search_run",
+    "pegsym_two_point_depth_sim",
+    "pegsym_scene_close",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

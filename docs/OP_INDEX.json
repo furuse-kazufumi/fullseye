@@ -1,8 +1,8 @@
 {
- "n_ops": 2969,
+ "n_ops": 2984,
  "tiers": {
   "color": 12,
-  "ledger": 2016,
+  "ledger": 2031,
   "nary": 17,
   "registry": 924
  },
@@ -16072,6 +16072,20 @@
    ]
   },
   {
+   "name": "pegsym_scene_mjcf",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "any",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "pendulum_launch_speed",
    "halcon": "",
    "in_sort": null,
@@ -16934,6 +16948,22 @@
    ]
   },
   {
+   "name": "plane_topview",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "matrix",
+    "matrix",
+    "signal"
+   ]
+  },
+  {
    "name": "plate_mesh_from_image",
    "halcon": "",
    "in_sort": "rgba",
@@ -17294,6 +17324,88 @@
    "dim": "drive",
    "in_sorts": [
     "any"
+   ]
+  },
+  {
+   "name": "polygon_coverage_image",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image2d",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
+   ]
+  },
+  {
+   "name": "polygon_fit_check",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "polygon_offset",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "polygon_peg",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "polygon_two_point_depth",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "polygon_yaw_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -19203,6 +19315,21 @@
    ]
   },
   {
+   "name": "relative_yaw_from_images",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
    "name": "render_beauty",
    "halcon": "",
    "in_sort": "mesh",
@@ -19834,6 +19961,20 @@
    "in_sorts": []
   },
   {
+   "name": "rotation_search_plan",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "rotation_translation_error",
    "halcon": "",
    "in_sort": "pose",
@@ -19845,6 +19986,21 @@
    "in_sorts": [
     "pose",
     "pose"
+   ]
+  },
+  {
+   "name": "rotation_window",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -20411,6 +20567,20 @@
    "dim": "math",
    "in_sorts": [
     "matrix"
+   ]
+  },
+  {
+   "name": "search_expected_tries",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -22078,6 +22248,36 @@
    ]
   },
   {
+   "name": "spiral_expected_tries",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "spiral_search_points",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "spoon_tilt_critical",
    "halcon": "",
    "in_sort": "scalar",
@@ -23091,6 +23291,20 @@
    "dim": "drive",
    "in_sorts": [
     "text"
+   ]
+  },
+  {
+   "name": "symmetry_fold",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "pegsym",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
    ]
   },
   {

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_fold — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_fold&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>角を n 回対称の商 SO(2)/C_n の代表 (−π/n, π/n] に畳む(n = 1 は (−π, π]、n = 0 = 円は 0)。群の恒等式</p>
+<p>symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) が門。<b>Raises</b> ValueError: n &lt; 0、角が有限でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">scalar</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pegsym</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polygon_peg">polygon_peg</a> · <a style="color:#22d3bf" href="opdrive:polygon_offset">polygon_offset</a> · <a style="color:#22d3bf" href="opdrive:polygon_fit_check">polygon_fit_check</a> · <a style="color:#22d3bf" href="opdrive:rotation_window">rotation_window</a> · <a style="color:#22d3bf" href="opdrive:polygon_two_point_depth">polygon_two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:polygon_coverage_image">polygon_coverage_image</a> · <a style="color:#22d3bf" href="opdrive:plane_topview">plane_topview</a> · <a style="color:#22d3bf" href="opdrive:polygon_yaw_read">polygon_yaw_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsym.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

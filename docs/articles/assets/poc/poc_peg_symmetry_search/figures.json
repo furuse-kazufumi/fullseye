@@ -1,0 +1,90 @@
+[
+ {
+  "file": "01_pegsym_rotating_shapes_read_mod_2pi_over_n.gif",
+  "name": "pegsym_rotating_shapes_read_mod_2pi_over_n",
+  "caption": "正方形・正六角形・キー付きの正方形を 0〜180° 回す。緑 = 真の向きを 2π/n で畳んだもの、橙 = 輪郭の複素フーリエ位相の読み(2π/n を法とした角)。正方形は 90°、六角形は 60° ごとに読みが同じ所へ戻り(群の恒等式)、キー付きは 1 周しないと戻らない。",
+  "shape": [
+   200,
+   600,
+   3
+  ],
+  "animated": true,
+  "frames": 31,
+  "frames_written": 31,
+  "fps": 6.0
+ },
+ {
+  "file": "02_pegsym_expected_tries_vs_symmetry.png",
+  "name": "pegsym_expected_tries_vs_symmetry",
+  "caption": "線 = 窓 5° を共通にした時の閉形式 E(n)、破線 = 対称を知らない探索の E を n で割ったもの。点 = この装置(窓は形ごとに違う)の閉形式と、一様な誤差の格子で口への線形計画が判定した平均。キー付きは n = 1。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_pegsym_rotation_window_margin.png",
+  "name": "pegsym_rotation_window_margin",
+  "caption": "平行移動も自由にした時の口の中の最良の余裕(線形計画)。0 を切る角 = 面取りが捕まえる窓。閉形式の窓: {'triangle': 4.75, 'square': 8.72, 'hexagon': 20.85}°。キー付き(点線)は窓の中で正方形と重なり、周期が 360°。",
+  "shape": [
+   360,
+   738,
+   3
+  ]
+ },
+ {
+  "file": "04_pegsym_two_point_depth_vs_tilt_direction.png",
+  "name": "pegsym_two_point_depth_vs_tilt_direction",
+  "caption": "傾き 3° の二点接触の深さ(厳密、凸包の頂点の線形計画)を内接円の円柱の Whitney の式で割ったもの。横軸は傾ける向きを 1 周期で割った値(0 = 面の法線、0.5 = 頂点)。偶数の n は面の法線の向きで 1(正方形では Goli ほか 2024 の (2.28) の小角の極限と同じ)、頂点の向きで外接円の式(破線)に近づく。三角形は面の向かいが頂点なので、どの向きでも 1 より上(面の法線方向の幅が辺心距離 + 外接円の半径)。",
+  "shape": [
+   380,
+   928,
+   3
+  ]
+ },
+ {
+  "file": "05_pegsym_spiral_search_cover.png",
+  "name": "pegsym_spiral_search_cover",
+  "caption": "Archimedes のらせん。期待点数: 格子 17.9、閉形式 πρ²/(2ps) + ½ = 18.6。回転と入れ子にすると (E_らせん − 1)·M + E_回転 なので、回転の M が 1/n になれば全体もほぼ 1/n。",
+  "shape": [
+   360,
+   775,
+   3
+  ]
+ },
+ {
+  "file": "06_pegsym_mujoco_blind_rotation_search.gif",
+  "name": "pegsym_mujoco_blind_rotation_search",
+  "caption": "正方形のペグの盲目の回転探索(MuJoCo、斜め上の固定カメラ)。候補は 90° の 1 周期を 6 等分(刻み 15.0°、面取りの窓 ±8.72°)。下の帯 = 試行(赤 = 面取りか襟で止まった、緑 = 入った)。6 回目で入り、予言も 6 回。",
+  "shape": [
+   254,
+   320,
+   3
+  ],
+  "animated": true,
+  "frames": 133,
+  "frames_written": 112,
+  "fps": 12.0
+ },
+ {
+  "file": "07_pegsym_capture_window_vs_friction.png",
+  "name": "pegsym_capture_window_vs_friction",
+  "caption": "面取りが回して入れる最大の向きの誤差。線 = 導出(幾何の窓、摩擦の限界 π/n − β*、最狭部の窓の大きい方)。六角形は頂点が面の法線に近く、回すモーメントが摩擦に負ける。正方形の μ ≥ 0.5 は MuJoCo の方が広い(導出の仮定 —— 並進しない —— が崩れる内訳)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "08_pegsym_wrist_and_up_camera_rectified.png",
+  "name": "pegsym_wrist_and_up_camera_rectified",
+  "caption": "手首カメラ(下向き)で穴の口、上向きカメラでペグの端面を撮り、それぞれの平面を真上から見た図に打ち直す(世界の向き、下からの鏡像も同じ向き)。どちらも輪郭の位相で向きを 90° を法として読み、差がペグに加える回転。",
+  "shape": [
+   1054,
+   990,
+   3
+  ]
+ }
+]

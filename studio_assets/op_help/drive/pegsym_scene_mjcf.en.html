@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pegsym_scene_mjcf — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: &#x27;float&#x27; = 0.0005, hole_depth: &#x27;float&#x27; = 0.02, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, k_yaw: &#x27;float&#x27; = 0.01, timestep: &#x27;float&#x27; = 0.0005, image_size=(480, 480), fovy_deg: &#x27;float&#x27; = 40.0, station=(0.1, 0.0), offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsym; pegsym.pegsym_scene_mjcf(peg_vertices, hole_vertices, chamfer: &#x27;float&#x27; = 0.0005, hole_depth: &#x27;float&#x27; = 0.02, peg_length: &#x27;float&#x27; = 0.04, mu: &#x27;float&#x27; = 0.3, k_trans: &#x27;float&#x27; = 600.0, k_rot: &#x27;float&#x27; = 1.5, k_yaw: &#x27;float&#x27; = 0.01, timestep: &#x27;float&#x27; = 0.0005, image_size=(480, 480), fovy_deg: &#x27;float&#x27; = 40.0, station=(0.1, 0.0), offsamples: &#x27;int&#x27; = 4) -&gt; &#x27;str&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pegsym_scene_mjcf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>多角形ペグの場面の MJCF 文字列(mujoco 不要): 穴 = 辺ごとに壁の箱(最狭部より下)・45° の面取りの板・明るい襟(口の面 z = 0)、</p>
+<p>ペグ = 凸メッシュの角柱(断面 `<code style="color:#22d3bf">peg_vertices</code>`、ペグ系、軸が原点)。搬送台は x・y・z のスライドと yaw のヒンジ(位置制御)、</p>
+<p>その先に 6 自由度のばねの手首(傾き `<code style="color:#22d3bf">k_rot</code><code style="color:#22d3bf">・ねじり </code><code style="color:#22d3bf">k_yaw</code>` [N m/rad] は別。把持はねじりに柔らかい)。カメラは</p>
+<p>手首(搬送台の 30 mm 横、真下向き)と、穴から `<code style="color:#22d3bf">station</code>` [m] の上向きカメラ(床の面、ペグの端面を下から見る)、</p>
+<p>図のための斜め上の固定カメラ `<code style="color:#22d3bf">side</code>`。</p>
+<p>箱は自分の辺の外側の半平面にだけあるので、角を越えて伸ばしても穴の中に入らない(凸の穴ならどの形でも同じ作り方)。</p>
+<p><b>Raises</b> ValueError: 多角形が凸でない、面取り &lt; 0、穴の深さ ≤ 面取り、摩擦 &lt; 0、剛性 ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">any</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pegsym</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polygon_peg">polygon_peg</a> · <a style="color:#22d3bf" href="opdrive:polygon_offset">polygon_offset</a> · <a style="color:#22d3bf" href="opdrive:polygon_fit_check">polygon_fit_check</a> · <a style="color:#22d3bf" href="opdrive:rotation_window">rotation_window</a> · <a style="color:#22d3bf" href="opdrive:polygon_two_point_depth">polygon_two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:polygon_coverage_image">polygon_coverage_image</a> · <a style="color:#22d3bf" href="opdrive:plane_topview">plane_topview</a> · <a style="color:#22d3bf" href="opdrive:polygon_yaw_read">polygon_yaw_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsym.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

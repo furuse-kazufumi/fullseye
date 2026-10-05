@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polygon_two_point_depth — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_two_point_depth(peg_vertices, hole_vertices, theta: &#x27;float&#x27;, tilt_dir: &#x27;float&#x27; = 0.0, depth_max: &#x27;float&#x27; = 0.05, tol: &#x27;float&#x27; = 1e-10) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegsym; pegsym.polygon_two_point_depth(peg_vertices, hole_vertices, theta: &#x27;float&#x27;, tilt_dir: &#x27;float&#x27; = 0.0, depth_max: &#x27;float&#x27; = 0.05, tol: &#x27;float&#x27; = 1e-10) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;polygon_two_point_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>傾けた多角形ペグの二点接触の深さ l₂ [m] (最狭部 z = 0 から先端の中心まで)を厳密に: 深さ l で z ≤ 0 にあるペグの部分は、先端面の</p>
+<p>頂点と側面の稜線が z = 0 を切る点の凸包。穴は鉛直な角柱なので、この頂点の水平の射影が平行移動で穴に入る(:func:<code style="color:#22d3bf">polygon_fit_check</code>)</p>
+<p>間は入り、l を深くすると入らなくなる —— その境を二分法で。`<code style="color:#22d3bf">tilt_dir</code>` = 傾ける水平の向き [rad] (世界系、ペグの断面と同じ系)。</p>
+<p>比べる円の式(Whitney、pegsim の 3-D 円柱の厳密式 (2R − r(cos θ + sec θ))/tan θ)を、内接円(r = A、R = A + δ)と外接円</p>
+<p>(r = A/cos(π/n)、R = (A + δ)/cos(π/n))で返す(`<code style="color:#22d3bf">circle_in</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">circle_out</code>`)。正方形を面に平行な軸で傾けた時の小角の極限は</p>
+<p>Goli ほか 2024 の式 (2.28) φ = (v − v′)/h、すなわち l₂ tan θ → 2δ(`<code style="color:#22d3bf">goli_small_angle</code>` = 2δ/tan θ)。</p>
+<p>奇数の n(三角形)は面の向かいが頂点なので、どの向きでも内接円の式より深い。偶数の n は面の法線の向きで内接円の式に一致する</p>
+<p>(正方形で 1e-11 m)。内接円の側に 0.03 % まで出る組がある(傾き 6°、面から 15°)。</p>
+<p>返り `<code style="color:#22d3bf">l2</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">circle_in</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">circle_out</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">goli_small_angle</code>`(δ は辺心距離の差の平均、n は頂点数)。</p>
+<p><b>Raises</b> ValueError: θ ≤ 0 か ≥ 30°、まっすぐでも入らない、depth_max まで二点接触しない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pegsym</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polygon_peg">polygon_peg</a> · <a style="color:#22d3bf" href="opdrive:polygon_offset">polygon_offset</a> · <a style="color:#22d3bf" href="opdrive:polygon_fit_check">polygon_fit_check</a> · <a style="color:#22d3bf" href="opdrive:rotation_window">rotation_window</a> · <a style="color:#22d3bf" href="opdrive:polygon_coverage_image">polygon_coverage_image</a> · <a style="color:#22d3bf" href="opdrive:plane_topview">plane_topview</a> · <a style="color:#22d3bf" href="opdrive:polygon_yaw_read">polygon_yaw_read</a> · <a style="color:#22d3bf" href="opdrive:relative_yaw_from_images">relative_yaw_from_images</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsym.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

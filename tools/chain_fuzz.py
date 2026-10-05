@@ -5301,6 +5301,98 @@ def _b_td_read(pool, rng):
     return (f["img"] + rng.normal(0, float(rng.choice([0.0, 0.02])), f["img"].shape), f["pitch"]), {}
 
 
+_FUZZ_PS = {}
+
+
+def _fuzz_ps():
+    """角ペグの小さな種(正方形と穴、合成の上から見た図、真下のカメラ)を 1 回だけ作る(pegsym、numpy だけ)。"""
+    if "peg" not in _FUZZ_PS:
+        import pegsym as PSY
+        peg = PSY.polygon_peg(4, 5.0e-3, yaw=0.2)["vertices"]
+        hole = PSY.polygon_offset(PSY.polygon_peg(4, 5.0e-3, yaw=0.5)["vertices"], 0.2e-3)["vertices"]
+        res, size = 0.15e-3, 96
+        c = (size - 1) / 2.0
+        px = np.stack([c + peg[:, 0] / res, c - peg[:, 1] / res], axis=1)
+        pxh = np.stack([c + hole[:, 0] / res, c - hole[:, 1] / res], axis=1)
+        img = PSY.polygon_coverage_image(px, size, 2)
+        himg = 1.0 - PSY.polygon_coverage_image(pxh, size, 2)
+        K = np.array([[300.0, 0, (size - 1) / 2], [0, 300.0, (size - 1) / 2], [0, 0, 1]])
+        R = np.diag([1.0, -1.0, -1.0])
+        _FUZZ_PS.update({"peg": peg, "hole": hole, "px": px, "img": img, "himg": himg, "K": K, "R": R, "t": np.array([0.0, 0.0, 300.0 * res])})
+    return _FUZZ_PS
+
+
+def _b_ps_peg(pool, rng):
+    return (int(rng.choice([3, 4, 6])),), {"yaw": float(rng.uniform(0, 6.28))}
+
+
+def _b_ps_offset(pool, rng):
+    return (_fuzz_ps()["peg"], float(rng.uniform(0.0, 0.5e-3))), {}
+
+
+def _b_ps_fit(pool, rng):
+    f = _fuzz_ps()
+    return (f["peg"] + rng.normal(0, 0.2e-3, 2), f["hole"]), {}
+
+
+def _b_ps_window(pool, rng):
+    return (int(rng.choice([3, 4, 6])), 5.0e-3, float(rng.uniform(0.05e-3, 0.4e-3))), {"chamfer": float(rng.uniform(0, 1e-3)),
+                                                                                         "mu": float(rng.uniform(0, 0.6))}
+
+
+def _b_ps_two_point(pool, rng):
+    import pegsym as PSY
+    peg = PSY.polygon_peg(4, 5.0e-3)["vertices"]
+    return (peg, PSY.polygon_offset(peg, 0.2e-3)["vertices"], float(np.radians(rng.uniform(1.0, 6.0)))), {"tilt_dir": float(rng.uniform(0, 1.6))}
+
+
+def _b_ps_cover(pool, rng):
+    return (_fuzz_ps()["px"],), {"size": 96, "ss": 2}
+
+
+def _b_ps_topview(pool, rng):
+    f = _fuzz_ps()
+    return (f["img"] * 200.0, f["K"], f["R"], f["t"]), {"extent": 96 * 0.15e-3, "res": 0.15e-3}
+
+
+def _b_ps_yaw(pool, rng):
+    return (_fuzz_ps()["img"],), {"polarity": "bright", "n": 4}
+
+
+def _b_ps_rel(pool, rng):
+    f = _fuzz_ps()
+    return (f["img"], f["himg"], 4), {}
+
+
+def _b_ps_fold(pool, rng):
+    return (float(rng.uniform(-20, 20)), int(rng.integers(0, 8))), {}
+
+
+def _b_ps_plan(pool, rng):
+    return (int(rng.integers(0, 8)), float(rng.uniform(0.02, 0.5))), {"order": str(rng.choice(["alternate", "sweep"]))}
+
+
+def _b_ps_expected(pool, rng):
+    return (int(rng.integers(1, 8)), float(rng.uniform(0.02, 0.5))), {}
+
+
+def _b_ps_spiral(pool, rng):
+    c = 0.7e-3
+    return (float(rng.uniform(1.0, 2.0)) * c, c, 3.0e-3), {}
+
+
+def _b_ps_spiral_e(pool, rng):
+    import pegsym as PSY
+    c = 0.7e-3
+    return (PSY.spiral_search_points(1.6 * c, c, 3.0e-3)["points"], c, 2.0e-3), {"grid": 31}
+
+
+def _b_ps_mjcf(pool, rng):
+    f = _fuzz_ps()
+    import pegsym as PSY
+    return (f["peg"], PSY.polygon_offset(f["peg"], 0.2e-3)["vertices"]), {"chamfer": float(rng.uniform(0, 1e-3))}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5651,6 +5743,11 @@ OP_ARG_BUILDERS = {
     "largedef_universal_correction": _b_td_univ, "large_deformation_contact": _b_td_fwd, "large_deformation_inverse": _b_td_inv,
     "mdr_spring_bed": _b_td_bed, "neohookean_cylinder_exact": _b_td_cyl, "hertz_small_strain_error": _b_td_err,
     "dome_contact_image": _b_td_img, "contact_patch_radius": _b_td_read, "largedef_c1_coefficient": _b_td_c1,
+    "polygon_peg": _b_ps_peg, "polygon_offset": _b_ps_offset, "polygon_fit_check": _b_ps_fit, "rotation_window": _b_ps_window,
+    "polygon_two_point_depth": _b_ps_two_point, "polygon_coverage_image": _b_ps_cover, "plane_topview": _b_ps_topview,
+    "polygon_yaw_read": _b_ps_yaw, "relative_yaw_from_images": _b_ps_rel, "symmetry_fold": _b_ps_fold, "rotation_search_plan": _b_ps_plan,
+    "search_expected_tries": _b_ps_expected, "spiral_search_points": _b_ps_spiral, "spiral_expected_tries": _b_ps_spiral_e,
+    "pegsym_scene_mjcf": _b_ps_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

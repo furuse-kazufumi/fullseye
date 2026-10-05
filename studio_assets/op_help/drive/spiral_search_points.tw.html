@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spiral_search_points — DRIVE <code style="color:#22d3bf">pegsym</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsym; pegsym.spiral_search_points(pitch: &#x27;float&#x27;, step: &#x27;float&#x27;, r_max: &#x27;float&#x27;, centre=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;spiral_search_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>横ずれの探索点: Archimedes のらせん r = p φ/(2π) を弧長 `<code style="color:#22d3bf">step</code><code style="color:#22d3bf"> [m] ごとに(中心から)、半径 </code><code style="color:#22d3bf">r_max</code>` まで。隣の巻きとの間隔 =</p>
+<p>`<code style="color:#22d3bf">pitch</code>`。面取りが捕まえる半径を c とすると、p ≤ 2c かつ step ≤ 2c で抜けなく覆う(隣の巻きの間の点の最悪の距離 √((p/2)² + (s/2)²)</p>
+<p>≤ c が十分条件、`<code style="color:#22d3bf">worst_gap</code><code style="color:#22d3bf"> で返す)。返り </code><code style="color:#22d3bf">points</code><code style="color:#22d3bf">(N, 2)、</code><code style="color:#22d3bf">worst_gap</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n</code>`。</p>
+<p><b>Raises</b> ValueError: pitch・step・r_max ≤ 0、点が 200,000 を超える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_symmetry_search">poc_peg_symmetry_search</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_symmetry_search.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">pegsym</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:polygon_peg">polygon_peg</a> · <a style="color:#22d3bf" href="opdrive:polygon_offset">polygon_offset</a> · <a style="color:#22d3bf" href="opdrive:polygon_fit_check">polygon_fit_check</a> · <a style="color:#22d3bf" href="opdrive:rotation_window">rotation_window</a> · <a style="color:#22d3bf" href="opdrive:polygon_two_point_depth">polygon_two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:polygon_coverage_image">polygon_coverage_image</a> · <a style="color:#22d3bf" href="opdrive:plane_topview">plane_topview</a> · <a style="color:#22d3bf" href="opdrive:polygon_yaw_read">polygon_yaw_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsym.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

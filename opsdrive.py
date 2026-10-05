@@ -29,6 +29,7 @@
 食材の切断を画像で測る(cutting: 刃の追跡・切り込み深さ・切片の厚み・切断面の粗さ・柔らかい手首のたわみからの切断力を規則だけで。真値 = Atkins 2016 の摩擦なし slice/push の閉形式(H = ξV、H/Rw は ξ = 1 で最大 0.5、ξ = tan i)と Williams & Patel 2016 のくさび + 摩擦(μ = 0.2 で θo = 79°・最小 1.24)、合成の被覆率描画、MuJoCo の正射影カメラと手首の拘束力。厚みは画素を背景・食材・刃の 3 色に線形分解し、2 つの段の窓をぼけの推定で広げる。摩擦と刃角を含む slice/push の式は未読なので組み合わせは ValueError。合成の力も当てはめも同じ模型 = 配管の検査(自己申告)。mujoco が要る 1 本は facade)。
 ディアボロの解析模型と視覚(diabolo: ロボット学習用の解析模型(arXiv:2011.09068)を LaTeX 原文から写し、原文どおりでは成り立たない所(式 1b の次元・状態遷移の帯の重なり・回転則の刻み依存)を直す。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・放物線)、厳密な糸の模型(片側拘束の RATTLE)、第 2 実装 = MuJoCo の空間テンドン。視覚は学習なし: 光線追跡の合成映像から縁と底の板の 2 円の透視モーメントで軸、マーカーの位相と回転ぶれの弧で回転数、V 字で張力。棒の組は matrix (2, 3)、棒の時系列 (N, 2, 3) と棒の動きの指定(名前 / dict / 呼べる物)は any。mujoco が要る 1 本は facade)。
 ドーム状の柔らかい指先センサを平らな物に押す大変形接触(tacdome: べき乗則断面のスケーリング則(arXiv:2509.18581)の補正 κₙ・接触半径の式 (4)・普遍形、式 (3) の 1 次の係数は活字 (4+2n)/(1+n) では円柱で力が負になるので本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)から導いた 2n/(1+n)、真値 = 非圧縮 neo-Hookean の円柱の厳密解と Hertz の極限、第 2 実装 = ばね列の中点則、内側カメラの接触像と面積法の半径 → 力の逆算。全部 numpy)。
+ペグの対称性で回転の探索を 1/n に絞る(pegsym: 正 n 角柱(n = 3, 4, 6)とキー付き(n = 1)のペグの挿入。輪郭の複素フーリエ位相で向きを 2π/n を法として読み、回転の探索は 1 周期だけを面取りの窓の 2 倍以下の刻みで掃く。真値 = 回転の窓の閉形式(導出)と平行移動の線形計画、摩擦で止まる限界の導出、期待試行回数の閉形式、Goli ほか 2024(R. Soc. Open Sci.)の式 (2.28) と円柱の Whitney の式で挟む多角形の二点接触、群の恒等式、MuJoCo の試行回数と画像。mujoco が要る 6 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -83,6 +84,7 @@ import granular
 import cutting
 import diabolo
 import tacdome
+import pegsym
 import racket
 import roadjp
 import rsssafety
@@ -91,7 +93,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -914,6 +916,28 @@ _CATALOG = {
         ("dome_contact_image", "tacdome", ["scalar", "scalar"], "image2d"),
         ("contact_patch_radius", "tacdome", ["image2d", "scalar"], "table"),
         ("largedef_c1_coefficient", "tacdome", ["scalar"], "scalar"),
+    ],
+    # ペグの対称性で回転の探索を 1/n に絞る(2026-10-05、物理シミュ × Fullseye 系列、題材は Symmetry-aware RL ICRA 2024 = arXiv:2402.18002
+    # を学習なしで): 多角形の頂点列は matrix (V, 2)、窓・探索・読みの結果は table(dict)、上から見た図と合成は image2d、角の畳み込みは scalar、
+    # カメラの t は signal、MJCF は文字列(any)。真値 = 閉形式(回転の窓・摩擦の限界・期待試行回数)、線形計画(第 2 実装)、Goli 2024 式 (2.28)、
+    # 群の恒等式、MuJoCo(--full)。mujoco が要る 6 本(pegsym_scene_build / pegsym_views / pegsym_insert_try / pegsym_search_run /
+    # pegsym_two_point_depth_sim / pegsym_scene_close)は facade だけ。
+    "pegsym": [
+        ("polygon_peg", "pegsym", ["scalar"], "table"),
+        ("polygon_offset", "pegsym", ["matrix", "scalar"], "table"),
+        ("polygon_fit_check", "pegsym", ["matrix", "matrix"], "table"),
+        ("rotation_window", "pegsym", ["scalar", "scalar", "scalar"], "table"),
+        ("polygon_two_point_depth", "pegsym", ["matrix", "matrix", "scalar"], "table"),
+        ("polygon_coverage_image", "pegsym", ["matrix"], "image2d"),
+        ("plane_topview", "pegsym", ["image2d", "matrix", "matrix", "signal"], "image2d"),
+        ("polygon_yaw_read", "pegsym", ["image2d"], "table"),
+        ("relative_yaw_from_images", "pegsym", ["image2d", "image2d", "scalar"], "table"),
+        ("symmetry_fold", "pegsym", ["scalar", "scalar"], "scalar"),
+        ("rotation_search_plan", "pegsym", ["scalar", "scalar"], "table"),
+        ("search_expected_tries", "pegsym", ["scalar", "scalar"], "table"),
+        ("spiral_search_points", "pegsym", ["scalar", "scalar", "scalar"], "table"),
+        ("spiral_expected_tries", "pegsym", ["matrix", "scalar", "scalar"], "table"),
+        ("pegsym_scene_mjcf", "pegsym", ["matrix", "matrix"], "any"),
     ],
 }
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2969,
- "n_notes": 2975,
+ "n_ops": 2984,
+ "n_notes": 2990,
  "notes": {
   "vol_dilate": [
    {
@@ -19093,6 +19093,156 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/pegsim/whitney_clearance.md"
+   }
+  ],
+  "pegsym_scene_mjcf": [
+   {
+    "op": "pegsym_scene_mjcf",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix × matrix",
+    "out": "any",
+    "path": "docs/ops/drive/pegsym/pegsym_scene_mjcf.md"
+   }
+  ],
+  "plane_topview": [
+   {
+    "op": "plane_topview",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "image2d × matrix × matrix × signal",
+    "out": "image2d",
+    "path": "docs/ops/drive/pegsym/plane_topview.md"
+   }
+  ],
+  "polygon_coverage_image": [
+   {
+    "op": "polygon_coverage_image",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix",
+    "out": "image2d",
+    "path": "docs/ops/drive/pegsym/polygon_coverage_image.md"
+   }
+  ],
+  "polygon_fit_check": [
+   {
+    "op": "polygon_fit_check",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/polygon_fit_check.md"
+   }
+  ],
+  "polygon_offset": [
+   {
+    "op": "polygon_offset",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/polygon_offset.md"
+   }
+  ],
+  "polygon_peg": [
+   {
+    "op": "polygon_peg",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/polygon_peg.md"
+   }
+  ],
+  "polygon_two_point_depth": [
+   {
+    "op": "polygon_two_point_depth",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix × matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/polygon_two_point_depth.md"
+   }
+  ],
+  "polygon_yaw_read": [
+   {
+    "op": "polygon_yaw_read",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "image2d",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/polygon_yaw_read.md"
+   }
+  ],
+  "relative_yaw_from_images": [
+   {
+    "op": "relative_yaw_from_images",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "image2d × image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/relative_yaw_from_images.md"
+   }
+  ],
+  "rotation_search_plan": [
+   {
+    "op": "rotation_search_plan",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/rotation_search_plan.md"
+   }
+  ],
+  "rotation_window": [
+   {
+    "op": "rotation_window",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/rotation_window.md"
+   }
+  ],
+  "search_expected_tries": [
+   {
+    "op": "search_expected_tries",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/search_expected_tries.md"
+   }
+  ],
+  "spiral_expected_tries": [
+   {
+    "op": "spiral_expected_tries",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "matrix × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/spiral_expected_tries.md"
+   }
+  ],
+  "spiral_search_points": [
+   {
+    "op": "spiral_search_points",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegsym/spiral_search_points.md"
+   }
+  ],
+  "symmetry_fold": [
+   {
+    "op": "symmetry_fold",
+    "dim": "drive",
+    "category": "pegsym",
+    "in": "scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/pegsym/symmetry_fold.md"
    }
   ],
   "contact_candidates": [
