@@ -1,0 +1,100 @@
+[
+ {
+  "file": "01_cutting_track_force.gif",
+  "name": "cutting_track_force",
+  "caption": "合成の切断(8 px/mm、等倍): 刃先線の推定(マゼンタ、食材に隠れた所は破線 = 両側からの内挿)、真値(緑)、先端(橙)、差し込みは最近傍 8 倍。下は手首のたわみからの力(実線)と Atkins の閉形式(破線)。",
+  "shape": [
+   680,
+   800,
+   3
+  ],
+  "animated": true,
+  "frames": 19,
+  "frames_written": 19,
+  "fps": 10.0
+ },
+ {
+  "file": "02_edge_view_thickness.png",
+  "name": "edge_view_thickness",
+  "caption": "刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。破線 = 推定の両縁。",
+  "shape": [
+   560,
+   520,
+   3
+  ]
+ },
+ {
+  "file": "03_thickness_distribution.png",
+  "name": "thickness_distribution",
+  "caption": "狙い 1.5 mm・ばらつき σ 0.08 mm・傾き σ 0.5° の 40 枚: 真値(破線)と画像(実線)の分布。",
+  "shape": [
+   360,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_thickness_scatter.png",
+  "name": "thickness_scatter",
+  "caption": "40 枚の測った厚み vs 真値(破線 = y = x)。誤差 -0.8 ± 0.6 µm。",
+  "shape": [
+   480,
+   480,
+   3
+  ]
+ },
+ {
+  "file": "05_cut_surface_profile.png",
+  "name": "cut_surface_profile",
+  "caption": "切断面の断面(振幅 30 µm・波長 1 mm + 乱れ 10 µm): 真値(破線)とシルエットからの断面(実線)。",
+  "shape": [
+   320,
+   865,
+   3
+  ]
+ },
+ {
+  "file": "06_where_it_breaks.png",
+  "name": "where_it_breaks",
+  "caption": "雑音とぼけを強めたときの深さ・厚みの誤差(元の解像度)。点が無い所は拒否(ValueError)= 黙って間違えない。",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_slice_push_closed_form.png",
+  "name": "slice_push_closed_form",
+  "caption": "摩擦なしの slice/push の閉形式。引く分が増える(ξ が大きい)ほど押す力が下がる。破線 = 画像から出したこの切断の ξ。",
+  "shape": [
+   380,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "08_mujoco_wrist_track.gif",
+  "name": "mujoco_wrist_track",
+  "caption": "MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。破線 = 推定の刃先線。",
+  "shape": [
+   480,
+   800,
+   3
+  ],
+  "animated": true,
+  "frames": 30,
+  "frames_written": 30,
+  "fps": 6.0
+ },
+ {
+  "file": "09_mujoco_flex_knife.png",
+  "name": "mujoco_flex_knife",
+  "caption": "MuJoCo の柔体に刃を押し込むと、力は頭打ちの後に下がる(潜り込み)。切断は関節の摩擦損失で入れる理由。",
+  "shape": [
+   320,
+   560,
+   3
+  ]
+ }
+]

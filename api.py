@@ -700,6 +700,10 @@ import pegtactile  # noqa: E402  (ペグ挿入を 2 本指の膜で読む: 接�
 from pegtactile import (  # noqa: E402,F401
     pegtactile_episode_run, pegtactile_prefetch, pegtactile_process_episode, pegtactile_cutaway_xml,
 )
+import cutting  # noqa: E402  (食材の切断を画像で測る: 刃・厚み・粗さ・手首の力、真値は Atkins の閉形式と MuJoCo。台帳は opsdrive "cutting")
+from cutting import (  # noqa: E402,F401
+    cutting_mujoco_wrist,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1216,6 +1220,7 @@ __all__ = [
     "pegtactile_prefetch",
     "pegtactile_process_episode",
     "pegtactile_cutaway_xml",
+    "cutting_mujoco_wrist",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

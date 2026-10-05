@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cutting_face_render — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × scalar × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_face_render(scene, heel_x: &#x27;float&#x27;, heel_z: &#x27;float&#x27;, theta_deg: &#x27;float&#x27;, gain: &#x27;float&#x27; = 1.0, gradient: &#x27;float&#x27; = 0.0, blur_px: &#x27;float&#x27; = 0.0, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, food_visible: &#x27;bool&#x27; = True)</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.cutting_face_render(scene, heel_x: &#x27;float&#x27;, heel_z: &#x27;float&#x27;, theta_deg: &#x27;float&#x27;, gain: &#x27;float&#x27; = 1.0, gradient: &#x27;float&#x27; = 0.0, blur_px: &#x27;float&#x27; = 0.0, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, food_visible: &#x27;bool&#x27; = True)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_face_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>正面像(RGB、(H, W, 3) float)。壁 → まな板 → 刃 → 食材(手前)の順に、被覆率の解析描画で重ねる。</p>
+<p>`<code style="color:#22d3bf">heel_x</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">heel_z</code><code style="color:#22d3bf"> は刃の根元の刃先(mm)、</code><code style="color:#22d3bf">theta_deg</code><code style="color:#22d3bf"> は刃先の傾き。カメラは </code><code style="color:#22d3bf">gain</code><code style="color:#22d3bf">(明るさの倍率)、</code><code style="color:#22d3bf">gradient</code>`</p>
+<p>(左右の照明勾配、全幅で ±gradient/2)、`<code style="color:#22d3bf">blur_px</code><code style="color:#22d3bf">(ガウスぼけの σ)、</code><code style="color:#22d3bf">noise</code>`(加法の正規雑音の σ)。</p>
+<p>刃の面積は副列 8 本で縦方向を厳密に積分する(多角形の面積と 2e-4 以内、PoC の門)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">rgb</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_depth_decode">carla_depth_decode</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">cutting</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cutting_scene">cutting_scene</a> · <a style="color:#22d3bf" href="opdrive:cutting_edge_render">cutting_edge_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_episode_synth">cutting_episode_synth</a> · <a style="color:#22d3bf" href="opdrive:cutting_wrist_mjcf">cutting_wrist_mjcf</a> · <a style="color:#22d3bf" href="opdrive:knife_edge_track">knife_edge_track</a> · <a style="color:#22d3bf" href="opdrive:cut_depth_from_side">cut_depth_from_side</a> · <a style="color:#22d3bf" href="opdrive:slice_thickness_profile">slice_thickness_profile</a> · <a style="color:#22d3bf" href="opdrive:cut_surface_roughness">cut_surface_roughness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cutting.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

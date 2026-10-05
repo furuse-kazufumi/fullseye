@@ -988,7 +988,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 27 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 28 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1807,6 +1807,46 @@ py -3.11 examples/poc_granular_heap_repose.py
 この回が作った図は全部で **16 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_granular_heap_repose)
 
 使用 op(ノートへ): [`beverloo_fit`](https://furuse.work/ops/drive/granular/beverloo_fit.html) · [`beverloo_rate`](https://furuse.work/ops/drive/granular/beverloo_rate.html) · [`container_fill_level`](https://furuse.work/ops/drive/granular/container_fill_level.html) · [`container_synth`](https://furuse.work/ops/drive/granular/container_synth.html) · [`datum_tilt_check`](https://furuse.work/ops/drive/granular/datum_tilt_check.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`discharge_synth`](https://furuse.work/ops/drive/granular/discharge_synth.html) · [`dispense_mass_from_video`](https://furuse.work/ops/drive/granular/dispense_mass_from_video.html) · [`heap_mass`](https://furuse.work/ops/drive/granular/heap_mass.html) · [`heap_scene_mjcf`](https://furuse.work/ops/drive/granular/heap_scene_mjcf.html) · [`heap_spheres_select`](https://furuse.work/ops/drive/granular/heap_spheres_select.html) · [`heap_synth_cone`](https://furuse.work/ops/drive/granular/heap_synth_cone.html) · [`heap_volume_cone`](https://furuse.work/ops/drive/granular/heap_volume_cone.html) · [`heap_volume_heightmap`](https://furuse.work/ops/drive/granular/heap_volume_heightmap.html) · [`hopper_discharge_rate`](https://furuse.work/ops/drive/granular/hopper_discharge_rate.html) · [`powder_flowability_class`](https://furuse.work/ops/drive/granular/powder_flowability_class.html) · [`repose_angle_heightmap`](https://furuse.work/ops/drive/granular/repose_angle_heightmap.html) · [`repose_angle_silhouette`](https://furuse.work/ops/drive/granular/repose_angle_silhouette.html) · [`spheres_render_shaded`](https://furuse.work/ops/drive/granular/spheres_render_shaded.html) · [`spheres_to_heightmap`](https://furuse.work/ops/drive/granular/spheres_to_heightmap.html) · [`spheres_to_silhouette`](https://furuse.work/ops/drive/granular/spheres_to_silhouette.html) · [`spoon_tilt_critical`](https://furuse.work/ops/drive/granular/spoon_tilt_critical.html) · [`spoon_tilt_dispense`](https://furuse.work/ops/drive/granular/spoon_tilt_dispense.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.205 —— 食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo
+
+[![食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/01_cutting_track_force.gif)
+
+*↑ **食材の切断を画像で測る ―― 刃の追跡・切片の厚み・切断面の粗さ・手首のたわみからの切断力、真値は閉形式と MuJoCo** ―― 物理シミュ × Fullseye 系列。題材はロボットの食材スライスの研究(arXiv:2404.02569、ICRA 2024)。学習はせず規則だけで「画像 → 刃の高さ → 柔らかい手首のたわみ → 力 → 靱性 R」の鎖を閉じる。新モジュール cutting 16 op + mujoco の facade 1。外から来る真値は 3 つ。(1) 閉形式の切断力学: Atkins, Interface Focus 6:20160019 (2016) の式 1.1〜1.4(摩擦なしの押し + 引き、V/(Rw) = 1/(1+ξ²)、H = ξV、F_res/(Rw) = 1/√(1+ξ²))と本文の数(H/Rw は ξ = 1 で最大 0.5、傾けた刃を縦に動かすと ξ = tan i)、Williams & Patel, Interface Focus 6:20150108 (2016) の式 2.6(くさび + Coulomb 摩擦、最小 1/(1 − sin β))と本文の例(μ = 0.2 で θo = 79°・最小 1.24)。摩擦と刃角を含む slice/push の式は未読なので実装せず、組み合わせは ValueError。(2) 物理エンジン = MuJoCo(--full): 正射影カメラで描いた刃を同じ追跡器で追い、食材の抵抗を関節の摩擦損失として毎歩 R·w_eff·g(ξ) に置き換えた手首の拘束力と比べる。柔体は剛性の桁が合うが破断しない(刃は潜り込む)ことも門で固定。(3) 有限要素の刃の力(--full、任意、非商用): arXiv:2105.12244 が公開した CSV(CC BY-NC 4.0)を環境変数から読み、形の比較だけ(データは repo に入れず、図にも載せない)。★厚みの縁は行の 3 色(背景・食材・刃)の線形分解で読む: 背景の割合は端面で 1 → 0、刃の割合は刃の面で 0 → 1 の純粋な段なので、窓の中の和が縁の位置になる。ぼけは割合の和を変えないので、窓を端面の段の 2 次モーメントから広げれば偏らない —— ぼけ 4 px の厚みの偏り −18 µm → +11 µm、8 px は刃の帯がぼけに比べて細すぎるので拒否(試作は −37 µm で黙って通った)。★薄い切片の食材の参照色は刃の向こうの本体から取るので照明の左右勾配で 13 % ずれる: 刃の帯の輝度から照明を推定して戻し 66 → 5 µm。図: 合成の切断の GIF(推定の刃先線・隠れた所は破線・真値・先端・力の曲線)、刃先方向の像と両縁、40 枚の厚みの分布と散布、切断面の断面、壊れる場所、slice/push の閉形式; --full: MuJoCo の GIF、柔体に刃を押した力。門 14 本(numpy、CPU 0.95 s)+ --full 7 本: 閉形式 1e-16、H/Rw の最大 0.5000 @ ξ 1.000、θo 78.69°・最小 1.2440、角度 0.017°、隠れた中央の刃先 8.2 µm、先端 0.24 mm、深さ 29 µm(0.12 px)、厚み 0.1〜5 mm の偏り 6.9 µm・行ごとの RMS 18.5 µm・傾き 0.021°、粗さの床 Rq 11 µm、R 393.6(真値 400、−1.6 %)・ξ 0.561(真値 0.570)、力 1.25 倍の世界で R 500.0(自己申告); --full(8 px/mm・20 px/mm): 角度 0.0014°・刃先 1.1 µm・深さ 2.2 µm・厚みの偏り 2.8 µm・RMS 10.4 µm、雑音 0.05 まで ≤ 5 µm で 0.1 は拒否、MuJoCo 柔体 F/(E·A·δ/H) 1.106 / 1.074 / 1.059、刃は 0.76 N で頭打ち、描画 → 追跡 0.9 µm・0.0007°、手首の力 0.083 N ≤ c·v 0.150 N、FEM 6 本の残差 / 定常値 ≤ 0.068。正直に: 力の真値は外から来ていない —— 合成の力も当てはめも同じ Atkins の模型で作るので、画像 → R の鎖は配管の検査(力 1.25 倍の世界でも R が 1.25 倍に出るだけで靱性と摩擦を分けられない)。食材は変形しない、刃先は直線、片刃を仮定。靱性の実測値は引用しない。画像つきの切断の公開データは見つからなかった。MuJoCo の柔体は保持中も ±5〜11 % 揺れ続ける。踏んだ罠: 画像の中心は ((H−1)/2, (W−1)/2)(H/2 だと 62.5 µm ずれる)、MuJoCo の摩擦損失は既定だと粘性のように柔らかい、入り始めの軌跡で ξ を出すと 0.63(真値 0.57)。*
+
+[![刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。破線 = 推定の両縁。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/02_edge_view_thickness.png)
+
+*↑ 測定の図 ―― 刃先方向の像(20 px/mm、等倍): 片刃の平らな面と食材の端面の距離 = 切片の厚み。破線 = 推定の両縁。*
+
+[![狙い 1.5 mm・ばらつき σ 0.08 mm・傾き σ 0.5° の 40 枚: 真値(破線)と画像(実線)の分布。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/03_thickness_distribution_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/03_thickness_distribution.png)
+
+*↑ 狙い 1.5 mm・ばらつき σ 0.08 mm・傾き σ 0.5° の 40 枚: 真値(破線)と画像(実線)の分布。*
+
+[![40 枚の測った厚み vs 真値(破線 = y = x)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/04_thickness_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/04_thickness_scatter.png)
+
+*↑ 40 枚の測った厚み vs 真値(破線 = y = x)。*
+
+[![雑音とぼけを強めたときの深さ・厚みの誤差(元の解像度)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/06_where_it_breaks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/06_where_it_breaks.png)
+
+*↑ 雑音とぼけを強めたときの深さ・厚みの誤差(元の解像度)。*
+
+[![摩擦なしの slice/push の閉形式。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/07_slice_push_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/07_slice_push_closed_form.png)
+
+*↑ 摩擦なしの slice/push の閉形式。*
+
+[![MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。破線 = 推定の刃先線。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_food_cutting_measure/08_mujoco_wrist_track.gif)
+
+*↑ 動く図 ―― MuJoCo の正射影カメラで描いた刃(柔らかい手首 4 N/mm、抵抗 = 摩擦損失 = Atkins の切断力)を同じ追跡器で追う。破線 = 推定の刃先線。*
+
+```
+py -3.11 examples/poc_food_cutting_measure.py
+```
+
+ソース: [examples/poc_food_cutting_measure.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_food_cutting_measure.py)
+
+この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_food_cutting_measure)
+
+使用 op(ノートへ): [`cut_depth_from_side`](https://furuse.work/ops/drive/cutting/cut_depth_from_side.html) · [`cut_force_atkins`](https://furuse.work/ops/drive/cutting/cut_force_atkins.html) · [`cut_force_csv_load`](https://furuse.work/ops/drive/cutting/cut_force_csv_load.html) · [`cut_force_fit`](https://furuse.work/ops/drive/cutting/cut_force_fit.html) · [`cut_surface_roughness`](https://furuse.work/ops/drive/cutting/cut_surface_roughness.html) · [`cutting_edge_render`](https://furuse.work/ops/drive/cutting/cutting_edge_render.html) · [`cutting_episode_synth`](https://furuse.work/ops/drive/cutting/cutting_episode_synth.html) · [`cutting_face_render`](https://furuse.work/ops/drive/cutting/cutting_face_render.html) · [`cutting_scene`](https://furuse.work/ops/drive/cutting/cutting_scene.html) · [`cutting_wrist_mjcf`](https://furuse.work/ops/drive/cutting/cutting_wrist_mjcf.html) · [`food_cut_width`](https://furuse.work/ops/drive/cutting/food_cut_width.html) · [`force_from_wrist_displacement`](https://furuse.work/ops/drive/cutting/force_from_wrist_displacement.html) · [`identity`](https://furuse.work/ops/2d/misc/identity.html) · [`knife_edge_track`](https://furuse.work/ops/drive/cutting/knife_edge_track.html) · [`profile_params`](https://furuse.work/ops/roughness/measure/profile_params.html) · [`slice_push_from_track`](https://furuse.work/ops/drive/cutting/slice_push_from_track.html) · [`slice_push_ratio`](https://furuse.work/ops/drive/cutting/slice_push_ratio.html) · [`slice_thickness_profile`](https://furuse.work/ops/drive/cutting/slice_thickness_profile.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`zoom_inset`](https://furuse.work/ops/annotate/compose/zoom_inset.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

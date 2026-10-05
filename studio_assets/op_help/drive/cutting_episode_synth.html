@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cutting_episode_synth — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">なし</code> → <code style="color:#22d3bf">table</code>(引数だけで決まる op —— 画像やデータの入力を取らない)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_episode_synth(R: &#x27;float&#x27; = 400.0, theta_deg: &#x27;float&#x27; = 4.0, vx: &#x27;float&#x27; = 6.0, vz: &#x27;float&#x27; = 4.0, k_wrist: &#x27;float&#x27; = 4.0, dt: &#x27;float&#x27; = 0.1, n_frames: &#x27;int&#x27; = 40, heel_x0: &#x27;float&#x27; = 12.0, edge_start: &#x27;float&#x27; = 27.0, scene=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cutting; cutting.cutting_episode_synth(R: &#x27;float&#x27; = 400.0, theta_deg: &#x27;float&#x27; = 4.0, vx: &#x27;float&#x27; = 6.0, vz: &#x27;float&#x27; = 4.0, k_wrist: &#x27;float&#x27; = 4.0, dt: &#x27;float&#x27; = 0.1, n_frames: &#x27;int&#x27; = 40, heel_x0: &#x27;float&#x27; = 12.0, edge_start: &#x27;float&#x27; = 27.0, scene=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cutting_episode_synth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>閉形式の運動で切断の 1 回分を作る(準静的、剛塑性の食材 + 縦だけ柔らかい手首)。返り値 dict(列は numpy 配列)。</p>
+<p>指令: 刃の根元を (vx, −vz) mm/s で動かす(`<code style="color:#22d3bf">k_wrist</code>` N/mm)。食材は切れ始めるまで動かず、切れている間の押し力は</p>
+<p>`<code style="color:#22d3bf">R · w_eff · 1/(1+ξ²)</code><code style="color:#22d3bf">(:func:</code>cut_force_atkins` の slice_push)。刃は「指令 + F/k」の高さに止まり、切った所は戻らない。</p>
+<p>刃先の最下点(食材の幅の中)がまな板の 0.3 mm 上に来たら止める。</p>
+<p>返り値: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_x</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_z_cmd</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">heel_z</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">edge_z_c</code><code style="color:#22d3bf">(食材中央での刃先の高さの真値)、</code><code style="color:#22d3bf">F</code>`(押し力の真値)、</p>
+<p>`<code style="color:#22d3bf">w_eff</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">xi</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">params</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">cutting</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cutting_scene">cutting_scene</a> · <a style="color:#22d3bf" href="opdrive:cutting_face_render">cutting_face_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_edge_render">cutting_edge_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_wrist_mjcf">cutting_wrist_mjcf</a> · <a style="color:#22d3bf" href="opdrive:knife_edge_track">knife_edge_track</a> · <a style="color:#22d3bf" href="opdrive:cut_depth_from_side">cut_depth_from_side</a> · <a style="color:#22d3bf" href="opdrive:slice_thickness_profile">slice_thickness_profile</a> · <a style="color:#22d3bf" href="opdrive:cut_surface_roughness">cut_surface_roughness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cutting.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

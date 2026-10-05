@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2925,
- "n_notes": 2931,
+ "n_ops": 2941,
+ "n_notes": 2947,
  "notes": {
   "vol_dilate": [
    {
@@ -16607,6 +16607,165 @@
     "in": "any",
     "out": "any",
     "path": "docs/ops/drive/crossing/track_sight_distance.md"
+   }
+  ],
+  "cut_depth_from_side": [
+   {
+    "op": "cut_depth_from_side",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "rgb × table × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cut_depth_from_side.md"
+   }
+  ],
+  "cut_force_atkins": [
+   {
+    "op": "cut_force_atkins",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cut_force_atkins.md"
+   }
+  ],
+  "cut_force_csv_load": [
+   {
+    "op": "cut_force_csv_load",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "any × any",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cut_force_csv_load.md"
+   }
+  ],
+  "cut_force_fit": [
+   {
+    "op": "cut_force_fit",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "signal × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cut_force_fit.md"
+   }
+  ],
+  "cut_surface_roughness": [
+   {
+    "op": "cut_surface_roughness",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "rgb × scalar × scalar × signal",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cut_surface_roughness.md"
+   }
+  ],
+  "cutting_edge_render": [
+   {
+    "op": "cutting_edge_render",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "table × any × scalar × scalar × scalar",
+    "out": "rgb",
+    "path": "docs/ops/drive/cutting/cutting_edge_render.md"
+   }
+  ],
+  "cutting_episode_synth": [
+   {
+    "op": "cutting_episode_synth",
+    "dim": "drive",
+    "category": "cutting",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cutting_episode_synth.md"
+   }
+  ],
+  "cutting_face_render": [
+   {
+    "op": "cutting_face_render",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "table × scalar × scalar × scalar",
+    "out": "rgb",
+    "path": "docs/ops/drive/cutting/cutting_face_render.md"
+   }
+  ],
+  "cutting_scene": [
+   {
+    "op": "cutting_scene",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/cutting_scene.md"
+   }
+  ],
+  "cutting_wrist_mjcf": [
+   {
+    "op": "cutting_wrist_mjcf",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "table × scalar",
+    "out": "any",
+    "path": "docs/ops/drive/cutting/cutting_wrist_mjcf.md"
+   }
+  ],
+  "food_cut_width": [
+   {
+    "op": "food_cut_width",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/cutting/food_cut_width.md"
+   }
+  ],
+  "force_from_wrist_displacement": [
+   {
+    "op": "force_from_wrist_displacement",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "signal × signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/cutting/force_from_wrist_displacement.md"
+   }
+  ],
+  "knife_edge_track": [
+   {
+    "op": "knife_edge_track",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "rgb",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/knife_edge_track.md"
+   }
+  ],
+  "slice_push_from_track": [
+   {
+    "op": "slice_push_from_track",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "scalar × signal × signal",
+    "out": "scalar",
+    "path": "docs/ops/drive/cutting/slice_push_from_track.md"
+   }
+  ],
+  "slice_push_ratio": [
+   {
+    "op": "slice_push_ratio",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "scalar × scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/cutting/slice_push_ratio.md"
+   }
+  ],
+  "slice_thickness_profile": [
+   {
+    "op": "slice_thickness_profile",
+    "dim": "drive",
+    "category": "cutting",
+    "in": "rgb × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/cutting/slice_thickness_profile.md"
    }
   ],
   "aliased_frequency": [

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cut_force_atkins — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_atkins(R_j_per_m2: &#x27;float&#x27;, width_mm: &#x27;float&#x27;, xi: &#x27;float&#x27; = 0.0, wedge_deg: &#x27;float | None&#x27; = None, mu: &#x27;float&#x27; = 0.0, model: &#x27;str | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.cut_force_atkins(R_j_per_m2: &#x27;float&#x27;, width_mm: &#x27;float&#x27;, xi: &#x27;float&#x27; = 0.0, wedge_deg: &#x27;float | None&#x27; = None, mu: &#x27;float&#x27; = 0.0, model: &#x27;str | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_atkins&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>柔らかい固体の切断力の閉形式(尺度 = 靱性 R × 切っている幅 w、R と w の 1 次)。返り値 dict(N)。</p>
+<p>`<code style="color:#22d3bf">model=&quot;slice_push&quot;</code><code style="color:#22d3bf">(既定、</code><code style="color:#22d3bf">wedge_deg</code>` なし): 摩擦なしの押し + 引き(Atkins 2016、Interface Focus 6:20160019 の</p>
+<p>式 1.2〜1.4): `<code style="color:#22d3bf">V/(Rw) = 1/(1+ξ²)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">H/(Rw) = ξ/(1+ξ²)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">F_res/(Rw) = 1/√(1+ξ²)</code>`。ξ = 刃に沿う速度 / 刃を横切る速度。</p>
+<p>`<code style="color:#22d3bf">model=&quot;wedge_friction&quot;</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">wedge_deg</code>` を渡す、押しだけ ξ = 0): 弾性の切りくず + Coulomb 摩擦(Williams &amp; Patel 2016、</p>
+<p>Interface Focus 6:20150108 の式 2.6、μ = tan β): `<code style="color:#22d3bf">Fc/(b Gc) = 1 / ((1 − cos θ) + sin θ / tan(β + θ))</code>`。θ は原文の工具角。</p>
+<p>最小は θ + β = 90° で `<code style="color:#22d3bf">1/(1 − sin β)</code>`。</p>
+<p>★ 摩擦と刃角が入った slice/push の式は未読なので実装しない: ξ &gt; 0 と `<code style="color:#22d3bf">wedge_deg</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">mu</code>` の同時指定は ValueError。</p>
+<p>返り値: `<code style="color:#22d3bf">V</code><code style="color:#22d3bf">(押し)、</code><code style="color:#22d3bf">H</code><code style="color:#22d3bf">(引き、wedge_friction では nan)、</code><code style="color:#22d3bf">F_res</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">scale</code><code style="color:#22d3bf"> = R·w、wedge_friction では </code><code style="color:#22d3bf">Fc_over_bGc</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">cutting</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cutting_scene">cutting_scene</a> · <a style="color:#22d3bf" href="opdrive:cutting_face_render">cutting_face_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_edge_render">cutting_edge_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_episode_synth">cutting_episode_synth</a> · <a style="color:#22d3bf" href="opdrive:cutting_wrist_mjcf">cutting_wrist_mjcf</a> · <a style="color:#22d3bf" href="opdrive:knife_edge_track">knife_edge_track</a> · <a style="color:#22d3bf" href="opdrive:cut_depth_from_side">cut_depth_from_side</a> · <a style="color:#22d3bf" href="opdrive:slice_thickness_profile">slice_thickness_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cutting.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

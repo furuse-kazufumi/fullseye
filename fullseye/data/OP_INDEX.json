@@ -1,8 +1,8 @@
 {
- "n_ops": 2925,
+ "n_ops": 2941,
  "tiers": {
   "color": 12,
-  "ledger": 1972,
+  "ledger": 1988,
   "nary": 17,
   "registry": 924
  },
@@ -4779,6 +4779,81 @@
    ]
   },
   {
+   "name": "cut_depth_from_side",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "table",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cut_force_atkins",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cut_force_csv_load",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any"
+   ]
+  },
+  {
+   "name": "cut_force_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cut_surface_roughness",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "scalar",
+    "scalar",
+    "signal"
+   ]
+  },
+  {
    "name": "cutout",
    "halcon": "",
    "in_sort": "points",
@@ -4789,6 +4864,77 @@
    "dim": "3d",
    "in_sorts": [
     "points"
+   ]
+  },
+  {
+   "name": "cutting_edge_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "rgb",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "any",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cutting_episode_synth",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "cutting_face_render",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "rgb",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cutting_scene",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
+   "name": "cutting_wrist_mjcf",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "any",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar"
    ]
   },
   {
@@ -7897,6 +8043,37 @@
     "any",
     "scalar",
     "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "food_cut_width",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "force_from_wrist_displacement",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
     "scalar"
    ]
   },
@@ -11190,6 +11367,19 @@
    "dim": "reprconv",
    "in_sorts": [
     "keypoints"
+   ]
+  },
+  {
+   "name": "knife_edge_track",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb"
    ]
   },
   {
@@ -20913,6 +21103,51 @@
    "dim": "optics",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "slice_push_from_track",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "slice_push_ratio",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "slice_thickness_profile",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "cutting",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "scalar",
+    "scalar"
    ]
   },
   {

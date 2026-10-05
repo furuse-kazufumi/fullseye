@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**食材の切断を画像で測る**(新モジュール `cutting` 16 op + mujoco の facade 1、台帳 `cutting`(opsdrive)、PoC `poc_food_cutting_measure`、wing_metrology):
+  題材はロボットの食材スライス(arXiv:2404.02569)。規則だけで「画像 → 刃の高さ → 手首のたわみ → 力 → 靱性」を閉じる。真値 = Atkins 2016 / Williams & Patel 2016 の
+  閉形式と本文の数、MuJoCo の描画と手首の拘束力(`--full`)、有限要素の力の CSV(arXiv:2105.12244、CC BY-NC 4.0、repo に入れず `FULLSEYE_CUT_FORCE_DATA`)。
+  ★厚みは行の 3 色の線形分解(ぼけ 4 px の偏り −18 → +11 µm、8 px は拒否)、照明の勾配は刃の帯から戻す(66 → 5 µm)。門 14 本 + `--full` 7 本: 厚みの偏り
+  6.9 µm(4 px/mm・10 px/mm)/ 2.8 µm(元の解像度)、R 393.6(真値 400)。正直に: 力の真値は外から来ていない(合成と当てはめが同じ模型 = 配管の検査)、
+  食材は変形しない・刃先は直線・片刃の仮定、摩擦と刃角を含む slice/push は未読で ValueError。
 - ★**ペグ挿入を 2 本指の膜で読む**(新モジュール `pegtactile` 19 op + 既存へ 2(`tacsim.contact_radius_fit_pixelwise` / `tacslip.mindlin_fit_vector`)+ mujoco の
   facade 4、台帳 `pegtactile`(opsdrive)、PoC `poc_peg_insertion_tactile`、wing_geometry): pegsim・pegfail と視触覚 3 本の集大成。膜の像 2 枚だけから接触レンチを
   復元し、Whitney の接触状態・壁の μ・止まった時のくさび / かじり・手首剛性を学習なしの規則で読む。真値 = Whitney 1982 の l₂(θ) と c/μ、Johnson 1985 の閉形式、

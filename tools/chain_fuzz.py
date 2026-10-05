@@ -5042,6 +5042,96 @@ def _b_tacslip_vector(pool, rng):
     return (model, ctx["pts_flat"], d["u_m"]), {"n_coarse": 11, "n_fine": 5}
 
 
+_FUZZ_CUT = {}
+
+
+def _fuzz_cut():
+    """食材の切断の小さな種(低い解像度の場面・正面像・刃先方向の像・追跡)を 1 回だけ作る(cutting、numpy + scipy)。"""
+    if "sf" not in _FUZZ_CUT:
+        import cutting as CT
+        sf = CT.cutting_scene("face", 4.0)
+        se = CT.cutting_scene("edge", 10.0)
+        face = CT.cutting_face_render(sf, 18.0, 12.0, 3.0, noise=0.01, seed=1)
+        edge = CT.cutting_edge_render(se, 6.0, 7.0, 0.5, 6.0, noise=0.01, seed=1)
+        _FUZZ_CUT.update({"sf": sf, "se": se, "face": face, "edge": edge, "track": CT.knife_edge_track(face, sf["board_row"])})
+    return _FUZZ_CUT
+
+
+def _b_cut_scene(pool, rng):
+    return (str(rng.choice(["face", "edge"])),), {"px_per_mm": float(rng.choice([4.0, 6.0]))}
+
+
+def _b_cut_face_render(pool, rng):
+    return (_fuzz_cut()["sf"], float(rng.uniform(5, 25)), float(rng.uniform(5, 30)), float(rng.uniform(-10, 10))), {"noise": 0.01}
+
+
+def _b_cut_edge_render(pool, rng):
+    return (_fuzz_cut()["se"], 6.0, float(rng.uniform(6.1, 9.0)), float(rng.uniform(-2, 2)), 6.0), {}
+
+
+def _b_cut_none(pool, rng):
+    return (), {}
+
+
+def _b_cut_mjcf(pool, rng):
+    return (_fuzz_cut()["sf"], float(rng.uniform(-10, 10))), {}
+
+
+def _b_cut_track(pool, rng):
+    return (_fuzz_cut()["face"],), {"board_row": _fuzz_cut()["sf"]["board_row"]}
+
+
+def _b_cut_depth(pool, rng):
+    f = _fuzz_cut()
+    return (f["face"], f["track"], f["sf"]["px_per_mm"], f["sf"]["board_row"]), {}
+
+
+def _b_cut_thickness(pool, rng):
+    f = _fuzz_cut()
+    return (f["edge"], f["se"]["px_per_mm"], f["se"]["board_row"]), {"z_band": (10.3, 23.7)}
+
+
+def _b_cut_roughness(pool, rng):
+    f = _fuzz_cut()
+    return (f["edge"], f["se"]["px_per_mm"], f["se"]["board_row"], np.array([12.0, 22.0])), {}
+
+
+def _b_cut_wrist(pool, rng):
+    z = rng.uniform(0, 20, 12)
+    return (z + rng.uniform(0, 2, 12), z, float(rng.uniform(0.5, 8))), {}
+
+
+def _b_cut_atkins(pool, rng):
+    return (float(rng.uniform(50, 1500)), float(rng.uniform(1, 60))), {"xi": float(rng.uniform(0, 3))}
+
+
+def _b_cut_ratio(pool, rng):
+    return (float(rng.uniform(-30, 30)), float(rng.uniform(-6, 6)), float(rng.uniform(0.5, 8))), {}
+
+
+def _b_cut_from_track(pool, rng):
+    t = np.arange(8.0)
+    return (float(rng.uniform(-10, 10)), 4.0 * t * 0.1, 30.0 - 6.0 * t * 0.1), {}
+
+
+def _b_cut_width(pool, rng):
+    return (float(rng.uniform(-10, 10)), float(rng.uniform(0, 30)), 34.0, 24.0), {}
+
+
+def _b_cut_fit(pool, rng):
+    w = np.linspace(0, 34, 12)
+    return (0.4 * w / (1 + 0.3 ** 2) + rng.normal(0, 0.05, 12), w, 0.3), {}
+
+
+def _b_cut_csv(pool, rng):
+    p = os.path.join(tempfile.gettempdir(), "chain_fuzz_cut_force.csv")
+    with open(p, "w", encoding="utf-8") as fh:
+        fh.write("deck,Rcforc Data\nTime,X-force,Time,Y-force,Time,Z-force,\n")
+        for k in range(6):
+            fh.write("%g,0,%g,%g,%g,0,\n" % (0.01 * k, 0.01 * k, -k, 0.01 * k))
+    return (p, "CC-BY-NC-4.0"), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5377,6 +5467,12 @@ OP_ARG_BUILDERS = {
     "friction_from_single_contact": _b_pt_friction, "stall_verdict": _b_pt_stall, "wrist_stiffness_fit": _b_pt_stiffness,
     "wrist_deflection_from_rgbd": _b_pt_deflection, "symmetric_peg_shape": _b_pt_shape, "symmetry_order_contour": _b_pt_symmetry,
     "equivariance_check": _b_pt_equivariance, "contact_radius_fit_pixelwise": _b_tacsim_pixelwise, "mindlin_fit_vector": _b_tacslip_vector,
+    "cutting_scene": _b_cut_scene, "cutting_face_render": _b_cut_face_render, "cutting_edge_render": _b_cut_edge_render,
+    "cutting_episode_synth": _b_cut_none, "cutting_wrist_mjcf": _b_cut_mjcf, "knife_edge_track": _b_cut_track,
+    "cut_depth_from_side": _b_cut_depth, "slice_thickness_profile": _b_cut_thickness, "cut_surface_roughness": _b_cut_roughness,
+    "force_from_wrist_displacement": _b_cut_wrist, "cut_force_atkins": _b_cut_atkins, "slice_push_ratio": _b_cut_ratio,
+    "slice_push_from_track": _b_cut_from_track, "food_cut_width": _b_cut_width, "cut_force_fit": _b_cut_fit,
+    "cut_force_csv_load": _b_cut_csv,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

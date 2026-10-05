@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cutting_scene — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import cutting; cutting.cutting_scene(kind: &#x27;str&#x27; = &#x27;face&#x27;, px_per_mm: &#x27;float | None&#x27; = None, **overrides) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cutting_scene&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>合成の場面の諸元(dict)。`<code style="color:#22d3bf">kind=&quot;face&quot;</code><code style="color:#22d3bf"> = 正面像(カメラは刃の面の法線方向)、</code><code style="color:#22d3bf">&quot;edge&quot;</code>` = 刃先方向の像。</p>
+<p>正面像: 刃は食材より長く、食材の左右で刃先の直線が見える。食材の幅の中は食材に隠れる。キーは `<code style="color:#22d3bf">food_xc</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">food_w</code>` /</p>
+<p>`<code style="color:#22d3bf">food_h</code><code style="color:#22d3bf">(食材の中心・幅・高さ)、</code><code style="color:#22d3bf">blade_len</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">blade_h</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">tip_slant</code>`(刃先の長さ・刃の高さ・先端の斜め部)。</p>
+<p>刃先方向の像: 刃は細い帯に見え、片刃の平らな面と食材の端面の距離が切片の厚み。キーは `<code style="color:#22d3bf">food_top</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">blade_tb</code>`(峰の厚み)、</p>
+<p>`<code style="color:#22d3bf">blade_hb</code><code style="color:#22d3bf">(片刃の切刃の高さ)、</code><code style="color:#22d3bf">blade_h</code>`。</p>
+<p>`<code style="color:#22d3bf">px_per_mm</code><code style="color:#22d3bf"> を変えると画素の寸法 </code><code style="color:#22d3bf">H</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">W</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">board_row</code>`(z = 0 の行)が比例して変わる(mm の寸法は同じ)。</p>
+<p>既定は正面像 8 px/mm(800×480)、刃先方向 20 px/mm(520×560)。知らないキーは ValueError(綴り壊しを黙って通さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">cutting</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cutting_face_render">cutting_face_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_edge_render">cutting_edge_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_episode_synth">cutting_episode_synth</a> · <a style="color:#22d3bf" href="opdrive:cutting_wrist_mjcf">cutting_wrist_mjcf</a> · <a style="color:#22d3bf" href="opdrive:knife_edge_track">knife_edge_track</a> · <a style="color:#22d3bf" href="opdrive:cut_depth_from_side">cut_depth_from_side</a> · <a style="color:#22d3bf" href="opdrive:slice_thickness_profile">slice_thickness_profile</a> · <a style="color:#22d3bf" href="opdrive:cut_surface_roughness">cut_surface_roughness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cutting.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

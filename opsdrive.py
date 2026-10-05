@@ -26,6 +26,7 @@
 粉体の山を画像で測る(granular: 安息角・体積・質量・流動性・排出率を規則だけで。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> の流動性の表(Carr 1965)、1 mm ガラス球の公表値 25.2 ± 0.8 度(arXiv 2009.10448)、第 2 実装 = MuJoCo の剛体球の山。側面像は縁の画素の被覆率を副画素の位置に読む(列和法は粉の画素値のずれで tan φ が縮む罠)、高さ図は勾配ヒストグラムの最頻、傾いた基準面は左右差 ≈ 2β の警報。mujoco が要る 2 本は facade)。
 視触覚センサの照明を実機の較正球で較正する(tacscalib: 既知球の法線の閉形式と手当ての接触円を真値に、線形 12 パラメタの照明模型(逆算は photometric_stereo = 被験者)と example-based の勾配 LUT(位置の 2 次式つき、行の少ないビンは近いビンの位置の項を借りて傾き 0〜15° の不感帯を消す、粗 → 細の逆引き)を 2 つの独立な経路にする。外部の位置 2 次 LUT の書式を読むアダプタつき。全部 numpy)。
 ペグ挿入を 2 本指の膜で読む(pegtactile: 指先の弾性膜のせん断の像から、ペグが穴から受ける接触レンチ・Whitney の接触状態(一点 / 二点、止まった時のくさび / かじり)・壁の摩擦・手首剛性を学習なしの規則で。真値 = Whitney 1982 の二点接触の深さ l₂(θ) とくさびの境目 c/μ、Hertz・Cattaneo–Mindlin・Cerruti・無滑りねじりの閉形式、群の作用(同変性)、MuJoCo の接触と手首の力・トルクセンサ。膜は MuJoCo に無いのでパッド荷重は静力学の写像(把持の左右分配は対称の仮定)。くさびの境目ではレンチだけの規則が二点を口の一点と読む死角があり幾何の検査で解く。mujoco が要る 4 本は facade)。
+食材の切断を画像で測る(cutting: 刃の追跡・切り込み深さ・切片の厚み・切断面の粗さ・柔らかい手首のたわみからの切断力を規則だけで。真値 = Atkins 2016 の摩擦なし slice/push の閉形式(H = ξV、H/Rw は ξ = 1 で最大 0.5、ξ = tan i)と Williams & Patel 2016 のくさび + 摩擦(μ = 0.2 で θo = 79°・最小 1.24)、合成の被覆率描画、MuJoCo の正射影カメラと手首の拘束力。厚みは画素を背景・食材・刃の 3 色に線形分解し、2 つの段の窓をぼけの推定で広げる。摩擦と刃角を含む slice/push の式は未読なので組み合わせは ValueError。合成の力も当てはめも同じ模型 = 配管の検査(自己申告)。mujoco が要る 1 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -77,6 +78,7 @@ import puck
 import pegfail
 import pegtactile
 import granular
+import cutting
 import racket
 import roadjp
 import rsssafety
@@ -85,7 +87,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -844,6 +846,29 @@ _CATALOG = {
         ("symmetric_peg_shape", "pegtactile", ["text"], "image2d"),
         ("symmetry_order_contour", "pegtactile", ["matrix"], "table"),
         ("equivariance_check", "pegtactile", ["any", "any", "signal", "scalar", "signal"], "table"),
+    ],
+    # 食材の切断を画像で測る(2026-10-05、物理シミュ × Fullseye 系列、題材は arXiv:2404.02569): 刃の追跡・切り込み深さ・切片の厚み・
+    # 切断面の粗さ・手首のたわみ → 力 → 靱性。真値 = Atkins 2016(式 1.1〜1.4)と Williams & Patel 2016(式 2.6)の閉形式と本文の数、
+    # 合成の被覆率描画、MuJoCo の描画と手首の拘束力(--full)。正面像・刃先方向の像は rgb、場面・追跡・厚み・粗さ・力の結果は table、
+    # 位置と力の列は signal、z_band は 2 要素の signal、端面の指定(数 / dict / (N, 2))と CSV のパス・ライセンスは any、MJCF は文字列(any)。
+    # mujoco が要る 1 本(cutting_mujoco_wrist)は facade だけで台帳には載せない。
+    "cutting": [
+        ("cutting_scene", "cutting", ["any"], "table"),
+        ("cutting_face_render", "cutting", ["table", "scalar", "scalar", "scalar"], "rgb"),
+        ("cutting_edge_render", "cutting", ["table", "any", "scalar", "scalar", "scalar"], "rgb"),
+        ("cutting_episode_synth", "cutting", [], "table"),
+        ("cutting_wrist_mjcf", "cutting", ["table", "scalar"], "any"),
+        ("knife_edge_track", "cutting", ["rgb"], "table"),
+        ("cut_depth_from_side", "cutting", ["rgb", "table", "scalar", "scalar"], "table"),
+        ("slice_thickness_profile", "cutting", ["rgb", "scalar", "scalar"], "table"),
+        ("cut_surface_roughness", "cutting", ["rgb", "scalar", "scalar", "signal"], "table"),
+        ("force_from_wrist_displacement", "cutting", ["signal", "signal", "scalar"], "signal"),
+        ("cut_force_atkins", "cutting", ["scalar", "scalar"], "table"),
+        ("slice_push_ratio", "cutting", ["scalar", "scalar", "scalar"], "scalar"),
+        ("slice_push_from_track", "cutting", ["scalar", "signal", "signal"], "scalar"),
+        ("food_cut_width", "cutting", ["scalar", "scalar", "scalar", "scalar"], "scalar"),
+        ("cut_force_fit", "cutting", ["signal", "signal", "scalar"], "table"),
+        ("cut_force_csv_load", "cutting", ["any", "any"], "table"),
     ],
 }
 
