@@ -696,6 +696,10 @@ import granular  # noqa: E402  (粉体の山を画像で測る: 安息角・体�
 from granular import (  # noqa: E402,F401
     heap_mujoco_pour, heap_mujoco_discharge,
 )
+import pegtactile  # noqa: E402  (ペグ挿入を 2 本指の膜で読む: 接触レンチ → Whitney の状態・μ・手首剛性。台帳は opsdrive "pegtactile")
+from pegtactile import (  # noqa: E402,F401
+    pegtactile_episode_run, pegtactile_prefetch, pegtactile_process_episode, pegtactile_cutaway_xml,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1208,6 +1212,10 @@ __all__ = [
     "pegfail_failure_grid",
     "heap_mujoco_pour",
     "heap_mujoco_discharge",
+    "pegtactile_episode_run",
+    "pegtactile_prefetch",
+    "pegtactile_process_episode",
+    "pegtactile_cutaway_xml",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

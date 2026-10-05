@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pad_tactile_read — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_tactile_read(frame: &#x27;dict&#x27;, pad: &#x27;dict&#x27;, ctx=None, track=None, pixelwise: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.pad_tactile_read(frame: &#x27;dict&#x27;, pad: &#x27;dict&#x27;, ctx=None, track=None, pixelwise: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pad_tactile_read&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>パッド 1 枚の像 → (P̂, q̂, ねじり)。</p>
+<p>P̂ = 陰影 → photometric の法線(:func:<code style="color:#22d3bf">tacsim.membrane_recover</code>)→ 接触半径(中心は既知 = パッド中央;`<code style="color:#22d3bf">pixelwise</code>` なら</p>
+<p>:func:<code style="color:#22d3bf">tacsim.contact_radius_fit_pixelwise</code>、偽ならビン版 :func:<code style="color:#22d3bf">tacsim.contact_radius_fit</code> = 罠の対照)→ :func:<code style="color:#22d3bf">tacsim.hertz_force</code>。</p>
+<p>q̂ = マーカー追跡(:func:<code style="color:#22d3bf">tacslip.marker_track</code>、`<code style="color:#22d3bf">track</code>` で渡せば省く)→ 法線荷重の ūr(P̂ から閉形式)を引く → 2 成分の Mindlin</p>
+<p>当てはめ(:func:<code style="color:#22d3bf">tacslip.mindlin_fit_vector</code>)。ねじり = 当てはめたせん断場を引いた残りに、固着核(r &lt; 0.6 â)で剛体回転</p>
+<p>(:func:<code style="color:#22d3bf">tactorque.rigid_rotation_fit</code>)→ M = (16Gâ³/3)ω(Reissner–Sagoci)。第 2 実装 `<code style="color:#22d3bf">Q_stick</code>` = 固着核の一様変位 δ̂ を</p>
+<p>Mindlin の δx 式で逆に解いた値(μ は較正値)。返り `<code style="color:#22d3bf">P</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">q</code><code style="color:#22d3bf">(2,)・</code><code style="color:#22d3bf">Q</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">phi</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">c_over_a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Q_stick</code>`・</p>
+<p>`<code style="color:#22d3bf">matched</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_px</code><code style="color:#22d3bf">(当てはめの残差)・</code><code style="color:#22d3bf">track</code><code style="color:#22d3bf">。**Raises** ValueError: frame に </code><code style="color:#22d3bf">rgb</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">shading</code>` が無い、追跡できたマーカーが 3 未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">pegtactile</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:pad_params">pad_params</a> · <a style="color:#22d3bf" href="opdrive:pad_context">pad_context</a> · <a style="color:#22d3bf" href="opdrive:peg_wrench_to_pad_loads">peg_wrench_to_pad_loads</a> · <a style="color:#22d3bf" href="opdrive:pad_loads_to_peg_wrench">pad_loads_to_peg_wrench</a> · <a style="color:#22d3bf" href="opdrive:pad_shear_asymmetry">pad_shear_asymmetry</a> · <a style="color:#22d3bf" href="opdrive:pad_marker_displacement">pad_marker_displacement</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_frame">pad_tactile_frame</a> · <a style="color:#22d3bf" href="opdrive:contact_candidates">contact_candidates</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegtactile.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

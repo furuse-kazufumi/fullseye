@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2904,
- "n_notes": 2910,
+ "n_ops": 2925,
+ "n_notes": 2931,
  "notes": {
   "vol_dilate": [
    {
@@ -18778,6 +18778,195 @@
     "path": "docs/ops/drive/pegsim/whitney_clearance.md"
    }
   ],
+  "contact_candidates": [
+   {
+    "op": "contact_candidates",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/contact_candidates.md"
+   }
+  ],
+  "contact_state_from_wrench": [
+   {
+    "op": "contact_state_from_wrench",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × signal × signal × signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/contact_state_from_wrench.md"
+   }
+  ],
+  "equivariance_check": [
+   {
+    "op": "equivariance_check",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "any × any × signal × scalar × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/equivariance_check.md"
+   }
+  ],
+  "friction_from_single_contact": [
+   {
+    "op": "friction_from_single_contact",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "signal × text × any × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/friction_from_single_contact.md"
+   }
+  ],
+  "pad_context": [
+   {
+    "op": "pad_context",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_context.md"
+   }
+  ],
+  "pad_loads_to_peg_wrench": [
+   {
+    "op": "pad_loads_to_peg_wrench",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "scalar × signal × scalar × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_loads_to_peg_wrench.md"
+   }
+  ],
+  "pad_marker_displacement": [
+   {
+    "op": "pad_marker_displacement",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "scalar × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_marker_displacement.md"
+   }
+  ],
+  "pad_params": [
+   {
+    "op": "pad_params",
+    "dim": "drive",
+    "category": "pegtactile",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_params.md"
+   }
+  ],
+  "pad_shear_asymmetry": [
+   {
+    "op": "pad_shear_asymmetry",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_shear_asymmetry.md"
+   }
+  ],
+  "pad_tactile_frame": [
+   {
+    "op": "pad_tactile_frame",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "scalar × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_tactile_frame.md"
+   }
+  ],
+  "pad_tactile_read": [
+   {
+    "op": "pad_tactile_read",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/pad_tactile_read.md"
+   }
+  ],
+  "peg_wrench_to_pad_loads": [
+   {
+    "op": "peg_wrench_to_pad_loads",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "signal × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/peg_wrench_to_pad_loads.md"
+   }
+  ],
+  "stall_verdict": [
+   {
+    "op": "stall_verdict",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × scalar × any",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/stall_verdict.md"
+   }
+  ],
+  "symmetric_peg_shape": [
+   {
+    "op": "symmetric_peg_shape",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "text",
+    "out": "image2d",
+    "path": "docs/ops/drive/pegtactile/symmetric_peg_shape.md"
+   }
+  ],
+  "symmetry_order_contour": [
+   {
+    "op": "symmetry_order_contour",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "matrix",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/symmetry_order_contour.md"
+   }
+  ],
+  "two_point_forces": [
+   {
+    "op": "two_point_forces",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × signal × signal × signal × signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/two_point_forces.md"
+   }
+  ],
+  "whitney_wrench": [
+   {
+    "op": "whitney_wrench",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "table × text × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/whitney_wrench.md"
+   }
+  ],
+  "wrist_deflection_from_rgbd": [
+   {
+    "op": "wrist_deflection_from_rgbd",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "rgb × image2d × matrix × matrix × signal × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/wrist_deflection_from_rgbd.md"
+   }
+  ],
+  "wrist_stiffness_fit": [
+   {
+    "op": "wrist_stiffness_fit",
+    "dim": "drive",
+    "category": "pegtactile",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pegtactile/wrist_stiffness_fit.md"
+   }
+  ],
   "fivebar_fk": [
    {
     "op": "fivebar_fk",
@@ -19419,6 +19608,16 @@
     "path": "docs/ops/drive/tacsim/contact_radius_fit.md"
    }
   ],
+  "contact_radius_fit_pixelwise": [
+   {
+    "op": "contact_radius_fit_pixelwise",
+    "dim": "drive",
+    "category": "tacsim",
+    "in": "normalmap × matrix × matrix × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacsim/contact_radius_fit_pixelwise.md"
+   }
+  ],
   "contact_radius_ring": [
    {
     "op": "contact_radius_ring",
@@ -19687,6 +19886,16 @@
     "in": "table × matrix × matrix",
     "out": "table",
     "path": "docs/ops/drive/tacslip/mindlin_fit.md"
+   }
+  ],
+  "mindlin_fit_vector": [
+   {
+    "op": "mindlin_fit_vector",
+    "dim": "drive",
+    "category": "tacslip",
+    "in": "table × matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tacslip/mindlin_fit_vector.md"
    }
   ],
   "mindlin_model": [

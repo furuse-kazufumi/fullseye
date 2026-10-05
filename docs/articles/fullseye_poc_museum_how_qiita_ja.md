@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **78 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **79 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1350,7 +1350,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 15 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 16 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1795,6 +1795,50 @@ py -3.11 examples/poc_tacscalib_sphere_lut.py
 この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut)
 
 使用 op(ノートへ): [`calib_pack_load`](https://furuse.work/ops/drive/tacscalib/calib_pack_load.html) · [`contact_radius_ring`](https://furuse.work/ops/drive/tacsim/contact_radius_ring.html) · [`field_position_sweep`](https://furuse.work/ops/drive/tacscalib/field_position_sweep.html) · [`gradient_lut_build`](https://furuse.work/ops/drive/tacscalib/gradient_lut_build.html) · [`gradient_lut_invert`](https://furuse.work/ops/drive/tacscalib/gradient_lut_invert.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`invert`](https://furuse.work/ops/2d/gray/invert.html) · [`lights_fit_from_sphere`](https://furuse.work/ops/drive/tacscalib/lights_fit_from_sphere.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`membrane_predict_rgb`](https://furuse.work/ops/drive/tacscalib/membrane_predict_rgb.html) · [`normal_error_map`](https://furuse.work/ops/drive/tacscalib/normal_error_map.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`poly_lut_invert`](https://furuse.work/ops/drive/tacscalib/poly_lut_invert.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sphere_cap_height`](https://furuse.work/ops/drive/tacscalib/sphere_cap_height.html) · [`sphere_normals_known`](https://furuse.work/ops/drive/tacscalib/sphere_normals_known.html) · [`surface_normals`](https://furuse.work/ops/3d/photometric/surface_normals.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
+
+## No.2026.204 —— ペグ挿入を 2 本指の膜で読む ―― せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない
+
+[![ペグ挿入を 2 本指の膜で読む ―― せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/12_pegtactile_wrist_stiffness_from_images.png)
+
+*↑ **ペグ挿入を 2 本指の膜で読む ―― せん断の像から接触レンチ、Whitney の接触状態、壁の μ、手首剛性まで、くさびの境目はレンチだけでは見えない** ―― 物理シミュ × Fullseye 系列(pegsim 2026.195・pegfail 2026.201)と視触覚の 3 本(tacsim・tacslip・tactorque)の集大成。2 本指の指先に弾性膜を付け、ペグが穴から受ける接触レンチを膜の像 2 枚だけから復元し、Whitney の接触状態(無接触 / 面取り / 一点 / 二点、止まった時のくさび / かじり)を学習なしの規則で当てる。同じ挿入で手首剛性 k を「手首カメラのたわみ × 触覚の力」から同定し、ペグの形の対称性(n 回対称)と装置の対称性(2 本指は回転対称でない)を同変性の門で測る。新モジュール pegtactile 19 op + 既存へ 2(tacsim.contact_radius_fit_pixelwise = 半径ビンを使わない接触半径、tacslip.mindlin_fit_vector = 向きを持つせん断の 2 係数の Mindlin)+ mujoco の facade 4。外から来る真値は 4 つ。(1) 定理 = Whitney 1982(原著は有料で未読、式は著者本人の MIT OCW 2.875 Class 3 スライド): 二点接触の深さ l₂(θ) = (2R − r(cosθ + secθ))/tanθ とくさびの境目 θ = c/μ。(2) 接触力学の閉形式(Johnson 1985): Hertz、Cattaneo–Mindlin、Cerruti、無滑りねじり。(3) 群の作用(回した形・場面の答えは同じだけ回る)。(4) MuJoCo の接触点・接触力・手首の力・トルクセンサ・手首ばねの設定値(--full)。膜は MuJoCo に無いので、パッド荷重は「露光平均の接触レンチ + 重力」を 2 パッドへ静力学で配る写像で作る。★くさびの境目はレンチだけの規則の死角: 口と先端を結ぶ線の傾き c/θ が μ に等しい所では先端の摩擦円錐の縁が口の接触点を通り、二点のレンチが「口の一点」と区別できない(閉形式 36 組のうち θ 3°・μ 0.8 の 2 組)。Whitney の幾何(深さ ≥ W + l₂(θ) なら二点を強制)で 36/36。★場面を 90° 回すと傾きのモーメントはせん断の偶力からパッドのねじりへ移る: ねじりを読めば一致率 97.6 → 96.8 %、捨てると 47.6 %。図: 膜 2 枚の像と読み、Whitney の閉形式の挿入を膜で読む GIF、半径ビンの罠、レンチだけの死角、形の向き(フーリエ位相 vs 2 次モーメント); --full: 挿入の GIF(穴の断面・手首カメラ・膜 2 枚・状態の帯)、4 走行の時系列、手首剛性 F = kΔx、二点の始まり、90° 回した時の一致率。門 10 本(numpy、2.4 s)+ --full 12 本(重い numpy 3 + MuJoCo 9): 静力学の往復 4.4e-16、膜の往復 P 0.011 %・q 2.8 mN(20 組で 4.4 mN)・ねじり 0.010 mN·m、向き 0.12°、ゼロ荷重の偽のせん断 規則格子 12.1 mN → ジッタ 0.7 mN、P̂ の傾きの誤差 ビン 8.5 % → 画素 0.018 %、Whitney 36 組 レンチだけ 34 → 幾何つき 36、二点の μ 0.0008(法線力 0.6 N)、n 回対称 0/3/4/6/1、フーリエ位相の向き 0.001〜0.018°(キー付き 0.59°)vs 2 次モーメント 10〜59°、手首 RGB-D の同変性 3.2 µm(鏡映で 0.000 µm); MuJoCo: 写像 vs 力センサ 0.41 mN・0.023 mN·m、触覚のレンチ |ΔF| 中央 2.7・最大 6.8 mN、状態の一致 97.5 %(真値のレンチで 98.0 %)、二点の始まり 閉形式との差 ≤ 0.04 mm、壁の μ 一点 0.292・二点 0.2998(設定 0.3)、くさび / かじり 2/2、手首カメラ 1.2 µm、k_t 599.9〜601.1 N/m(設定 600)、k_r 1.496〜1.512 N·m/rad(設定 1.5)。正直に: 膜は MuJoCo に無く、パッド荷重は静力学の写像(左右分配は対称の仮定、ペグの慣性は無視 —— 鉛直 11.7 mN が範囲外)。合成と逆算は同じ閉形式族なので膜の模型の誤り(有限厚・大変形)はこの門では見えない(tacslip の有限要素の比較が担当)。k の同定は二点の区間だけ。走行は各条件 1 回。角・六角ペグの MuJoCo 挿入は無い(対称性は知覚 op の門だけ)。踏んだ罠: 規則格子のマーカーの pixel-locking、半径ビンの接触半径が P̂ の傾きを 40 % 狂わせ 2 パッドの差で k が +3.7 %、瞬間の接触力は撃力(露光で平均)、候補点を絞らないと二点の作用線を一点と読む。*
+
+[![Whitney の二点接触(θ 3°、μ 0.8 = くさびの境目の近く)を 2 本の指の膜で見た像(等倍 256 px = 16 mm)。矢印はマーカーの変位 ×12、円は読んだ接触円。真値の荷重 L: P 4.093 N・q (-0.0](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/01_pegtactile_two_membranes_read.png)
+
+*↑ 測定の図 ―― Whitney の二点接触(θ 3°、μ 0.8 = くさびの境目の近く)を 2 本の指の膜で見た像(等倍 256 px = 16 mm)。矢印はマーカーの変位 ×12、円は読んだ接触円。真値の荷重 L: P 4.093 N・q (-0.000, 0.344) N、R: P 3.907 N・q (-0.000, 0.398) N。左右でせん断の v 成分が逆向き = モーメントは偶力で運ばれる。*
+
+[![同じ二点接触の接触レンチ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/02_pegtactile_wrench_truth_vs_membranes.png)
+
+*↑ 同じ二点接触の接触レンチ。*
+
+[![二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/05_pegtactile_wrench_only_blind_band.png)
+
+*↑ 二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。*
+
+[![走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/09_pegtactile_timeline_run_B.png)
+
+*↑ 走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。*
+
+[![走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/11_pegtactile_timeline_run_D.png)
+
+*↑ 走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。*
+
+[![Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。上の文字の色 = 膜からの判定が真値と一致(全](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/03_pegtactile_whitney_insertion_through_membranes.gif)
+
+*↑ 動く図 ―― Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。上の文字の色 = 膜からの判定が真値と一致(全 14 コマ)。*
+
+[![挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_peg_insertion_tactile/07_pegtactile_insertion_section_wrist_membranes.gif)
+
+*↑ 動く図 ―― 挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = 2 本の指の膜(矢印 ×12)。下の帯 = 状態(灰 無接触・青 面取り・橙 一点・赤 二点)の MuJoCo と触覚。*
+
+```
+py -3.11 examples/poc_peg_insertion_tactile.py
+```
+
+ソース: [examples/poc_peg_insertion_tactile.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_peg_insertion_tactile.py)
+
+この回が作った図は全部で **14 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_insertion_tactile)
+
+使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`blob_features`](https://furuse.work/ops/blob/measure/blob_features.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`contact_radius_fit`](https://furuse.work/ops/drive/tacsim/contact_radius_fit.html) · [`contact_radius_fit_pixelwise`](https://furuse.work/ops/drive/tacsim/contact_radius_fit_pixelwise.html) · [`contact_state_from_wrench`](https://furuse.work/ops/drive/pegtactile/contact_state_from_wrench.html) · [`ellipse`](https://furuse.work/ops/annotate/shape/ellipse.html) · [`equivariance_check`](https://furuse.work/ops/drive/pegtactile/equivariance_check.html) · [`friction_from_single_contact`](https://furuse.work/ops/drive/pegtactile/friction_from_single_contact.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`membrane_recover`](https://furuse.work/ops/drive/tacsim/membrane_recover.html) · [`pad_context`](https://furuse.work/ops/drive/pegtactile/pad_context.html) · [`pad_loads_to_peg_wrench`](https://furuse.work/ops/drive/pegtactile/pad_loads_to_peg_wrench.html) · [`pad_params`](https://furuse.work/ops/drive/pegtactile/pad_params.html) · [`pad_tactile_frame`](https://furuse.work/ops/drive/pegtactile/pad_tactile_frame.html) · [`pad_tactile_read`](https://furuse.work/ops/drive/pegtactile/pad_tactile_read.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`peg_wrench_to_pad_loads`](https://furuse.work/ops/drive/pegtactile/peg_wrench_to_pad_loads.html) · [`project_points`](https://furuse.work/ops/3d/render/project_points.html) · [`stall_verdict`](https://furuse.work/ops/drive/pegtactile/stall_verdict.html) · [`symmetric_peg_shape`](https://furuse.work/ops/drive/pegtactile/symmetric_peg_shape.html) · [`symmetry_order_contour`](https://furuse.work/ops/drive/pegtactile/symmetry_order_contour.html) …(他 7)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

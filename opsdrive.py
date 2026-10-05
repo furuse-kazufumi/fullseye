@@ -25,6 +25,7 @@
 ペグ挿入の失敗検出と回復(pegfail: VLM の代わりに規則の分類表 12 行 × 接触計測。観測(接触の種別・深さの帯・停滞・くさびの境目・かじりの図の内外・穴中心からのずれ)を 6 欄の署名にし、当たる行は高々 1 つ、無ければ unknown(fail-closed)。真値 = Whitney 1982 のくさび θ > c/μ とかじりの平行四辺形(平面静力学から導き直して pegsim の頂点と一致)+ MuJoCo の接触と手首の力センサ。手首ばねのたわみから荷重を読む。失敗はわざと注入(ずれ・傾き・横目標・栓・囮)。回復は脚本のプリミティブ。mujoco が要る 3 本は facade)。
 粉体の山を画像で測る(granular: 安息角・体積・質量・流動性・排出率を規則だけで。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> の流動性の表(Carr 1965)、1 mm ガラス球の公表値 25.2 ± 0.8 度(arXiv 2009.10448)、第 2 実装 = MuJoCo の剛体球の山。側面像は縁の画素の被覆率を副画素の位置に読む(列和法は粉の画素値のずれで tan φ が縮む罠)、高さ図は勾配ヒストグラムの最頻、傾いた基準面は左右差 ≈ 2β の警報。mujoco が要る 2 本は facade)。
 視触覚センサの照明を実機の較正球で較正する(tacscalib: 既知球の法線の閉形式と手当ての接触円を真値に、線形 12 パラメタの照明模型(逆算は photometric_stereo = 被験者)と example-based の勾配 LUT(位置の 2 次式つき、行の少ないビンは近いビンの位置の項を借りて傾き 0〜15° の不感帯を消す、粗 → 細の逆引き)を 2 つの独立な経路にする。外部の位置 2 次 LUT の書式を読むアダプタつき。全部 numpy)。
+ペグ挿入を 2 本指の膜で読む(pegtactile: 指先の弾性膜のせん断の像から、ペグが穴から受ける接触レンチ・Whitney の接触状態(一点 / 二点、止まった時のくさび / かじり)・壁の摩擦・手首剛性を学習なしの規則で。真値 = Whitney 1982 の二点接触の深さ l₂(θ) とくさびの境目 c/μ、Hertz・Cattaneo–Mindlin・Cerruti・無滑りねじりの閉形式、群の作用(同変性)、MuJoCo の接触と手首の力・トルクセンサ。膜は MuJoCo に無いのでパッド荷重は静力学の写像(把持の左右分配は対称の仮定)。くさびの境目ではレンチだけの規則が二点を口の一点と読む死角があり幾何の検査で解く。mujoco が要る 4 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -74,6 +75,7 @@ import tacslip
 import tactorque
 import puck
 import pegfail
+import pegtactile
 import granular
 import racket
 import roadjp
@@ -83,7 +85,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -651,6 +653,7 @@ _CATALOG = {
         ("membrane_recover", "tacsim", ["rgb", "matrix", "scalar"], "table"),
         ("contact_radius_ring", "tacsim", ["image2d", "scalar"], "table"),
         ("contact_radius_fit", "tacsim", ["normalmap", "matrix", "matrix", "scalar", "scalar"], "table"),
+        ("contact_radius_fit_pixelwise", "tacsim", ["normalmap", "matrix", "matrix", "scalar", "scalar"], "table"),
         ("membrane_delta_from_normals", "tacsim", ["normalmap", "matrix", "matrix", "scalar"], "scalar"),
     ],
     # 視触覚のマーカー配列 → せん断場・固着/滑り(2026-10-04、物理シミュ × Fullseye 系列 第 2 弾の第 2 本): 真値 = Cattaneo–Mindlin の部分滑り
@@ -676,6 +679,7 @@ _CATALOG = {
         ("marker_track", "tacslip", ["image2d", "image2d", "scalar", "scalar", "scalar"], "table"),
         ("mindlin_model", "tacslip", ["table", "matrix", "matrix", "table", "scalar", "scalar"], "table"),
         ("mindlin_fit", "tacslip", ["table", "matrix", "matrix"], "table"),
+        ("mindlin_fit_vector", "tacslip", ["table", "matrix", "matrix"], "table"),
         ("stick_radius_modelfree", "tacslip", ["matrix", "matrix"], "table"),
         ("slip_entropy", "tacslip", ["signal"], "scalar"),
         ("fem_nodes_load", "tacslip", ["text", "text"], "table"),
@@ -813,6 +817,33 @@ _CATALOG = {
         ("sphere_cap_height", "tacscalib", ["any", "any", "scalar", "scalar", "scalar"], "table"),
         ("field_position_sweep", "tacscalib", ["matrix", "signal", "any"], "table"),
         ("poly_lut_invert", "tacscalib", ["rgb", "table", "image2d"], "normalmap"),
+    ],
+    # ペグ挿入を 2 本指の膜で読む(2026-10-05、物理シミュ × Fullseye 系列と視触覚 3 本の集大成): 膜の像 2 枚 → 接触レンチ → Whitney の
+    # 接触状態・壁の μ・止まった時のくさび / かじり、手首カメラ × 触覚で手首剛性、形と装置の同変性。真値 = Whitney 1982(OCW 2.875 Class 3、
+    # 原著未読)の l₂(θ) と c/μ、Johnson 1985 の閉形式(Hertz / Cattaneo–Mindlin / Cerruti / Reissner–Sagoci)、群の作用 + MuJoCo(--full)。
+    # パッドの表・荷重・読み・状態・当てはめはどれも table(dict)、力とモーメントの 3-vector と q の 2-vector は signal、輪郭 (N, 2) は matrix、
+    # 状態名・形の名は text、None を取りうる入力(接触点・μ̂)と呼べる物(render / op)は any(型が違えば ValueError)。
+    # mujoco が要る 4 本(pegtactile_episode_run / pegtactile_prefetch / pegtactile_process_episode / pegtactile_cutaway_xml)は facade だけ。
+    "pegtactile": [
+        ("pad_params", "pegtactile", [], "table"),
+        ("pad_context", "pegtactile", ["table"], "table"),
+        ("peg_wrench_to_pad_loads", "pegtactile", ["signal", "signal", "table"], "table"),
+        ("pad_loads_to_peg_wrench", "pegtactile", ["scalar", "signal", "scalar", "signal", "table"], "table"),
+        ("pad_shear_asymmetry", "pegtactile", ["signal", "signal"], "table"),
+        ("pad_marker_displacement", "pegtactile", ["scalar", "signal", "table"], "table"),
+        ("pad_tactile_frame", "pegtactile", ["scalar", "signal", "table"], "table"),
+        ("pad_tactile_read", "pegtactile", ["table", "table"], "table"),
+        ("contact_candidates", "pegtactile", ["table", "signal", "signal"], "table"),
+        ("contact_state_from_wrench", "pegtactile", ["table", "signal", "signal", "signal", "signal", "signal"], "table"),
+        ("two_point_forces", "pegtactile", ["table", "signal", "signal", "signal", "signal", "signal"], "table"),
+        ("whitney_wrench", "pegtactile", ["table", "text", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("friction_from_single_contact", "pegtactile", ["signal", "text", "any", "signal"], "table"),
+        ("stall_verdict", "pegtactile", ["table", "scalar", "any"], "table"),
+        ("wrist_stiffness_fit", "pegtactile", ["signal", "signal"], "table"),
+        ("wrist_deflection_from_rgbd", "pegtactile", ["rgb", "image2d", "matrix", "matrix", "signal", "signal", "scalar"], "table"),
+        ("symmetric_peg_shape", "pegtactile", ["text"], "image2d"),
+        ("symmetry_order_contour", "pegtactile", ["matrix"], "table"),
+        ("equivariance_check", "pegtactile", ["any", "any", "signal", "scalar", "signal"], "table"),
     ],
 }
 

@@ -51,7 +51,7 @@ __all__ = [
     "cerruti_kernel", "cerruti_surface_displacement", "membrane_shear_field",
     "membrane_markers", "displace_markers", "membrane_render_markers",
     "marker_image", "marker_detect", "marker_match_grow", "marker_track",
-    "mindlin_model", "mindlin_fit", "stick_radius_modelfree", "slip_entropy",
+    "mindlin_model", "mindlin_fit", "mindlin_fit_vector", "stick_radius_modelfree", "slip_entropy",
     "fem_nodes_load", "fem_vs_halfspace",
 ]
 
@@ -511,6 +511,47 @@ def mindlin_fit(model: dict, pts_px, u_m, n_coarse: int = 101, n_fine: int = 41,
     ca = float(fine[j]); muP = float(sol[0])
     return {"c_over_a": ca, "q_ratio": 1.0 - ca ** 3, "muP": muP, "Q": muP * (1.0 - ca ** 3), "mu": muP / float(model["hz"]["F"]),
             "rms_m": res, "shift_m": (float(sol[1]), float(sol[2])) if rigid else (0.0, 0.0)}
+
+
+def mindlin_fit_vector(model: dict, pts_px, u_m, n_coarse: int = 51, n_fine: int = 21) -> dict:
+    """向きを持つせん断の Mindlin 当てはめ(:func:`mindlin_fit` の 2 成分版): (c/a, μP, 向き φ) を一度に読む。
+
+    比例載荷では接線トラクションは同じ半径分布 × 方向ベクトルなので、場は u(p) = A·F_x(p; c) + B·F_y(p; c)(F_y は x 向きの単位場
+    F_x を 90° 回した場 R(90°)F_x(R(−90°)p)、核は等方な半空間なので回転で閉じる)—— 各 c/a で (A, B) は線形の最小二乗。
+    μP = √(A² + B²)、φ = atan2(B, A)、Q = μP(1 − (c/a)³)。c/a は粗く走査 → 最良の周りを細かく。
+    向きを先に「固着核の平均変位」で決めて 1 成分の :func:`mindlin_fit` に回す版は、規則格子の位相で核の標本が非対称になり 0.5° 前後の
+    偏り(純 v のせん断に 0.01 N の偽の u 成分)を出した(pegtactile の試作で測って捨てた)。
+    返り ``c_over_a``・``q_ratio``・``muP``・``Q``・``phi``・``rms_m``。**Raises** ``ValueError``: 形の不一致、点が 3 個未満。"""
+    pts_px = np.asarray(pts_px, np.float64)
+    u_m = np.asarray(u_m, np.float64)
+    if pts_px.ndim != 2 or pts_px.shape[1] != 2 or u_m.shape != pts_px.shape or len(pts_px) < 3:
+        raise ValueError("mindlin_fit_vector: pts_px and u_m must be (M, 2) with M >= 3")
+    if int(n_coarse) < 3 or int(n_fine) < 3:
+        raise ValueError("mindlin_fit_vector: n_coarse and n_fine must be >= 3")
+    obs = np.concatenate([u_m[:, 0], u_m[:, 1]])
+    c0 = float(model["c0"])
+    d = pts_px - c0
+    p90 = np.column_stack([d[:, 1], -d[:, 0]]) + c0          # R(−90°) d
+    R90 = np.array([[0.0, -1.0], [1.0, 0.0]])
+
+    def cost(ca):
+        fx, fy = _model_unit_field(model, pts_px, ca)
+        gx, gy = _model_unit_field(model, p90, ca)
+        g = np.column_stack([gx, gy]) @ R90.T
+        A = np.column_stack([np.concatenate([fx, fy]), np.concatenate([g[:, 0], g[:, 1]])])
+        sol, *_ = np.linalg.lstsq(A, obs, rcond=None)
+        return float(np.sqrt(np.mean((obs - A @ sol) ** 2))), sol
+    grid = np.linspace(0.0, 1.0, int(n_coarse))
+    cs = [cost(ca) for ca in grid]
+    k = int(np.argmin([c_[0] for c_ in cs]))
+    fine = np.linspace(grid[max(k - 1, 0)], grid[min(k + 1, len(grid) - 1)], int(n_fine))
+    cf = [cost(ca) for ca in fine]
+    j = int(np.argmin([c_[0] for c_ in cf]))
+    res, sol = cf[j]
+    ca = float(fine[j])
+    muP = float(math.hypot(sol[0], sol[1]))
+    return {"c_over_a": ca, "q_ratio": 1.0 - ca ** 3, "muP": muP, "Q": muP * (1.0 - ca ** 3), "phi": math.atan2(sol[1], sol[0]),
+            "rms_m": res}
 
 
 def stick_radius_modelfree(pts_c, u_px, rel: float = 0.08, abs_px: float = 0.05) -> dict:

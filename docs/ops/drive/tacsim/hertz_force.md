@@ -4,7 +4,7 @@ dim: drive
 category: tacsim
 in: scalar × scalar
 out: scalar
-examples: [poc_tacsim_elastic_membrane]
+examples: [poc_peg_insertion_tactile, poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -29,6 +29,7 @@ Hertz の逆算: 接触半径 a か押し込み δ のどちらか一方から�
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_tacsim_elastic_membrane](../../../../examples/poc_tacsim_elastic_membrane.py) — `py -3.11 examples/poc_tacsim_elastic_membrane.py`
 
 ## 型が繋がる次の op(`scalar` を入力に取れる)

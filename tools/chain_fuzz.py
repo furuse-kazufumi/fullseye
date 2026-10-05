@@ -4904,6 +4904,144 @@ def _b_tcal_poly(pool, rng):
     return (f["imgs"][k], f["poly"], f["scs"][k]["mask"]), {}
 
 
+_FUZZ_PT = {}
+
+
+def _fuzz_pt():
+    """ペグ × 触覚の小さな種(パッド・道具・膜 1 枚・Whitney の二点のレンチ・合成 RGB-D)を 1 回だけ作る(pegtactile、numpy だけ)。"""
+    if "pad" not in _FUZZ_PT:
+        import math as _m
+        import pegsim as PS
+        import pegtactile as PT
+        kp = PS.peg_params()
+        pad = PT.pad_params()
+        ctx = PT.pad_context(pad)
+        th = 3.0 * _m.pi / 180.0
+        ww = PT.whitney_wrench(kp, "two_point", th, kp["chamfer"] + PS.two_point_depth(kp, th), 0.3, 0.6, 0.78)
+        sy = PS.peg_synthetic_rgbd(kp, tip_xyz=(1.0e-3, 0.5e-3, 0.004), axis=(_m.sin(th), 0.0, _m.cos(th)), width=160, height=120, supersample=2)
+        _FUZZ_PT.update({"kp": kp, "pad": pad, "ctx": ctx, "frame": PT.pad_tactile_frame(4.0, (0.2, 0.1), pad, ctx), "ww": ww, "sy": sy,
+                         "contour": PT._level_contour(PT.symmetric_peg_shape("square", 96, 30.0, 0.3))})
+    return _FUZZ_PT
+
+
+def _b_pt_pad_params(pool, rng):
+    return (), {"grip": float(rng.uniform(3.0, 5.0))}
+
+
+def _b_pt_pad_context(pool, rng):
+    return (_fuzz_pt()["pad"],), {"jitter_px": float(rng.choice([0.0, 0.5]))}
+
+
+def _b_pt_to_pads(pool, rng):
+    return (rng.normal(0, 0.5, 3), rng.normal(0, 3e-3, 3), _fuzz_pt()["pad"]), {}
+
+
+def _b_pt_to_wrench(pool, rng):
+    return (float(rng.uniform(3, 5)), rng.normal(0, 0.3, 2), float(rng.uniform(3, 5)), rng.normal(0, 0.3, 2), _fuzz_pt()["pad"]), {}
+
+
+def _b_pt_asym(pool, rng):
+    return (rng.normal(0, 0.3, 2), rng.normal(0, 0.3, 2)), {}
+
+
+def _b_pt_marker_disp(pool, rng):
+    f = _fuzz_pt()
+    return (float(rng.uniform(3, 5)), rng.normal(0, 0.3, 2), f["pad"]), {"ctx": f["ctx"]}
+
+
+def _b_pt_frame(pool, rng):
+    f = _fuzz_pt()
+    return (float(rng.uniform(3, 5)), rng.normal(0, 0.3, 2), f["pad"]), {"ctx": f["ctx"]}
+
+
+def _b_pt_read(pool, rng):
+    f = _fuzz_pt()
+    return (f["frame"], f["pad"]), {"ctx": f["ctx"]}
+
+
+def _b_pt_candidates(pool, rng):
+    f = _fuzz_pt()
+    return (f["kp"], f["ww"]["tip"], f["ww"]["axis"]), {}
+
+
+def _b_pt_state(pool, rng):
+    f = _fuzz_pt()
+    w = f["ww"]
+    return (f["kp"], w["F"] * float(rng.uniform(0.5, 2.0)), w["M_g"], w["g"], w["tip"], w["axis"]), {"geometry": bool(rng.uniform() < 0.5)}
+
+
+def _b_pt_two_point(pool, rng):
+    f = _fuzz_pt()
+    w = f["ww"]
+    return (f["kp"], w["F"], w["M_g"], w["g"], w["tip"], w["axis"]), {}
+
+
+def _b_pt_whitney(pool, rng):
+    import math as _m
+    f = _fuzz_pt()
+    return (f["kp"], str(rng.choice(["one_point", "mouth", "two_point"])), float(rng.uniform(1.0, 5.0)) * _m.pi / 180.0, 6e-3,
+            float(rng.uniform(0.1, 1.0)), 0.5), {"fn_mouth": 0.6}
+
+
+def _b_pt_friction(pool, rng):
+    w = _fuzz_pt()["ww"]
+    return (w["F"], str(rng.choice(["tip", "mouth", "none"])), None, w["axis"]), {}
+
+
+def _b_pt_stall(pool, rng):
+    return (_fuzz_pt()["kp"], float(rng.uniform(0.0, 0.2)), float(rng.choice([0.3, 0.8]))), {}
+
+
+def _b_pt_stiffness(pool, rng):
+    x = np.linspace(-0.5e-3, 0.5e-3, 21)
+    return (x, float(rng.uniform(300, 900)) * x + rng.normal(0, 0.003, x.size)), {}
+
+
+def _b_pt_deflection(pool, rng):
+    f = _fuzz_pt()
+    sy = f["sy"]
+    return (sy["rgb"], sy["depth"], sy["K"], sy["R_cam_to_world"], -sy["R"].T @ sy["t"], np.zeros(3), f["kp"]["r"]), {"hinge_z": 0.02}
+
+
+def _b_pt_shape(pool, rng):
+    return (str(rng.choice(["circle", "triangle", "square", "hexagon", "keyed"])),), {"size": 64, "radius": 20.0, "ss": 2,
+                                                                                     "angle": float(rng.uniform(0, 6.3))}
+
+
+def _b_pt_symmetry(pool, rng):
+    return (_fuzz_pt()["contour"],), {}
+
+
+def _b_pt_equivariance(pool, rng):
+    import pegtactile as PT
+
+    def render(t):
+        return PT.symmetric_peg_shape("square", 64, 20.0, 0.3 + t, ss=2)
+
+    def op(img):
+        so = PT.symmetry_order_contour(PT._level_contour(img))
+        return so["centroid"][0], so["centroid"][1], so["angle"]
+    return (render, op, np.array([float(rng.uniform(0.1, 1.5))]), 4, np.array([31.5, 31.5])), {}
+
+
+def _b_tacsim_pixelwise(pool, rng):
+    import tacsim as T
+    f = _fuzz_pt()
+    pad, ctx = f["pad"], f["ctx"]
+    rec = T.membrane_recover(f["frame"]["shading"], ctx["lights"], pad["pitch"], ambient=0.03)
+    return (rec["normals"], ctx["X"], ctx["Y"], pad["R"], float(pad["a_grip"]) * float(rng.uniform(0.95, 1.05))), {}
+
+
+def _b_tacslip_vector(pool, rng):
+    import tacslip as S
+    import pegtactile as PT
+    f = _fuzz_pt()
+    pad, ctx = f["pad"], f["ctx"]
+    d = PT.pad_marker_displacement(4.0, rng.normal(0, 0.3, 2), pad, ctx)
+    model = S.mindlin_model(d["hz"], ctx["X"], ctx["Y"], ctx["kern"], pad["G"], pad["nu"])
+    return (model, ctx["pts_flat"], d["u_m"]), {"n_coarse": 11, "n_fine": 5}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5232,6 +5370,13 @@ OP_ARG_BUILDERS = {
     "membrane_predict_rgb": _b_tcal_predict, "gradient_lut_build": _b_tcal_build, "gradient_lut_invert": _b_tcal_invert,
     "normal_error_map": _b_tcal_error, "sphere_cap_height": _b_tcal_cap, "field_position_sweep": _b_tcal_sweep,
     "poly_lut_invert": _b_tcal_poly,
+    "pad_params": _b_pt_pad_params, "pad_context": _b_pt_pad_context, "peg_wrench_to_pad_loads": _b_pt_to_pads,
+    "pad_loads_to_peg_wrench": _b_pt_to_wrench, "pad_shear_asymmetry": _b_pt_asym, "pad_marker_displacement": _b_pt_marker_disp,
+    "pad_tactile_frame": _b_pt_frame, "pad_tactile_read": _b_pt_read, "contact_candidates": _b_pt_candidates,
+    "contact_state_from_wrench": _b_pt_state, "two_point_forces": _b_pt_two_point, "whitney_wrench": _b_pt_whitney,
+    "friction_from_single_contact": _b_pt_friction, "stall_verdict": _b_pt_stall, "wrist_stiffness_fit": _b_pt_stiffness,
+    "wrist_deflection_from_rgbd": _b_pt_deflection, "symmetric_peg_shape": _b_pt_shape, "symmetry_order_contour": _b_pt_symmetry,
+    "equivariance_check": _b_pt_equivariance, "contact_radius_fit_pixelwise": _b_tacsim_pixelwise, "mindlin_fit_vector": _b_tacslip_vector,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

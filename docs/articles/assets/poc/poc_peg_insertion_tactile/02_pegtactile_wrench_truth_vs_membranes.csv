@@ -1,0 +1,6 @@
+﻿quantity,truth (MuJoCo-free closed form),read from the two membranes
+F_x [N],-0.1463,-0.1465
+F_z [N],1.1440,1.1404
+M_y about grasp [mN m],-0.142,-0.133
+state,two_point,two_point
+wall mu,0.800,0.7992

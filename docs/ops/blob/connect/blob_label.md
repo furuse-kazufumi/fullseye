@@ -4,7 +4,7 @@ dim: blob
 category: connect
 in: mask
 out: labels2d
-examples: [blob_split_tour, poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_em_split_merge_score, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_gravitational_lens_invariants, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
+examples: [blob_split_tour, poc_am_thermal_to_ct, poc_bone_trabecular_thickness, poc_bump_coplanarity, poc_em_split_merge_score, poc_fresco_craquelure, poc_gear_tooth_metrology, poc_gravitational_lens_invariants, poc_leaf_disease_area, poc_machine_condition_fusion, poc_metal_grain_size, poc_nuclei_ploidy, poc_particle_sizing, poc_particle_tracking, poc_peg_insertion_tactile, poc_pipe_wall_loss, poc_print_warpage_risk, poc_pv_thermal_survey, poc_real_coin_metrology, poc_rotation_invariance_audit, poc_sea_ice_concentration, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_solder_fillet_aoi, poc_timelapse_growth, poc_traffic_counting, poc_vessel_network, poc_weld_radiograph_porosity, poc_wound_area_tracking]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ Examples
 - [poc_nuclei_ploidy](../../../../examples/poc_nuclei_ploidy.py) — `py -3.11 examples/poc_nuclei_ploidy.py`
 - [poc_particle_sizing](../../../../examples/poc_particle_sizing.py) — `py -3.11 examples/poc_particle_sizing.py`
 - [poc_particle_tracking](../../../../examples/poc_particle_tracking.py) — `py -3.11 examples/poc_particle_tracking.py`
+- [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_pipe_wall_loss](../../../../examples/poc_pipe_wall_loss.py) — `py -3.11 examples/poc_pipe_wall_loss.py`
 - [poc_print_warpage_risk](../../../../examples/poc_print_warpage_risk.py) — `py -3.11 examples/poc_print_warpage_risk.py`
 - [poc_pv_thermal_survey](../../../../examples/poc_pv_thermal_survey.py) — `py -3.11 examples/poc_pv_thermal_survey.py`

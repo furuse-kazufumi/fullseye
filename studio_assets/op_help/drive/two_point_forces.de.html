@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">two_point_forces — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × signal × signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;two_point_forces&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>二点接触(Whitney)のレンチを 2 つの接触力と壁の摩擦 μ に分解する(平面、両点が下へ滑る Coulomb の仮定)。</p>
+<p>傾きの面(軸の水平成分 e)で、先端の縁は −e 側の壁(法線 = 水平、摩擦 = 上向き)、胴は +e 側の最狭部の縁(法線 = 軸に垂直、摩擦 =</p>
+<p>軸の上向き)。各 μ で (f_n1, f_n2) は 3 式(F_e, F_z, M)の最小二乗、残差最小の μ を放物線で詰める(既定の格子 0〜1.5、301 点)。</p>
+<p>返り `<code style="color:#22d3bf">mu</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fn_tip</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fn_mouth</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">resid</code><code style="color:#22d3bf">(N)・</code><code style="color:#22d3bf">p_tip</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">p_mouth</code>`。</p>
+<p><b>Raises</b> ValueError: 軸が鉛直すぎて傾きの面が決まらない、ベクトルが有限の 3 成分でない、μ の格子が 3 点未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pegtactile</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:pad_params">pad_params</a> · <a style="color:#22d3bf" href="opdrive:pad_context">pad_context</a> · <a style="color:#22d3bf" href="opdrive:peg_wrench_to_pad_loads">peg_wrench_to_pad_loads</a> · <a style="color:#22d3bf" href="opdrive:pad_loads_to_peg_wrench">pad_loads_to_peg_wrench</a> · <a style="color:#22d3bf" href="opdrive:pad_shear_asymmetry">pad_shear_asymmetry</a> · <a style="color:#22d3bf" href="opdrive:pad_marker_displacement">pad_marker_displacement</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_frame">pad_tactile_frame</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_read">pad_tactile_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegtactile.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

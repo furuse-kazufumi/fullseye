@@ -1,8 +1,8 @@
 {
- "n_ops": 2904,
+ "n_ops": 2925,
  "tiers": {
   "color": 12,
-  "ledger": 1951,
+  "ledger": 1972,
   "nary": 17,
   "registry": 924
  },
@@ -3521,7 +3521,39 @@
    ]
   },
   {
+   "name": "contact_candidates",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "signal"
+   ]
+  },
+  {
    "name": "contact_radius_fit",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "table",
+   "category": "tacsim",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "matrix",
+    "matrix",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "contact_radius_fit_pixelwise",
    "halcon": "",
    "in_sort": "normalmap",
    "out_sort": "table",
@@ -3549,6 +3581,24 @@
    "in_sorts": [
     "image2d",
     "scalar"
+   ]
+  },
+  {
+   "name": "contact_state_from_wrench",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "signal",
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {
@@ -6367,6 +6417,23 @@
    ]
   },
   {
+   "name": "equivariance_check",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any",
+    "signal",
+    "scalar",
+    "signal"
+   ]
+  },
+  {
    "name": "erf",
    "halcon": "",
    "in_sort": "signal",
@@ -8011,6 +8078,22 @@
    "dim": "drive",
    "in_sorts": [
     "any"
+   ]
+  },
+  {
+   "name": "friction_from_single_contact",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "text",
+    "any",
+    "signal"
    ]
   },
   {
@@ -13367,6 +13450,21 @@
    ]
   },
   {
+   "name": "mindlin_fit_vector",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "tacslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
    "name": "mindlin_model",
    "halcon": "",
    "in_sort": "table",
@@ -14930,6 +15028,105 @@
    ]
   },
   {
+   "name": "pad_context",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
+   "name": "pad_loads_to_peg_wrench",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "signal",
+    "scalar",
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "pad_marker_displacement",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "pad_params",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "pad_shear_asymmetry",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "pad_tactile_frame",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "pad_tactile_read",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table"
+   ]
+  },
+  {
    "name": "pairs_to_image2d",
    "halcon": "",
    "in_sort": "pairs",
@@ -15308,6 +15505,21 @@
     "rgb",
     "image2d",
     "matrix"
+   ]
+  },
+  {
+   "name": "peg_wrench_to_pad_loads",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table"
    ]
   },
   {
@@ -21405,6 +21617,21 @@
    ]
   },
   {
+   "name": "stall_verdict",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "scalar",
+    "any"
+   ]
+  },
+  {
    "name": "stanley_steer",
    "halcon": "",
    "in_sort": "any",
@@ -22211,6 +22438,32 @@
    "dim": "text",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "symmetric_peg_shape",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "image2d",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "text"
+   ]
+  },
+  {
+   "name": "symmetry_order_contour",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix"
    ]
   },
   {
@@ -23693,6 +23946,24 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "two_point_forces",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "signal",
+    "signal",
+    "signal",
+    "signal"
    ]
   },
   {
@@ -25502,6 +25773,24 @@
    ]
   },
   {
+   "name": "whitney_wrench",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "text",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "wood_grain",
    "halcon": "",
    "in_sort": null,
@@ -25705,6 +25994,25 @@
    ]
   },
   {
+   "name": "wrist_deflection_from_rgbd",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "image2d",
+    "matrix",
+    "matrix",
+    "signal",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "wrist_load_from_deflection",
    "halcon": "",
    "in_sort": "table",
@@ -25718,6 +26026,20 @@
     "signal",
     "signal",
     "signal",
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "wrist_stiffness_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pegtactile",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
     "signal",
     "signal"
    ]

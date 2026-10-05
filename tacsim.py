@@ -48,7 +48,7 @@ import photometric as _ph
 __all__ = [
     "combined_modulus", "hertz_sphere", "hertz_force", "hertz_cylinder", "hertz_surface_uz", "hertz_pressure",
     "membrane_indent_sphere", "membrane_indent_shape", "membrane_lights", "membrane_render_rgb",
-    "membrane_recover", "contact_radius_ring", "contact_radius_fit", "membrane_delta_from_normals",
+    "membrane_recover", "contact_radius_ring", "contact_radius_fit", "contact_radius_fit_pixelwise", "membrane_delta_from_normals",
     "SHAPES",
 ]
 
@@ -446,6 +446,57 @@ def contact_radius_fit(normals, X, Y, R: float, pitch: float, centre_xy=None) ->
     model = _hertz_slope(r_bin, a_best, R)
     return {"a": float(a_best), "delta": float(a_best * a_best / R), "rms": float(np.sqrt(np.sum(w * (prof - model) ** 2) / w.sum())),
             "r": r_bin, "slope": prof, "model": model, "centre_xy": centre_xy}
+
+
+def contact_radius_fit_pixelwise(normals, X, Y, R: float, a0: float, centre_xy=(0.0, 0.0), r_max_over_a: float = 2.5,
+                                 excl_px: float = 1.5) -> dict:
+    """接触半径を**画素ごと**の半径方向スロープに Hertz のスロープ模型 dh/dr(r; a) を連続の a で当てて読む(:func:`contact_radius_fit`
+    のビンを使わない版。``a0`` はその粗い値)。
+
+    :func:`contact_radius_fit` は半径ビン(幅 = 画素ピッチ)の平均に当てるので、a が画素ピッチをまたぐたびに偏りの符号が変わる
+    (P = 3.5 / 4.0 / 4.5 N で −0.04 / +0.31 / −0.02 %)。P の値そのものは 0.3 % で十分でも、2 枚の差(把持の 2 本指の F_x = P_L − P_R)
+    では P̂ の**傾き** dP̂/dP が効き、ビン版は傾きを 40 % 狂わせた(pegtactile の PoC で測った)。ここでは r < ``r_max_over_a``·a0 の
+    画素をそのまま使い、縁 r ≈ a0 の ±``excl_px`` 画素は捨てる —— スロープは r = a で微分が不連続(外側に平方根の尖り)で、
+    画素と縁の位置関係で値が揺れ、残すと a が画素ピッチの周期で揺れる。SSE(a) を黄金分割(初期区間 [0.8, 1.2]·a0、40 回)で最小化。
+    ``centre_xy`` は既知の中心 (x, y)、単位 m。返り ``a``・``delta`` = a²/R・``rms``(スロープの残差)・``n``(使った画素数)。
+    **Raises** ``ValueError``: R, a0 ≤ 0、形が合わない、使える画素が 16 未満。"""
+    nrm = np.asarray(normals, np.float64)
+    X = np.asarray(X, np.float64)
+    Y = np.asarray(Y, np.float64)
+    R, a0 = float(R), float(a0)
+    if not (R > 0.0 and a0 > 0.0):
+        raise ValueError("contact_radius_fit_pixelwise: R and a0 must be > 0")
+    if nrm.ndim != 3 or nrm.shape[:2] != X.shape or X.shape != Y.shape or X.shape[1] < 2:
+        raise ValueError("contact_radius_fit_pixelwise: normals (H, W, 3) and X, Y (H, W) must agree")
+    p, q = _ph.normals_to_gradients(nrm)
+    dx = X - float(centre_xy[0])
+    dy = Y - float(centre_xy[1])
+    r = np.hypot(dx, dy)
+    pitch = float(abs(X[0, 1] - X[0, 0]))
+    sel = (r > 1e-12) & (r < float(r_max_over_a) * a0) & (np.abs(r - a0) > float(excl_px) * pitch)
+    if int(sel.sum()) < 16:
+        raise ValueError("contact_radius_fit_pixelwise: only %d usable pixels (need >= 16)" % int(sel.sum()))
+    s_r = (p[sel] * dx[sel] + q[sel] * dy[sel]) / r[sel]
+    rs = r[sel]
+
+    def sse(a):
+        return float(np.sum((s_r - _hertz_slope(rs, a, R)) ** 2))
+
+    lo, hi = 0.8 * a0, 1.2 * a0
+    g = (math.sqrt(5.0) - 1.0) / 2.0
+    c, d = hi - g * (hi - lo), lo + g * (hi - lo)
+    fc, fd = sse(c), sse(d)
+    for _ in range(40):
+        if fc < fd:
+            hi, d, fd = d, c, fc
+            c = hi - g * (hi - lo)
+            fc = sse(c)
+        else:
+            lo, c, fc = c, d, fd
+            d = lo + g * (hi - lo)
+            fd = sse(d)
+    a = 0.5 * (lo + hi)
+    return {"a": float(a), "delta": float(a * a / R), "rms": float(np.sqrt(sse(a) / rs.size)), "n": int(rs.size)}
 
 
 def membrane_delta_from_normals(normals, X, Y, pitch: float, tail: str = "boussinesq", centre_xy=None) -> float:

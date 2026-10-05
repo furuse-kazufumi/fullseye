@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**ペグ挿入を 2 本指の膜で読む**(新モジュール `pegtactile` 19 op + 既存へ 2(`tacsim.contact_radius_fit_pixelwise` / `tacslip.mindlin_fit_vector`)+ mujoco の
+  facade 4、台帳 `pegtactile`(opsdrive)、PoC `poc_peg_insertion_tactile`、wing_geometry): pegsim・pegfail と視触覚 3 本の集大成。膜の像 2 枚だけから接触レンチを
+  復元し、Whitney の接触状態・壁の μ・止まった時のくさび / かじり・手首剛性を学習なしの規則で読む。真値 = Whitney 1982 の l₂(θ) と c/μ、Johnson 1985 の閉形式、
+  群の作用、MuJoCo の接触と手首の力・トルクセンサ(`--full`)。★くさびの境目はレンチだけでは二点が口の一点に見える(36 組中 2 組)→ 幾何の検査で 36/36。
+  ★場面を 90° 回すとモーメントはパッドのねじりへ移る(ねじりを捨てると一致率 47.6 %)。門 10 本(2.4 s)+ `--full` 12 本: 状態の一致 97.5 %、壁の μ 0.2998、
+  手首剛性 ±0.2 %。正直に: 膜は MuJoCo に無くパッド荷重は静力学の写像(左右対称の仮定)、合成と逆算は同じ閉形式族、走行は各条件 1 回。
 - ★**視触覚センサの照明を実機の較正球で較正する**(新モジュール `tacscalib` 10 op、台帳 `tacscalib`(opsdrive)、PoC `poc_tacscalib_sphere_lut`、
   wing_geometry): 物理シミュ × Fullseye 系列、tacsim の続き。実機の較正パック(arXiv:2109.04027 の作者が MIT で公開、`FULLSEYE_TAXIM_DATA`)を持ち込み、
   順方向(法線 → 色)を較正して逆方向を 2 経路で解く: 線形 12 パラメタ + `photometric_stereo`(被験者)と example-based の勾配 LUT(位置の 2 次式つき)。

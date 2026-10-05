@@ -4,7 +4,7 @@ dim: annotate
 category: shape
 in: image2d
 out: image2d
-examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_machine_condition_fusion, poc_public_camera_heading_real]
+examples: [annotate_gallery, poc_dimensional_inspection, poc_driving_crossing, poc_driving_lateral, poc_driving_pass, poc_machine_condition_fusion, poc_peg_insertion_tactile, poc_public_camera_heading_real]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ ValueError
 - [poc_driving_lateral](../../../../examples/poc_driving_lateral.py) — `py -3.11 examples/poc_driving_lateral.py`
 - [poc_driving_pass](../../../../examples/poc_driving_pass.py) — `py -3.11 examples/poc_driving_pass.py`
 - [poc_machine_condition_fusion](../../../../examples/poc_machine_condition_fusion.py) — `py -3.11 examples/poc_machine_condition_fusion.py`
+- [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 - [poc_public_camera_heading_real](../../../../examples/poc_public_camera_heading_real.py) — `py -3.11 examples/poc_public_camera_heading_real.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

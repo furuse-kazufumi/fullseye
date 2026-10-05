@@ -1,0 +1,4 @@
+scene	pad torsion	state agreement with MuJoCo
+0 deg	read	97.6 %
+90 deg	read	96.8 %
+90 deg	ignored	47.6 %

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">peg_wrench_to_pad_loads — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.peg_wrench_to_pad_loads(F_pad, M_pad, pad: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;peg_wrench_to_pad_loads&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>2 つのパッドがペグに加えるレンチ(グリッパ系、把持点まわり)→ 各パッドの (法線力 P、膜が受けるせん断 q = (q_u, q_v))。</p>
+<p>釣り合い(導出): パッド R(+x)はペグに −N_R x̂ と T_R、L(−x)は +N_L x̂ と T_L。F_x = N_L − N_R、F_y = T_Ry + T_Ly、</p>
+<p>F_z = T_Rz + T_Lz、M_y = −w(T_Rz − T_Lz)、M_z = w(T_Ry − T_Ly)、M_x = ねじり(半分ずつ)。法線は把持力で N = G₀ ∓ F_x/2。</p>
+<p>返り: `<code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf">(各 </code><code style="color:#22d3bf">P</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">q</code><code style="color:#22d3bf">(膜が受ける = −T)・</code><code style="color:#22d3bf">slip_ratio</code><code style="color:#22d3bf"> = |q|/(μP)・</code><code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">(膜が受けるねじり)・</code><code style="color:#22d3bf">torsion_ratio</code>`</p>
+<p>= |ねじり| / 全滑りトルク (3π/16)μPa)、`<code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">(ペグへのねじりの半分 M_x/2)、</code><code style="color:#22d3bf">ok</code><code style="color:#22d3bf">(両方 |q| &lt; μP)、</code><code style="color:#22d3bf">min_margin</code>`、</p>
+<p>`<code style="color:#22d3bf">torsion_ok</code>`。滑り(|q| ≥ μP)とねじりの全滑りは<b>印</b>で返す(例外にしない: 合成は比例載荷・無滑りねじりの模型)。</p>
+<p><b>Raises</b> ValueError: 形が (3,) でない・有限でない、どちらかのパッドの法線力が 0 以下(パッドが離れる = この写像の外。fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">pegtactile</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:pad_params">pad_params</a> · <a style="color:#22d3bf" href="opdrive:pad_context">pad_context</a> · <a style="color:#22d3bf" href="opdrive:pad_loads_to_peg_wrench">pad_loads_to_peg_wrench</a> · <a style="color:#22d3bf" href="opdrive:pad_shear_asymmetry">pad_shear_asymmetry</a> · <a style="color:#22d3bf" href="opdrive:pad_marker_displacement">pad_marker_displacement</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_frame">pad_tactile_frame</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_read">pad_tactile_read</a> · <a style="color:#22d3bf" href="opdrive:contact_candidates">contact_candidates</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegtactile.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

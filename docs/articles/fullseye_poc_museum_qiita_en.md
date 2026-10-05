@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 105 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 78 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 79 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
 
@@ -62,12 +62,12 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 - 2026-10-05 — No.2026.202 Measuring a Powder Heap from Images — Angle of Repose, Volume, Mass, Flowability and Discharge by Rules, with Closed Forms, Published Values and MuJoCo as the Truth
 - 2026-10-05 — No.2026.203 Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth
+- 2026-10-05 — No.2026.204 Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
 - 2026-10-04 — No.2026.190 One Scene, Two Worlds — Scoring a Photoreal Simulator's Depth Against a Closed-Form Truth, Side by Side with Our Own World
 - 2026-10-04 — No.2026.191 Assembling One Town — Auto-Joining Driving-School Elements, Driving Through from Entry to Exit, and Scoring Every Stop Line on the Way
 - 2026-10-04 — No.2026.192 Building a Real Japanese Town in Our Own World and Driving It — Roads from OpenStreetMap, Buildings from PLATEAU, Japanese Furniture and Rules
 - 2026-10-04 — No.2026.193 Driving Our Own Driver Through Someone Else's Scenario and Submitting to Someone Else's Judge — CommonRoad Public Scenarios and TUM's Official Checker
 - 2026-10-04 — No.2026.194 Measuring Image-Quality Metrics Against a Public Ground Truth — TID2013's 3,000 Images × 971 Observers and the Authors' Published Values as the Gate
-- 2026-10-04 — No.2026.197 Perceptual Indices FSIM / FSIMc / GMSD / VIF Matched to Four Digits Against an External Truth — TID2013's Three Author-Value Files and the Published Rank-Correlation Tables
 
 ## Applying it to your own problem
 

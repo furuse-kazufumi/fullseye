@@ -201,6 +201,7 @@ with warnings.catch_warnings():
         puck_challenge_mjcf, puck_mujoco_run,   # エアホッケーの外部シムの台と MuJoCo の走行(mujoco が要るので台帳の外、2026-10-04)
         pegfail_scene_build, pegfail_episode_run, pegfail_failure_grid,   # ペグ挿入の失敗注入 → 検出 → 回復の走行(mujoco が要るので台帳の外、2026-10-04)
         heap_mujoco_pour, heap_mujoco_discharge,   # 粉体の剛体球の山と排出率(MuJoCo の第 2 実装、mujoco が要るので台帳の外、2026-10-05)
+        pegtactile_episode_run, pegtactile_prefetch, pegtactile_process_episode, pegtactile_cutaway_xml,   # ペグ挿入を 2 本指の膜で読む走行と後処理(mujoco が要るので台帳の外、2026-10-05)
         hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
@@ -901,6 +902,7 @@ __all__ = [
     "puck_challenge_mjcf", "puck_mujoco_run",
     "pegfail_scene_build", "pegfail_episode_run", "pegfail_failure_grid",
     "heap_mujoco_pour", "heap_mujoco_discharge",
+    "pegtactile_episode_run", "pegtactile_prefetch", "pegtactile_process_episode", "pegtactile_cutaway_xml",
     "hankel_image", "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
     "erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "chebyshev_coeffs_nd", "chebyshev_eval_nd", "low_discrepancy", "chebyshev_nodes", "interp_barycentric", "integrate_hamiltonian",
     "lomb_scargle", "music_doa", "esprit_doa", "ula_snapshots", "n_sources_mdl", "hilbert_analytic",

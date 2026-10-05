@@ -1,0 +1,154 @@
+[
+ {
+  "file": "01_pegtactile_two_membranes_read.png",
+  "name": "pegtactile_two_membranes_read",
+  "caption": "Whitney の二点接触(θ 3°、μ 0.8 = くさびの境目の近く)を 2 本の指の膜で見た像(等倍 256 px = 16 mm)。矢印はマーカーの変位 ×12、円は読んだ接触円。真値の荷重 L: P 4.093 N・q (-0.000, 0.344) N、R: P 3.907 N・q (-0.000, 0.398) N。左右でせん断の v 成分が逆向き = モーメントは偶力で運ばれる。",
+  "shape": [
+   308,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "02_pegtactile_wrench_truth_vs_membranes.png",
+  "name": "pegtactile_wrench_truth_vs_membranes",
+  "caption": "同じ二点接触の接触レンチ。真値は Whitney の平面の釣り合い(閉形式)、右列は膜の像 2 枚から読んだ値。壁の μ は二点の Whitney 分解。",
+  "shape": [
+   200,
+   575,
+   3
+  ],
+  "csv": "02_pegtactile_wrench_truth_vs_membranes.csv",
+  "tsv": "02_pegtactile_wrench_truth_vs_membranes.tsv"
+ },
+ {
+  "file": "03_pegtactile_whitney_insertion_through_membranes.gif",
+  "name": "pegtactile_whitney_insertion_through_membranes",
+  "caption": "Whitney の閉形式の挿入(θ 3°、μ 0.3)を膜 2 枚で読む動く図: 先端が壁に一点で触れたまま深くなり、深さ W + l₂(θ) = 8.63 mm で胴が口の縁にも触れて二点へ。上の文字の色 = 膜からの判定が真値と一致(全 14 コマ)。",
+  "shape": [
+   340,
+   520,
+   3
+  ],
+  "animated": true,
+  "frames": 14,
+  "frames_written": 14,
+  "fps": 2.0
+ },
+ {
+  "file": "04_pegtactile_contact_radius_binned_vs_pixelwise.png",
+  "name": "pegtactile_contact_radius_binned_vs_pixelwise",
+  "caption": "半径ビンの接触半径は a が画素ピッチをまたぐたびに偏りの符号が変わる(17 点、傾きの誤差 最大 40.5 %)。画素ごとの当てはめは偏り 0.42 mN で滑らか(傾き 0.029 %)。2 本の指の差 F_x = P_L − P_R で効くのは値でなく傾き。",
+  "shape": [
+   360,
+   837,
+   3
+  ]
+ },
+ {
+  "file": "05_pegtactile_wrench_only_blind_band.png",
+  "name": "pegtactile_wrench_only_blind_band",
+  "caption": "二点接触(閉形式)をレンチだけの規則に通すと、口と先端を結ぶ線の傾き c/θ が μ に等しい線(破線、Whitney のくさびの境目そのもの)の近くでだけ口の一点と読む(12 組中 2 組)。先端の摩擦円錐の縁が口の接触点を通るから。幾何の検査(深さ ≥ W + l₂(θ))で全部直る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_pegtactile_shape_orientation_fourier_vs_moment.png",
+  "name": "pegtactile_shape_orientation_fourier_vs_moment",
+  "caption": "5 形状 × 3 角度(形を回して描き直し、等倍 160 px): 緑 = 輪郭の複素フーリエ位相の向き arg(c₁₋ₙ c₁ⁿ⁻¹)/n を n 本、赤 = 2 次モーメントの主軸(blob2d)。n ≥ 3 では慣性が等方になり赤は形と無関係に向く(罠)、フーリエ位相は形と一緒に回る。",
+  "shape": [
+   480,
+   800,
+   3
+  ]
+ },
+ {
+  "file": "07_pegtactile_insertion_section_wrist_membranes.gif",
+  "name": "pegtactile_insertion_section_wrist_membranes",
+  "caption": "挿入の動く図(θ 3°、横ずれ 0.6 mm、48 コマ = 0.08 s ごと): 左 = 穴の断面(板を半透明、緑の円 = MuJoCo の接触点、大きさ ∝ 力、桃の × = 膜 2 枚から読んだ接触点)、中 = 手首カメラ、右 = 2 本の指の膜(矢印 ×12)。下の帯 = 状態(灰 無接触・青 面取り・橙 一点・赤 二点)の MuJoCo と触覚。",
+  "shape": [
+   504,
+   1056,
+   3
+  ],
+  "animated": true,
+  "frames": 48,
+  "frames_written": 48,
+  "fps": 5.0
+ },
+ {
+  "file": "08_pegtactile_timeline_run_A.png",
+  "name": "pegtactile_timeline_run_A",
+  "caption": "走行 A の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 97.6 %。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "09_pegtactile_timeline_run_B.png",
+  "name": "pegtactile_timeline_run_B",
+  "caption": "走行 B の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 95.7 %。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "10_pegtactile_timeline_run_C.png",
+  "name": "pegtactile_timeline_run_C",
+  "caption": "走行 C の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 98.1 %。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "11_pegtactile_timeline_run_D.png",
+  "name": "pegtactile_timeline_run_D",
+  "caption": "走行 D の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 98.7 %。",
+  "shape": [
+   360,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "12_pegtactile_wrist_stiffness_from_images.png",
+  "name": "pegtactile_wrist_stiffness_from_images",
+  "caption": "手首カメラの軸の直線を z = 0 で切った点(たわみ)と、膜 2 枚から読んだ接触力(z 圧縮の分を軸の傾きで射影)。触覚が 3 フレーム続けて二点と言ったフレームだけ。破線 = MuJoCo の設定値。k̂_t は ±0.2 %。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "13_pegtactile_two_point_onset_depth.png",
+  "name": "pegtactile_two_point_onset_depth",
+  "caption": "二点接触の始まり(4 走行)。破線 = Whitney の閉形式、触覚の推定深さとの差は最大 0.037 mm。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "14_pegtactile_rotated_scene_agreement.png",
+  "name": "pegtactile_rotated_scene_agreement",
+  "caption": "場面を 90° 回すと傾きのモーメントはせん断の偶力からパッドのねじりへ移る。ねじりを読めば一致率は変わらず、捨てると落ちる(ねじりの全滑り比 最大 0.60)。物理(MuJoCo)の状態列は 99.2 % 一致。",
+  "shape": [
+   152,
+   350,
+   3
+  ],
+  "csv": "14_pegtactile_rotated_scene_agreement.csv",
+  "tsv": "14_pegtactile_rotated_scene_agreement.tsv"
+ }
+]

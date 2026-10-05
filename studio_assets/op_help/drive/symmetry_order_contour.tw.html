@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symmetry_order_contour — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_order_contour(contour, K: &#x27;int&#x27; = 24, rel: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.symmetry_order_contour(contour, K: &#x27;int&#x27; = 24, rel: &#x27;float&#x27; = 0.01) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_order_contour&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>閉輪郭 (N, 2) = (row, col) の複素フーリエ係数(:func:<code style="color:#22d3bf">fourierdesc.contour_fourier_complex</code>、弧長で打ち直し、±K 次)から n 回対称の</p>
+<p>次数を読む: n 回対称なら非零の係数は k ≡ 1 (mod n) だけ。有意(|c_k| &gt; rel·|c_1|、k ≠ 0, 1)な k の (k − 1) の最大公約数が n。</p>
+<p>有意な k が無ければ円(`<code style="color:#22d3bf">n</code>` = 0 = 連続)。向き α̂ = arg(c₁₋ₙ c₁ⁿ⁻¹)/n(始点の取り方に依らない不変量、mod 2π/n)。n = 1 は</p>
+<p>c₂ c₁⁻² から α̂ = −arg(·) —— k = −1(振幅は 3 倍)は形ごとの定数位相が違い、枝(α / α + π)を参照なしに決められない(試作で</p>
+<p>180° 取り違えた)。返り `<code style="color:#22d3bf">n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">angle</code><code style="color:#22d3bf">(rad、n = 0 は nan)・</code><code style="color:#22d3bf">amps</code><code style="color:#22d3bf">(k → |c_k|/|c_1|)・</code><code style="color:#22d3bf">sig</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">centroid</code>`(c₀ = (row, col))。</p>
+<p>2 次モーメントの向きは n ≥ 3 で慣性が等方になり使えない(PoC の罠の門)。<b>Raises</b> ValueError: 輪郭が (N ≥ 8, 2) でない、K &lt; 6。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">pegtactile</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:pad_params">pad_params</a> · <a style="color:#22d3bf" href="opdrive:pad_context">pad_context</a> · <a style="color:#22d3bf" href="opdrive:peg_wrench_to_pad_loads">peg_wrench_to_pad_loads</a> · <a style="color:#22d3bf" href="opdrive:pad_loads_to_peg_wrench">pad_loads_to_peg_wrench</a> · <a style="color:#22d3bf" href="opdrive:pad_shear_asymmetry">pad_shear_asymmetry</a> · <a style="color:#22d3bf" href="opdrive:pad_marker_displacement">pad_marker_displacement</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_frame">pad_tactile_frame</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_read">pad_tactile_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegtactile.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

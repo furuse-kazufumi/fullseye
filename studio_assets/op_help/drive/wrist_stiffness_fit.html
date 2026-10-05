@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wrist_stiffness_fit — DRIVE <code style="color:#22d3bf">pegtactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wrist_stiffness_fit(dx, F, min_span: &#x27;float&#x27; = 2e-05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pegtactile; pegtactile.wrist_stiffness_fit(dx, F, min_span: &#x27;float&#x27; = 2e-05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;wrist_stiffness_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>手首のたわみ Δx(手首カメラ)と、ペグが受ける接触力の同じ成分 F から k = Σ FΔx / ΣΔx²(原点を通る最小二乗、準静的な釣り合い</p>
+<p>F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx)。回転(角と モーメント)にも同じ式で使える。返り `<code style="color:#22d3bf">k</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">r2</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_N</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">span</code>`。</p>
+<p><b>Raises</b> ValueError: 点が 3 未満、形が違う、有限でない、Δx の幅が `<code style="color:#22d3bf">min_span</code>` 未満(悪条件: 動いていないばねの k は決まらない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pegtactile</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:pad_params">pad_params</a> · <a style="color:#22d3bf" href="opdrive:pad_context">pad_context</a> · <a style="color:#22d3bf" href="opdrive:peg_wrench_to_pad_loads">peg_wrench_to_pad_loads</a> · <a style="color:#22d3bf" href="opdrive:pad_loads_to_peg_wrench">pad_loads_to_peg_wrench</a> · <a style="color:#22d3bf" href="opdrive:pad_shear_asymmetry">pad_shear_asymmetry</a> · <a style="color:#22d3bf" href="opdrive:pad_marker_displacement">pad_marker_displacement</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_frame">pad_tactile_frame</a> · <a style="color:#22d3bf" href="opdrive:pad_tactile_read">pad_tactile_read</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegtactile.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
