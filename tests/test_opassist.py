@@ -333,14 +333,23 @@ def test_find_accepts_multi_word_queries():
 
 
 def test_find_weights_rare_words_above_common_ones():
-    """"strain measurement" は `piv_strain_rate` を先に出す。
+    """"strain measurement" は名前に strain を持つ op を、measure を持つ op より先に出す。
 
     "measurement" は op 名に 1 度も出ないが、語幹一致する "measure" は
     60 個以上の名前に出る。素の出現数で重みを付けると計測系の
     `add_metrology_object_*_measure` が上に来てしまう(実測して直した)。
+
+    ★2026-10-05: 以前は ``names[0] == "piv_strain_rate"`` と 1 位を名指ししていたが、名前に strain を持つ op は
+    同点(30)で、1 位は**名前の辞書順**で決まっていた。tacdome の ``hertz_small_strain_error`` が入って辞書順で前に出て
+    落ちた —— 守りたいのは「希少語の op が一般語の op より上」という順序であって、同点の中の並びではない。
     """
     names = [h["op"] for h in A.find("strain measurement", limit=10)]
-    assert names[0] == "piv_strain_rate", names
+    assert len(names) >= 4, names
+    strain = [i for i, n in enumerate(names) if "strain" in n]
+    measure = [i for i, n in enumerate(names) if "measure" in n and "strain" not in n]
+    assert "piv_strain_rate" in names[:len(strain)], names
+    assert len(strain) >= 2 and len(measure) >= 1, names
+    assert max(strain) < min(measure), names                  # 希少語(strain)の op が全部、一般語(measure)の op より上
 
 
 def test_find_still_rejects_a_query_that_matches_nothing():
