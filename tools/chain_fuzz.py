@@ -5718,6 +5718,101 @@ def _b_sw_dam(pool, rng):
     return (), {"n_particles": int(rng.integers(40, 80)), "t_end": float(rng.uniform(0.02, 0.06)), "n_out": 2}
 
 
+_FUZZ_PX = {}
+
+
+def _fuzz_px():
+    """小さな種(Si と岩塩の相、192×192 の Si の環、積分したプロファイル、2 相の辞書)を 1 回だけ作る(pxrd、numpy + scipy)。"""
+    if "si" not in _FUZZ_PX:
+        import pxrd as PX
+        si = PX.cubic_prototype("diamond", 5.431109, ["Si"], name="Si")
+        na = PX.cubic_prototype("rocksalt", 5.6402, ["Na", "Cl"], name="NaCl")
+        geom = {"cx": 95.3, "cy": 97.1, "distance": 40.0, "pixel": 0.2, "wavelength": 0.5}
+        im = PX.debye_ring_image([si, na], [0.6, 0.4], geom, shape=(192, 192), counts=2e4, seed=1)
+        p = PX.azimuthal_integrate(im["image"], geom, polarization=0.0)
+        ok = np.isfinite(p["intensity"]) & (p["count"] > 0.1 * np.nanmax(p["count"]))
+        x, y, s = p["two_theta"][ok], p["intensity"][ok], p["sigma"][ok]
+        dic = PX.phase_dictionary([si, na], x, 0.5, instrumental_fwhm=0.25)
+        fit = PX.phase_fractions(x, y, dic, sigma=s)
+        _FUZZ_PX.update({"si": si, "na": na, "geom": geom, "img": im["image"], "x": x, "y": y, "dic": dic, "fit": fit,
+                         "d": PX.powder_reflections(si, 0.5, 40.0)["d"],
+                         "cif": ("data_t\n_cell_length_a 4.05\n_cell_length_b 4.05\n_cell_length_c 4.05\n"
+                                 "_cell_angle_alpha 90\n_cell_angle_beta 90\n_cell_angle_gamma 90\nloop_\n"
+                                 "_space_group_symop_operation_xyz\nx,y,z\nx,1/2+y,1/2+z\n1/2+x,y,1/2+z\n1/2+x,1/2+y,z\n"
+                                 "loop_\n_atom_site_label\n_atom_site_fract_x\n_atom_site_fract_y\n_atom_site_fract_z\n"
+                                 "Al1 0 0 0\n")})
+    return _FUZZ_PX
+
+
+def _b_px_cif(pool, rng):
+    return (_fuzz_px()["cif"],), {}
+
+
+def _b_px_proto(pool, rng):
+    k = ("fcc", "bcc", "diamond", "sc")[int(rng.integers(0, 4))]
+    return (k, float(rng.uniform(3.0, 6.0)), ["Cu" if k != "diamond" else "Si"]), {}
+
+
+def _b_px_refl(pool, rng):
+    return (_fuzz_px()["si"], float(rng.uniform(0.4, 1.6))), {"two_theta_max": float(rng.uniform(30, 120))}
+
+
+def _b_px_scherrer(pool, rng):
+    return (float(rng.uniform(0.1, 1.0)), float(rng.uniform(10, 120)), float(rng.uniform(0.5, 1.6))), {}
+
+
+def _b_px_ring(pool, rng):
+    f = _fuzz_px()
+    w = rng.uniform(0.1, 1.0, 2)
+    return ([f["si"], f["na"]], w, f["geom"]), {"shape": (96, 96), "seed": int(rng.integers(0, 99))}
+
+
+def _b_px_tth(pool, rng):
+    return ((int(rng.integers(16, 80)), int(rng.integers(16, 80))), dict(_fuzz_px()["geom"], tilt=float(rng.uniform(-8, 8)))), {}
+
+
+def _b_px_calib(pool, rng):
+    f = _fuzz_px()
+    return (f["img"], f["d"], {"pixel": 0.2, "wavelength": 0.5}), {"n_azimuth": int(rng.integers(60, 120))}
+
+
+def _b_px_integ(pool, rng):
+    f = _fuzz_px()
+    return (f["img"], f["geom"]), {"n_bins": int(rng.integers(100, 600))}
+
+
+def _b_px_peaks(pool, rng):
+    f = _fuzz_px()
+    return (f["x"], f["y"]), {"min_snr": float(rng.uniform(4, 10))}
+
+
+def _b_px_index(pool, rng):
+    a = float(rng.uniform(3.5, 6.5))
+    N = np.array([3, 4, 8, 11, 12, 16])
+    lam = 0.5
+    tt = 2 * np.degrees(np.arctan2(lam * np.sqrt(N) / (2 * a), np.sqrt(1 - (lam * np.sqrt(N) / (2 * a)) ** 2)))
+    return (tt, lam), {}
+
+
+def _b_px_dict(pool, rng):
+    f = _fuzz_px()
+    return ([f["si"], f["na"]], f["x"], 0.5), {"size": float(rng.uniform(100, 1000))}
+
+
+def _b_px_frac(pool, rng):
+    f = _fuzz_px()
+    return (f["x"], f["y"], f["dic"]), {"background_order": int(rng.integers(0, 6))}
+
+
+def _b_px_unexp(pool, rng):
+    return (_fuzz_px()["fit"],), {"min_snr": float(rng.uniform(4, 10))}
+
+
+def _b_px_peel(pool, rng):
+    f = _fuzz_px()
+    return (f["x"], f["y"], f["dic"]), {"min_gain": float(rng.uniform(0.0, 0.2))}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6092,6 +6187,11 @@ OP_ARG_BUILDERS = {
     "swarm_render_overhead": _b_sw_render, "swarm_field_from_tracks": _b_sw_tracks, "swarm_field_from_piv": _b_sw_piv,
     "potential_flow_cylinder": _b_sw_pf, "velocity_deficit_map": _b_sw_field, "stagnation_from_centerline": _b_sw_field,
     "obstacle_fit_doublet": _b_sw_field, "ritter_dam_break": _b_sw_ritter, "sph_dam_break_1d": _b_sw_dam,
+    "cif_read": _b_px_cif, "cubic_prototype": _b_px_proto, "powder_reflections": _b_px_refl,
+    "scherrer_size": _b_px_scherrer, "debye_ring_image": _b_px_ring, "detector_two_theta": _b_px_tth,
+    "detector_calibrate": _b_px_calib, "azimuthal_integrate": _b_px_integ, "diffraction_peaks": _b_px_peaks,
+    "cubic_index": _b_px_index, "phase_dictionary": _b_px_dict, "phase_fractions": _b_px_frac,
+    "unexplained_peaks": _b_px_unexp, "phase_peel": _b_px_peel,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

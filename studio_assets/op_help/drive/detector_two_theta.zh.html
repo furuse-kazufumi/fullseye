@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">detector_two_theta — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.detector_two_theta(shape, geometry)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;detector_two_theta&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>検出器の各画素の 2θ・方位 χ・相対立体角(傾き・距離・中心つき)。</p>
+<p>`<code style="color:#22d3bf">shape = (H, W)</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">geometry</code><code style="color:#22d3bf"> は module の docstring の Fit2D 型。返り値(dict): </code><code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf"> [deg]・</code><code style="color:#22d3bf">chi</code>` [deg]</p>
+<p>(`<code style="color:#22d3bf">atan2</code><code style="color:#22d3bf">、+列が 0、+行が +90)・</code><code style="color:#22d3bf">solid_angle</code><code style="color:#22d3bf">(ビームの中心で傾き 0 のとき 1 になる相対値、</code><code style="color:#22d3bf">cos³</code>` で落ちる)。</p>
+<p>2θ は `<code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code>` で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
+<p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、`<code style="color:#22d3bf">|tilt| &gt;= 60</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a> · <a style="color:#22d3bf" href="opdrive:diffraction_peaks">diffraction_peaks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

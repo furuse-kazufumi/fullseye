@@ -1,4 +1,4 @@
-# DRIVE operator help — 659 ops in 47 categories
+# DRIVE operator help — 673 ops in 48 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -131,6 +131,10 @@
 ### puck (26)
 
 [fivebar_fk](puck/fivebar_fk.md) · [fivebar_ik](puck/fivebar_ik.md) · [fivebar_link](puck/fivebar_link.md) · [fivebar_reach_interval](puck/fivebar_reach_interval.md) · [fivebar_trajectory](puck/fivebar_trajectory.md) · [fivebar_workspace](puck/fivebar_workspace.md) · [puck_camera](puck/puck_camera.md) · [puck_crossing_point](puck/puck_crossing_point.md) · [puck_detect](puck/puck_detect.md) · [puck_mirror_path](puck/puck_mirror_path.md) · [puck_mu_from_decel](puck/puck_mu_from_decel.md) · [puck_pinhole_camera](puck/puck_pinhole_camera.md) · [puck_pixel_to_world](puck/puck_pixel_to_world.md) · [puck_render_frame](puck/puck_render_frame.md) · [puck_restitution_from_wall](puck/puck_restitution_from_wall.md) · [puck_scene_mjcf](puck/puck_scene_mjcf.md) · [puck_slide_predict](puck/puck_slide_predict.md) · [puck_state_at](puck/puck_state_at.md) · [puck_stop_distance](puck/puck_stop_distance.md) · [puck_synth_frames](puck/puck_synth_frames.md) · [puck_table](puck/puck_table.md) · [puck_track](puck/puck_track.md) · [puck_velocity_estimate](puck/puck_velocity_estimate.md) · [puck_wall_bounce](puck/puck_wall_bounce.md) · [puck_world_to_pixel](puck/puck_world_to_pixel.md) · [striker_plan](puck/striker_plan.md)
+
+### pxrd (14)
+
+[azimuthal_integrate](pxrd/azimuthal_integrate.md) · [cif_read](pxrd/cif_read.md) · [cubic_index](pxrd/cubic_index.md) · [cubic_prototype](pxrd/cubic_prototype.md) · [debye_ring_image](pxrd/debye_ring_image.md) · [detector_calibrate](pxrd/detector_calibrate.md) · [detector_two_theta](pxrd/detector_two_theta.md) · [diffraction_peaks](pxrd/diffraction_peaks.md) · [phase_dictionary](pxrd/phase_dictionary.md) · [phase_fractions](pxrd/phase_fractions.md) · [phase_peel](pxrd/phase_peel.md) · [powder_reflections](pxrd/powder_reflections.md) · [scherrer_size](pxrd/scherrer_size.md) · [unexplained_peaks](pxrd/unexplained_peaks.md)
 
 ### racket (10)
 

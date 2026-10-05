@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cubic_index — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_index(two_theta, wavelength, lattices=(&#x27;P&#x27;, &#x27;I&#x27;, &#x27;F&#x27;, &#x27;diamond&#x27;), tolerance=0.05, n_first=6, max_unindexed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import pxrd; pxrd.cubic_index(two_theta, wavelength, lattices=(&#x27;P&#x27;, &#x27;I&#x27;, &#x27;F&#x27;, &#x27;diamond&#x27;), tolerance=0.05, n_first=6, max_unindexed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;cubic_index&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>立方晶として山に指数を付け、格子(P / I / F / diamond)と格子定数 a [Å] を決める。</p>
+<p>`<code style="color:#22d3bf">1/d² = N / a²</code><code style="color:#22d3bf"> なので、1 本目の山に許される N の小さい方から </code><code style="color:#22d3bf">n_first</code>` 個を当てて a を仮に決め、全部の山を</p>
+<p>最も近い許される N に割り当て、`<code style="color:#22d3bf">a</code>` を最小二乗で追い込み(割り当て → 追い込みを 2 回)、計算と観測の 2θ の差が</p>
+<p>`<code style="color:#22d3bf">tolerance</code><code style="color:#22d3bf"> [deg] 以内の候補だけを残す(外れる山が </code><code style="color:#22d3bf">max_unindexed</code>` 本までなら、それを除いて残す —— 不純物や</p>
+<p>偽の山が 1 本混じっただけで全部を捨てないため。除いた山は `<code style="color:#22d3bf">unindexed</code>` に返す)。候補どうしは de Wolff の M 型の性能指数</p>
+<p>`<code style="color:#22d3bf">M = Q_last / (2 ε̄ N_calc)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">Q = 1/d²</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">ε̄</code><code style="color:#22d3bf"> = |ΔQ| の平均、</code><code style="color:#22d3bf">N_calc</code>` = 最後の観測線までに許される計算線の数)</p>
+<p>で比べる —— P は何にでも合うが計算線が多いぶん M が下がる。外した山がある候補は `<code style="color:#22d3bf">(指数の付いた割合)⁴</code>` で割り引く</p>
+<p>(経験的な重み。強い山を捨てて計算線の少ない格子に逃げるのを防ぐ)。</p>
+<p>返り値(dict): `<code style="color:#22d3bf">lattice</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">a_sigma</code><code style="color:#22d3bf">(残差からの標準誤差)・</code><code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">(指数の付いた山)・</code><code style="color:#22d3bf">hkl</code>`((n, 3))・</p>
+<p>`<code style="color:#22d3bf">N</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">residual_deg</code><code style="color:#22d3bf">(観測 − 計算)・</code><code style="color:#22d3bf">fom</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">missing</code><code style="color:#22d3bf">(範囲内で許されるのに観測に無い N の list)・</code><code style="color:#22d3bf">unindexed</code>`</p>
+<p>(外した山)・`<code style="color:#22d3bf">candidates</code>`(全候補の要約)。</p>
+<p>当てはまる候補が無ければ `<code style="color:#22d3bf">lattice = None</code>`(立方晶でない・山の取り違え)。</p>
+<p>Raises ValueError: 山が 2 本未満・非有限・(0, 180) の外、波長が非正、格子の綴り違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_two_theta">detector_two_theta</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">detector_calibrate — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × signal × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。</p>
+<p>`<code style="color:#22d3bf">d_spacings</code><code style="color:#22d3bf"> は標準の面間隔 [Å] の list(強い順でなくてよい)、</code><code style="color:#22d3bf">geometry_guess</code><code style="color:#22d3bf"> には少なくとも </code><code style="color:#22d3bf">pixel</code>` と</p>
+<p>`<code style="color:#22d3bf">wavelength</code><code style="color:#22d3bf">、分かっていれば </code><code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt_dir</code>` を入れる。手順:</p>
+<p>1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>
+<p>2. 距離が無ければ、半径方向のプロファイルの最初の山を d の候補(小さい 2θ から 4 本)に当て、他の環の予測と</p>
+<p>観測の山が最も多く一致する組を選ぶ。</p>
+<p>3. 現在の幾何で各環の位置を `<code style="color:#22d3bf">n_azimuth</code>` 本の光線上で予測し、窓の中の強度の重心で点を拾い、</p>
+<p>`<code style="color:#22d3bf">scipy.optimize.least_squares</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(cx, cy, distance, tilt の 2 成分)</code>` を 2θ の残差 [deg] で当てる。窓を</p>
+<p>縮めながら 3 回。傾きは回転ベクトルの 2 成分 `<code style="color:#22d3bf">tilt·(cos φ, sin φ)</code>` で解く(傾き 0 で φ が不定になる特異点を避ける)。</p>
+<p>返り値(dict): 幾何(`<code style="color:#22d3bf">cx</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">cy</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">distance</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">pixel</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">wavelength</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">tilt_dir</code>`)に</p>
+<p>`<code style="color:#22d3bf">rms_two_theta_deg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_points</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_rings</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rings_deg</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">ok</code><code style="color:#22d3bf">(rms が画素 1/4 の角 </code><code style="color:#22d3bf">0.25·pixel/distance</code>` 未満</p>
+<p>かつ環 &gt;= `<code style="color:#22d3bf">min_rings</code>`)を足したもの。</p>
+<p>Raises ValueError: 像が 2-D でない、d が 1 本も無い、pixel / wavelength が無い、環が `<code style="color:#22d3bf">min_rings</code>` 本見つからない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_two_theta">detector_two_theta</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a> · <a style="color:#22d3bf" href="opdrive:diffraction_peaks">diffraction_peaks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

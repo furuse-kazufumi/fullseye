@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">azimuthal_integrate — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import pxrd; pxrd.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;azimuthal_integrate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。</p>
+<p>各画素を `<code style="color:#22d3bf">supersample</code>`² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに <b>平均</b></p>
+<p>する(画素の分け方の粗さによる縞を減らす)。`<code style="color:#22d3bf">solid_angle=True</code><code style="color:#22d3bf"> で相対立体角を、</code><code style="color:#22d3bf">polarization</code>` が数(0 = 無偏光、</p>
+<p>1 = 水平偏光)なら偏光因子を、平均の前に割り戻す。`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> は True の画素を **除く**(同じ形の bool)。</code><code style="color:#22d3bf">chi_range</code>`</p>
+<p>= (χ₀, χ₁) [deg] で扇形だけを積分(χ は `<code style="color:#22d3bf">atan2</code>` の (−180, 180])。非有限の画素は mask に入っていなければ拒否する。</p>
+<p>`<code style="color:#22d3bf">n_bins</code><code style="color:#22d3bf"> の既定は画素 1 個の角の半分の幅になる数(</code><code style="color:#22d3bf">0.5·pixel/distance</code>` [rad])。</p>
+<p>返り値(dict): `<code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">(ビンの中心 [deg])・</code><code style="color:#22d3bf">intensity</code><code style="color:#22d3bf">(平均)・</code><code style="color:#22d3bf">count</code>`(副画素の重みの和、0 のビンは</p>
+<p>`<code style="color:#22d3bf">intensity</code><code style="color:#22d3bf"> が nan —— 埋めない)・</code><code style="color:#22d3bf">sigma</code>`(Poisson を仮定した平均の標準誤差)。</p>
+<p>Raises ValueError: 2-D でない、mask の形の不一致、非有限の画素、範囲が空、扇形が空、ビン数 &lt; 8。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_two_theta">detector_two_theta</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:diffraction_peaks">diffraction_peaks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

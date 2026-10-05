@@ -1,0 +1,5 @@
+﻿case,wt% (truth 40 / 35 / 25),max error wt%,rwp
+same model,40.0 / 35.1 / 24.9,0.10,0.027
+"synthesis 30 % Lorentzian tails, dictionary Gaussian",40.2 / 34.7 / 25.1,0.33,0.031
+dictionary neutral atoms (synthesis uses the CIF ions),40.0 / 35.1 / 25.0,0.06,0.029
+dictionary crystallites 250 A (truth 350 A),39.4 / 36.0 / 24.6,0.97,0.103

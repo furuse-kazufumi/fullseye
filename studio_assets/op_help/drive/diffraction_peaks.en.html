@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">diffraction_peaks — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;diffraction_peaks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。</p>
+<p>手順: 窓 `<code style="color:#22d3bf">baseline_window</code>` [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の</p>
+<p>局所の最大のうち `<code style="color:#22d3bf">min_snr</code><code style="color:#22d3bf"> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。</code><code style="color:#22d3bf">noise</code>` に</p>
+<p>数か、:func:<code style="color:#22d3bf">azimuthal_integrate</code> の `<code style="color:#22d3bf">sigma</code>` のようなビンごとの配列を渡してもよい —— 中心の近くや隅のように画素の</p>
+<p>少ないビンの揺れを山と取り違えないためには配列が要る)。各候補の半値幅を目で測る代わりに半値の交点で見積もり、隣の候補との中点で切った窓でガウス + 直線を</p>
+<p>`<code style="color:#22d3bf">scipy.optimize.least_squares</code><code style="color:#22d3bf"> で当てる。重なった山は窓が切られるぶん偏る(分けたいなら :func:</code>phase_fractions`)。</p>
+<p>返り値(dict): `<code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">height</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fwhm</code><code style="color:#22d3bf"> [deg]・</code><code style="color:#22d3bf">area</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">snr</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fit_ok</code>`(当てはめが収束し窓の中に</p>
+<p>収まったか)、`<code style="color:#22d3bf">noise</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">baseline</code>`(格子と同じ長さ)。山が無ければ長さ 0 の配列(空 = 失敗ではない)。</p>
+<p>Raises ValueError: 長さの不一致・非有限・2θ が増えない、`<code style="color:#22d3bf">min_snr &lt;= 0</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_two_theta">detector_two_theta</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

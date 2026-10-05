@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**粉末 X 線回折の 2-D 検出器像から相を 1 つずつ剥がす**(新モジュール `pxrd` 14 op、facade なし、台帳 `pxrd`(opsdrive)、PoC `poc_pxrd_phase_peel`、wing_metrology):
+  標準 Si の環で検出器の中心・距離・傾きを較正し、方位積分・山の検出・立方晶の指数付け・CIF から作った参照の辞書で NNLS の相分率と前進選択、残差の山から未知相を名指しする。Scherrer の結晶子径も。
+  外の真値は NIST SRM 640g の証明書(線 11 本を 0.00044° 以内)と COD の CIF(CC0、repo の外・環境変数 `FULLSEYE_PXRD_DATA`、無い CI では立方晶の原型で全部の門が走る)。4 相の分率の誤差 0.04 wt%。
+  正直に: 合成と解析は同じ物理模型を共有する(模型をわざと食い違わせると結晶子径 −29 % で 0.97 wt%)。強度の外部真値はまだ無い。
 - ★**群れが見えない障害物を速度場の乱れだけで察知する**(新モジュール `swarmflow` 12 op、facade なし、台帳 `swarmflow`(opsdrive)、PoC `poc_swarm_obstacle_from_flow`、wing_xyt):
   群れの個体を SPH の粒子として動かし、俯瞰映像から追跡(blob2d)と PIV(pivops)で速度場を測って、円柱まわりのポテンシャル流の閉形式で衝突点と障害物の中心・半径を読む。
   閉形式の場で 2 次元の当てはめは厳密、PIV で半径 −0.6 %・追跡で +0.3 %、群れの模擬(1692 個体)では上流だけで中心 4.5 % of R・半径 −10 %。雑音・渦・湧き出しでは「説明できる割合」で言わない。

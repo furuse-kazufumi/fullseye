@@ -1,0 +1,4 @@
+NaCl strain	NaCl wt% (no refine)	rwp	NaCl wt% (refined)	lattice scale	rwp
++0.0 %	49.9	0.026	49.9	1.0000	0.025
++0.2 %	42.8	0.233	49.9	1.0020	0.026
++0.4 %	26.8	0.348	49.8	1.0040	0.027

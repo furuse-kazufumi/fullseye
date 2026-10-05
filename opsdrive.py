@@ -35,6 +35,7 @@
 乳鉢の粉砕を測る(grind: 粉体の 3 本目。レーザー回折の粒度分布の D10/D50/D90(装置の Dx(50) と同じ log 補間)、粉砕則(一般式 dE = −C dx/xⁿ、Kick / Bond / Rittinger、Reddy の式 (1)・(5)〜(7))の閉形式と当てはめ、一次の破砕速度(Deniz 2004 の式 (1)〜(3)、出典 Austin)、独立試行のばらつきと材料の差、AE の帯域電力(公開の解析コードの定義とacoustics.stft の密度、Parseval で突き合わせ)と D50 の対応、合成画像からの体積基準 / 個数基準の D50。外の真値は公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)の実測で、repo の外に置き環境変数で渡す。全部 numpy + scipy)。
 点の順に依らない FP64 の縮約(ozaki: Ozaki スキームの行列積。正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット。Ozaki-I(固定小数点の切り出し、分割数は誤差の保証上界から自動で選ぶ)と Ozaki-II(中国剰余定理、定数倍で壊れない拡大)、打ち切りの上界、Kabsch / ICP の相互共分散と剛体の R・t、GPU の FP64 エミュレーションの有無の探針(ctypes だけ、例外なし)。真値は Python の整数で計算した正確な積。CPU では DGEMM の 15〜83 倍遅く、効くのは再現性と精度の保証だけ。numpy だけ)。
 流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する(swarmflow: SPH の 3 次スプライン核(∫W dV = 1)と密度・圧力、障害物のある周期の流路を流れる群れの模擬、俯瞰映像の合成、個体の検出(blob2d)と追跡 / 相互相関の PIV(pivops)から速度場、自由流からの欠損の地図、中心線の 1/√d の直線化と二重湧き出しの 2 次元の当てはめで衝突点・障害物の中心と半径と「障害物あり」の判定、Ritter のダム崩壊解と 1 次元 SPH の浅水)。
+粉末 X 線回折を測る(pxrd: 2-D 検出器のデバイ環 → 検出器の較正(中心・距離・傾き、標準 Si の環)→ 方位積分(マスク・立体角・偏光)→ 山の検出と立方晶の指数付け(P / I / F / diamond、de Wolff 型の性能指数)→ CIF の結晶構造から作った参照パターンの辞書と NNLS の重量分率(Hill–Howard の ZMV と同じ形)・相を 1 つずつ剥がす前進選択・残差の未知相・Scherrer の結晶子径。外の真値は NIST SRM 640g の証明書(a と線の位置の表 A1)と COD の CIF(CC0、repo の外・環境変数)。全部 numpy + scipy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -95,6 +96,7 @@ import scoop
 import grind
 import ozakimm
 import swarmflow
+import pxrd
 import racket
 import roadjp
 import rsssafety
@@ -103,7 +105,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1034,6 +1036,25 @@ _CATALOG = {
         ("obstacle_fit_doublet", "swarmflow", ["table"], "table"),
         ("ritter_dam_break", "swarmflow", ["signal", "scalar", "scalar"], "table"),
         ("sph_dam_break_1d", "swarmflow", [], "table"),
+    ],
+    # 粉末 X 線回折を測る(2026-10-05): 相・反射の一覧・幾何・プロファイル・当てはめは table(dict)、検出器像は image2d、
+    # 1-D の 2θ と強度は signal、波長・径・FWHM は scalar、CIF のパス / 本文・相の list・原型の名前は any。外の真値 =
+    # NIST SRM 640g の証明書(線の位置 11 本を Bragg + 消滅則で 0.0005° 以内)と COD の CIF(repo の外、FULLSEYE_PXRD_DATA)。
+    "pxrd": [
+        ("cif_read", "pxrd", ["any"], "table"),
+        ("cubic_prototype", "pxrd", ["any", "scalar", "any"], "table"),
+        ("powder_reflections", "pxrd", ["table", "scalar"], "table"),
+        ("scherrer_size", "pxrd", ["scalar", "scalar", "scalar"], "scalar"),
+        ("debye_ring_image", "pxrd", ["any", "signal", "table"], "table"),
+        ("detector_two_theta", "pxrd", ["any", "table"], "table"),
+        ("detector_calibrate", "pxrd", ["image2d", "signal", "table"], "table"),
+        ("azimuthal_integrate", "pxrd", ["image2d", "table"], "table"),
+        ("diffraction_peaks", "pxrd", ["signal", "signal"], "table"),
+        ("cubic_index", "pxrd", ["signal", "scalar"], "table"),
+        ("phase_dictionary", "pxrd", ["any", "signal", "scalar"], "table"),
+        ("phase_fractions", "pxrd", ["signal", "signal", "table"], "table"),
+        ("unexplained_peaks", "pxrd", ["table"], "table"),
+        ("phase_peel", "pxrd", ["signal", "signal", "table"], "table"),
     ],
 }
 

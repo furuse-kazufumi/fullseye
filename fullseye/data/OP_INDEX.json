@@ -1,8 +1,8 @@
 {
- "n_ops": 3043,
+ "n_ops": 3057,
  "tiers": {
   "color": 12,
-  "ledger": 2090,
+  "ledger": 2104,
   "nary": 17,
   "registry": 924
  },
@@ -1640,6 +1640,20 @@
    "in_sorts": []
   },
   {
+   "name": "azimuthal_integrate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "table"
+   ]
+  },
+  {
    "name": "background_flatten",
    "halcon": "",
    "in_sort": "image2d",
@@ -3232,6 +3246,19 @@
    ]
   },
   {
+   "name": "cif_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
+   ]
+  },
+  {
    "name": "circle_fit_known_radius",
    "halcon": "",
    "in_sort": "matrix",
@@ -4805,6 +4832,35 @@
    ]
   },
   {
+   "name": "cubic_index",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
+   "name": "cubic_prototype",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "any"
+   ]
+  },
+  {
    "name": "cup_catch_check",
    "halcon": "",
    "in_sort": null,
@@ -5208,6 +5264,21 @@
    "dim": "math",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "debye_ring_image",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal",
+    "table"
    ]
   },
   {
@@ -5841,6 +5912,35 @@
    ]
   },
   {
+   "name": "detector_calibrate",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "detector_two_theta",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "table"
+   ]
+  },
+  {
    "name": "diabolo_axis_from_image",
    "halcon": "",
    "in_sort": "rgb",
@@ -6057,6 +6157,20 @@
    "in_sorts": [
     "rgbimage",
     "table"
+   ]
+  },
+  {
+   "name": "diffraction_peaks",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
    ]
   },
   {
@@ -16681,6 +16795,21 @@
    ]
   },
   {
+   "name": "phase_dictionary",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "phase_displacement",
    "halcon": "",
    "in_sort": "video",
@@ -16691,6 +16820,36 @@
    "dim": "motionmag",
    "in_sorts": [
     "video"
+   ]
+  },
+  {
+   "name": "phase_fractions",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table"
+   ]
+  },
+  {
+   "name": "phase_peel",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table"
    ]
   },
   {
@@ -17816,6 +17975,20 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
+   "name": "powder_reflections",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
     "scalar"
    ]
   },
@@ -20916,6 +21089,21 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "scherrer_size",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
   },
   {
    "name": "scoop_count",
@@ -25647,6 +25835,19 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "unexplained_peaks",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "pxrd",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
   },
   {
    "name": "unpremultiply",

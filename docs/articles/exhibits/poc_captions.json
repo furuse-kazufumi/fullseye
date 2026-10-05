@@ -2296,6 +2296,17 @@
    "run": "py -3.11 examples/poc_swarm_obstacle_from_flow.py"
   },
   {
+   "id": "poc_pxrd_phase_peel",
+   "wing": "wing_metrology",
+   "added": "2026-10-06",
+   "numbers_source": "log",
+   "title_ja": "粉末 X 線回折の 2-D 検出器像から相を 1 つずつ剥がす ―― 較正・方位積分・NNLS・残差の未知相。真値は NIST SRM 640g の証明書と COD の CIF、合成と解析が模型を共有する分は食い違わせて測る",
+   "title_en": "Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch",
+   "caption_ja": "混合物の粉末に X 線を当てると、検出器には相ごとのデバイ環が重なって写る。新モジュール pxrd(14 op)は学習なしに、標準 Si の環で検出器の中心・距離・傾きを較正し(傾き 3° で中心 0.011 px、距離 0.0009 %、傾き 3.004°・向き −40.01°、rms 0.019°)、方位積分で 2θ のプロファイルに落とし、山の幅から Scherrer で結晶子径を出し(354 Å、真 350 Å)、CIF から作った参照の辞書で相を 1 つずつ剥がし(NNLS の前進選択、NaCl > CaF₂ > コランダムの順、rwp 0.546 → 0.179)、残差に残った 8 本の山を立方晶 F・a = 4.2170 Å(真 4.2170)と指数付けして、候補 4 つ(MgO・NiO・CaO・KCl)から MgO を名指しする。4 相(35 / 30 / 20 / 15 wt%)の分率の誤差は 0.04 wt%。外の真値は NIST SRM 640g の証明書: a = 0.543 110 9 nm と Cu Kα1 から、表の線 11 本を Bragg + 消滅則で最大 0.00044° に再現し、140° までに他の線は 1 本も出ない。相は COD の CIF(CC0、repo の外)。罠: 傾き 5° を無視して積分すると環が楕円になり、山 10 本が 23 本に割れる。試料の格子が参照より 0.4 % 大きいだけで分率が崩れ、格子の追い込みで戻る。正直に: 合成と解析は同じ物理模型を共有するので、0.04 wt% は「幾何・画素・雑音・重なりを通り抜けても模型の量が戻る」確認にとどまる。模型をわざと食い違わせて漏れを測った: 山の形の取り違え 0.33 wt%、イオンと中性原子 0.06 wt%、結晶子径 −29 % で 0.97 wt%。微視的吸収・選択配向・異常分散は模型に無く、強度の外部真値(実測の相対強度)もまだ無い。",
+   "caption_en": "Shine X-rays on a powder mixture and the detector records the Debye rings of every phase on top of each other. The new module pxrd (14 ops), with no learning, calibrates the detector's centre, distance and tilt on the rings of a Si standard (at a 3° tilt: centre 0.011 px, distance 0.0009 %, tilt 3.004°, direction −40.01°, rms 0.019°), integrates azimuthally into a 2θ profile, takes the crystallite size from the peak widths by Scherrer (354 Å, truth 350 Å), peels the phases off one at a time against a reference dictionary built from CIFs (NNLS forward selection, in the order NaCl > CaF₂ > corundum, rwp 0.546 → 0.179), indexes the 8 peaks left in the residual as cubic F with a = 4.2170 Å (truth 4.2170), and names MgO among four candidates (MgO, NiO, CaO, KCl). The four-phase fractions (35 / 30 / 20 / 15 wt%) come back to within 0.04 wt%. The external reference is the NIST SRM 640g certificate: from a = 0.543 110 9 nm and Cu Kα1, Bragg plus the extinction rules reproduce its 11 tabulated lines to 0.00044° and produce no other line up to 140°. The phases are COD CIFs (CC0, kept outside the repository). Traps: integrating a 5°-tilted detector as if flat turns the rings into ellipses and splits 10 peaks into 23; a sample lattice only 0.4 % larger than the reference collapses the fractions, which return once the lattice is refined. Honestly: synthesis and analysis share one physical model, so 0.04 wt% only shows that the model's quantities survive geometry, pixels, noise and overlap. The leak was measured by deliberate mismatch: a wrong peak shape costs 0.33 wt%, ions versus neutral atoms 0.06 wt%, a crystallite size off by −29 % 0.97 wt%. Microabsorption, preferred orientation and anomalous dispersion are not in the model, and there is no external reference for intensities (measured relative intensities) yet.",
+   "run": "py -3.11 examples/poc_pxrd_phase_peel.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

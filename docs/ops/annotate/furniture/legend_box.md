@@ -4,7 +4,7 @@ dim: annotate
 category: furniture
 in: image2d × entries
 out: image2d
-examples: [annotate_gallery, poc_driving_decisions, poc_measurement_system_analysis]
+examples: [annotate_gallery, poc_driving_decisions, poc_measurement_system_analysis, poc_pxrd_phase_peel]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -59,6 +59,7 @@ ValueError
 - [annotate_gallery](../../../../examples/annotate_gallery.py) — `py -3.11 examples/annotate_gallery.py`
 - [poc_driving_decisions](../../../../examples/poc_driving_decisions.py) — `py -3.11 examples/poc_driving_decisions.py`
 - [poc_measurement_system_analysis](../../../../examples/poc_measurement_system_analysis.py) — `py -3.11 examples/poc_measurement_system_analysis.py`
+- [poc_pxrd_phase_peel](../../../../examples/poc_pxrd_phase_peel.py) — `py -3.11 examples/poc_pxrd_phase_peel.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

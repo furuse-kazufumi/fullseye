@@ -988,7 +988,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 32 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 33 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2003,6 +2003,42 @@ Source: [examples/poc_powder_grinding_ae.py](https://github.com/furuse-kazufumi/
 This run produced **13 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_powder_grinding_ae)
 
 Ops used (notes): [`ae_band_power`](https://furuse.work/ops/drive/grind/ae_band_power.html) · [`ae_read_csv`](https://furuse.work/ops/drive/grind/ae_read_csv.html) · [`ae_size_correspondence`](https://furuse.work/ops/drive/grind/ae_size_correspondence.html) · [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`blob_overlay`](https://furuse.work/ops/blob/extract/blob_overlay.html) · [`breakage_first_order_fit`](https://furuse.work/ops/drive/grind/breakage_first_order_fit.html) · [`comminution_energy`](https://furuse.work/ops/drive/grind/comminution_energy.html) · [`comminution_law_fit`](https://furuse.work/ops/drive/grind/comminution_law_fit.html) · [`particle_image_d50`](https://furuse.work/ops/drive/grind/particle_image_d50.html) · [`particle_image_synth`](https://furuse.work/ops/drive/grind/particle_image_synth.html) · [`particle_size_dx`](https://furuse.work/ops/drive/grind/particle_size_dx.html) · [`particle_size_oversize`](https://furuse.work/ops/drive/grind/particle_size_oversize.html) · [`particle_size_read`](https://furuse.work/ops/drive/grind/particle_size_read.html) · [`particle_size_synth`](https://furuse.work/ops/drive/grind/particle_size_synth.html) · [`replicate_compare`](https://furuse.work/ops/drive/grind/replicate_compare.html)
+
+## No.2026.214 —— Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch
+
+[![Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/01_phase_peel.gif)
+
+*↑ **Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch** ―― Shine X-rays on a powder mixture and the detector records the Debye rings of every phase on top of each other. The new module pxrd (14 ops), with no learning, calibrates the detector's centre, distance and tilt on the rings of a Si standard (at a 3° tilt: centre 0.011 px, distance 0.0009 %, tilt 3.004°, direction −40.01°, rms 0.019°), integrates azimuthally into a 2θ profile, takes the crystallite size from the peak widths by Scherrer (354 Å, truth 350 Å), peels the phases off one at a time against a reference dictionary built from CIFs (NNLS forward selection, in the order NaCl > CaF₂ > corundum, rwp 0.546 → 0.179), indexes the 8 peaks left in the residual as cubic F with a = 4.2170 Å (truth 4.2170), and names MgO among four candidates (MgO, NiO, CaO, KCl). The four-phase fractions (35 / 30 / 20 / 15 wt%) come back to within 0.04 wt%. The external reference is the NIST SRM 640g certificate: from a = 0.543 110 9 nm and Cu Kα1, Bragg plus the extinction rules reproduce its 11 tabulated lines to 0.00044° and produce no other line up to 140°. The phases are COD CIFs (CC0, kept outside the repository). Traps: integrating a 5°-tilted detector as if flat turns the rings into ellipses and splits 10 peaks into 23; a sample lattice only 0.4 % larger than the reference collapses the fractions, which return once the lattice is refined. Honestly: synthesis and analysis share one physical model, so 0.04 wt% only shows that the model's quantities survive geometry, pixels, noise and overlap. The leak was measured by deliberate mismatch: a wrong peak shape costs 0.33 wt%, ions versus neutral atoms 0.06 wt%, a crystallite size off by −29 % 0.97 wt%. Microabsorption, preferred orientation and anomalous dispersion are not in the model, and there is no external reference for intensities (measured relative intensities) yet.*
+
+[![the detector image coloured by phase (1:1 pixels, lossless PNG)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/02_detector_by_phase_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/02_detector_by_phase.png)
+
+*↑ The measurement ―― the detector image coloured by phase (1:1 pixels, lossless PNG) (figure labels are in Japanese; the numbers are the same)*
+
+[![the observed detector image (background removed, gamma 0.5)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/03_detector_observed_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/03_detector_observed.png)
+
+*↑ the observed detector image (background removed, gamma 0.5)*
+
+[![integrated profile, NNLS fit and each phase's contribution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/04_profile_fit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/04_profile_fit.png)
+
+*↑ integrated profile, NNLS fit and each phase's contribution*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/06_trap_lattice_mismatch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/06_trap_lattice_mismatch.png)
+
+*↑ この回の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/08_calibration_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_pxrd_phase_peel/08_calibration.png)
+
+*↑ この回の図*
+
+```
+py -3.11 examples/poc_pxrd_phase_peel.py
+```
+
+Source: [examples/poc_pxrd_phase_peel.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_pxrd_phase_peel.py)
+
+This run produced **9 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_pxrd_phase_peel)
+
+Ops used (notes): [`axes_frame`](https://furuse.work/ops/annotate/plot/axes_frame.html) · [`axes_transform`](https://furuse.work/ops/annotate/plot/axes_transform.html) · [`azimuthal_integrate`](https://furuse.work/ops/drive/pxrd/azimuthal_integrate.html) · [`cif_read`](https://furuse.work/ops/drive/pxrd/cif_read.html) · [`cubic_index`](https://furuse.work/ops/drive/pxrd/cubic_index.html) · [`cubic_prototype`](https://furuse.work/ops/drive/pxrd/cubic_prototype.html) · [`debye_ring_image`](https://furuse.work/ops/drive/pxrd/debye_ring_image.html) · [`detector_calibrate`](https://furuse.work/ops/drive/pxrd/detector_calibrate.html) · [`detector_two_theta`](https://furuse.work/ops/drive/pxrd/detector_two_theta.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`diffraction_peaks`](https://furuse.work/ops/drive/pxrd/diffraction_peaks.html) · [`grid_lines`](https://furuse.work/ops/annotate/plot/grid_lines.html) · [`intensity`](https://furuse.work/ops/2d/features/intensity.html) · [`legend_box`](https://furuse.work/ops/annotate/furniture/legend_box.html) · [`nice_ticks`](https://furuse.work/ops/annotate/plot/nice_ticks.html) · [`phase_dictionary`](https://furuse.work/ops/drive/pxrd/phase_dictionary.html) · [`phase_fractions`](https://furuse.work/ops/drive/pxrd/phase_fractions.html) · [`phase_peel`](https://furuse.work/ops/drive/pxrd/phase_peel.html) · [`plot_series`](https://furuse.work/ops/annotate/plot/plot_series.html) · [`powder_reflections`](https://furuse.work/ops/drive/pxrd/powder_reflections.html) · [`scherrer_size`](https://furuse.work/ops/drive/pxrd/scherrer_size.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`ticks`](https://furuse.work/ops/annotate/plot/ticks.html) · [`unexplained_peaks`](https://furuse.work/ops/drive/pxrd/unexplained_peaks.html)
 
 ## No.2026.142 —— How Much of That Number Is Your Measuring - Gauge R&R and Measurement Uncertainty
 

@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3043,
- "n_notes": 3049,
+ "n_ops": 3057,
+ "n_notes": 3063,
  "notes": {
   "vol_dilate": [
    {
@@ -20009,6 +20009,146 @@
     "in": "any × signal × table",
     "out": "table",
     "path": "docs/ops/drive/puck/striker_plan.md"
+   }
+  ],
+  "azimuthal_integrate": [
+   {
+    "op": "azimuthal_integrate",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "image2d × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/azimuthal_integrate.md"
+   }
+  ],
+  "cif_read": [
+   {
+    "op": "cif_read",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/cif_read.md"
+   }
+  ],
+  "cubic_index": [
+   {
+    "op": "cubic_index",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/cubic_index.md"
+   }
+  ],
+  "cubic_prototype": [
+   {
+    "op": "cubic_prototype",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "any × scalar × any",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/cubic_prototype.md"
+   }
+  ],
+  "debye_ring_image": [
+   {
+    "op": "debye_ring_image",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "any × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/debye_ring_image.md"
+   }
+  ],
+  "detector_calibrate": [
+   {
+    "op": "detector_calibrate",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "image2d × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/detector_calibrate.md"
+   }
+  ],
+  "detector_two_theta": [
+   {
+    "op": "detector_two_theta",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "any × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/detector_two_theta.md"
+   }
+  ],
+  "diffraction_peaks": [
+   {
+    "op": "diffraction_peaks",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/diffraction_peaks.md"
+   }
+  ],
+  "phase_dictionary": [
+   {
+    "op": "phase_dictionary",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "any × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/phase_dictionary.md"
+   }
+  ],
+  "phase_fractions": [
+   {
+    "op": "phase_fractions",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "signal × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/phase_fractions.md"
+   }
+  ],
+  "phase_peel": [
+   {
+    "op": "phase_peel",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "signal × signal × table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/phase_peel.md"
+   }
+  ],
+  "powder_reflections": [
+   {
+    "op": "powder_reflections",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/powder_reflections.md"
+   }
+  ],
+  "scherrer_size": [
+   {
+    "op": "scherrer_size",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "scalar × scalar × scalar",
+    "out": "scalar",
+    "path": "docs/ops/drive/pxrd/scherrer_size.md"
+   }
+  ],
+  "unexplained_peaks": [
+   {
+    "op": "unexplained_peaks",
+    "dim": "drive",
+    "category": "pxrd",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/pxrd/unexplained_peaks.md"
    }
   ],
   "aim_velocity": [

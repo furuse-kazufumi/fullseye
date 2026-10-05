@@ -5,7 +5,7 @@ category: features
 in: image
 out: feature
 halcon: intensity
-examples: [gallery2d_bridge, gallery2d_features, poc_multibeam_bathymetry, poc_solder_fillet_aoi, poc_video_cube]
+examples: [gallery2d_bridge, gallery2d_features, poc_multibeam_bathymetry, poc_pxrd_phase_peel, poc_solder_fillet_aoi, poc_video_cube]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ intensity 0.50 0.50
 - [gallery2d_bridge](../../../../examples/gallery2d_bridge.py) — `py -3.11 examples/gallery2d_bridge.py`
 - [gallery2d_features](../../../../examples/gallery2d_features.py) — `py -3.11 examples/gallery2d_features.py`
 - [poc_multibeam_bathymetry](../../../../examples/poc_multibeam_bathymetry.py) — `py -3.11 examples/poc_multibeam_bathymetry.py`
+- [poc_pxrd_phase_peel](../../../../examples/poc_pxrd_phase_peel.py) — `py -3.11 examples/poc_pxrd_phase_peel.py`
 - [poc_solder_fillet_aoi](../../../../examples/poc_solder_fillet_aoi.py) — `py -3.11 examples/poc_solder_fillet_aoi.py`
 - [poc_video_cube](../../../../examples/poc_video_cube.py) — `py -3.11 examples/poc_video_cube.py`
 

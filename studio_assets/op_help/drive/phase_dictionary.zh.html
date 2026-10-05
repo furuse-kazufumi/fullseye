@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">phase_dictionary — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;phase_dictionary&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>相の参照パターンの辞書: 2θ の格子の上に、体積分率 1 あたりの 1-D 強度を相ごとに並べる。</p>
+<p>1 行 = `<code style="color:#22d3bf">(1/V²) Σ m|F|² L(2θ) × 形</code><code style="color:#22d3bf">(形は Scherrer の </code><code style="color:#22d3bf">size</code>` [Å] と装置の FWHM をガウスで足した幅の pseudo-Voigt、</p>
+<p>`<code style="color:#22d3bf">eta</code><code style="color:#22d3bf"> は Lorentz の割合)。</code><code style="color:#22d3bf">instrumental_fwhm</code><code style="color:#22d3bf"> は数 [deg] か </code><code style="color:#22d3bf">(2θ の列, FWHM の列)</code>` の表 —— 平らな検出器では画素の</p>
+<p>張る角が `<code style="color:#22d3bf">cos² 2θ</code>` で縮むので装置の幅は 2θ で変わる。広がりの無い標準(Si)の像を同じ幾何で積分し、</p>
+<p>:func:<code style="color:#22d3bf">diffraction_peaks</code> の FWHM を表にして渡すのが筋(PoC の手順)。:func:<code style="color:#22d3bf">azimuthal_integrate</code> を偏光・立体角の補正つきで回したプロファイルと同じ量に揃う。</p>
+<p>幅が合っていないと NNLS の倍率が偏る —— :func:<code style="color:#22d3bf">diffraction_peaks</code> の FWHM と :func:<code style="color:#22d3bf">scherrer_size</code> で `<code style="color:#22d3bf">size</code>` を</p>
+<p>先に見積もるのが筋。</p>
+<p>返り値(dict): `<code style="color:#22d3bf">names</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">two_theta</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">matrix</code><code style="color:#22d3bf">((P, n))・</code><code style="color:#22d3bf">density</code><code style="color:#22d3bf"> [g/cm³]・</code><code style="color:#22d3bf">phases</code>`(元の相、格子の追い込みで</p>
+<p>描き直すため)・`<code style="color:#22d3bf">params</code>`(波長・幅・Lorentz)。</p>
+<p>Raises ValueError: 相が空・相の形でない、名前の重複、格子が増えない、幅の値が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_two_theta">detector_two_theta</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

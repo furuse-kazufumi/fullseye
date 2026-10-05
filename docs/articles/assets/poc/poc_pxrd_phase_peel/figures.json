@@ -1,0 +1,104 @@
+[
+ {
+  "file": "01_phase_peel.gif",
+  "name": "phase_peel",
+  "caption": "2-D detector: the phases are peeled off one at a time (grey = what is still unexplained; colours = identified phases). Bottom: the azimuthally integrated profile and each phase's contribution. The last ring set is named from the residual.",
+  "shape": [
+   812,
+   512,
+   3
+  ],
+  "animated": true,
+  "frames": 43,
+  "frames_written": 17,
+  "fps": 6.0
+ },
+ {
+  "file": "02_detector_by_phase.png",
+  "name": "detector_by_phase",
+  "caption": "the detector image coloured by phase (1:1 pixels, lossless PNG)",
+  "shape": [
+   512,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "03_detector_observed.png",
+  "name": "detector_observed",
+  "caption": "the observed detector image (background removed, gamma 0.5)",
+  "shape": [
+   512,
+   512,
+   3
+  ]
+ },
+ {
+  "file": "04_profile_fit.png",
+  "name": "profile_fit",
+  "caption": "integrated profile, NNLS fit and each phase's contribution",
+  "shape": [
+   460,
+   1100,
+   3
+  ]
+ },
+ {
+  "file": "05_trap_tilt_ignored.png",
+  "name": "trap_tilt_ignored",
+  "caption": "integrating a tilted detector as if flat turns each ring into an ellipse and splits the peak",
+  "shape": [
+   380,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "06_trap_lattice_mismatch.png",
+  "name": "trap_lattice_mismatch",
+  "caption": "",
+  "shape": [
+   152,
+   563,
+   3
+  ],
+  "csv": "06_trap_lattice_mismatch.csv",
+  "tsv": "06_trap_lattice_mismatch.tsv"
+ },
+ {
+  "file": "07_model_mismatch.png",
+  "name": "model_mismatch",
+  "caption": "",
+  "shape": [
+   176,
+   656,
+   3
+  ],
+  "csv": "07_model_mismatch.csv",
+  "tsv": "07_model_mismatch.tsv"
+ },
+ {
+  "file": "08_calibration.png",
+  "name": "calibration",
+  "caption": "",
+  "shape": [
+   224,
+   289,
+   3
+  ],
+  "csv": "08_calibration.csv",
+  "tsv": "08_calibration.tsv"
+ },
+ {
+  "file": "09_nist_srm640g.png",
+  "name": "nist_srm640g",
+  "caption": "",
+  "shape": [
+   344,
+   346,
+   3
+  ],
+  "csv": "09_nist_srm640g.csv",
+  "tsv": "09_nist_srm640g.tsv"
+ }
+]
