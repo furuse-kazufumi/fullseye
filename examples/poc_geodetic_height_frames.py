@@ -1122,7 +1122,9 @@ def main():
     #   語幹へ付け替える**。閉じた側は「何が閉じたか」を名前で固定する。
     closed = {"geoid": ["dem_geoid_height"],
               "enu": ["dem_enu_from_geodetic", "dem_geodetic_from_enu"],
-              "datum": ["dem_datum_shift_3param"]}
+              # ★2026-10-05: granular の datum_tilt_check(粉体の山の**基準面**の傾きの警報)が語幹 datum に当たる。
+              #   測地成果ではなく「高さ図の基準面」の意味 —— 同じ語の別の意味として名前で固定する。
+              "datum": ["datum_tilt_check", "dem_datum_shift_3param"]}
     for stem, want in closed.items():
         got = sorted(h["op"] for h in fs.op_find(stem) if h.get("match") != "doc")
         assert got == sorted(want), (stem, got)          # 増えたら内容を書き足す

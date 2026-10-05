@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">beverloo_fit — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beverloo_fit(D0, W, d: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, k: &#x27;float&#x27; = 1.4, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.beverloo_fit(D0, W, d: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, k: &#x27;float&#x27; = 1.4, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;beverloo_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>排出率の列 `<code style="color:#22d3bf">W_i(D0_i)</code><code style="color:#22d3bf"> に </code><code style="color:#22d3bf">log W = log(C ρ_b √g) + n log(D₀ − k d)</code><code style="color:#22d3bf"> を最小二乗で当て、指数 </code><code style="color:#22d3bf">n</code>`</p>
+<p>と係数 `<code style="color:#22d3bf">C</code><code style="color:#22d3bf"> を返す(真値 n = 2.5、C ≈ 0.58)。返り: </code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">C</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">rms_log</code>`(対数残差)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 点が 3 未満 / </code><code style="color:#22d3bf">D0 ≤ k d</code>` の点がある / W ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">granular</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:heap_volume_cone">heap_volume_cone</a> · <a style="color:#22d3bf" href="opdrive:heap_mass">heap_mass</a> · <a style="color:#22d3bf" href="opdrive:heap_volume_heightmap">heap_volume_heightmap</a> · <a style="color:#22d3bf" href="opdrive:beverloo_rate">beverloo_rate</a> · <a style="color:#22d3bf" href="opdrive:discharge_synth">discharge_synth</a> · <a style="color:#22d3bf" href="opdrive:dispense_mass_from_video">dispense_mass_from_video</a> · <a style="color:#22d3bf" href="opdrive:hopper_discharge_rate">hopper_discharge_rate</a> · <a style="color:#22d3bf" href="opdrive:spoon_tilt_critical">spoon_tilt_critical</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: granular.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

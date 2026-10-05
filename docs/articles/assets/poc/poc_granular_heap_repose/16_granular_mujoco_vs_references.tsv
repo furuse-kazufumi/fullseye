@@ -1,0 +1,5 @@
+quantity	this run (MuJoCo)	outside reference	difference	gate
+angle of repose, side view [deg]	22.17	25.2 +- 0.8 (1 mm glass, arXiv:2009.10448)	-3.03	-7 .. +1
+angle of repose, heightmap median [deg]	25.74	side view 22.17	+3.56	|d| < 4
+discharge rate [kg/s]	0.906	Beverloo 0.911 (D_eq 54.2 mm)	ratio 0.99	0.5 .. 2
+flowability class (USP <1174>)	below the table (< 25 deg)	excellent (published)	-	-

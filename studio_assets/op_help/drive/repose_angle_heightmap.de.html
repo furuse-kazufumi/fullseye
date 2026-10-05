@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">repose_angle_heightmap — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.repose_angle_heightmap(hm, pitch: &#x27;float&#x27;, *, ground=None, min_rel_height: &#x27;float&#x27; = 0.1, max_rel_height: &#x27;float&#x27; = 0.9, bin_deg: &#x27;float&#x27; = 0.25, method: &#x27;str&#x27; = &#x27;horn&#x27;, smooth_cells: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.repose_angle_heightmap(hm, pitch: &#x27;float&#x27;, *, ground=None, min_rel_height: &#x27;float&#x27; = 0.1, max_rel_height: &#x27;float&#x27; = 0.9, bin_deg: &#x27;float&#x27; = 0.25, method: &#x27;str&#x27; = &#x27;horn&#x27;, smooth_cells: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;repose_angle_heightmap&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>高さ図から安息角 φ —— `<code style="color:#22d3bf">demops.dem_slope</code>` の勾配のヒストグラムの最頻値。</p>
+<p>手順: ①`<code style="color:#22d3bf">ground</code><code style="color:#22d3bf"> があれば引く(datum の補正; 無ければ外周 1 画素の中央値を地面とする)②</code><code style="color:#22d3bf">smooth_cells</code>`</p>
+<p>(奇数)の移動平均 —— <b>粒が見える高さ図では必須</b>: 球の山(粒径 5.3 px)を平滑なしで測ると勾配の最頻は</p>
+<p>62 度(球面の縁)、2 粒径 = 11 セルで 24.5 度(MuJoCo の球の山の実測)。粒が見えない粉の山では 1 のまま</p>
+<p>③高さが最大の `<code style="color:#22d3bf">min_rel_height</code><code style="color:#22d3bf">〜</code><code style="color:#22d3bf">max_rel_height</code>` の帯のセルだけ使う(裾の丸みと頂の鈍りを除く)</p>
+<p>④`<code style="color:#22d3bf">dem_slope(method)</code><code style="color:#22d3bf"> を </code><code style="color:#22d3bf">bin_deg</code>` 刻みで数え、最頻ビンとその両隣に入る値の平均で φ(ビン中心の重心だと半ビン = 0.125 度の偏りが出た、実測)。</p>
+<p>返り: `<code style="color:#22d3bf">phi_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">phi_median_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">frac_within_1deg</code>`(最頻 ±1 度に入るセルの割合 —— 円錐なら</p>
+<p>≈ 1、起伏があれば下がる)、`<code style="color:#22d3bf">n_cells</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hist_centers</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">hist_counts</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 形・pitch・選択肢(</code><code style="color:#22d3bf">method</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">&quot;horn&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;central&quot;</code>` のみ)/ 山が無い</p>
+<p>(地面より高いセルが無い)/ 帯に 20 セル未満。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">granular</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:heap_volume_cone">heap_volume_cone</a> · <a style="color:#22d3bf" href="opdrive:heap_mass">heap_mass</a> · <a style="color:#22d3bf" href="opdrive:heap_volume_heightmap">heap_volume_heightmap</a> · <a style="color:#22d3bf" href="opdrive:beverloo_rate">beverloo_rate</a> · <a style="color:#22d3bf" href="opdrive:beverloo_fit">beverloo_fit</a> · <a style="color:#22d3bf" href="opdrive:discharge_synth">discharge_synth</a> · <a style="color:#22d3bf" href="opdrive:dispense_mass_from_video">dispense_mass_from_video</a> · <a style="color:#22d3bf" href="opdrive:hopper_discharge_rate">hopper_discharge_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: granular.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

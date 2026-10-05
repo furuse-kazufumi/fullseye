@@ -1,8 +1,8 @@
 {
- "n_ops": 2871,
+ "n_ops": 2894,
  "tiers": {
   "color": 12,
-  "ledger": 1918,
+  "ledger": 1941,
   "nary": 17,
   "registry": 924
  },
@@ -1866,6 +1866,37 @@
    ]
   },
   {
+   "name": "beverloo_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "beverloo_rate",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "bicycle_model_step",
    "halcon": "",
    "in_sort": "any",
@@ -3434,6 +3465,21 @@
    ]
   },
   {
+   "name": "cone_profile_px",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "conflict_zone_intervals",
    "halcon": "",
    "in_sort": "any",
@@ -3501,6 +3547,32 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "container_fill_level",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
+   ]
+  },
+  {
+   "name": "container_synth",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
    ]
   },
   {
@@ -4748,6 +4820,19 @@
    ]
   },
   {
+   "name": "datum_tilt_check",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "dct_transform",
    "halcon": "",
    "in_sort": "image2d",
@@ -5461,6 +5546,40 @@
     "scalar",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "discharge_synth",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "dispense_mass_from_video",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar",
+    "signal"
    ]
   },
   {
@@ -9171,6 +9290,92 @@
    ]
   },
   {
+   "name": "heap_mass",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "heap_scene_mjcf",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "heap_spheres_select",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "heap_synth_cone",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "heap_volume_cone",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "heap_volume_heightmap",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "scalar",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
    "name": "hertz_cylinder",
    "halcon": "",
    "in_sort": "scalar",
@@ -9459,6 +9664,21 @@
    "dim": "drive",
    "in_sorts": [
     "image2d"
+   ]
+  },
+  {
+   "name": "hopper_discharge_rate",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "scalar"
    ]
   },
   {
@@ -16261,6 +16481,19 @@
    "in_sorts": []
   },
   {
+   "name": "powder_flowability_class",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
    "name": "predict_amber_onset",
    "halcon": "",
    "in_sort": "table",
@@ -18221,6 +18454,33 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "repose_angle_heightmap",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
+   "name": "repose_angle_silhouette",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d"
    ]
   },
   {
@@ -20769,6 +21029,56 @@
    ]
   },
   {
+   "name": "spheres_render_shaded",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "rgb",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "spheres_to_heightmap",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image2d",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "spheres_to_silhouette",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image2d",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "spin_from_marker_sequence",
    "halcon": "",
    "in_sort": "any",
@@ -20793,6 +21103,37 @@
    "in_sorts": [
     "points",
     "points"
+   ]
+  },
+  {
+   "name": "spoon_tilt_critical",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "spoon_tilt_dispense",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "granular",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {

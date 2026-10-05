@@ -67,3 +67,13 @@ def test_generated_stems_are_produced_by_the_chain():
     prose = set(D.prose_docs())
     leaked = sorted(D.GENERATED & prose)
     assert not leaked, "生成物が散文として数えられている: %s" % leaked
+
+
+def test_stamp_accepts_several_files(monkeypatch):
+    """★`--stamp A --stamp B` で最後の 1 本しか打ち直されなかった(argparse の既定 store、2026-10-05)。
+    訳を 6 言語まとめて直した回に 5 本が黙って stale のまま残る。繰り返し指定も並べて渡すのも全部効くこと。"""
+    got = []
+    monkeypatch.setattr(D, "stamp", got.append)
+    assert D.main(["--stamp", "docs/A.en.md", "--stamp", "docs/A.zh.md"]) == 0
+    assert D.main(["--stamp", "docs/B.ko.md", "docs/B.de.md"]) == 0
+    assert got == ["docs/A.en.md", "docs/A.zh.md", "docs/B.ko.md", "docs/B.de.md"]

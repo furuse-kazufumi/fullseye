@@ -1,0 +1,171 @@
+[
+ {
+  "file": "01_granular_heap_side_view_two_lines.png",
+  "name": "granular_heap_side_view_two_lines",
+  "caption": "合成の側面像(粉の被覆率、雑音 ±0.05、等倍)。黄 = 当てた範囲(裾 15 %・頂 15 % を外す)、橙 = その延長、青 = 地面。φ = 32.001 度(真値 32)。縁の画素の被覆率をそのまま副画素の位置に読む。",
+  "shape": [
+   423,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "02_granular_slope_histogram.png",
+  "name": "granular_slope_histogram",
+  "caption": "高さ図の勾配ヒストグラム(demops.dem_slope)。雑音なしは 1 ビンに立つ。σ = 0.1 px の雑音で最頻が +0.12 度ずれる(|∇| は雑音で増えるだけ)—— 同じ大きさの雑音で側面像は 0.01 度も動かない。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "03_granular_where_it_breaks_resolution.png",
+  "name": "granular_where_it_breaks_resolution",
+  "caption": "山の幅(画素)と φ の最大誤差(2 角度 × 8 seed)。側面像は 50 px で 0.20 度、25 px で 0.62 度。高さ図は雑音で上にずれるので 400 px でも 0.37 度残る。台帳の問い「山が 50 px のとき何度」の答え。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "04_granular_breaks_toe_rounding_view.png",
+  "name": "granular_breaks_toe_rounding_view",
+  "caption": "裾を円弧(r = 120 px、底 800 px)で埋めた山を裾ごと当てると -0.284 度。裾 15 % を外せば -0.001 度。",
+  "shape": [
+   391,
+   1025,
+   3
+  ]
+ },
+ {
+  "file": "05_granular_breaks_apex_blunting_view.png",
+  "name": "granular_breaks_apex_blunting_view",
+  "caption": "頂を円弧(r = 120 px)で削った山を頂ごと当てると -0.560 度。頂 15 % を外せば -0.003 度。",
+  "shape": [
+   391,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "06_granular_breaks_tilted_datum_view.png",
+  "name": "granular_breaks_tilted_datum_view",
+  "caption": "基準面が 5 度傾くと左右が 33.62 / 26.10 度に割れる(atan(tan φ ± tan β))。左右差 7.52 度が警報、tan の引き算で 30.000 度に戻る。",
+  "shape": [
+   475,
+   960,
+   3
+  ]
+ },
+ {
+  "file": "07_granular_breaks_small_heap_view.png",
+  "name": "granular_breaks_small_heap_view",
+  "caption": "幅 50 px の山(10 倍の最近傍拡大で画素が見える)。雑音 ±0.1 で φ = 29.89 度(真値 30)。",
+  "shape": [
+   390,
+   740,
+   3
+  ]
+ },
+ {
+  "file": "08_granular_beverloo_W_vs_D0.png",
+  "name": "granular_beverloo_W_vs_D0",
+  "caption": "合成排出の高さ図の列(6 コマ)から体積の傾きで読んだ率(点)と閉形式(破線)。対数当ての指数 n = 2.5074、C = 0.5894。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "09_granular_flowability_bands.png",
+  "name": "granular_flowability_bands",
+  "caption": "安息角 → 流動性区分(USP <1174> 表 1、原典 Carr 1965)。表は整数の度なので四捨五入して引く。25 度未満は表の外。",
+  "shape": [
+   330,
+   1000,
+   3
+  ]
+ },
+ {
+  "file": "10_granular_spoon_tilt_dispense.png",
+  "name": "granular_spoon_tilt_dispense",
+  "caption": "スプーンを傾けたときに出る割合(2 次元断面・準静的・自分の導出)。盛りが多いほど早くこぼれ始め、θ = φ で全部出る。L 50 mm・h₀ 5 mm で θ_c = 20.67 度。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "11_granular_datum_tilt_sweep.gif",
+  "name": "granular_datum_tilt_sweep",
+  "caption": "基準面の傾き β を −8〜+8 度で振る(32 コマ)。左右の斜面が atan(tan φ ± tan β) で割れ、左右差 ≈ 2β が 1 度を超えると警報。tan の引き算で 30 度に戻る。",
+  "shape": [
+   509,
+   820,
+   3
+  ],
+  "animated": true,
+  "frames": 32,
+  "frames_written": 32,
+  "fps": 4.0
+ },
+ {
+  "file": "12_granular_mujoco_heap_render_settling.gif",
+  "name": "granular_mujoco_heap_render_settling",
+  "caption": "剛体球 1200 個(r 4 mm、滑り摩擦 0.16、転がり 0.09·R、粗い台)が平底ホッパ(青灰の線 = 壁と底板)の正方孔(48 mm)から流れて山になる(0.5 mm/px、67 コマ)。φ = 22.17 度(4 方位の平均)。",
+  "shape": [
+   520,
+   640,
+   3
+  ],
+  "animated": true,
+  "frames": 67,
+  "frames_written": 67,
+  "fps": 10.0
+ },
+ {
+  "file": "13_granular_mujoco_side_fit_view.png",
+  "name": "granular_mujoco_side_fit_view",
+  "caption": "球の山の側面(陰影つき正射影、0.25 mm/px)に、被覆率の側面像で当てた 2 直線(黄)と公表値 25.2 度の斜面(水色の破線)を重ねる。この方位で φ = 22.40 度。4 方位 22.4, 23.0, 18.9, 24.4。",
+  "shape": [
+   280,
+   1280,
+   3
+  ]
+ },
+ {
+  "file": "14_granular_mujoco_heightmap.png",
+  "name": "granular_mujoco_heightmap",
+  "caption": "同じ山の高さ図(単位 mm、球面の最大高さ、1.5 mm/セルを 3 倍の最近傍で表示)。2 粒径で平滑してから dem_slope: 中央値 25.74 度(平滑なしの最頻 65.5 度 = 球の縁)。",
+  "shape": [
+   639,
+   639
+  ]
+ },
+ {
+  "file": "15_granular_mujoco_discharge.png",
+  "name": "granular_mujoco_discharge",
+  "caption": "底板より下の質量。中央 20〜80 % の帯(14 コマ)の傾き 0.906 kg/s、Beverloo(正方孔を等価直径に)0.911 kg/s、比 0.99 —— 桁の照合だけ。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "16_granular_mujoco_vs_references.png",
+  "name": "granular_mujoco_vs_references",
+  "caption": "第 2 実装(MuJoCo の剛体球)と外の真値。安息角は公表値より 3.0 度低い(剛体・付着なし・転がりの模型・山が 5 粒径 —— 切り分けていない)。",
+  "shape": [
+   176,
+   857,
+   3
+  ],
+  "csv": "16_granular_mujoco_vs_references.csv",
+  "tsv": "16_granular_mujoco_vs_references.tsv"
+ }
+]

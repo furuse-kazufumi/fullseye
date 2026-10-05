@@ -4087,6 +4087,123 @@ def _b_pf_mjcf(pool, rng):
     return (_fuzz_pf()["kp"],), {"blocked_depth": 6e-3 if k == 1 else None, "decoy_xy": (26e-3, 0.0) if k == 2 else None}
 
 
+_FUZZ_GR = {}
+
+
+def _fuzz_gr():
+    """粉体の山の小さな種(円錐の合成・容器・球の山の中心・排出の高さ図列)を 1 回だけ作る(granular、numpy だけ)。"""
+    if "cone" not in _FUZZ_GR:
+        import granular as GR
+        cone = GR.heap_synth_cone(30.0, 40)
+        g = np.random.default_rng(5)
+        n = 80
+        ang = g.uniform(0.0, 2.0 * np.pi, n)
+        rad = 0.03 * np.sqrt(g.uniform(0.0, 1.0, n))
+        pos = np.column_stack([rad * np.cos(ang), rad * np.sin(ang), 0.004 + 0.02 * (1.0 - rad / 0.03) * g.uniform(0.5, 1.0, n)])
+        ds = GR.discharge_synth(0.03, 0.001, 1500.0, 30.0, 3e-3, 1.0, n_frames=4, grid=96)
+        _FUZZ_GR.update({"cone": cone, "sil": GR.repose_angle_silhouette(cone["side"]), "box": GR.container_synth(0.5, 2.0),
+                         "pos": pos, "ds": ds})
+    return _FUZZ_GR
+
+
+def _b_gr_cone(pool, rng):
+    return (), {"R": float(rng.uniform(0.05, 1.0)), "phi_deg": float(rng.uniform(15.0, 50.0))}
+
+
+def _b_gr_mass(pool, rng):
+    return (float(rng.uniform(0.0, 0.1)), float(rng.uniform(800.0, 2000.0))), {}
+
+
+def _b_gr_hm_volume(pool, rng):
+    c = _fuzz_gr()["cone"]
+    return (c["heightmap"], c["pitch"]), {}
+
+
+def _b_gr_beverloo(pool, rng):
+    return (float(rng.uniform(0.01, 0.08)), float(rng.uniform(2e-4, 2e-3)), float(rng.uniform(800.0, 2000.0))), {}
+
+
+def _b_gr_beverloo_fit(pool, rng):
+    D0 = np.array([0.02, 0.03, 0.04, 0.05])
+    W = 0.58 * 1500.0 * np.sqrt(9.80665) * (D0 - 1.4e-3) ** 2.5 * np.exp(rng.normal(0.0, 0.01, 4))
+    return (D0, W, 0.001, 1500.0), {}
+
+
+def _b_gr_discharge(pool, rng):
+    return (float(rng.uniform(0.02, 0.04)), 0.001, 1500.0, float(rng.uniform(25.0, 40.0)), 3e-3, float(rng.uniform(0.2, 1.0))), {"n_frames": 3, "grid": 96}
+
+
+def _b_gr_video_mass(pool, rng):
+    ds = _fuzz_gr()["ds"]
+    return (ds["frames"], 3e-3, 1500.0, ds["times"]), {}
+
+
+def _b_gr_hopper(pool, rng):
+    t = np.linspace(0.0, 2.0, 11)
+    return (float(rng.uniform(0.2, 1.0)) * t, t, 2.0), {}
+
+
+def _b_gr_spoon_c(pool, rng):
+    return (float(rng.uniform(20.0, 45.0)), 0.05, float(rng.uniform(1e-4, 0.01))), {}
+
+
+def _b_gr_spoon(pool, rng):
+    return (float(rng.uniform(0.0, 50.0)), float(rng.uniform(20.0, 45.0)), 0.05, float(rng.uniform(1e-4, 0.01))), {}
+
+
+def _b_gr_flow(pool, rng):
+    return (float(rng.uniform(1.0, 89.0)),), {}
+
+
+def _b_gr_synth(pool, rng):
+    return (float(rng.uniform(20.0, 45.0)), float(rng.uniform(20.0, 60.0))), {"ground_tilt_deg": float(rng.uniform(-5.0, 5.0)), "noise": 0.05, "seed": 1}
+
+
+def _b_gr_profile(pool, rng):
+    return (np.linspace(-40.0, 40.0, 81), 30.0, float(rng.uniform(20.0, 45.0))), {}
+
+
+def _b_gr_sil(pool, rng):
+    return (_fuzz_gr()["cone"]["side"],), {}
+
+
+def _b_gr_hm(pool, rng):
+    c = _fuzz_gr()["cone"]
+    return (c["heightmap"], c["pitch"]), {}
+
+
+def _b_gr_datum(pool, rng):
+    return (_fuzz_gr()["sil"],), {}
+
+
+def _b_gr_box(pool, rng):
+    return (float(rng.uniform(0.1, 0.9)),), {"surface_tilt_deg": float(rng.uniform(-3.0, 3.0))}
+
+
+def _b_gr_box_level(pool, rng):
+    return (_fuzz_gr()["box"]["side"],), {}
+
+
+def _b_gr_select(pool, rng):
+    return (_fuzz_gr()["pos"], 0.003, 0.06, 0.05), {}
+
+
+def _b_gr_sph_hm(pool, rng):
+    return (_fuzz_gr()["pos"], 0.003, 0.002, 0.05), {}
+
+
+def _b_gr_sph_sil(pool, rng):
+    return (_fuzz_gr()["pos"], 0.003, 0.002, 0.05, 0.04), {}
+
+
+def _b_gr_sph_shade(pool, rng):
+    return (_fuzz_gr()["pos"], 0.003, 0.002, 0.05, 0.04), {}
+
+
+def _b_gr_mjcf(pool, rng):
+    return (int(rng.integers(5, 40)), 0.004), {"seed": int(rng.integers(0, 9))}
+
+
 def _b_events_to_frames(pool, rng):
     import motionio
     return (motionio.read_events(_b_read_events(pool, rng)[0][0]),), {"n_frames": 8}
@@ -5023,6 +5140,14 @@ OP_ARG_BUILDERS = {
     "wrist_load_from_deflection": _b_pf_wrist, "tip_force_ratios": _b_pf_ratios, "insertion_episode_summary": _b_pf_summary,
     "failure_confusion": _b_pf_confusion, "vision_boundary_flip": _b_pf_flip, "insertion_failure_presets": _b_pf_presets,
     "pegfail_scene_mjcf": _b_pf_mjcf,
+    "heap_volume_cone": _b_gr_cone, "heap_mass": _b_gr_mass, "heap_volume_heightmap": _b_gr_hm_volume, "beverloo_rate": _b_gr_beverloo,
+    "beverloo_fit": _b_gr_beverloo_fit, "discharge_synth": _b_gr_discharge, "dispense_mass_from_video": _b_gr_video_mass,
+    "hopper_discharge_rate": _b_gr_hopper, "spoon_tilt_critical": _b_gr_spoon_c, "spoon_tilt_dispense": _b_gr_spoon,
+    "powder_flowability_class": _b_gr_flow, "heap_synth_cone": _b_gr_synth, "cone_profile_px": _b_gr_profile,
+    "repose_angle_silhouette": _b_gr_sil, "repose_angle_heightmap": _b_gr_hm, "datum_tilt_check": _b_gr_datum,
+    "container_synth": _b_gr_box, "container_fill_level": _b_gr_box_level, "heap_spheres_select": _b_gr_select,
+    "spheres_to_heightmap": _b_gr_sph_hm, "spheres_to_silhouette": _b_gr_sph_sil, "spheres_render_shaded": _b_gr_sph_shade,
+    "heap_scene_mjcf": _b_gr_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

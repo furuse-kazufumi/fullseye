@@ -1,4 +1,4 @@
-# DRIVE operator help — 487 ops in 35 categories
+# DRIVE operator help — 510 ops in 36 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -43,6 +43,10 @@
 ### env (16)
 
 [beta_from_mor](env/beta_from_mor.md) · [env_params](env/env_params.md) · [env_render](env/env_render.md) · [fog_beta_from_profile](env/fog_beta_from_profile.md) · [julian_day](env/julian_day.md) · [koschmieder](env/koschmieder.md) · [mor_from_beta](env/mor_from_beta.md) · [road_row_distance](env/road_row_distance.md) · [sight_stop_speed](env/sight_stop_speed.md) · [sun_at](env/sun_at.md) · [sun_events](env/sun_events.md) · [sun_illuminance](env/sun_illuminance.md) · [sun_vector](env/sun_vector.md) · [tone_map](env/tone_map.md) · [veil_chroma_limit](env/veil_chroma_limit.md) · [veiling_luminance](env/veiling_luminance.md)
+
+### granular (23)
+
+[beverloo_fit](granular/beverloo_fit.md) · [beverloo_rate](granular/beverloo_rate.md) · [cone_profile_px](granular/cone_profile_px.md) · [container_fill_level](granular/container_fill_level.md) · [container_synth](granular/container_synth.md) · [datum_tilt_check](granular/datum_tilt_check.md) · [discharge_synth](granular/discharge_synth.md) · [dispense_mass_from_video](granular/dispense_mass_from_video.md) · [heap_mass](granular/heap_mass.md) · [heap_scene_mjcf](granular/heap_scene_mjcf.md) · [heap_spheres_select](granular/heap_spheres_select.md) · [heap_synth_cone](granular/heap_synth_cone.md) · [heap_volume_cone](granular/heap_volume_cone.md) · [heap_volume_heightmap](granular/heap_volume_heightmap.md) · [hopper_discharge_rate](granular/hopper_discharge_rate.md) · [powder_flowability_class](granular/powder_flowability_class.md) · [repose_angle_heightmap](granular/repose_angle_heightmap.md) · [repose_angle_silhouette](granular/repose_angle_silhouette.md) · [spheres_render_shaded](granular/spheres_render_shaded.md) · [spheres_to_heightmap](granular/spheres_to_heightmap.md) · [spheres_to_silhouette](granular/spheres_to_silhouette.md) · [spoon_tilt_critical](granular/spoon_tilt_critical.md) · [spoon_tilt_dispense](granular/spoon_tilt_dispense.md)
 
 ### gsplat (5)
 

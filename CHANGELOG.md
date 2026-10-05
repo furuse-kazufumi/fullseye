@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**粉体の山を画像で測る**(新モジュール `granular` 23 op + mujoco の facade 2、台帳 `granular`(opsdrive)、PoC `poc_granular_heap_repose`、
+  wing_metrology): 物理シミュ × Fullseye 系列。先行研究の粉体計量(Kadokawa ほか IROS 2023)は秤だけで視覚が無い —— ここは山の形(側面像・高さ図)から
+  安息角・体積・質量・流動性・排出率を規則だけで読む。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> Table 1(Carr 1965、整数の度)、1 mm ガラス球の
+  公表値 25.2 ± 0.8 度(arXiv 2009.10448 §5.4、測り方も同論文)、第 2 実装 = MuJoCo の剛体球 1,200 個の山(`--full`)。側面像は縁の画素の被覆率を副画素の位置に
+  読む(雑音 ±0.1 で 0.0064 度)、★列和法は [0, 1] に切った雑音で tan φ が縮み −0.63 度(罠を門に)。★傾いた基準面 5 度は左右 33.62 / 26.10 度に割れ(閉形式
+  atan(tan φ ± tan β))、左右差 7.52 度で警報(`datum_tilt_check`)、高さ図の最頻は地面そのもの。門 20 本(numpy、1.3 s)+ `--full` 5 本(MuJoCo、34 s):
+  Beverloo の指数 2.5074、分解能(山の幅 50 px で側面 0.20 度・高さ図 1.10 度)、裾・頂の偏りと除外、スプーンの規則(自分の導出)、容器の充填率、MuJoCo の山
+  22.17 度 vs 公表値 25.2(−3.03 度、門 −7〜+1)、排出率 vs Beverloo 比 0.99(桁の門)。正直に: 合成の側面像は縁の模型が計測と同じ(雑音なしの往復は配管の
+  検査)、MuJoCo が 3 度低い理由(剛体・付着なし・転がりの模型・山が 5 粒径・正方孔の異方性)は切り分けていない、Al-Hashemi 2018 の表は未収録、mg 級は秤に譲る。
+- `tools/i18n_docs.py --stamp` が複数のファイルを受ける(`--stamp A --stamp B` / `--stamp A B`)。以前は argparse の既定(store)で最後の 1 本しか打ち直さず、
+  6 言語をまとめて直した回に 5 本が黙って stale のまま残った(回帰テスト `tests/test_i18n_docs.py::test_stamp_accepts_several_files`)。
 - ★**ペグ挿入の失敗を規則の表で見つけて回復する**(新モジュール `pegfail` 16 op + mujoco の facade 3、台帳 `pegfail`(opsdrive)、PoC
   `poc_peg_failure_recovery`、wing_geometry): 物理シミュ × Fullseye 系列、pegsim の集大成。先行研究(arXiv:2509.17666、ICRA 2026 予定)の **VLM** による
   失敗判定を **規則の分類表 12 行 × 接触計測**に置き換える: 観測(接触の種別・深さの帯・停滞・くさびの境目・かじりの図の内外・穴中心からのずれ)→ 6 欄の

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">heap_mass — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;heap_mass&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>`<code style="color:#22d3bf">m = ρ_b V</code><code style="color:#22d3bf"> [kg]。</code><code style="color:#22d3bf">bulk_density</code>` はかさ密度 [kg/m³] (粒子密度ではない —— ガラス球 2500 kg/m³ の</p>
+<p>山は充填率 ≈ 0.6 で ρ_b ≈ 1500 kg/m³)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 体積が &lt; 0、密度が ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">scalar</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">granular</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:heap_volume_cone">heap_volume_cone</a> · <a style="color:#22d3bf" href="opdrive:heap_volume_heightmap">heap_volume_heightmap</a> · <a style="color:#22d3bf" href="opdrive:beverloo_rate">beverloo_rate</a> · <a style="color:#22d3bf" href="opdrive:beverloo_fit">beverloo_fit</a> · <a style="color:#22d3bf" href="opdrive:discharge_synth">discharge_synth</a> · <a style="color:#22d3bf" href="opdrive:dispense_mass_from_video">dispense_mass_from_video</a> · <a style="color:#22d3bf" href="opdrive:hopper_discharge_rate">hopper_discharge_rate</a> · <a style="color:#22d3bf" href="opdrive:spoon_tilt_critical">spoon_tilt_critical</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: granular.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

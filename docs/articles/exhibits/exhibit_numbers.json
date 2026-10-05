@@ -341,6 +341,10 @@
    "accessioned": "2026-09-17",
    "no": "2026.122"
   },
+  "poc_granular_heap_repose": {
+   "accessioned": "2026-10-05",
+   "no": "2026.202"
+  },
   "poc_graph_hierarchy_segmentation": {
    "accessioned": "2026-10-02",
    "no": "2026.187"

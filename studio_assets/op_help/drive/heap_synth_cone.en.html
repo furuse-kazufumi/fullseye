@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">heap_synth_cone — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_synth_cone(phi_deg: &#x27;float&#x27;, radius_px: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.001, *, toe_round_px: &#x27;float&#x27; = 0.0, apex_blunt_px: &#x27;float&#x27; = 0.0, ground_tilt_deg: &#x27;float&#x27; = 0.0, margin_px: &#x27;int&#x27; = 12, supersample: &#x27;int&#x27; = 8, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.heap_synth_cone(phi_deg: &#x27;float&#x27;, radius_px: &#x27;float&#x27;, pitch: &#x27;float&#x27; = 0.001, *, toe_round_px: &#x27;float&#x27; = 0.0, apex_blunt_px: &#x27;float&#x27; = 0.0, ground_tilt_deg: &#x27;float&#x27; = 0.0, margin_px: &#x27;int&#x27; = 12, supersample: &#x27;int&#x27; = 8, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;heap_synth_cone&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>既知の安息角の円錐の山を合成する(側面像 = 反エイリアスの被覆率、高さ図 = セル中心の高さ)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">radius_px</code><code style="color:#22d3bf">: 裾までの半径 [px] (丸み無しのとき)。高さ </code><code style="color:#22d3bf">H = R tan φ</code>`。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">ground_tilt_deg</code><code style="color:#22d3bf">: **基準面の傾き**(せん断型: </code><code style="color:#22d3bf">z&#x27; = z + x tan β</code>`)。高さ図の基準面(datum)</p>
+<p>が傾いているときの罠(平らでない地面で安息角が足し算される —— 既存 PoC <code style="color:#22d3bf">poc_stockpile_volume</code></p>
+<p>と同じ門)。カメラのロール(回転型)とは 2 次でなく <b>1 次で違う</b>(β = 5 度・φ = 30 度で</p>
+<p>1.4 度、`<code style="color:#22d3bf">atan(tan φ + tan β)</code><code style="color:#22d3bf"> 対 </code><code style="color:#22d3bf">φ + β</code>`)ので別物として扱う。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">noise</code>`: 被覆率に足す一様雑音の振幅(縁の揺らぎの代わり)。</p>
+<p style="margin:2px 0 2px 12px">• 返り: `<code style="color:#22d3bf">side</code><code style="color:#22d3bf">(被覆率 </code><code style="color:#22d3bf">(rows, cols)</code><code style="color:#22d3bf">)、</code><code style="color:#22d3bf">heightmap</code><code style="color:#22d3bf"> [m]、</code><code style="color:#22d3bf">ground</code>`(基準面 [m]、同形)、</p>
+<p>`<code style="color:#22d3bf">truth</code>`(phi_deg, R_px, H_px, toe_px, V(数値回転積分 [m³]), V_cone(閉形式)、ground_tilt_deg)、</p>
+<p>`<code style="color:#22d3bf">pitch</code><code style="color:#22d3bf">。側面像の列 </code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> の粉の高さ(被覆率の列和)はちょうど </code><code style="color:#22d3bf">c(x)</code>` [px] になる(副画素)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 範囲外・円弧の重なり。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">granular</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:heap_volume_cone">heap_volume_cone</a> · <a style="color:#22d3bf" href="opdrive:heap_mass">heap_mass</a> · <a style="color:#22d3bf" href="opdrive:heap_volume_heightmap">heap_volume_heightmap</a> · <a style="color:#22d3bf" href="opdrive:beverloo_rate">beverloo_rate</a> · <a style="color:#22d3bf" href="opdrive:beverloo_fit">beverloo_fit</a> · <a style="color:#22d3bf" href="opdrive:discharge_synth">discharge_synth</a> · <a style="color:#22d3bf" href="opdrive:dispense_mass_from_video">dispense_mass_from_video</a> · <a style="color:#22d3bf" href="opdrive:hopper_discharge_rate">hopper_discharge_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: granular.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

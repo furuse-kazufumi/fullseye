@@ -115,11 +115,13 @@ def main(argv=None) -> int:
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--stale", action="store_true",
                     help="stale / no-stamp があれば exit 1(missing は数えるが止めない)")
-    ap.add_argument("--stamp", metavar="FILE", help="訳ファイルの指紋を打ち直す")
+    ap.add_argument("--stamp", metavar="FILE", nargs="+", action="extend",
+                    help="訳ファイルの指紋を打ち直す(複数可: --stamp A B / --stamp A --stamp B。以前は最後の 1 つしか効かなかった)")
     a = ap.parse_args(argv)
 
     if a.stamp:
-        stamp(a.stamp)
+        for path in a.stamp:
+            stamp(path)
         return 0
 
     rows, fresh, stale, missing = status()

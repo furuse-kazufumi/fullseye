@@ -23,6 +23,7 @@
 触覚双極子 → 把持内トルク(tactorque: マーカー変位場の発散を電荷と見た双極子(arXiv 2404.15626 の再実装)で傾きトルク、剛体回転でねじり、平均で並進に分ける。真値 = Johnson 1985 の閉形式: 平頭押し込み子の圧 + 傾きモーメントの反対称項、Boussinesq 核、Gauss の恒等式 ∇·ū = −(1−2ν)p/2G(双極子 = 圧力の 1 次モーメント、形状不変)、Reissner–Sagoci のねじり。純せん断の漏れ (1−ν)/(1−2ν)·Q·R を窓で切る。有限要素では有限厚が膨らんで符号が逆)。
 エアホッケーのパック追跡・予測・打ち返し(puck: 学習なし、全部ルール。真値 = Coulomb の等減速と壁の 2 つの反発係数の閉形式(区間ごとに繋ぐ、鏡映法と一致)、5 節リンクの FK/IK(円と円の交点)、第 2 実装 = 外部シムの台の MJCF(粘性減衰 c/m = 0.5 /s で Coulomb ではない、e・kₜ は測って出る)。合成の真上カメラ(被覆率の反エイリアス、モーションブラー = v·τ/2)、検出は balltrack の facade、速度は向き固定の最小二乗、打点計画は一定角速度の規則。リンク寸法・サーボ速度・打具半径・守備線は仮定)。
 ペグ挿入の失敗検出と回復(pegfail: VLM の代わりに規則の分類表 12 行 × 接触計測。観測(接触の種別・深さの帯・停滞・くさびの境目・かじりの図の内外・穴中心からのずれ)を 6 欄の署名にし、当たる行は高々 1 つ、無ければ unknown(fail-closed)。真値 = Whitney 1982 のくさび θ > c/μ とかじりの平行四辺形(平面静力学から導き直して pegsim の頂点と一致)+ MuJoCo の接触と手首の力センサ。手首ばねのたわみから荷重を読む。失敗はわざと注入(ずれ・傾き・横目標・栓・囮)。回復は脚本のプリミティブ。mujoco が要る 3 本は facade)。
+粉体の山を画像で測る(granular: 安息角・体積・質量・流動性・排出率を規則だけで。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> の流動性の表(Carr 1965)、1 mm ガラス球の公表値 25.2 ± 0.8 度(arXiv 2009.10448)、第 2 実装 = MuJoCo の剛体球の山。側面像は縁の画素の被覆率を副画素の位置に読む(列和法は粉の画素値のずれで tan φ が縮む罠)、高さ図は勾配ヒストグラムの最頻、傾いた基準面は左右差 ≈ 2β の警報。mujoco が要る 2 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -71,6 +72,7 @@ import tacslip
 import tactorque
 import puck
 import pegfail
+import granular
 import racket
 import roadjp
 import rsssafety
@@ -79,7 +81,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -759,6 +761,37 @@ _CATALOG = {
         ("vision_boundary_flip", "pegfail", ["table", "signal", "scalar"], "table"),
         ("insertion_failure_presets", "pegfail", ["table"], "table"),
         ("pegfail_scene_mjcf", "pegfail", ["table"], "any"),
+    ],
+    # 粉体の山を画像で測る(2026-10-05、物理シミュ × Fullseye 系列): 安息角・体積・質量・流動性・排出率を規則だけで。真値 = 円錐の閉形式、
+    # Beverloo 1961 の排出則、USP <1174> Table 1(Carr 1965)、1 mm ガラス球の公表値 25.2 ± 0.8 度(Sunday ほか 2020、arXiv 2009.10448)、
+    # 第 2 実装 = MuJoCo の剛体球の山。側面像(被覆率)と高さ図は image2d、合成の世界・計測の結果・MJCF の dict は table、
+    # 球の中心 (n, 3) は matrix(点群の op に流すと意味が違う —— 山の選別と描画の入口だけが受ける)、陰影つきの絵は rgb、
+    # 動画の高さ図の列はコマのリスト(any、型が違えば ValueError)。mujoco が要る 2 本(heap_mujoco_pour / heap_mujoco_discharge)は
+    # facade だけで台帳には載せない。
+    "granular": [
+        ("heap_volume_cone", "granular", ["scalar", "scalar"], "table"),
+        ("heap_mass", "granular", ["scalar", "scalar"], "scalar"),
+        ("heap_volume_heightmap", "granular", ["image2d", "scalar"], "scalar"),
+        ("beverloo_rate", "granular", ["scalar", "scalar", "scalar"], "scalar"),
+        ("beverloo_fit", "granular", ["signal", "signal", "scalar", "scalar"], "table"),
+        ("discharge_synth", "granular", ["scalar", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("dispense_mass_from_video", "granular", ["any", "scalar", "scalar", "signal"], "table"),
+        ("hopper_discharge_rate", "granular", ["signal", "signal", "scalar"], "table"),
+        ("spoon_tilt_critical", "granular", ["scalar", "scalar", "scalar"], "scalar"),
+        ("spoon_tilt_dispense", "granular", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("powder_flowability_class", "granular", ["scalar"], "table"),
+        ("heap_synth_cone", "granular", ["scalar", "scalar"], "table"),
+        ("cone_profile_px", "granular", ["signal", "scalar", "scalar"], "signal"),
+        ("repose_angle_silhouette", "granular", ["image2d"], "table"),
+        ("repose_angle_heightmap", "granular", ["image2d", "scalar"], "table"),
+        ("datum_tilt_check", "granular", ["table"], "table"),
+        ("container_synth", "granular", ["scalar"], "table"),
+        ("container_fill_level", "granular", ["image2d"], "table"),
+        ("heap_spheres_select", "granular", ["matrix", "scalar", "scalar", "scalar"], "table"),
+        ("spheres_to_heightmap", "granular", ["matrix", "scalar", "scalar", "scalar"], "image2d"),
+        ("spheres_to_silhouette", "granular", ["matrix", "scalar", "scalar", "scalar", "scalar"], "image2d"),
+        ("spheres_render_shaded", "granular", ["matrix", "scalar", "scalar", "scalar", "scalar"], "rgb"),
+        ("heap_scene_mjcf", "granular", ["scalar", "scalar"], "table"),
     ],
 }
 

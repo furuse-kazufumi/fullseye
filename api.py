@@ -692,6 +692,10 @@ import pegfail  # noqa: E402  (ペグ挿入の失敗検出と回復: 規則の�
 from pegfail import (  # noqa: E402,F401
     pegfail_scene_build, pegfail_episode_run, pegfail_failure_grid,
 )
+import granular  # noqa: E402  (粉体の山を画像で測る: 安息角・体積・質量・流動性・排出率、真値は閉形式・公表値・MuJoCo。台帳は opsdrive "granular")
+from granular import (  # noqa: E402,F401
+    heap_mujoco_pour, heap_mujoco_discharge,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1202,6 +1206,8 @@ __all__ = [
     "pegfail_scene_build",
     "pegfail_episode_run",
     "pegfail_failure_grid",
+    "heap_mujoco_pour",
+    "heap_mujoco_discharge",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",
