@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">knife_load_from_pads — DRIVE <code style="color:#22d3bf">cuttouch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">table × table × table × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.knife_load_from_pads(read_R: &#x27;dict&#x27;, read_L: &#x27;dict&#x27;, pad: &#x27;dict&#x27;, Lz: &#x27;float&#x27;, edge_slope: &#x27;float&#x27; = 0.0, torsion_model: &#x27;str&#x27; = &#x27;partial_slip&#x27;, tare=None, v_min: &#x27;float&#x27; = 0.05, na: &#x27;int&#x27; = 64) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import cuttouch; cuttouch.knife_load_from_pads(read_R: &#x27;dict&#x27;, read_L: &#x27;dict&#x27;, pad: &#x27;dict&#x27;, Lz: &#x27;float&#x27;, edge_slope: &#x27;float&#x27; = 0.0, torsion_model: &#x27;str&#x27; = &#x27;partial_slip&#x27;, tare=None, v_min: &#x27;float&#x27; = 0.05, na: &#x27;int&#x27; = 64) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;knife_load_from_pads&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>2 枚のパッドの読み(:func:<code style="color:#22d3bf">pegtactile.pad_tactile_read</code>)→ 刃が食材から受ける押し V・引き H・モーメント M_x と、刃の当たり位置 Ly。</p>
+<p>`<code style="color:#22d3bf">Lz</code><code style="color:#22d3bf"> [m]: 把持点から刃先までの高さ(刃が傾いていれば把持点の真下での値 Lz₀、</code><code style="color:#22d3bf">edge_slope</code>` = 刃先の傾きの正接で</p>
+<p>`<code style="color:#22d3bf">Ly = (M_x + Lz₀ H)/(V + s H)</code><code style="color:#22d3bf">)。</code><code style="color:#22d3bf">torsion_model</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">&quot;partial_slip&quot;</code>`(既定 —— 無滑りの関係で読まれたねじりを部分滑りの数値解で</p>
+<p>直す、モジュール冒頭)/ `<code style="color:#22d3bf">&quot;no_slip&quot;</code><code style="color:#22d3bf">(読みのまま = :mod:</code>pegtactile<code style="color:#22d3bf"> の約束、比べるため)。</code><code style="color:#22d3bf">tare</code>`: 空中の 1 コマの 2 枚の読み</p>
+<p>`<code style="color:#22d3bf">(read_R, read_L)</code><code style="color:#22d3bf">(または前の返り・</code><code style="color:#22d3bf">{&quot;F&quot;: (3,), &quot;M&quot;: (3,)}</code>` のパッドのレンチ)—— 包丁の重さを差し引く(空中のコマそのものは</p>
+<p>V = 0 で Ly が定まらないので、この op に単独では渡せない)。</p>
+<p>返り: `<code style="color:#22d3bf">V</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">H</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Mx</code><code style="color:#22d3bf">(食材 → 刃、グリッパ系)、</code><code style="color:#22d3bf">Ly</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">xi</code><code style="color:#22d3bf">(= H/V)、パッドごとの </code><code style="color:#22d3bf">torsion</code><code style="color:#22d3bf">(直した値)・</code><code style="color:#22d3bf">torsion_read</code>`・</p>
+<p>`<code style="color:#22d3bf">torsion_ratio</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slip_ratio</code><code style="color:#22d3bf">(せん断 |q|/μP)・</code><code style="color:#22d3bf">c_over_a</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">combined_margin</code>` = 1 − max(せん断の比 + ねじりの比)(十分条件)、</p>
+<p>`<code style="color:#22d3bf">readable</code><code style="color:#22d3bf">(両方のパッドで固着円が読みの核を含む)、</code><code style="color:#22d3bf">Ly_range_full_slip</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Ly_range_readable</code>`(いまの V・H・把持力のまま当たり位置が</p>
+<p>動いたとき、全滑り / 読めなくなるまでの Ly の範囲 = 持てる柄の長さの限界)、`<code style="color:#22d3bf">pad_wrench</code><code style="color:#22d3bf">(パッド → 刃、tare 前)、</code><code style="color:#22d3bf">torsion_model</code>`。</p>
+<p><b>Raises</b> ValueError: 読みが壊れている、V ≤ `<code style="color:#22d3bf">v_min</code>`(刃が食材を押していない = Ly が定まらない)、綴り違い、Lz が非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">cuttouch</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:torsion_partial_slip">torsion_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:toughness_from_pads">toughness_from_pads</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cuttouch.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

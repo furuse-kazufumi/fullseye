@@ -5844,6 +5844,45 @@ def _b_du_time(pool, rng):
         {"n_mc": 2000}
 
 
+_FUZZ_CT = {}
+
+
+def _ct_reads(pad, V, H, Ly, Lz=18e-3):
+    import pegtactile as PT
+    F = np.array([0.0, -H, V])
+    M = np.cross([0.0, Ly, -Lz], F)
+    L = PT.peg_wrench_to_pad_loads(-F, -M, pad)
+    return tuple({"P": L[k]["P"], "q": L[k]["q"], "torsion": L[k]["torsion"]} for k in ("R", "L"))
+
+
+def _fuzz_ct():
+    """包丁 × 触覚の小さな種(パッドの表・閉形式の 2 パッドの読み 6 コマ・切っている幅)を 1 回だけ作る(cuttouch、numpy だけ)。"""
+    if "pad" not in _FUZZ_CT:
+        import cuttouch as CT
+        import pegtactile as PT
+        pad = PT.pad_params()
+        w = np.array([4.0, 10.0, 18.0, 26.0, 34.0, 34.0])
+        loads = [CT.knife_load_from_pads(*_ct_reads(pad, 0.06 * x, 0.004 * x, 1e-3), pad, 18e-3) for x in w]
+        _FUZZ_CT.update({"pad": pad, "loads": loads, "w": w})
+    return _FUZZ_CT
+
+
+def _b_ct_torsion(pool, rng):
+    f = _fuzz_ct()
+    return (float(rng.uniform(-4e-3, 4e-3)), float(rng.uniform(3.0, 5.0)), f["pad"]), {}
+
+
+def _b_ct_load(pool, rng):
+    f = _fuzz_ct()
+    rR, rL = _ct_reads(f["pad"], float(rng.uniform(0.5, 2.0)), float(rng.uniform(0.0, 0.2)), float(rng.uniform(-2e-3, 3e-3)))
+    return (rR, rL, f["pad"], 18e-3), {"edge_slope": float(rng.uniform(0.0, 0.1))}
+
+
+def _b_ct_tough(pool, rng):
+    f = _fuzz_ct()
+    return (f["loads"], f["w"]), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6224,6 +6263,7 @@ OP_ARG_BUILDERS = {
     "cubic_index": _b_px_index, "phase_dictionary": _b_px_dict, "phase_fractions": _b_px_frac,
     "unexplained_peaks": _b_px_unexp, "phase_peel": _b_px_peel,
     "dose_cv_lognormal": _b_du_logn, "dose_cv_from_sizes": _b_du_sizes, "grind_time_for_dose_cv": _b_du_time,
+    "torsion_partial_slip": _b_ct_torsion, "knife_load_from_pads": _b_ct_load, "toughness_from_pads": _b_ct_tough,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

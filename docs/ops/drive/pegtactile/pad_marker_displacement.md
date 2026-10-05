@@ -4,7 +4,7 @@ dim: drive
 category: pegtactile
 in: scalar × signal × table
 out: table
-examples: []
+examples: [poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -31,7 +31,7 @@ u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
-- (まだありません)
+- [poc_knife_tactile_toughness](../../../../examples/poc_knife_tactile_toughness.py) — `py -3.11 examples/poc_knife_tactile_toughness.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

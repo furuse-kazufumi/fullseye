@@ -1,0 +1,66 @@
+[
+ {
+  "file": "01_handle_length_limit.png",
+  "name": "handle_length_limit",
+  "caption": "押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。把持力 4 N では -3.5〜6.0 mm の外で読めなくなり、-4.5〜7.0 mm の外で全滑り。把持力を 4 倍にすると範囲は約 6.3 倍(全滑りのトルク ∝ P a ∝ P^{4/3})。",
+  "shape": [
+   460,
+   1006,
+   3
+  ]
+ },
+ {
+  "file": "02_contact_position_read.png",
+  "name": "contact_position_read",
+  "caption": "無滑りの関係でねじりを読むと、指から離れるほど当たり位置を遠くに読む(部分滑りでねじれ角が大きい)。部分滑りの数値解で直すと真値の線に戻る。",
+  "shape": [
+   460,
+   955,
+   3
+  ]
+ },
+ {
+  "file": "03_mujoco_cut_timeline.png",
+  "name": "mujoco_cut_timeline",
+  "caption": "刃が食材の左端から切れ始め、切っている幅の中点(当たり位置)が右へ動く。パッドの像だけで押し V と当たり位置を追う。R̂ = 59.84 J/m²(設定 60)。",
+  "shape": [
+   460,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "04_pad_images.png",
+  "name": "pad_images",
+  "caption": "",
+  "shape": [
+   647,
+   542,
+   3
+  ]
+ },
+ {
+  "file": "05_stick_zone_shrinks.png",
+  "name": "stick_zone_shrinks",
+  "caption": "パッドのねじれ(周方向の変位 ÷ 半径)。固着円の中は平ら(剛体回転)で、その高さが無滑りの値より大きい = 無滑りの関係で読むとトルクを過大に読む。平らな所が読みの核 0.6a より狭くなると読めない。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "06_cut_with_fingertip_pads.gif",
+  "name": "cut_with_fingertip_pads",
+  "caption": "MuJoCo の柔らかい手首で刃を押し下げる(上)。下は包丁の背を挟む 2 枚のパッドの膜の像 —— この像だけで力と当たり位置を読む。",
+  "shape": [
+   736,
+   800,
+   3
+  ],
+  "animated": true,
+  "frames": 14,
+  "frames_written": 14,
+  "fps": 4.0
+ }
+]

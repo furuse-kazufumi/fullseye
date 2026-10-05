@@ -4,7 +4,7 @@ dim: drive
 category: pegtactile
 in: table × table
 out: table
-examples: [poc_peg_insertion_tactile]
+examples: [poc_knife_tactile_toughness, poc_peg_insertion_tactile]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -35,6 +35,7 @@ Mindlin の δx 式で逆に解いた値(μ は較正値)。返り ``P``・``a``
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_knife_tactile_toughness](../../../../examples/poc_knife_tactile_toughness.py) — `py -3.11 examples/poc_knife_tactile_toughness.py`
 - [poc_peg_insertion_tactile](../../../../examples/poc_peg_insertion_tactile.py) — `py -3.11 examples/poc_peg_insertion_tactile.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

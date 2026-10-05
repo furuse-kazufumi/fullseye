@@ -7,6 +7,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**包丁を指先の視触覚だけで持って切る**(新モジュール `cuttouch` 3 op、facade なし、台帳 `cuttouch`(opsdrive)、PoC `poc_knife_tactile_toughness`、wing_metrology): cutting × pegtactile の連鎖。
+  2 枚のパッドの膜の読みから押し・引き・モーメントを復元し、刃の当たり位置・slice/push 比・靱性を手首の力センサなしに読む。持てる柄の長さの限界(全滑り / 読めなくなるまで)も返す。
+  Hertz 接触のねじりの部分滑りを Cerruti 核の影響行列で数値的に解く `torsion_partial_slip`(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。これで pegtactile の無滑りのねじりの読みが部分滑りで過大(比 0.5 で +33 %)と分かった。
+  外の真値は閉形式と MuJoCo の押しの時系列(mujoco が無い CI では閉形式の切断)。正直に: 膜の合成と補正は同じ数値解、引き H は Atkins の H = ξV で作った。
 - ★**何分すり潰せば 1 回分の薬の量が揃うか**(新モジュール `doseunif` 3 op、facade なし、台帳 `doseunif`(opsdrive)、PoC `poc_dose_uniformity_from_grinding`、wing_metrology): grind の続き。
   粒径から含量の CV を閉形式(CV² = (πρ/6)·D63³/D、対数正規と体積基準の表の恒等式 D63³ = E_v[d³])と Monte Carlo で出し、粉砕則で CV が目標まで下がる時間と第 1 段の合格の確率を逆算する。
   画像の粒の標本は縁の取りこぼし(−5 %)と d⁶ の重い裾で低く出る —— Miles–Lantuéjoul の重みと対数正規で直し区間を返す(試走の「一貫して −6 %」は同じ 12 枚を縮尺違いで測っていた見かけ)。

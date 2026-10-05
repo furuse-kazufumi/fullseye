@@ -1,8 +1,8 @@
 {
- "n_ops": 3060,
+ "n_ops": 3063,
  "tiers": {
   "color": 12,
-  "ledger": 2107,
+  "ledger": 2110,
   "nary": 17,
   "registry": 924
  },
@@ -11940,6 +11940,22 @@
    "dim": "drive",
    "in_sorts": [
     "rgb"
+   ]
+  },
+  {
+   "name": "knife_load_from_pads",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "cuttouch",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "table",
+    "table",
+    "scalar"
    ]
   },
   {
@@ -25321,6 +25337,21 @@
    ]
   },
   {
+   "name": "torsion_partial_slip",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "cuttouch",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "table"
+   ]
+  },
+  {
    "name": "torsion_stick_field",
    "halcon": "",
    "in_sort": "matrix",
@@ -25349,6 +25380,20 @@
    "dim": "3d",
    "in_sorts": [
     "coordgrid"
+   ]
+  },
+  {
+   "name": "toughness_from_pads",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "cuttouch",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal"
    ]
   },
   {

@@ -2318,6 +2318,17 @@
    "run": "py -3.11 examples/poc_dose_uniformity_from_grinding.py"
   },
   {
+   "id": "poc_knife_tactile_toughness",
+   "wing": "wing_metrology",
+   "added": "2026-10-06",
+   "numbers_source": "log",
+   "title_ja": "包丁を指先の視触覚だけで持って切る ―― 手首の力センサなしに靱性と刃の当たり位置、持てる柄の長さの限界。既存の読み手のねじりの過大(比 0.5 で +33 %)を部分滑りの数値解で直す",
+   "title_en": "Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution",
+   "caption_ja": "cutting(食材の切断を画像で測る)× pegtactile(2 本指の膜で接触レンチ)の連鎖。包丁の背を 2 枚のパッドで挟み、膜の像だけから押し V・引き H・モーメント M_x を復元し、刃の当たり位置 Ly = (M_x + Lz·H)/V、slice/push 比 ξ̂ = H/V、靱性 R を読む。★見つけて直したこと: pegtactile.pad_tactile_read はパッドのねじりを無滑り(Reissner–Sagoci)で読むが、Hertz 接触のねじりは縁から必ず滑るので M を過大に読む —— 部分滑りの像で比 0.5 で ×1.328、0.85 で ×2.022(数値解の予測と 0.4 % 以内)。接触円を 64 環に分け Cerruti 核の影響行列で部分滑りを解き(両端は閉形式: c → a で β/β_RS 0.9986、c → 0 で全滑りのトルク +0.11 %)、補正後 0.2 % 以内。MuJoCo の切断(既定の門は 4 コマ、図は 14 コマ)→ パッドの像だけで R̂ 59.86 J/m²(設定 60)、ξ̂ 0.0701(tan θ 0.0699)、当たり位置の誤差 中央値 0.01 mm・最大 0.48 mm(無滑りの読みのままだと 6.09 mm)。持てる柄の長さの限界: 把持力 4 N では刃の当たりが把持点から 6.0 mm を超えると読めない(8 N で 13.2 mm、16 N で 31.3 mm)、範囲の外は readable = False の印。正直に: 膜の合成と補正は同じ数値解(本物のゲルが半空間の部分滑りどおりかは未確認)、せん断とねじりは重ね合わせ、V は MuJoCo の摩擦損失に書いた式そのもの、H は H = ξV で作った。門 13 本(3.0 s、mujoco が無ければ閉形式の切断で代える)、--full は全 79 コマ・96 環・17 点。",
+   "caption_en": "The chain of cutting (measuring food cutting from images) and pegtactile (contact wrench from two fingertip membranes). Pinch the spine of a kitchen knife between two pads and recover, from the membrane images alone, the push V, the pull H and the moment M_x, then read the blade's contact position Ly = (M_x + Lz·H)/V, the slice/push ratio ξ̂ = H/V and the toughness R. ★What we found and fixed: pegtactile.pad_tactile_read reads the pad torsion with the no-slip (Reissner–Sagoci) relation, but torsion of a Hertz contact always slips from the edge, so it over-reads M — on partial-slip images ×1.328 at half the full-slip torque and ×2.022 at 0.85 (within 0.4 % of the numerical prediction). Splitting the contact into 64 rings and solving partial slip with the Cerruti-kernel influence matrix (both limits are closed forms: β/β_RS 0.9986 as c → a, the full-slip torque +0.11 % as c → 0) corrects it to within 0.2 %. A MuJoCo cut (4 frames for the default gates, 14 for the figures) → from the pad images alone R̂ 59.86 J/m² (set 60), ξ̂ 0.0701 (tan θ 0.0699), contact position error median 0.01 mm and max 0.48 mm (6.09 mm if the no-slip reading is kept). How long a handle can be held: at a 4 N grip the knife cannot be read once the blade contact is more than 6.0 mm from the grasp (13.2 mm at 8 N, 31.3 mm at 16 N), and outside that range the result carries readable = False. Honestly: the membrane synthesis and the correction use the same numerical solution (whether a real gel behaves like a half-space in partial slip is untested), shear and torsion are superposed, V is the formula written into MuJoCo's friction loss, and H was made as ξV. 13 gates (3.0 s; without mujoco a closed-form cut stands in); --full runs all 79 frames, 96 rings and 17 positions.",
+   "run": "py -3.11 examples/poc_knife_tactile_toughness.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

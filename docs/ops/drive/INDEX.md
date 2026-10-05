@@ -1,4 +1,4 @@
-# DRIVE operator help — 676 ops in 49 categories
+# DRIVE operator help — 679 ops in 50 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -39,6 +39,10 @@
 ### cutting (16)
 
 [cut_depth_from_side](cutting/cut_depth_from_side.md) · [cut_force_atkins](cutting/cut_force_atkins.md) · [cut_force_csv_load](cutting/cut_force_csv_load.md) · [cut_force_fit](cutting/cut_force_fit.md) · [cut_surface_roughness](cutting/cut_surface_roughness.md) · [cutting_edge_render](cutting/cutting_edge_render.md) · [cutting_episode_synth](cutting/cutting_episode_synth.md) · [cutting_face_render](cutting/cutting_face_render.md) · [cutting_scene](cutting/cutting_scene.md) · [cutting_wrist_mjcf](cutting/cutting_wrist_mjcf.md) · [food_cut_width](cutting/food_cut_width.md) · [force_from_wrist_displacement](cutting/force_from_wrist_displacement.md) · [knife_edge_track](cutting/knife_edge_track.md) · [slice_push_from_track](cutting/slice_push_from_track.md) · [slice_push_ratio](cutting/slice_push_ratio.md) · [slice_thickness_profile](cutting/slice_thickness_profile.md)
+
+### cuttouch (3)
+
+[knife_load_from_pads](cuttouch/knife_load_from_pads.md) · [torsion_partial_slip](cuttouch/torsion_partial_slip.md) · [toughness_from_pads](cuttouch/toughness_from_pads.md)
 
 ### decide (18)
 

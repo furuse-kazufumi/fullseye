@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">torsion_partial_slip — DRIVE <code style="color:#22d3bf">cuttouch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict&#x27;, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cuttouch; cuttouch.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict&#x27;, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;torsion_partial_slip&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>球面パッド(Hertz、法線力 `<code style="color:#22d3bf">P</code><code style="color:#22d3bf">)に法線まわりのねじり </code><code style="color:#22d3bf">M</code>` [N·m] を掛けたときの部分滑り: 固着半径 c、ねじれ角 β、全滑りまでの比。</p>
+<p>数値解はモジュール冒頭(環 `<code style="color:#22d3bf">na</code><code style="color:#22d3bf"> 本の影響行列、無次元の 1 本の曲線を一度だけ)。返り: </code><code style="color:#22d3bf">ratio</code><code style="color:#22d3bf"> = |M| / ((3π/16)μPa)、</code><code style="color:#22d3bf">c_over_a</code>`、</p>
+<p>`<code style="color:#22d3bf">beta</code><code style="color:#22d3bf">(部分滑りのねじれ角 [rad])、</code><code style="color:#22d3bf">beta_no_slip</code><code style="color:#22d3bf"> = 3M/(16Ga³)(Reissner–Sagoci)、</code><code style="color:#22d3bf">read_bias</code>` = β/β_no_slip(無滑りの関係で</p>
+<p>読んだときの M の過大の倍率)、`<code style="color:#22d3bf">a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">p0</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">M_full</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">slipping</code>`(比 ≥ 1 = 全滑り。例外にせず印 —— 滑りは起きる状態で入力の</p>
+<p>誤りではない。β は定まらないので nan)、`<code style="color:#22d3bf">readable</code><code style="color:#22d3bf">(固着円が読みの核 r &lt; 0.6a を含む)。</code><code style="color:#22d3bf">field=True</code><code style="color:#22d3bf"> なら </code><code style="color:#22d3bf">ctx</code>`</p>
+<p>(:func:<code style="color:#22d3bf">pegtactile.pad_context</code>)の格子で周方向トラクションを Cerruti 核で畳んだ表面変位 `<code style="color:#22d3bf">ux</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">uy</code>` [m] と、マーカーの基準位置での</p>
+<p>`<code style="color:#22d3bf">u_markers</code>` (N, 2) [m] も返す(合成用。全滑りでは作らない)。</p>
+<p><b>Raises</b> ValueError: P ≤ 0・非有限、M が非有限、pad が :func:<code style="color:#22d3bf">pegtactile.pad_params</code> の表でない、na &lt; 24。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">cuttouch</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:knife_load_from_pads">knife_load_from_pads</a> · <a style="color:#22d3bf" href="opdrive:toughness_from_pads">toughness_from_pads</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cuttouch.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

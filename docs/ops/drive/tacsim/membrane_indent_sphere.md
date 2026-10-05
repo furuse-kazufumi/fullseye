@@ -4,7 +4,7 @@ dim: drive
 category: tacsim
 in: table
 out: table
-examples: [poc_tacsim_elastic_membrane, poc_tacsim_marker_shear]
+examples: [poc_knife_tactile_toughness, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -31,6 +31,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_knife_tactile_toughness](../../../../examples/poc_knife_tactile_toughness.py) — `py -3.11 examples/poc_knife_tactile_toughness.py`
 - [poc_tacsim_elastic_membrane](../../../../examples/poc_tacsim_elastic_membrane.py) — `py -3.11 examples/poc_tacsim_elastic_membrane.py`
 - [poc_tacsim_marker_shear](../../../../examples/poc_tacsim_marker_shear.py) — `py -3.11 examples/poc_tacsim_marker_shear.py`
 

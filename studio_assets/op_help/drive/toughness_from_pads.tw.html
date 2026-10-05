@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">toughness_from_pads — DRIVE <code style="color:#22d3bf">cuttouch</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.toughness_from_pads(loads, w_eff_mm, xi: &#x27;float | None&#x27; = None, min_w_mm: &#x27;float&#x27; = 2.0, readable_only: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cuttouch; cuttouch.toughness_from_pads(loads, w_eff_mm, xi: &#x27;float | None&#x27; = None, min_w_mm: &#x27;float&#x27; = 2.0, readable_only: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;toughness_from_pads&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>:func:<code style="color:#22d3bf">knife_load_from_pads</code> の列と切っている幅 w_eff [mm] (画像から、:func:<code style="color:#22d3bf">cutting.food_cut_width</code>)→ 靱性 R と当たり位置の要約。</p>
+<p>R = 原点を通る最小二乗 `<code style="color:#22d3bf">V = R · w_eff · g(ξ)</code><code style="color:#22d3bf">、g = 1/(1+ξ²)(:func:</code>cutting.cut_force_fit`、摩擦は R に吸い込まれる)。ξ は</p>
+<p>`<code style="color:#22d3bf">xi</code><code style="color:#22d3bf"> を渡せばそれ(運動から)、省けば **触覚だけ** の ξ̂ = 中央値(H/V)(w_eff ≥ </code><code style="color:#22d3bf">min_w_mm</code><code style="color:#22d3bf"> かつ読めるコマ)。</code><code style="color:#22d3bf">readable_only</code>` なら</p>
+<p>`<code style="color:#22d3bf">readable = False</code><code style="color:#22d3bf"> のコマは使わない(黙って混ぜない、数は </code><code style="color:#22d3bf">n_unreadable</code><code style="color:#22d3bf"> に)。返り: </code><code style="color:#22d3bf">R</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_n</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">xi_used</code>`・</p>
+<p>`<code style="color:#22d3bf">xi_tactile</code><code style="color:#22d3bf">(中央値)・</code><code style="color:#22d3bf">xi_tactile_iqr</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">Ly_median</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Ly_mad</code><code style="color:#22d3bf">(読めるコマ)、</code><code style="color:#22d3bf">n_unreadable</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">model</code>`。</p>
+<p><b>Raises</b> ValueError: 長さ違い、使えるコマが 3 未満、要素が knife_load_from_pads の返りでない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">cuttouch</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:torsion_partial_slip">torsion_partial_slip</a> · <a style="color:#22d3bf" href="opdrive:knife_load_from_pads">knife_load_from_pads</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cuttouch.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

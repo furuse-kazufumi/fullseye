@@ -37,6 +37,7 @@
 流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する(swarmflow: SPH の 3 次スプライン核(∫W dV = 1)と密度・圧力、障害物のある周期の流路を流れる群れの模擬、俯瞰映像の合成、個体の検出(blob2d)と追跡 / 相互相関の PIV(pivops)から速度場、自由流からの欠損の地図、中心線の 1/√d の直線化と二重湧き出しの 2 次元の当てはめで衝突点・障害物の中心と半径と「障害物あり」の判定、Ritter のダム崩壊解と 1 次元 SPH の浅水)。
 粉末 X 線回折を測る(pxrd: 2-D 検出器のデバイ環 → 検出器の較正(中心・距離・傾き、標準 Si の環)→ 方位積分(マスク・立体角・偏光)→ 山の検出と立方晶の指数付け(P / I / F / diamond、de Wolff 型の性能指数)→ CIF の結晶構造から作った参照パターンの辞書と NNLS の重量分率(Hill–Howard の ZMV と同じ形)・相を 1 つずつ剥がす前進選択・残差の未知相・Scherrer の結晶子径。外の真値は NIST SRM 640g の証明書(a と線の位置の表 A1)と COD の CIF(CC0、repo の外・環境変数)。全部 numpy + scipy)。
 粉の粒径から 1 回分の含量のばらつきと必要な粉砕時間(doseunif: grind の続き。よく混ざった粉から 1 回分を取ると薬の粒の数がPoisson で揺らぐだけで含量がばらつく —— CV² = (πρ/6)·D63³/D を自分で導出し、対数正規の閉形式と Monte Carlo、体積基準の粒度分布からは恒等式 D63³ = E_v[d³] で形を仮定せずに。画像の標本の偏り(縁の粒の取りこぼし・d⁶ の重い裾)を Miles–Lantuéjoul の重みと対数正規の当てはめで直し区間を返す。粉砕則で CV が目標(受入値 15 相当、または第 1 段の合格の確率)まで下がる時間を逆算。外の真値は Monte Carlo と公開データのレーザー回折(Zenodo 10.5281/zenodo.18064323、CC BY 4.0、repo の外)。numpy + scipy)。
+包丁を指先の視触覚だけで持って切る(cuttouch: cutting × pegtactile の連鎖。2 枚のパッドの膜の読みから押し V・引き H・モーメント M_x を復元し、刃の当たり位置 Ly = (M_x + Lz·H)/V・slice/push 比 H/V・靱性 R を手首の力センサなしに。パッドのねじりは縁から必ず滑るので、無滑りの関係で読むと過大(比 0.5 で +33 %)—— Hertz 接触の部分滑りのねじりをCerruti 核の影響行列で数値的に解いて直す(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。持てる柄の長さの限界と全滑りの余裕も返す。外の真値は閉形式と MuJoCo(cutting_mujoco_wrist)。numpy + scipy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -99,6 +100,7 @@ import ozakimm
 import swarmflow
 import pxrd
 import doseunif
+import cuttouch
 import racket
 import roadjp
 import rsssafety
@@ -107,7 +109,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow, "pxrd": pxrd, "doseunif": doseunif, "cuttouch": cuttouch}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1065,6 +1067,14 @@ _CATALOG = {
         ("dose_cv_lognormal", "doseunif", ["scalar", "scalar", "scalar", "scalar"], "table"),
         ("dose_cv_from_sizes", "doseunif", ["any", "scalar", "scalar"], "table"),
         ("grind_time_for_dose_cv", "doseunif", ["signal", "signal", "scalar", "scalar"], "table"),
+    ],
+    # 包丁を指先の視触覚だけで持って切る(2026-10-06、cutting × pegtactile): パッドの表と読みは table(pegtactile と同じ)、
+    # ねじり・法線力・高さは scalar、読みの列は any(list)、切っている幅は signal。外の真値 = 閉形式(Reissner–Sagoci、
+    # 全滑りのトルク)と MuJoCo の押しの時系列(H は MuJoCo に無く Atkins の H = ξV)。mujoco を使う op は無い。
+    "cuttouch": [
+        ("torsion_partial_slip", "cuttouch", ["scalar", "scalar", "table"], "table"),
+        ("knife_load_from_pads", "cuttouch", ["table", "table", "table", "scalar"], "table"),
+        ("toughness_from_pads", "cuttouch", ["any", "signal"], "table"),
     ],
 }
 

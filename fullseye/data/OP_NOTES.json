@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3060,
- "n_notes": 3066,
+ "n_ops": 3063,
+ "n_notes": 3069,
  "notes": {
   "vol_dilate": [
    {
@@ -16766,6 +16766,36 @@
     "in": "rgb × scalar × scalar",
     "out": "table",
     "path": "docs/ops/drive/cutting/slice_thickness_profile.md"
+   }
+  ],
+  "knife_load_from_pads": [
+   {
+    "op": "knife_load_from_pads",
+    "dim": "drive",
+    "category": "cuttouch",
+    "in": "table × table × table × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/cuttouch/knife_load_from_pads.md"
+   }
+  ],
+  "torsion_partial_slip": [
+   {
+    "op": "torsion_partial_slip",
+    "dim": "drive",
+    "category": "cuttouch",
+    "in": "scalar × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/cuttouch/torsion_partial_slip.md"
+   }
+  ],
+  "toughness_from_pads": [
+   {
+    "op": "toughness_from_pads",
+    "dim": "drive",
+    "category": "cuttouch",
+    "in": "any × signal",
+    "out": "table",
+    "path": "docs/ops/drive/cuttouch/toughness_from_pads.md"
    }
   ],
   "aliased_frequency": [

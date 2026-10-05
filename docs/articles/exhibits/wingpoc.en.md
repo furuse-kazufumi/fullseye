@@ -988,7 +988,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 34 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 35 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2075,6 +2075,42 @@ Source: [examples/poc_dose_uniformity_from_grinding.py](https://github.com/furus
 This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_dose_uniformity_from_grinding)
 
 Ops used (notes): [`comminution_energy`](https://furuse.work/ops/drive/grind/comminution_energy.html) · [`dose_cv_from_sizes`](https://furuse.work/ops/drive/doseunif/dose_cv_from_sizes.html) · [`dose_cv_lognormal`](https://furuse.work/ops/drive/doseunif/dose_cv_lognormal.html) · [`grind_time_for_dose_cv`](https://furuse.work/ops/drive/doseunif/grind_time_for_dose_cv.html) · [`particle_image_d50`](https://furuse.work/ops/drive/grind/particle_image_d50.html) · [`particle_image_synth`](https://furuse.work/ops/drive/grind/particle_image_synth.html) · [`particle_size_read`](https://furuse.work/ops/drive/grind/particle_size_read.html) · [`particle_size_synth`](https://furuse.work/ops/drive/grind/particle_size_synth.html)
+
+## No.2026.216 —— Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution
+
+[![Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/04_pad_images.png)
+
+*↑ **Holding and Cutting with a Knife by Fingertip Visuotactile Sensing Alone — Toughness, Blade Contact Position and How Long a Handle Can Be Held, without a Wrist Force Sensor; the Existing Reader's Torsion Over-read (+33 % at Half Slip) Fixed by a Numerical Partial-Slip Solution** ―― The chain of cutting (measuring food cutting from images) and pegtactile (contact wrench from two fingertip membranes). Pinch the spine of a kitchen knife between two pads and recover, from the membrane images alone, the push V, the pull H and the moment M_x, then read the blade's contact position Ly = (M_x + Lz·H)/V, the slice/push ratio ξ̂ = H/V and the toughness R. ★What we found and fixed: pegtactile.pad_tactile_read reads the pad torsion with the no-slip (Reissner–Sagoci) relation, but torsion of a Hertz contact always slips from the edge, so it over-reads M — on partial-slip images ×1.328 at half the full-slip torque and ×2.022 at 0.85 (within 0.4 % of the numerical prediction). Splitting the contact into 64 rings and solving partial slip with the Cerruti-kernel influence matrix (both limits are closed forms: β/β_RS 0.9986 as c → a, the full-slip torque +0.11 % as c → 0) corrects it to within 0.2 %. A MuJoCo cut (4 frames for the default gates, 14 for the figures) → from the pad images alone R̂ 59.86 J/m² (set 60), ξ̂ 0.0701 (tan θ 0.0699), contact position error median 0.01 mm and max 0.48 mm (6.09 mm if the no-slip reading is kept). How long a handle can be held: at a 4 N grip the knife cannot be read once the blade contact is more than 6.0 mm from the grasp (13.2 mm at 8 N, 31.3 mm at 16 N), and outside that range the result carries readable = False. Honestly: the membrane synthesis and the correction use the same numerical solution (whether a real gel behaves like a half-space in partial slip is untested), shear and torsion are superposed, V is the formula written into MuJoCo's friction loss, and H was made as ξV. 13 gates (3.0 s; without mujoco a closed-form cut stands in); --full runs all 79 frames, 96 rings and 17 positions.*
+
+[![押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。把持力 4 N では -3.5〜6.0 mm の外で読めなくなり、-4.5〜7.0 mm の外で全滑り。把持力を 4 倍にすると範囲は約 6.3 倍](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/01_handle_length_limit.png)
+
+*↑ The measurement ―― 押し 2 N の切断で、刃の当たり位置が指から離れるほどパッドのねじりが増え、固着円が縮む。把持力 4 N では -3.5〜6.0 mm の外で読めなくなり、-4.5〜7.0 mm の外で全滑り。把持力を 4 倍にすると範囲は約 6.3 倍(全滑りのトルク ∝ P a ∝ P^{4/3})。 (figure labels are in Japanese; the numbers are the same)*
+
+[![無滑りの関係でねじりを読むと、指から離れるほど当たり位置を遠くに読む(部分滑りでねじれ角が大きい)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/02_contact_position_read_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/02_contact_position_read.png)
+
+*↑ 無滑りの関係でねじりを読むと、指から離れるほど当たり位置を遠くに読む(部分滑りでねじれ角が大きい)。*
+
+[![刃が食材の左端から切れ始め、切っている幅の中点(当たり位置)が右へ動く。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/03_mujoco_cut_timeline_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/03_mujoco_cut_timeline.png)
+
+*↑ 刃が食材の左端から切れ始め、切っている幅の中点(当たり位置)が右へ動く。*
+
+[![パッドのねじれ(周方向の変位 ÷ 半径)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/05_stick_zone_shrinks_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/05_stick_zone_shrinks.png)
+
+*↑ パッドのねじれ(周方向の変位 ÷ 半径)。*
+
+[![MuJoCo の柔らかい手首で刃を押し下げる(上)。下は包丁の背を挟む 2 枚のパッドの膜の像 —— この像だけで力と当たり位置を読む。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_knife_tactile_toughness/06_cut_with_fingertip_pads.gif)
+
+*↑ The animation ―― MuJoCo の柔らかい手首で刃を押し下げる(上)。下は包丁の背を挟む 2 枚のパッドの膜の像 —— この像だけで力と当たり位置を読む。*
+
+```
+py -3.11 examples/poc_knife_tactile_toughness.py
+```
+
+Source: [examples/poc_knife_tactile_toughness.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_knife_tactile_toughness.py)
+
+This run produced **6 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_knife_tactile_toughness)
+
+Ops used (notes): [`combined_modulus`](https://furuse.work/ops/drive/tacsim/combined_modulus.html) · [`cutting_episode_synth`](https://furuse.work/ops/drive/cutting/cutting_episode_synth.html) · [`cutting_scene`](https://furuse.work/ops/drive/cutting/cutting_scene.html) · [`food_cut_width`](https://furuse.work/ops/drive/cutting/food_cut_width.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`knife_load_from_pads`](https://furuse.work/ops/drive/cuttouch/knife_load_from_pads.html) · [`membrane_indent_sphere`](https://furuse.work/ops/drive/tacsim/membrane_indent_sphere.html) · [`membrane_render_markers`](https://furuse.work/ops/drive/tacslip/membrane_render_markers.html) · [`membrane_render_rgb`](https://furuse.work/ops/drive/tacsim/membrane_render_rgb.html) · [`pad_context`](https://furuse.work/ops/drive/pegtactile/pad_context.html) · [`pad_marker_displacement`](https://furuse.work/ops/drive/pegtactile/pad_marker_displacement.html) · [`pad_params`](https://furuse.work/ops/drive/pegtactile/pad_params.html) · [`pad_tactile_read`](https://furuse.work/ops/drive/pegtactile/pad_tactile_read.html) · [`peg_wrench_to_pad_loads`](https://furuse.work/ops/drive/pegtactile/peg_wrench_to_pad_loads.html) · [`rigid_rotation_fit`](https://furuse.work/ops/drive/tactorque/rigid_rotation_fit.html) · [`torsion_partial_slip`](https://furuse.work/ops/drive/cuttouch/torsion_partial_slip.html) · [`toughness_from_pads`](https://furuse.work/ops/drive/cuttouch/toughness_from_pads.html)
 
 ## No.2026.142 —— How Much of That Number Is Your Measuring - Gauge R&R and Measurement Uncertainty
 

@@ -4,7 +4,7 @@ dim: drive
 category: cutting
 in: 
 out: table
-examples: [poc_food_cutting_measure]
+examples: [poc_food_cutting_measure, poc_knife_tactile_toughness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -34,6 +34,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_food_cutting_measure](../../../../examples/poc_food_cutting_measure.py) — `py -3.11 examples/poc_food_cutting_measure.py`
+- [poc_knife_tactile_toughness](../../../../examples/poc_knife_tactile_toughness.py) — `py -3.11 examples/poc_knife_tactile_toughness.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 
