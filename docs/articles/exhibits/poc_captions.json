@@ -2274,6 +2274,17 @@
    "run": "py -3.11 examples/poc_powder_grinding_ae.py"
   },
   {
+   "id": "poc_reproducible_icp",
+   "wing": "wing_geometry",
+   "added": "2026-10-05",
+   "numbers_source": "log",
+   "title_ja": "点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる",
+   "title_en": "Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation",
+   "caption_ja": "同じ 20 万点の点群を、点の順だけ入れ替えて Kabsch の回転を解く。普通の FP64 の行列積(DGEMM)は足す順で下位ビットが動くので、11 回の入れ替えで回転は 12 通りに分かれた(最大の差 1.7e-15)。新モジュール ozakimm(6 op)は縮約を正確な整数の部分積に分けて計算し(Ozaki-I = 7 ビットずつの固定小数点の切れ端、Ozaki-II = 中国剰余定理)、点の順・BLAS のスレッド数 1/2/4/8 に依らず 1 通りのビットを返す。分割数を 1 枚増やすたびに誤差は約 2⁻⁷ ずつ段で落ちて FP64 の水準に届き(真値は Python の整数で計算した正確な積)、分割数は誤差の保証上界から自動で選ぶ(φ = 0.5 / 2 / 4 で 9 / 11 / 13 枚)。上界は 9,216 要素で破れ 0。入力を 2 の冪倍すると答えも正確に同じ倍率になり、arXiv 2606.29129 が報告した旧 fast mode の「定数倍だけで答えが壊れる」欠陥は無い。正直に: CPU では速くならない(正方行列で DGEMM の 11〜60 倍、20 万点の 3×3 の相互共分散で 0.68 ms → 170 ms)。GPU で FP64 を速くしたいなら、自前の実装より cuBLAS 13.4 の FP64 エミュレーション(opt-in)が手元の 1 台で n = 8192 に 17.8〜23.8 TFLOPS(ネイティブ 1.67、13.3 は指数の幅が広い入力でネイティブへ戻った)。ただし cuBLAS はエミュレーション中のビット単位の再現を保証しないので、速さは cuBLAS、再現はこちら、と分ける。",
+   "caption_en": "The same 200,000-point cloud, with only the point order shuffled, is fed to Kabsch. An ordinary FP64 matrix product (DGEMM) moves its low bits with the summation order, so 11 shuffles gave 12 different rotations (largest difference 1.7e-15). The new module ozakimm (6 ops) splits the reduction into exact integer partial products (Ozaki-I = fixed-point slices of 7 bits, Ozaki-II = Chinese remainder theorem) and returns one set of bits regardless of point order or BLAS thread count 1/2/4/8. Each extra slice drops the error by about 2⁻⁷ until it reaches the FP64 level (the reference is the exact product computed with Python integers), and the slice count is chosen from a guaranteed error bound (9 / 11 / 13 slices for φ = 0.5 / 2 / 4). The bound is never violated over 9,216 elements. Scaling the input by a power of two scales the answer exactly, so the defect reported in arXiv 2606.29129 for the old fast mode — the answer breaking under a mere constant factor — is absent. Honestly: it is not faster on the CPU (11-60 times slower than DGEMM for square matrices; 0.68 ms → 170 ms for the 3×3 cross-covariance of 200,000 points). To make FP64 fast on a GPU, cuBLAS 13.4 FP64 emulation (opt-in) reached 17.8-23.8 TFLOPS at n = 8192 on one local machine (native 1.67; 13.3 fell back to native for inputs with a wide exponent span). cuBLAS does not guarantee bitwise reproducibility while emulating, so: speed from cuBLAS, reproducibility from here.",
+   "run": "py -3.11 examples/poc_reproducible_icp.py"
+  },
+  {
    "id": "poc_driving_crossing",
    "wing": "lane_drive",
    "added": "2026-10-02",

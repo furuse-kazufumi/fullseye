@@ -1,0 +1,4 @@
+n	DGEMM	Ozaki-I 8 slices	Ozaki-II 16 moduli
+256	1.62 ms	11 x slower	42 x slower
+512	3.43 ms	30 x slower	145 x slower
+1024	6.54 ms	60 x slower	329 x slower

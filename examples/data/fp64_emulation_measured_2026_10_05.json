@@ -1,0 +1,431 @@
+{
+ "_": "Measured on one machine (not a vendor claim). GPU: dgemm called through ctypes with math mode CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH, strategy PERFORMANT / EAGER; 3 warm-up + 10 timed calls; error = max |C - CPU DGEMM| / (|A||B|). CPU: seconds per n x n product, OpenBLAS 0.3.31, 24 threads.",
+ "measured": "2026-10-05",
+ "gpu": "RTX 5090, driver 610.74 (R610), Windows 11",
+ "input": "(rand - 0.5) * exp(phi * randn), square n x n",
+ "cublas": {
+  "13.3": {
+   "version": 130600,
+   "rows": [
+    {
+     "n": 1024,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.4752,
+      "err_over_absAB": 4.15e-16
+     },
+     "emul_performant": {
+      "tflops": 2.8988,
+      "err_over_absAB": 1.4e-16
+     },
+     "emul_eager": {
+      "tflops": 2.7517,
+      "err_over_absAB": 1.4e-16
+     }
+    },
+    {
+     "n": 1024,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.4275,
+      "err_over_absAB": 3.87e-15
+     },
+     "emul_performant": {
+      "tflops": 2.4694,
+      "err_over_absAB": 2.16e-15
+     },
+     "emul_eager": {
+      "tflops": 2.6688,
+      "err_over_absAB": 2.16e-15
+     }
+    },
+    {
+     "n": 1024,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.4119,
+      "err_over_absAB": 4.54e-15
+     },
+     "emul_performant": {
+      "tflops": 1.3717,
+      "err_over_absAB": 3.5e-15
+     },
+     "emul_eager": {
+      "tflops": 1.3465,
+      "err_over_absAB": 3.5e-15
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.474,
+      "err_over_absAB": 9.16e-16
+     },
+     "emul_performant": {
+      "tflops": 7.6179,
+      "err_over_absAB": 1.08e-16
+     },
+     "emul_eager": {
+      "tflops": 7.7501,
+      "err_over_absAB": 1.08e-16
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.4589,
+      "err_over_absAB": 8.11e-15
+     },
+     "emul_performant": {
+      "tflops": 1.6168,
+      "err_over_absAB": 7.42e-15
+     },
+     "emul_eager": {
+      "tflops": 1.6232,
+      "err_over_absAB": 7.42e-15
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.4662,
+      "err_over_absAB": 1.01e-14
+     },
+     "emul_performant": {
+      "tflops": 1.5952,
+      "err_over_absAB": 1.01e-14
+     },
+     "emul_eager": {
+      "tflops": 1.6387,
+      "err_over_absAB": 1.01e-14
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.6441,
+      "err_over_absAB": 7.55e-16
+     },
+     "emul_performant": {
+      "tflops": 10.3965,
+      "err_over_absAB": 8.66e-17
+     },
+     "emul_eager": {
+      "tflops": 10.3618,
+      "err_over_absAB": 8.66e-17
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.6447,
+      "err_over_absAB": 1.21e-14
+     },
+     "emul_performant": {
+      "tflops": 1.6734,
+      "err_over_absAB": 1.2e-14
+     },
+     "emul_eager": {
+      "tflops": 1.6769,
+      "err_over_absAB": 1.2e-14
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.6459,
+      "err_over_absAB": 1.53e-14
+     },
+     "emul_performant": {
+      "tflops": 1.6788,
+      "err_over_absAB": 1.53e-14
+     },
+     "emul_eager": {
+      "tflops": 1.6744,
+      "err_over_absAB": 1.53e-14
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.6755,
+      "err_over_absAB": 1.02e-15
+     },
+     "emul_performant": {
+      "tflops": 11.6163,
+      "err_over_absAB": 8.69e-17
+     },
+     "emul_eager": {
+      "tflops": 11.5353,
+      "err_over_absAB": 8.69e-17
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.6754,
+      "err_over_absAB": 1.88e-14
+     },
+     "emul_performant": {
+      "tflops": 1.6918,
+      "err_over_absAB": 1.88e-14
+     },
+     "emul_eager": {
+      "tflops": 1.6921,
+      "err_over_absAB": 1.88e-14
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.6776,
+      "err_over_absAB": 2.61e-14
+     },
+     "emul_performant": {
+      "tflops": 1.6907,
+      "err_over_absAB": 2.61e-14
+     },
+     "emul_eager": {
+      "tflops": 1.6912,
+      "err_over_absAB": 2.61e-14
+     }
+    }
+   ]
+  },
+  "13.4": {
+   "version": 130700,
+   "rows": [
+    {
+     "n": 1024,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.4494,
+      "err_over_absAB": 4.15e-16
+     },
+     "emul_performant": {
+      "tflops": 3.5008,
+      "err_over_absAB": 1.4e-16
+     },
+     "emul_eager": {
+      "tflops": 3.298,
+      "err_over_absAB": 1.4e-16
+     }
+    },
+    {
+     "n": 1024,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.4282,
+      "err_over_absAB": 3.87e-15
+     },
+     "emul_performant": {
+      "tflops": 3.2546,
+      "err_over_absAB": 2.16e-15
+     },
+     "emul_eager": {
+      "tflops": 3.3904,
+      "err_over_absAB": 2.16e-15
+     }
+    },
+    {
+     "n": 1024,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.4496,
+      "err_over_absAB": 4.54e-15
+     },
+     "emul_performant": {
+      "tflops": 2.7289,
+      "err_over_absAB": 2.36e-15
+     },
+     "emul_eager": {
+      "tflops": 2.6971,
+      "err_over_absAB": 2.36e-15
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.4575,
+      "err_over_absAB": 9.16e-16
+     },
+     "emul_performant": {
+      "tflops": 8.2465,
+      "err_over_absAB": 1.08e-16
+     },
+     "emul_eager": {
+      "tflops": 8.4257,
+      "err_over_absAB": 1.08e-16
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.4628,
+      "err_over_absAB": 8.11e-15
+     },
+     "emul_performant": {
+      "tflops": 8.0217,
+      "err_over_absAB": 2.18e-15
+     },
+     "emul_eager": {
+      "tflops": 7.703,
+      "err_over_absAB": 2.18e-15
+     }
+    },
+    {
+     "n": 2048,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.4575,
+      "err_over_absAB": 1.01e-14
+     },
+     "emul_performant": {
+      "tflops": 7.4594,
+      "err_over_absAB": 3.22e-15
+     },
+     "emul_eager": {
+      "tflops": 7.2088,
+      "err_over_absAB": 3.22e-15
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.6424,
+      "err_over_absAB": 7.55e-16
+     },
+     "emul_performant": {
+      "tflops": 15.6695,
+      "err_over_absAB": 8.81e-17
+     },
+     "emul_eager": {
+      "tflops": 15.6975,
+      "err_over_absAB": 8.81e-17
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.6402,
+      "err_over_absAB": 1.21e-14
+     },
+     "emul_performant": {
+      "tflops": 14.1965,
+      "err_over_absAB": 2.35e-15
+     },
+     "emul_eager": {
+      "tflops": 14.3969,
+      "err_over_absAB": 2.35e-15
+     }
+    },
+    {
+     "n": 4096,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.6456,
+      "err_over_absAB": 1.53e-14
+     },
+     "emul_performant": {
+      "tflops": 12.6018,
+      "err_over_absAB": 3.87e-15
+     },
+     "emul_eager": {
+      "tflops": 12.5178,
+      "err_over_absAB": 3.87e-15
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 0.5,
+     "native": {
+      "tflops": 1.6721,
+      "err_over_absAB": 1.02e-15
+     },
+     "emul_performant": {
+      "tflops": 23.7578,
+      "err_over_absAB": 8.79e-17
+     },
+     "emul_eager": {
+      "tflops": 23.6403,
+      "err_over_absAB": 8.79e-17
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 2.0,
+     "native": {
+      "tflops": 1.6715,
+      "err_over_absAB": 1.88e-14
+     },
+     "emul_performant": {
+      "tflops": 21.1621,
+      "err_over_absAB": 2.53e-15
+     },
+     "emul_eager": {
+      "tflops": 21.1763,
+      "err_over_absAB": 2.53e-15
+     }
+    },
+    {
+     "n": 8192,
+     "phi": 4.0,
+     "native": {
+      "tflops": 1.6713,
+      "err_over_absAB": 2.61e-14
+     },
+     "emul_performant": {
+      "tflops": 17.794,
+      "err_over_absAB": 3.3e-15
+     },
+     "emul_eager": {
+      "tflops": 17.744,
+      "err_over_absAB": 3.3e-15
+     }
+    }
+   ]
+  }
+ },
+ "cpu": {
+  "blas": "OpenBLAS 0.3.31, 24 threads",
+  "rows": [
+   {
+    "n": 256,
+    "dgemm_s": 0.0011515999940456823,
+    "ozaki1_8_slices_s": 0.017409699998097494,
+    "ozaki2_16_moduli_s": 0.07870079998974688
+   },
+   {
+    "n": 512,
+    "dgemm_s": 0.003353749998495914,
+    "ozaki1_8_slices_s": 0.12705710000591353,
+    "ozaki2_16_moduli_s": 0.5025691000046209
+   },
+   {
+    "n": 1024,
+    "dgemm_s": 0.007827449997421354,
+    "ozaki1_8_slices_s": 0.5197596000070916,
+    "ozaki2_16_moduli_s": 2.0411440000025323
+   },
+   {
+    "n": 2048,
+    "dgemm_s": 0.03122649999568239,
+    "ozaki1_8_slices_s": 2.5992592999973567,
+    "ozaki2_16_moduli_s": 8.444543699995847
+   }
+  ]
+ }
+}

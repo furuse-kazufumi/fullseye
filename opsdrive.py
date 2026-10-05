@@ -33,6 +33,7 @@
 研削・研磨・拭き取りを画像で測る(polish: Preston の式 dh/dt = k_p p v を軌跡と押す力で積分した除去の深さの地図(直接の積分と FFT の畳み込みの 2 実装)、平板と Hertz の工具の一筆の断面・拭けた帯の幅・拭ける最小の力・平行な一筆の面積の閉形式(導出)、膜の画像(Beer–Lambert)と Otsu で拭けた面積と帯の幅、前後の高さ図から削れた深さと Preston 係数、弾性床のパッドで粗さが exp(−k_p k_w v t) で減る時間発展。MuJoCo で工具を手首のばねで押して動かす 3 本は facade)。
 粉体のすくいと注ぎを画像で測る(scoop: granular の続き。スプーンですくった量を側面像の輪郭から(球冠の椀の閉形式 + 縁の上の回転体、直交 2 方向の楕円の和、体積 → 粒の数は 1 回の較正)、傾けて注いだ流量を流れの幅と速さから(PIV の速さ × Boolean 模型で重なりを数え直した線密度)。真値 = すり切りと山盛りの閉形式、楕円錐の体素、自由落下、Boolean 模型、傾けて出る量の口の楔(自分の導出)、第 2 実装 = MuJoCo の剛体球の個数と線の横切り数。mg 級は秤に譲る規則。mujoco が要る 2 本は facade)。
 乳鉢の粉砕を測る(grind: 粉体の 3 本目。レーザー回折の粒度分布の D10/D50/D90(装置の Dx(50) と同じ log 補間)、粉砕則(一般式 dE = −C dx/xⁿ、Kick / Bond / Rittinger、Reddy の式 (1)・(5)〜(7))の閉形式と当てはめ、一次の破砕速度(Deniz 2004 の式 (1)〜(3)、出典 Austin)、独立試行のばらつきと材料の差、AE の帯域電力(公開の解析コードの定義とacoustics.stft の密度、Parseval で突き合わせ)と D50 の対応、合成画像からの体積基準 / 個数基準の D50。外の真値は公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)の実測で、repo の外に置き環境変数で渡す。全部 numpy + scipy)。
+点の順に依らない FP64 の縮約(ozaki: Ozaki スキームの行列積。正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット。Ozaki-I(固定小数点の切り出し、分割数は誤差の保証上界から自動で選ぶ)と Ozaki-II(中国剰余定理、定数倍で壊れない拡大)、打ち切りの上界、Kabsch / ICP の相互共分散と剛体の R・t、GPU の FP64 エミュレーションの有無の探針(ctypes だけ、例外なし)。真値は Python の整数で計算した正確な積。CPU では DGEMM の 15〜83 倍遅く、効くのは再現性と精度の保証だけ。numpy だけ)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -91,6 +92,7 @@ import pegsym
 import polish
 import scoop
 import grind
+import ozakimm
 import racket
 import roadjp
 import rsssafety
@@ -99,7 +101,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1002,6 +1004,16 @@ _CATALOG = {
         ("ae_size_correspondence", "grind", ["signal", "signal"], "table"),
         ("particle_image_synth", "grind", ["scalar", "scalar", "scalar"], "table"),
         ("particle_image_d50", "grind", ["image2d", "scalar"], "table"),
+    ],
+    # 点の順に依らない FP64 の縮約(2026-10-05、Ozaki スキーム): 行列は matrix、点群は points (N, 3)、R・t と探針の表は table。
+    # 真値は Python の整数で計算した正確な積(門は tests/test_ozakimm.py と PoC poc_reproducible_icp)。
+    "ozaki": [
+        ("matmul_ozaki", "ozakimm", ["matrix", "matrix"], "matrix"),
+        ("matmul_reproducible", "ozakimm", ["matrix", "matrix"], "matrix"),
+        ("ozaki_error_bound", "ozakimm", ["matrix", "matrix", "scalar"], "matrix"),
+        ("cross_covariance_reproducible", "ozakimm", ["points", "points"], "matrix"),
+        ("kabsch_reproducible", "ozakimm", ["points", "points"], "table"),
+        ("fp64_emulation_probe", "ozakimm", [], "table"),
     ],
 }
 

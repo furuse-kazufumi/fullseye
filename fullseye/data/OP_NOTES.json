@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3025,
- "n_notes": 3031,
+ "n_ops": 3031,
+ "n_notes": 3037,
  "notes": {
   "vol_dilate": [
    {
@@ -18720,6 +18720,65 @@
     "category": "motion_io",
     "out": "table",
     "path": "docs/ops/drive/motion_io/read_events.md"
+   }
+  ],
+  "cross_covariance_reproducible": [
+   {
+    "op": "cross_covariance_reproducible",
+    "dim": "drive",
+    "category": "ozaki",
+    "in": "points × points",
+    "out": "matrix",
+    "path": "docs/ops/drive/ozaki/cross_covariance_reproducible.md"
+   }
+  ],
+  "fp64_emulation_probe": [
+   {
+    "op": "fp64_emulation_probe",
+    "dim": "drive",
+    "category": "ozaki",
+    "out": "table",
+    "path": "docs/ops/drive/ozaki/fp64_emulation_probe.md"
+   }
+  ],
+  "kabsch_reproducible": [
+   {
+    "op": "kabsch_reproducible",
+    "dim": "drive",
+    "category": "ozaki",
+    "in": "points × points",
+    "out": "table",
+    "path": "docs/ops/drive/ozaki/kabsch_reproducible.md"
+   }
+  ],
+  "matmul_ozaki": [
+   {
+    "op": "matmul_ozaki",
+    "dim": "drive",
+    "category": "ozaki",
+    "in": "matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/ozaki/matmul_ozaki.md"
+   }
+  ],
+  "matmul_reproducible": [
+   {
+    "op": "matmul_reproducible",
+    "dim": "drive",
+    "category": "ozaki",
+    "in": "matrix × matrix",
+    "out": "matrix",
+    "path": "docs/ops/drive/ozaki/matmul_reproducible.md"
+   }
+  ],
+  "ozaki_error_bound": [
+   {
+    "op": "ozaki_error_bound",
+    "dim": "drive",
+    "category": "ozaki",
+    "in": "matrix × matrix × scalar",
+    "out": "matrix",
+    "path": "docs/ops/drive/ozaki/ozaki_error_bound.md"
    }
   ],
   "convex_mirror_image": [

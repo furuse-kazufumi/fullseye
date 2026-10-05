@@ -5624,6 +5624,35 @@ def _b_gd_imd50(pool, rng):
     return (_fuzz_gd()["img"], float(rng.uniform(0.5, 2.0))), {"basis": ("volume", "number")[int(rng.integers(0, 2))]}
 
 
+
+def _b_oz_mm(pool, rng):
+    k = int(rng.integers(8, 400))
+    phi = float(rng.uniform(0.0, 3.0))
+    A = (rng.random((int(rng.integers(1, 12)), k)) - 0.5) * np.exp(phi * rng.standard_normal((1, k)))
+    B = (rng.random((k, int(rng.integers(1, 12)))) - 0.5) * np.exp(phi * rng.standard_normal((k, 1)))
+    return (A, B), {}
+
+
+def _b_oz_mm_fixed(pool, rng):
+    (A, B), _ = _b_oz_mm(pool, rng)
+    if rng.random() < 0.5:
+        return (A, B, int(rng.integers(1, 17))), {}
+    return (A, B, int(rng.integers(2, 21)), "ozaki2"), {}
+
+
+def _b_oz_bound(pool, rng):
+    (A, B), _ = _b_oz_mm(pool, rng)
+    return (A, B, int(rng.integers(1, 17))), {}
+
+
+def _b_oz_pts(pool, rng):
+    n = int(rng.integers(3, 2000))
+    P = rng.normal(0, float(rng.uniform(0.01, 10.0)), (n, 3)) + rng.normal(0, 1000.0, 3)
+    th = float(rng.uniform(-np.pi, np.pi))
+    R = np.array([[np.cos(th), -np.sin(th), 0.0], [np.sin(th), np.cos(th), 0.0], [0.0, 0.0, 1.0]])
+    return (P, P @ R.T + rng.normal(0, 1.0, 3)), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5992,6 +6021,8 @@ OP_ARG_BUILDERS = {
     "breakage_first_order_fit": _b_gd_first, "replicate_compare": _b_gd_rep, "ae_read_csv": _b_gd_aeread,
     "ae_band_power": _b_gd_band, "ae_size_correspondence": _b_gd_corr, "particle_image_synth": _b_gd_imsynth,
     "particle_image_d50": _b_gd_imd50,
+    "matmul_ozaki": _b_oz_mm_fixed, "matmul_reproducible": _b_oz_mm, "ozaki_error_bound": _b_oz_bound,
+    "cross_covariance_reproducible": _b_oz_pts, "kabsch_reproducible": _b_oz_pts, "fp64_emulation_probe": _b_noargs,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

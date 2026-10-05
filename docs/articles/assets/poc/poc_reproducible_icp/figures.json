@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_error_staircase_ozaki1.png",
+  "name": "error_staircase_ozaki1",
+  "caption": "分割数(枚数)を 1 枚増やすたびに誤差が約 2⁻⁷ ずつ落ち、破線(普通の FP64 の積の誤差)に届いて止まる。真値は Python の整数で計算した正確な値。指数の幅 φ が広いほど枚数が要る(自動選択: φ=0.5 → 9 枚、φ=2 → 11 枚、φ=4 → 13 枚)。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "02_error_staircase_ozaki2.png",
+  "name": "error_staircase_ozaki2",
+  "caption": "Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。",
+  "shape": [
+   420,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "03_kabsch_rotation_under_shuffles.png",
+  "name": "kabsch_rotation_under_shuffles",
+  "caption": "点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。Ozaki 版は 1 通り(全部ビット単位で同じ、点線 = 差 0)。",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "04_same_bits_or_not.png",
+  "name": "same_bits_or_not",
+  "caption": "違う結果の数(1 = どの条件でも同じビット)。この計算機での値。普通の FP64 がスレッド数で動くかは BLAS の分け方次第。",
+  "shape": [
+   152,
+   629,
+   3
+  ],
+  "csv": "04_same_bits_or_not.csv",
+  "tsv": "04_same_bits_or_not.tsv"
+ },
+ {
+  "file": "05_gpu_fp64_emulation_phi_0_5.png",
+  "name": "gpu_fp64_emulation_phi_0_5",
+  "caption": "手元の 1 台での測定(2026-10-05)。φ = 0.5 で cuBLAS 13.3 のエミュレーションは速くなり、13.4 は n=8192 で 23.8 TFLOPS(ネイティブ 1.67)。速さが要るならこちら。ただし cuBLAS はエミュレーション中のビット単位の再現を保証しない。",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "06_gpu_fp64_emulation_phi_4_0.png",
+  "name": "gpu_fp64_emulation_phi_4_0",
+  "caption": "手元の 1 台での測定(2026-10-05)。φ = 4 で cuBLAS 13.3 のエミュレーションはネイティブに戻った、13.4 は n=8192 で 17.8 TFLOPS(ネイティブ 1.67)。速さが要るならこちら。ただし cuBLAS はエミュレーション中のビット単位の再現を保証しない。",
+  "shape": [
+   400,
+   720,
+   3
+  ]
+ },
+ {
+  "file": "07_cpu_is_not_faster.png",
+  "name": "cpu_is_not_faster",
+  "caption": "この計算機で今測った値。正方行列の積は DGEMM の 1〜2 桁遅い。",
+  "shape": [
+   152,
+   374,
+   3
+  ],
+  "csv": "07_cpu_is_not_faster.csv",
+  "tsv": "07_cpu_is_not_faster.tsv"
+ }
+]

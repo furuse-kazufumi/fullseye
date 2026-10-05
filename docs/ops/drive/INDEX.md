@@ -1,4 +1,4 @@
-# DRIVE operator help — 641 ops in 45 categories
+# DRIVE operator help — 647 ops in 46 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -99,6 +99,10 @@
 ### motion_io (3)
 
 [events_to_frames](motion_io/events_to_frames.md) · [read_bvh](motion_io/read_bvh.md) · [read_events](motion_io/read_events.md)
+
+### ozaki (6)
+
+[cross_covariance_reproducible](ozaki/cross_covariance_reproducible.md) · [fp64_emulation_probe](ozaki/fp64_emulation_probe.md) · [kabsch_reproducible](ozaki/kabsch_reproducible.md) · [matmul_ozaki](ozaki/matmul_ozaki.md) · [matmul_reproducible](ozaki/matmul_reproducible.md) · [ozaki_error_bound](ozaki/ozaki_error_bound.md)
 
 ### pass (17)
 

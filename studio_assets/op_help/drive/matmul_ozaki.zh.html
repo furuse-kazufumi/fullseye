@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">matmul_ozaki — DRIVE <code style="color:#22d3bf">ozaki</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_ozaki(A, B, n_slices=None, scheme: &#x27;str&#x27; = &#x27;ozaki1&#x27;, tol: &#x27;float&#x27; = 1.1102230246251565e-16, on_insufficient: &#x27;str&#x27; = &#x27;raise&#x27;, return_info: &#x27;bool&#x27; = False)</code>(要直接调用实现,<code style="color:#22d3bf">import ozakimm; ozakimm.matmul_ozaki(A, B, n_slices=None, scheme: &#x27;str&#x27; = &#x27;ozaki1&#x27;, tol: &#x27;float&#x27; = 1.1102230246251565e-16, on_insufficient: &#x27;str&#x27; = &#x27;raise&#x27;, return_info: &#x27;bool&#x27; = False)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;matmul_ozaki&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>FP64 の精度の行列積 `<code style="color:#22d3bf">A @ B</code>` を、正確な低精度の部分積から組む(Ozaki-I / Ozaki-II)。</p>
+<p>`<code style="color:#22d3bf">scheme=&quot;ozaki1&quot;</code><code style="color:#22d3bf">: </code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf"> 枚に切る(積 </code><code style="color:#22d3bf">n(n+1)/2</code><code style="color:#22d3bf"> 回)。</code><code style="color:#22d3bf">n_slices=None</code>` なら、誤差の保証上界が</p>
+<p>`<code style="color:#22d3bf">tol · (|A||B|)_ij</code><code style="color:#22d3bf"> 以下になる最少の枚数を自動で選ぶ(1〜16 枚)。届かなければ </code><code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code>` で</p>
+<p>`<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;fallback&quot;</code><code style="color:#22d3bf"> で普通の float64 の積を返す(この場合だけ再現性の約束は外れる。</code><code style="color:#22d3bf">return_info=True</code>`</p>
+<p>の `<code style="color:#22d3bf">fallback</code>` で分かる)。</p>
+<p>`<code style="color:#22d3bf">scheme=&quot;ozaki2&quot;</code><code style="color:#22d3bf">: 法の数を </code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf">(2〜20)で必ず指定する(積 </code><code style="color:#22d3bf">n</code>` 回)。自動の選択は無い。</p>
+<p>`<code style="color:#22d3bf">return_info=True</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">(C, info)</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">n_slices</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_products</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">scheme</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">fallback</code>`)。</p>
+<p>どちらの方式も、同じ入力なら内側の並べ替え・BLAS のスレッド数に依らず同じビット。CPU では DGEMM より 1〜2 桁遅い</p>
+<p>(module の docstring の使い分けを参照)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_reproducible_icp">poc_reproducible_icp</a> — <code style="color:#22d3bf">py -3.11 examples/poc_reproducible_icp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">matrix</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:relative_motion">relative_motion</a> · <a style="color:#22d3bf" href="opdrive:foe_from_motion">foe_from_motion</a> · <a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:world_materials">world_materials</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">ozaki</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:matmul_reproducible">matmul_reproducible</a> · <a style="color:#22d3bf" href="opdrive:ozaki_error_bound">ozaki_error_bound</a> · <a style="color:#22d3bf" href="opdrive:cross_covariance_reproducible">cross_covariance_reproducible</a> · <a style="color:#22d3bf" href="opdrive:kabsch_reproducible">kabsch_reproducible</a> · <a style="color:#22d3bf" href="opdrive:fp64_emulation_probe">fp64_emulation_probe</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ozakimm.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

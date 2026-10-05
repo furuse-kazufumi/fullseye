@@ -1,8 +1,8 @@
 {
- "n_ops": 3025,
+ "n_ops": 3031,
  "tiers": {
   "color": 12,
-  "ledger": 2072,
+  "ledger": 2078,
   "nary": 17,
   "registry": 924
  },
@@ -4582,6 +4582,20 @@
    ]
   },
   {
+   "name": "cross_covariance_reproducible",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "matrix",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "crosshair",
    "halcon": "",
    "in_sort": "image2d",
@@ -8473,6 +8487,17 @@
    ]
   },
   {
+   "name": "fp64_emulation_probe",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
    "name": "frame_align",
    "halcon": "",
    "in_sort": "image2d",
@@ -11516,6 +11541,20 @@
    ]
   },
   {
+   "name": "kabsch_reproducible",
+   "halcon": "",
+   "in_sort": "points",
+   "out_sort": "table",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "points",
+    "points"
+   ]
+  },
+  {
    "name": "kalman_ca",
    "halcon": "",
    "in_sort": "points",
@@ -13347,6 +13386,34 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "matmul_ozaki",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "matmul_reproducible",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
   },
   {
    "name": "matrix_to_angle",
@@ -15687,6 +15754,21 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "ozaki_error_bound",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "matrix",
+   "category": "ozaki",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix",
+    "scalar"
    ]
   },
   {

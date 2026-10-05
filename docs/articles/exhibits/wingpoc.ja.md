@@ -4922,7 +4922,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 17 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 18 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -5451,6 +5451,42 @@ py -3.11 examples/poc_peg_symmetry_search.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_symmetry_search)
 
 使用 op(ノートへ): [`pegsym_scene_mjcf`](https://furuse.work/ops/drive/pegsym/pegsym_scene_mjcf.html) · [`plane_topview`](https://furuse.work/ops/drive/pegsym/plane_topview.html) · [`polygon_coverage_image`](https://furuse.work/ops/drive/pegsym/polygon_coverage_image.html) · [`polygon_fit_check`](https://furuse.work/ops/drive/pegsym/polygon_fit_check.html) · [`polygon_offset`](https://furuse.work/ops/drive/pegsym/polygon_offset.html) · [`polygon_peg`](https://furuse.work/ops/drive/pegsym/polygon_peg.html) · [`polygon_two_point_depth`](https://furuse.work/ops/drive/pegsym/polygon_two_point_depth.html) · [`polygon_yaw_read`](https://furuse.work/ops/drive/pegsym/polygon_yaw_read.html) · [`relative_yaw_from_images`](https://furuse.work/ops/drive/pegsym/relative_yaw_from_images.html) · [`rotation_search_plan`](https://furuse.work/ops/drive/pegsym/rotation_search_plan.html) · [`rotation_window`](https://furuse.work/ops/drive/pegsym/rotation_window.html) · [`search_expected_tries`](https://furuse.work/ops/drive/pegsym/search_expected_tries.html) · [`spiral_expected_tries`](https://furuse.work/ops/drive/pegsym/spiral_expected_tries.html) · [`spiral_search_points`](https://furuse.work/ops/drive/pegsym/spiral_search_points.html) · [`symmetry_fold`](https://furuse.work/ops/drive/pegsym/symmetry_fold.html)
+
+## No.2026.212 —— 点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる
+
+[![点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png)
+
+*↑ **点の順を入れ替えても 1 ビットも動かない位置合わせ ―― Ozaki スキームの FP64 の縮約。誤差は段で落ち、上界で保証する。CPU では遅く、GPU の速さは cuBLAS のエミュレーションに任せる** ―― 同じ 20 万点の点群を、点の順だけ入れ替えて Kabsch の回転を解く。普通の FP64 の行列積(DGEMM)は足す順で下位ビットが動くので、11 回の入れ替えで回転は 12 通りに分かれた(最大の差 1.7e-15)。新モジュール ozakimm(6 op)は縮約を正確な整数の部分積に分けて計算し(Ozaki-I = 7 ビットずつの固定小数点の切れ端、Ozaki-II = 中国剰余定理)、点の順・BLAS のスレッド数 1/2/4/8 に依らず 1 通りのビットを返す。分割数を 1 枚増やすたびに誤差は約 2⁻⁷ ずつ段で落ちて FP64 の水準に届き(真値は Python の整数で計算した正確な積)、分割数は誤差の保証上界から自動で選ぶ(φ = 0.5 / 2 / 4 で 9 / 11 / 13 枚)。上界は 9,216 要素で破れ 0。入力を 2 の冪倍すると答えも正確に同じ倍率になり、arXiv 2606.29129 が報告した旧 fast mode の「定数倍だけで答えが壊れる」欠陥は無い。正直に: CPU では速くならない(正方行列で DGEMM の 11〜60 倍、20 万点の 3×3 の相互共分散で 0.68 ms → 170 ms)。GPU で FP64 を速くしたいなら、自前の実装より cuBLAS 13.4 の FP64 エミュレーション(opt-in)が手元の 1 台で n = 8192 に 17.8〜23.8 TFLOPS(ネイティブ 1.67、13.3 は指数の幅が広い入力でネイティブへ戻った)。ただし cuBLAS はエミュレーション中のビット単位の再現を保証しないので、速さは cuBLAS、再現はこちら、と分ける。*
+
+[![Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2.png)
+
+*↑ 測定の図 ―― Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。*
+
+[![点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles.png)
+
+*↑ 点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。*
+
+[![違う結果の数(1 = どの条件でも同じビット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not.png)
+
+*↑ 違う結果の数(1 = どの条件でも同じビット)。*
+
+[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5.png)
+
+*↑ 手元の 1 台での測定(2026-10-05)。*
+
+[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0.png)
+
+*↑ 手元の 1 台での測定(2026-10-05)。*
+
+```
+py -3.11 examples/poc_reproducible_icp.py
+```
+
+ソース: [examples/poc_reproducible_icp.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_reproducible_icp.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_reproducible_icp)
+
+使用 op(ノートへ): [`cross_covariance_reproducible`](https://furuse.work/ops/drive/ozaki/cross_covariance_reproducible.html) · [`fp64_emulation_probe`](https://furuse.work/ops/drive/ozaki/fp64_emulation_probe.html) · [`kabsch_reproducible`](https://furuse.work/ops/drive/ozaki/kabsch_reproducible.html) · [`matmul_ozaki`](https://furuse.work/ops/drive/ozaki/matmul_ozaki.html) · [`matmul_reproducible`](https://furuse.work/ops/drive/ozaki/matmul_reproducible.html) · [`ozaki_error_bound`](https://furuse.work/ops/drive/ozaki/ozaki_error_bound.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

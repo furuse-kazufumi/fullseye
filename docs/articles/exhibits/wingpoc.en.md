@@ -4922,7 +4922,7 @@ Ops used (notes): [`moving_average_window`](https://furuse.work/ops/videostream/
 
 ### The Geometry and Calibration Wing — A Small Residual Is Not Proof of Correctness
 
-Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 17 exhibits here, with ground truth in hand, show where that reading fails.
+Reprojection error in camera calibration, seam mismatch in a panorama, residual in point-cloud registration: all are read as 'smaller is better'. The 18 exhibits here, with ground truth in hand, show where that reading fails.
 
 Reprojection RMS of 0.0688–0.0690 px alongside focal-length errors of 0.026–7.334 %. Adjacent seams at 0.12 px while the single closing seam opens by 1.5 px. Spheres and cylinders converging to the same residual with an arbitrary pose. Least squares drives the residual down to the noise; whether it lands on the truth is a separate question.
 
@@ -5451,6 +5451,42 @@ Source: [examples/poc_peg_symmetry_search.py](https://github.com/furuse-kazufumi
 This run produced **8 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_symmetry_search)
 
 Ops used (notes): [`pegsym_scene_mjcf`](https://furuse.work/ops/drive/pegsym/pegsym_scene_mjcf.html) · [`plane_topview`](https://furuse.work/ops/drive/pegsym/plane_topview.html) · [`polygon_coverage_image`](https://furuse.work/ops/drive/pegsym/polygon_coverage_image.html) · [`polygon_fit_check`](https://furuse.work/ops/drive/pegsym/polygon_fit_check.html) · [`polygon_offset`](https://furuse.work/ops/drive/pegsym/polygon_offset.html) · [`polygon_peg`](https://furuse.work/ops/drive/pegsym/polygon_peg.html) · [`polygon_two_point_depth`](https://furuse.work/ops/drive/pegsym/polygon_two_point_depth.html) · [`polygon_yaw_read`](https://furuse.work/ops/drive/pegsym/polygon_yaw_read.html) · [`relative_yaw_from_images`](https://furuse.work/ops/drive/pegsym/relative_yaw_from_images.html) · [`rotation_search_plan`](https://furuse.work/ops/drive/pegsym/rotation_search_plan.html) · [`rotation_window`](https://furuse.work/ops/drive/pegsym/rotation_window.html) · [`search_expected_tries`](https://furuse.work/ops/drive/pegsym/search_expected_tries.html) · [`spiral_expected_tries`](https://furuse.work/ops/drive/pegsym/spiral_expected_tries.html) · [`spiral_search_points`](https://furuse.work/ops/drive/pegsym/spiral_search_points.html) · [`symmetry_fold`](https://furuse.work/ops/drive/pegsym/symmetry_fold.html)
+
+## No.2026.212 —— Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation
+
+[![Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/01_error_staircase_ozaki1.png)
+
+*↑ **Registration That Does Not Move by a Single Bit When the Points Are Shuffled — FP64 Reductions by the Ozaki Scheme, with the Error Falling in Steps under a Guaranteed Bound; Slow on the CPU, and GPU Speed Is Left to cuBLAS Emulation** ―― The same 200,000-point cloud, with only the point order shuffled, is fed to Kabsch. An ordinary FP64 matrix product (DGEMM) moves its low bits with the summation order, so 11 shuffles gave 12 different rotations (largest difference 1.7e-15). The new module ozakimm (6 ops) splits the reduction into exact integer partial products (Ozaki-I = fixed-point slices of 7 bits, Ozaki-II = Chinese remainder theorem) and returns one set of bits regardless of point order or BLAS thread count 1/2/4/8. Each extra slice drops the error by about 2⁻⁷ until it reaches the FP64 level (the reference is the exact product computed with Python integers), and the slice count is chosen from a guaranteed error bound (9 / 11 / 13 slices for φ = 0.5 / 2 / 4). The bound is never violated over 9,216 elements. Scaling the input by a power of two scales the answer exactly, so the defect reported in arXiv 2606.29129 for the old fast mode — the answer breaking under a mere constant factor — is absent. Honestly: it is not faster on the CPU (11-60 times slower than DGEMM for square matrices; 0.68 ms → 170 ms for the 3×3 cross-covariance of 200,000 points). To make FP64 fast on a GPU, cuBLAS 13.4 FP64 emulation (opt-in) reached 17.8-23.8 TFLOPS at n = 8192 on one local machine (native 1.67; 13.3 fell back to native for inputs with a wide exponent span). cuBLAS does not guarantee bitwise reproducibility while emulating, so: speed from cuBLAS, reproducibility from here.*
+
+[![Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/02_error_staircase_ozaki2.png)
+
+*↑ The measurement ―― Ozaki-II は積の回数 = 法の数。φ が広いと同じ法の数では FP64 に届かない(φ=4 で 20 法 4.9e-16)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/03_kabsch_rotation_under_shuffles.png)
+
+*↑ 点の順を入れ替えるだけで、普通の FP64 の回転は 12 通りに分かれた(最大の差 1.7e-15)。*
+
+[![違う結果の数(1 = どの条件でも同じビット)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/04_same_bits_or_not.png)
+
+*↑ 違う結果の数(1 = どの条件でも同じビット)。*
+
+[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/05_gpu_fp64_emulation_phi_0_5.png)
+
+*↑ 手元の 1 台での測定(2026-10-05)。*
+
+[![手元の 1 台での測定(2026-10-05)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_reproducible_icp/06_gpu_fp64_emulation_phi_4_0.png)
+
+*↑ 手元の 1 台での測定(2026-10-05)。*
+
+```
+py -3.11 examples/poc_reproducible_icp.py
+```
+
+Source: [examples/poc_reproducible_icp.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_reproducible_icp.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_reproducible_icp)
+
+Ops used (notes): [`cross_covariance_reproducible`](https://furuse.work/ops/drive/ozaki/cross_covariance_reproducible.html) · [`fp64_emulation_probe`](https://furuse.work/ops/drive/ozaki/fp64_emulation_probe.html) · [`kabsch_reproducible`](https://furuse.work/ops/drive/ozaki/kabsch_reproducible.html) · [`matmul_ozaki`](https://furuse.work/ops/drive/ozaki/matmul_ozaki.html) · [`matmul_reproducible`](https://furuse.work/ops/drive/ozaki/matmul_reproducible.html) · [`ozaki_error_bound`](https://furuse.work/ops/drive/ozaki/ozaki_error_bound.html)
 
 ## No.2026.133 —— Where Is the Public Camera Looking — The Orientation of a Fixed Camera Whose Only Published Fact Is Its Position, from the Picture Itself
 

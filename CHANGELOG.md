@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**点の順に依らない FP64 の縮約**(新モジュール `ozakimm` 6 op、facade なし、台帳 `ozaki`(opsdrive)、PoC `poc_reproducible_icp`、wing_geometry): Ozaki スキーム。
+  縮約を正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット(20 万点の Kabsch を 11 回入れ替えて、普通の FP64 は 12 通り、Ozaki は 1 通り)。
+  Ozaki-I の分割数は誤差の保証上界から自動で選び、選ぶのに使う量(|A||B| の下界を含む)も順序に依らない形にした(下書きは float32 の BLAS で見積もり、境目で分割数が入れ替わりえた)。
+  Ozaki-II は定数倍で壊れない拡大(arXiv 2606.29129 の旧 fast mode の欠陥が無いことを門に)。正直に: CPU では DGEMM の 11〜83 倍遅い。GPU の速さは cuBLAS 13.4 の
+  FP64 エミュレーション(opt-in、手元の n = 8192 で 17.8〜23.8 TFLOPS、ネイティブ 1.67)に任せ、`fp64_emulation_probe` で有無を確かめる(例外を出さない)。
 - ★**乳鉢の粉砕を測る**(新モジュール `grind` 13 op、facade なし、台帳 `grind`(opsdrive)、PoC `poc_powder_grinding_ae`、wing_metrology): 粉体の 3 本目。
   公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)のレーザー回折の粒度分布 117 本と AE 6 本を外の真値に(repo の外、環境変数 `FULLSEYE_GRIND_DATA`、
   無い CI では numpy の 12 門)。D50 は装置の Dx(50) と同じ log 補間で 3.2e-15、解析コードの下の端の累積は 1 区間分 −12 % の偏り。粉砕則の当てはめと、
