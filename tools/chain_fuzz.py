@@ -6809,6 +6809,7 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "kalman_ca",           # "innovation" は観測の無いコマ(z が NaN)で NaN
                          "ken_truth",           # "radius_px" はカメラの後ろ(深度 ≤ 0)で NaN(docstring どおり)
                          "catch_success_rate",  # "mean_lateral" は 1 回も捕れなければ nan(docstring どおり)
+                         "raster_wipe_area",    # "path" は一筆ごとの区切りが NaN の行(docstring どおり。溢れは別に ValueError)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

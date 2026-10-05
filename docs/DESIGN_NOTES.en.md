@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1209. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1210. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -1558,6 +1558,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `pivops.py`
 
 - **L472** — ★ A window where the correlation peak does not stand (no texture, uniform everywhere) returns nan —— we do not return 0 so as not to mix "not moving" with "unknown". But **what fraction is nan can only be known from the return value**, and the form was such that you only notice when ``flow.mean()`` becomes nan (2026-09-06). We count it here. Measured: an image with only a 16x16 square on a uniform background has only 16 of 98 windows finite (0.163). Full texture gives 1.000.
+
+## `polish.py`
+
+- **L430** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
 
 ## `ppf.py`
 

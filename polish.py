@@ -425,8 +425,15 @@ def raster_wipe_area(radius: float, length: float, pitch: float, n_strokes: int,
         rows.append(np.stack([xs, np.full(m + 1, y)], axis=1))
         if i < N - 1:
             rows.append(np.full((1, 2), np.nan))
-    return {"area": area, "rect_area": rect, "disc_union_area": discs, "lens": lens, "overlap_saving": N * single - area,
-            "path": np.vstack(rows), "n_strokes": N}
+    saving = N * single - area
+    path = np.vstack(rows)
+    # ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と
+    # 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
+    if not (math.isfinite(saving) and np.isfinite(path[~np.isnan(path)]).all()):
+        raise ValueError("%s: the stroke path or the overlap saving overflows (radius %r, length %r, pitch %r, n_strokes %d)"
+                         % (op, radius, length, pitch, N))
+    return {"area": area, "rect_area": rect, "disc_union_area": discs, "lens": lens, "overlap_saving": saving,
+            "path": path, "n_strokes": N}
 
 
 # ======================================================================================================================

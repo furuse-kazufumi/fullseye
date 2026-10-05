@@ -184,3 +184,16 @@ def test_mujoco_soft_wrist_press():
         assert abs(float(np.mean(np.hypot(*r["tangent"][-10:].T))) / N - 0.3) < 0.003
     finally:
         S.polish_scene_close(sc)
+
+
+def test_raster_wipe_area_refuses_an_overflowing_path_or_saving():
+    """chain_fuzz の 2 回目の発見(2026-10-05): 面積は有限でも、一筆の y 座標と N 本の和が溢れて inf を返していた。"""
+    import polish as PO
+    cases = [(1e-300, 1e-300, 1.7e308, 7),        # y = (i − 3)·pitch が溢れる
+             (1e-3, 1.7e308, 1e-300, 1000)]        # overlap_saving = N·single − area が溢れる
+    assert len(cases) == 2
+    for args in cases:
+        with pytest.raises(ValueError):
+            PO.raster_wipe_area(*args)
+    r = PO.raster_wipe_area(1.0, 10.0, 1.5, 3)      # 普通の入力は従来どおり
+    assert np.isfinite(r["overlap_saving"]) and r["path"].shape == (3 * 2 + 2, 2)   # 一筆 2 点 × 3 + 区切りの NaN 2 行

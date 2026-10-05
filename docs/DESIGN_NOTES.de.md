@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1209. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1210. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1558,6 +1558,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `pivops.py`
 
 - **L472** — ★ Ein Fenster, in dem der Korrelationspeak nicht steht (keine Textur, überall gleichförmig), gibt nan zurück —— wir geben nicht 0 zurück, um "bewegt sich nicht" nicht mit "unbekannt" zu vermischen. Aber **welcher Anteil nan ist, lässt sich nur aus dem Rückgabewert erkennen**, und die Form war so, dass man es erst bemerkt, wenn ``flow.mean()`` zu nan wird (2026-09-06). Hier zählen wir es. Gemessen: ein Bild mit nur einem 16x16-Quadrat auf gleichförmigem Hintergrund hat nur 16 von 98 Fenstern endlich (0.163). Volle Textur ergibt 1.000.
+
+## `polish.py`
+
+- **L430** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
 
 ## `ppf.py`
 
