@@ -1,7 +1,7 @@
 {
 "version": "2605",
 "n_operators": 2313,
-"n_covered": 980,
+"n_covered": 982,
 "n_with_signature": 2235,
 "signature_source": "mvtec-halcon binding",
 "operators": {
@@ -10537,8 +10537,10 @@
 "XLD"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/gen_contour_nurbs_xld.html",
-"covered": false,
-"imgevolve_analogs": [],
+"covered": true,
+"imgevolve_analogs": [
+"facade:contours_xld2.gen_contour_nurbs_xld"
+],
 "py_signature": {
 "params": "rows: Sequence[float], cols: Sequence[float], knots: MaybeSequence[Union[str, float]], weights: MaybeSequence[Union[str, float]], degree: int, max_error: Union[float, str], max_distance: Union[float, str]",
 "ret": "-> HObject"
@@ -11149,8 +11151,10 @@
 "XLD"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/gen_nurbs_interp.html",
-"covered": false,
-"imgevolve_analogs": [],
+"covered": true,
+"imgevolve_analogs": [
+"facade:contours_xld2.gen_nurbs_interp"
+],
 "py_signature": {
 "params": "rows: Sequence[float], cols: Sequence[float], tangents: Sequence[float], degree: int",
 "ret": "-> Tuple[Sequence[float], Sequence[float], Sequence[float]]"

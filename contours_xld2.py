@@ -1,10 +1,11 @@
-"""XLD 輪郭の追加演算: 多角形ブール・交差・幾何統合・parallels
+"""XLD 輪郭の追加演算: 多角形ブール・交差・幾何統合・parallels・NURBS
 (HALCON "Contours"/"XLD" chapter genuine 続き, numpy).
 
 contours_xld のヘルパ(_contour/_rasterize/get_polygon_xld/*_closed_contours_xld)を再利用。
 """
 from __future__ import annotations
 
+import warnings
 
 import numpy as np
 
@@ -204,5 +205,36 @@ def segment_contours_xld(contour, max_line_dist=2.0):
     return _contour(contour.get("shape", (256, 256)), out)
 
 
+def gen_contour_nurbs_xld(control_points, degree=3, n=100, shape=(256, 256)):
+    """制御点を **通る** 補間 B スプラインの輪郭(gen_contour_nurbs_xld)。
+
+    .. deprecated:: 0.4.0
+       名前に反して NURBS ではない: 重みを持たず、``splprep(s=0)`` で全制御点を通る補間 B スプラインを返す
+       (本物の NURBS は重みつきで、制御点は一般に通らない)。0.5.0 で削除する。重みつきの正しい曲線は
+       ``mathgeometry.nurbs_curve``(``fs.nurbs_curve``)、円は ``nurbs_circle`` を使うこと。
+    """
+    warnings.warn("gen_contour_nurbs_xld は非推奨(中身は補間 B スプラインで NURBS ではない)。0.5.0 で削除する。"
+                  "重みつきの NURBS は mathgeometry.nurbs_curve を使うこと", DeprecationWarning, stacklevel=2)
+    return _interp_bspline_contour(control_points, degree, n, shape)
 
 
+def _interp_bspline_contour(control_points, degree, n, shape):
+    from scipy.interpolate import splprep, splev
+    p = np.asarray(control_points, float).reshape(-1, 2)
+    k = min(int(degree), len(p) - 1)
+    tck, _ = splprep([p[:, 0], p[:, 1]], k=k, s=0)
+    u = np.linspace(0, 1, int(n))
+    r, c = splev(u, tck)
+    return _contour(shape, [np.column_stack([r, c])])
+
+
+def gen_nurbs_interp(points, degree=3, n=100, shape=(256, 256)):
+    """点を通る補間 B スプラインの輪郭(gen_nurbs_interp)。
+
+    .. deprecated:: 0.4.0
+       名前に反して NURBS ではない(重みなしの補間 B スプライン)。0.5.0 で削除する。
+       重みつきの正しい曲線は ``mathgeometry.nurbs_curve`` を使うこと。
+    """
+    warnings.warn("gen_nurbs_interp は非推奨(中身は補間 B スプラインで NURBS ではない)。0.5.0 で削除する。"
+                  "重みつきの NURBS は mathgeometry.nurbs_curve を使うこと", DeprecationWarning, stacklevel=2)
+    return _interp_bspline_contour(points, degree, n, shape)

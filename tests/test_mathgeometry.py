@@ -242,8 +242,10 @@ def test_nurbs_rejects_bad_input():
         G.nurbs_revolve(np.array([[-1.0, 0], [1, 1]]), degree=1)   # 軸の反対側
 
 
-def test_old_nurbs_names_are_removed_in_040():
-    """旧 2 本(中身は補間 B スプラインで NURBS ではなかった)は 0.3.x で非推奨、0.4.0 で削除した。"""
+def test_old_nurbs_names_warn_they_are_interpolating_bsplines():
+    """旧 2 本は非推奨(0.4.0 で非推奨・0.5.0 で削除): 呼ぶと警告し、docstring が「本当は補間 B スプライン」と言う。"""
     import contours_xld2
-    for name in ("gen_contour_nurbs_xld", "gen_nurbs_interp"):
-        assert not hasattr(contours_xld2, name)
+    for f in (contours_xld2.gen_contour_nurbs_xld, contours_xld2.gen_nurbs_interp):
+        assert "補間 B スプライン" in f.__doc__ and "nurbs_curve" in f.__doc__
+        with pytest.warns(DeprecationWarning, match="0.5.0"):
+            f(np.array([[10, 10], [40, 80], [90, 30], [120, 100]], float), 3, 20)

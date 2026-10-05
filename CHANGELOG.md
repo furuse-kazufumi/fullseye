@@ -12,19 +12,21 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 ### 破壊的変更(Breaking)
 
 **op は 1 本も消えていない**(OP_INDEX 2,590 → 3,031、消失 0、既存 2,590 本の in/out の sort・分類の変化 0。
-v0.3.0 の索引と機械で突き合わせた)。minor を上げるのは、**0.3.0 で「0.4.0 で削除」と予告した公開名 5 つを消した**ためと、
+v0.3.0 の索引と機械で突き合わせた)。minor を上げるのは、**0.3.0 で「0.4.0 で削除」と予告した公開名 3 つを消した**ためと、
 既存の公開関数 1 本の返り値が変わった(下)ため。CONTRIBUTING の Versioning では「名前が消える」「既存の数値が変わる」は
-minor —— 消した 5 つは op ではないが、呼んでいたコードは確実に壊れるので patch では出さない。
+minor —— 消した 3 つは op ではないが、呼んでいたコードは確実に壊れるので patch では出さない。
 
 公開名の削除(呼び出し元は repo の中でどれも 0 本):
 
 - `ops.op_slot(name)` → `ops.SLOTS[name]`
 - `transforms.hom_mat3d_transpose_(H)` → `transforms.hom_mat3d_transpose(H)`(中身は同じ)
 - `unified.build_registry()` → 共有の索引(`fullseye.vision`、内部は `unified._ensure()`)。旧関数は呼ぶたびに全層を作り直していた
-- `contours_xld2.gen_contour_nurbs_xld` / `gen_nurbs_interp` → `mathgeometry.nurbs_curve`(`fs.nurbs_curve`、円は `nurbs_circle`)。
-  旧 2 本の中身は重みなしで全制御点を通る**補間 B スプライン**で、NURBS ではなかった。同じ「点を通る曲線」が要るなら
-  `scipy.interpolate.splprep(..., s=0)` + `splev`。HALCON 名の facade 表からも外したので、HALCON 対応の数え(`halcon_stubs`)は
-  982 → 980。★正直に: この 2 本の `DeprecationWarning` は 0.3.0 の**後**に入った —— 公開版では警告の期間を経ずに消える。
+
+非推奨のまま(0.5.0 で削除): `contours_xld2.gen_contour_nurbs_xld` / `gen_nurbs_interp` → `mathgeometry.nurbs_curve`
+(`fs.nurbs_curve`、円は `nurbs_circle`)。旧 2 本の中身は重みなしで全制御点を通る**補間 B スプライン**で、NURBS ではない。
+同じ「点を通る曲線」が要るなら `scipy.interpolate.splprep(..., s=0)` + `splev`。この 2 本の `DeprecationWarning` は 0.3.0 の
+**後**に入ったので、0.4.0 では消さない —— 公開版で警告の期間ゼロの削除はしない(「非推奨と削除を同じ版にしない」、0.3.0 で決めた規則)。
+呼んでも答えは変わらず、警告が出るだけ。
 
 返り値の数値が変わる既存の関数:
 
@@ -403,7 +405,7 @@ minor —— 消した 5 つは op ではないが、呼んでいたコードは
   不透明度(sigmoid)・大きさ(exp)・向きを返す。**以前の Studio は 3DGS の PLY を色無しの点群として開いていた**。
 - Studio Inspector: dict を返す op が中身に関係なく「輪郭 0 本」と出ていた → 表(欄ごとの形と値域)・組・列で出す。
   Figures タブの GIF が 1 コマ目しか出なかった → QMovie で再生。
-- **非推奨にした(同じ 0.4.0 で削除 —— 破壊的変更の節)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
+- **非推奨(0.5.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。
 - ★**離散幾何と位相 6 op(math 台帳 `geometry`、陣 4、最初から 2-D/3-D)**: オイラー標数と種数・角欠損(離散 Gauss–Bonnet)・

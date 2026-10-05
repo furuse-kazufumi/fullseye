@@ -474,6 +474,8 @@
   "mod_parallels_xld": "contours_xld2.mod_parallels_xld",
   "max_parallels_xld": "contours_xld2.max_parallels_xld",
   "segment_contours_xld": "contours_xld2.segment_contours_xld",
+  "gen_contour_nurbs_xld": "contours_xld2.gen_contour_nurbs_xld",
+  "gen_nurbs_interp": "contours_xld2.gen_nurbs_interp",
   "vector_to_rel_pose": "reconstruction.vector_to_rel_pose",
   "vector_to_fundamental_matrix_distortion": "reconstruction.vector_to_fundamental_matrix_distortion",
   "match_fundamental_matrix_distortion_ransac": "reconstruction.match_fundamental_matrix_distortion_ransac",

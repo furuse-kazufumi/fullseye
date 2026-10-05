@@ -69,13 +69,12 @@ def test_the_lazy_registry_still_loads_every_layer():
     assert len(u._ensure().list()) > 1000
 
 
-# ---- 0.3.0 で非推奨にした公開名 5 つは 0.4.0 で削除した —— 名前がもう無く、移行先は在ること ---- #
+# ---- 0.3.0 で非推奨にした公開名 3 つは 0.4.0 で削除した —— 名前がもう無く、移行先は在ること ---- #
+# (contours_xld2 の旧 NURBS 2 本は 0.4.0 で非推奨・0.5.0 で削除 —— 門は tests/test_mathgeometry.py)
 _REMOVED_IN_040 = (
     ("ops", "op_slot", "SLOTS"),
     ("transforms", "hom_mat3d_transpose_", "hom_mat3d_transpose"),
     ("unified", "build_registry", "_ensure"),
-    ("contours_xld2", "gen_contour_nurbs_xld", None),
-    ("contours_xld2", "gen_nurbs_interp", None),
 )
 
 
@@ -88,16 +87,19 @@ def test_the_names_deprecated_in_030_are_gone_in_040(mod, name, successor):
         assert hasattr(m, successor)
 
 
-def test_the_nurbs_successor_exists_and_the_halcon_facade_no_longer_points_at_the_removed_names():
-    """旧 NURBS 2 本の移行先(mathgeometry.nurbs_curve)が在り、HALCON 名の facade 表が消した関数を指さない。"""
+def test_the_old_nurbs_names_stay_until_050_and_the_halcon_facade_still_points_at_them():
+    """旧 NURBS 2 本は 0.5.0 まで残す(公開版で警告の期間ゼロの削除はしない)。HALCON 名の facade 表と
+    stubs の対応数も、残している関数と食い違わないこと。"""
     import json
+    import contours_xld2
     import mathgeometry as G
     assert callable(G.nurbs_curve)
+    assert hasattr(contours_xld2, "gen_contour_nurbs_xld") and hasattr(contours_xld2, "gen_nurbs_interp")
     root = Path(__file__).resolve().parents[1]
     facade = json.loads((root / "fullseye" / "data" / "halcon_facade_map.json").read_text(encoding="utf-8"))
-    assert len(facade) > 500                      # 表が空なら下の not any は無条件に通る
-    assert not any(str(v).startswith("contours_xld2.gen_") and "nurbs" in str(v) for v in facade.values())
+    assert facade["gen_contour_nurbs_xld"] == "contours_xld2.gen_contour_nurbs_xld"
+    assert facade["gen_nurbs_interp"] == "contours_xld2.gen_nurbs_interp"
     stubs = json.loads((root / "fullseye" / "data" / "halcon_stubs.json").read_text(encoding="utf-8"))
-    assert stubs["operators"]["gen_contour_nurbs_xld"]["covered"] is False
-    assert stubs["operators"]["gen_nurbs_interp"]["covered"] is False
+    assert stubs["operators"]["gen_contour_nurbs_xld"]["covered"] is True
+    assert stubs["operators"]["gen_nurbs_interp"]["covered"] is True
     assert stubs["n_covered"] == sum(1 for v in stubs["operators"].values() if v.get("covered"))
