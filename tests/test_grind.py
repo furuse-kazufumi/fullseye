@@ -150,6 +150,7 @@ def test_csv_readers_round_trip_and_reject(tmp_path):
     f.write_text("\n".join(lines) + "\n", encoding="utf-8")
     r = G.particle_size_read(str(f))
     assert G.particle_size_dx(r) == pytest.approx(r["dx50_reported"], rel=1e-14) and r["n_rows"] == 74
+    assert len(r) >= 5
     assert all("psd.csv" not in str(v) for v in r.values())
     ae = tmp_path / "ae.csv"
     raw = [32768, 49152, 16384, 32768]
