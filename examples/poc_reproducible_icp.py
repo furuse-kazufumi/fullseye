@@ -14,7 +14,9 @@
 
 門(既定): 階段(Ozaki-I・II)、上界の破れ 0、点の順 11 通りで Ozaki は 1 通り、スレッド数 1/2/4/8 で同じビット、
 2 の冪の定数倍で答えも正確に同じ倍率(2606.29129 の欠陥が無い)、Kabsch の回転の復元、fail-closed、探針が例外を出さない、
-入口、ICP の家族 5 本の ``reproducible=True``(点の順を入れ替えても姿勢が 1 通り、既定との差は丸めの範囲)、所要。--full: 点を 20 万に、CPU の速さを測り、GPU があれば cuBLAS を測る。
+入口、ICP の ``reproducible=True``(点の順を入れ替えても姿勢が 1 通り、既定との差は丸めの範囲)、所要。既定は 2 万点 × 5 順の Kabsch と
+registration.icp 1 本(1,500 点 × 3 順)に絞る(CI の PoC の門で所要 30 s に収めるため)。--full: 点を 20 万 × 11 順に、ICP の家族 5 本
+(2 万点 × 5 順)、CPU の速さを測り、GPU があれば cuBLAS を測る。記事・展示の数字は --full から。
 図(既定の出力先は out/figures/<PoC 名>/、FULLSEYE_FIGURE_DIR で変更): 誤差の階段、点の順を入れ替えたときの回転の差、
 同じビットか違うビットかの表、GPU の FP64 相当の速さ(記録)、CPU の遅さの表。
 Run: py -3.11 examples/poc_reproducible_icp.py [--full]
@@ -34,8 +36,11 @@ import examplefig as figs  # noqa: E402
 import ozakimm as om  # noqa: E402
 
 FULL = "--full" in sys.argv
-N_POINTS = 200_000 if FULL else 50_000
-N_SHUFFLES = 11
+# ★既定(図なし)の経路は CI の PoC の門そのもの。手元 6 s が CI で 41〜57 s(約 9 倍)になり「所要 ≤ 30 s」で落ちた
+#   (0.4.0、a9f7e765c)。既定は手元 2.5 s 以下に絞り、主張の重い版(20 万点 × 11 順、ICP の家族 5 本)は --full に移した。
+#   記事・展示の数字は --full の実行から写している。
+N_POINTS = 200_000 if FULL else 20_000
+N_SHUFFLES = 11 if FULL else 5
 RECORDED = Path(__file__).resolve().parent / "data" / "fp64_emulation_measured_2026_10_05.json"
 U = 2.0 ** -53
 _GATES: list[tuple[str, bool]] = []
@@ -133,7 +138,11 @@ def order_and_threads() -> dict:
     gate("門 5 点の順を %d 回入れ替えても Ozaki の Kabsch は 1 通りの回転(ビット単位)" % N_SHUFFLES, n_oz == 1,
          "Ozaki %d 通り / 普通の FP64 %d 通り(最大の差 %.1e)" % (n_oz, n_nat, max(d_nat)))
     rot_err = float(np.max(np.abs(r_oz[0] - Rt)))
-    gate("門 6 回転の復元(雑音 1e-4 の点群)", rot_err < 1e-6, "max |R − R_true| = %.1e" % rot_err)
+    # 回転の誤差は雑音 σ と点の広がり s から σ / (s √N) の桁(N を 5 万 → 2 万に減らしたので固定の 1e-6 では足りない。
+    # 実測 2 万点 1.7e-6・5 万点 3.6e-7)。門は 2.5 倍の余裕で点の数に合わせる(20 万点では 1.1e-6)。
+    lim6 = 2.5 * 1e-4 / (0.5 * math.sqrt(N_POINTS))
+    gate("門 6 回転の復元(雑音 1e-4 の点群、限界 2.5 σ / (s √N))", rot_err < lim6,
+         "max |R − R_true| = %.1e(限界 %.1e)" % (rot_err, lim6))
 
     X, Y = (P - P.mean(0)).T, Q - Q.mean(0)
     h_nat, h_oz = [], []
@@ -215,13 +224,14 @@ def probe_and_entry() -> dict:
 
 
 def icp_family() -> dict:
-    print("== ICP の家族(reproducible=True、波打つ面 %d 点)" % (20_000 if FULL else 4_000))
+    n = 20_000 if FULL else 1_500
+    n_orders = 5 if FULL else 3
+    print("== ICP の%s(reproducible=True、波打つ面 %d 点、点の順 %d 通り)" % ("家族 5 本" if FULL else " 1 本(家族 5 本は --full)", n, n_orders))
     import gicp
     import match3d
     import pointcloud
     import registration
     rng = np.random.default_rng(4)
-    n = 20_000 if FULL else 4_000
     u, v = rng.uniform(-1, 1, (2, n))
     Q = np.stack([u, v, 0.2 * np.sin(3 * u) * np.cos(2 * v)], 1) + 50.0
     th = 0.08
@@ -236,9 +246,11 @@ def icp_family() -> dict:
         "gicp.gicp": lambda X, **k: (lambda r: (r["R"], r["t"]))(gicp.gicp(X, Q, **k)),
     }
     assert len(runs) == 5
+    if not FULL:                                           # 既定は 1 本(主張を弱めたことは門の文言に書く)
+        runs = {"registration.icp": runs["registration.icp"]}
     rows, ok_all = [], True
     for name, fn in runs.items():
-        perms = [np.arange(n)] + [np.random.default_rng(s_).permutation(n) for s_ in range(4)]
+        perms = [np.arange(n)] + [np.random.default_rng(s_).permutation(n) for s_ in range(n_orders - 1)]
         t0 = time.perf_counter()
         dflt = [fn(P[p]) for p in perms]
         t1 = time.perf_counter()
@@ -252,9 +264,10 @@ def icp_family() -> dict:
                      "ms_default": 1e3 * (t1 - t0) / len(perms), "ms_repro": 1e3 * (t2 - t1) / len(perms)})
         print("    %-32s 既定 %d 通り / reproducible %d 通り、|ΔR| %.1e、%.0f ms → %.0f ms"
               % (name, n_d, n_r, dR, rows[-1]["ms_default"], rows[-1]["ms_repro"]))
-    gate("門 13 ICP の家族 5 本: reproducible=True は点の順 5 通りで姿勢が 1 通り(ビット単位)、既定との差は丸めの範囲(|ΔR| < 1e-12)",
-         ok_all, "既定は %s 通り" % "/".join(str(r["n_default"]) for r in rows))
-    return {"rows": rows, "n": n}
+    who = "ICP の家族 5 本" if FULL else "ICP 1 本(registration.icp のみ、家族 5 本は --full で確かめる)"
+    gate("門 13 %s: reproducible=True は点の順 %d 通りで姿勢が 1 通り(ビット単位)、既定との差は丸めの範囲(|ΔR| < 1e-12)"
+         % (who, n_orders), ok_all and len(rows) == len(runs), "既定は %s 通り" % "/".join(str(r["n_default"]) for r in rows))
+    return {"rows": rows, "n": n, "n_orders": n_orders}
 
 
 def cpu_speed() -> list:
@@ -390,7 +403,7 @@ def figures(st: dict, od: dict, cpu: list, gpu_live: list, icp: dict) -> None:
                      ["BLAS threads 1 / 2 / 4 / 8 (cross-covariance H)", str(od["t_nat"]), str(od["t_oz"])],
                      ["time for the 3x3 H of %d points" % N_POINTS, "%.2f ms" % (1e3 * od["times"]["dgemm"]),
                       "%.0f ms" % (1e3 * od["times"]["ozaki"])]]
-                    + [["%s, 5 point orders (%d pts)" % (r["name"], icp["n"]), "%d (%.0f ms)" % (r["n_default"], r["ms_default"]),
+                    + [["%s, %d point orders (%d pts)" % (r["name"], icp["n_orders"], icp["n"]), "%d (%.0f ms)" % (r["n_default"], r["ms_default"]),
                         "%d (%.0f ms)" % (r["n_repro"], r["ms_repro"])] for r in icp["rows"]],
                     title="Same answer, bit for bit?",
                     caption="違う結果の数(1 = どの条件でも同じビット)。この計算機での値。普通の FP64 がスレッド数で動くかは BLAS の分け方次第。")

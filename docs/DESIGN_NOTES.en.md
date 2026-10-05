@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1213. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1214. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -848,6 +848,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L785** — ★When the user explicitly passes `estimate_normals`, thinking "but the normals do exist". This is the **remainder** of the gap, 14 orders of magnitude worse than the default.
 - **L965** — ★Gap 1 was closed on 2026-09-06. This assert has been rewritten to **pin the closed state** (previously it pinned the broken state: `d_fixed < 1e-6 < d_default` = broken). If the breakage returns, this fails.
 - **L976** — ★Gap 2 was closed on 2026-09-06. Previously it was `< 0.9 * len(ka)` (pinning the broken state). Now it pins that **the default gives an exact match**.
+
+## `examples/poc_reproducible_icp.py`
+
+- **L39** _(ja)_ — ★既定(図なし)の経路は CI の PoC の門そのもの。手元 6 s が CI で 41〜57 s(約 9 倍)になり「所要 ≤ 30 s」で落ちた (0.4.0、a9f7e765c)。既定は手元 2.5 s 以下に絞り、主張の重い版(20 万点 × 11 順、ICP の家族 5 本)は --full に移した。 記事・展示の数字は --full の実行から写している。
 
 ## `examples/poc_rotation_invariance_audit.py`
 
