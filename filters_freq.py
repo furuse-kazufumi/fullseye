@@ -31,18 +31,42 @@ def correlation_fft(image1, image2):
     return np.fft.irfft2(F * np.conj(G), s=a.shape)
 
 
-def phase_correlation_fft(image1, image2):
-    """位相相関で並進 (drow, dcol) を推定(phase_correlation_fft)。"""
+def phase_correlation_fft(image1, image2, window: str | None = "hann", whitening: float = 0.5):
+    """位相相関で並進 (drow, dcol) を推定(phase_correlation_fft)。返りは image1 の image2 に対するずれ(整数画素)。
+
+    相互パワースペクトル R = F·conj(G) を |R|^``whitening`` で割ってから逆変換し、最大の位置を読む。
+    ``whitening`` = 1 は古典的な位相相関(全白色化)、0 は素の相互相関、既定 0.5 はその間。``window = "hann"``(既定)は
+    平均を引いて 2 次元の Hann 窓を掛けてから変換する、``None`` は掛けない。
+
+    ★既定を替えた理由(2026-10-06): 0.4.0 までの「窓なし + 全白色化」は、帯域の限られた像(地面・自然な写真のように
+    高い周波数にほとんど信号の無い像)を **周期的でない切り出し** で比べると、信号の無い周波数のビン(切り出しの縁の
+    不連続の漏れと丸め)が白色化で信号のあるビンと同じ重みになり、正しいずれでなく 0 の近く(例: 真 (−2, −5) に (1, 0))を
+    返した。np.roll の周期的なずれでは厳密だったので、それだけの門では見えなかった。場面 6 種 × 60 通りのずれ(64 × 64)で、
+    旧の既定は帯域の限られた切り出し 0 %・低域の切り出し 0 % の当たり、新しい既定はどの場面も 100 %(周期的なずれも 100 %)。
+    窓だけでは直らない(白色化が主因)。旧の挙動は ``window=None, whitening=1.0``。
+    **Raises** ValueError: 形が違う・2 次元でない、window の綴り違い、whitening が [0, 1] の外。"""
     a = _img(image1); b = _img(image2)
+    if a.ndim != 2 or a.shape != b.shape:
+        raise ValueError("phase_correlation_fft: image1 and image2 must be 2-D arrays of the same shape, got %s and %s" % (a.shape, b.shape))
+    if window not in ("hann", None):
+        raise ValueError("phase_correlation_fft: window must be 'hann' or None, got %r" % (window,))
+    w = float(whitening) if not isinstance(whitening, bool) else float("nan")
+    if not (0.0 <= w <= 1.0):
+        raise ValueError("phase_correlation_fft: whitening must be in [0, 1], got %r" % (whitening,))
+    if window == "hann":
+        win = np.outer(np.hanning(a.shape[0]), np.hanning(a.shape[1]))
+        a = (a - a.mean()) * win
+        b = (b - b.mean()) * win
     F = np.fft.fft2(a); G = np.fft.fft2(b)
     R = F * np.conj(G)
-    R /= np.abs(R) + 1e-12
+    if w > 0.0:
+        R /= np.abs(R) ** w + 1e-12
     corr = np.fft.ifft2(R).real
     pk = np.unravel_index(np.argmax(corr), corr.shape)
     dr = pk[0] - (a.shape[0] if pk[0] > a.shape[0] // 2 else 0)
     dc = pk[1] - (a.shape[1] if pk[1] > a.shape[1] // 2 else 0)
     return {"row_shift": float(dr), "col_shift": float(dc),
-            "peak": float(corr[pk]), "correlation": corr}
+            "peak": float(corr[pk]), "correlation": corr, "window": window, "whitening": w}
 
 
 def gen_gauss_filter(sigma=1.0, size=None):

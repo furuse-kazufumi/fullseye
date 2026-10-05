@@ -19,7 +19,7 @@ numpy だけの門(常に走る):
 12. 差が出る場面と出ない場面(否定の門は両側): 12° の斜面に崩れる殻の土 → 平均は殻を突っ切り CVaR は避ける /
     平らなら同じ経路
 13. 「走った」でなく中身: 曲線・地図が有限・非定数・空でない
-14. 既存 op を被験者に: filters_freq.phase_correlation_fft(整数の並進)、flow.optical_flow_lk(平均の流れ)、
+14. 既存 op を被験者に: filters_freq.phase_correlation_fft(整数の並進、0.4.0 の窓なし・全白色化の罠と 2026-10-06 の直し)、flow.optical_flow_lk(平均の流れ)、
     terrain.slope_map(傾き)(worktree が import できなければ skip)
 15. 綴り壊しと壊れた入力は ValueError
 16. 入口: __all__ が実在、docstring に Markdown のリンク記法なし、ソースに acos / asin の呼び出しなし
@@ -346,12 +346,14 @@ def test_14_existing_ops_as_subjects():
     pc = wt["filters_freq"].phase_correlation_fft(a, b)
     ours = R.ground_shift_track([a, b])["step"][0]
     assert (pc["row_shift"], pc["col_shift"]) == (-2.0, -5.0) and np.allclose(ours, [2.0, 5.0], atol=0.05)
-    # 窓のない全白色化の位相相関は、地面のカメラのような周期的でない切り出しでは縁の不連続に負けて 0 付近を返す(罠、
-    # 試作の測りで (1, 0)。真は (−2, −5))
+    # 0.4.0 の位相相関(窓なし・全白色化)は、地面のカメラのような帯域の限られた像の周期的でない切り出しでは (1, 0) を返した
+    # (真は (−2, −5))。2026-10-06 に既定を Hann 窓 + 半分の白色化に直した —— 既定は当たり、旧の挙動は罠のまま
     b2 = _texture((64, 64), -2.0, -5.0)
     pc2 = wt["filters_freq"].phase_correlation_fft(a, b2)
+    old = wt["filters_freq"].phase_correlation_fft(a, b2, window=None, whitening=1.0)
     ours2 = R.ground_shift_track([a, b2])["step"][0]
-    assert max(abs(pc2["row_shift"] + 2), abs(pc2["col_shift"] + 5)) >= 2 and np.allclose(ours2, [2.0, 5.0], atol=0.05)
+    assert (pc2["row_shift"], pc2["col_shift"]) == (-2.0, -5.0) and np.allclose(ours2, [2.0, 5.0], atol=0.05)
+    assert max(abs(old["row_shift"] + 2), abs(old["col_shift"] + 5)) >= 2
     an = (a - a.min()) / np.ptp(a)
     bn = (b2 - a.min()) / np.ptp(a)
     u, v = wt["flow"].optical_flow_lk(an, bn)

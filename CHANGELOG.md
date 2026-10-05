@@ -21,13 +21,20 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   門: test_pegtactile に部分滑りの場面 2 本、PoC poc_peg_insertion_tactile に門 2b(比 0.5 / 0.8)。読みの補正を外すと両方が赤になることを確かめた。
   同じ無滑りの仮定は `tactorque.torque_decompose` の `Mz` にも残る(Hertz 接触に使えば同じ向きに過大。今回は直していない)。
 
+- ★**`filters_freq.phase_correlation_fft` の既定を Hann 窓 + 半分の白色化に**(引数 `window`(`"hann"` / `None`)・`whitening`(0〜1)を追加、既定 `"hann"`・0.5)。
+  0.4.0 までの「窓なし + 全白色化」は、帯域の限られた像(地面・自然な写真)の周期的でない切り出しで、信号の無い周波数のビン(縁の漏れと丸め)が白色化で同じ重みになり、
+  正しいずれでなく 0 の近くを返していた(真 (−2, −5) に (1, 0))。場面 6 種 × ずれ 60 通り(64 × 64)の当たりは、帯域の限られた切り出し 0 % → 100 %、低域通過の切り出し 0 % → 100 %、
+  周期的なずれ・白色雑音の切り出し・一様な背景の上の物体は 100 % のまま。窓だけでは直らない(白色化が主因)。旧の挙動は `window=None, whitening=1.0`。
+  影響: 同じ入力に対する返りのずれ(旧で外れていた場面)、`correlation` と `peak` の値(白色化の度合いが変わる)。呼び出し元は `fullseye.golden`(良品画像の位置合わせ、test_golden は緑)。
+  返りの dict に `window`・`whitening` が増えた。形の違う入力・綴り違いは ValueError(旧は形が違うと numpy の例外)。
+
 ### 追加
 
 - ★**惑星ローバーの車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く**(新モジュール `roverslip` 15 op、facade なし、台帳 `roverslip`(opsdrive)、PoC `poc_rover_slip_risk_path`、wing_astroenv):
   Bekker の圧力–沈下と Wong–Reece の剛な車輪の応力の数値積分で沈下・牽引・トルク、斜面の角ごとの定常の滑り率と登れる最大の角、地面を見るカメラの並進と車輪の回転から実際の滑り率、
   分位点回帰 + 共形の補正とガウス過程の滑りの帯、CVaR で割り引いた辺の所要時間のコスト地図と 8 近傍の Dijkstra。numpy だけ。
   外の真値は閉形式(Bekker の締め固め抵抗を 1.9e-7)、文献の土の定数、MuJoCo の剛体の車輪(剛な地面で一致)、HiRISE の DTM(パブリックドメイン、repo の外・`FULLSEYE_ROVERSLIP_DATA`、無い CI では合成の fBm)。
-  正直に: 滑りの真値は合成、1 種の土では 2 経路はほとんど重なる。既存の `filters_freq.phase_correlation_fft` が帯域の限られた周期的でない切り出しで外れる罠を test に固定(直していない)。
+  正直に: 滑りの真値は合成、1 種の土では 2 経路はほとんど重なる。0.4.0 の `filters_freq.phase_correlation_fft` が帯域の限られた周期的でない切り出しで外れる罠を見つけた(下の「挙動の変更」で直した)。
 - ★**包丁を指先の視触覚だけで持って切る**(新モジュール `cuttouch` 3 op、facade なし、台帳 `cuttouch`(opsdrive)、PoC `poc_knife_tactile_toughness`、wing_metrology): cutting × pegtactile の連鎖。
   2 枚のパッドの膜の読みから押し・引き・モーメントを復元し、刃の当たり位置・slice/push 比・靱性を手首の力センサなしに読む。持てる柄の長さの限界(全滑り / 読めなくなるまで)も返す。
   Hertz 接触のねじりの部分滑りを Cerruti 核の影響行列で数値的に解く `torsion_partial_slip`(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。これで pegtactile の無滑りのねじりの読みが部分滑りで過大(比 0.5 で +33 %)と分かった。
