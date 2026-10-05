@@ -7,7 +7,7 @@ out: region
 examples: [poc_tacsim_elastic_membrane, sim2real_and_alife]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # tac_contact_mask — 2D `tactile` op

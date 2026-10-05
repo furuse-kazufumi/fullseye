@@ -7,7 +7,7 @@ out: table
 examples: [poc_peg_failure_recovery, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # whitney_clearance — DRIVE `pegsim` op

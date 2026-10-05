@@ -7,7 +7,7 @@ out: table
 examples: [poc_active_contours, poc_graph_hierarchy_segmentation, poc_segmentation_gauntlet]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # seg_score_card — SEGMENTATION `score` op

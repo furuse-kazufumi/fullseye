@@ -7,7 +7,7 @@ out: table
 examples: [poc_connectome_across_decades, poc_connectome_across_worms]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # graph_edge_consensus — GRAPH `population` op

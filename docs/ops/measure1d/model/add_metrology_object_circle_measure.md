@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_calipers_under_illusion, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # add_metrology_object_circle_measure — MEASURE1D `model` op

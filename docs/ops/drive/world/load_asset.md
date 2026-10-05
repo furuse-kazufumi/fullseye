@@ -7,7 +7,7 @@ out: table
 examples: [poc_driving_longitudinal, poc_driving_pass, poc_driving_school, poc_driving_weather, poc_ttc_rss]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # load_asset — DRIVE `world` op

@@ -7,7 +7,7 @@ out: table
 examples: [poc_car_parking, poc_driving_school]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # car_hybrid_astar — GRAPH `path` op

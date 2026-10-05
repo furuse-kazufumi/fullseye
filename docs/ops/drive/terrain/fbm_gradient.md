@@ -7,7 +7,7 @@ out: any
 examples: [poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # fbm_gradient — DRIVE `terrain` op

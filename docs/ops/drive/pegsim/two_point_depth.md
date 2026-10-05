@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_peg_insertion_tactile, poc_pegsim_insertion]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # two_point_depth — DRIVE `pegsim` op

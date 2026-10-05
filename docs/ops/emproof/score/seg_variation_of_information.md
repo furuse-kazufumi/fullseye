@@ -7,7 +7,7 @@ out: table
 examples: [poc_em_split_merge_score, poc_em_wiring_errors, poc_skeleton_run_length_vs_voi]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # seg_variation_of_information — EMPROOF `score` op

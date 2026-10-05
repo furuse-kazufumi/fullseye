@@ -7,7 +7,7 @@ out: matrix
 examples: [poc_ball_bounce, poc_table_tennis_bounce, poc_table_tennis_spin]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.3.0  # fullseye lib version this note was generated for
+version: 0.4.0  # fullseye lib version this note was generated for
 ---
 
 # rotation_from_omega — DRIVE `ballworld` op

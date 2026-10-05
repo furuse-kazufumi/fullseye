@@ -7,6 +7,47 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+## 0.4.0 — 2026-10-06
+
+### 破壊的変更(Breaking)
+
+**op は 1 本も消えていない**(OP_INDEX 2,590 → 3,031、消失 0、既存 2,590 本の in/out の sort・分類の変化 0。
+v0.3.0 の索引と機械で突き合わせた)。minor を上げるのは、**0.3.0 で「0.4.0 で削除」と予告した公開名 5 つを消した**ためと、
+既存の公開関数 1 本の返り値が変わった(下)ため。CONTRIBUTING の Versioning では「名前が消える」「既存の数値が変わる」は
+minor —— 消した 5 つは op ではないが、呼んでいたコードは確実に壊れるので patch では出さない。
+
+公開名の削除(呼び出し元は repo の中でどれも 0 本):
+
+- `ops.op_slot(name)` → `ops.SLOTS[name]`
+- `transforms.hom_mat3d_transpose_(H)` → `transforms.hom_mat3d_transpose(H)`(中身は同じ)
+- `unified.build_registry()` → 共有の索引(`fullseye.vision`、内部は `unified._ensure()`)。旧関数は呼ぶたびに全層を作り直していた
+- `contours_xld2.gen_contour_nurbs_xld` / `gen_nurbs_interp` → `mathgeometry.nurbs_curve`(`fs.nurbs_curve`、円は `nurbs_circle`)。
+  旧 2 本の中身は重みなしで全制御点を通る**補間 B スプライン**で、NURBS ではなかった。同じ「点を通る曲線」が要るなら
+  `scipy.interpolate.splprep(..., s=0)` + `splev`。HALCON 名の facade 表からも外したので、HALCON 対応の数え(`halcon_stubs`)は
+  982 → 980。★正直に: この 2 本の `DeprecationWarning` は 0.3.0 の**後**に入った —— 公開版では警告の期間を経ずに消える。
+
+返り値の数値が変わる既存の関数:
+
+- `photometric.angular_error_deg` — `acos(â·b̂)` → `atan2(|a × b|, a·b)`。正規化の分母の 1e-12 と acos で、平行に近い組が
+  約 1.15e-4° の床に張り付いていた(1e-7° も 1e-5° も 1.146e-4° と返した)。直した後は 1e-7°〜179° を相対 1e-6 で返す。
+  長さ 0 → 90°、NaN → NaN は従来どおり。repo の呼び出し 33 か所の閾値はどれも床より上で、合否は変わらない。
+  移行: 「1e-4° 未満は 0 扱い」のような床を前提にした比較だけ見直すこと。
+
+0.3.0 の**後**に入った族で挙動を変えたもの(公開版に対する破壊ではない。master を直接使っていた人だけ数値が変わる):
+
+- `granular.spoon_tilt_critical` / `spoon_tilt_dispense` — 楔の傾きを小角の近似 `tan φ − tan θ` から厳密な `tan(φ − θ)` に。
+  θ_c = atan(tan φ − 2h₀/L) → φ − atan(2h₀/L)。L 50 mm・h₀ 5 mm・φ 30° で θ_c 20.67° → 18.69°、θ = 10° で旧式の楔は 1.102 倍。
+  小角(φ = 2°)では θ_c の差 < 0.1 %。移行: 旧式で決めた傾きの閾値は測り直す。比較の返りの鍵は
+  `F_small_angle` / `theta_c_small_angle_deg` → `F_lip_wall` / `theta_c_lip_wall_deg`、返りに `initial_area`・`lip` が増えた。
+  既定は従来どおり口に縁のある器(`lip="wall"`)。
+- `tacsim.contact_radius_ring` — 既定の探索半径を「窓の半分の半分」→「窓の縁 − 2 px」(大きな接触を小さく答えていた)。
+  探索半径が 2 px 未満は ValueError。
+- `polish.raster_wipe_area` — 極端な入力で一筆の y 座標や重なりの節約が inf に溢れたら ValueError(以前は inf を返した)。既定の入力の値は変わらない。
+
+既定が変わらないもの: ICP の家族 5 本の `reproducible=True` は opt-in で、既定の経路は 0.3.0 とビット同一。
+
+### 追加・修正
+
 - ★**点の順に依らない FP64 の縮約**(新モジュール `ozakimm` 6 op、facade なし、台帳 `ozaki`(opsdrive)、PoC `poc_reproducible_icp`、wing_geometry): Ozaki スキーム。
   縮約を正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット(20 万点の Kabsch を 11 回入れ替えて、普通の FP64 は 12 通り、Ozaki は 1 通り)。
   Ozaki-I の分割数は誤差の保証上界から自動で選び、選ぶのに使う量(|A||B| の下界を含む)も順序に依らない形にした(下書きは float32 の BLAS で見積もり、境目で分割数が入れ替わりえた)。
@@ -362,7 +403,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   不透明度(sigmoid)・大きさ(exp)・向きを返す。**以前の Studio は 3DGS の PLY を色無しの点群として開いていた**。
 - Studio Inspector: dict を返す op が中身に関係なく「輪郭 0 本」と出ていた → 表(欄ごとの形と値域)・組・列で出す。
   Figures タブの GIF が 1 コマ目しか出なかった → QMovie で再生。
-- **非推奨(0.4.0 で削除)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
+- **非推奨にした(同じ 0.4.0 で削除 —— 破壊的変更の節)**: `gen_contour_nurbs_xld`・`gen_nurbs_interp`(`contours_xld2`)—— 名前に反して NURBS ではなく、
   重みなしで全制御点を通る**補間 B スプライン**だった。呼ぶと `DeprecationWarning`、docstring に正体と移行先
   (`nurbs_curve`)を書いた。動作は変えていない。
 - ★**離散幾何と位相 6 op(math 台帳 `geometry`、陣 4、最初から 2-D/3-D)**: オイラー標数と種数・角欠損(離散 Gauss–Bonnet)・
