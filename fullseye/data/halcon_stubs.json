@@ -1,7 +1,7 @@
 {
 "version": "2605",
 "n_operators": 2313,
-"n_covered": 982,
+"n_covered": 984,
 "n_with_signature": 2235,
 "signature_source": "mvtec-halcon binding",
 "operators": {
@@ -26010,8 +26010,10 @@
 "Classification"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/train_class_mlp.html",
-"covered": false,
-"imgevolve_analogs": [],
+"covered": true,
+"imgevolve_analogs": [
+"facade:final_genuine2.train_class_mlp"
+],
 "py_signature": {
 "params": "mlphandle: HHandle, max_iterations: int, weight_tolerance: float, error_tolerance: float",
 "ret": "-> Tuple[float, Sequence[float]]"
@@ -26022,8 +26024,10 @@
 "Classification"
 ],
 "url": "https://www.mvtec.com/doc/halcon/2605/en/train_class_svm.html",
-"covered": false,
-"imgevolve_analogs": [],
+"covered": true,
+"imgevolve_analogs": [
+"facade:final_genuine2.train_class_svm"
+],
 "py_signature": {
 "params": "svmhandle: HHandle, epsilon: float, train_mode: Union[str, int]",
 "ret": "-> None"

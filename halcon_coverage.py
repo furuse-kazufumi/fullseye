@@ -90,7 +90,14 @@ def analyze(data, registry, versions_data=None):
             analog.setdefault(h, []).append(o.name)
     # 知覚 facade(camera/stereo/pcseg/ppf/pointcloud)が genuine 実装する operator も計上。
     # 進化 registry の Op ではないため data/halcon_facade_map.json から別途マージ(全 smoke 検証済)。
-    facade_path = os.path.join(HERE, "data", "halcon_facade_map.json")
+    # ★2026-10-06: 正本は同梱の fullseye/data/(c5268029e で移した)。旧来の data/ だけを見ていたため、
+    #   facade の 600 本が黙って数えから落ち、HALCON 対応が 982 → 388 と出ていた(例外も警告も無し)。
+    facade_path = next((p for p in (os.path.join(HERE, "fullseye", "data", "halcon_facade_map.json"),
+                                    os.path.join(HERE, "data", "halcon_facade_map.json"))
+                        if os.path.exists(p)), None)
+    if facade_path is None:
+        raise SystemExit("[halcon_coverage] halcon_facade_map.json が見つからない —— facade を数えずに"
+                         "被覆率を出すと桁違いに小さくなるので止める")
     if os.path.exists(facade_path):
         with open(facade_path, encoding="utf-8") as fh:
             for hname, ref in json.load(fh).items():

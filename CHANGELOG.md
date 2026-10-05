@@ -50,6 +50,10 @@ minor —— 消した 3 つは op ではないが、呼んでいたコードは
 
 ### 追加・修正
 
+- **HALCON 対応の数え直し: 984 / 2313(42.5 %)**。`halcon_coverage.py` が facade 表を旧来の `data/` でしか探さず、
+  同梱の正本 `fullseye/data/` を見ていなかった —— 生成器を回すと facade の 600 本が黙って落ちて 388 と出た。正本を先に探し、
+  無ければ止まるように直して `docs/HALCON_COVERAGE.md` を作り直した。`halcon_stubs` も train_class_mlp / svm の facade 分
+  (0.3.0 の後に足した)が未反映だったので 982 → 984。記事の手書きの 981 / 982 もこの値に揃えた(章別の図は 982 のときのまま)。
 - ★**点の順に依らない FP64 の縮約**(新モジュール `ozakimm` 6 op、facade なし、台帳 `ozaki`(opsdrive)、PoC `poc_reproducible_icp`、wing_geometry): Ozaki スキーム。
   縮約を正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット(20 万点の Kabsch を 11 回入れ替えて、普通の FP64 は 12 通り、Ozaki は 1 通り)。
   Ozaki-I の分割数は誤差の保証上界から自動で選び、選ぶのに使う量(|A||B| の下界を含む)も順序に依らない形にした(下書きは float32 の BLAS で見積もり、境目で分割数が入れ替わりえた)。
