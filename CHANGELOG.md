@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**群れが見えない障害物を速度場の乱れだけで察知する**(新モジュール `swarmflow` 12 op、facade なし、台帳 `swarmflow`(opsdrive)、PoC `poc_swarm_obstacle_from_flow`、wing_xyt):
+  群れの個体を SPH の粒子として動かし、俯瞰映像から追跡(blob2d)と PIV(pivops)で速度場を測って、円柱まわりのポテンシャル流の閉形式で衝突点と障害物の中心・半径を読む。
+  閉形式の場で 2 次元の当てはめは厳密、PIV で半径 −0.6 %・追跡で +0.3 %、群れの模擬(1692 個体)では上流だけで中心 4.5 % of R・半径 −10 %。雑音・渦・湧き出しでは「説明できる割合」で言わない。
+  Ritter のダム崩壊解と 1 次元 SPH の浅水も。chain_fuzz が `sph_dam_break_1d` の粒子が少ない時の添字の誤りを見つけて直した(回帰テストあり)。正直に: 群れの流れは厳密なポテンシャル流ではなく半径は 1 割小さく出る。
+
 ## 0.4.0 — 2026-10-06
 
 ### 破壊的変更(Breaking)

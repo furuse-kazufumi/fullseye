@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sph_dam_break_1d — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sph_dam_break_1d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。</p>
+<p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、</p>
+<p>運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、</p>
+<p>組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は :func:<code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (K,)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf"> (K, N)、</code><code style="color:#22d3bf">u</code><code style="color:#22d3bf"> (K, N)(各時刻の粒子)、</code><code style="color:#22d3bf">front</code>` (K,)(最も前の粒子)、</p>
+<p>`<code style="color:#22d3bf">mass</code><code style="color:#22d3bf">(全質量、保存)、</code><code style="color:#22d3bf">c0</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

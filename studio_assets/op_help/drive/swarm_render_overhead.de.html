@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">swarm_render_overhead — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × any × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>個体の位置 → 上から見た 1 コマ(ガウスの輝点、直径 = 標準偏差の 2 倍 = PIV の慣行、pivops と同じ)。</p>
+<p>Args:</p>
+<p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
+<p>shape: (H, W) [px]。</p>
+<p>res: 画素の大きさ [m/px]。</p>
+<p>center: 画像の中心の世界座標 [m]。</p>
+<p>diameter_px: 輝点の直径 [px]。</p>
+<p>intensity: 輝点の明るさ。</p>
+<p>background: 一様な下駄。</p>
+<p>Returns:</p>
+<p>(H, W) float64。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">image2d</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:ttc_from_flow">ttc_from_flow</a> · <a style="color:#22d3bf" href="opdrive:foe_from_flow">foe_from_flow</a> · <a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a> · <a style="color:#22d3bf" href="opdrive:stagnation_from_centerline">stagnation_from_centerline</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

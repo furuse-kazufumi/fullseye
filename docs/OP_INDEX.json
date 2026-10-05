@@ -1,8 +1,8 @@
 {
- "n_ops": 3031,
+ "n_ops": 3043,
  "tiers": {
   "color": 12,
-  "ledger": 2078,
+  "ledger": 2090,
   "nary": 17,
   "registry": 924
  },
@@ -15287,6 +15287,19 @@
    "in_sorts": []
   },
   {
+   "name": "obstacle_fit_doublet",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
+   ]
+  },
+  {
    "name": "obstruction_decel",
    "halcon": "",
    "in_sort": "any",
@@ -17749,6 +17762,21 @@
    "dim": "reprconv",
    "in_sorts": [
     "position"
+   ]
+  },
+  {
+   "name": "potential_flow_cylinder",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "any"
    ]
   },
   {
@@ -20239,6 +20267,21 @@
    ]
   },
   {
+   "name": "ritter_dam_break",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "rms",
    "halcon": "",
    "in_sort": "signal",
@@ -22626,6 +22669,45 @@
    ]
   },
   {
+   "name": "sph_dam_break_1d",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": []
+  },
+  {
+   "name": "sph_density_pressure",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "sph_kernel",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "sphere_cap_height",
    "halcon": "",
    "in_sort": "any",
@@ -22953,6 +23035,19 @@
    "in_sorts": [
     "image2d",
     "image2d"
+   ]
+  },
+  {
+   "name": "stagnation_from_centerline",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {
@@ -23799,6 +23894,62 @@
    "tier": "ledger",
    "ledger": "opsroughness",
    "dim": "roughness",
+   "in_sorts": []
+  },
+  {
+   "name": "swarm_field_from_piv",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "swarm_field_from_tracks",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "swarm_render_overhead",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image2d",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "any",
+    "scalar"
+   ]
+  },
+  {
+   "name": "swarm_simulate",
+   "halcon": "",
+   "in_sort": null,
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
    "in_sorts": []
   },
   {
@@ -25616,6 +25767,19 @@
    "in_sorts": [
     "any",
     "any"
+   ]
+  },
+  {
+   "name": "velocity_deficit_map",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "swarmflow",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table"
    ]
   },
   {

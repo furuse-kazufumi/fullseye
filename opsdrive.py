@@ -34,6 +34,7 @@
 粉体のすくいと注ぎを画像で測る(scoop: granular の続き。スプーンですくった量を側面像の輪郭から(球冠の椀の閉形式 + 縁の上の回転体、直交 2 方向の楕円の和、体積 → 粒の数は 1 回の較正)、傾けて注いだ流量を流れの幅と速さから(PIV の速さ × Boolean 模型で重なりを数え直した線密度)。真値 = すり切りと山盛りの閉形式、楕円錐の体素、自由落下、Boolean 模型、傾けて出る量の口の楔(自分の導出)、第 2 実装 = MuJoCo の剛体球の個数と線の横切り数。mg 級は秤に譲る規則。mujoco が要る 2 本は facade)。
 乳鉢の粉砕を測る(grind: 粉体の 3 本目。レーザー回折の粒度分布の D10/D50/D90(装置の Dx(50) と同じ log 補間)、粉砕則(一般式 dE = −C dx/xⁿ、Kick / Bond / Rittinger、Reddy の式 (1)・(5)〜(7))の閉形式と当てはめ、一次の破砕速度(Deniz 2004 の式 (1)〜(3)、出典 Austin)、独立試行のばらつきと材料の差、AE の帯域電力(公開の解析コードの定義とacoustics.stft の密度、Parseval で突き合わせ)と D50 の対応、合成画像からの体積基準 / 個数基準の D50。外の真値は公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)の実測で、repo の外に置き環境変数で渡す。全部 numpy + scipy)。
 点の順に依らない FP64 の縮約(ozaki: Ozaki スキームの行列積。正確な整数の部分積に分けるので、点の順・BLAS のスレッド数に依らず同じビット。Ozaki-I(固定小数点の切り出し、分割数は誤差の保証上界から自動で選ぶ)と Ozaki-II(中国剰余定理、定数倍で壊れない拡大)、打ち切りの上界、Kabsch / ICP の相互共分散と剛体の R・t、GPU の FP64 エミュレーションの有無の探針(ctypes だけ、例外なし)。真値は Python の整数で計算した正確な積。CPU では DGEMM の 15〜83 倍遅く、効くのは再現性と精度の保証だけ。numpy だけ)。
+流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する(swarmflow: SPH の 3 次スプライン核(∫W dV = 1)と密度・圧力、障害物のある周期の流路を流れる群れの模擬、俯瞰映像の合成、個体の検出(blob2d)と追跡 / 相互相関の PIV(pivops)から速度場、自由流からの欠損の地図、中心線の 1/√d の直線化と二重湧き出しの 2 次元の当てはめで衝突点・障害物の中心と半径と「障害物あり」の判定、Ritter のダム崩壊解と 1 次元 SPH の浅水)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -93,6 +94,7 @@ import polish
 import scoop
 import grind
 import ozakimm
+import swarmflow
 import racket
 import roadjp
 import rsssafety
@@ -101,7 +103,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop, "grind": grind, "ozakimm": ozakimm, "swarmflow": swarmflow}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -1014,6 +1016,24 @@ _CATALOG = {
         ("cross_covariance_reproducible", "ozakimm", ["points", "points"], "matrix"),
         ("kabsch_reproducible", "ozakimm", ["points", "points"], "table"),
         ("fp64_emulation_probe", "ozakimm", [], "table"),
+    ],
+    # 流体のように流れる群れが見えない障害物を速度場の乱れだけで察知する(2026-10-05、群れロボットの流体模倣制御
+    # doi:10.1109/iros58592.2024.10801800 を学習なしで): 位置は matrix (N, 2)、俯瞰のコマは image2d(コマの列は any)、速度場は table
+    # (dict: x / y / u / v / valid)、閉形式と読みの結果は table。真値 = 円柱まわりのポテンシャル流、SPH 核の正規化、Ritter の解。
+    # 被験者 = pivops.piv_cross_correlate(PIV)と blob2d.blob_label(個体の検出)。
+    "swarmflow": [
+        ("sph_kernel", "swarmflow", ["signal", "scalar"], "signal"),
+        ("sph_density_pressure", "swarmflow", ["matrix", "scalar"], "table"),
+        ("swarm_simulate", "swarmflow", [], "table"),
+        ("swarm_render_overhead", "swarmflow", ["matrix", "any", "scalar"], "image2d"),
+        ("swarm_field_from_tracks", "swarmflow", ["any", "scalar", "scalar"], "table"),
+        ("swarm_field_from_piv", "swarmflow", ["any", "scalar", "scalar"], "table"),
+        ("potential_flow_cylinder", "swarmflow", ["signal", "signal", "any"], "table"),
+        ("velocity_deficit_map", "swarmflow", ["table"], "table"),
+        ("stagnation_from_centerline", "swarmflow", ["table"], "table"),
+        ("obstacle_fit_doublet", "swarmflow", ["table"], "table"),
+        ("ritter_dam_break", "swarmflow", ["signal", "scalar", "scalar"], "table"),
+        ("sph_dam_break_1d", "swarmflow", [], "table"),
     ],
 }
 

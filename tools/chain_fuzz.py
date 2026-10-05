@@ -5653,6 +5653,71 @@ def _b_oz_pts(pool, rng):
     return (P, P @ R.T + rng.normal(0, 1.0, 3)), {}
 
 
+_FUZZ_SW = {}
+_SW_CYL = (0.3, 0.1, 0.6)
+
+
+def _fuzz_sw():
+    """群れの小さな種(ポテンシャル流の速度場と、粒子を運んだ俯瞰の 3 コマ)を 1 回だけ作る(swarmflow、numpy + scipy)。"""
+    if "field" not in _FUZZ_SW:
+        import swarmflow as SW
+        x, y = np.linspace(-2.0, 2.0, 41), np.linspace(1.5, -1.5, 31)
+        rng = np.random.default_rng(0)
+        p = np.column_stack([rng.uniform(-2.2, 2.2, 500), rng.uniform(-1.6, 1.6, 500)])
+        p = p[np.hypot(p[:, 0] - _SW_CYL[0], p[:, 1] - _SW_CYL[1]) > _SW_CYL[2]]
+        frames = []
+        for _ in range(3):
+            frames.append(SW.swarm_render_overhead(p, (150, 200), 0.02, diameter_px=2.5))
+            r = SW.potential_flow_cylinder(p[:, 0], p[:, 1], _SW_CYL, 1.0)
+            p = p + 0.02 * np.column_stack([np.nan_to_num(r["u"]), np.nan_to_num(r["v"])])
+        _FUZZ_SW.update({"field": SW.potential_flow_cylinder(x, y, _SW_CYL, 1.0, grid=True), "frames": frames, "pts": p, "x": x, "y": y})
+    return _FUZZ_SW
+
+
+def _b_sw_kernel(pool, rng):
+    return (np.linspace(0.0, 2.0, 41), float(rng.uniform(0.3, 1.0))), {"dim": int(rng.integers(1, 4)), "derivative": bool(rng.integers(0, 2))}
+
+
+def _b_sw_density(pool, rng):
+    return (_fuzz_sw()["pts"], float(rng.uniform(0.1, 0.3))), {"c": float(rng.uniform(5.0, 20.0))}
+
+
+def _b_sw_sim(pool, rng):
+    return (), {"obstacle": (0.0, 0.0, 0.4) if rng.integers(0, 2) else None, "box": (2.4, 1.6), "spacing": 0.15, "t_warm": 0.05,
+                "n_frames": 2, "frame_dt": 0.02, "seed": int(rng.integers(0, 9))}
+
+
+def _b_sw_render(pool, rng):
+    return (_fuzz_sw()["pts"], (60, 80), float(rng.uniform(0.03, 0.08))), {"diameter_px": float(rng.uniform(2.0, 4.0))}
+
+
+def _b_sw_tracks(pool, rng):
+    return (_fuzz_sw()["frames"], 0.02, 0.02), {}
+
+
+def _b_sw_piv(pool, rng):
+    return (_fuzz_sw()["frames"], 0.02, 0.02), {"window": int(rng.choice([16, 24, 32]))}
+
+
+def _b_sw_pf(pool, rng):
+    f = _fuzz_sw()
+    return (f["x"], f["y"], (float(rng.uniform(-0.5, 0.5)), 0.0, float(rng.uniform(0.2, 0.8)))), {"grid": True}
+
+
+def _b_sw_field(pool, rng):
+    f = dict(_fuzz_sw()["field"])
+    f["u"] = f["u"] + rng.normal(0, 0.02, f["u"].shape)
+    return (f,), {}
+
+
+def _b_sw_ritter(pool, rng):
+    return (np.linspace(-1.0, 1.0, 101), float(rng.uniform(0.05, 0.5)), float(rng.uniform(0.05, 0.2))), {}
+
+
+def _b_sw_dam(pool, rng):
+    return (), {"n_particles": int(rng.integers(40, 80)), "t_end": float(rng.uniform(0.02, 0.06)), "n_out": 2}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6023,6 +6088,10 @@ OP_ARG_BUILDERS = {
     "particle_image_d50": _b_gd_imd50,
     "matmul_ozaki": _b_oz_mm_fixed, "matmul_reproducible": _b_oz_mm, "ozaki_error_bound": _b_oz_bound,
     "cross_covariance_reproducible": _b_oz_pts, "kabsch_reproducible": _b_oz_pts, "fp64_emulation_probe": _b_noargs,
+    "sph_kernel": _b_sw_kernel, "sph_density_pressure": _b_sw_density, "swarm_simulate": _b_sw_sim,
+    "swarm_render_overhead": _b_sw_render, "swarm_field_from_tracks": _b_sw_tracks, "swarm_field_from_piv": _b_sw_piv,
+    "potential_flow_cylinder": _b_sw_pf, "velocity_deficit_map": _b_sw_field, "stagnation_from_centerline": _b_sw_field,
+    "obstacle_fit_doublet": _b_sw_field, "ritter_dam_break": _b_sw_ritter, "sph_dam_break_1d": _b_sw_dam,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
@@ -6810,6 +6879,9 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "ken_truth",           # "radius_px" はカメラの後ろ(深度 ≤ 0)で NaN(docstring どおり)
                          "catch_success_rate",  # "mean_lateral" は 1 回も捕れなければ nan(docstring どおり)
                          "raster_wipe_area",    # "path" は一筆ごとの区切りが NaN の行(docstring どおり。溢れは別に ValueError)
+                         "swarm_field_from_tracks", "swarm_field_from_piv",  # 測れない格子は u・v が NaN で valid = False(module の規約どおり)
+                         "velocity_deficit_map",  # 測れない格子(valid = False)は NaN(docstring どおり)
+                         "potential_flow_cylinder",  # 円の内側は u・v が NaN(docstring どおり。流れの無い所)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

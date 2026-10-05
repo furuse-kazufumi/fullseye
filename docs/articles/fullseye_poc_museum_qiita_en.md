@@ -35,7 +35,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 | Article | Wings | Exhibits |
 |---|---|---:|
 | [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 110 |
-| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 82 |
+| [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 83 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
 
@@ -60,6 +60,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-10-06 — No.2026.213 A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle
 - 2026-10-05 — No.2026.202 Measuring a Powder Heap from Images — Angle of Repose, Volume, Mass, Flowability and Discharge by Rules, with Closed Forms, Published Values and MuJoCo as the Truth
 - 2026-10-05 — No.2026.203 Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth
 - 2026-10-05 — No.2026.204 Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
@@ -67,7 +68,6 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-10-05 — No.2026.206 Transcribing a Diabolo Model from the Paper and Checking It, then Reading Axis, Spin and Tension from Synthetic Video — Eq. (1b) as Printed Is Dimensionally Wrong and Gives NaN at the Real Dimensions; Closed Forms, an Exact String and MuJoCo as the Truth
 - 2026-10-05 — No.2026.207 Gating Large-Deformation Contact of a Soft Dome Fingertip Pressed on a Flat Object with a Scaling Law and an Exact Continuum Solution — As Printed, the Linear Coefficient of Eq. (3) Makes the Force of a Cylinder Negative; 2n/(1+n) Is Derived from the Paper's Own Model
 - 2026-10-05 — No.2026.208 Cutting a Peg's Rotation Search to 1/n with Its Symmetry — Inserting Square, Hexagonal and Keyed Pegs Checked by Group Identities, Closed Forms and MuJoCo; Friction Shrinks the Hexagon's Chamfer Window from 20.9° to 6.8°
-- 2026-10-05 — No.2026.209 Measuring Grinding, Polishing and Wiping from Images — Removed Depth, Wiped Band Width and Area Checked by Preston's Law, Closed-Form Contact Pressure and MuJoCo; a Compliant Wrist Keeps the Band Even over a 2 mm Height Error while a Stiff Wrist Lifts Off and Leaves Gaps
 
 ## Applying it to your own problem
 

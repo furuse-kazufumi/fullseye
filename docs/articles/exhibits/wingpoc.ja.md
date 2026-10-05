@@ -4186,7 +4186,7 @@ py -3.11 examples/poc_graph_hierarchy_segmentation.py
 
 ### 時系列を 3-D として測るウィング ―― 動画は 1 つの体積
 
-2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 20 点はその実演です。
+2-D の動画を (t, y, x) の 1 つの体積とみなすと、3-D の op ―― 連結成分、等値面、領域特徴 ―― がそのまま時間方向に効きます。合体したコロニーは時空間で Y 字になり、通過する車は (t, x) 画像の帯になり、波面の到達時刻は等値面になります。この部屋の 21 点はその実演です。
 
 同時に、時間方向ならではの罠も出ました。フレーム格子への丸めは必ず遅らせ、画素の面積は合体を早める。誤リンクには向きの逆な 2 種類があり、誤り率 1 本では拡散係数がどちらへ外れるか決まらない。テンプレート追跡は見失うより先に静かにずれ、ずれた 152 フレーム全部が「見つけた」と報告する。
 
@@ -4699,6 +4699,38 @@ py -3.11 examples/poc_diabolo_model_and_vision.py
 この回が作った図は全部で **9 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_diabolo_model_and_vision)
 
 使用 op(ノートへ): [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`diabolo_axis_from_image`](https://furuse.work/ops/drive/diabolo/diabolo_axis_from_image.html) · [`diabolo_camera`](https://furuse.work/ops/drive/diabolo/diabolo_camera.html) · [`diabolo_dynamics_step`](https://furuse.work/ops/drive/diabolo/diabolo_dynamics_step.html) · [`diabolo_marker_phase`](https://furuse.work/ops/drive/diabolo/diabolo_marker_phase.html) · [`diabolo_params`](https://furuse.work/ops/drive/diabolo/diabolo_params.html) · [`diabolo_render`](https://furuse.work/ops/drive/diabolo/diabolo_render.html) · [`diabolo_scene_mjcf`](https://furuse.work/ops/drive/diabolo/diabolo_scene_mjcf.html) · [`diabolo_simulate`](https://furuse.work/ops/drive/diabolo/diabolo_simulate.html) · [`diabolo_spheroid`](https://furuse.work/ops/drive/diabolo/diabolo_spheroid.html) · [`diabolo_spin_from_markers`](https://furuse.work/ops/drive/diabolo/diabolo_spin_from_markers.html) · [`diabolo_state_sequence`](https://furuse.work/ops/drive/diabolo/diabolo_state_sequence.html) · [`diabolo_throw_catch_truth`](https://furuse.work/ops/drive/diabolo/diabolo_throw_catch_truth.html) · [`diabolo_track`](https://furuse.work/ops/drive/diabolo/diabolo_track.html) · [`measure_text`](https://furuse.work/ops/annotate/text/measure_text.html) · [`spheroid_closest`](https://furuse.work/ops/drive/diabolo/spheroid_closest.html) · [`string_tension_from_sag`](https://furuse.work/ops/drive/diabolo/string_tension_from_sag.html) · [`string_tension_static`](https://furuse.work/ops/drive/diabolo/string_tension_static.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`zoom_inset`](https://furuse.work/ops/annotate/compose/zoom_inset.html)
+
+## No.2026.213 —— 流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する ―― 俯瞰映像の追跡と PIV で衝突点と障害物の輪郭を読む。当たる前の上流だけで分かり、障害物が無ければ何も言わない
+
+[![流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する ―― 俯瞰映像の追跡と PIV で衝突点と障害物の輪郭を読む。当たる前の上流だけで分かり、障害物が無ければ何も言わない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/02_swarmflow_speed_change_maps.png)
+
+*↑ **流体のように流れる群れが、見えない障害物を速度場の乱れだけで察知する ―― 俯瞰映像の追跡と PIV で衝突点と障害物の輪郭を読む。当たる前の上流だけで分かり、障害物が無ければ何も言わない** ―― 群れのロボットを SPH(平滑化粒子流体力学)の粒子として動かすと、障害物に当たった個体の減速が押し合いの圧力として上流へ伝わり、群れは円柱のまわりで近似的にポテンシャル流になる(自由流へ戻る抵抗が強い弱圧縮の群れは Darcy の流れ、という導出)。新モジュール swarmflow(12 op)は、上から撮った映像で個体を検出して追跡するか(blob2d)、相互相関の PIV(pivops)で速度場を測り、自由流からの欠け方で衝突点(よどみ点)と障害物の中心・半径を読む。真値は閉形式: 円柱まわりのポテンシャル流(表面の速さ 2U|sin θ| とのずれ 2e-7)、SPH の 3 次スプライン核の正規化 ∫W dV = 1(1・2・3 次元とも 1e-12 以内)、Ritter のダム崩壊解。閉形式の場では 2 次元の当てはめが厳密で、中心線の 1/√d の直線化は中心 0.30 % of R・半径 +0.09 %(上流の端の速さをそのまま U にすると半径 −16 % —— 円柱の欠損は 1/r² でしか消えないので、U を閉形式で割り戻して反復する)。粒子の映像から PIV で速度の rms 2.1 % of U・半径 −0.6 %、追跡で 3.3 %・+0.3 %。雑音だけ・渦・湧き出しの場では「説明できる割合」0.002〜0.080 で何も言わず、障害物ありは 0.761 以上(しきい値 0.5)。格子のように並ぶ群れの PIV は隣の格子の位置にも相関の峰が立ち、検査なしで rms 25 % → 峰の比 1.1 と中央値の検査で 2.9 %。1692 個体の群れの模擬では、映像から測った速度が個体の本当の速度と rms 1.4 % で合い、上流だけ(当たる前)の当てはめで中心 4.5 % of R・半径 −10 %、障害物なしでは何も言わない(0.017)。正直に: 群れの流れは厳密なポテンシャル流ではない —— 後ろに個体の入らない空洞が伸び、表面の速さは 2U に届かず 1.3U 前後、半径は 1 割小さく出る。俯瞰の映像には障害物の穴そのものが見えるが、推定はそれを使わず速度だけで読む(価値は当たる前に分かること)。障害物は円だけ、自由流は +x の前提。*
+
+[![群れ(白い点、1692 個体)が左から右へ流れる。障害物は描いていない —— 群れには当たる壁として効くだけ。直近 10 コマの個体の追跡から速度場を作り、自由流より遅い所を橙、速い所を青で塗る。上流だけの当てはめで推定した障害物の輪郭(水](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/01_swarmflow_hidden_obstacle_emerges.gif)
+
+*↑ 測定の図 ―― 群れ(白い点、1692 個体)が左から右へ流れる。障害物は描いていない —— 群れには当たる壁として効くだけ。直近 10 コマの個体の追跡から速度場を作り、自由流より遅い所を橙、速い所を青で塗る。上流だけの当てはめで推定した障害物の輪郭(水色の輪)と衝突点(桃色の×)が浮かび上がる。最後の 8 コマで真の障害物を白の破線で重ねる(半径は 1 割ほど小さめに出る —— 群れの流れは厳密なポテンシャル流ではないため)。*
+
+[![中心線の上の欠損 d = R²/(x − x_c)² は 1/√d にすると直線になり(傾き −1/R)、1/√d = 1 の所がよどみ点(衝突点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/03_swarmflow_centerline_linearised.png)
+
+*↑ 中心線の上の欠損 d = R²/(x − x_c)² は 1/√d にすると直線になり(傾き −1/R)、1/√d = 1 の所がよどみ点(衝突点)。*
+
+[![個体を減らすと間隔 s が広がる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/04_swarmflow_density_limit.png)
+
+*↑ 個体を減らすと間隔 s が広がる。*
+
+[![ゲートを開けた群れの広がりの模型(1 次元 SPH の浅水、400 粒子)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow/05_swarmflow_dam_break_ritter.png)
+
+*↑ ゲートを開けた群れの広がりの模型(1 次元 SPH の浅水、400 粒子)。*
+
+```
+py -3.11 examples/poc_swarm_obstacle_from_flow.py
+```
+
+ソース: [examples/poc_swarm_obstacle_from_flow.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_swarm_obstacle_from_flow.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_swarm_obstacle_from_flow)
+
+使用 op(ノートへ): [`blob_label`](https://furuse.work/ops/blob/connect/blob_label.html) · [`obstacle_fit_doublet`](https://furuse.work/ops/drive/swarmflow/obstacle_fit_doublet.html) · [`piv_cross_correlate`](https://furuse.work/ops/piv/estimate/piv_cross_correlate.html) · [`potential_flow_cylinder`](https://furuse.work/ops/drive/swarmflow/potential_flow_cylinder.html) · [`ritter_dam_break`](https://furuse.work/ops/drive/swarmflow/ritter_dam_break.html) · [`sph_dam_break_1d`](https://furuse.work/ops/drive/swarmflow/sph_dam_break_1d.html) · [`sph_kernel`](https://furuse.work/ops/drive/swarmflow/sph_kernel.html) · [`stagnation_from_centerline`](https://furuse.work/ops/drive/swarmflow/stagnation_from_centerline.html) · [`swarm_field_from_piv`](https://furuse.work/ops/drive/swarmflow/swarm_field_from_piv.html) · [`swarm_field_from_tracks`](https://furuse.work/ops/drive/swarmflow/swarm_field_from_tracks.html) · [`swarm_render_overhead`](https://furuse.work/ops/drive/swarmflow/swarm_render_overhead.html) · [`swarm_simulate`](https://furuse.work/ops/drive/swarmflow/swarm_simulate.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`velocity_deficit_map`](https://furuse.work/ops/drive/swarmflow/velocity_deficit_map.html)
 
 ## No.2026.170 —— 卓球の球を先駆者の目で測る ―― 真値つきの台で、多カメラ追跡・三角測量・軌道予測・跳ね・スピンを定理で採点する
 

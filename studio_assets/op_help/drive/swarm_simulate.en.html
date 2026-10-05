@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">swarm_simulate — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_simulate(obstacle=None, speed: &#x27;float&#x27; = 1.0, box=(8.0, 5.0), spacing: &#x27;float&#x27; = 0.15, h_factor: &#x27;float&#x27; = 1.3, tau: &#x27;float&#x27; = 0.1, c: &#x27;float&#x27; = 10.0, alpha: &#x27;float&#x27; = 0.5, t_warm: &#x27;float&#x27; = 2.0, n_frames: &#x27;int&#x27; = 20, frame_dt: &#x27;float&#x27; = 0.06, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_simulate(obstacle=None, speed: &#x27;float&#x27; = 1.0, box=(8.0, 5.0), spacing: &#x27;float&#x27; = 0.15, h_factor: &#x27;float&#x27; = 1.3, tau: &#x27;float&#x27; = 0.1, c: &#x27;float&#x27; = 10.0, alpha: &#x27;float&#x27; = 0.5, t_warm: &#x27;float&#x27; = 2.0, n_frames: &#x27;int&#x27; = 20, frame_dt: &#x27;float&#x27; = 0.06, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;swarm_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>障害物のある周期の流路を流れる群れ(SPH の弱圧縮流体として動く個体)。障害物は個体には「ぶつかる壁」として効くだけ。</p>
+<p>個体 i の加速度 = (U e_x − v_i)/τ(自由流の速さへ戻る)− Σ_j m (p_i/ρ_i² + p_j/ρ_j²) ∇W_ij(圧力 = 押し合い)</p>
+<p>− Σ_j m Π_ij ∇W_ij(Monaghan の人工粘性、近づく組だけ)+ 揺らぎ(標準偏差 `<code style="color:#22d3bf">noise</code>` [m/s²] の白色)。</p>
+<p>壁: 円の内側に入った個体は表面へ戻し、内向きの速度だけ消す(滑る壁)。周期境界(x も y も)。積分は symplectic Euler、</p>
+<p>刻みは CFL 0.25 h/(c + U)。U τ ≪ R・c ≫ U のとき定常の流れは円柱まわりのポテンシャル流に近い(module docstring の導出)。</p>
+<p>Args:</p>
+<p>obstacle: (xc, yc, R) [m] か None(障害物なし)。</p>
+<p>speed: 自由流の速さ U [m/s]。</p>
+<p>box: 流路の大きさ (Lx, Ly) [m]、中心が原点。</p>
+<p>spacing: 初期の格子の間隔 [m] (個体の間隔)。</p>
+<p>h_factor: h = h_factor × spacing。</p>
+<p>tau: 速さへ戻る時定数 [s]。</p>
+<p>c: 音速 [m/s] (押し合いの硬さ)。</p>
+<p>alpha: 人工粘性の係数。</p>
+<p>t_warm: 記録の前に流す時間 [s] (定常に近づける)。</p>
+<p>n_frames: 記録するコマ数(≥ 2)。</p>
+<p>frame_dt: コマの間隔 [s]。</p>
+<p>noise: 加速度の揺らぎ [m/s²]。</p>
+<p>seed: 乱数の種。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">frames</code><code style="color:#22d3bf"> (T, N, 2) 位置 [m] (箱の中へ折り返し済み)、</code><code style="color:#22d3bf">velocities</code><code style="color:#22d3bf"> (T, N, 2)、</code><code style="color:#22d3bf">t</code><code style="color:#22d3bf"> (T,)、</code><code style="color:#22d3bf">box</code>`、</p>
+<p>`<code style="color:#22d3bf">obstacle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">h</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">dt</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rho0</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">density_range</code><code style="color:#22d3bf">(記録の間の ρ/ρ₀ の 1〜99 % 点)、</code><code style="color:#22d3bf">n_agents</code>`、</p>
+<p>`<code style="color:#22d3bf">t_total</code><code style="color:#22d3bf">(流した時間)、</code><code style="color:#22d3bf">t_wake_reenters</code>`(障害物の後ろの空洞が箱の右端から左端へ回り込み始める時刻</p>
+<p>(Lx/2 − x_c − R)/U。これより長く流すと、上流の端に空洞の個体が入ってきて自由流が汚れる)。</p>
+<p>★障害物の後ろには個体の入らない空洞が長く伸びる(押し合いの圧力は引っ張らないほど弱く、抵抗で U に戻るだけなので</p>
+<p>横から埋まらない)。俯瞰の映像では障害物の所の「穴」と空洞そのものが見える —— 速度だけで推定するという主張は、</p>
+<p>推定がこの穴を使わない(速度場の欠測として捨てる)という意味で、映像に障害物の手がかりが無いという意味ではない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a> · <a style="color:#22d3bf" href="opdrive:stagnation_from_centerline">stagnation_from_centerline</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

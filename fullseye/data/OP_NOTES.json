@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3031,
- "n_notes": 3037,
+ "n_ops": 3043,
+ "n_notes": 3049,
  "notes": {
   "vol_dilate": [
    {
@@ -20422,6 +20422,124 @@
     "in": "image2d × image2d × scalar",
     "out": "table",
     "path": "docs/ops/drive/scoop/two_view_volume.md"
+   }
+  ],
+  "obstacle_fit_doublet": [
+   {
+    "op": "obstacle_fit_doublet",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/obstacle_fit_doublet.md"
+   }
+  ],
+  "potential_flow_cylinder": [
+   {
+    "op": "potential_flow_cylinder",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "signal × signal × any",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/potential_flow_cylinder.md"
+   }
+  ],
+  "ritter_dam_break": [
+   {
+    "op": "ritter_dam_break",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "signal × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/ritter_dam_break.md"
+   }
+  ],
+  "sph_dam_break_1d": [
+   {
+    "op": "sph_dam_break_1d",
+    "dim": "drive",
+    "category": "swarmflow",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/sph_dam_break_1d.md"
+   }
+  ],
+  "sph_density_pressure": [
+   {
+    "op": "sph_density_pressure",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "matrix × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/sph_density_pressure.md"
+   }
+  ],
+  "sph_kernel": [
+   {
+    "op": "sph_kernel",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/swarmflow/sph_kernel.md"
+   }
+  ],
+  "stagnation_from_centerline": [
+   {
+    "op": "stagnation_from_centerline",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/stagnation_from_centerline.md"
+   }
+  ],
+  "swarm_field_from_piv": [
+   {
+    "op": "swarm_field_from_piv",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/swarm_field_from_piv.md"
+   }
+  ],
+  "swarm_field_from_tracks": [
+   {
+    "op": "swarm_field_from_tracks",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/swarm_field_from_tracks.md"
+   }
+  ],
+  "swarm_render_overhead": [
+   {
+    "op": "swarm_render_overhead",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "matrix × any × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/swarmflow/swarm_render_overhead.md"
+   }
+  ],
+  "swarm_simulate": [
+   {
+    "op": "swarm_simulate",
+    "dim": "drive",
+    "category": "swarmflow",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/swarm_simulate.md"
+   }
+  ],
+  "velocity_deficit_map": [
+   {
+    "op": "velocity_deficit_map",
+    "dim": "drive",
+    "category": "swarmflow",
+    "in": "table",
+    "out": "table",
+    "path": "docs/ops/drive/swarmflow/velocity_deficit_map.md"
    }
   ],
   "contact_patch_radius": [

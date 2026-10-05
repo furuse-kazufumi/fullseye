@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">obstacle_fit_doublet — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;obstacle_fit_doublet&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>速度場に円柱まわりのポテンシャル流 u − i v = U (1 − R²/(z − z_c)²) を当てはめる(実装 2、2 次元の非線形最小二乗)。</p>
+<p>未知数は (x_c, y_c, R², U)。出発点は 2 つ: :func:<code style="color:#22d3bf">stagnation_from_centerline</code> と、格子の節点を中心の候補にした</p>
+<p>粗い探索(U を固定すると模型は R² について 1 次なので閉形式で解ける)。説明できる割合の大きい方を採る。円の</p>
+<p>`<code style="color:#22d3bf">exclude_margin</code>` 倍より内側の格子は使わない(格子へ移す核が壁をまたいで速さを均すため)—— 推定し直して 3 回回す。</p>
+<p>`<code style="color:#22d3bf">upstream_only</code>` なら衝突点より上流(x &lt; x_c − R)の格子だけで当てはめる(「当たる前に」分かるか)。</p>
+<p>判定: 一様流だけの模型(u, v が定数)の残差 RSS₀ に対して、円柱の模型で減った割合 1 − RSS₁/RSS₀(**乱れのうち</p>
+<p>円柱で説明できる割合**)が `<code style="color:#22d3bf">min_explained</code><code style="color:#22d3bf"> 以上、半径が </code><code style="color:#22d3bf">min_radius</code>`(既定 = 格子の間隔 2 つ)以上、中心が場の中</p>
+<p>—— の 3 つで `<code style="color:#22d3bf">detected</code>`。否定の判定(障害物なし)はこの割合が小さいことで出る。</p>
+<p>★半径の下限は解像の限界: :func:<code style="color:#22d3bf">swarm_field_from_tracks</code> の格子は個体の間隔 s ごとなので、既定では R &lt; 2s の障害物を</p>
+<p>「ある」と言わない。拒否が正当なことは実測で確かめた(一様に撒いた粒子、R = 0.6 m: R/s ≈ 5 で中心・半径とも 2 % 以内、</p>
+<p>R/s ≈ 2.5 で 5 % 以内、R/s ≈ 1.2 で半径が 48 % 小さく出る)。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">center</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">radius</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">speed</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">stagnation</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">explained</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">detected</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">n_used</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rms_residual</code>`</p>
+<p>(m/s)・`<code style="color:#22d3bf">rms_null</code>`(m/s)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

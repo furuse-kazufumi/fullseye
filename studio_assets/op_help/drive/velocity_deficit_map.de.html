@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">velocity_deficit_map — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import swarmflow; swarmflow.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;velocity_deficit_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>速度場 → 自由流からの欠損 1 − u/U、横の振れ v/U、速さの欠損 1 − |v|/U。U は与えるか、上流の端 15 % の u の中央値。</p>
+<p>Returns:</p>
+<p>dict: `<code style="color:#22d3bf">deficit</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">deflection</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">speed_deficit</code><code style="color:#22d3bf"> (H, W)(測れない格子は NaN)、</code><code style="color:#22d3bf">speed</code><code style="color:#22d3bf">(使った U)、</code><code style="color:#22d3bf">x</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">y</code>`。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:stagnation_from_centerline">stagnation_from_centerline</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
