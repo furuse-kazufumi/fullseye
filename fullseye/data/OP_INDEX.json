@@ -1,8 +1,8 @@
 {
- "n_ops": 2984,
+ "n_ops": 2997,
  "tiers": {
   "color": 12,
-  "ledger": 2031,
+  "ledger": 2044,
   "nary": 17,
   "registry": 924
  },
@@ -1727,6 +1727,21 @@
    ]
   },
   {
+   "name": "band_width_profile",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "bandpass",
    "halcon": "",
    "in_sort": "signal",
@@ -3288,6 +3303,34 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "coat_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
+   "name": "coat_thickness_from_image",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
   },
   {
    "name": "coherence",
@@ -17258,6 +17301,19 @@
    ]
   },
   {
+   "name": "polish_scene_mjcf",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "any",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar"
+   ]
+  },
+  {
    "name": "poly_eval",
    "halcon": "",
    "in_sort": "signal",
@@ -17524,6 +17580,67 @@
     "matrix",
     "matrix",
     "matrix",
+    "scalar"
+   ]
+  },
+  {
+   "name": "preston_coefficient_fit",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d"
+   ]
+  },
+  {
+   "name": "preston_pressure_kernel",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "image2d",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "preston_removal_map",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "image2d",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "preston_track_profile",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar",
+    "scalar",
     "scalar"
    ]
   },
@@ -18779,6 +18896,22 @@
    ]
   },
   {
+   "name": "raster_wipe_area",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "raw_apply_gains",
    "halcon": "",
    "in_sort": "image2d",
@@ -19327,6 +19460,20 @@
     "image2d",
     "image2d",
     "scalar"
+   ]
+  },
+  {
+   "name": "removal_depth_from_heights",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -26641,6 +26788,54 @@
     "scalar",
     "scalar",
     "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "winkler_polish_run",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "wipe_band_width",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "wipe_coverage",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "polish",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
     "scalar"
    ]
   },

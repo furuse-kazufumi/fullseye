@@ -1,0 +1,86 @@
+[
+ {
+  "file": "01_polish_raster_wipe_coat.gif",
+  "name": "polish_raster_wipe_coat",
+  "caption": "半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。暗い所 = 残った膜(Beer–Lambert)、青い輪 = 工具。最後の画像で拭けた面積 961.8 mm²、閉形式 (2a + (N−1)min(s, 2a))L + Nπa² − (N−1)lens(s) = 1087.1 mm²。縁は膜が薄くなるだけで消えきらない所があり(パッドの縁は通過の弦が短い)、Otsu のしきい値がその途中に入る。",
+  "shape": [
+   319,
+   440,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 6.0
+ },
+ {
+  "file": "02_polish_track_profiles_vs_closed_form.png",
+  "name": "polish_track_profiles_vs_closed_form",
+  "caption": "10 N、k_p = 10⁻¹² m²/N(セリアでガラスを磨く桁)、送り 1 mm/s。平板(半径 8 mm)= 半楕円、球(R = 50 mm、E* = 2 MPa)= Hertz で放物線、600 rpm で回る平板 = 進む側(+y で相対速度が小さい)と戻る側で非対称。点 = 地図の中央の列、破線 = 閉形式。回らない時の深さは送りの速さに依らない(dx だけで決まる)。縦軸は閉形式の最大で割った(回ると深さが 300 倍以上になるので)。",
+  "shape": [
+   400,
+   888,
+   3
+  ]
+ },
+ {
+  "file": "03_polish_band_width_vs_force.png",
+  "name": "polish_band_width_vs_force",
+  "caption": "膜 1 µm、除去係数は仮の値(平板で拭ける最小の力が 2 N になる値)。平板の幅は 2a√(1 − (h0/D)²) で半径 8 mm の 2 倍に近づき、球の幅は Hertz の接触半径とともに F^{1/3} で伸び続ける。画像の読みは Otsu のしきい値が意味する残膜(h0 の約 1/3)を戻して閉形式に入れた。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "04_polish_height_maps_depth_read.png",
+  "name": "polish_height_maps_depth_read",
+  "caption": "16 × 24 mm、画素 0.1 mm。磨く前と後の高さ図(粗さ Sq 20 nm、雑音 1 nm、後は載せ直しで傾きと高さが変わる。見せるために全体の平面を引いた)。軌跡から 1 mm 以上離れた帯で平面を引くと、削れた深さ(最大 240 nm)が雑音の桁(rms 1.4 nm)で読める。右端 = 読みと閉形式の差。",
+  "shape": [
+   534,
+   1338,
+   3
+  ]
+ },
+ {
+  "file": "05_polish_roughness_decay_winkler.png",
+  "name": "polish_roughness_decay_winkler",
+  "caption": "弾性床のパッド(k_w = 10¹⁰ Pa/m、平均圧 30 kPa、相対速度 1 m/s)。全面が当たる(粗さ 0.3 µm)間は rms が exp(−k_p k_w v t) に乗る。粗さ 3 µm では山だけが当たり(当たる割合の最小 0.81)、谷は削られないので減り方が式より遅い。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "06_polish_raster_area_vs_pitch.png",
+  "name": "polish_raster_area_vs_pitch",
+  "caption": "4 本の一筆(長さ 30 mm、パッド半径 5 mm)。s ≥ 2a で帯が離れ、面積は 4 本の和で一定になる(破線の平らな部分)。点 = 膜の画像を Otsu で2 値化して数えた面積。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_polish_mujoco_force_along_stroke.png",
+  "name": "polish_mujoco_force_along_stroke",
+  "caption": "板の高さの誤差 2 mm(80 mm で)。柔らかい手首(300 N/m、30 mm 押し込む)は力がほぼ一定で ばねの閉形式どおり。硬い手首(10 kN/m、0.3 mm)は力が 15 N から 0 まで変わり、x* = (Δ0 + mg/k)/g で浮く。硬い手首の点のばらつきは接触の細かな跳ね。",
+  "shape": [
+   400,
+   640,
+   3
+  ]
+ },
+ {
+  "file": "08_polish_mujoco_wiped_bands.png",
+  "name": "polish_mujoco_wiped_bands",
+  "caption": "MuJoCo の実測の軌跡と力で拭いた跡(膜 1 µm、画素 0.2 mm、104 × 24 mm)。柔らかい手首は帯がそろい、硬い手首は押しすぎる所で太く、浮く所で途切れる。",
+  "shape": [
+   336,
+   541,
+   3
+  ]
+ }
+]

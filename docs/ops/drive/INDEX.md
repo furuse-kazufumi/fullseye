@@ -1,4 +1,4 @@
-# DRIVE operator help — 600 ops in 42 categories
+# DRIVE operator help — 613 ops in 43 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -115,6 +115,10 @@
 ### pegtactile (19)
 
 [contact_candidates](pegtactile/contact_candidates.md) · [contact_state_from_wrench](pegtactile/contact_state_from_wrench.md) · [equivariance_check](pegtactile/equivariance_check.md) · [friction_from_single_contact](pegtactile/friction_from_single_contact.md) · [pad_context](pegtactile/pad_context.md) · [pad_loads_to_peg_wrench](pegtactile/pad_loads_to_peg_wrench.md) · [pad_marker_displacement](pegtactile/pad_marker_displacement.md) · [pad_params](pegtactile/pad_params.md) · [pad_shear_asymmetry](pegtactile/pad_shear_asymmetry.md) · [pad_tactile_frame](pegtactile/pad_tactile_frame.md) · [pad_tactile_read](pegtactile/pad_tactile_read.md) · [peg_wrench_to_pad_loads](pegtactile/peg_wrench_to_pad_loads.md) · [stall_verdict](pegtactile/stall_verdict.md) · [symmetric_peg_shape](pegtactile/symmetric_peg_shape.md) · [symmetry_order_contour](pegtactile/symmetry_order_contour.md) · [two_point_forces](pegtactile/two_point_forces.md) · [whitney_wrench](pegtactile/whitney_wrench.md) · [wrist_deflection_from_rgbd](pegtactile/wrist_deflection_from_rgbd.md) · [wrist_stiffness_fit](pegtactile/wrist_stiffness_fit.md)
+
+### polish (13)
+
+[band_width_profile](polish/band_width_profile.md) · [coat_image](polish/coat_image.md) · [coat_thickness_from_image](polish/coat_thickness_from_image.md) · [polish_scene_mjcf](polish/polish_scene_mjcf.md) · [preston_coefficient_fit](polish/preston_coefficient_fit.md) · [preston_pressure_kernel](polish/preston_pressure_kernel.md) · [preston_removal_map](polish/preston_removal_map.md) · [preston_track_profile](polish/preston_track_profile.md) · [raster_wipe_area](polish/raster_wipe_area.md) · [removal_depth_from_heights](polish/removal_depth_from_heights.md) · [winkler_polish_run](polish/winkler_polish_run.md) · [wipe_band_width](polish/wipe_band_width.md) · [wipe_coverage](polish/wipe_coverage.md)
 
 ### puck (26)
 

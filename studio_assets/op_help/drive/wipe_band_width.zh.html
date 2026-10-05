@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wipe_band_width — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.wipe_band_width(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, coat: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;wipe_band_width&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>厚さ `<code style="color:#22d3bf">coat</code><code style="color:#22d3bf"> の膜を回らない工具の直線の一筆で拭いた時、膜が消える帯の幅(閉形式)。返り </code><code style="color:#22d3bf">width</code>`(0 なら拭けない)、</p>
+<p>`<code style="color:#22d3bf">half_width</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">force_min</code><code style="color:#22d3bf">(帯ができ始める力)、</code><code style="color:#22d3bf">centre_depth</code><code style="color:#22d3bf">(中心の除去の深さ)、</code><code style="color:#22d3bf">a</code>`(接触半径)。</p>
+<p>平板: D = 2 a k_p p、半幅 a √(1 − (h0/D)²)、F_min = π a h0/(2 k_p)。Hertz: D = k_p E* a²/R、半幅 √(a² − h0 R/(k_p E*))、</p>
+<p>F_min = (4E*/3R)(h0 R/(k_p E*))^{3/2}。速さに依らない(回らない時)。<b>Raises</b> ValueError: 数の検査。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">polish</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:preston_pressure_kernel">preston_pressure_kernel</a> · <a style="color:#22d3bf" href="opdrive:preston_removal_map">preston_removal_map</a> · <a style="color:#22d3bf" href="opdrive:preston_track_profile">preston_track_profile</a> · <a style="color:#22d3bf" href="opdrive:raster_wipe_area">raster_wipe_area</a> · <a style="color:#22d3bf" href="opdrive:coat_image">coat_image</a> · <a style="color:#22d3bf" href="opdrive:coat_thickness_from_image">coat_thickness_from_image</a> · <a style="color:#22d3bf" href="opdrive:wipe_coverage">wipe_coverage</a> · <a style="color:#22d3bf" href="opdrive:band_width_profile">band_width_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: polish.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

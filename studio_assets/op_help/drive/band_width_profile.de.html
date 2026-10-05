@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">band_width_profile — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>直線の一筆(`<code style="color:#22d3bf">along</code>` の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を</p>
+<p>隣の画素との線形補間で求め、その差 × res。返り `<code style="color:#22d3bf">widths</code><code style="color:#22d3bf">(線ごと、読めない線は NaN)、</code><code style="color:#22d3bf">centres</code>`(帯の中心の位置 [m]、</p>
+<p>地図の座標)、`<code style="color:#22d3bf">valid</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">median</code>`。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。</p>
+<p><b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">polish</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:preston_pressure_kernel">preston_pressure_kernel</a> · <a style="color:#22d3bf" href="opdrive:preston_removal_map">preston_removal_map</a> · <a style="color:#22d3bf" href="opdrive:preston_track_profile">preston_track_profile</a> · <a style="color:#22d3bf" href="opdrive:wipe_band_width">wipe_band_width</a> · <a style="color:#22d3bf" href="opdrive:raster_wipe_area">raster_wipe_area</a> · <a style="color:#22d3bf" href="opdrive:coat_image">coat_image</a> · <a style="color:#22d3bf" href="opdrive:coat_thickness_from_image">coat_thickness_from_image</a> · <a style="color:#22d3bf" href="opdrive:wipe_coverage">wipe_coverage</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: polish.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

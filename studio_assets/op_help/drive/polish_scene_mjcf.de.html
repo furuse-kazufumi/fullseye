@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polish_scene_mjcf — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polish_scene_mjcf(radius: &#x27;float&#x27; = 0.008, k_z: &#x27;float&#x27; = 500.0, k_xy: &#x27;float&#x27; = 20000.0, mass: &#x27;float&#x27; = 0.2, friction: &#x27;float&#x27; = 0.3, thickness: &#x27;float&#x27; = 0.004, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import polish; polish.polish_scene_mjcf(radius: &#x27;float&#x27; = 0.008, k_z: &#x27;float&#x27; = 500.0, k_xy: &#x27;float&#x27; = 20000.0, mass: &#x27;float&#x27; = 0.2, friction: &#x27;float&#x27; = 0.3, thickness: &#x27;float&#x27; = 0.004, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;polish_scene_mjcf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>平らな板(z = 0 の平面)の上で、円柱の工具(半径 `<code style="color:#22d3bf">radius</code><code style="color:#22d3bf">、厚さ </code><code style="color:#22d3bf">thickness</code><code style="color:#22d3bf">、質量 </code><code style="color:#22d3bf">mass</code>`)を x・y・z の 3 本の直動の</p>
+<p>関節で動かす MJCF。z は位置サーボ(ゲイン `<code style="color:#22d3bf">k_z</code><code style="color:#22d3bf"> [N/m] = 手首の押し付けのばね)、x・y は硬いサーボ </code><code style="color:#22d3bf">k_xy</code>`。重力あり。</p>
+<p>ばねの閉形式: 工具の底が板に載っている時の法線力 N = m g + k_z (q_surface − q_cmd)(q_surface = 底が z = 0 に来る関節値)。</p>
+<p>接触は硬めに(solref の時定数 = 4 × timestep、solimp 0.99)して、めり込みを ばねの縮みより十分小さくする(既定の柔らかい接触では</p>
+<p>質量 0.05 kg・5 N で 0.7 mm めり込み、手首のばねと直列になって力が 6 % 小さく出た —— 実測)。摩擦の錐は角錐(pyramidal)。</p>
+<p>楕円の錐 + impratio = 10 では、硬い手首(20 kN/m)で 0.1〜0.36 mm めり込んで力が 17 % 小さく出た(摩擦 0 でも同じ、実測)。</p>
+<p><b>Raises</b> ValueError: 数の検査。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">any</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">polish</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:preston_pressure_kernel">preston_pressure_kernel</a> · <a style="color:#22d3bf" href="opdrive:preston_removal_map">preston_removal_map</a> · <a style="color:#22d3bf" href="opdrive:preston_track_profile">preston_track_profile</a> · <a style="color:#22d3bf" href="opdrive:wipe_band_width">wipe_band_width</a> · <a style="color:#22d3bf" href="opdrive:raster_wipe_area">raster_wipe_area</a> · <a style="color:#22d3bf" href="opdrive:coat_image">coat_image</a> · <a style="color:#22d3bf" href="opdrive:coat_thickness_from_image">coat_thickness_from_image</a> · <a style="color:#22d3bf" href="opdrive:wipe_coverage">wipe_coverage</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: polish.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

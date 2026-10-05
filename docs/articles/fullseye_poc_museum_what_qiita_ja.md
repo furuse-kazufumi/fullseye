@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **107 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **108 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -996,7 +996,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 29 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 30 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1891,6 +1891,42 @@ py -3.11 examples/poc_tacdome_large_deformation.py
 この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacdome_large_deformation)
 
 使用 op(ノートへ): [`contact_patch_radius`](https://furuse.work/ops/drive/tacdome/contact_patch_radius.html) · [`dome_contact_image`](https://furuse.work/ops/drive/tacdome/dome_contact_image.html) · [`hertz_force`](https://furuse.work/ops/drive/tacsim/hertz_force.html) · [`hertz_small_strain_error`](https://furuse.work/ops/drive/tacdome/hertz_small_strain_error.html) · [`hertz_sphere`](https://furuse.work/ops/drive/tacsim/hertz_sphere.html) · [`large_deformation_contact`](https://furuse.work/ops/drive/tacdome/large_deformation_contact.html) · [`large_deformation_inverse`](https://furuse.work/ops/drive/tacdome/large_deformation_inverse.html) · [`largedef_correction`](https://furuse.work/ops/drive/tacdome/largedef_correction.html) · [`largedef_radius_ratio`](https://furuse.work/ops/drive/tacdome/largedef_radius_ratio.html) · [`largedef_universal_correction`](https://furuse.work/ops/drive/tacdome/largedef_universal_correction.html) · [`mdr_spring_bed`](https://furuse.work/ops/drive/tacdome/mdr_spring_bed.html) · [`neohookean_cylinder_exact`](https://furuse.work/ops/drive/tacdome/neohookean_cylinder_exact.html) · [`powerlaw_linear_contact`](https://furuse.work/ops/drive/tacdome/powerlaw_linear_contact.html)
+
+## No.2026.209 —— 研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない
+
+[![研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/02_polish_track_profiles_vs_closed_form.png)
+
+*↑ **研削・研磨・拭き取りを画像で測る ―― 削れた深さ・拭けた帯の幅・面積を Preston の式と接触圧の閉形式と MuJoCo で、柔らかい手首は板の高さの誤差 2 mm でも帯がそろい硬い手首は途中で浮いて拭けない** ―― 物理シミュ × Fullseye 系列の続き。研削の模倣学習(DIPCOM、arXiv:2410.19235)と可変コンプライアンスの拭き(Comp-ACT、arXiv:2406.14990)は接触を保つ剛性を学習で決める。台帳では「視覚が薄い」と保留していたが、仕事の結果(削れた量・拭けた範囲)は画像で測れるので、学習なしで残る部品として成立させた。新モジュール polish 13 op + mujoco の facade 3。外から来るもの: Preston の式 dh/dt = k_p p v(原文 1927 は未読、式の形と k_p の桁 = セリアでガラス 2e-13〜2e-12 m²/N は Shen ほか 2018、J. Am. Ceram. Soc. の式 (1) と本文から)、接触圧(平板 = 一様、球 = Hertz、tacsim の hertz_sphere)、導出した閉形式(直線の一筆の断面、拭けた帯の幅と拭ける最小の力、平行な一筆の面積、弾性床のパッドで粗さが exp(−k_p k_w v t) で減ること)、MuJoCo。(1) 除去の地図の 2 実装(小区間ごとの直接の積分 / 軌跡の線密度と圧力の窓の FFT 畳み込み)が rms 差 0.37 % of peak、体積比 3.6e-4。(2) 一筆の断面 = 閉形式(平板 2k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²) で曲率が力に依らない、回る平板の asinh の式)が 0.26 % 以内、体積 / 長さ = k_p F(0.99964 / 1.00002)。(3) 膜の画像(Beer–Lambert、雑音 1 %)から Otsu で読んだ帯の幅 = 閉形式が平板・Hertz 各 4 力で 0.28 % 以内。罠: Otsu のしきい値は残膜 h0 の約 1/3 を意味し、戻さないと最大 36 % 外れる。拭ける最小の力 1.90 N の下で「きれい」な画素 0、平行な 4 本の一筆の面積は 4 つの間隔で 0.30 % 以内(型を画素の中心に置くと縁が 1 列まるごと落ちて −1.7 %、0.3 画素ずらした)。(4) 前後の高さ図(粗さ 20 nm・雑音 1 nm・載せ直し)から削れた深さ 240 nm を rms 1.41 nm で読み、Preston 係数を 0.04 % で当てた(外周の枠を参照にすると 42 % 外れる)。(5) 弾性床: 全面が当たる間 rms は exp に 0.20 % 以内、roughness の Sq 比 0.1351 vs 0.1353。山だけが当たると 19 % 外れる。(6) MuJoCo(--full): 円柱の工具を手首のばね(300 N/m と 10 kN/m)で板に押して動かす。柔らかい手首の力 = ばねの閉形式(99 % 点 0.05 %)、摩擦 = μ、硬い手首は閉形式の 19.8 mm に対し 19.2 mm で浮く。MuJoCo の力で拭いた跡の帯の幅 = 力が変わる一筆の閉形式(中央値 0.55 % / 0.17 %)。帯の幅の変動係数 柔らかい 0.02 %・硬い 13 %、拭けない列 83 / 309 —— 可変コンプライアンスで拭く理由を学習なしで帯の幅の画像から。図: 平行に拭く動く図、一筆の断面と閉形式、帯の幅と力、高さ図と深さの読み、弾性床の粗さの減り、面積と間隔; --full: 一筆の間の力、MuJoCo の力で拭いた跡。門 10 本(既定 1.9 s)+ --full 5 本(図込み 15 s)。正直に: 拭き取りの膜の除去係数は仮の値(帯の幅の門は同じ係数で閉形式と画像が合うかを見るもの)。平板の一様な圧力は剛な平板の仮定(縁で立つ Boussinesq の圧力は入れていない)。弾性床は仮定、高さ図は横にずれない前提。MuJoCo の既定の接触は柔らかすぎて力が 6〜17 % 小さく出たので、接触を硬くし楕円の錐にした。研削の切りくずの模型は扱っていない。*
+
+[![半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。暗い所 = 残った膜(Beer–Lambert)、青い輪 = 工具。最後の画像で拭けた面積 961.8 mm²、閉形式 (2a + (](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/01_polish_raster_wipe_coat.gif)
+
+*↑ 測定の図 ―― 半径 5 mm の平らなパッドで、長さ 30 mm の一筆を間隔 1.2a で 4 本(持ち上げて戻る)。暗い所 = 残った膜(Beer–Lambert)、青い輪 = 工具。最後の画像で拭けた面積 961.8 mm²、閉形式 (2a + (N−1)min(s, 2a))L + Nπa² − (N−1)lens(s) = 1087.1 mm²。縁は膜が薄くなるだけで消えきらない所があり(パッドの縁は通過の弦が短い)、Otsu のしきい値がその途中に入る。*
+
+[![膜 1 µm、除去係数は仮の値(平板で拭ける最小の力が 2 N になる値)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/03_polish_band_width_vs_force_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/03_polish_band_width_vs_force.png)
+
+*↑ 膜 1 µm、除去係数は仮の値(平板で拭ける最小の力が 2 N になる値)。*
+
+[![16 × 24 mm、画素 0.1 mm。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/04_polish_height_maps_depth_read_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/04_polish_height_maps_depth_read.png)
+
+*↑ 16 × 24 mm、画素 0.1 mm。*
+
+[![4 本の一筆(長さ 30 mm、パッド半径 5 mm)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/06_polish_raster_area_vs_pitch_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/06_polish_raster_area_vs_pitch.png)
+
+*↑ 4 本の一筆(長さ 30 mm、パッド半径 5 mm)。*
+
+[![板の高さの誤差 2 mm(80 mm で)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/07_polish_mujoco_force_along_stroke_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_polish_wipe_measure/07_polish_mujoco_force_along_stroke.png)
+
+*↑ 板の高さの誤差 2 mm(80 mm で)。*
+
+```
+py -3.11 examples/poc_polish_wipe_measure.py
+```
+
+ソース: [examples/poc_polish_wipe_measure.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_polish_wipe_measure.py)
+
+この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_polish_wipe_measure)
+
+使用 op(ノートへ): [`band_width_profile`](https://furuse.work/ops/drive/polish/band_width_profile.html) · [`coat_image`](https://furuse.work/ops/drive/polish/coat_image.html) · [`coat_thickness_from_image`](https://furuse.work/ops/drive/polish/coat_thickness_from_image.html) · [`polish_scene_mjcf`](https://furuse.work/ops/drive/polish/polish_scene_mjcf.html) · [`preston_coefficient_fit`](https://furuse.work/ops/drive/polish/preston_coefficient_fit.html) · [`preston_pressure_kernel`](https://furuse.work/ops/drive/polish/preston_pressure_kernel.html) · [`preston_removal_map`](https://furuse.work/ops/drive/polish/preston_removal_map.html) · [`preston_track_profile`](https://furuse.work/ops/drive/polish/preston_track_profile.html) · [`raster_wipe_area`](https://furuse.work/ops/drive/polish/raster_wipe_area.html) · [`removal_depth_from_heights`](https://furuse.work/ops/drive/polish/removal_depth_from_heights.html) · [`surface_form_remove`](https://furuse.work/ops/roughness/prepare/surface_form_remove.html) · [`surface_params`](https://furuse.work/ops/roughness/measure/surface_params.html) · [`surface_synth_psd`](https://furuse.work/ops/roughness/synth/surface_synth_psd.html) · [`winkler_polish_run`](https://furuse.work/ops/drive/polish/winkler_polish_run.html) · [`wipe_band_width`](https://furuse.work/ops/drive/polish/wipe_band_width.html) · [`wipe_coverage`](https://furuse.work/ops/drive/polish/wipe_coverage.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

@@ -5393,6 +5393,77 @@ def _b_ps_mjcf(pool, rng):
     return (f["peg"], PSY.polygon_offset(f["peg"], 0.2e-3)["vertices"]), {"chamfer": float(rng.uniform(0, 1e-3))}
 
 
+_FUZZ_PO = {}
+_PO_A, _PO_K = 4.0e-3, np.pi * 4.0e-3 * 1e-6 / 4.0
+
+
+def _fuzz_po():
+    """拭き取りの小さな種(直線の一筆の除去の地図と膜の画像、滞在の地図)を 1 回だけ作る(polish、numpy だけ)。"""
+    if "map" not in _FUZZ_PO:
+        import polish as PO
+        line = np.array([[-0.01, 0.0], [0.01, 0.0]])
+        m = PO.preston_removal_map(line, 3.0, _PO_A, _PO_K, shape=(61, 41), res=2e-4, speed=0.01)
+        dw = PO.preston_removal_map(line, 3.0, _PO_A, 1.0, shape=(61, 41), res=2e-4, speed=0.01)
+        _FUZZ_PO.update({"line": line, "map": m, "dwell": dw, "img": PO.coat_image(m, 1e-6, noise=0.005, seed=0)})
+    return _FUZZ_PO
+
+
+def _b_po_kernel(pool, rng):
+    return (float(rng.uniform(1.0, 10.0)), _PO_A, 2e-4), {}
+
+
+def _b_po_map(pool, rng):
+    return (_fuzz_po()["line"], float(rng.uniform(1.0, 6.0)), _PO_A, _PO_K), {"shape": (41, 41), "res": 2e-4, "speed": 0.01,
+                                                                                 "method": str(rng.choice(["direct", "fft"]))}
+
+
+def _b_po_profile(pool, rng):
+    return (np.linspace(-5e-3, 5e-3, 21), float(rng.uniform(1.0, 10.0)), _PO_A, 1e-12), {"spin": float(rng.uniform(0, 60)), "speed": 1e-3}
+
+
+def _b_po_band(pool, rng):
+    return (float(rng.uniform(0.5, 10.0)), _PO_A, _PO_K, 1e-6), {}
+
+
+def _b_po_area(pool, rng):
+    return (_PO_A, 0.02, float(rng.uniform(0.2, 3.0)) * _PO_A, int(rng.integers(1, 5))), {}
+
+
+def _b_po_coat(pool, rng):
+    return (_fuzz_po()["map"], 1e-6), {"noise": float(rng.uniform(0, 0.02)), "seed": int(rng.integers(0, 9))}
+
+
+def _b_po_thick(pool, rng):
+    return (_fuzz_po()["img"], 1e-6), {}
+
+
+def _b_po_cover(pool, rng):
+    return (_fuzz_po()["img"], 2e-4), {"coat": 1e-6}
+
+
+def _b_po_bwp(pool, rng):
+    return (_fuzz_po()["img"], float(rng.uniform(0.4, 0.7)), 2e-4), {}
+
+
+def _b_po_heights(pool, rng):
+    f = _fuzz_po()
+    zb = rng.normal(0, 1e-8, f["map"].shape)
+    return (zb, zb - f["map"] + float(rng.normal(0, 1e-7))), {}
+
+
+def _b_po_fit(pool, rng):
+    f = _fuzz_po()
+    return (f["map"] * float(rng.uniform(0.5, 2.0)), f["dwell"]), {}
+
+
+def _b_po_winkler(pool, rng):
+    return (rng.normal(0, 0.2e-6, (16, 16)), 3e4, 1e10, 1e-12, 1.0, float(rng.uniform(1.0, 20.0))), {}
+
+
+def _b_po_mjcf(pool, rng):
+    return (float(rng.uniform(3e-3, 10e-3)),), {"k_z": float(rng.uniform(100.0, 2e4))}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5748,6 +5819,10 @@ OP_ARG_BUILDERS = {
     "polygon_yaw_read": _b_ps_yaw, "relative_yaw_from_images": _b_ps_rel, "symmetry_fold": _b_ps_fold, "rotation_search_plan": _b_ps_plan,
     "search_expected_tries": _b_ps_expected, "spiral_search_points": _b_ps_spiral, "spiral_expected_tries": _b_ps_spiral_e,
     "pegsym_scene_mjcf": _b_ps_mjcf,
+    "preston_pressure_kernel": _b_po_kernel, "preston_removal_map": _b_po_map, "preston_track_profile": _b_po_profile,
+    "wipe_band_width": _b_po_band, "raster_wipe_area": _b_po_area, "coat_image": _b_po_coat, "coat_thickness_from_image": _b_po_thick,
+    "wipe_coverage": _b_po_cover, "band_width_profile": _b_po_bwp, "removal_depth_from_heights": _b_po_heights,
+    "preston_coefficient_fit": _b_po_fit, "winkler_polish_run": _b_po_winkler, "polish_scene_mjcf": _b_po_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

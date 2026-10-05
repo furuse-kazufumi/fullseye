@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**研削・研磨・拭き取りを画像で測る**(新モジュール `polish` 13 op + mujoco の facade 3、台帳 `polish`(opsdrive)、PoC `poc_polish_wipe_measure`、
+  wing_metrology): 題材は arXiv:2410.19235(研削の模倣学習)と arXiv:2406.14990(可変コンプライアンスの拭き)を学習なしで。Preston の式を軌跡と力で積分した
+  除去の地図(直接の積分と FFT の 2 実装、rms 0.37 %)、平板と Hertz の一筆の断面・帯の幅・拭ける最小の力・平行な一筆の面積の閉形式(導出、0.26〜0.30 %)、
+  膜の画像の Otsu のしきい値は残膜 h0 の約 1/3 を意味する(戻さないと最大 36 %)。前後の高さ図から削れた深さ 240 nm を rms 1.41 nm、Preston 係数 0.04 %。
+  ★MuJoCo: 柔らかい手首は板の高さの誤差 2 mm でも帯の幅の変動 0.02 %、硬い手首は 19.2 mm で浮いて 83 / 309 列が拭けない。門 10 本 + `--full` 5 本。
+  正直に: 膜の除去係数は仮の値、平板の一様な圧力・弾性床は仮定、Preston の原文は未読。
 - ★**既存 op の不具合 2 件を直す**: (1) `tacsim.contact_radius_ring` の既定の探索半径を「窓の半分の半分」から「窓の縁 − 2 px」へ。201 px の窓で半径 61 px の
   実機の接触を 49 px と答えていた(tacscalib の門 12、実機データ: 既定 −12.9 px → −0.25 px = 明示した場合と同じ、既定も門に)。tacsim の合成は接触が窓の 1/4 より
   内側なので門の結果は変わらない。(2) `photometric.angular_error_deg` を acos → atan2(|a × b|, a·b) に。正規化の 1e-12 と acos で平行に近い組が約 1.15e-4° の床に

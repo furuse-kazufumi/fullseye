@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">preston_track_profile — DRIVE <code style="color:#22d3bf">polish</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × scalar × scalar × scalar</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import polish; polish.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;preston_track_profile&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、`<code style="color:#22d3bf">y</code>` と同じ形)。閉形式:</p>
+<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(`<code style="color:#22d3bf">spin</code><code style="color:#22d3bf"> = ω、</code><code style="color:#22d3bf">speed</code>` = v が要る)</p>
+<p>(k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。</p>
+<p><b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polish_wipe_measure">poc_polish_wipe_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polish_wipe_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">polish</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:preston_pressure_kernel">preston_pressure_kernel</a> · <a style="color:#22d3bf" href="opdrive:preston_removal_map">preston_removal_map</a> · <a style="color:#22d3bf" href="opdrive:wipe_band_width">wipe_band_width</a> · <a style="color:#22d3bf" href="opdrive:raster_wipe_area">raster_wipe_area</a> · <a style="color:#22d3bf" href="opdrive:coat_image">coat_image</a> · <a style="color:#22d3bf" href="opdrive:coat_thickness_from_image">coat_thickness_from_image</a> · <a style="color:#22d3bf" href="opdrive:wipe_coverage">wipe_coverage</a> · <a style="color:#22d3bf" href="opdrive:band_width_profile">band_width_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: polish.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

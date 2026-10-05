@@ -712,6 +712,8 @@ import pegsym  # noqa: E402  (ペグの対称性で回転の探索を 1/n に絞
 from pegsym import (  # noqa: E402,F401
     pegsym_scene_build, pegsym_views, pegsym_insert_try, pegsym_search_run, pegsym_two_point_depth_sim, pegsym_scene_close,
 )
+import polish  # noqa: E402  (研削・研磨・拭き取りを画像で測る: MuJoCo で工具を手首のばねで押して動かす。台帳は opsdrive "polish")
+from polish import polish_scene_build, polish_scene_close, polish_stroke_run  # noqa: E402,F401
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1236,6 +1238,9 @@ __all__ = [
     "pegsym_search_run",
     "pegsym_two_point_depth_sim",
     "pegsym_scene_close",
+    "polish_scene_build",
+    "polish_stroke_run",
+    "polish_scene_close",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

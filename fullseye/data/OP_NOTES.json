@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2984,
- "n_notes": 2990,
+ "n_ops": 2997,
+ "n_notes": 3003,
  "notes": {
   "vol_dilate": [
    {
@@ -19432,6 +19432,136 @@
     "in": "signal × signal",
     "out": "table",
     "path": "docs/ops/drive/pegtactile/wrist_stiffness_fit.md"
+   }
+  ],
+  "band_width_profile": [
+   {
+    "op": "band_width_profile",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/polish/band_width_profile.md"
+   }
+  ],
+  "coat_image": [
+   {
+    "op": "coat_image",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/polish/coat_image.md"
+   }
+  ],
+  "coat_thickness_from_image": [
+   {
+    "op": "coat_thickness_from_image",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/polish/coat_thickness_from_image.md"
+   }
+  ],
+  "polish_scene_mjcf": [
+   {
+    "op": "polish_scene_mjcf",
+    "dim": "drive",
+    "category": "polish",
+    "in": "scalar",
+    "out": "any",
+    "path": "docs/ops/drive/polish/polish_scene_mjcf.md"
+   }
+  ],
+  "preston_coefficient_fit": [
+   {
+    "op": "preston_coefficient_fit",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/drive/polish/preston_coefficient_fit.md"
+   }
+  ],
+  "preston_pressure_kernel": [
+   {
+    "op": "preston_pressure_kernel",
+    "dim": "drive",
+    "category": "polish",
+    "in": "scalar × scalar × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/polish/preston_pressure_kernel.md"
+   }
+  ],
+  "preston_removal_map": [
+   {
+    "op": "preston_removal_map",
+    "dim": "drive",
+    "category": "polish",
+    "in": "matrix × scalar × scalar × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/polish/preston_removal_map.md"
+   }
+  ],
+  "preston_track_profile": [
+   {
+    "op": "preston_track_profile",
+    "dim": "drive",
+    "category": "polish",
+    "in": "signal × scalar × scalar × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/polish/preston_track_profile.md"
+   }
+  ],
+  "raster_wipe_area": [
+   {
+    "op": "raster_wipe_area",
+    "dim": "drive",
+    "category": "polish",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/polish/raster_wipe_area.md"
+   }
+  ],
+  "removal_depth_from_heights": [
+   {
+    "op": "removal_depth_from_heights",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × image2d",
+    "out": "image2d",
+    "path": "docs/ops/drive/polish/removal_depth_from_heights.md"
+   }
+  ],
+  "winkler_polish_run": [
+   {
+    "op": "winkler_polish_run",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × scalar × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/polish/winkler_polish_run.md"
+   }
+  ],
+  "wipe_band_width": [
+   {
+    "op": "wipe_band_width",
+    "dim": "drive",
+    "category": "polish",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/polish/wipe_band_width.md"
+   }
+  ],
+  "wipe_coverage": [
+   {
+    "op": "wipe_coverage",
+    "dim": "drive",
+    "category": "polish",
+    "in": "image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/polish/wipe_coverage.md"
    }
   ],
   "fivebar_fk": [

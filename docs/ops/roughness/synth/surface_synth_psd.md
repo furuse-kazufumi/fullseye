@@ -4,7 +4,7 @@ dim: roughness
 category: synth
 in: 
 out: depth
-examples: [poc_surface_roughness]
+examples: [poc_polish_wipe_measure, poc_surface_roughness]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -86,6 +86,7 @@ fail-closed
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_polish_wipe_measure](../../../../examples/poc_polish_wipe_measure.py) — `py -3.11 examples/poc_polish_wipe_measure.py`
 - [poc_surface_roughness](../../../../examples/poc_surface_roughness.py) — `py -3.11 examples/poc_surface_roughness.py`
 
 ## 型が繋がる次の op(`depth` を入力に取れる)

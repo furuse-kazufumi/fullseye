@@ -30,6 +30,7 @@
 ディアボロの解析模型と視覚(diabolo: ロボット学習用の解析模型(arXiv:2011.09068)を LaTeX 原文から写し、原文どおりでは成り立たない所(式 1b の次元・状態遷移の帯の重なり・回転則の刻み依存)を直す。真値 = 閉形式(焦点の恒等式・振り子の周期・静止張力・放物線)、厳密な糸の模型(片側拘束の RATTLE)、第 2 実装 = MuJoCo の空間テンドン。視覚は学習なし: 光線追跡の合成映像から縁と底の板の 2 円の透視モーメントで軸、マーカーの位相と回転ぶれの弧で回転数、V 字で張力。棒の組は matrix (2, 3)、棒の時系列 (N, 2, 3) と棒の動きの指定(名前 / dict / 呼べる物)は any。mujoco が要る 1 本は facade)。
 ドーム状の柔らかい指先センサを平らな物に押す大変形接触(tacdome: べき乗則断面のスケーリング則(arXiv:2509.18581)の補正 κₙ・接触半径の式 (4)・普遍形、式 (3) の 1 次の係数は活字 (4+2n)/(1+n) では円柱で力が負になるので本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)から導いた 2n/(1+n)、真値 = 非圧縮 neo-Hookean の円柱の厳密解と Hertz の極限、第 2 実装 = ばね列の中点則、内側カメラの接触像と面積法の半径 → 力の逆算。全部 numpy)。
 ペグの対称性で回転の探索を 1/n に絞る(pegsym: 正 n 角柱(n = 3, 4, 6)とキー付き(n = 1)のペグの挿入。輪郭の複素フーリエ位相で向きを 2π/n を法として読み、回転の探索は 1 周期だけを面取りの窓の 2 倍以下の刻みで掃く。真値 = 回転の窓の閉形式(導出)と平行移動の線形計画、摩擦で止まる限界の導出、期待試行回数の閉形式、Goli ほか 2024(R. Soc. Open Sci.)の式 (2.28) と円柱の Whitney の式で挟む多角形の二点接触、群の恒等式、MuJoCo の試行回数と画像。mujoco が要る 6 本は facade)。
+研削・研磨・拭き取りを画像で測る(polish: Preston の式 dh/dt = k_p p v を軌跡と押す力で積分した除去の深さの地図(直接の積分と FFT の畳み込みの 2 実装)、平板と Hertz の工具の一筆の断面・拭けた帯の幅・拭ける最小の力・平行な一筆の面積の閉形式(導出)、膜の画像(Beer–Lambert)と Otsu で拭けた面積と帯の幅、前後の高さ図から削れた深さと Preston 係数、弾性床のパッドで粗さが exp(−k_p k_w v t) で減る時間発展。MuJoCo で工具を手首のばねで押して動かす 3 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -85,6 +86,7 @@ import cutting
 import diabolo
 import tacdome
 import pegsym
+import polish
 import racket
 import roadjp
 import rsssafety
@@ -93,7 +95,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -938,6 +940,26 @@ _CATALOG = {
         ("spiral_search_points", "pegsym", ["scalar", "scalar", "scalar"], "table"),
         ("spiral_expected_tries", "pegsym", ["matrix", "scalar", "scalar"], "table"),
         ("pegsym_scene_mjcf", "pegsym", ["matrix", "matrix"], "any"),
+    ],
+    # 研削・研磨・拭き取りを画像で測る(2026-10-05、物理シミュ × Fullseye 系列、題材は研削の模倣学習 DIPCOM = arXiv:2410.19235 と
+    # 可変コンプライアンスの拭き Comp-ACT = arXiv:2406.14990 を学習なしで): 軌跡は matrix (N, 2)(NaN の行で持ち上げ)、圧力の窓・除去の地図・
+    # 膜の画像・高さ図は image2d、断面は signal、閉形式と読みの結果は table(dict)、MJCF は文字列(any)。真値 = Preston の式(二次資料で確認)、
+    # Hertz(tacsim)、導出した閉形式、MuJoCo(--full)。mujoco が要る 3 本(polish_scene_build / polish_stroke_run / polish_scene_close)は
+    # facade だけ。
+    "polish": [
+        ("preston_pressure_kernel", "polish", ["scalar", "scalar", "scalar"], "image2d"),
+        ("preston_removal_map", "polish", ["matrix", "scalar", "scalar", "scalar"], "image2d"),
+        ("preston_track_profile", "polish", ["signal", "scalar", "scalar", "scalar"], "signal"),
+        ("wipe_band_width", "polish", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("raster_wipe_area", "polish", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("coat_image", "polish", ["image2d", "scalar"], "image2d"),
+        ("coat_thickness_from_image", "polish", ["image2d", "scalar"], "image2d"),
+        ("wipe_coverage", "polish", ["image2d", "scalar"], "table"),
+        ("band_width_profile", "polish", ["image2d", "scalar", "scalar"], "table"),
+        ("removal_depth_from_heights", "polish", ["image2d", "image2d"], "image2d"),
+        ("preston_coefficient_fit", "polish", ["image2d", "image2d"], "table"),
+        ("winkler_polish_run", "polish", ["image2d", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("polish_scene_mjcf", "polish", ["scalar"], "any"),
     ],
 }
 
