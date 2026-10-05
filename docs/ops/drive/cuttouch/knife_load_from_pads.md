@@ -21,7 +21,9 @@ version: 0.4.0  # fullseye lib version this note was generated for
 
 ``Lz`` [m]: 把持点から刃先までの高さ(刃が傾いていれば把持点の真下での値 Lz₀、``edge_slope`` = 刃先の傾きの正接で
 ``Ly = (M_x + Lz₀ H)/(V + s H)``)。``torsion_model``: ``"partial_slip"``(既定 —— 無滑りの関係で読まれたねじりを部分滑りの数値解で
-直す、モジュール冒頭)/ ``"no_slip"``(読みのまま = :mod:`pegtactile` の約束、比べるため)。``tare``: 空中の 1 コマの 2 枚の読み
+直す、モジュール冒頭)/ ``"no_slip"``(無滑りの読みのまま = :mod:`pegtactile` 0.4.0 の約束、比べるため)。読みが
+:func:`pegtactile.pad_tactile_read` の既定(既に部分滑りに直した ``torsion`` と無滑りの ``torsion_no_slip``)でも、ここは無滑りの値から
+始めるので二重には直さない。``tare``: 空中の 1 コマの 2 枚の読み
 ``(read_R, read_L)``(または前の返り・``{"F": (3,), "M": (3,)}`` のパッドのレンチ)—— 包丁の重さを差し引く(空中のコマそのものは
 V = 0 で Ly が定まらないので、この op に単独では渡せない)。
 返り: ``V``・``H``・``Mx``(食材 → 刃、グリッパ系)、``Ly``・``xi``(= H/V)、パッドごとの ``torsion``(直した値)・``torsion_read``・

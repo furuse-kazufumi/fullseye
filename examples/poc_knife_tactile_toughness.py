@@ -3,8 +3,9 @@
 
 :mod:`cutting`(食材の切断を画像で測る)× :mod:`pegtactile`(2 本指の弾性膜で接触レンチを読む)の連鎖。新モジュール cuttouch(3 op)。
 包丁の背を 2 枚のパッドで挟み、膜の像だけから押し V・引き H・モーメント M_x を復元して、当たり位置 Ly = (M_x + Lz·H)/V・
-slice/push 比 ξ̂ = H/V・靱性 R を出す。途中で見つけたこと: :func:`pegtactile.pad_tactile_read` はねじりを無滑りの関係で読むので、
-実際の接触(縁から必ず滑る)では M を過大に読む(全滑りまでの比 0.5 で +33 %)。部分滑りのねじりを数値で解いて直した。
+slice/push 比 ξ̂ = H/V・靱性 R を出す。途中で見つけたこと: :func:`pegtactile.pad_tactile_read` は 0.4.0 までねじりを無滑りの関係で
+読んでいたので、実際の接触(縁から必ず滑る)では M を過大に読む(全滑りまでの比 0.5 で +33 %)。部分滑りのねじりを数値で解いて直し、
+2026-10-06 から pegtactile の既定の読みもこの数値解で直す(``torsion_model="no_slip"`` で 0.4.0 の読み。門 4 は両方を同じ像で比べる)。
 
 何が外から来るか:
   * **閉形式**: Reissner–Sagoci の無滑りのねじれ角 β = 3M/(16Ga³) と、全滑りのトルク (3π/16)μPa —— 部分滑りの数値解の両端。
@@ -146,20 +147,22 @@ def solver_part(pad, ctx) -> dict:
     rows = []
     for k, m in enumerate((0.1, 0.3, 0.5, 0.7, 0.85) if FULL else (0.5, 0.85)):
         tau = m * Mf
+        # 0.4.0 の読み(無滑りの関係)と、2026-10-06 からの pegtactile の既定の読み(部分滑りに直した値)を同じ像で
         rd = PT.pad_tactile_read(pad_frame(pad["grip"], [0.3, 0.2], tau, pad, ctx, seed=100 + k), pad, ctx)
-        tc, c_a, ok, _ = CT._true_torsion_from_stick_read(rd["torsion"], rd["P"], pad, 64)
+        tc, c_a, ok, _ = CT._true_torsion_from_stick_read(rd["torsion_no_slip"], rd["P"], pad, 64)
         pr = CT.torsion_partial_slip(tau, pad["grip"], pad)
-        rows.append((m, rd["torsion"] / tau, pr["read_bias"], tc / tau, c_a, ok))
+        rows.append((m, rd["torsion_no_slip"] / tau, pr["read_bias"], tc / tau, c_a, ok, rd["torsion"] / tau))
     out["bias_rows"] = rows
     _NUM["bias_rows"] = rows
     good = [r for r in rows if r[5]]
     e_pred = max(abs(r[1] / r[2] - 1) for r in rows)
     e_corr = max(abs(r[3] - 1) for r in good)
     flagged = [r[0] for r in rows if not r[5]]
-    gate("門 4 既存の読み手(pegtactile、無滑りの関係)は部分滑りの像で M を過大に読む: 比 %s で ×%s(予測との差 ≤ %.1f %%)。"
-         "補正後 ≤ %.1f %%、読めない(c < 0.6a)= 比 %s"
-         % (" / ".join("%g" % r[0] for r in rows), " / ".join("%.3f" % r[1] for r in rows), 100 * e_pred, 100 * e_corr, flagged),
-         e_pred < 0.02 and e_corr < 0.02 and flagged == [0.85] and [r[1] for r in rows if r[0] == 0.5][0] > 1.25)
+    e_default = max(abs(r[6] / r[3] - 1) for r in rows)        # pegtactile の既定の読み = この補正(二重に直さない)
+    gate("門 4 0.4.0 の読み手(pegtactile、無滑りの関係)は部分滑りの像で M を過大に読む: 比 %s で ×%s(予測との差 ≤ %.1f %%)。"
+         "補正後 ≤ %.1f %%、読めない(c < 0.6a)= 比 %s。pegtactile の既定の読み(2026-10-06 から部分滑り)は補正と %.1e で一致"
+         % (" / ".join("%g" % r[0] for r in rows), " / ".join("%.3f" % r[1] for r in rows), 100 * e_pred, 100 * e_corr, flagged, e_default),
+         e_pred < 0.02 and e_corr < 0.02 and flagged == [0.85] and [r[1] for r in rows if r[0] == 0.5][0] > 1.25 and e_default < 1e-9)
     print("    (%.1f s)" % (time.time() - t0))
     return out
 

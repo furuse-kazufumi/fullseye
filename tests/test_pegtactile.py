@@ -61,6 +61,43 @@ def _through(F_c, M_c, axis, pad, ctx):
     return -(Rw @ est["F"]) - Fg, -(Rw @ est["M"]) - np.cross(cmg, Fg)
 
 
+
+def _full_slip_torque(pad, P):
+    return (3.0 * math.pi / 16.0) * pad["mu"] * P * T.hertz_sphere(P, pad["R"], pad["Es"])["a"]
+
+
+# ── 部分滑りのねじり(2026-10-06): 合成も読みも部分滑りが既定、無滑りの関係で読むと過大 ────────────────────────
+def test_partial_slip_twist_is_read_without_the_no_slip_overestimate(pc):
+    """Hertz 接触のねじりは縁から必ず滑る。部分滑りの像を 0.4.0 の読み(無滑りの関係)で読むと、全滑りまでの比 0.5 で +33 %、
+    0.8 で +85 % 過大。既定の読み(部分滑りの数値解で直す)は 1 % 以内。合成も読みも無滑りだった 0.4.0 の門は、この場面を持たなかった。"""
+    pad, ctx = pc
+    P = pad["grip"]
+    Mf = _full_slip_torque(pad, P)
+    for m, lo_old, hi_old in ((0.5, 1.30, 1.36), (0.8, 1.80, 1.90)):
+        fr = PT.pad_tactile_frame(P, [0.3, 0.2], pad, ctx, torsion=m * Mf)
+        assert fr["truth"]["torsion_model"] == "partial_slip" and not fr["truth"]["torsion_slipping"]
+        rd = PT.pad_tactile_read(fr, pad, ctx)
+        assert abs(rd["torsion"] / (m * Mf) - 1) < 0.01 and rd["torsion_readable"], (m, rd["torsion"] / (m * Mf))
+        assert lo_old < rd["torsion_no_slip"] / (m * Mf) < hi_old, (m, rd["torsion_no_slip"] / (m * Mf))
+        old = PT.pad_tactile_read(fr, pad, ctx, torsion_model="no_slip")
+        assert old["torsion"] == rd["torsion_no_slip"] and old["torsion_model"] == "no_slip"
+
+
+def test_no_slip_model_keeps_the_0_4_0_behaviour_and_full_slip_is_flagged(pc):
+    pad, ctx = pc
+    P = pad["grip"]
+    Mf = _full_slip_torque(pad, P)
+    fr = PT.pad_tactile_frame(P, [0.3, 0.2], pad, ctx, torsion=0.5 * Mf, torsion_model="no_slip")
+    old = PT.pad_tactile_read(fr, pad, ctx, torsion_model="no_slip")
+    assert abs(old["torsion"] / (0.5 * Mf) - 1) < 0.02                       # 無滑りの合成 → 無滑りの読み = 0.4.0 の往復
+    sl = PT.pad_tactile_frame(P, [0.3, 0.2], pad, ctx, torsion=1.3 * Mf)     # 全滑りを超えるねじり: 例外でなく印
+    assert sl["truth"]["torsion_slipping"]
+    r = PT.pad_tactile_read(sl, pad, ctx)
+    assert not r["torsion_readable"] and abs(r["torsion"]) <= Mf * (1 + 1e-9)
+    assert _raises(lambda: PT.pad_tactile_read(fr, pad, ctx, torsion_model="noslip"))
+    assert _raises(lambda: PT.pad_tactile_frame(P, [0.3, 0.2], pad, ctx, torsion=1e-3, torsion_model="stick"))
+
+
 # ── 1〜2. 静力学 ───────────────────────────────────────────────────────────────
 def test_statics_roundtrip_is_identity_and_lost_contact_fails_closed(pc):
     pad, _ = pc

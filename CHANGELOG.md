@@ -7,6 +7,22 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 挙動の変更(既定の数値が変わる —— CONTRIBUTING の Versioning により次の版は minor)
+
+- ★**`pegtactile` のパッドのねじりを部分滑りで合成し、部分滑りで読む**(`pad_tactile_read` / `pad_tactile_frame` / `pad_marker_displacement` に `torsion_model`、既定 `"partial_slip"`)。
+  Hertz 接触のねじりのトラクションは縁で発散するので、どんな小さなねじりでも縁から滑る。0.4.0 の読み手は無滑り(Reissner–Sagoci、M = 16Ga³ω/3)の関係で読むので、
+  部分滑りの像では M を過大に返していた: 全滑りまでの比 0.1 で +3 %、0.5 で +33 %、0.8 で +85 %。合成も読みも無滑りの模型だったので、0.4.0 の門はこれに盲目だった。
+  既定の `torsion` は `cuttouch.torsion_partial_slip`(Cerruti 核の影響行列の数値解、両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)で直した値(比 0.5 / 0.8 の像で ×0.998 / ×1.000)。
+  0.4.0 の値は `torsion_no_slip` に残し、`torsion_model="no_slip"` で 0.4.0 の挙動(合成も読みも無滑り)を選べる。固着円が当てはめの核(r < 0.6a)を含まないときは `torsion_readable = False`(数は返すが当てにならない)。
+  合成は全滑りを超えるねじりを膜が運べる最大の場で描き `torsion_slipping` の印を立てる。返りの dict にキーが増えた(`torsion_no_slip`・`torsion_model`・`torsion_c_over_a`・`torsion_readable`、truth に `torsion_model`・`torsion_ratio`・`torsion_slipping`)。
+  **既定を替えた理由**: 引数で補正を選ばせる形だと、0.4.0 の利用者は誤った値(実機のゲルでも過大になる側)を黙って受け取り続け、同じ値が `pad_loads_to_peg_wrench` のモーメント M_x と接触状態の判定に流れる。
+  一方 0.4.0 の数値は 1 語(`torsion_model="no_slip"`)で戻せる。ねじりが小さい(比 0.1)場面では差は 3 % 以内。
+  影響: 同じ像に対する `pad_tactile_read(...)["torsion"]`、同じ荷重に対する `pad_tactile_frame` の像、それを通る `pegtactile_process_episode` の M̂。ねじりを使う最初の呼び出しで数値解の表を 1 回作る(約 0.7 s)。
+  門: test_pegtactile に部分滑りの場面 2 本、PoC poc_peg_insertion_tactile に門 2b(比 0.5 / 0.8)。読みの補正を外すと両方が赤になることを確かめた。
+  同じ無滑りの仮定は `tactorque.torque_decompose` の `Mz` にも残る(Hertz 接触に使えば同じ向きに過大。今回は直していない)。
+
+### 追加
+
 - ★**包丁を指先の視触覚だけで持って切る**(新モジュール `cuttouch` 3 op、facade なし、台帳 `cuttouch`(opsdrive)、PoC `poc_knife_tactile_toughness`、wing_metrology): cutting × pegtactile の連鎖。
   2 枚のパッドの膜の読みから押し・引き・モーメントを復元し、刃の当たり位置・slice/push 比・靱性を手首の力センサなしに読む。持てる柄の長さの限界(全滑り / 読めなくなるまで)も返す。
   Hertz 接触のねじりの部分滑りを Cerruti 核の影響行列で数値的に解く `torsion_partial_slip`(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。これで pegtactile の無滑りのねじりの読みが部分滑りで過大(比 0.5 で +33 %)と分かった。

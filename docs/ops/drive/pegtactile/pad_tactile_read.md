@@ -13,7 +13,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # pad_tactile_read — DRIVE `pegtactile` op
 
 - **データ種**: `table × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.pad_tactile_read(frame: 'dict', pad: 'dict', ctx=None, track=None, pixelwise: 'bool' = True) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_tactile_read(frame: 'dict', pad: 'dict', ctx=None, track=None, pixelwise: 'bool' = True) -> 'dict'`、台帳から引くなら `opsdrive.get("pad_tactile_read")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pad_tactile_read(frame: 'dict', pad: 'dict', ctx=None, track=None, pixelwise: 'bool' = True, torsion_model: 'str' = 'partial_slip') -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_tactile_read(frame: 'dict', pad: 'dict', ctx=None, track=None, pixelwise: 'bool' = True, torsion_model: 'str' = 'partial_slip') -> 'dict'`、台帳から引くなら `opsdrive.get("pad_tactile_read")`)
 
 ## 使い方
 
@@ -23,9 +23,15 @@ P̂ = 陰影 → photometric の法線(:func:`tacsim.membrane_recover`)→ 接�
 :func:`tacsim.contact_radius_fit_pixelwise`、偽ならビン版 :func:`tacsim.contact_radius_fit` = 罠の対照)→ :func:`tacsim.hertz_force`。
 q̂ = マーカー追跡(:func:`tacslip.marker_track`、``track`` で渡せば省く)→ 法線荷重の ūr(P̂ から閉形式)を引く → 2 成分の Mindlin
 当てはめ(:func:`tacslip.mindlin_fit_vector`)。ねじり = 当てはめたせん断場を引いた残りに、固着核(r < 0.6 â)で剛体回転
-(:func:`tactorque.rigid_rotation_fit`)→ M = (16Gâ³/3)ω(Reissner–Sagoci)。第 2 実装 ``Q_stick`` = 固着核の一様変位 δ̂ を
-Mindlin の δx 式で逆に解いた値(μ は較正値)。返り ``P``・``a``・``q``(2,)・``Q``・``phi``・``torsion``・``c_over_a``・``Q_stick``・
-``matched``・``rms_px``(当てはめの残差)・``track``。**Raises** ValueError: frame に ``rgb``・``shading`` が無い、追跡できたマーカーが 3 未満。
+(:func:`tactorque.rigid_rotation_fit`)→ 無滑りの関係 M = (16Gâ³/3)ω(Reissner–Sagoci)が ``torsion_no_slip``。
+★``torsion_model="partial_slip"``(既定、2026-10-06 から)では、それを部分滑りの数値解(:func:`cuttouch.torsion_partial_slip` の
+``from_no_slip_read``)で直した値を ``torsion`` に返す —— Hertz 接触のねじりは縁から必ず滑るので、無滑りの関係のままだと M を過大に
+読む(全滑りまでの比 0.5 で +33 %、0.8 で +85 %)。``"no_slip"`` は 0.4.0 までの値(``torsion`` = ``torsion_no_slip``)。
+``torsion_c_over_a``(固着円の半径 / a)と ``torsion_readable``(固着円が当てはめの核 r < 0.6a を含み全滑りでない —— 偽なら数は返すが
+当てにならない)も返す。第 2 実装 ``Q_stick`` = 固着核の一様変位 δ̂ を Mindlin の δx 式で逆に解いた値(μ は較正値)。返り ``P``・``a``・
+``q``(2,)・``Q``・``phi``・``torsion``・``torsion_no_slip``・``torsion_model``・``torsion_c_over_a``・``torsion_readable``・``c_over_a``・
+``Q_stick``・``matched``・``rms_px``(当てはめの残差)・``track``。**Raises** ValueError: frame に ``rgb``・``shading`` が無い、
+追跡できたマーカーが 3 未満、torsion_model の綴り違い。
 
 ## 参考(サンプルデータ・文献)
 

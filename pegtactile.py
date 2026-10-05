@@ -12,6 +12,10 @@
     (:func:`whitney_wrench`、平面の準静的な釣り合い + 下へ滑る Coulomb 摩擦)を真値つきの合成に使う。
   * **閉形式の接触力学**(K. L. Johnson, *Contact Mechanics*, CUP 1985): Hertz(:mod:`tacsim`)、Cattaneo–Mindlin の部分滑りと
     Cerruti 核(:mod:`tacslip`)、無滑りねじり(:mod:`tactorque`)、Hertz 接触のねじりの全滑りトルク (3π/16)μPa(Lubkin 1951)。
+  * **ねじりの部分滑り**(:func:`cuttouch.torsion_partial_slip`、2026-10-06 から既定): Hertz 接触のねじりのトラクションは縁で発散するので
+    どんな小さな M でも縁から滑る。0.4.0 までは膜の合成も読みも無滑り(M = 16Ga³ω/3)で、同じ模型どうしなので門に見えなかったが、
+    部分滑りの像を無滑りの関係で読むと M を過大に読む(全滑りまでの比 0.5 で +33 %、0.8 で +85 %)。合成と読みの既定を部分滑りに替え、
+    ``torsion_model="no_slip"`` で 0.4.0 の挙動を選べる(数値解の両端は Reissner–Sagoci と全滑りのトルクの閉形式)。
   * **群の作用**: 回した形・回した場面の答えは同じだけ回る(:func:`equivariance_check`)。
   * **物理エンジン(mujoco 層、facade のみ)**: MuJoCo の接触点・世界系の接触力・手首の力・トルクセンサ・手首ばねの設定値(k_t, k_r)。
 
@@ -230,14 +234,28 @@ def pad_shear_asymmetry(qR, qL) -> dict:
 
 # ======================================================================================================================
 # 2. 膜の合成と逆算(tacsim + tacslip + tactorque を被験者として、向きを持つせん断とねじりへ)
-def pad_marker_displacement(P: float, q_uv, pad: dict, ctx=None, pts=None, torsion: float = 0.0) -> dict:
+_TORSION_MODELS = ("partial_slip", "no_slip")
+
+
+def _torsion_model(name, op):
+    if name not in _TORSION_MODELS:
+        raise ValueError("%s: torsion_model must be 'partial_slip' or 'no_slip', got %r" % (op, name))
+    return name
+
+
+def pad_marker_displacement(P: float, q_uv, pad: dict, ctx=None, pts=None, torsion: float = 0.0,
+                            torsion_model: str = "partial_slip") -> dict:
     """膜の表面変位をマーカー位置で(閉形式 + Cerruti 畳み込み): 向き φ のせん断 |q| は x 向きの Mindlin 場を φ だけ回したもの
-    u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)、法線荷重の半径変位 ūr(Johnson 式 3.41b)と無滑りねじりの場
-    (:func:`tactorque.torsion_stick_field`)を足す。``pts`` はマーカー中心(px、省略時は ``ctx`` の基準位置)。返り ``u_m``(N, 2)[m]、
-    ``hz``・``mp``(Hertz と Mindlin の表)、``phi``・``Q``・``torsion``。全滑り(|q| ≥ μP)は ``mp['slipping']`` の印(場は c = 0)。
-    **Raises** ValueError: P ≤ 0(パッドが離れている)、q が有限の 2 成分でない。"""
+    u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)、法線荷重の半径変位 ūr(Johnson 式 3.41b)とねじりの場を足す。
+    ねじりの場は ``torsion_model="partial_slip"``(既定、2026-10-06 から)なら部分滑り(:func:`cuttouch.torsion_partial_slip` の数値解、
+    縁の環から滑る)、``"no_slip"`` なら 0.4.0 までの無滑りの場(:func:`tactorque.torsion_stick_field`)。ねじりが全滑りを超えるときは、
+    膜はそれ以上のねじりを運べないので表の最後の行(固着円が環 1 本)の場で描き、``torsion_slipping`` の印を立てる。``pts`` はマーカー中心
+    (px、省略時は ``ctx`` の基準位置)。返り ``u_m``(N, 2)[m]、``hz``・``mp``(Hertz と Mindlin の表)、``phi``・``Q``・``torsion``・
+    ``torsion_model``・``torsion_ratio``・``torsion_slipping``。全滑り(|q| ≥ μP)は ``mp['slipping']`` の印(場は c = 0)。
+    **Raises** ValueError: P ≤ 0(パッドが離れている)、q が有限の 2 成分でない、torsion_model の綴り違い。"""
     pad = _pad(pad)
     ctx = _ctx_for(pad, ctx)
+    tmodel = _torsion_model(torsion_model, "pad_marker_displacement")
     if not (float(P) > 0.0 and math.isfinite(float(P))):
         raise ValueError("pad_marker_displacement: P must be finite and > 0 (pad not in contact), got %r" % (P,))
     q = _vec(q_uv, 2, "pad_marker_displacement: q_uv")
@@ -254,26 +272,40 @@ def pad_marker_displacement(P: float, q_uv, pad: dict, ctx=None, pts=None, torsi
         f = S.cerruti_surface_displacement(trac, ctx["kern"])
         dp = d @ _rot(-phi).T + c0
         u = np.column_stack([S._sample(f["ux"], dp), S._sample(f["uy"], dp)]) @ _rot(phi).T
+    t_ratio, t_slip = 0.0, False
     if float(torsion) != 0.0:
-        tf = TQ.torsion_stick_field(ctx["X"], ctx["Y"], hz["a"], float(torsion), ctx["kern"], pad["G"])
+        if tmodel == "no_slip":
+            tf = TQ.torsion_stick_field(ctx["X"], ctx["Y"], hz["a"], float(torsion), ctx["kern"], pad["G"])
+        else:
+            import cuttouch as _CT                              # 遅延 import(cuttouch は pegtactile を import する)
+            info = _CT.torsion_partial_slip(float(torsion), float(P), pad)
+            t_ratio = info["ratio"]
+            M_eff = float(torsion)
+            if info["c_over_a"] <= 0.0:                         # 全滑りの像: 膜が運べる最大のねじり(表の最後の行)の場で描く
+                t_slip = True
+                M_eff = math.copysign(0.999 * info["ratio_table_max"] * info["M_full"], float(torsion))
+            tf = _CT.torsion_partial_slip(M_eff, float(P), pad, ctx=ctx, field=True)
         u = u + np.column_stack([S._sample(tf["ux"], pts), S._sample(tf["uy"], pts)])
     rr = np.hypot(d[:, 0], d[:, 1])
     ur = S.hertz_surface_ur(rr * pitch, hz["a"], hz["p0"], pad["G"], pad["nu"])
     dirn = d / np.maximum(rr[:, None], 1e-12)
     u = u + ur[:, None] * dirn
-    return {"u_m": u, "hz": hz, "mp": mp, "phi": phi, "Q": Q, "torsion": float(torsion)}
+    return {"u_m": u, "hz": hz, "mp": mp, "phi": phi, "Q": Q, "torsion": float(torsion), "torsion_model": tmodel,
+            "torsion_ratio": float(t_ratio), "torsion_slipping": bool(t_slip)}
 
 
-def pad_tactile_frame(P: float, q_uv, pad: dict, ctx=None, noise: float = 0.0, seed: int = 0, torsion: float = 0.0) -> dict:
+def pad_tactile_frame(P: float, q_uv, pad: dict, ctx=None, noise: float = 0.0, seed: int = 0, torsion: float = 0.0,
+                      torsion_model: str = "partial_slip") -> dict:
     """パッド 1 枚の合成像: Hertz 押し込みの陰影(:func:`tacsim.membrane_render_rgb`)+ 変位で中心を移したマーカー
     (:func:`tacslip.membrane_render_markers`、補間で歪めない)。``noise`` は画素の正規雑音の σ。
     返り ``rgb``(マーカー入り、(n, n, 3))、``shading``(マーカー無し = 力の読み取り用、実機はマーカーの除去が要る)、``pts``
-    (マーカー中心の真値 [px])、``truth``(P・q・φ・Q・c/a・滑りの印・a・ねじり)。**Raises** ValueError: P ≤ 0、noise < 0。"""
+    (マーカー中心の真値 [px])、``truth``(P・q・φ・Q・c/a・滑りの印・a・ねじり・ねじりの模型と全滑りの印)。ねじりの場の模型は
+    ``torsion_model``(既定 ``"partial_slip"``、:func:`pad_marker_displacement`)。**Raises** ValueError: P ≤ 0、noise < 0、綴り違い。"""
     pad = _pad(pad)
     ctx = _ctx_for(pad, ctx)
     if not (float(noise) >= 0.0):
         raise ValueError("pad_tactile_frame: noise must be >= 0")
-    disp = pad_marker_displacement(P, q_uv, pad, ctx, torsion=torsion)
+    disp = pad_marker_displacement(P, q_uv, pad, ctx, torsion=torsion, torsion_model=torsion_model)
     ind = T.membrane_indent_sphere(disp["hz"], pad["n"], pad["fov"])
     shading = T.membrane_render_rgb(ind["normals"], ctx["lights"], ambient=_AMB)
     pts = ctx["pts_flat"] + disp["u_m"] / pad["pitch"]
@@ -285,7 +317,8 @@ def pad_tactile_frame(P: float, q_uv, pad: dict, ctx=None, noise: float = 0.0, s
     return {"rgb": rgb, "shading": shading, "pts": pts,
             "truth": {"P": float(P), "q": np.asarray(q_uv, np.float64).reshape(2), "phi": disp["phi"], "Q": disp["Q"],
                       "c_over_a": disp["mp"]["c_over_a"], "slipping": disp["mp"]["slipping"], "a": disp["hz"]["a"],
-                      "torsion": float(torsion)}}
+                      "torsion": float(torsion), "torsion_model": disp["torsion_model"], "torsion_ratio": disp["torsion_ratio"],
+                      "torsion_slipping": disp["torsion_slipping"]}}
 
 
 def _model_for(pad, ctx, a_hat, hz):
@@ -298,18 +331,25 @@ def _model_for(pad, ctx, a_hat, hz):
     return cache[key]
 
 
-def pad_tactile_read(frame: dict, pad: dict, ctx=None, track=None, pixelwise: bool = True) -> dict:
+def pad_tactile_read(frame: dict, pad: dict, ctx=None, track=None, pixelwise: bool = True, torsion_model: str = "partial_slip") -> dict:
     """パッド 1 枚の像 → (P̂, q̂, ねじり)。
 
     P̂ = 陰影 → photometric の法線(:func:`tacsim.membrane_recover`)→ 接触半径(中心は既知 = パッド中央;``pixelwise`` なら
     :func:`tacsim.contact_radius_fit_pixelwise`、偽ならビン版 :func:`tacsim.contact_radius_fit` = 罠の対照)→ :func:`tacsim.hertz_force`。
     q̂ = マーカー追跡(:func:`tacslip.marker_track`、``track`` で渡せば省く)→ 法線荷重の ūr(P̂ から閉形式)を引く → 2 成分の Mindlin
     当てはめ(:func:`tacslip.mindlin_fit_vector`)。ねじり = 当てはめたせん断場を引いた残りに、固着核(r < 0.6 â)で剛体回転
-    (:func:`tactorque.rigid_rotation_fit`)→ M = (16Gâ³/3)ω(Reissner–Sagoci)。第 2 実装 ``Q_stick`` = 固着核の一様変位 δ̂ を
-    Mindlin の δx 式で逆に解いた値(μ は較正値)。返り ``P``・``a``・``q``(2,)・``Q``・``phi``・``torsion``・``c_over_a``・``Q_stick``・
-    ``matched``・``rms_px``(当てはめの残差)・``track``。**Raises** ValueError: frame に ``rgb``・``shading`` が無い、追跡できたマーカーが 3 未満。"""
+    (:func:`tactorque.rigid_rotation_fit`)→ 無滑りの関係 M = (16Gâ³/3)ω(Reissner–Sagoci)が ``torsion_no_slip``。
+    ★``torsion_model="partial_slip"``(既定、2026-10-06 から)では、それを部分滑りの数値解(:func:`cuttouch.torsion_partial_slip` の
+    ``from_no_slip_read``)で直した値を ``torsion`` に返す —— Hertz 接触のねじりは縁から必ず滑るので、無滑りの関係のままだと M を過大に
+    読む(全滑りまでの比 0.5 で +33 %、0.8 で +85 %)。``"no_slip"`` は 0.4.0 までの値(``torsion`` = ``torsion_no_slip``)。
+    ``torsion_c_over_a``(固着円の半径 / a)と ``torsion_readable``(固着円が当てはめの核 r < 0.6a を含み全滑りでない —— 偽なら数は返すが
+    当てにならない)も返す。第 2 実装 ``Q_stick`` = 固着核の一様変位 δ̂ を Mindlin の δx 式で逆に解いた値(μ は較正値)。返り ``P``・``a``・
+    ``q``(2,)・``Q``・``phi``・``torsion``・``torsion_no_slip``・``torsion_model``・``torsion_c_over_a``・``torsion_readable``・``c_over_a``・
+    ``Q_stick``・``matched``・``rms_px``(当てはめの残差)・``track``。**Raises** ValueError: frame に ``rgb``・``shading`` が無い、
+    追跡できたマーカーが 3 未満、torsion_model の綴り違い。"""
     pad = _pad(pad)
     ctx = _ctx_for(pad, ctx)
+    tmodel = _torsion_model(torsion_model, "pad_tactile_read")
     if not isinstance(frame, dict) or "rgb" not in frame or "shading" not in frame:
         raise ValueError("pad_tactile_read: frame must be the dict from pad_tactile_frame (needs 'rgb' and 'shading')")
     rec = T.membrane_recover(frame["shading"], ctx["lights"], pad["pitch"], ambient=_AMB)
@@ -352,8 +392,17 @@ def pad_tactile_read(frame: dict, pad: dict, ctx=None, track=None, pixelwise: bo
     if core6.sum() >= 3:
         rf = TQ.rigid_rotation_fit(d[core6] * pitch, (u - u_fit)[core6] * pitch)
         torsion_hat = 16.0 * pad["G"] * a_hat ** 3 / 3.0 * rf["omega"]
+    torsion_out, t_ca, t_ok = torsion_hat, 1.0, True
+    if torsion_hat != 0.0:
+        import cuttouch as _CT                                  # 遅延 import(cuttouch は pegtactile を import する)
+        info = _CT.torsion_partial_slip(torsion_hat, P_hat, pad, from_no_slip_read=True)
+        t_ca, t_ok = info["c_over_a"], bool(info["readable"] and not info["slipping"])
+        if tmodel == "partial_slip":
+            torsion_out = info["M"]
     return {"P": float(P_hat), "a": float(a_hat), "q": Q * np.array([math.cos(phi), math.sin(phi)]), "Q": float(Q), "phi": phi,
-            "torsion": float(torsion_hat), "c_over_a": fit["c_over_a"], "Q_stick": float(Q_stick), "matched": int(tr["matched"]),
+            "torsion": float(torsion_out), "torsion_no_slip": float(torsion_hat), "torsion_model": tmodel,
+            "torsion_c_over_a": float(t_ca), "torsion_readable": t_ok,
+            "c_over_a": fit["c_over_a"], "Q_stick": float(Q_stick), "matched": int(tr["matched"]),
             "rms_px": fit["rms_m"] / pitch, "track": tr}
 
 

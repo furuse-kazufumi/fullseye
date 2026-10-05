@@ -13,14 +13,15 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # pad_tactile_frame — DRIVE `pegtactile` op
 
 - **データ種**: `scalar × signal × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.pad_tactile_frame(P: 'float', q_uv, pad: 'dict', ctx=None, noise: 'float' = 0.0, seed: 'int' = 0, torsion: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_tactile_frame(P: 'float', q_uv, pad: 'dict', ctx=None, noise: 'float' = 0.0, seed: 'int' = 0, torsion: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("pad_tactile_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pad_tactile_frame(P: 'float', q_uv, pad: 'dict', ctx=None, noise: 'float' = 0.0, seed: 'int' = 0, torsion: 'float' = 0.0, torsion_model: 'str' = 'partial_slip') -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_tactile_frame(P: 'float', q_uv, pad: 'dict', ctx=None, noise: 'float' = 0.0, seed: 'int' = 0, torsion: 'float' = 0.0, torsion_model: 'str' = 'partial_slip') -> 'dict'`、台帳から引くなら `opsdrive.get("pad_tactile_frame")`)
 
 ## 使い方
 
 パッド 1 枚の合成像: Hertz 押し込みの陰影(:func:`tacsim.membrane_render_rgb`)+ 変位で中心を移したマーカー
 (:func:`tacslip.membrane_render_markers`、補間で歪めない)。``noise`` は画素の正規雑音の σ。
 返り ``rgb``(マーカー入り、(n, n, 3))、``shading``(マーカー無し = 力の読み取り用、実機はマーカーの除去が要る)、``pts``
-(マーカー中心の真値 [px])、``truth``(P・q・φ・Q・c/a・滑りの印・a・ねじり)。**Raises** ValueError: P ≤ 0、noise < 0。
+(マーカー中心の真値 [px])、``truth``(P・q・φ・Q・c/a・滑りの印・a・ねじり・ねじりの模型と全滑りの印)。ねじりの場の模型は
+``torsion_model``(既定 ``"partial_slip"``、:func:`pad_marker_displacement`)。**Raises** ValueError: P ≤ 0、noise < 0、綴り違い。
 
 ## 参考(サンプルデータ・文献)
 

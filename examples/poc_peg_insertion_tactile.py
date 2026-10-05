@@ -9,11 +9,12 @@
   * **定理**: Whitney 1982(原著は有料で未読、式は著者本人の MIT OCW 2.875 Class 3 スライド本文)—— 二点接触の深さ
     l₂(θ) = (2R − r(cosθ + secθ))/tanθ、くさびの境目 θ = c/μ。閉形式の接触レンチを真値つきの合成に使う。
   * **閉形式の接触力学**(Johnson 1985): Hertz、Cattaneo–Mindlin、Cerruti、無滑りねじり、ねじりの全滑り (3π/16)μPa。
+    ねじりの部分滑り(2026-10-06 から既定)は cuttouch の数値解で、両端がこの 2 つの閉形式。
   * **群の作用**: 回した形・回した場面の答えは同じだけ回る。
   * **物理エンジン(--full)**: MuJoCo の接触点・世界系の接触力・手首の力・トルクセンサ・手首ばねの設定値(600 N/m、1.5 N·m/rad)。
 
-門(既定 10 本は numpy で CI 向けに例の数を減らしたもの、--full は MuJoCo の 9 本 + 重い numpy の 3 本):
-  1 静力学の写像の往復 / 2 膜 1 枚の往復 / 3 膜の SO(2) 同変性と規則格子の罠 / 4 接触半径のビンの罠(P̂ の傾き)/
+門(既定 11 本は numpy で CI 向けに例の数を減らしたもの、--full は MuJoCo の 9 本 + 重い numpy の 3 本):
+  1 静力学の写像の往復 / 2 膜 1 枚の往復 / 2b 部分滑りのねじり(無滑りの関係の読みは過大)/ 3 膜の SO(2) 同変性と規則格子の罠 / 4 接触半径のビンの罠(P̂ の傾き)/
   5 Whitney の閉形式レンチ → 状態(くさびの境目の死角と幾何の検査)/ 6 壁の μ を逆に解く / 7 止まった時のくさび / かじり /
   8 輪郭の複素フーリエから n 回対称 / 9 形の同変性と 2 次モーメントの罠 / 10 剛性の当てはめと綴り壊し;
   --full: 11 手首 RGB-D の同変性と鏡映 / 12 膜の往復と Whitney を全組で / 13 輪郭 op の登録表経由 = 直呼び /
@@ -24,7 +25,8 @@
 --full でさらに 5 枚 = 挿入の動く図(穴の断面に接触点の真値と触覚の推定、手首カメラ、膜 2 枚、状態の帯)、4 走行の時系列、
 手首剛性 F = kΔx、二点の始まりの深さ(閉形式 / MuJoCo / 触覚)、場面を 90° 回した時の判定一致率の表。
 正直に: 膜は MuJoCo に無く、パッド荷重は静力学の写像(把持の左右分配は対称の仮定、ペグの慣性は無視)。合成と逆算は同じ閉形式族なので
-膜の模型の誤りはここでは見えない。合成は比例載荷の Mindlin と無滑りねじり。マーカーの背景(陰影)は既知とした。走行は各条件 1 回。
+膜の模型の誤りはここでは見えない。合成は比例載荷の Mindlin と部分滑りのねじり(0.4.0 までは無滑りで、読みも無滑りだったので
+ねじりの過大(比 0.5 で +33 %)に盲目だった —— 門 2b)。マーカーの背景(陰影)は既知とした。走行は各条件 1 回。
 Run: py -3.11 examples/poc_peg_insertion_tactile.py [--full] [--workers N]        (--full は mujoco)
 """
 from __future__ import annotations
@@ -133,10 +135,22 @@ def numpy_part(pad, ctx) -> dict:
         et = max(et, abs(rd["torsion"] - tq))
         eQs = max(eQs, abs(rd["Q_stick"] - Q))
     _NUM.update(roundtrip_P_rel=eP, roundtrip_q_N=eq, roundtrip_torsion_Nm=et, roundtrip_Qstick_N=eQs)
-    gate("門 2 膜 1 枚の往復(合成 = Hertz の陰影 + Cattaneo–Mindlin の Cerruti 畳み込み + 無滑りねじり → 読み = 画素ごとの接触半径 + マーカー追跡 + "
-         "2 成分の Mindlin + 剛体回転)、%d 組: P の相対誤差 < 0.03 %%、q < 6 mN、ねじり < 0.03 mN·m、固着核の一様変位から逆に解いた第 2 実装 Q_stick < 8 mN"
+    gate("門 2 膜 1 枚の往復(合成 = Hertz の陰影 + Cattaneo–Mindlin の Cerruti 畳み込み + 部分滑りのねじり → 読み = 画素ごとの接触半径 + マーカー追跡 + "
+         "2 成分の Mindlin + 剛体回転 + 部分滑りの補正)、%d 組: P の相対誤差 < 0.03 %%、q < 6 mN、ねじり < 0.03 mN·m、固着核の一様変位から逆に解いた第 2 実装 Q_stick < 8 mN"
          % len(combos), eP < 3e-4 and eq < 6e-3 and et < 3e-5 and eQs < 8e-3,
          "P %.4f %%、|Δq| %.2f mN、ねじり %.3f mN·m、Q_stick %.2f mN(%.2f s)" % (100 * eP, 1e3 * eq, 1e3 * et, 1e3 * eQs, time.time() - t0))
+    # ── 2b. 部分滑りのねじり(2026-10-06): 0.4.0 は合成も読みも無滑りで、同じ模型どうしなのでこの偏りに盲目だった
+    t0 = time.time()
+    Mf = (3.0 * math.pi / 16.0) * pad["mu"] * pad["grip"] * T.hertz_sphere(pad["grip"], pad["R"], pad["Es"])["a"]
+    tw_rows = []
+    for m in (0.5, 0.8):
+        rd = PT.pad_tactile_read(PT.pad_tactile_frame(pad["grip"], [0.3, 0.2], pad, ctx, torsion=m * Mf), pad, ctx)
+        tw_rows.append((m, rd["torsion"] / (m * Mf), rd["torsion_no_slip"] / (m * Mf), rd["torsion_readable"]))
+    _NUM["partial_slip_twist"] = tw_rows
+    gate("門 2b 部分滑りのねじり(Hertz 接触のねじりは縁から必ず滑る、cuttouch.torsion_partial_slip の数値解): 全滑りまでの比 0.5 / 0.8 の像を "
+         "既定の読みで ×%.3f / ×%.3f、0.4.0 の無滑りの関係のままなら ×%.3f / ×%.3f(過大)" % (tw_rows[0][1], tw_rows[1][1], tw_rows[0][2], tw_rows[1][2]),
+         all(abs(r[1] - 1) < 0.01 and r[3] for r in tw_rows) and 1.30 < tw_rows[0][2] < 1.36 and 1.80 < tw_rows[1][2] < 1.90,
+         "(%.2f s)" % (time.time() - t0))
     # ── 3. SO(2) 同変性(3 方位: 格子の軸・対角・直交の軸)+ 規則格子の罠(ジッタ側のゼロ荷重は門 2 の 1 組を使う)
     t0 = time.time()
     rows = []

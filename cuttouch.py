@@ -151,7 +151,8 @@ def _pad_hertz(P, pad, op):
 
 
 # ======================================================================================================================
-def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = False, na: int = 64) -> dict:
+def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = False, na: int = 64,
+                         from_no_slip_read: bool = False) -> dict:
     """球面パッド(Hertz、法線力 ``P``)に法線まわりのねじり ``M`` [N·m] を掛けたときの部分滑り: 固着半径 c、ねじれ角 β、全滑りまでの比。
 
     数値解はモジュール冒頭(環 ``na`` 本の影響行列、無次元の 1 本の曲線を一度だけ)。返り: ``ratio`` = |M| / ((3π/16)μPa)、``c_over_a``、
@@ -159,7 +160,10 @@ def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = 
     読んだときの M の過大の倍率)、``a``・``p0``・``M_full``、``slipping``(比 ≥ 1 = 全滑り。例外にせず印 —— 滑りは起きる状態で入力の
     誤りではない。β は定まらないので nan)、``readable``(固着円が読みの核 r < 0.6a を含む)。``field=True`` なら ``ctx``
     (:func:`pegtactile.pad_context`)の格子で周方向トラクションを Cerruti 核で畳んだ表面変位 ``ux``・``uy`` [m] と、マーカーの基準位置での
-    ``u_markers`` (N, 2) [m] も返す(合成用。全滑りでは作らない)。
+    ``u_markers`` (N, 2) [m] も返す(合成用。全滑りでは作らない)。``from_no_slip_read=True`` なら ``M`` を **無滑りの関係で読んだ値**
+    (Reissner–Sagoci、:func:`pegtactile.pad_tactile_read` の ``torsion_model="no_slip"``)と見て、部分滑りの M に直してから同じ表を返す
+    (``M`` = 直した値、``M_read`` = 渡した読み。読みが全滑りの像を超えていれば ``M`` = 全滑りのトルクで ``slipping``)。
+    ``ratio_table_max`` は表の最後の行の比(これ以上は固着円が環 1 本より小さく、場を作らない)。
     **Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、na < 24。"""
     op = "torsion_partial_slip"
     pad = PT._pad(pad)
@@ -171,9 +175,16 @@ def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = 
     hz, Mf = _pad_hertz(P, pad, op)
     a, p0, G, mu = hz["a"], hz["p0"], pad["G"], pad["mu"]
     tab = _torsion_table(int(na))
+    M_read = None
+    if from_no_slip_read:
+        M_read = Mv
+        Mv = _true_torsion_from_stick_read(Mv, float(P), pad, int(na))[0]
     ratio = abs(Mv) / Mf
     beta_ns = 3.0 * Mv / (16.0 * G * a ** 3)
-    out = {"ratio": float(ratio), "a": float(a), "p0": float(p0), "M_full": float(Mf), "beta_no_slip": float(beta_ns), "M": Mv}
+    out = {"ratio": float(ratio), "a": float(a), "p0": float(p0), "M_full": float(Mf), "beta_no_slip": float(beta_ns), "M": Mv,
+           "ratio_table_max": float(tab["ratio"][-1])}
+    if M_read is not None:
+        out["M_read"] = M_read
     if ratio >= tab["ratio"][-1]:
         out.update({"c_over_a": 0.0, "beta": float("nan"), "read_bias": float("nan"), "slipping": bool(ratio >= 1.0),
                     "readable": False})
@@ -222,10 +233,23 @@ def _true_torsion_from_stick_read(tau_read, P, pad, na):
 
 
 def _read_keys(rd, name, op):
+    """読みの dict → (P, q, 無滑りの関係で読んだねじり)。
+
+    :func:`pegtactile.pad_tactile_read` は既定(``torsion_model="partial_slip"``)で ``torsion`` を部分滑りに直して返し、無滑りの値を
+    ``torsion_no_slip`` に残す。ここでは常に無滑りの値から始める(二重に直さない)。``torsion_model`` の無い dict(閉形式の荷重・0.4.0 の
+    読み)は ``torsion`` を無滑りの読みとして扱う。"""
     if not isinstance(rd, dict) or not all(k in rd for k in ("P", "q", "torsion")):
         raise ValueError("%s: %s must be the dict from pegtactile.pad_tactile_read (needs P, q, torsion)" % (op, name))
     q = np.asarray(rd["q"], np.float64).reshape(-1)
-    P, tq = float(rd["P"]), float(rd["torsion"])
+    model = rd.get("torsion_model", "no_slip")
+    if model == "partial_slip":
+        if "torsion_no_slip" not in rd:
+            raise ValueError("%s: %s says torsion_model='partial_slip' but has no torsion_no_slip" % (op, name))
+        P, tq = float(rd["P"]), float(rd["torsion_no_slip"])
+    elif model == "no_slip":
+        P, tq = float(rd["P"]), float(rd["torsion"])
+    else:
+        raise ValueError("%s: %s has an unknown torsion_model %r" % (op, name, model))
     if q.size != 2 or not (np.all(np.isfinite(q)) and math.isfinite(P) and math.isfinite(tq)) or P <= 0:
         raise ValueError("%s: %s has a non-finite or non-positive reading" % (op, name))
     return P, q, tq
@@ -248,7 +272,9 @@ def knife_load_from_pads(read_R: dict, read_L: dict, pad: dict, Lz: float, edge_
 
     ``Lz`` [m]: 把持点から刃先までの高さ(刃が傾いていれば把持点の真下での値 Lz₀、``edge_slope`` = 刃先の傾きの正接で
     ``Ly = (M_x + Lz₀ H)/(V + s H)``)。``torsion_model``: ``"partial_slip"``(既定 —— 無滑りの関係で読まれたねじりを部分滑りの数値解で
-    直す、モジュール冒頭)/ ``"no_slip"``(読みのまま = :mod:`pegtactile` の約束、比べるため)。``tare``: 空中の 1 コマの 2 枚の読み
+    直す、モジュール冒頭)/ ``"no_slip"``(無滑りの読みのまま = :mod:`pegtactile` 0.4.0 の約束、比べるため)。読みが
+    :func:`pegtactile.pad_tactile_read` の既定(既に部分滑りに直した ``torsion`` と無滑りの ``torsion_no_slip``)でも、ここは無滑りの値から
+    始めるので二重には直さない。``tare``: 空中の 1 コマの 2 枚の読み
     ``(read_R, read_L)``(または前の返り・``{"F": (3,), "M": (3,)}`` のパッドのレンチ)—— 包丁の重さを差し引く(空中のコマそのものは
     V = 0 で Ly が定まらないので、この op に単独では渡せない)。
     返り: ``V``・``H``・``Mx``(食材 → 刃、グリッパ系)、``Ly``・``xi``(= H/V)、パッドごとの ``torsion``(直した値)・``torsion_read``・

@@ -103,10 +103,22 @@ def test_partial_slip_field_is_rigid_in_the_stick_zone(pad_ctx):
 def test_existing_reader_overestimates_twist_and_correction_restores_it(pad_ctx):
     pad, ctx = pad_ctx
     tau = 0.5 * _mf(pad)
-    rd = PT.pad_tactile_read(_frame(pad["grip"], [0.3, 0.2], tau, pad, ctx, seed=3), pad, ctx)
-    assert rd["torsion"] / tau == pytest.approx(1.332, abs=0.025)
-    tc, c_a, ok, sat = CT._true_torsion_from_stick_read(rd["torsion"], rd["P"], pad, 64)
+    fr = _frame(pad["grip"], [0.3, 0.2], tau, pad, ctx, seed=3)
+    old = PT.pad_tactile_read(fr, pad, ctx, torsion_model="no_slip")         # 0.4.0 の読み(無滑りの関係)
+    assert old["torsion"] / tau == pytest.approx(1.332, abs=0.025)
+    tc, c_a, ok, sat = CT._true_torsion_from_stick_read(old["torsion"], old["P"], pad, 64)
     assert tc / tau == pytest.approx(1.0, abs=0.02) and ok and not sat and 0.78 < c_a < 0.86
+    # 2026-10-06 から pegtactile の既定の読みはこの補正そのもの(公開の入口 from_no_slip_read 経由)、二重に直さない
+    rd = PT.pad_tactile_read(fr, pad, ctx)
+    assert rd["torsion_model"] == "partial_slip" and rd["torsion"] == pytest.approx(tc, rel=1e-9)
+    assert rd["torsion_no_slip"] == pytest.approx(old["torsion"], rel=1e-12) and rd["torsion_readable"]
+    assert CT.torsion_partial_slip(old["torsion"], old["P"], pad, from_no_slip_read=True)["M"] == pytest.approx(tc, rel=1e-12)
+    rR = {"P": rd["P"], "q": rd["q"], "torsion": rd["torsion"], "torsion_no_slip": rd["torsion_no_slip"], "torsion_model": "partial_slip"}
+    rO = {"P": old["P"], "q": old["q"], "torsion": old["torsion"]}
+    k_new = CT.knife_load_from_pads(rR, rR, pad, 18e-3)
+    k_old = CT.knife_load_from_pads(rO, rO, pad, 18e-3)
+    assert k_new["pads"]["R"]["torsion"] == pytest.approx(k_old["pads"]["R"]["torsion"], rel=1e-12)
+    assert _raises(lambda: CT.knife_load_from_pads({**rR, "torsion_model": "slip"}, rR, pad, 18e-3))
 
 
 # ── 4. 静力学の往復 ─────────────────────────────────────────────────────

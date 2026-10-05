@@ -13,15 +13,18 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # pad_marker_displacement — DRIVE `pegtactile` op
 
 - **データ種**: `scalar × signal × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.pad_marker_displacement(P: 'float', q_uv, pad: 'dict', ctx=None, pts=None, torsion: 'float' = 0.0) -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_marker_displacement(P: 'float', q_uv, pad: 'dict', ctx=None, pts=None, torsion: 'float' = 0.0) -> 'dict'`、台帳から引くなら `opsdrive.get("pad_marker_displacement")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.pad_marker_displacement(P: 'float', q_uv, pad: 'dict', ctx=None, pts=None, torsion: 'float' = 0.0, torsion_model: 'str' = 'partial_slip') -> 'dict'` (実装を直接呼ぶなら `import pegtactile; pegtactile.pad_marker_displacement(P: 'float', q_uv, pad: 'dict', ctx=None, pts=None, torsion: 'float' = 0.0, torsion_model: 'str' = 'partial_slip') -> 'dict'`、台帳から引くなら `opsdrive.get("pad_marker_displacement")`)
 
 ## 使い方
 
 膜の表面変位をマーカー位置で(閉形式 + Cerruti 畳み込み): 向き φ のせん断 |q| は x 向きの Mindlin 場を φ だけ回したもの
-u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)、法線荷重の半径変位 ūr(Johnson 式 3.41b)と無滑りねじりの場
-(:func:`tactorque.torsion_stick_field`)を足す。``pts`` はマーカー中心(px、省略時は ``ctx`` の基準位置)。返り ``u_m``(N, 2)[m]、
-``hz``・``mp``(Hertz と Mindlin の表)、``phi``・``Q``・``torsion``。全滑り(|q| ≥ μP)は ``mp['slipping']`` の印(場は c = 0)。
-**Raises** ValueError: P ≤ 0(パッドが離れている)、q が有限の 2 成分でない。
+u(p) = R(φ) u_x(R(−φ)p)(核は等方な半空間なので回転で閉じる)、法線荷重の半径変位 ūr(Johnson 式 3.41b)とねじりの場を足す。
+ねじりの場は ``torsion_model="partial_slip"``(既定、2026-10-06 から)なら部分滑り(:func:`cuttouch.torsion_partial_slip` の数値解、
+縁の環から滑る)、``"no_slip"`` なら 0.4.0 までの無滑りの場(:func:`tactorque.torsion_stick_field`)。ねじりが全滑りを超えるときは、
+膜はそれ以上のねじりを運べないので表の最後の行(固着円が環 1 本)の場で描き、``torsion_slipping`` の印を立てる。``pts`` はマーカー中心
+(px、省略時は ``ctx`` の基準位置)。返り ``u_m``(N, 2)[m]、``hz``・``mp``(Hertz と Mindlin の表)、``phi``・``Q``・``torsion``・
+``torsion_model``・``torsion_ratio``・``torsion_slipping``。全滑り(|q| ≥ μP)は ``mp['slipping']`` の印(場は c = 0)。
+**Raises** ValueError: P ≤ 0(パッドが離れている)、q が有限の 2 成分でない、torsion_model の綴り違い。
 
 ## 参考(サンプルデータ・文献)
 

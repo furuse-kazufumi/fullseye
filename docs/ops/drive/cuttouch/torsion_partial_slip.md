@@ -13,7 +13,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # torsion_partial_slip — DRIVE `cuttouch` op
 
 - **データ種**: `scalar × scalar × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64) -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_partial_slip")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_partial_slip")`)
 
 ## 使い方
 
@@ -24,7 +24,10 @@ version: 0.4.0  # fullseye lib version this note was generated for
 読んだときの M の過大の倍率)、``a``・``p0``・``M_full``、``slipping``(比 ≥ 1 = 全滑り。例外にせず印 —— 滑りは起きる状態で入力の
 誤りではない。β は定まらないので nan)、``readable``(固着円が読みの核 r < 0.6a を含む)。``field=True`` なら ``ctx``
 (:func:`pegtactile.pad_context`)の格子で周方向トラクションを Cerruti 核で畳んだ表面変位 ``ux``・``uy`` [m] と、マーカーの基準位置での
-``u_markers`` (N, 2) [m] も返す(合成用。全滑りでは作らない)。
+``u_markers`` (N, 2) [m] も返す(合成用。全滑りでは作らない)。``from_no_slip_read=True`` なら ``M`` を **無滑りの関係で読んだ値**
+(Reissner–Sagoci、:func:`pegtactile.pad_tactile_read` の ``torsion_model="no_slip"``)と見て、部分滑りの M に直してから同じ表を返す
+(``M`` = 直した値、``M_read`` = 渡した読み。読みが全滑りの像を超えていれば ``M`` = 全滑りのトルクで ``slipping``)。
+``ratio_table_max`` は表の最後の行の比(これ以上は固着円が環 1 本より小さく、場を作らない)。
 **Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、na < 24。
 
 ## 参考(サンプルデータ・文献)
