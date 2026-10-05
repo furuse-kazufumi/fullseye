@@ -3690,17 +3690,19 @@ peaks = fs.range_doppler_peaks(rdmap, dr, dv, n_peaks=2)["peaks"]   # dr, dv = b
 
 **Specular separation (13 ops)** either removes glare by colour (one material, white illuminant) or recovers normals from multiple lights.
 
-**The breaking point is highlight contamination, not occlusion.** Adding a positive outlier of `+3.0` to 4 of 8 lights gives 65.4° for RANSAC and 7.4° for median (0.0001° at 1–3 lights). The median's breakdown point is exactly 50 %, so failing at 4/8 is theory.
+**The breaking point is highlight contamination, not occlusion.** Adding a positive outlier of `+3.0` to 4 of 8 lights gives 65.4° for RANSAC and 7.4° for median (a mean of 2.3e-07° at 1–3 lights, the float32 rounding level of the output). The median's breakdown point is exactly 50 %, so failing at 4/8 is theory.
 
 **Occlusion, by contrast, is solvable.** A measured zero is the *inequality* `n·L ≤ 0`, which a linear solver reads as the equality `n·L = 0` — and the zero-albedo degenerate solution reproduces every blacked-out frame exactly, so **the set of occluded lights can outscore the truth as a self-consistent hypothesis**. Changing the rule to "the fit explains it within tolerance, **and the measurement itself is further from zero than that same tolerance**" gives:
 
 | Occluded lights | Before | After |
 |---|---|---|
-| 0–3 | 0.0001° | 0.0001° |
-| **4** | **70.5°** (while reporting 8/8 lights trusted) | **0.000115°** |
+| 0–3 | below what could be measured (shown as 0.0001° at the time) | 2.3e-07° |
+| **4** | **70.5°** (while reporting 8/8 lights trusted) | **2.3e-07°** |
 | 6 (2 live lights) | 8.99° (**answers**) | **NaN everywhere** (says it cannot be solved) |
 
 The last row is the point: two live lights means **3 unknowns and 2 equations**, unsolvable in principle.
+
+> **Correction, 2026-10-05**: earlier versions gave the "After" column as **0.000115°** (and 0.0001°). That was not an estimation error but a **rounding floor** of the function that measures the angle (`angular_error_deg`), which used acos: the 1e-12 added to the normalising denominator shifted the dot product to 1 − 2e-12, so every nearly parallel pair stuck at about 1.15e-4°. With atan2 and a re-measurement, occlusion of 0–4 lights and highlights on 1–3 lights all drop to a mean of **2.3e-07°** (max 7.5e-07°), identical in every digit to the cost of rounding the true normal to float32 (the output is float32, so nothing below that can be measured). The conclusions of the table — occlusion of 4 lights is solvable, 6 lights is reported as unsolvable — do not change.
 
 > **Correction, 2026-09-02**: the first published version called occlusion the breaking point. The number (70.5°) was real, but the cause was a misread model; once fixed, occlusion is solvable.
 
@@ -3906,7 +3908,8 @@ A run looks like this:
 The strongest example was polarisation. **A polariser sweep and a multi-light stack are both non-negative `(N,H,W)` arrays and structurally indistinguishable.** And mixing them **lies silently in both directions**.
 
 - Feed a genuine light stack to polarisation separation and it **fabricates 5.4 % degree of polarisation** with no polariser and no polarised light anywhere in the scene (50 of 50 random light layouts accepted).
-- Feed a genuine polariser sweep to photometric stereo and it returns a normal **34° off** from the true `(0,0,1)` of a flat surface, at 21 % residual. The same op on genuine photometric data gives 0.000115°. **A factor of 296,000** (independently re-measured at 35.15° vs 0.000000°).
+- Feed a genuine polariser sweep to photometric stereo and it returns a normal **34° off** from the true `(0,0,1)` of a flat surface, at 21 % residual. The same op on genuine photometric data gives **1.9e-14°** — the level of arithmetic rounding, effectively zero (independently re-measured at 35.15° vs 0.000000°).
+  > **Correction, 2026-10-05**: earlier versions said "0.000115° on genuine photometric data, **a factor of 296,000**". 0.000115° was the rounding floor of the angle computation (acos); with atan2 it drops to 1.9e-14°. The factor of 296,000 was a division by that floor, so it is removed (without the floor the ratio becomes 1.8e15, and a ratio over a number this close to zero means nothing). What holds is the contrast: a 34°-wrong answer returned with no exception and no NaN, while the same op on genuine data is accurate to rounding.
 
 No exception, no NaN — a confident lie. The same judgement was applied to time-first video (T,H,W) vs spatial voxels, time-of-arrival cubes (H,W,T), colour quaternions vs monogenic signals, complex beat cubes vs real photon histograms, and z-scan stacks — **six times, each backed by measurement**.
 
