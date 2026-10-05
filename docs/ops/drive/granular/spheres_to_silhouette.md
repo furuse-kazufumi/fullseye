@@ -4,7 +4,7 @@ dim: drive
 category: granular
 in: matrix × scalar × scalar × scalar × scalar
 out: image2d
-examples: [poc_granular_heap_repose]
+examples: [poc_granular_heap_repose, poc_powder_scoop_pour]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -28,6 +28,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_granular_heap_repose](../../../../examples/poc_granular_heap_repose.py) — `py -3.11 examples/poc_granular_heap_repose.py`
+- [poc_powder_scoop_pour](../../../../examples/poc_powder_scoop_pour.py) — `py -3.11 examples/poc_powder_scoop_pour.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)
 

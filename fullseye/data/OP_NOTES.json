@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2997,
- "n_notes": 3003,
+ "n_ops": 3012,
+ "n_notes": 3018,
  "notes": {
   "vol_dilate": [
    {
@@ -20083,6 +20083,156 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
+   }
+  ],
+  "pour_scene_mjcf": [
+   {
+    "op": "pour_scene_mjcf",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/pour_scene_mjcf.md"
+   }
+  ],
+  "revolution_volume_side": [
+   {
+    "op": "revolution_volume_side",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/revolution_volume_side.md"
+   }
+  ],
+  "scoop_count": [
+   {
+    "op": "scoop_count",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/scoop_count.md"
+   }
+  ],
+  "scoop_image_limit": [
+   {
+    "op": "scoop_image_limit",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/scoop_image_limit.md"
+   }
+  ],
+  "scoop_scene_mjcf": [
+   {
+    "op": "scoop_scene_mjcf",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/scoop_scene_mjcf.md"
+   }
+  ],
+  "scoop_synth_side": [
+   {
+    "op": "scoop_synth_side",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/scoop_synth_side.md"
+   }
+  ],
+  "scoop_volume_read": [
+   {
+    "op": "scoop_volume_read",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "image2d × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/scoop_volume_read.md"
+   }
+  ],
+  "spoon_bowl_volume": [
+   {
+    "op": "spoon_bowl_volume",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/spoon_bowl_volume.md"
+   }
+  ],
+  "stream_areal_density": [
+   {
+    "op": "stream_areal_density",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "image2d × scalar",
+    "out": "image2d",
+    "path": "docs/ops/drive/scoop/stream_areal_density.md"
+   }
+  ],
+  "stream_flux_read": [
+   {
+    "op": "stream_flux_read",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/stream_flux_read.md"
+   }
+  ],
+  "stream_synth": [
+   {
+    "op": "stream_synth",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/stream_synth.md"
+   }
+  ],
+  "tilt_pour_rate": [
+   {
+    "op": "tilt_pour_rate",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/tilt_pour_rate.md"
+   }
+  ],
+  "tilt_wedge_retained": [
+   {
+    "op": "tilt_wedge_retained",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/tilt_wedge_retained.md"
+   }
+  ],
+  "tilted_surface_read": [
+   {
+    "op": "tilted_surface_read",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "image2d × scalar × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/tilted_surface_read.md"
+   }
+  ],
+  "two_view_volume": [
+   {
+    "op": "two_view_volume",
+    "dim": "drive",
+    "category": "scoop",
+    "in": "image2d × image2d × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/scoop/two_view_volume.md"
    }
   ],
   "contact_patch_radius": [

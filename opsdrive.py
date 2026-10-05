@@ -31,6 +31,7 @@
 ドーム状の柔らかい指先センサを平らな物に押す大変形接触(tacdome: べき乗則断面のスケーリング則(arXiv:2509.18581)の補正 κₙ・接触半径の式 (4)・普遍形、式 (3) の 1 次の係数は活字 (4+2n)/(1+n) では円柱で力が負になるので本文の模型(長さ L − g の neo-Hookean 円柱ばねの列)から導いた 2n/(1+n)、真値 = 非圧縮 neo-Hookean の円柱の厳密解と Hertz の極限、第 2 実装 = ばね列の中点則、内側カメラの接触像と面積法の半径 → 力の逆算。全部 numpy)。
 ペグの対称性で回転の探索を 1/n に絞る(pegsym: 正 n 角柱(n = 3, 4, 6)とキー付き(n = 1)のペグの挿入。輪郭の複素フーリエ位相で向きを 2π/n を法として読み、回転の探索は 1 周期だけを面取りの窓の 2 倍以下の刻みで掃く。真値 = 回転の窓の閉形式(導出)と平行移動の線形計画、摩擦で止まる限界の導出、期待試行回数の閉形式、Goli ほか 2024(R. Soc. Open Sci.)の式 (2.28) と円柱の Whitney の式で挟む多角形の二点接触、群の恒等式、MuJoCo の試行回数と画像。mujoco が要る 6 本は facade)。
 研削・研磨・拭き取りを画像で測る(polish: Preston の式 dh/dt = k_p p v を軌跡と押す力で積分した除去の深さの地図(直接の積分と FFT の畳み込みの 2 実装)、平板と Hertz の工具の一筆の断面・拭けた帯の幅・拭ける最小の力・平行な一筆の面積の閉形式(導出)、膜の画像(Beer–Lambert)と Otsu で拭けた面積と帯の幅、前後の高さ図から削れた深さと Preston 係数、弾性床のパッドで粗さが exp(−k_p k_w v t) で減る時間発展。MuJoCo で工具を手首のばねで押して動かす 3 本は facade)。
+粉体のすくいと注ぎを画像で測る(scoop: granular の続き。スプーンですくった量を側面像の輪郭から(球冠の椀の閉形式 + 縁の上の回転体、直交 2 方向の楕円の和、体積 → 粒の数は 1 回の較正)、傾けて注いだ流量を流れの幅と速さから(PIV の速さ × Boolean 模型で重なりを数え直した線密度)。真値 = すり切りと山盛りの閉形式、楕円錐の体素、自由落下、Boolean 模型、傾けて出る量の口の楔(自分の導出)、第 2 実装 = MuJoCo の剛体球の個数と線の横切り数。mg 級は秤に譲る規則。mujoco が要る 2 本は facade)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -87,6 +88,7 @@ import diabolo
 import tacdome
 import pegsym
 import polish
+import scoop
 import racket
 import roadjp
 import rsssafety
@@ -95,7 +97,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib, "pegtactile": pegtactile, "cutting": cutting, "diabolo": diabolo, "tacdome": tacdome, "pegsym": pegsym, "polish": polish, "scoop": scoop}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -960,6 +962,26 @@ _CATALOG = {
         ("preston_coefficient_fit", "polish", ["image2d", "image2d"], "table"),
         ("winkler_polish_run", "polish", ["image2d", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
         ("polish_scene_mjcf", "polish", ["scalar"], "any"),
+    ],
+    # 粉体のすくいと注ぎを画像で測る(2026-10-05、物理シミュ × Fullseye 系列、granular の続き): 側面像は image2d(被覆率)、閉形式と
+    # 読みの結果は table(dict)、流れのコマ列は any(list)、Boolean 模型の逆は image2d。真値 = 閉形式(椀・楔・自由落下)、
+    # 楕円錐の体素、Boolean 模型、MuJoCo(--full)。mujoco が要る 2 本(scoop_mujoco_fill / scoop_mujoco_pour)は facade だけ。
+    "scoop": [
+        ("spoon_bowl_volume", "scoop", ["scalar", "scalar"], "table"),
+        ("scoop_synth_side", "scoop", ["scalar", "scalar"], "table"),
+        ("revolution_volume_side", "scoop", ["image2d", "scalar"], "table"),
+        ("two_view_volume", "scoop", ["image2d", "image2d", "scalar"], "table"),
+        ("scoop_volume_read", "scoop", ["image2d", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("scoop_count", "scoop", ["scalar", "scalar", "scalar"], "table"),
+        ("scoop_image_limit", "scoop", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("tilt_wedge_retained", "scoop", ["scalar", "scalar", "scalar", "scalar"], "table"),
+        ("tilt_pour_rate", "scoop", ["scalar", "scalar", "scalar", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("tilted_surface_read", "scoop", ["image2d", "scalar", "scalar", "scalar", "scalar"], "table"),
+        ("stream_synth", "scoop", ["scalar", "scalar", "scalar"], "table"),
+        ("stream_areal_density", "scoop", ["image2d", "scalar"], "image2d"),
+        ("stream_flux_read", "scoop", ["any", "scalar", "scalar"], "table"),
+        ("scoop_scene_mjcf", "scoop", ["scalar", "scalar"], "table"),
+        ("pour_scene_mjcf", "scoop", ["scalar", "scalar", "scalar", "scalar"], "table"),
     ],
 }
 

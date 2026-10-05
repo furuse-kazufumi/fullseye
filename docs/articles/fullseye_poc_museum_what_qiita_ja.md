@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **108 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **109 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -996,7 +996,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 30 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 31 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -1927,6 +1927,50 @@ py -3.11 examples/poc_polish_wipe_measure.py
 この回が作った図は全部で **8 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_polish_wipe_measure)
 
 使用 op(ノートへ): [`band_width_profile`](https://furuse.work/ops/drive/polish/band_width_profile.html) · [`coat_image`](https://furuse.work/ops/drive/polish/coat_image.html) · [`coat_thickness_from_image`](https://furuse.work/ops/drive/polish/coat_thickness_from_image.html) · [`polish_scene_mjcf`](https://furuse.work/ops/drive/polish/polish_scene_mjcf.html) · [`preston_coefficient_fit`](https://furuse.work/ops/drive/polish/preston_coefficient_fit.html) · [`preston_pressure_kernel`](https://furuse.work/ops/drive/polish/preston_pressure_kernel.html) · [`preston_removal_map`](https://furuse.work/ops/drive/polish/preston_removal_map.html) · [`preston_track_profile`](https://furuse.work/ops/drive/polish/preston_track_profile.html) · [`raster_wipe_area`](https://furuse.work/ops/drive/polish/raster_wipe_area.html) · [`removal_depth_from_heights`](https://furuse.work/ops/drive/polish/removal_depth_from_heights.html) · [`surface_form_remove`](https://furuse.work/ops/roughness/prepare/surface_form_remove.html) · [`surface_params`](https://furuse.work/ops/roughness/measure/surface_params.html) · [`surface_synth_psd`](https://furuse.work/ops/roughness/synth/surface_synth_psd.html) · [`winkler_polish_run`](https://furuse.work/ops/drive/polish/winkler_polish_run.html) · [`wipe_band_width`](https://furuse.work/ops/drive/polish/wipe_band_width.html) · [`wipe_coverage`](https://furuse.work/ops/drive/polish/wipe_coverage.html)
+
+## No.2026.210 —— 粉体のすくいと注ぎを画像で測る ―― すくった量を側面像の輪郭から、注ぎの流量を PIV の速さ × Boolean 模型の線密度から、MuJoCo の球の個数と横切り数で 5 % 以内
+
+[![粉体のすくいと注ぎを画像で測る ―― すくった量を側面像の輪郭から、注ぎの流量を PIV の速さ × Boolean 模型の線密度から、MuJoCo の球の個数と横切り数で 5 % 以内](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/01_scoop_spoon_side_views_states.png)
+
+*↑ **粉体のすくいと注ぎを画像で測る ―― すくった量を側面像の輪郭から、注ぎの流量を PIV の速さ × Boolean 模型の線密度から、MuJoCo の球の個数と横切り数で 5 % 以内** ―― 物理シミュ × Fullseye 系列、granular(山の安息角・体積・Beverloo 排出)の続き。先行研究の粉体計量(Kadokawa, Hamaya, Tanaka, IROS 2023)は秤の質量だけを観測に使う。こちらは横から見た像で、スプーンにすくった量と、傾けて注いだときの流量を読む。新モジュール scoop 15 op + mujoco の facade 2。(1) すくった量: 球冠の椀(縁の半径 a、深さ h)のすり切り V = πh(3a² + h²)/6(体素 300³ と 1.4e-5)、山盛りは縁の上の安息角の円錐(granular の heap_volume_cone と一致)。側面像の体積は Pappus の形 π Σ|x − x_axis| c で読む: 被覆率に線形なので、平らな粉面が行の途中を横切っても偏らない(罠: 行の幅を直径にした円板の和は f² で数え落として −1.5 %)。金属の椀は縁より下が見えないので、すり切りの閉形式 + 縁の上の回転体; 縁の上が空だと「すり切りか足りないかは横から分からない」で ValueError。縦長の盛り(楕円錐 1.6 : 1)は直交 2 方向の楕円の和で体素の真値に −0.01 %、片方だけの回転体は −37.5 % / +60.0 %。(2) 粒の数(MuJoCo、--full): 椀を薄板 118 枚で張り、剛体球(半径 2 mm)を椀の中から積んで放す(上から落とすと跳ねて 500 個中 172 個しか残らなかった)。2 方向の像の体積 × 充填率(1 回で較正、ν = 0.539 —— 輪郭は粒の外側の包絡なので充填そのものより小さい)で、他の 5 本の個数を +3.2 / +0.1 / −0.5 / −3.8 / −4.3 %。金属の椀として読むと山の裾が縁に届いた 600 個で +1.0 %、山になりかけの 330 個は +9.3 % → rim_full=False の旗。半径 3.5 mm(縁の半径 / 粒径 4.3)は同じ較正で −9.5 % → 規則 scoop_image_limit は a/d < 5 を秤に回す。(3) 注ぎの流量: 速さは PIV(pivops.piv_cross_correlate の全コマ対の中央値)、線密度は時間平均の被覆率を Boolean 模型 c = 1 − exp(−nπr²) で逆に解いて横に積分、流量 = λ v。合成の流れで速さ 0.82 %、流量は実現した横切り数の 0.98〜1.03 倍、素朴な c/(πr²) は 0.60〜0.73 倍。MuJoCo で口の開いた樋(665 球)を 15 度/s で傾けると、像の流量は線を横切った球の数の0.98〜1.04 倍(傾き 6〜26 度の 5 区間、160〜482 個/s; 素朴な数え方は 0.88〜0.95)、速さは自由落下 √(v₀² + 2gs) と 1.6 % 以内、時間積分した注いだ量は器から出た数の −5.8 %。流量は口の流れの層を等価直径にした Beverloo の 0.42 倍(桁だけ)。(4) 傾き角への依存(自分の導出): 口に壁の無い器は前面が初めから安息角の斜面なので、保持断面は A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx で θ = 0⁺ からこぼれ始める。MuJoCo の出た割合に φ と深さを当てはめると口の楔が RMS 0.023、tan φ − tan θ と書く小角の近似 0.038、2 % 出た角 1.3 度 < 小角の θ_c 4.0 度。器に残る量を像の断面積(− 粒半径 × 自由表面の長さ)で読むと数より最大 0.09 遅れる。図: すくいの側面像、楕円の盛りの 2 方向、合成の流れの GIF、速さと自由落下、Boolean 模型と素朴な数え方、傾けの 2 模型、像か秤か; --full: MuJoCo の椀、注ぎの GIF、出た割合、流量の像と数、参照との表。門 15 本(既定 0.7 s)+ --full 10 本(図込み 71 s)。正直に: 側面像の体積は軸対称か断面が楕円を仮定。体積 → 粒の数は充填率を 1 回較正(量が多いほど ν が上がる系統 ±4 %)。Boolean 模型は粒の位置が独立な流れの式で、口の近くの密な流れでは外れる。傾けて出る量の比較は φ と深さを当てはめたもの(独立でない)、奥の平らな層が実際には流れて薄くなる挙動はどちらの模型にも無い(一次情報は未読)。MuJoCo は剛体の軟接触・付着なし・単分散の球で、μm 級の粉には当てはまらない。*
+
+[![縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。2 方向の楕円の和は体素の真値に -0.01 %、片方だけの回転体は -37 % / +60 % 外れる。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/02_scoop_elliptic_heap_two_views.png)
+
+*↑ 測定の図 ―― 縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。2 方向の楕円の和は体素の真値に -0.01 %、片方だけの回転体は -37 % / +60 % 外れる。*
+
+[![PIV(全コマ対の中央値)の速さと自由落下の閉形式。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/04_scoop_stream_speed_vs_freefall_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/04_scoop_stream_speed_vs_freefall.png)
+
+*↑ PIV(全コマ対の中央値)の速さと自由落下の閉形式。*
+
+[![口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、granular の小角の近似は θ_c まで 1 粒も出ない。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/06_scoop_tilt_models_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/06_scoop_tilt_models.png)
+
+*↑ 口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、granular の小角の近似は θ_c まで 1 粒も出ない。*
+
+[![球冠の椀(青 = 内面の閉形式、縁 30 mm、深さ 12 mm、薄板 118 枚)にすくった剛体球(半径 2 mm)150 / 330 / 600 個(陰影つき正射影、0.25 mm/px、等倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/08_scoop_mujoco_fills_render_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/08_scoop_mujoco_fills_render.png)
+
+*↑ 球冠の椀(青 = 内面の閉形式、縁 30 mm、深さ 12 mm、薄板 118 枚)にすくった剛体球(半径 2 mm)150 / 330 / 600 個(陰影つき正射影、0.25 mm/px、等倍)。*
+
+[![流れの像から読んだ流量(3 高さの平均)と MuJoCo で線を横切った数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/11_scoop_mujoco_flux_image_vs_count_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/11_scoop_mujoco_flux_image_vs_count.png)
+
+*↑ 流れの像から読んだ流量(3 高さの平均)と MuJoCo で線を横切った数。*
+
+[![合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。破線 = 流量を読む 3 つの帯。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/03_scoop_stream_synthetic_frames.gif)
+
+*↑ 動く図 ―― 合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。破線 = 流量を読む 3 つの帯。*
+
+[![口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。数は傾け始めに器にあった球のうち口を越えた数。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_powder_scoop_pour/09_scoop_mujoco_pour_render.gif)
+
+*↑ 動く図 ―― 口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。数は傾け始めに器にあった球のうち口を越えた数。*
+
+```
+py -3.11 examples/poc_powder_scoop_pour.py
+```
+
+ソース: [examples/poc_powder_scoop_pour.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_powder_scoop_pour.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_powder_scoop_pour)
+
+使用 op(ノートへ): [`beverloo_rate`](https://furuse.work/ops/drive/granular/beverloo_rate.html) · [`difference`](https://furuse.work/ops/2d/nary/difference.html) · [`heap_volume_cone`](https://furuse.work/ops/drive/granular/heap_volume_cone.html) · [`pour_scene_mjcf`](https://furuse.work/ops/drive/scoop/pour_scene_mjcf.html) · [`revolution_volume_side`](https://furuse.work/ops/drive/scoop/revolution_volume_side.html) · [`scoop_count`](https://furuse.work/ops/drive/scoop/scoop_count.html) · [`scoop_image_limit`](https://furuse.work/ops/drive/scoop/scoop_image_limit.html) · [`scoop_scene_mjcf`](https://furuse.work/ops/drive/scoop/scoop_scene_mjcf.html) · [`scoop_synth_side`](https://furuse.work/ops/drive/scoop/scoop_synth_side.html) · [`scoop_volume_read`](https://furuse.work/ops/drive/scoop/scoop_volume_read.html) · [`spheres_render_shaded`](https://furuse.work/ops/drive/granular/spheres_render_shaded.html) · [`spheres_to_silhouette`](https://furuse.work/ops/drive/granular/spheres_to_silhouette.html) · [`spoon_bowl_volume`](https://furuse.work/ops/drive/scoop/spoon_bowl_volume.html) · [`stream_flux_read`](https://furuse.work/ops/drive/scoop/stream_flux_read.html) · [`stream_synth`](https://furuse.work/ops/drive/scoop/stream_synth.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tilt_pour_rate`](https://furuse.work/ops/drive/scoop/tilt_pour_rate.html) · [`tilt_wedge_retained`](https://furuse.work/ops/drive/scoop/tilt_wedge_retained.html) · [`tilted_surface_read`](https://furuse.work/ops/drive/scoop/tilted_surface_read.html) · [`two_view_volume`](https://furuse.work/ops/drive/scoop/two_view_volume.html)
 
 ## No.2026.142 —— その数字のうち、いくつが測り方のものか ―― ゲージ R&R と測定の不確かさ
 

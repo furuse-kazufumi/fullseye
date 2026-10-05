@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>直交する 2 方向の側面像から体積 —— 行ごとの 2 つの弦 `<code style="color:#22d3bf">W_a</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">W_b</code>` を軸とする楕円の和</p>
+<p>`<code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>`。</p>
+<p>断面が楕円(軸対称でない山、縦長の盛り)なら厳密で、片方だけの回転体の仮定は楕円の扁平さの比で外れる(PoC で</p>
+<p>1.6 : 1 の楕円錐が片方だと −38 % / +60 %)。行の満ち具合 `<code style="color:#22d3bf">f</code>`(平らな面が行の途中を横切る行、像 a で読む)で弦を</p>
+<p>`<code style="color:#22d3bf">W = w / f</code><code style="color:#22d3bf"> に直してから掛ける(幅の積は </code><code style="color:#22d3bf">f²</code>` で数え落とすため)。雑音は先に消す。2 枚は同じ高さの刻み(同じ行が</p>
+<p>同じ高さ)であること。返り: `<code style="color:#22d3bf">V</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">V_a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">V_b</code><code style="color:#22d3bf">(片方だけの回転体、Pappus)、</code><code style="color:#22d3bf">ellipticity</code>`(弦の比の中央値</p>
+<p>max/min)。<b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 行数が違う / 被覆率でない / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">scoop</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spoon_bowl_volume">spoon_bowl_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_synth_side">scoop_synth_side</a> · <a style="color:#22d3bf" href="opdrive:revolution_volume_side">revolution_volume_side</a> · <a style="color:#22d3bf" href="opdrive:scoop_volume_read">scoop_volume_read</a> · <a style="color:#22d3bf" href="opdrive:scoop_count">scoop_count</a> · <a style="color:#22d3bf" href="opdrive:scoop_image_limit">scoop_image_limit</a> · <a style="color:#22d3bf" href="opdrive:tilt_wedge_retained">tilt_wedge_retained</a> · <a style="color:#22d3bf" href="opdrive:tilt_pour_rate">tilt_pour_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: scoop.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

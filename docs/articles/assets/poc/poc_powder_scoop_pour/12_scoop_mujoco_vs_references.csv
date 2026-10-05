@@ -1,0 +1,6 @@
+﻿quantity,image (this module),outside truth,difference,gate
+"scooped count, r 2 mm (5 runs)",max err 4.3 %,MuJoCo sphere count,-,< 5 %
+"scooped count, r 3.5 mm (a/d 4.3)",max err 9.5 %,MuJoCo sphere count,-,> 2x
+stream speed vs free fall (v0 0.23 m/s),max resid 1.60 %,sqrt(v0^2 + 2 g s),-,2 %
+poured spheres 6-26 deg,405,430 (count),-5.8 %,8 %
+peak pour rate [g/s],40.4,Beverloo 96.3 (D_h 22.4 mm),ratio 0.42,0.1 .. 1

@@ -1,0 +1,132 @@
+[
+ {
+  "file": "01_scoop_spoon_side_views_states.png",
+  "name": "scoop_spoon_side_views_states",
+  "caption": "球冠の椀(縁の半径 240 px = 12 mm、深さ 96 px、0.05 mm/px)の中の粉の側面像(被覆率、雑音 ±0.05、等倍)。青 = 椀の内面(閉形式)、破線 = 縁。下 2 枚は縁の上に安息角 30 度の円錐。Pappus の形で読んだ体積と閉形式の真値。",
+  "shape": [
+   612,
+   1022,
+   3
+  ]
+ },
+ {
+  "file": "02_scoop_elliptic_heap_two_views.png",
+  "name": "scoop_elliptic_heap_two_views",
+  "caption": "縦長の盛り(楕円錐 1.6 : 1)を直交する 2 方向から見た像(等倍)。2 方向の楕円の和は体素の真値に -0.01 %、片方だけの回転体は -37 % / +60 % 外れる。",
+  "shape": [
+   80,
+   430,
+   3
+  ]
+ },
+ {
+  "file": "03_scoop_stream_synthetic_frames.gif",
+  "name": "scoop_stream_synthetic_frames",
+  "caption": "合成の流れ(3000 個/s、半径 1 mm、幅 8 mm、0.5 mm/px を 2 倍の最近傍、1.5 ms/コマ)。破線 = 流量を読む 3 つの帯。",
+  "shape": [
+   384,
+   128,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0
+ },
+ {
+  "file": "04_scoop_stream_speed_vs_freefall.png",
+  "name": "scoop_stream_speed_vs_freefall",
+  "caption": "PIV(全コマ対の中央値)の速さと自由落下の閉形式。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "05_scoop_boolean_model_vs_naive.png",
+  "name": "scoop_boolean_model_vs_naive",
+  "caption": "合成の流れの流量を 200〜5000 個/s に振り、像から読んだ流量を実現した横切り数で割る。Boolean 模型の逆は [1.11, 0.96, 1.0, 1.05, 1.01]、素朴な c/(πr²) は被覆率とともに数え落とす([1.07, 0.86, 0.77, 0.64, 0.5])。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "06_scoop_tilt_models.png",
+  "name": "scoop_tilt_models",
+  "caption": "口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、granular の小角の近似は θ_c まで 1 粒も出ない。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "07_scoop_image_vs_scale.png",
+  "name": "scoop_image_vs_scale",
+  "caption": "山盛りの椀の体積の誤差の目安(表面積 × (0.5 px + 0.25 r))。31 g の椀は 1.5 %、10 mg の椀(縁 2.0 mm)は 21 % → 秤。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "08_scoop_mujoco_fills_render.png",
+  "name": "scoop_mujoco_fills_render",
+  "caption": "球冠の椀(青 = 内面の閉形式、縁 30 mm、深さ 12 mm、薄板 118 枚)にすくった剛体球(半径 2 mm)150 / 330 / 600 個(陰影つき正射影、0.25 mm/px、等倍)。破線 = 縁。2 方向の像の体積 × 較正した充填率 0.539 で数えた個数。",
+  "shape": [
+   480,
+   304,
+   3
+  ]
+ },
+ {
+  "file": "09_scoop_mujoco_pour_render.gif",
+  "name": "scoop_mujoco_pour_render",
+  "caption": "口の開いた樋(青 = 床と奥壁、床 80 mm、幅 24 mm、滑らかな側壁)を口の縁を軸に 15 度/s で傾ける(剛体球 665 個、0.5 mm/px、陰影つき正射影)。数は傾け始めに器にあった球のうち口を越えた数。",
+  "shape": [
+   340,
+   360,
+   3
+  ],
+  "animated": true,
+  "frames": 43,
+  "frames_written": 39,
+  "fps": 10.0
+ },
+ {
+  "file": "10_scoop_mujoco_poured_fraction.png",
+  "name": "scoop_mujoco_poured_fraction",
+  "caption": "MuJoCo の数(真値)と 2 つの準静的模型(φ と深さを当てはめ; 口の楔 RMS 0.023、小角 0.038)。点 = 像の断面積から読んだ割合。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "11_scoop_mujoco_flux_image_vs_count.png",
+  "name": "scoop_mujoco_flux_image_vs_count",
+  "caption": "流れの像から読んだ流量(3 高さの平均)と MuJoCo で線を横切った数。傾くほど流量が増える(供給で決まる)。",
+  "shape": [
+   440,
+   760,
+   3
+  ]
+ },
+ {
+  "file": "12_scoop_mujoco_vs_references.png",
+  "name": "scoop_mujoco_vs_references",
+  "caption": "第 2 実装(MuJoCo の剛体球)と像の読み。数の真値は MuJoCo の個数と線の横切り。",
+  "shape": [
+   200,
+   720,
+   3
+  ],
+  "csv": "12_scoop_mujoco_vs_references.csv",
+  "tsv": "12_scoop_mujoco_vs_references.tsv"
+ }
+]

@@ -714,6 +714,10 @@ from pegsym import (  # noqa: E402,F401
 )
 import polish  # noqa: E402  (研削・研磨・拭き取りを画像で測る: MuJoCo で工具を手首のばねで押して動かす。台帳は opsdrive "polish")
 from polish import polish_scene_build, polish_scene_close, polish_stroke_run  # noqa: E402,F401
+import scoop  # noqa: E402  (粉体のすくいと注ぎを画像で測る: すくった量と注ぎの流量、真値は閉形式・Boolean 模型・MuJoCo。台帳は opsdrive "scoop")
+from scoop import (  # noqa: E402,F401
+    scoop_mujoco_fill, scoop_mujoco_pour,
+)
 import kendamaworld  # noqa: E402  (けんの真値つき世界: けん + 大皿 + 糸のメッシュ、カメラの組、皿の投影の真値)
 from kendamaworld import (  # noqa: E402,F401
     ken_mesh, add_ken, ken_set_pose, string_mesh, add_string, string_set, kendama_world, kendama_rig, ken_truth,
@@ -1241,6 +1245,8 @@ __all__ = [
     "polish_scene_build",
     "polish_stroke_run",
     "polish_scene_close",
+    "scoop_mujoco_fill",
+    "scoop_mujoco_pour",
     "hankel_image",
     "dct_transform",
     "wavelet_filters",

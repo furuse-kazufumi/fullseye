@@ -1,8 +1,8 @@
 {
- "n_ops": 2997,
+ "n_ops": 3012,
  "tiers": {
   "color": 12,
-  "ledger": 2044,
+  "ledger": 2059,
   "nary": 17,
   "registry": 924
  },
@@ -17514,6 +17514,22 @@
    "in_sorts": []
   },
   {
+   "name": "pour_scene_mjcf",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "powder_flowability_class",
    "halcon": "",
    "in_sort": "scalar",
@@ -19760,6 +19776,20 @@
    ]
   },
   {
+   "name": "revolution_volume_side",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
    "name": "rgb_apply_gains",
    "halcon": "",
    "in_sort": "rgb",
@@ -20581,6 +20611,82 @@
    "ledger": "opsoptics",
    "dim": "optics",
    "in_sorts": []
+  },
+  {
+   "name": "scoop_count",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "scoop_image_limit",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "scoop_scene_mjcf",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "scoop_synth_side",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "scoop_volume_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
   },
   {
    "name": "score_to_image2d",
@@ -22425,6 +22531,20 @@
    ]
   },
   {
+   "name": "spoon_bowl_volume",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "spoon_tilt_critical",
    "halcon": "",
    "in_sort": "scalar",
@@ -22966,6 +23086,50 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "stream_areal_density",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "image2d",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar"
+   ]
+  },
+  {
+   "name": "stream_flux_read",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "stream_synth",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -24315,6 +24479,25 @@
    ]
   },
   {
+   "name": "tilt_pour_rate",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
    "name": "tilt_shear_field",
    "halcon": "",
    "in_sort": "matrix",
@@ -24327,6 +24510,39 @@
     "matrix",
     "matrix",
     "table"
+   ]
+  },
+  {
+   "name": "tilt_wedge_retained",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "tilted_surface_read",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "scalar",
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -24965,6 +25181,21 @@
     "signal",
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "two_view_volume",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "scoop",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "image2d",
+    "scalar"
    ]
   },
   {

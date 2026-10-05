@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tilt_wedge_retained — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilt_wedge_retained(theta_deg: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scoop; scoop.tilt_wedge_retained(theta_deg: &#x27;float&#x27;, phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tilt_wedge_retained&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>口に壁の無い器(床の長さ `<code style="color:#22d3bf">L</code><code style="color:#22d3bf">、奥壁は床に垂直で十分高い)に深さ </code><code style="color:#22d3bf">h0</code>` で平らに盛った粉を、口を下げて θ 傾けた</p>
+<p>ときに残る量(2 次元断面、準静的、<b>自分の導出</b>)。</p>
+<p>口の前面は初めから安息角 φ の斜面(口に壁が無いので垂直の崖は立たない)。傾けると口を通る斜面は水平から φ を</p>
+<p>保ち、床から見ると `<code style="color:#22d3bf">φ − θ</code><code style="color:#22d3bf">。奥の平らな面は床に平行のまま(</code><code style="color:#22d3bf">θ &lt; φ</code>` で安定)。保持断面</p>
+<p>`<code style="color:#22d3bf">A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx</code><code style="color:#22d3bf">、出た割合 </code><code style="color:#22d3bf">F = 1 − A(θ) / A(0)</code>`。出始めは θ = 0⁺(前面の楔からすぐ</p>
+<p>こぼれる)、斜面が奥壁に届く角 `<code style="color:#22d3bf">θ_b = φ − atan(h₀ / L)</code>`、θ ≥ φ で全部出る。</p>
+<p>参考に granular の小角の近似(`<code style="color:#22d3bf">tan φ − tan θ</code><code style="color:#22d3bf">、初めの量 </code><code style="color:#22d3bf">L h₀</code><code style="color:#22d3bf">)の割合 </code><code style="color:#22d3bf">F_small_angle</code><code style="color:#22d3bf"> と </code><code style="color:#22d3bf">theta_c_small_angle_deg</code>`</p>
+<p>も返す(MuJoCo でどちらが合うかを比べるため)。</p>
+<p>返り: `<code style="color:#22d3bf">A</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">A0</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">fraction</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">theta_back_deg</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">F_small_angle</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">theta_c_small_angle_deg</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: θ が [0, 90) の外、φ が (0, 90) の外、</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">h0</code>` が ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">table</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">scoop</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spoon_bowl_volume">spoon_bowl_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_synth_side">scoop_synth_side</a> · <a style="color:#22d3bf" href="opdrive:revolution_volume_side">revolution_volume_side</a> · <a style="color:#22d3bf" href="opdrive:two_view_volume">two_view_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_volume_read">scoop_volume_read</a> · <a style="color:#22d3bf" href="opdrive:scoop_count">scoop_count</a> · <a style="color:#22d3bf" href="opdrive:scoop_image_limit">scoop_image_limit</a> · <a style="color:#22d3bf" href="opdrive:tilt_pour_rate">tilt_pour_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: scoop.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

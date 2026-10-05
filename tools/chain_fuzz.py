@@ -5464,6 +5464,86 @@ def _b_po_mjcf(pool, rng):
     return (float(rng.uniform(3e-3, 10e-3)),), {"k_z": float(rng.uniform(100.0, 2e4))}
 
 
+_FUZZ_SC = {}
+
+
+def _fuzz_sc():
+    """粉体のすくいと注ぎの小さな種(山盛りの椀の側面像・楕円の 2 方向・短い流れ・傾いた器)を 1 回だけ作る(scoop、numpy だけ)。"""
+    if "w" not in _FUZZ_SC:
+        import scoop as SC
+        w = SC.scoop_synth_side(40, 16, heap_frac=1.0, phi_deg=30.0, supersample=4)
+        st = SC.stream_synth(2000, 1e-3, 8e-3, rows=96, cols=48, n_frames=6, seed=1)
+        rows, cols = 60, 110
+        yy, xx = np.mgrid[0:rows, 0:cols] + 0.5
+        tilt = ((xx - 10) >= 0) & ((xx - 10) <= 90) & ((50 - yy) >= 0) & ((50 - yy) <= np.minimum(20, (xx - 10) * 0.5))
+        _FUZZ_SC.update({"w": w, "st": st, "tilt": tilt.astype(float)})
+    return _FUZZ_SC
+
+
+def _b_sc_bowl(pool, rng):
+    a = float(rng.uniform(0.01, 0.04))
+    return (a, float(rng.uniform(0.2, 1.0)) * a), {"phi_deg": float(rng.uniform(20, 40))}
+
+
+def _b_sc_synth(pool, rng):
+    return (float(rng.uniform(20, 40)), float(rng.uniform(6, 16))), {"heap_frac": float(rng.uniform(0, 1)), "supersample": 2}
+
+
+def _b_sc_rev(pool, rng):
+    return (_fuzz_sc()["w"]["side"], float(rng.uniform(1e-5, 1e-3))), {}
+
+
+def _b_sc_two(pool, rng):
+    s = _fuzz_sc()["w"]["side"]
+    return (s, s[:, ::-1].copy(), float(rng.uniform(1e-5, 1e-3))), {}
+
+
+def _b_sc_read(pool, rng):
+    w = _fuzz_sc()["w"]
+    return (w["side_above"], w["rim_row"], 40.0, 16.0, w["pitch"]), {}
+
+
+def _b_sc_count(pool, rng):
+    return (float(rng.uniform(1e-7, 1e-4)), float(rng.uniform(1e-4, 3e-3)), float(rng.uniform(0.4, 0.64))), {"density": 2500.0}
+
+
+def _b_sc_limit(pool, rng):
+    return (float(rng.uniform(0.005, 0.05)), 1e-4, float(rng.uniform(1e-4, 3e-3)), 1500.0), {"target_mass": float(rng.uniform(1e-6, 0.05))}
+
+
+def _b_sc_wedge(pool, rng):
+    return (float(rng.uniform(0, 40)), float(rng.uniform(20, 40)), 0.08, float(rng.uniform(0.005, 0.03))), {}
+
+
+def _b_sc_rate(pool, rng):
+    return (float(rng.uniform(0, 40)), float(rng.uniform(1, 30)), float(rng.uniform(20, 40)), 0.08, 0.02, 0.03, 1500.0), {}
+
+
+def _b_sc_tilted(pool, rng):
+    return (_fuzz_sc()["tilt"], 50.0, 10.0, float(rng.uniform(0, 30)), 90.0), {"wall_px": 40.0}
+
+
+def _b_sc_stream(pool, rng):
+    return (float(rng.uniform(200, 3000)), 1e-3, 8e-3), {"rows": 64, "cols": 32, "n_frames": 3, "supersample": 2}
+
+
+def _b_sc_density(pool, rng):
+    return (rng.uniform(0, 0.9, (8, 8)), float(rng.uniform(1, 5))), {}
+
+
+def _b_sc_flux(pool, rng):
+    st = _fuzz_sc()["st"]
+    return (st["frames"], st["dt"], st["truth"]["radius_px"]), {"band_rows": [30, 60], "min_valid": 0.0, "c_max": 0.999}
+
+
+def _b_sc_scoop_mjcf(pool, rng):
+    return (int(rng.integers(5, 60)), float(rng.uniform(0.0015, 0.003))), {}
+
+
+def _b_sc_pour_mjcf(pool, rng):
+    return (float(rng.uniform(0.04, 0.08)), float(rng.uniform(0.02, 0.04)), float(rng.uniform(0.008, 0.02)), 0.002), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5823,6 +5903,10 @@ OP_ARG_BUILDERS = {
     "wipe_band_width": _b_po_band, "raster_wipe_area": _b_po_area, "coat_image": _b_po_coat, "coat_thickness_from_image": _b_po_thick,
     "wipe_coverage": _b_po_cover, "band_width_profile": _b_po_bwp, "removal_depth_from_heights": _b_po_heights,
     "preston_coefficient_fit": _b_po_fit, "winkler_polish_run": _b_po_winkler, "polish_scene_mjcf": _b_po_mjcf,
+    "spoon_bowl_volume": _b_sc_bowl, "scoop_synth_side": _b_sc_synth, "revolution_volume_side": _b_sc_rev, "two_view_volume": _b_sc_two,
+    "scoop_volume_read": _b_sc_read, "scoop_count": _b_sc_count, "scoop_image_limit": _b_sc_limit, "tilt_wedge_retained": _b_sc_wedge,
+    "tilt_pour_rate": _b_sc_rate, "tilted_surface_read": _b_sc_tilted, "stream_synth": _b_sc_stream, "stream_areal_density": _b_sc_density,
+    "stream_flux_read": _b_sc_flux, "scoop_scene_mjcf": _b_sc_scoop_mjcf, "pour_scene_mjcf": _b_sc_pour_mjcf,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

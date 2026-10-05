@@ -7,6 +7,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**粉体のすくいと注ぎを画像で測る**(新モジュール `scoop` 15 op + mujoco の facade 2、台帳 `scoop`(opsdrive)、PoC `poc_powder_scoop_pour`、
+  wing_metrology): granular の続き。すくった量を側面像の輪郭から(球冠の椀の閉形式 + 縁の上の回転体、Pappus の線形和、直交 2 方向の楕円の和で体素に −0.01 %)、
+  MuJoCo の剛体球の個数を 1 回較正の充填率で 4.3 % 以内、粒が大きいと秤に回す規則。注ぎの流量は PIV の速さ × Boolean 模型の線密度で MuJoCo の横切り数の
+  0.98〜1.04 倍(素朴な数え方は 0.88〜0.95)、速さは自由落下と 1.6 %。★傾き角への依存は口に壁の無い器の楔(導出)が MuJoCo の出た割合に RMS 0.023(小角の近似 0.038)。
+  門 15 本 + `--full` 10 本。正直に: 傾けの比較は φ と深さを当てはめたもの、奥の層が流れる挙動はどちらの模型にも無い、MuJoCo の球は μm 級の粉ではない。
 - ★**研削・研磨・拭き取りを画像で測る**(新モジュール `polish` 13 op + mujoco の facade 3、台帳 `polish`(opsdrive)、PoC `poc_polish_wipe_measure`、
   wing_metrology): 題材は arXiv:2410.19235(研削の模倣学習)と arXiv:2406.14990(可変コンプライアンスの拭き)を学習なしで。Preston の式を軌跡と力で積分した
   除去の地図(直接の積分と FFT の 2 実装、rms 0.37 %)、平板と Hertz の一筆の断面・帯の幅・拭ける最小の力・平行な一筆の面積の閉形式(導出、0.26〜0.30 %)、

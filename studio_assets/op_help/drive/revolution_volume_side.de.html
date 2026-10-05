@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">revolution_volume_side — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.revolution_volume_side(side, pitch: &#x27;float&#x27;, *, axis_col: &#x27;float | None&#x27; = None, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import scoop; scoop.revolution_volume_side(side, pitch: &#x27;float&#x27;, *, axis_col: &#x27;float | None&#x27; = None, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;revolution_volume_side&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>側面像 1 枚から軸対称を仮定した体積 —— Pappus の形 `<code style="color:#22d3bf">V = π Σ |x − x_axis| c(x, z) pitch³</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">c</code>` = 被覆率、</p>
+<p>`<code style="color:#22d3bf">x</code>` = 画素の中心の列)。</p>
+<p>被覆率に <b>線形</b> なので、平らな粉面が行の途中を横切る行でも偏らない(行ごとの幅を直径にした円板の和</p>
+<p>`<code style="color:#22d3bf">Σ π (w/2)²</code><code style="color:#22d3bf"> は、満ち具合 </code><code style="color:#22d3bf">f</code><code style="color:#22d3bf"> の行を </code><code style="color:#22d3bf">f²</code>` で数えて 1.5 % 低く出た、実測)。雑音は先に物の外と内で消す</p>
+<p>(`<code style="color:#22d3bf">_clean_coverage</code><code style="color:#22d3bf">)。軸 </code><code style="color:#22d3bf">axis_col</code>`(画素の端が整数)を与えなければ被覆率の重心の列。行ごとの重心に直線を</p>
+<p>当てて軸の傾き `<code style="color:#22d3bf">axis_tilt_deg</code>`(atan2)も返す(傾いた椀は体積が増える; 判定は呼び手)。</p>
+<p>返り: `<code style="color:#22d3bf">V</code><code style="color:#22d3bf"> [pitch の単位の 3 乗]、</code><code style="color:#22d3bf">V_px</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">V_discs</code><code style="color:#22d3bf">(円板の和、比較用)、</code><code style="color:#22d3bf">radius_px</code><code style="color:#22d3bf">(行ごとの半幅)、</code><code style="color:#22d3bf">axis_col</code>`、</p>
+<p>`<code style="color:#22d3bf">axis_tilt_deg</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">rows_used</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">height_px</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 被覆率でない / 粉が写っていない / 左右の縁に触れている(切れている)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">scoop</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spoon_bowl_volume">spoon_bowl_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_synth_side">scoop_synth_side</a> · <a style="color:#22d3bf" href="opdrive:two_view_volume">two_view_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_volume_read">scoop_volume_read</a> · <a style="color:#22d3bf" href="opdrive:scoop_count">scoop_count</a> · <a style="color:#22d3bf" href="opdrive:scoop_image_limit">scoop_image_limit</a> · <a style="color:#22d3bf" href="opdrive:tilt_wedge_retained">tilt_wedge_retained</a> · <a style="color:#22d3bf" href="opdrive:tilt_pour_rate">tilt_pour_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: scoop.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

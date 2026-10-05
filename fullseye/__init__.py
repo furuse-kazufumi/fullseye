@@ -206,6 +206,7 @@ with warnings.catch_warnings():
         diabolo_mujoco_simulate,   # ディアボロの第 2 実装 MuJoCo の空間テンドン(mujoco が要るので台帳の外、2026-10-05)
         pegsym_scene_build, pegsym_views, pegsym_insert_try, pegsym_search_run, pegsym_two_point_depth_sim, pegsym_scene_close,   # 角・六角ペグの対称性で探索を 1/n に(mujoco が要るので台帳の外、2026-10-05)
         polish_scene_build, polish_stroke_run, polish_scene_close,   # 研削・研磨・拭き取り: 工具を手首のばねで押して動かす(mujoco が要るので台帳の外、2026-10-05)
+        scoop_mujoco_fill, scoop_mujoco_pour,   # 粉体のすくい(椀の球の個数)と注ぎ(樋を傾ける)の MuJoCo の第 2 実装(mujoco が要るので台帳の外、2026-10-05)
         hankel_image, dct_transform, wavelet_filters, dwt_transform, dwt_inverse,
         # 数値計算の古典と特殊関数(2026-10-03)
         erf,
@@ -911,6 +912,7 @@ __all__ = [
     "diabolo_mujoco_simulate",
     "pegsym_scene_build", "pegsym_views", "pegsym_insert_try", "pegsym_search_run", "pegsym_two_point_depth_sim", "pegsym_scene_close",
     "polish_scene_build", "polish_stroke_run", "polish_scene_close",
+    "scoop_mujoco_fill", "scoop_mujoco_pour",
     "hankel_image", "dct_transform", "wavelet_filters", "dwt_transform", "dwt_inverse",
     "erf", "erfc", "bessel", "gauss_quadrature", "gauss_cubature", "chebyshev_coeffs_nd", "chebyshev_eval_nd", "low_discrepancy", "chebyshev_nodes", "interp_barycentric", "integrate_hamiltonian",
     "lomb_scargle", "music_doa", "esprit_doa", "ula_snapshots", "n_sources_mdl", "hilbert_analytic",

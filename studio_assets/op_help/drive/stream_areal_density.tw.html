@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stream_areal_density — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import scoop; scoop.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;stream_areal_density&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>被覆率から粒の中心の面密度 [個 / px²] を Boolean 模型で逆に解く `<code style="color:#22d3bf">n = −ln(1 − c) / (π r²)</code>`。</p>
+<p>独立に置いた半径 `<code style="color:#22d3bf">r</code><code style="color:#22d3bf"> の円板の和の被覆率は </code><code style="color:#22d3bf">c = 1 − exp(−n π r²)</code>`(重なりを数え落とさない)。素朴な</p>
+<p>`<code style="color:#22d3bf">c / (π r²)</code>` は c = 0.8 で 2 倍近く数え落とす(PoC の門)。c が 1 に近いと逆は発散する(厚い流れは向こうが</p>
+<p>見えない): `<code style="color:#22d3bf">mode=&quot;raise&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">c ≥ c_max</code><code style="color:#22d3bf"> の画素があれば </code><code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">&quot;clip&quot;</code><code style="color:#22d3bf"> は </code><code style="color:#22d3bf">c_max</code>` に切る(下限の推定に</p>
+<p>なる)。粒の位置が独立でない密な流れ(口の近く、粒が接している)では模型が外れる —— 限界。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: 被覆率でない / 飽和(</code><code style="color:#22d3bf">mode=&quot;raise&quot;</code>`)/ 綴り違い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• (尚無)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">image2d</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:ttc_from_flow">ttc_from_flow</a> · <a style="color:#22d3bf" href="opdrive:foe_from_flow">foe_from_flow</a> · <a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">scoop</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spoon_bowl_volume">spoon_bowl_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_synth_side">scoop_synth_side</a> · <a style="color:#22d3bf" href="opdrive:revolution_volume_side">revolution_volume_side</a> · <a style="color:#22d3bf" href="opdrive:two_view_volume">two_view_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_volume_read">scoop_volume_read</a> · <a style="color:#22d3bf" href="opdrive:scoop_count">scoop_count</a> · <a style="color:#22d3bf" href="opdrive:scoop_image_limit">scoop_image_limit</a> · <a style="color:#22d3bf" href="opdrive:tilt_wedge_retained">tilt_wedge_retained</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: scoop.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

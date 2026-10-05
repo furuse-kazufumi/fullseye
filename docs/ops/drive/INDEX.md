@@ -1,4 +1,4 @@
-# DRIVE operator help — 613 ops in 43 categories
+# DRIVE operator help — 628 ops in 44 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -135,6 +135,10 @@
 ### rss (10)
 
 [rss_lateral](rss/rss_lateral.md) · [rss_lateral_check](rss/rss_lateral_check.md) · [rss_longitudinal_check](rss/rss_longitudinal_check.md) · [rss_longitudinal_opposite](rss/rss_longitudinal_opposite.md) · [rss_longitudinal_same](rss/rss_longitudinal_same.md) · [rss_params](rss/rss_params.md) · [rss_stopping_distance](rss/rss_stopping_distance.md) · [rss_worst_case_gap](rss/rss_worst_case_gap.md) · [rss_worst_case_gap_lateral](rss/rss_worst_case_gap_lateral.md) · [rss_worst_case_gap_opposite](rss/rss_worst_case_gap_opposite.md)
+
+### scoop (15)
+
+[pour_scene_mjcf](scoop/pour_scene_mjcf.md) · [revolution_volume_side](scoop/revolution_volume_side.md) · [scoop_count](scoop/scoop_count.md) · [scoop_image_limit](scoop/scoop_image_limit.md) · [scoop_scene_mjcf](scoop/scoop_scene_mjcf.md) · [scoop_synth_side](scoop/scoop_synth_side.md) · [scoop_volume_read](scoop/scoop_volume_read.md) · [spoon_bowl_volume](scoop/spoon_bowl_volume.md) · [stream_areal_density](scoop/stream_areal_density.md) · [stream_flux_read](scoop/stream_flux_read.md) · [stream_synth](scoop/stream_synth.md) · [tilt_pour_rate](scoop/tilt_pour_rate.md) · [tilt_wedge_retained](scoop/tilt_wedge_retained.md) · [tilted_surface_read](scoop/tilted_surface_read.md) · [two_view_volume](scoop/two_view_volume.md)
 
 ### tacdome (12)
 

@@ -15,7 +15,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
                                           "ball", "balltrack", "ballworld", "racket", "roadjp",
                                           "kendama", "kendamaworld", "gsplat", "long", "env", "inf", "traffic", "decide", "lateral", "crossing", "pass",
-                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish"}
+                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish", "scoop"}
     # 288 → 292: gs_read_file + 動きのデータの入口 3(read_bvh / read_events / events_to_frames、2026-10-03)
     # 292 → 296: 歩くヒューマノイド 4(humanoid_clip_mesh / world_pose_humanoid / humanoid_impostors / world_camera_impostors)
     # 296 → 309: 工場・倉庫の AGV の群れ 13(agvfleet: 格子・CBS / 焦点探索 / 結合 A* / 優先度付き・ADG・VDA 5050)
@@ -39,7 +39,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     #            円柱の厳密解 1・Hertz の誤差 1・接触像と半径 2、2026-10-05。全部 numpy)
     # 585 → 600: ペグの対称性で回転の探索を 1/n に絞る 15(pegsym: 多角形と穴と線形計画 3・回転の窓 1・二点接触 1・合成と打ち直しと向きの読み 4・畳み込みと探索 5・MJCF 1、2026-10-05。numpy だけ、向きの読みは fourierdesc と pegtactile の輪郭)
     # 600 → 613: 研削・研磨・拭き取りを画像で測る 13(polish: 圧力の窓と除去の地図 2・閉形式 3(断面・帯の幅・面積)・膜の画像と読み 4・高さ図と Preston 係数 2・弾性床 1・MJCF 1、2026-10-05。numpy だけ、Hertz は tacsim、2 値化は detect)
-    assert len(opsdrive.OPSDRIVE) == 613
+    # 613 → 628: 粉体のすくいと注ぎを画像で測る 15(scoop: 椀の閉形式と合成と読み 5・粒の数と秤の規則 2・傾けの導出と像 3・流れの合成と Boolean 模型と流量 3・MJCF 2、2026-10-05。numpy だけ、速さは pivops、山の角は granular)
+    assert len(opsdrive.OPSDRIVE) == 628
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -75,6 +76,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import tacdome
     import pegsym
     import polish
+    import scoop
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
@@ -82,7 +84,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
            | set(driveenv.__all__) | set(driveinf.__all__) | set(drivetraffic.__all__)
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
-           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__) | set(pegsym.__all__) | set(polish.__all__))
+           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__) | set(pegsym.__all__) | set(polish.__all__) | set(scoop.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -99,7 +101,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 613
+    assert len(rows) == 628
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 
