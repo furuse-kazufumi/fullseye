@@ -63,44 +63,40 @@ def test_ensure_color_always_returns_three_channels(shape):
         assert np.array_equal(out, a[:, :, :3])
 
 
-def test_build_registry_and_the_lazy_registry_load_the_same_layers():
-    """unified.build_registry と _ensure は同じ層を同じ順に積む(手順を 1 か所にした回帰)。"""
-    import warnings
-    with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
-        import unified as u
-        a, b = u.build_registry(), u._ensure()
-    assert sorted(a.list()) == sorted(b.list())
-    assert len(a.list()) > 1000
-
-
-def test_the_transpose_alias_matches_the_original():
-    import transforms as T
-    H = np.arange(16.0).reshape(4, 4)
-    assert np.array_equal(T.hom_mat3d_transpose_(H), T.hom_mat3d_transpose(H))
-
-
-
-# ---- 呼び出し元 0 本の公開名 3 つは非推奨(0.3.0 で非推奨・0.4.0 で削除)—— 警告を出し、答えは変えない ---- #
-def test_the_three_dead_public_names_warn_and_still_answer():
-    import pytest
-    import ops
-    import transforms as T
+def test_the_lazy_registry_still_loads_every_layer():
+    """unified._ensure が全層を積む(build_registry を 0.4.0 で消した後も、層の手順は _load_layers の 1 か所)。"""
     import unified as u
-    name = next(iter(ops.SLOTS))
-    with pytest.warns(DeprecationWarning, match="0.4.0"):
-        assert ops.op_slot(name) == ops.SLOTS[name]
-    H = np.arange(16.0).reshape(4, 4)
-    with pytest.warns(DeprecationWarning, match="0.4.0"):
-        assert np.array_equal(T.hom_mat3d_transpose_(H), H.T)
-    with pytest.warns(DeprecationWarning, match="0.4.0"):
-        assert len(u.build_registry().list()) > 1000
+    assert len(u._ensure().list()) > 1000
 
 
-def test_the_warning_points_at_the_caller_not_the_library():
-    import warnings
-    import transforms as T
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        T.hom_mat3d_transpose_(np.eye(4))
-    assert w and w[0].filename == __file__        # stacklevel=2
+# ---- 0.3.0 で非推奨にした公開名 5 つは 0.4.0 で削除した —— 名前がもう無く、移行先は在ること ---- #
+_REMOVED_IN_040 = (
+    ("ops", "op_slot", "SLOTS"),
+    ("transforms", "hom_mat3d_transpose_", "hom_mat3d_transpose"),
+    ("unified", "build_registry", "_ensure"),
+    ("contours_xld2", "gen_contour_nurbs_xld", None),
+    ("contours_xld2", "gen_nurbs_interp", None),
+)
+
+
+@pytest.mark.parametrize("mod, name, successor", _REMOVED_IN_040)
+def test_the_names_deprecated_in_030_are_gone_in_040(mod, name, successor):
+    import importlib
+    m = importlib.import_module(mod)
+    assert not hasattr(m, name), "%s.%s は 0.4.0 で削除したはず" % (mod, name)
+    if successor is not None:
+        assert hasattr(m, successor)
+
+
+def test_the_nurbs_successor_exists_and_the_halcon_facade_no_longer_points_at_the_removed_names():
+    """旧 NURBS 2 本の移行先(mathgeometry.nurbs_curve)が在り、HALCON 名の facade 表が消した関数を指さない。"""
+    import json
+    import mathgeometry as G
+    assert callable(G.nurbs_curve)
+    root = Path(__file__).resolve().parents[1]
+    facade = json.loads((root / "fullseye" / "data" / "halcon_facade_map.json").read_text(encoding="utf-8"))
+    assert not any(str(v).startswith("contours_xld2.gen_") and "nurbs" in str(v) for v in facade.values())
+    stubs = json.loads((root / "fullseye" / "data" / "halcon_stubs.json").read_text(encoding="utf-8"))
+    for nm in ("gen_contour_nurbs_xld", "gen_nurbs_interp"):
+        assert stubs["operators"][nm]["covered"] is False
+    assert stubs["n_covered"] == sum(1 for v in stubs["operators"].values() if v.get("covered"))

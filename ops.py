@@ -22,7 +22,6 @@ stdlib + numpy + scipy.ndimage only. C support is a growing image-sort subset.
 from __future__ import annotations
 
 import threading
-import warnings
 from dataclasses import dataclass
 from typing import Callable, Optional
 
@@ -2792,15 +2791,6 @@ def pipeline_str(genome, start: str = IMAGE) -> str:
 SLOTS: dict[str, int] = {op.name: i for i, op in enumerate(REGISTRY)}
 
 
-def op_slot(name: str) -> int:
-    """Stable registration-order slot of an op (frozen when REGISTRY was built).
-
-    .. deprecated:: 0.3.0
-       呼び出し元が 0 本(2026-10-02 の棚卸し)。0.4.0 で削除する。``ops.SLOTS[name]`` を使うこと。
-    """
-    warnings.warn("ops.op_slot は非推奨で 0.4.0 で削除する。ops.SLOTS[name] を使うこと",
-                  DeprecationWarning, stacklevel=2)
-    return SLOTS[name]
 
 
 def stages_str(stages) -> str:

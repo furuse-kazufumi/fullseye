@@ -5,7 +5,6 @@ hom_mat2d(3x3)/ hom_mat3d(4x4)の生成・合成・逆・分解と点/画素変�
 """
 from __future__ import annotations
 
-import warnings
 
 import numpy as np
 
@@ -210,15 +209,6 @@ def hom_mat3d_scale_local(H, sx=1.0, sy=1.0, sz=1.0):
     return _m(H) @ np.diag([sx, sy, sz, 1.0])
 
 
-def hom_mat3d_transpose_(H):
-    """``hom_mat3d_transpose`` の別名(名前を残すだけ。本文の複製はやめた、2026-10-02)。
-
-    .. deprecated:: 0.3.0
-       0.4.0 で削除する。``hom_mat3d_transpose`` を使うこと。
-    """
-    warnings.warn("transforms.hom_mat3d_transpose_ は非推奨で 0.4.0 で削除する。"
-                  "hom_mat3d_transpose を使うこと", DeprecationWarning, stacklevel=2)
-    return hom_mat3d_transpose(H)
 
 
 def hom_mat3d_project(H, px, py, pz):
