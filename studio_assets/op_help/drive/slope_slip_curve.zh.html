@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">slope_slip_curve — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × table × any × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slope_slip_curve(slopes_deg, wheel, soil, mass: &#x27;float&#x27;, n_wheels: &#x27;int&#x27; = 6, gravity: &#x27;float&#x27; = 3.72, s_min: &#x27;float&#x27; = -0.9, s_max: &#x27;float&#x27; = 0.99) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roverslip; roverslip.slope_slip_curve(slopes_deg, wheel, soil, mass: &#x27;float&#x27;, n_wheels: &#x27;int&#x27; = 6, gravity: &#x27;float&#x27; = 3.72, s_min: &#x27;float&#x27; = -0.9, s_max: &#x27;float&#x27; = 0.99) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;slope_slip_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>斜面の角(度、登りが正)ごとに、車体の重さを支えつつ斜面方向の重力成分を牽引力で釣り合わせる定常の滑り率。</p>
+<p>1 輪あたり `<code style="color:#22d3bf">F_z = m g cos β / N</code><code style="color:#22d3bf">、必要な牽引力 </code><code style="color:#22d3bf">m g sin β / N</code>`。滑り率を [s_min, s_max] で二分法</p>
+<p>(内側で沈下も二分法)。`<code style="color:#22d3bf">s_max</code><code style="color:#22d3bf"> でも牽引力が足りない角は </code><code style="color:#22d3bf">feasible = False</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">slip = nan</code>`(立ち往生)、</p>
+<p>下りで `<code style="color:#22d3bf">s_min</code>` でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code><code style="color:#22d3bf">(</code><code style="color:#22d3bf">max_slope</code>` は登れる最大の角の内挿 [deg]、</p>
+<p>範囲内に限界が無ければ nan)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">roverslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:bekker_pressure">bekker_pressure</a> · <a style="color:#22d3bf" href="opdrive:bekker_wheel_sinkage">bekker_wheel_sinkage</a> · <a style="color:#22d3bf" href="opdrive:wheel_forces">wheel_forces</a> · <a style="color:#22d3bf" href="opdrive:wheel_sinkage">wheel_sinkage</a> · <a style="color:#22d3bf" href="opdrive:wheel_traction_curve">wheel_traction_curve</a> · <a style="color:#22d3bf" href="opdrive:ground_shift_track">ground_shift_track</a> · <a style="color:#22d3bf" href="opdrive:odometry_slip">odometry_slip</a> · <a style="color:#22d3bf" href="opdrive:slip_gp_fit">slip_gp_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roverslip.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

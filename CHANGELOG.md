@@ -23,6 +23,11 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ### 追加
 
+- ★**惑星ローバーの車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く**(新モジュール `roverslip` 15 op、facade なし、台帳 `roverslip`(opsdrive)、PoC `poc_rover_slip_risk_path`、wing_astroenv):
+  Bekker の圧力–沈下と Wong–Reece の剛な車輪の応力の数値積分で沈下・牽引・トルク、斜面の角ごとの定常の滑り率と登れる最大の角、地面を見るカメラの並進と車輪の回転から実際の滑り率、
+  分位点回帰 + 共形の補正とガウス過程の滑りの帯、CVaR で割り引いた辺の所要時間のコスト地図と 8 近傍の Dijkstra。numpy だけ。
+  外の真値は閉形式(Bekker の締め固め抵抗を 1.9e-7)、文献の土の定数、MuJoCo の剛体の車輪(剛な地面で一致)、HiRISE の DTM(パブリックドメイン、repo の外・`FULLSEYE_ROVERSLIP_DATA`、無い CI では合成の fBm)。
+  正直に: 滑りの真値は合成、1 種の土では 2 経路はほとんど重なる。既存の `filters_freq.phase_correlation_fft` が帯域の限られた周期的でない切り出しで外れる罠を test に固定(直していない)。
 - ★**包丁を指先の視触覚だけで持って切る**(新モジュール `cuttouch` 3 op、facade なし、台帳 `cuttouch`(opsdrive)、PoC `poc_knife_tactile_toughness`、wing_metrology): cutting × pegtactile の連鎖。
   2 枚のパッドの膜の読みから押し・引き・モーメントを復元し、刃の当たり位置・slice/push 比・靱性を手首の力センサなしに読む。持てる柄の長さの限界(全滑り / 読めなくなるまで)も返す。
   Hertz 接触のねじりの部分滑りを Cerruti 核の影響行列で数値的に解く `torsion_partial_slip`(両端 = Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。これで pegtactile の無滑りのねじりの読みが部分滑りで過大(比 0.5 で +33 %)と分かった。

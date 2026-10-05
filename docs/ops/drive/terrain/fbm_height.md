@@ -4,7 +4,7 @@ dim: drive
 category: terrain
 in: image2d × image2d × table
 out: image2d
-examples: [poc_world_terrain]
+examples: [poc_rover_slip_risk_path, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -27,6 +27,7 @@ fBm の高さの閉形式: h(x, y) = Σ_k A_k cos(2π f_k (x cosθ_k + y sinθ_k
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_rover_slip_risk_path](../../../../examples/poc_rover_slip_risk_path.py) — `py -3.11 examples/poc_rover_slip_risk_path.py`
 - [poc_world_terrain](../../../../examples/poc_world_terrain.py) — `py -3.11 examples/poc_world_terrain.py`
 
 ## 型が繋がる次の op(`image2d` を入力に取れる)

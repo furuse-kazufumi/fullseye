@@ -2982,7 +2982,7 @@ Ops used (notes): [`graph_core_persistence`](https://furuse.work/ops/graph/popul
 
 ### The Astronomy and Environment Wing — Biased by Position, Flipped by the Definition of Truth
 
-Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 20 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
+Stellar brightness and position, the solar limb, all-sky cloud cover, sea-ice concentration, crop cover, terrain, river stage. The subjects are far away and ground truth is normally out of reach. The 21 exhibits here turn that around, placing their truth in closed forms and public data: celestial coordinates, the solid angle of a spherical cap, Eddington limb darkening, elevation tiles from the Geospatial Information Authority of Japan.
 
 The shared finding is that the same object reads differently depending on where it is: the same cloud counts 1.45x more at the horizon than at the zenith; clouds of equal optical thickness are detected or not depending on their angular distance from the sun; the same reflection makes one detector read quietly low and another stop silently.
 
@@ -3571,6 +3571,46 @@ Source: [examples/poc_water_level.py](https://github.com/furuse-kazufumi/fullsey
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_level)
 
 Ops used (notes): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`mat_svd`](https://furuse.work/ops/math/linalg/mat_svd.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`projective_trans_image`](https://furuse.work/ops/2d/geometry/projective_trans_image.html) · [`ransac_line`](https://furuse.work/ops/3d/robust_fit/ransac_line.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.217 —— Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'
+
+[![Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene.png)
+
+*↑ **Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'** ―― On soft sand a wheel turns without the body advancing by the same amount (slip ratio s), and on steeper slopes the rover gets stuck. The existing terrain.traversability is purely geometric and has no notion of soil that cannot hold. With learning-free soil mechanics and light statistics: Bekker pressure–sinkage → numerical integration of Wong–Reece stresses on a rigid wheel → steady slip per slope angle → actual slip from a ground-facing camera's translation and the wheel rotation → slip uncertainty (quantile regression with conformal calibration, and a Gaussian process) → a cost map of CVaR-discounted edge travel time and 8-neighbour Dijkstra. Closed form: traction at τ = 0 equals −Bekker's compaction resistance to 1.9e-7. Dry sand (Mars gravity, 50 kg, 4 wheels) slips 0.219 at 20° and climbs at most 25.2°; the rigid-ground limit is 26.35° (a MuJoCo rigid wheel gives 25.83°, and does not match on sand). Visual-odometry slip error at most 0.0034. Coverage of the nominal 90 % band: quantile regression 0.915; the Gaussian process covers only 0.780 above 8°, is too wide on gentle slopes (0.992), and outside the data answers 'slip 0.29' at 32° (truth: stuck). On a HiRISE DTM (central peak of Balvicar crater, public domain, outside the repo via FULLSEYE_ROVERSLIP_DATA) the mean-shortest path is 672 m and the minimum-risk path 696 m, mean time +1.1 %, probability of getting stuck under true slip 2.23 % → 0.05 %. Traps: Bekker's textbook sinkage factor (3 − n)/3 is 17 % too deep at n = 1.9; the existing phase_correlation_fft returns (1, 0) on a non-periodic crop of the ground (truth (−2, −5)). Honestly: the slip truth is synthetic, the soil type is unknown, and with one soil the two paths nearly coincide. 18 gates (15 on CI without data or mujoco, 3.1 s, curves at 5° and training data as observed); the figure run and --full use 1° curves and training data through visual odometry.*
+
+[![real Mars terrain at 1:1 pixels: the mean-slip shortest path and the minimum slip-risk path](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/01_dtm_two_paths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/01_dtm_two_paths.png)
+
+*↑ The measurement ―― real Mars terrain at 1:1 pixels: the mean-slip shortest path and the minimum slip-risk path (figure labels are in Japanese; the numbers are the same)*
+
+[![the risk-aware path trims the peaks of the upper band at almost no extra length](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/02_slip_band_along_paths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/02_slip_band_along_paths.png)
+
+*↑ the risk-aware path trims the peaks of the upper band at almost no extra length*
+
+[![GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile.png)
+
+*↑ GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean past the data*
+
+[![the slope a wheel can hold is where DP/W reaches sin(slope)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/05_traction_slip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/05_traction_slip.png)
+
+*↑ the slope a wheel can hold is where DP/W reaches sin(slope)*
+
+[![no sinkage, no shear deformation: a rigid-contact simulator cannot show soft-soil slip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/06_mujoco_vs_wong_reece_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/06_mujoco_vs_wong_reece.png)
+
+*↑ no sinkage, no shear deformation: a rigid-contact simulator cannot show soft-soil slip*
+
+[![as the rover drives, measured slips tighten the slip-vs-slope band (quantile regression, 90 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif)
+
+*↑ The animation ―― as the rover drives, measured slips tighten the slip-vs-slope band (quantile regression, 90 %)*
+
+```
+py -3.11 examples/poc_rover_slip_risk_path.py
+```
+
+Source: [examples/poc_rover_slip_risk_path.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rover_slip_risk_path.py)
+
+This run produced **7 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rover_slip_risk_path)
+
+Ops used (notes): [`bekker_wheel_sinkage`](https://furuse.work/ops/drive/roverslip/bekker_wheel_sinkage.html) · [`cvar_cost_map`](https://furuse.work/ops/drive/roverslip/cvar_cost_map.html) · [`fbm_height`](https://furuse.work/ops/drive/terrain/fbm_height.html) · [`fbm_params`](https://furuse.work/ops/drive/terrain/fbm_params.html) · [`ground_shift_track`](https://furuse.work/ops/drive/roverslip/ground_shift_track.html) · [`odometry_slip`](https://furuse.work/ops/drive/roverslip/odometry_slip.html) · [`path_slip_risk`](https://furuse.work/ops/drive/roverslip/path_slip_risk.html) · [`risk_aware_path`](https://furuse.work/ops/drive/roverslip/risk_aware_path.html) · [`slip_gp_fit`](https://furuse.work/ops/drive/roverslip/slip_gp_fit.html) · [`slip_predict`](https://furuse.work/ops/drive/roverslip/slip_predict.html) · [`slip_quantile_fit`](https://furuse.work/ops/drive/roverslip/slip_quantile_fit.html) · [`slope_slip_curve`](https://furuse.work/ops/drive/roverslip/slope_slip_curve.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`wheel_forces`](https://furuse.work/ops/drive/roverslip/wheel_forces.html) · [`wheel_sinkage`](https://furuse.work/ops/drive/roverslip/wheel_sinkage.html) · [`wheel_traction_curve`](https://furuse.work/ops/drive/roverslip/wheel_traction_curve.html)
 
 ## No.2026.136 —— There Are Two Kinds of Height, for Real — Putting a Height-Frame Mix-Up Under a Detector with 523 Published Survey Marks
 

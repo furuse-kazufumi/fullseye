@@ -1,0 +1,76 @@
+[
+ {
+  "file": "01_dtm_two_paths.png",
+  "name": "dtm_two_paths",
+  "caption": "real Mars terrain at 1:1 pixels: the mean-slip shortest path and the minimum slip-risk path",
+  "shape": [
+   1024,
+   1024,
+   3
+  ]
+ },
+ {
+  "file": "02_slip_band_along_paths.png",
+  "name": "slip_band_along_paths",
+  "caption": "the risk-aware path trims the peaks of the upper band at almost no extra length",
+  "shape": [
+   420,
+   1214,
+   3
+  ]
+ },
+ {
+  "file": "03_rover_slip_update.gif",
+  "name": "rover_slip_update",
+  "caption": "as the rover drives, measured slips tighten the slip-vs-slope band (quantile regression, 90 %)",
+  "shape": [
+   512,
+   1024,
+   3
+  ],
+  "animated": true,
+  "frames": 28,
+  "frames_written": 28,
+  "fps": 4.0
+ },
+ {
+  "file": "04_slip_band_gp_vs_quantile.png",
+  "name": "slip_band_gp_vs_quantile",
+  "caption": "GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean past the data",
+  "shape": [
+   520,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "05_traction_slip.png",
+  "name": "traction_slip",
+  "caption": "the slope a wheel can hold is where DP/W reaches sin(slope)",
+  "shape": [
+   480,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "06_mujoco_vs_wong_reece.png",
+  "name": "mujoco_vs_wong_reece",
+  "caption": "no sinkage, no shear deformation: a rigid-contact simulator cannot show soft-soil slip",
+  "shape": [
+   480,
+   900,
+   3
+  ]
+ },
+ {
+  "file": "07_two_soils_scene.png",
+  "name": "two_soils_scene",
+  "caption": "left: on a 12 deg incline the risk-aware path avoids the bimodal crust; right: on flat ground both coincide",
+  "shape": [
+   384,
+   776,
+   3
+  ]
+ }
+]

@@ -5883,6 +5883,103 @@ def _b_ct_tough(pool, rng):
     return (f["loads"], f["w"]), {}
 
 
+_FUZZ_RS = {}
+_RS_WHEEL = {"r": 0.15, "b": 0.12}
+
+
+def _fuzz_rs():
+    """小さな種(滑りの観測 80 点、分位点回帰と GP の模型、20 × 20 の丘の DTM とその上の経路、地面の模様のコマ)を 1 回だけ作る。"""
+    if "qr" not in _FUZZ_RS:
+        import roverslip as RS
+        rng = np.random.default_rng(0)
+        x = rng.uniform(-15, 20, 80)
+        y = 0.002 * np.maximum(x, 0) ** 2 + 0.005 * x + rng.normal(0, 0.02 + 0.003 * np.abs(x))
+        qr = RS.slip_quantile_fit(x, y)
+        gp = RS.slip_gp_fit(x, y)
+        i, j = np.mgrid[0:20, 0:20]
+        Z = 1.5 * np.exp(-((i - 10) ** 2 + (j - 9) ** 2) / 30.0)
+        cm = RS.cvar_cost_map(Z, 1.0, qr, alpha=0.9, extrapolate=True)
+        pth = RS.risk_aware_path(cm, (1, 1), (18, 18))["path"]
+        ii, jj = np.mgrid[0:24, 0:24].astype(float)
+        frames = np.array([np.sin(0.4 * (jj + 1.3 * t)) + np.cos(0.3 * (ii + 0.2 * t)) + 0.5 * np.sin(0.21 * (ii + jj + 1.5 * t))
+                           for t in range(4)])
+        _FUZZ_RS.update({"x": x, "y": y, "qr": qr, "gp": gp, "Z": Z, "cm": cm, "path": pth, "frames": frames})
+    return _FUZZ_RS
+
+
+def _b_rs_pressure(pool, rng):
+    return (rng.uniform(0, 0.05, int(rng.integers(3, 20))), float(rng.uniform(0.05, 0.3)), "dry_sand"), {}
+
+
+def _b_rs_bsink(pool, rng):
+    return (float(rng.uniform(5, 200)), dict(_RS_WHEEL), ("dry_sand", "mars_simulant_m90")[int(rng.integers(0, 2))]), \
+        {"form": ("classic", "parabolic")[int(rng.integers(0, 2))]}
+
+
+def _b_rs_forces(pool, rng):
+    return (rng.uniform(0.001, 0.05, 5), rng.uniform(-0.5, 0.9, 5), dict(_RS_WHEEL), "mars_simulant_m90"), {}
+
+
+def _b_rs_sink(pool, rng):
+    return (rng.uniform(5, 80, 4), dict(_RS_WHEEL), "dry_sand"), {"slip": float(rng.uniform(0, 0.6))}
+
+
+def _b_rs_trac(pool, rng):
+    return (float(rng.uniform(10, 80)), dict(_RS_WHEEL), "mars_simulant_m90"), {"slips": np.linspace(0, 0.8, 9)}
+
+
+def _b_rs_slope(pool, rng):
+    return (np.sort(rng.uniform(-15, 30, 6)), dict(_RS_WHEEL), "dry_sand", float(rng.uniform(20, 80))), {}
+
+
+def _b_rs_track(pool, rng):
+    return (_fuzz_rs()["frames"],), {"pixel_size": float(rng.uniform(0.001, 0.01))}
+
+
+def _b_rs_odo(pool, rng):
+    n = int(rng.integers(4, 12))
+    ang = np.cumsum(rng.uniform(0.02, 0.1, n))
+    return (0.15 * ang * (1 - rng.uniform(0, 0.6)), ang, 0.15), {"window": int(rng.integers(1, n - 1))}
+
+
+def _b_rs_gp(pool, rng):
+    f = _fuzz_rs()
+    k = rng.choice(f["x"].size, int(rng.integers(20, 60)), replace=False)
+    return (f["x"][k], f["y"][k]), {}
+
+
+def _b_rs_qr(pool, rng):
+    f = _fuzz_rs()
+    k = rng.choice(f["x"].size, int(rng.integers(40, 80)), replace=False)
+    return (f["x"][k], f["y"][k]), {"calibrate": float(rng.choice([0.0, 0.25]))}
+
+
+def _b_rs_pred(pool, rng):
+    f = _fuzz_rs()
+    return (f[("qr", "gp")[int(rng.integers(0, 2))]], rng.uniform(-20, 25, 7)), {}
+
+
+def _b_rs_cvar(pool, rng):
+    f = _fuzz_rs()
+    return (f[("qr", "gp")[int(rng.integers(0, 2))]], rng.uniform(-20, 25, 7), float(rng.uniform(0, 0.95))), \
+        {"sign": float(rng.choice([1.0, -1.0]))}
+
+
+def _b_rs_costmap(pool, rng):
+    f = _fuzz_rs()
+    return (f["Z"], float(rng.uniform(0.5, 2.0)), f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
+
+
+def _b_rs_path(pool, rng):
+    f = _fuzz_rs()
+    return (f["cm"], (int(rng.integers(0, 20)), int(rng.integers(0, 20))), (int(rng.integers(0, 20)), int(rng.integers(0, 20)))), {}
+
+
+def _b_rs_risk(pool, rng):
+    f = _fuzz_rs()
+    return (f["path"], f["Z"], 1.0, f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6264,6 +6361,11 @@ OP_ARG_BUILDERS = {
     "unexplained_peaks": _b_px_unexp, "phase_peel": _b_px_peel,
     "dose_cv_lognormal": _b_du_logn, "dose_cv_from_sizes": _b_du_sizes, "grind_time_for_dose_cv": _b_du_time,
     "torsion_partial_slip": _b_ct_torsion, "knife_load_from_pads": _b_ct_load, "toughness_from_pads": _b_ct_tough,
+    "bekker_pressure": _b_rs_pressure, "bekker_wheel_sinkage": _b_rs_bsink, "wheel_forces": _b_rs_forces,
+    "wheel_sinkage": _b_rs_sink, "wheel_traction_curve": _b_rs_trac, "slope_slip_curve": _b_rs_slope,
+    "ground_shift_track": _b_rs_track, "odometry_slip": _b_rs_odo, "slip_gp_fit": _b_rs_gp,
+    "slip_quantile_fit": _b_rs_qr, "slip_predict": _b_rs_pred, "slip_cvar": _b_rs_cvar,
+    "cvar_cost_map": _b_rs_costmap, "risk_aware_path": _b_rs_path, "path_slip_risk": _b_rs_risk,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,
@@ -7054,6 +7156,9 @@ NONFINITE_BY_CONTRACT = {"esdf", "register_spin", "register_fpfh",
                          "swarm_field_from_tracks", "swarm_field_from_piv",  # 測れない格子は u・v が NaN で valid = False(module の規約どおり)
                          "velocity_deficit_map",  # 測れない格子(valid = False)は NaN(docstring どおり)
                          "potential_flow_cylinder",  # 円の内側は u・v が NaN(docstring どおり。流れの無い所)
+                         "slope_slip_curve",    # 登れない角は slip が NaN で feasible = False(docstring どおり、立ち往生)
+                         "cvar_cost_map",       # 通れない辺(悲観的な滑り ≥ s_max・データの角の範囲の外・地図の外)は inf(docstring どおり)
+                         "risk_aware_path",     # 届かなければ cost が inf(docstring どおり)
                          } | NONFINITE_BY_CONTRACT_METRICS \
                          | NONFINITE_BY_CONTRACT_ASTRO_FORENSICS \
                          | NONFINITE_BY_CONTRACT_OPTICS \

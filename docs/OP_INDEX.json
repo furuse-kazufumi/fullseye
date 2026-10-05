@@ -1,8 +1,8 @@
 {
- "n_ops": 3063,
+ "n_ops": 3078,
  "tiers": {
   "color": 12,
-  "ledger": 2110,
+  "ledger": 2125,
   "nary": 17,
   "registry": 924
  },
@@ -1896,6 +1896,36 @@
    "dim": "optics",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "bekker_pressure",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "scalar",
+    "any"
+   ]
+  },
+  {
+   "name": "bekker_wheel_sinkage",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "scalar",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "table",
+    "any"
    ]
   },
   {
@@ -5145,6 +5175,21 @@
    "in_sorts": [
     "table",
     "scalar"
+   ]
+  },
+  {
+   "name": "cvar_cost_map",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "image2d",
+    "scalar",
+    "any"
    ]
   },
   {
@@ -9867,6 +9912,19 @@
     "signal",
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "ground_shift_track",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any"
    ]
   },
   {
@@ -15601,6 +15659,21 @@
    "in_sorts": []
   },
   {
+   "name": "odometry_slip",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "offtracking_circle",
    "halcon": "",
    "in_sort": null,
@@ -16326,6 +16399,22 @@
    "ledger": "opsdrive",
    "dim": "drive",
    "in_sorts": []
+  },
+  {
+   "name": "path_slip_risk",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "image2d",
+    "scalar",
+    "table"
+   ]
   },
   {
    "name": "pc_density",
@@ -20503,6 +20592,21 @@
    ]
   },
   {
+   "name": "risk_aware_path",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "any",
+    "any"
+   ]
+  },
+  {
    "name": "ritter_dam_break",
    "halcon": "",
    "in_sort": "signal",
@@ -22502,6 +22606,21 @@
    "in_sorts": []
   },
   {
+   "name": "slip_cvar",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "signal",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal",
+    "scalar"
+   ]
+  },
+  {
    "name": "slip_entropy",
    "halcon": "",
    "in_sort": "signal",
@@ -22512,6 +22631,64 @@
    "dim": "drive",
    "in_sorts": [
     "signal"
+   ]
+  },
+  {
+   "name": "slip_gp_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "slip_predict",
+   "halcon": "",
+   "in_sort": "table",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "table",
+    "signal"
+   ]
+  },
+  {
+   "name": "slip_quantile_fit",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal"
+   ]
+  },
+  {
+   "name": "slope_slip_curve",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table",
+    "any",
+    "scalar"
    ]
   },
   {
@@ -27708,6 +27885,52 @@
    "dim": "optics",
    "in_sorts": [
     "rgbimage"
+   ]
+  },
+  {
+   "name": "wheel_forces",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "signal",
+    "table",
+    "any"
+   ]
+  },
+  {
+   "name": "wheel_sinkage",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "signal",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "signal",
+    "table",
+    "any"
+   ]
+  },
+  {
+   "name": "wheel_traction_curve",
+   "halcon": "",
+   "in_sort": "scalar",
+   "out_sort": "table",
+   "category": "roverslip",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "scalar",
+    "table",
+    "any"
    ]
   },
   {

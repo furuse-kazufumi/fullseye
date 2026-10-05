@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bekker_wheel_sinkage — DRIVE <code style="color:#22d3bf">roverslip</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bekker_wheel_sinkage&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>Bekker の剛な車輪の沈下の近似式 [m]。接地を放物線 `<code style="color:#22d3bf">z(x) = z₀ − x²/D</code>` で近似し、せん断は入れない。</p>
+<p>`<code style="color:#22d3bf">load</code><code style="color:#22d3bf"> は 1 輪の垂直荷重 [N]、D = 2r、</code><code style="color:#22d3bf">k = k_c/b + k_φ</code><code style="color:#22d3bf">。荷重は </code><code style="color:#22d3bf">W = b k sqrt(D) z₀^(n+1/2) · I(n)</code>`、</p>
+<p>`<code style="color:#22d3bf">I(n) = ∫₀¹ (1 − t²)ⁿ dt</code>`。</p>
+<p>`<code style="color:#22d3bf">form = &quot;classic&quot;</code><code style="color:#22d3bf">: Bekker の教科書の式 </code><code style="color:#22d3bf">z = [3W / ((3 − n) b k sqrt(D))]^(2/(2n+1))</code>`。これは</p>
+<p>`<code style="color:#22d3bf">(1 − t²)ⁿ ≈ 1 − n t²</code><code style="color:#22d3bf"> と置いた </code><code style="color:#22d3bf">I(n) ≈ (3 − n)/3</code>` で、<b>n = 1 でだけ厳密</b>(n = 1.9 では I を 21 % 大きく</p>
+<p>見積もり、沈下を 17 % 深く出す —— 2026-10-06 の試作で数値積分と比べて見つけた)。</p>
+<p>`<code style="color:#22d3bf">form = &quot;parabolic&quot;</code><code style="color:#22d3bf">: 同じ放物線のまま </code><code style="color:#22d3bf">I(n) = √π Γ(n+1) / (2 Γ(n + 3/2))</code>` を厳密に使う。小さな沈下</p>
+<p>(z ≪ D)で :func:<code style="color:#22d3bf">wheel_sinkage</code> の数値積分(後側の接地なし、τ = 0)に収束する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">scalar</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">roverslip</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:bekker_pressure">bekker_pressure</a> · <a style="color:#22d3bf" href="opdrive:wheel_forces">wheel_forces</a> · <a style="color:#22d3bf" href="opdrive:wheel_sinkage">wheel_sinkage</a> · <a style="color:#22d3bf" href="opdrive:wheel_traction_curve">wheel_traction_curve</a> · <a style="color:#22d3bf" href="opdrive:slope_slip_curve">slope_slip_curve</a> · <a style="color:#22d3bf" href="opdrive:ground_shift_track">ground_shift_track</a> · <a style="color:#22d3bf" href="opdrive:odometry_slip">odometry_slip</a> · <a style="color:#22d3bf" href="opdrive:slip_gp_fit">slip_gp_fit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roverslip.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

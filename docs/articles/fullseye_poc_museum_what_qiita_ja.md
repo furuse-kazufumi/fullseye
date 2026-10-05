@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **113 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **114 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -2990,7 +2990,7 @@ py -3.11 examples/poc_worm_core_persists.py
 
 ### 天文・環境ウィング ―― 位置で偏り、真値の定義で反転する
 
-星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 20 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
+星の明るさと位置、太陽の縁、全天の雲量、海氷の密接度、畑の被覆率、地形、河川の水位。対象は遠く、真値は普通手に入りません。この部屋の 21 点はそれを逆手に取り、天球座標・球冠の立体角・Eddington の周辺減光・国土地理院の標高タイルといった閉形式や公開データから真値を置いています。
 
 共通して出てきたのは「同じ物が、どこにあるかで違って読める」ことです。同じ雲が天頂と地平線で 1.45 倍、同じ厚さの雲が太陽からの角距離で検出されたりされなかったり、同じ反射が検出器によって「静かに低く読む」か「黙って止まる」か。
 
@@ -3579,6 +3579,46 @@ py -3.11 examples/poc_water_level.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_water_level)
 
 使用 op(ノートへ): [`gen_measure_rectangle2`](https://furuse.work/ops/measure1d/caliper/gen_measure_rectangle2.html) · [`mat_svd`](https://furuse.work/ops/math/linalg/mat_svd.html) · [`measure_pos`](https://furuse.work/ops/measure1d/caliper/measure_pos.html) · [`projective_trans_image`](https://furuse.work/ops/2d/geometry/projective_trans_image.html) · [`ransac_line`](https://furuse.work/ops/3d/robust_fit/ransac_line.html) · [`threshold`](https://furuse.work/ops/2d/segmentation/threshold.html)
+
+## No.2026.217 —— 火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く ―― Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM、ガウス過程はデータの外で立ち往生を「滑り 0.29」と答える
+
+[![火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く ―― Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM、ガウス過程はデータの外で立ち往生を「滑り 0.29」と答える](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/07_two_soils_scene.png)
+
+*↑ **火星の実地形で車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く ―― Bekker / Wong–Reece と CVaR、地形は HiRISE の DTM、ガウス過程はデータの外で立ち往生を「滑り 0.29」と答える** ―― 柔らかい砂の上では車輪が回っても車体はその分だけ進まず(滑り率 s)、斜面が急になると立ち往生する。既存の terrain.traversability は幾何だけで、土が支えきれない効果を持っていなかった。学習なしの土の力学と軽い統計で、Bekker の圧力–沈下 → Wong–Reece の剛な車輪の応力の数値積分 → 斜面の角ごとの定常の滑り率 → 地面を見るカメラの並進と車輪の回転から実際の滑り率 → 滑りの不確かさ(分位点回帰 + 共形の補正、ガウス過程)→ CVaR で割り引いた辺の所要時間のコスト地図と 8 近傍の Dijkstra。閉形式: τ = 0 の牽引 = −Bekker の締め固め抵抗を 1.9e-7。乾いた砂(火星の重力、50 kg・4 輪)は 20° で滑り 0.219、登れる最大 25.2°、剛な地面の極限 26.35°(MuJoCo の剛体の車輪 25.83°、砂では一致しない)。視覚オドメトリの滑り率 最大 0.0034。名目 90 % の帯の被覆は分位点回帰 0.915、ガウス過程は 8° 以上で 0.780 しか覆わず緩斜面で 0.992 と広すぎ、データの外の 32° を「滑り 0.29」と答える(真は立ち往生)。HiRISE の DTM(Balvicar クレーターの中央丘、パブリックドメイン、repo の外・FULLSEYE_ROVERSLIP_DATA)の上で平均の最短 672 m / リスク最小 696 m、平均の時間 +1.1 %、真の滑りで立ち往生の確率 2.23 % → 0.05 %。罠: Bekker の教科書の沈下の式 (3 − n)/3 は n = 1.9 で 17 % 深い、既存の phase_correlation_fft は周期的でない地面の切り出しで (1, 0) を返す(真は (−2, −5))。正直に: 滑りの真値は合成、土の種類は分からない、1 種の土では 2 経路はほとんど重なる。門 18 本(データ無し・mujoco 無しの CI は 15 本、3.1 s、曲線 5° 刻み・学習データは観測のまま)、図の実行と --full は 1° 刻み・学習データを視覚オドメトリ経由。*
+
+[![real Mars terrain at 1:1 pixels: the mean-slip shortest path and the minimum slip-risk path](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/01_dtm_two_paths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/01_dtm_two_paths.png)
+
+*↑ 測定の図 ―― real Mars terrain at 1:1 pixels: the mean-slip shortest path and the minimum slip-risk path*
+
+[![the risk-aware path trims the peaks of the upper band at almost no extra length](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/02_slip_band_along_paths_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/02_slip_band_along_paths.png)
+
+*↑ the risk-aware path trims the peaks of the upper band at almost no extra length*
+
+[![GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean p](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/04_slip_band_gp_vs_quantile.png)
+
+*↑ GP's uniform noise is too wide on gentle slopes, too narrow on steep ones, and reverts to the mean past the data*
+
+[![the slope a wheel can hold is where DP/W reaches sin(slope)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/05_traction_slip_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/05_traction_slip.png)
+
+*↑ the slope a wheel can hold is where DP/W reaches sin(slope)*
+
+[![no sinkage, no shear deformation: a rigid-contact simulator cannot show soft-soil slip](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/06_mujoco_vs_wong_reece_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/06_mujoco_vs_wong_reece.png)
+
+*↑ no sinkage, no shear deformation: a rigid-contact simulator cannot show soft-soil slip*
+
+[![as the rover drives, measured slips tighten the slip-vs-slope band (quantile regression, 90 %)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_rover_slip_risk_path/03_rover_slip_update.gif)
+
+*↑ 動く図 ―― as the rover drives, measured slips tighten the slip-vs-slope band (quantile regression, 90 %)*
+
+```
+py -3.11 examples/poc_rover_slip_risk_path.py
+```
+
+ソース: [examples/poc_rover_slip_risk_path.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_rover_slip_risk_path.py)
+
+この回が作った図は全部で **7 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_rover_slip_risk_path)
+
+使用 op(ノートへ): [`bekker_wheel_sinkage`](https://furuse.work/ops/drive/roverslip/bekker_wheel_sinkage.html) · [`cvar_cost_map`](https://furuse.work/ops/drive/roverslip/cvar_cost_map.html) · [`fbm_height`](https://furuse.work/ops/drive/terrain/fbm_height.html) · [`fbm_params`](https://furuse.work/ops/drive/terrain/fbm_params.html) · [`ground_shift_track`](https://furuse.work/ops/drive/roverslip/ground_shift_track.html) · [`odometry_slip`](https://furuse.work/ops/drive/roverslip/odometry_slip.html) · [`path_slip_risk`](https://furuse.work/ops/drive/roverslip/path_slip_risk.html) · [`risk_aware_path`](https://furuse.work/ops/drive/roverslip/risk_aware_path.html) · [`slip_gp_fit`](https://furuse.work/ops/drive/roverslip/slip_gp_fit.html) · [`slip_predict`](https://furuse.work/ops/drive/roverslip/slip_predict.html) · [`slip_quantile_fit`](https://furuse.work/ops/drive/roverslip/slip_quantile_fit.html) · [`slope_slip_curve`](https://furuse.work/ops/drive/roverslip/slope_slip_curve.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`wheel_forces`](https://furuse.work/ops/drive/roverslip/wheel_forces.html) · [`wheel_sinkage`](https://furuse.work/ops/drive/roverslip/wheel_sinkage.html) · [`wheel_traction_curve`](https://furuse.work/ops/drive/roverslip/wheel_traction_curve.html)
 
 ## No.2026.136 —— 高さは 2 つある・実データ編 ―― 公開された測量成果 523 点で、高さの取り違えを検出器にかける
 

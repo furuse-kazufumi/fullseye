@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3063,
- "n_notes": 3069,
+ "n_ops": 3078,
+ "n_notes": 3084,
  "notes": {
   "vol_dilate": [
    {
@@ -20374,6 +20374,156 @@
     "category": "roadjp",
     "out": "table",
     "path": "docs/ops/drive/roadjp/signal_jp_mesh.md"
+   }
+  ],
+  "bekker_pressure": [
+   {
+    "op": "bekker_pressure",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × scalar × any",
+    "out": "signal",
+    "path": "docs/ops/drive/roverslip/bekker_pressure.md"
+   }
+  ],
+  "bekker_wheel_sinkage": [
+   {
+    "op": "bekker_wheel_sinkage",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "scalar × table × any",
+    "out": "scalar",
+    "path": "docs/ops/drive/roverslip/bekker_wheel_sinkage.md"
+   }
+  ],
+  "cvar_cost_map": [
+   {
+    "op": "cvar_cost_map",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "image2d × scalar × any",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/cvar_cost_map.md"
+   }
+  ],
+  "ground_shift_track": [
+   {
+    "op": "ground_shift_track",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/ground_shift_track.md"
+   }
+  ],
+  "odometry_slip": [
+   {
+    "op": "odometry_slip",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "any × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/odometry_slip.md"
+   }
+  ],
+  "path_slip_risk": [
+   {
+    "op": "path_slip_risk",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "matrix × image2d × scalar × table",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/path_slip_risk.md"
+   }
+  ],
+  "risk_aware_path": [
+   {
+    "op": "risk_aware_path",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "table × any × any",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/risk_aware_path.md"
+   }
+  ],
+  "slip_cvar": [
+   {
+    "op": "slip_cvar",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "table × signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/roverslip/slip_cvar.md"
+   }
+  ],
+  "slip_gp_fit": [
+   {
+    "op": "slip_gp_fit",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/slip_gp_fit.md"
+   }
+  ],
+  "slip_predict": [
+   {
+    "op": "slip_predict",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "table × signal",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/slip_predict.md"
+   }
+  ],
+  "slip_quantile_fit": [
+   {
+    "op": "slip_quantile_fit",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/slip_quantile_fit.md"
+   }
+  ],
+  "slope_slip_curve": [
+   {
+    "op": "slope_slip_curve",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × table × any × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/slope_slip_curve.md"
+   }
+  ],
+  "wheel_forces": [
+   {
+    "op": "wheel_forces",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × signal × table × any",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/wheel_forces.md"
+   }
+  ],
+  "wheel_sinkage": [
+   {
+    "op": "wheel_sinkage",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "signal × table × any",
+    "out": "signal",
+    "path": "docs/ops/drive/roverslip/wheel_sinkage.md"
+   }
+  ],
+  "wheel_traction_curve": [
+   {
+    "op": "wheel_traction_curve",
+    "dim": "drive",
+    "category": "roverslip",
+    "in": "scalar × table × any",
+    "out": "table",
+    "path": "docs/ops/drive/roverslip/wheel_traction_curve.md"
    }
   ],
   "rss_lateral": [

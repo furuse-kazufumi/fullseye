@@ -1,4 +1,4 @@
-# DRIVE operator help — 679 ops in 50 categories
+# DRIVE operator help — 694 ops in 51 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -151,6 +151,10 @@
 ### roadjp (7)
 
 [add_sign](roadjp/add_sign.md) · [add_signal_jp](roadjp/add_signal_jp.md) · [plate_mesh_from_image](roadjp/plate_mesh_from_image.md) · [sign_image](roadjp/sign_image.md) · [sign_mesh](roadjp/sign_mesh.md) · [sign_params](roadjp/sign_params.md) · [signal_jp_mesh](roadjp/signal_jp_mesh.md)
+
+### roverslip (15)
+
+[bekker_pressure](roverslip/bekker_pressure.md) · [bekker_wheel_sinkage](roverslip/bekker_wheel_sinkage.md) · [cvar_cost_map](roverslip/cvar_cost_map.md) · [ground_shift_track](roverslip/ground_shift_track.md) · [odometry_slip](roverslip/odometry_slip.md) · [path_slip_risk](roverslip/path_slip_risk.md) · [risk_aware_path](roverslip/risk_aware_path.md) · [slip_cvar](roverslip/slip_cvar.md) · [slip_gp_fit](roverslip/slip_gp_fit.md) · [slip_predict](roverslip/slip_predict.md) · [slip_quantile_fit](roverslip/slip_quantile_fit.md) · [slope_slip_curve](roverslip/slope_slip_curve.md) · [wheel_forces](roverslip/wheel_forces.md) · [wheel_sinkage](roverslip/wheel_sinkage.md) · [wheel_traction_curve](roverslip/wheel_traction_curve.md)
 
 ### rss (10)
 
