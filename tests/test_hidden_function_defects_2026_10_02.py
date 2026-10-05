@@ -95,8 +95,9 @@ def test_the_nurbs_successor_exists_and_the_halcon_facade_no_longer_points_at_th
     assert callable(G.nurbs_curve)
     root = Path(__file__).resolve().parents[1]
     facade = json.loads((root / "fullseye" / "data" / "halcon_facade_map.json").read_text(encoding="utf-8"))
+    assert len(facade) > 500                      # 表が空なら下の not any は無条件に通る
     assert not any(str(v).startswith("contours_xld2.gen_") and "nurbs" in str(v) for v in facade.values())
     stubs = json.loads((root / "fullseye" / "data" / "halcon_stubs.json").read_text(encoding="utf-8"))
-    for nm in ("gen_contour_nurbs_xld", "gen_nurbs_interp"):
-        assert stubs["operators"][nm]["covered"] is False
+    assert stubs["operators"]["gen_contour_nurbs_xld"]["covered"] is False
+    assert stubs["operators"]["gen_nurbs_interp"]["covered"] is False
     assert stubs["n_covered"] == sum(1 for v in stubs["operators"].values() if v.get("covered"))
