@@ -13,18 +13,23 @@ version: 0.3.0  # fullseye lib version this note was generated for
 # spoon_tilt_critical — DRIVE `granular` op
 
 - **データ種**: `scalar × scalar × scalar` → `scalar`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: 'float', L: 'float', h0: 'float') -> 'float'` (実装を直接呼ぶなら `import granular; granular.spoon_tilt_critical(phi_deg: 'float', L: 'float', h0: 'float') -> 'float'`、台帳から引くなら `opsdrive.get("spoon_tilt_critical")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: 'float', L: 'float', h0: 'float', lip: 'str' = 'wall') -> 'float'` (実装を直接呼ぶなら `import granular; granular.spoon_tilt_critical(phi_deg: 'float', L: 'float', h0: 'float', lip: 'str' = 'wall') -> 'float'`、台帳から引くなら `opsdrive.get("spoon_tilt_critical")`)
 
 ## 使い方
 
 スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— **自分の導出**)。
 
-模型: 床の長さ ``L``(唇から奥壁まで)、水平で深さ ``h0`` に平らに盛った粉。唇を下げて床を θ 傾ける。
-粉の自由表面は水平から φ(安息角)までしか立てないので、保持できる断面積は唇から奥へ
-``A(θ) = ½ L² (tan φ − tan θ)``(床と表面の楔)。初めの面積 ``L h0`` を超えて保持できなくなる傾きが
-``θ_c = atan(tan φ − 2 h0 / L)``。盛りが多いほど早くこぼれ、``h0 → 0`` で ``θ_c → φ``、θ = φ で全部出る。
-``2 h0 / L ≥ tan φ`` なら水平でも既に保持できない(θ_c = 0 を返す)。
-**Raises** ``ValueError``: φ が (0, 90) の外、L / h0 が ≤ 0。
+模型: 床の長さ ``L``(唇から奥壁まで、奥壁は床に垂直)、水平で深さ ``h0`` に平らに盛った粉。唇を下げて床を θ 傾ける。
+粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は**床から見て φ − θ**。
+
+* ``lip="wall"``(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 ``L h0``): 保持できる断面は
+  ``A(θ) = ½ L² tan(φ − θ)``(床と表面の楔)。``L h0`` を超えて保持できなくなる傾きが ``θ_c = φ − atan(2 h0 / L)``(atan2 で)。
+  盛りが多いほど早くこぼれ、``h0 → 0`` で ``θ_c → φ``、θ = φ で全部出る。``2 h0 / L ≥ tan φ`` なら水平でも既に保持できない(0 を返す)。
+* ``lip="open"``(口に壁の無い器): 前面は初めから安息角の斜面なので **θ = 0⁺ からこぼれる** —— 常に 0 を返す。
+
+★2026-10-05 まで ``wall`` の楔の傾きを ``tan φ − tan θ`` と書いていた(小角の近似、``θ_c = atan(tan φ − 2 h0 / L)``)。
+θ = 10 度・φ = 30 度で楔の傾きが 10 % 大きく、L 50 mm・h0 5 mm で θ_c が 20.67 度(厳密 18.69 度)と出ていた。
+**Raises** ``ValueError``: φ が (0, 90) の外、L / h0 が ≤ 0、``lip`` が wall / open 以外。
 
 ## 参考(サンプルデータ・文献)
 

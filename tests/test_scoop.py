@@ -9,7 +9,8 @@ numpy だけの門(常に走る):
  4. 2 方向: 楕円錐 1.6 : 1 の体素の真値 0.5 %、片方だけは −30 % / +50 % を超えて外れる
  5. 流れ: PIV の速さ vs 自由落下 2 %、Boolean 模型の流量 vs 実現した横切り数 8 %、素朴な数え方は密な流れで 0.8 倍未満
  6. 壊れる場所: 粒が少ない流れは reliable=False、もっと少ないと PIV が立たず ValueError、飽和は ValueError
- 7. 傾けの導出: dA/dθ の閉形式 = 数値微分、F(0) = 0・F(φ) = 1・単調、granular の小角の近似より早くこぼれ始める
+ 7. 傾けの導出: dA/dθ の閉形式 = 数値微分、F(0) = 0・F(φ) = 1・単調、口に縁のある器(granular の lip="wall")より早くこぼれ始める、
+    式は granular の lip="open" と同じ 1 か所
  8. 傾いた器の像 → 断面積 vs 閉形式 0.5 %、殻の補正は長さ × 半径
  9. 体積 → 粒の数・質量、画像で足りるか(31 g は画像、10 mg は秤、a/d < 5 は秤)
 10. MJCF 文字列(mujoco 不要): 椀の薄板と球の数、樋は mocap、contact_tc < 2 timestep は ValueError
@@ -137,7 +138,9 @@ def test_tilt_wedge_derivative_and_comparison():
     assert len(Fs) == 61
     assert Fs[0] == 0.0 and Fs[-1] == pytest.approx(1.0, abs=1e-12) and all(b >= a - 1e-15 for a, b in zip(Fs, Fs[1:]))
     m = S.tilt_wedge_retained(3.0, phi, L, h0)
-    assert m["fraction"] > 0.0 and m["F_small_angle"] == 0.0 and m["theta_c_small_angle_deg"] > 3.0
+    assert m["fraction"] > 0.0 and m["F_lip_wall"] == 0.0 and m["theta_c_lip_wall_deg"] > 3.0
+    for t in (0.0, 3.0, 17.0, 29.0):
+        assert S.tilt_wedge_retained(t, phi, L, h0)["fraction"] == G.spoon_tilt_dispense(t, phi, L, h0, lip="open")["fraction"]
     assert _raises(S.tilt_wedge_retained, 95.0, 30.0, 1.0, 0.1) and _raises(S.tilt_pour_rate, 5.0, 0.0, 30.0, 1.0, 0.1, 0.1, 1000.0)
 
 
@@ -154,7 +157,7 @@ def test_tilted_container_area_read():
         m = (xf >= 0) & (xf <= 200) & (yf >= 0) & (yf <= np.minimum(45.0, xf * t))
         img = m.reshape(rows, ss, cols, ss).mean(axis=(1, 3))
         r = S.tilted_surface_read(img, lip[0], lip[1], th, 200.0, wall_px=90.0, shell_px=2.0)
-        assert r["area_px"] == pytest.approx(S._wedge_area(t, 200.0, 45.0), rel=5e-3)
+        assert r["area_px"] == pytest.approx(G._tilt_wedge_area(t, 200.0, 45.0), rel=5e-3)
         assert r["area_corrected"] == pytest.approx(r["area_px"] - 2.0 * r["surface_len_px"], rel=1e-12)
     assert _raises(S.tilted_surface_read, np.zeros((20, 20)), 10, 2, 5.0, 10.0)
 

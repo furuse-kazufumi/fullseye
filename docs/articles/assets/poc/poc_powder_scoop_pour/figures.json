@@ -56,7 +56,7 @@
  {
   "file": "06_scoop_tilt_models.png",
   "name": "scoop_tilt_models",
-  "caption": "口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、granular の小角の近似は θ_c まで 1 粒も出ない。",
+  "caption": "口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、口に縁のある器(granular の lip=\"wall\"、初めは口まで平らに満ちている)は θ_c まで 1 粒も出ない。どちらも楔の傾きは厳密な tan(φ − θ)。",
   "shape": [
    440,
    760,
@@ -100,7 +100,7 @@
  {
   "file": "10_scoop_mujoco_poured_fraction.png",
   "name": "scoop_mujoco_poured_fraction",
-  "caption": "MuJoCo の数(真値)と 2 つの準静的模型(φ と深さを当てはめ; 口の楔 RMS 0.023、小角 0.038)。点 = 像の断面積から読んだ割合。",
+  "caption": "MuJoCo の数(真値)と 2 つの準静的模型(φ と深さを当てはめ; 口の楔 RMS 0.023、口に縁のある器 0.050)。点 = 像の断面積から読んだ割合。",
   "shape": [
    440,
    760,

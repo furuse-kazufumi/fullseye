@@ -13,10 +13,11 @@
   標準結果): 被覆率から面密度 ``n = −ln(1 − c) / (π r²)`` を逆に解く(素朴な ``c / (π r²)`` は重なりで数え落とす)。
 - 自由落下 ``v(s) = √(v₀² + 2 g s)``(流量の連続 = どの高さでも同じ粒の数 / 秒)。
 - 傾けた器から出る量(**自分の導出**、前の口に壁の無い器 = 粉の前面が口から安息角 φ の斜面): 保持断面
-  ``A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx``(床に沿って口から ``x``、床に垂直な高さ、奥壁は床に垂直)。granular の
-  ``spoon_tilt_critical`` / ``spoon_tilt_dispense`` は ``tan φ − tan θ`` と書く小角の近似で、初めの量を ``L h₀``
-  (口まで平らに満ちた形)に取る —— 2 つは θ = 10 度・φ = 30 度で楔の傾きが 10 % 違う。MuJoCo の口の開いた樋の出た割合に
-  φ と深さを当てはめると口の楔が RMS 0.023、小角の近似 0.038(PoC の門; φ は当てはめで独立でない、奥の平らな層が流れて
+  ``A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx``(床に沿って口から ``x``、床に垂直な高さ、奥壁は床に垂直)。式は granular の
+  ``spoon_tilt_dispense(lip="open")`` にある(2026-10-05 にこの導出を根拠に granular の楔を厳密な ``tan(φ − θ)`` に直し、
+  口に壁の無い器を足した。それまでの granular は ``tan φ − tan θ`` の小角の近似で、θ = 10 度・φ = 30 度で楔の傾きが 10 % 違った)。
+  口に縁がある器(``lip="wall"``)は初めの量を ``L h₀``(口まで平らに満ちた形)に取り θ_c までこぼれない。MuJoCo の口の開いた樋の
+  出た割合に φ と深さを当てはめると、口の楔が縁のある器より よく合う(PoC の門 22; φ は当てはめで独立でない、奥の平らな層が流れて
   薄くなる挙動はどちらの模型にも無い)。
 - 第 2 実装(MuJoCo 3.x、optional): granular と同じ剛体球の場面の作法で、球冠の椀を薄板で張った ``scoop_scene_mjcf``
   と、口が開いた樋を傾ける ``pour_scene_mjcf``(どちらも文字列だけで mujoco 不要、台帳に載る)。走らせる
@@ -446,16 +447,6 @@ def scoop_image_limit(a: float, pitch: float, radius: float, bulk_density: float
 # ----------------------------------------------------------------------------------------------
 # 傾けて注ぐ(口の開いた器、準静的)—— 自分の導出
 # ----------------------------------------------------------------------------------------------
-def _wedge_area(t, L, cap):
-    """``∫₀ᴸ min(cap, x t) dx``(``t ≤ 0`` で 0)。"""
-    if t <= 0.0:
-        return 0.0
-    xk = cap / t
-    if xk >= L:
-        return 0.5 * L * L * t
-    return cap * L - 0.5 * cap * cap / t
-
-
 def tilt_wedge_retained(theta_deg: float, phi_deg: float, L: float, h0: float) -> dict:
     """口に壁の無い器(床の長さ ``L``、奥壁は床に垂直で十分高い)に深さ ``h0`` で平らに盛った粉を、口を下げて θ 傾けた
     ときに残る量(2 次元断面、準静的、**自分の導出**)。
@@ -464,20 +455,21 @@ def tilt_wedge_retained(theta_deg: float, phi_deg: float, L: float, h0: float) -
     保ち、床から見ると ``φ − θ``。奥の平らな面は床に平行のまま(``θ < φ`` で安定)。保持断面
     ``A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx``、出た割合 ``F = 1 − A(θ) / A(0)``。出始めは θ = 0⁺(前面の楔からすぐ
     こぼれる)、斜面が奥壁に届く角 ``θ_b = φ − atan(h₀ / L)``、θ ≥ φ で全部出る。
-    参考に granular の小角の近似(``tan φ − tan θ``、初めの量 ``L h₀``)の割合 ``F_small_angle`` と ``theta_c_small_angle_deg``
-    も返す(MuJoCo でどちらが合うかを比べるため)。
-    返り: ``A``, ``A0``, ``fraction``, ``theta_back_deg``, ``F_small_angle``, ``theta_c_small_angle_deg``。
+    式は granular の ``spoon_tilt_dispense(lip="open")`` を呼ぶ(保持断面の式は granular の 1 か所だけ)。参考に口に縁がある器
+    (``lip="wall"``、初めの量 ``L h₀``、θ_c までこぼれない)の割合 ``F_lip_wall`` と ``theta_c_lip_wall_deg`` も返す(MuJoCo の
+    口の開いた樋でどちらが合うかを比べるため)。
+    返り: ``A``, ``A0``, ``fraction``, ``theta_back_deg``, ``F_lip_wall``, ``theta_c_lip_wall_deg``。
     **Raises** ``ValueError``: θ が [0, 90) の外、φ が (0, 90) の外、``L``・``h0`` が ≤ 0。"""
     th = _nonneg(theta_deg, "theta_deg")
     if th >= 90.0:
         raise ValueError("theta_deg must be < 90, got %r" % theta_deg)
     phi = _angle(phi_deg, "phi_deg")
     L, h0 = _pos(L, "L"), _pos(h0, "h0")
-    A0 = _wedge_area(math.tan(math.radians(phi)), L, h0)
-    A = _wedge_area(math.tan(math.radians(phi - th)), L, h0) if th < phi else 0.0
-    small = _G.spoon_tilt_dispense(th, phi, L, h0)
-    return {"A": A, "A0": A0, "fraction": 1.0 - A / A0, "theta_back_deg": phi - math.degrees(math.atan2(h0, L)),
-            "F_small_angle": small["fraction"], "theta_c_small_angle_deg": small["theta_c_deg"]}
+    op = _G.spoon_tilt_dispense(th, phi, L, h0, lip="open")
+    wall = _G.spoon_tilt_dispense(th, phi, L, h0, lip="wall")
+    return {"A": op["retained_area"], "A0": op["initial_area"], "fraction": op["fraction"],
+            "theta_back_deg": phi - math.degrees(math.atan2(h0, L)),
+            "F_lip_wall": wall["fraction"], "theta_c_lip_wall_deg": wall["theta_c_deg"]}
 
 
 def tilt_pour_rate(theta_deg: float, omega_deg_s: float, phi_deg: float, L: float, h0: float, B: float,

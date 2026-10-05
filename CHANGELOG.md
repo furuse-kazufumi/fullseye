@@ -7,6 +7,15 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**挙動の変更: `granular.spoon_tilt_critical` / `spoon_tilt_dispense` の楔を厳密版に**。床と粉の表面の楔の傾きを小角の近似 `tan φ − tan θ` から
+  厳密な `tan(φ − θ)` に直した(奥壁は床に垂直、唇を通る斜面は水平から φ = 床から φ − θ)。旧式 θ_c = atan(tan φ − 2h₀/L) → 新式 θ_c = φ − atan(2h₀/L)
+  (atan2 で)。差の例: θ = 10°・φ = 30° で旧式の楔の傾きは厳密の 1.102 倍(約 10 %)、L 50 mm・h₀ 5 mm で θ_c が 20.67° → 18.69°。小角では一致する
+  (φ = 2° で θ_c の差 < 0.1 %)。★口に壁の無い器(`lip="open"`)を足した: 前面が初めから安息角の斜面なので θ = 0⁺ からこぼれ(θ_c = 0)、
+  保持断面 ∫₀ᴸ min(h₀, x tan(φ − θ)) dx。根拠は scoop の `tilt_wedge_retained` の導出と MuJoCo の口の開いた樋の出た割合(口の楔 RMS 0.023、旧式 0.038)。
+  式は granular の `_tilt_wedge_area` の 1 か所だけにし、scoop の `tilt_wedge_retained` は `spoon_tilt_dispense(lip="open")` を呼ぶ
+  (比較の返りは `F_small_angle` / `theta_c_small_angle_deg` → `F_lip_wall` / `theta_c_lip_wall_deg`)。既定は従来どおり口に縁のある器(`lip="wall"`)。
+  返りに `initial_area`・`lip` が増えた。正直に: 縁のある器は厳密にすると MuJoCo への合いが 0.050 に悪くなる —— 旧式の誤差が「口に縁がある」仮定の誤差を
+  偶然打ち消していた。回帰テスト(厳密解の値、小角で旧式と一致、口に壁の無い器)を追加、PoC poc_granular_heap_repose の門 15 と図・展示の文言を直した。
 - ★**粉体のすくいと注ぎを画像で測る**(新モジュール `scoop` 15 op + mujoco の facade 2、台帳 `scoop`(opsdrive)、PoC `poc_powder_scoop_pour`、
   wing_metrology): granular の続き。すくった量を側面像の輪郭から(球冠の椀の閉形式 + 縁の上の回転体、Pappus の線形和、直交 2 方向の楕円の和で体素に −0.01 %)、
   MuJoCo の剛体球の個数を 1 回較正の充填率で 4.3 % 以内、粒が大きいと秤に回す規則。注ぎの流量は PIV の速さ × Boolean 模型の線密度で MuJoCo の横切り数の

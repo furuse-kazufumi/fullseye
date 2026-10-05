@@ -14,7 +14,8 @@ numpy だけの門(常に走る):
     高さ図の最頻は地面そのもの(5 度)で datum を渡せば 30.00
 10. 流動性区分(USP <1174> 表 1)の 16 境界値、25 度未満は tabulated=False、0 / 90 は ValueError
 11. 綴り壊し(method / cone / solver)と山が写っていない・切れている → ValueError
-12. スプーンの規則 θ_c = atan(tan φ − 2h₀/L)、h₀ → 0 で φ、単調、壁の高さは θ_c 以下で効かない
+12. スプーンの規則 θ_c = φ − atan(2h₀/L)(厳密な tan(φ − θ)、2026-10-05 まで小角の近似 atan(tan φ − 2h₀/L))、h₀ → 0 で φ、単調、
+    壁の高さは θ_c 以下で効かない; 回帰: 厳密解の値、小角で旧式と一致、口に壁の無い器は θ = 0⁺ からこぼれる
 13. 容器の充填率(0.63、面の傾き 3 度)0.002 / 0.05 度
 14. 動画からの質量(雑音なしの往復)1e-4、排出率の帯当て(3 コマ未満は ValueError)
 15. MJCF 文字列(mujoco 不要): 球の数・板 28 枚・contact_tc < 2 timestep は ValueError、孔がビンより大きいと ValueError
@@ -196,7 +197,7 @@ def test_spelling_breaks_and_no_heap_fail_closed():
 def test_spoon_tilt_rule():
     assert G.spoon_tilt_critical(30.0, 0.05, 1e-7) == pytest.approx(30.0, abs=1e-3)
     thc = G.spoon_tilt_critical(30.0, 0.05, 0.005)
-    assert thc == pytest.approx(math.degrees(math.atan(math.tan(math.radians(30.0)) - 0.2)), abs=1e-9)
+    assert thc == pytest.approx(30.0 - math.degrees(math.atan(0.2)), abs=1e-9)        # 18.690(旧式は 20.674)
     fr = [G.spoon_tilt_dispense(th, 30.0, 0.05, 0.005)["fraction"] for th in np.linspace(0.0, 45.0, 91)]
     assert len(fr) == 91
     assert all(b >= a - 1e-12 for a, b in zip(fr[:-1], fr[1:]))
@@ -204,6 +205,43 @@ def test_spoon_tilt_rule():
     assert G.spoon_tilt_dispense(30.0, 30.0, 0.05, 0.005)["fraction"] == 1.0
     assert G.spoon_tilt_dispense(15.0, 30.0, 0.05, 0.005, h_wall=10.0)["fraction"] == pytest.approx(G.spoon_tilt_dispense(15.0, 30.0, 0.05, 0.005)["fraction"], abs=1e-12)
     assert _raises(G.spoon_tilt_dispense, 95.0, 30.0, 0.05, 0.005)
+    assert _raises(G.spoon_tilt_dispense, 5.0, 30.0, 0.05, 0.005, lip="none") and _raises(G.spoon_tilt_critical, 30.0, 0.05, 0.005, lip=1)
+    assert _raises(G.spoon_tilt_dispense, 5.0, 30.0, 0.05, 0.005, h_wall=0.004, lip="open")
+
+
+def _old_small_angle_fraction(theta, phi, L, h0):
+    """2026-10-05 までの式(楔の傾き tan φ − tan θ)。回帰の比較にだけ使う。"""
+    s = math.tan(math.radians(phi)) - math.tan(math.radians(theta))
+    A = 0.5 * L * L * s if s > 0.0 else 0.0
+    return 1.0 - min(A, L * h0) / (L * h0)
+
+
+def test_spoon_tilt_exact_wedge_regression():
+    """厳密な楔 tan(φ − θ) の値そのもの、小角で旧式(tan φ − tan θ)と一致すること、口に壁の無い器(2026-10-05)。"""
+    L, h0 = 0.05, 0.005
+    # 厳密解: 保持断面 = ½ L² tan(φ − θ)(θ_c より先)。θ = 25°・φ = 30° で tan 5°
+    r = G.spoon_tilt_dispense(25.0, 30.0, L, h0)
+    assert r["retained_area"] == pytest.approx(0.5 * L * L * math.tan(math.radians(5.0)), rel=1e-12)
+    assert r["fraction"] == pytest.approx(1.0 - 0.5 * L * math.tan(math.radians(5.0)) / h0, rel=1e-12)
+    # 差の例: θ = 10°、φ = 30° で旧式の楔の傾きは厳密の 1.102 倍(約 10 %)
+    old = math.tan(math.radians(30.0)) - math.tan(math.radians(10.0))
+    assert old / math.tan(math.radians(20.0)) == pytest.approx(1.1018, abs=1e-4)
+    # 小角では旧式と一致する(φ = 2°: θ_c の差 < 0.1 %、割合の差 < 1e-3)
+    phi, hh = 2.0, 0.0002
+    old_thc = math.degrees(math.atan(math.tan(math.radians(phi)) - 2.0 * hh / L))
+    assert G.spoon_tilt_critical(phi, L, hh) == pytest.approx(old_thc, rel=1e-3)
+    ths = np.linspace(0.0, phi, 41)
+    assert len(ths) == 41
+    assert max(abs(G.spoon_tilt_dispense(t, phi, L, hh)["fraction"] - _old_small_angle_fraction(t, phi, L, hh)) for t in ths) < 1e-3
+    # 大きい角では違う(φ = 30°、h0 5 mm で θ_c 18.69° と 20.67°)
+    assert G.spoon_tilt_critical(30.0, L, h0) < math.degrees(math.atan(math.tan(math.radians(30.0)) - 0.2)) - 1.9
+    # 口に壁の無い器: θ = 0⁺ からこぼれ、θ_c = 0、θ ≥ φ で 1、単調、A(0) = L h0 − h0²/(2 tan φ)
+    o = [G.spoon_tilt_dispense(t, 30.0, L, h0, lip="open")["fraction"] for t in np.linspace(0.0, 30.0, 61)]
+    assert len(o) == 61
+    assert o[0] == 0.0 and o[1] > 0.0 and o[-1] == 1.0 and all(b >= a - 1e-15 for a, b in zip(o, o[1:]))
+    assert G.spoon_tilt_critical(30.0, L, h0, lip="open") == 0.0
+    assert G.spoon_tilt_dispense(0.0, 30.0, L, h0, lip="open")["initial_area"] == pytest.approx(
+        L * h0 - h0 * h0 / (2.0 * math.tan(math.radians(30.0))), rel=1e-12)
 
 
 # ── 13. 容器 ───────────────────────────────────────────────────────────────

@@ -24,9 +24,10 @@ version: 0.3.0  # fullseye lib version this note was generated for
 保ち、床から見ると ``φ − θ``。奥の平らな面は床に平行のまま(``θ < φ`` で安定)。保持断面
 ``A(θ) = ∫₀ᴸ min(h₀, x tan(φ − θ)) dx``、出た割合 ``F = 1 − A(θ) / A(0)``。出始めは θ = 0⁺(前面の楔からすぐ
 こぼれる)、斜面が奥壁に届く角 ``θ_b = φ − atan(h₀ / L)``、θ ≥ φ で全部出る。
-参考に granular の小角の近似(``tan φ − tan θ``、初めの量 ``L h₀``)の割合 ``F_small_angle`` と ``theta_c_small_angle_deg``
-も返す(MuJoCo でどちらが合うかを比べるため)。
-返り: ``A``, ``A0``, ``fraction``, ``theta_back_deg``, ``F_small_angle``, ``theta_c_small_angle_deg``。
+式は granular の ``spoon_tilt_dispense(lip="open")`` を呼ぶ(保持断面の式は granular の 1 か所だけ)。参考に口に縁がある器
+(``lip="wall"``、初めの量 ``L h₀``、θ_c までこぼれない)の割合 ``F_lip_wall`` と ``theta_c_lip_wall_deg`` も返す(MuJoCo の
+口の開いた樋でどちらが合うかを比べるため)。
+返り: ``A``, ``A0``, ``fraction``, ``theta_back_deg``, ``F_lip_wall``, ``theta_c_lip_wall_deg``。
 **Raises** ``ValueError``: θ が [0, 90) の外、φ が (0, 90) の外、``L``・``h0`` が ≤ 0。
 
 ## 参考(サンプルデータ・文献)

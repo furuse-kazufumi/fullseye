@@ -307,11 +307,17 @@ def numpy_part() -> dict:
     fr = [G.spoon_tilt_dispense(th, 30.0, 0.05, 0.005)["fraction"] for th in np.linspace(0.0, 45.0, 91)]
     assert len(fr) == 91
     mono = all(b >= a - 1e-12 for a, b in zip(fr[:-1], fr[1:]))
-    gate("門 15 スプーンの規則 θ_c = atan(tan φ − 2h₀/L)", abs(thc0 - 30.0) < 1e-3 and mono
-         and abs(thc - math.degrees(math.atan(math.tan(math.radians(30.0)) - 0.2))) < 1e-9
+    fo = [G.spoon_tilt_dispense(th, 30.0, 0.05, 0.005, lip="open")["fraction"] for th in np.linspace(0.0, 45.0, 91)]
+    assert len(fo) == 91
+    old = math.degrees(math.atan(math.tan(math.radians(30.0)) - 0.2))     # 2026-10-05 までの小角の近似
+    gate("門 15 スプーンの規則 θ_c = φ − atan(2h₀/L)(楔の傾きは厳密な tan(φ − θ))、口に壁の無い器は θ = 0⁺ からこぼれる",
+         abs(thc0 - 30.0) < 1e-3 and mono
+         and abs(thc - (30.0 - math.degrees(math.atan(0.2)))) < 1e-9
          and G.spoon_tilt_dispense(thc - 0.5, 30.0, 0.05, 0.005)["fraction"] == 0.0
-         and G.spoon_tilt_dispense(30.0, 30.0, 0.05, 0.005)["fraction"] == 1.0,
-         "h₀ → 0 で θ_c = %.4f(= φ)、L 50 mm・h₀ 5 mm で %.2f 度、θ_c の手前で 0・φ で 1・単調 %s" % (thc0, thc, mono))
+         and G.spoon_tilt_dispense(30.0, 30.0, 0.05, 0.005)["fraction"] == 1.0
+         and fo[0] == 0.0 and fo[1] > 0.0 and fo[60] == 1.0 and all(b >= a - 1e-12 for a, b in zip(fo[:-1], fo[1:])),
+         "h₀ → 0 で θ_c = %.4f(= φ)、L 50 mm・h₀ 5 mm で %.2f 度(2026-10-05 までの小角の近似 tan φ − tan θ では %.2f 度)、θ_c の手前で 0・φ で 1・単調 %s; "
+         "口に壁の無い器は 0.5 度で %.3f 出る" % (thc0, thc, old, mono, fo[1]))
     out["thc"] = thc
 
     # ── 門 16 容器の充填率
@@ -506,13 +512,18 @@ def _figures_numpy(out: dict) -> None:
                     np.array([G.spoon_tilt_dispense(t_, 30.0, 0.05, h0_)["fraction"] for t_ in th])))
         sty.append(None)
         col.append(None)
+    ser.append(("h0 = 5 mm, no lip wall (spills from 0)", th,
+                np.array([G.spoon_tilt_dispense(t_, 30.0, 0.05, 0.005, lip="open")["fraction"] for t_ in th])))
+    sty.append("dotted")
+    col.append(None)
     ser.append(("phi = 30 deg (all out)", np.array([30.0, 30.0]), np.array([0.0, 1.0])))
     sty.append("dashed")
     col.append("reference")
     figs.save_plot("granular_spoon_tilt_dispense", ser, xlabel="spoon tilt [deg]", ylabel="fraction dispensed", size=(760, 440),
-                   title="Spoon rule: theta_c = atan(tan phi - 2 h0 / L), L = 50 mm", styles=sty, colors=col,
-                   caption="スプーンを傾けたときに出る割合(2 次元断面・準静的・自分の導出)。盛りが多いほど早くこぼれ始め、θ = φ で全部出る。"
-                           "L 50 mm・h₀ 5 mm で θ_c = %.2f 度。" % out["thc"])
+                   title="Spoon rule: theta_c = phi - atan(2 h0 / L), L = 50 mm", styles=sty, colors=col,
+                   caption="スプーンを傾けたときに出る割合(2 次元断面・準静的・自分の導出、楔の傾きは厳密な tan(φ − θ))。盛りが多いほど早くこぼれ始め、"
+                           "θ = φ で全部出る。L 50 mm・h₀ 5 mm で θ_c = %.2f 度(2026-10-05 までの小角の近似では 20.67 度)。点線 = 口に壁の無い器"
+                           "(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれる。" % out["thc"])
     # 11 GIF: 基準面の傾きを振る
     frames = []
     betas = [float(b) for b in np.arange(-8.0, 8.01, 1.0)]

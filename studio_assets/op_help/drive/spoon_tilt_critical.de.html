@@ -1,16 +1,19 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">spoon_tilt_critical — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;spoon_tilt_critical&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;spoon_tilt_critical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
 <p>スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— <b>自分の導出</b>)。</p>
-<p>模型: 床の長さ `<code style="color:#22d3bf">L</code><code style="color:#22d3bf">(唇から奥壁まで)、水平で深さ </code><code style="color:#22d3bf">h0</code>` に平らに盛った粉。唇を下げて床を θ 傾ける。</p>
-<p>粉の自由表面は水平から φ(安息角)までしか立てないので、保持できる断面積は唇から奥へ</p>
-<p>`<code style="color:#22d3bf">A(θ) = ½ L² (tan φ − tan θ)</code><code style="color:#22d3bf">(床と表面の楔)。初めの面積 </code><code style="color:#22d3bf">L h0</code>` を超えて保持できなくなる傾きが</p>
-<p>`<code style="color:#22d3bf">θ_c = atan(tan φ − 2 h0 / L)</code><code style="color:#22d3bf">。盛りが多いほど早くこぼれ、</code><code style="color:#22d3bf">h0 → 0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">θ_c → φ</code>`、θ = φ で全部出る。</p>
-<p>`<code style="color:#22d3bf">2 h0 / L ≥ tan φ</code>` なら水平でも既に保持できない(θ_c = 0 を返す)。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: φ が (0, 90) の外、L / h0 が ≤ 0。</p>
+<p>模型: 床の長さ `<code style="color:#22d3bf">L</code><code style="color:#22d3bf">(唇から奥壁まで、奥壁は床に垂直)、水平で深さ </code><code style="color:#22d3bf">h0</code>` に平らに盛った粉。唇を下げて床を θ 傾ける。</p>
+<p>粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は<b>床から見て φ − θ</b>。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lip=&quot;wall&quot;</code><code style="color:#22d3bf">(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 </code><code style="color:#22d3bf">L h0</code>`): 保持できる断面は</p>
+<p>`<code style="color:#22d3bf">A(θ) = ½ L² tan(φ − θ)</code><code style="color:#22d3bf">(床と表面の楔)。</code><code style="color:#22d3bf">L h0</code><code style="color:#22d3bf"> を超えて保持できなくなる傾きが </code><code style="color:#22d3bf">θ_c = φ − atan(2 h0 / L)</code>`(atan2 で)。</p>
+<p>盛りが多いほど早くこぼれ、`<code style="color:#22d3bf">h0 → 0</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">θ_c → φ</code><code style="color:#22d3bf">、θ = φ で全部出る。</code><code style="color:#22d3bf">2 h0 / L ≥ tan φ</code>` なら水平でも既に保持できない(0 を返す)。</p>
+<p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">lip=&quot;open&quot;</code>`(口に壁の無い器): 前面は初めから安息角の斜面なので <b>θ = 0⁺ からこぼれる</b> —— 常に 0 を返す。</p>
+<p>★2026-10-05 まで `<code style="color:#22d3bf">wall</code><code style="color:#22d3bf"> の楔の傾きを </code><code style="color:#22d3bf">tan φ − tan θ</code><code style="color:#22d3bf"> と書いていた(小角の近似、</code><code style="color:#22d3bf">θ_c = atan(tan φ − 2 h0 / L)</code>`)。</p>
+<p>θ = 10 度・φ = 30 度で楔の傾きが 10 % 大きく、L 50 mm・h0 5 mm で θ_c が 20.67 度(厳密 18.69 度)と出ていた。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: φ が (0, 90) の外、L / h0 が ≤ 0、</code><code style="color:#22d3bf">lip</code>` が wall / open 以外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

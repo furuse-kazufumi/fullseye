@@ -13,15 +13,19 @@ version: 0.3.0  # fullseye lib version this note was generated for
 # spoon_tilt_dispense — DRIVE `granular` op
 
 - **データ種**: `scalar × scalar × scalar × scalar` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import granular; granular.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("spoon_tilt_dispense")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None, lip: 'str' = 'wall') -> 'dict'` (実装を直接呼ぶなら `import granular; granular.spoon_tilt_dispense(theta_deg: 'float', phi_deg: 'float', L: 'float', h0: 'float', h_wall: 'float | None' = None, lip: 'str' = 'wall') -> 'dict'`、台帳から引くなら `opsdrive.get("spoon_tilt_dispense")`)
 
 ## 使い方
 
-傾き θ で出た粉の割合(:func:`spoon_tilt_critical` と同じ 2 次元模型)。
+傾き θ で出た粉の割合(:func:`spoon_tilt_critical` と同じ 2 次元模型、厳密な ``tan(φ − θ)``)。
 
-保持断面 ``A(θ) = ∫₀ᴸ min((tan φ − tan θ) x, h_wall) dx``(``h_wall`` = 奥壁の高さ、None = 無限)、
-出た割合 ``= 1 − min(A, L h0) / (L h0)``。θ ≤ θ_c で 0、θ ≥ φ で 1、間は単調。
-返り: ``fraction``, ``retained_area``, ``theta_c_deg``。**Raises** ``ValueError``: 引数の範囲。
+* ``lip="wall"``: 保持断面 ``A(θ) = ∫₀ᴸ min(x tan(φ − θ), h_wall) dx``(``h_wall`` = 奥壁の高さ、None = 無限)、
+  出た割合 ``= 1 − min(A, L h0) / (L h0)``。θ ≤ θ_c で 0、θ ≥ φ で 1、間は単調。
+* ``lip="open"``: 前面が初めから安息角の斜面、奥の平らな面は床に平行のまま深さ ``h0``:
+  ``A(θ) = ∫₀ᴸ min(h0, x tan(φ − θ)) dx``、出た割合 ``= 1 − A(θ) / A(0)``。θ = 0⁺ からこぼれ、θ ≥ φ で 1
+  (scoop の ``tilt_wedge_retained`` はこれを呼ぶ)。``h_wall`` を渡すなら ``h0`` 以上(平らな面を奥壁が支える)。
+返り: ``fraction``, ``retained_area``, ``initial_area``, ``theta_c_deg``, ``lip``。
+**Raises** ``ValueError``: 引数の範囲、``lip="open"`` で ``h_wall < h0``。
 
 ## 参考(サンプルデータ・文献)
 

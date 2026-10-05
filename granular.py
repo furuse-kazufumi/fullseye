@@ -213,44 +213,68 @@ def beverloo_fit(D0, W, d: float, bulk_density: float, k: float = 1.4, g: float 
 # ----------------------------------------------------------------------------------------------
 # スプーンの傾け(規則、2 次元断面、準静的) —— 自分の導出
 # ----------------------------------------------------------------------------------------------
-def spoon_tilt_critical(phi_deg: float, L: float, h0: float) -> float:
+def _tilt_wedge_area(t: float, L: float, cap: float | None) -> float:
+    """``∫₀ᴸ min(x t, cap) dx`` —— 床に沿って口から ``x``、``t`` = 床から見た粉の斜面の傾き ``tan(φ − θ)``、``cap`` = 頭打ちの
+    高さ(奥壁の高さ、または口に壁の無い器の平らな面の高さ ``h0``; None = 頭打ちなし)。``t ≤ 0`` で 0。
+    :func:`spoon_tilt_dispense` の 2 つの器(``lip="wall"`` / ``"open"``)と scoop の ``tilt_wedge_retained`` が共有する唯一の式。"""
+    if t <= 0.0:
+        return 0.0
+    if cap is None or cap / t >= L:
+        return 0.5 * L * L * t
+    return cap * L - 0.5 * cap * cap / t
+
+
+def spoon_tilt_critical(phi_deg: float, L: float, h0: float, lip: str = "wall") -> float:
     """スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— **自分の導出**)。
 
-    模型: 床の長さ ``L``(唇から奥壁まで)、水平で深さ ``h0`` に平らに盛った粉。唇を下げて床を θ 傾ける。
-    粉の自由表面は水平から φ(安息角)までしか立てないので、保持できる断面積は唇から奥へ
-    ``A(θ) = ½ L² (tan φ − tan θ)``(床と表面の楔)。初めの面積 ``L h0`` を超えて保持できなくなる傾きが
-    ``θ_c = atan(tan φ − 2 h0 / L)``。盛りが多いほど早くこぼれ、``h0 → 0`` で ``θ_c → φ``、θ = φ で全部出る。
-    ``2 h0 / L ≥ tan φ`` なら水平でも既に保持できない(θ_c = 0 を返す)。
-    **Raises** ``ValueError``: φ が (0, 90) の外、L / h0 が ≤ 0。"""
+    模型: 床の長さ ``L``(唇から奥壁まで、奥壁は床に垂直)、水平で深さ ``h0`` に平らに盛った粉。唇を下げて床を θ 傾ける。
+    粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は**床から見て φ − θ**。
+
+    * ``lip="wall"``(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 ``L h0``): 保持できる断面は
+      ``A(θ) = ½ L² tan(φ − θ)``(床と表面の楔)。``L h0`` を超えて保持できなくなる傾きが ``θ_c = φ − atan(2 h0 / L)``(atan2 で)。
+      盛りが多いほど早くこぼれ、``h0 → 0`` で ``θ_c → φ``、θ = φ で全部出る。``2 h0 / L ≥ tan φ`` なら水平でも既に保持できない(0 を返す)。
+    * ``lip="open"``(口に壁の無い器): 前面は初めから安息角の斜面なので **θ = 0⁺ からこぼれる** —— 常に 0 を返す。
+
+    ★2026-10-05 まで ``wall`` の楔の傾きを ``tan φ − tan θ`` と書いていた(小角の近似、``θ_c = atan(tan φ − 2 h0 / L)``)。
+    θ = 10 度・φ = 30 度で楔の傾きが 10 % 大きく、L 50 mm・h0 5 mm で θ_c が 20.67 度(厳密 18.69 度)と出ていた。
+    **Raises** ``ValueError``: φ が (0, 90) の外、L / h0 が ≤ 0、``lip`` が wall / open 以外。"""
     phi = _angle(phi_deg, "phi_deg")
     L, h0 = _pos(L, "L"), _pos(h0, "h0")
-    t = math.tan(math.radians(phi)) - 2.0 * h0 / L
-    return math.degrees(math.atan(t)) if t > 0.0 else 0.0
+    if _choice(lip, "lip", ("wall", "open")) == "open":
+        return 0.0
+    t = phi - math.degrees(math.atan2(2.0 * h0, L))
+    return t if t > 0.0 else 0.0
 
 
-def spoon_tilt_dispense(theta_deg: float, phi_deg: float, L: float, h0: float, h_wall: float | None = None) -> dict:
-    """傾き θ で出た粉の割合(:func:`spoon_tilt_critical` と同じ 2 次元模型)。
+def spoon_tilt_dispense(theta_deg: float, phi_deg: float, L: float, h0: float, h_wall: float | None = None,
+                        lip: str = "wall") -> dict:
+    """傾き θ で出た粉の割合(:func:`spoon_tilt_critical` と同じ 2 次元模型、厳密な ``tan(φ − θ)``)。
 
-    保持断面 ``A(θ) = ∫₀ᴸ min((tan φ − tan θ) x, h_wall) dx``(``h_wall`` = 奥壁の高さ、None = 無限)、
-    出た割合 ``= 1 − min(A, L h0) / (L h0)``。θ ≤ θ_c で 0、θ ≥ φ で 1、間は単調。
-    返り: ``fraction``, ``retained_area``, ``theta_c_deg``。**Raises** ``ValueError``: 引数の範囲。"""
+    * ``lip="wall"``: 保持断面 ``A(θ) = ∫₀ᴸ min(x tan(φ − θ), h_wall) dx``(``h_wall`` = 奥壁の高さ、None = 無限)、
+      出た割合 ``= 1 − min(A, L h0) / (L h0)``。θ ≤ θ_c で 0、θ ≥ φ で 1、間は単調。
+    * ``lip="open"``: 前面が初めから安息角の斜面、奥の平らな面は床に平行のまま深さ ``h0``:
+      ``A(θ) = ∫₀ᴸ min(h0, x tan(φ − θ)) dx``、出た割合 ``= 1 − A(θ) / A(0)``。θ = 0⁺ からこぼれ、θ ≥ φ で 1
+      (scoop の ``tilt_wedge_retained`` はこれを呼ぶ)。``h_wall`` を渡すなら ``h0`` 以上(平らな面を奥壁が支える)。
+    返り: ``fraction``, ``retained_area``, ``initial_area``, ``theta_c_deg``, ``lip``。
+    **Raises** ``ValueError``: 引数の範囲、``lip="open"`` で ``h_wall < h0``。"""
     theta = _nonneg(theta_deg, "theta_deg")
     if theta >= 90.0:
         raise ValueError("theta_deg must be < 90, got %r" % theta_deg)
     phi = _angle(phi_deg, "phi_deg")
     L, h0 = _pos(L, "L"), _pos(h0, "h0")
-    A0 = L * h0
-    s = math.tan(math.radians(phi)) - math.tan(math.radians(theta))
-    if s <= 0.0:
-        A = 0.0
-    elif h_wall is None:
-        A = 0.5 * L * L * s
+    lip = _choice(lip, "lip", ("wall", "open"))
+    hw = None if h_wall is None else _pos(h_wall, "h_wall")
+    t = math.tan(math.radians(phi - theta)) if theta < phi else 0.0
+    if lip == "wall":
+        A0 = L * h0
+        A = min(_tilt_wedge_area(t, L, hw), A0)
     else:
-        hw = _pos(h_wall, "h_wall")
-        xw = min(L, hw / s)                       # ここまで楔、先は壁の高さで頭打ち
-        A = 0.5 * s * xw * xw + hw * (L - xw)
-    return {"fraction": 1.0 - min(A, A0) / A0, "retained_area": min(A, A0),
-            "theta_c_deg": spoon_tilt_critical(phi, L, h0)}
+        if hw is not None and hw < h0:
+            raise ValueError("lip='open': h_wall (%r) must be >= h0 (%r) to hold the flat surface" % (h_wall, h0))
+        A0 = _tilt_wedge_area(math.tan(math.radians(phi)), L, h0)
+        A = _tilt_wedge_area(t, L, h0)
+    return {"fraction": 1.0 - A / A0, "retained_area": A, "initial_area": A0,
+            "theta_c_deg": spoon_tilt_critical(phi, L, h0, lip), "lip": lip}
 
 
 # ----------------------------------------------------------------------------------------------

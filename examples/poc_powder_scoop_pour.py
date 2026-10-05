@@ -19,7 +19,7 @@
 **注ぎの GIF**、出た割合(数 vs 模型 vs 画像)、流量の時系列(画像 vs 横切り数)、外の真値との表。
 正直に: 合成の側面像と回転体の読みは同じ軸対称の模型なので往復は配管の検査(独立な被験者は楕円錐の体素と MuJoCo)。
 MuJoCo の充填率は 1 回で較正する(輪郭が粒の外側の包絡なので、充填そのものは分からない)。傾けて出る割合の模型は
-**φ を当てはめた** 比較で、口の楔の導出は granular の小角の近似より 2 倍よく合うが、奥の平らな層は実際には流れて
+**φ を当てはめた** 比較で、口の楔の導出は口に縁のある器(granular の lip="wall")よりよく合うが、奥の平らな層は実際には流れて
 薄くなる(斜面の流れの h_stop 型の挙動、一次情報は未読で模型に入れていない)。Beverloo は桁の照合だけ。
 Run: py -3.11 examples/poc_powder_scoop_pour.py [--full]        (--full は mujoco)
 """
@@ -251,8 +251,8 @@ def numpy_part() -> dict:
     gate("門 8 傾けて出る量(口の楔の導出): dA/dθ の閉形式 = 数値微分、∫流量 dt = 初めの量、F(0) = 0・F(φ) = 1・単調",
          dmax < 1e-6 and abs(tot / (r0["A0"] * 0.03 * 1500.0) - 1) < 1e-5 and Fs[0] == 0.0 and abs(Fs[-1] - 1) < 1e-12
          and all(b >= a_ - 1e-15 for a_, b in zip(Fs, Fs[1:])),
-         "微分 %.1e、積分 %+.1e; θ = 5 度で口の楔 %.3f 対 granular の小角の近似 %.3f(後者は θ_c = %.2f 度までこぼれない)"
-         % (dmax, tot / (r0["A0"] * 0.03 * 1500.0) - 1, m5["fraction"], m5["F_small_angle"], m5["theta_c_small_angle_deg"]))
+         "微分 %.1e、積分 %+.1e; θ = 5 度で口の楔 %.3f 対 口に縁のある器 %.3f(後者は θ_c = %.2f 度までこぼれない)"
+         % (dmax, tot / (r0["A0"] * 0.03 * 1500.0) - 1, m5["fraction"], m5["F_lip_wall"], m5["theta_c_lip_wall_deg"]))
     out["tilt"] = (L, h0, phi)
     # 門 9 傾いた器の像 → 断面積
     shape, lip = (150, 250), (120.0, 30.0)
@@ -260,7 +260,7 @@ def numpy_part() -> dict:
     for th in (0.0, 8.0, 16.0, 24.0):
         sim = _wedge_synth(th, 200.0, 45.0, 32.0, lip, shape)
         rdt = S.tilted_surface_read(sim, lip[0], lip[1], th, 200.0, wall_px=90.0)
-        exact = S._wedge_area(math.tan(math.radians(32.0 - th)), 200.0, 45.0)
+        exact = G._tilt_wedge_area(math.tan(math.radians(32.0 - th)), 200.0, 45.0)
         e9.append(rdt["area_px"] / exact - 1)
     assert len(e9) == 4
     gate("門 9 傾いた器の側面像 → 器の中の断面積(器の座標に直して数える)vs 閉形式 ∫min(h₀, x tan(φ−θ))dx",
@@ -429,7 +429,7 @@ def full_part(out: dict) -> dict:
     gate("門 21 注いだ量 = 像の流量の時間積分 vs MuJoCo でこぼれた球の数(6〜26 度)",
          abs(n_img / n_counted - 1) < 0.08, "像 %.0f 個 = %.1f g、横切り数 %.0f 個、器から出た数 %d 個(%+.1f %%、門 8 %%)"
          % (n_img, n_img * info["mass_each"] * 1e3, n_true, n_counted, (n_img / n_counted - 1) * 100))
-    # 門 22 傾き依存: 口の楔 vs 小角の近似(φ をそれぞれ当てる)
+    # 門 22 傾き依存: 口の楔 vs 口に縁のある器(どちらも厳密な tan(φ − θ)、φ をそれぞれ当てる)
     n0 = pr["n_start"]
     sel = np.arange(si, len(th))
     Fm = pr["n_out"][sel] / n0
@@ -441,19 +441,20 @@ def full_part(out: dict) -> dict:
     for phi in np.arange(18.0, 45.0, 0.25):
         for hh in np.arange(0.012, 0.030, 0.001):
             Fo = np.array([S.tilt_wedge_retained(t, phi, L, hh)["fraction"] for t in tt[keep][::6]])
-            Fs = np.array([S.tilt_wedge_retained(t, phi, L, hh)["F_small_angle"] for t in tt[keep][::6]])
+            Fs = np.array([S.tilt_wedge_retained(t, phi, L, hh)["F_lip_wall"] for t in tt[keep][::6]])
             eo_, es_ = float(np.sqrt(np.mean((Fo - Fm[keep][::6]) ** 2))), float(np.sqrt(np.mean((Fs - Fm[keep][::6]) ** 2)))
             if best_o is None or eo_ < best_o[0]:
                 best_o = (eo_, phi, hh)
             if best_s is None or es_ < best_s[0]:
                 best_s = (es_, phi, hh)
     first = float(tt[np.argmax(Fm > 0.02)])
-    thc_small = S.tilt_wedge_retained(0.0, best_s[1], L, best_s[2])["theta_c_small_angle_deg"]
+    thc_small = S.tilt_wedge_retained(0.0, best_s[1], L, best_s[2])["theta_c_lip_wall_deg"]
     h_eff = best_o[2]
-    gate("門 22 傾き角への依存(出た割合 F(θ)): 口の楔の導出 vs granular の小角の近似、φ と深さをそれぞれ当てはめ",
+    gate("門 22 傾き角への依存(出た割合 F(θ)): 口の楔の導出 vs 口に縁のある器(granular、どちらも厳密な tan(φ − θ))、φ と深さをそれぞれ当てはめ",
          best_o[0] < 0.7 * best_s[0] and first < thc_small,
-         "口の楔 RMS %.3f(φ %.2f 度、深さ %.0f mm)vs 小角 %.3f(φ %.2f 度)—— 楔が %.1f 倍よく合う; 2 %% 出た角 %.1f 度 < 小角の θ_c %.1f 度"
-         "(口に壁が無いとすぐこぼれ始める)。φ は当てはめで独立でない、奥の層は実際には流れて薄くなる(模型に無い)"
+         "口の楔 RMS %.3f(φ %.2f 度、深さ %.0f mm)vs 縁のある器 %.3f(φ %.2f 度)—— 楔が %.1f 倍よく合う; 2 %% 出た角 %.1f 度 < 縁のある器の θ_c %.1f 度"
+         "(口に壁が無いとすぐこぼれ始める)。2026-10-05 前の granular の小角の近似 tan φ − tan θ では RMS 0.038 だった。"
+         "φ は当てはめで独立でない、奥の層は実際には流れて薄くなる(模型に無い)"
          % (best_o[0], best_o[1], best_o[2] * 1e3, best_s[0], best_s[1], best_s[0] / best_o[0], first, thc_small))
     # 門 23 Beverloo の桁(口の流れの層を等価直径に)
     peak = max(float(c["truth"].mean()) for c in chunks) * info["mass_each"]
@@ -585,10 +586,11 @@ def _figures_numpy(out: dict) -> None:
     ths = np.linspace(0, phi, 121)
     figs.save_plot("scoop_tilt_models",
                    [("open lip wedge (this module)", ths, [S.tilt_wedge_retained(t, phi, L, h0)["fraction"] for t in ths]),
-                    ("small-angle model (granular)", ths, [S.tilt_wedge_retained(t, phi, L, h0)["F_small_angle"] for t in ths])],
+                    ("lip with a wall (granular)", ths, [S.tilt_wedge_retained(t, phi, L, h0)["F_lip_wall"] for t in ths])],
                    xlabel="tilt theta [deg]", ylabel="fraction poured", title="Tilting a trough: two quasi-static models (phi 30, h0/L 0.25)",
                    size=(760, 440), styles=[None, "dashed"], colors=["emphasis", "reference"],
-                   caption="口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、granular の小角の近似は θ_c まで 1 粒も出ない。")
+                   caption="口に壁の無い器(前面が初めから安息角の斜面)は θ = 0⁺ からこぼれ、口に縁のある器(granular の lip=\"wall\"、初めは口まで"
+                           "平らに満ちている)は θ_c まで 1 粒も出ない。どちらも楔の傾きは厳密な tan(φ − θ)。")
     # 07 画像で足りるか
     big, mg, few = out["limit"]
     aa = np.geomspace(1e-3, 0.05, 40)
@@ -654,11 +656,11 @@ def _figures_mujoco(out: dict) -> None:
     figs.save_plot("scoop_mujoco_poured_fraction",
                    [("MuJoCo count", tt, Fm),
                     ("open lip wedge, phi %.1f, h %.0f mm" % (bo[1], bo[2] * 1e3), tt, [S.tilt_wedge_retained(t, bo[1], L, bo[2])["fraction"] for t in tt]),
-                    ("small-angle model, phi %.1f" % bs[1], tt, [S.tilt_wedge_retained(t, bs[1], L, bs[2])["F_small_angle"] for t in tt]),
+                    ("lip with a wall, phi %.1f" % bs[1], tt, [S.tilt_wedge_retained(t, bs[1], L, bs[2])["F_lip_wall"] for t in tt]),
                     ("image (area - shell)", out["Fi_theta"], out["Fi"])],
                    xlabel="tilt theta [deg]", ylabel="fraction poured", title="Pouring by tilting: MuJoCo vs the two models", size=(760, 440),
                    styles=[None, "dashed", "dotted", None], kinds=["line", "line", "line", "scatter"], colors=["neutral", "emphasis", "reference", "right"],
-                   caption="MuJoCo の数(真値)と 2 つの準静的模型(φ と深さを当てはめ; 口の楔 RMS %.3f、小角 %.3f)。点 = 像の断面積から読んだ割合。"
+                   caption="MuJoCo の数(真値)と 2 つの準静的模型(φ と深さを当てはめ; 口の楔 RMS %.3f、口に縁のある器 %.3f)。点 = 像の断面積から読んだ割合。"
                            % (bo[0], bs[0]))
     # 11 流量の時系列
     ch = out["chunks"]
