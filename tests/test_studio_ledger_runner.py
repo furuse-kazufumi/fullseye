@@ -134,8 +134,10 @@ def test_the_window_runs_exactly_what_a_direct_call_runs():
         out = dlg._run()
         try:
             data, kw = opassist.sample_input(n)
-            getattr(fs.ledger, n)(*data, **kw)
-            direct = True
+            # ★返り値が None の op(tid2013_root はデータの置き場が無ければ None を返す)は、窓でも
+            #   「kind: none」で out = None になる。例外が出たかでなく**値が返ったか**で比べる
+            #   (2026-10-05: 台帳が 63 本増えて抜き取りの 60 本がずれ、tid2013_root が入って鳴った)。
+            direct = getattr(fs.ledger, n)(*data, **kw) is not None
         except Exception:                               # noqa: BLE001
             direct = False
         if (out is not None) != direct:
