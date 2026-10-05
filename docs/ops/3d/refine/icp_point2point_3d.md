@@ -13,7 +13,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 # icp_point2point_3d — 3D `refine` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu')`、台帳から引くなら `ops3d.get("icp_point2point_3d")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu', reproducible=False)` (実装を直接呼ぶなら `import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device='cpu', reproducible=False)`、台帳から引くなら `ops3d.get("icp_point2point_3d")`)
 
 ## 使い方
 
@@ -40,6 +40,10 @@ version: 0.3.0  # fullseye lib version this note was generated for
     trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
         採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
     device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+    reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。
+        平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。
+        src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で
+        距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。
 
 返り値:
     R: (3,3) 回転。dst ~= src @ R.T + t を満たす。**torch がある環境では

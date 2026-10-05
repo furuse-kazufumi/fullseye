@@ -1341,12 +1341,12 @@
 ## `match3d.py`
 
 - **L297** — ★2026-09-07: numpy の FFT に置き換えた。式は同じ(float32 の fftn → 位相のみ → ifftn の実部 → argmax)で、torch でやる必要がどこにも無かった。torch を入れない CI(py3.10 / 3.12)ではこの op が ImportError になり PoC が落ちていた。
-- **L1655** — ★2026-09-07: 本体を numpy に書き換えた。この ICP は **最近傍探索が cKDTree、 姿勢の更新が 3x3 の SVD** で、torch でやる仕事が 1 つも無いのに torch を 必須にしていた。torch を入れない CI(py3.10 / 3.12)で PoC 4 本が `ImportError: this operator needs the optional 'torch' backend` で落ちて 発覚(手元には torch があるので気づけなかった —— 門は事故の起きる場所に 立てる、の実例)。数値は float64 の同じ式なので**環境で結果が変わらない**。 返り値の型は互換のため据え置き: torch があれば torch.Tensor、無ければ numpy.ndarray(値は同一)。device に "cpu" 以外を頼まれたら fail-closed。
-- **L1870** — ★2026-09-07: 本体を numpy に書き換えた。最近傍探索・6x6 の正規方程式・ Rodrigues のどれも CPU の小さい線形代数で、torch でやる必要が無かったのに 必須になっていた。torch を入れない CI(py3.10 / 3.12)で PoC が ImportError で落ちて発覚。式は同じ float64 なので結果は変わらない (torch 版との差は R/t で 0、RMSE で 0 を実測)。
-- **L2832** — ★2026-09-07: **輪が画像の外にあるなら fail-closed**。``r_in``/``r_out`` は 画素単位なので、mm のまま渡すと視野の外を読み、例外なしに**全部 0** が返る (`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。中心から画像の四隅 までの最大距離より内側の半径が 1 つも無ければ、返るのは空以外にありえない。
-- **L2843** — ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)を scipy の map_coordinates(order=1, mode="constant", cval=0)に置き換えた —— 同じ双線形補間で、torch を入れない CI(py3.10 / 3.12)でも走る。 実測差は最大 6.0e-06(値域 0..1 の乱数画像。float32 と float64 の丸めぶん)。
-- **L2888** — ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・ 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
-- **L3139** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 / 3.12)でこの op が ImportError になっていた。規約はそのまま写した: 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。 grid の最終軸は (x, y, z) = (W, H, D) の順。torch 版との実測差は最大 7.6e-06。
+- **L1659** — ★2026-09-07: 本体を numpy に書き換えた。この ICP は **最近傍探索が cKDTree、 姿勢の更新が 3x3 の SVD** で、torch でやる仕事が 1 つも無いのに torch を 必須にしていた。torch を入れない CI(py3.10 / 3.12)で PoC 4 本が `ImportError: this operator needs the optional 'torch' backend` で落ちて 発覚(手元には torch があるので気づけなかった —— 門は事故の起きる場所に 立てる、の実例)。数値は float64 の同じ式なので**環境で結果が変わらない**。 返り値の型は互換のため据え置き: torch があれば torch.Tensor、無ければ numpy.ndarray(値は同一)。device に "cpu" 以外を頼まれたら fail-closed。
+- **L1894** — ★2026-09-07: 本体を numpy に書き換えた。最近傍探索・6x6 の正規方程式・ Rodrigues のどれも CPU の小さい線形代数で、torch でやる必要が無かったのに 必須になっていた。torch を入れない CI(py3.10 / 3.12)で PoC が ImportError で落ちて発覚。式は同じ float64 なので結果は変わらない (torch 版との差は R/t で 0、RMSE で 0 を実測)。
+- **L2872** — ★2026-09-07: **輪が画像の外にあるなら fail-closed**。``r_in``/``r_out`` は 画素単位なので、mm のまま渡すと視野の外を読み、例外なしに**全部 0** が返る (`poc_pipe_wall_loss` が真っ黒な図を 1 枚出して発覚)。中心から画像の四隅 までの最大距離より内側の半径が 1 つも無ければ、返るのは空以外にありえない。
+- **L2883** — ★2026-09-07: grid_sample(bilinear, align_corners=True, zeros padding)を scipy の map_coordinates(order=1, mode="constant", cval=0)に置き換えた —— 同じ双線形補間で、torch を入れない CI(py3.10 / 3.12)でも走る。 実測差は最大 6.0e-06(値域 0..1 の乱数画像。float32 と float64 の丸めぶん)。
+- **L2928** — ★2026-09-07: polar_unwrap と同じ理由で map_coordinates に置き換え(双線形・ 範囲外 0)。torch 不在でも走る。実測差は最大 7.6e-06。
+- **L3179** — ★2026-09-07: affine_grid + grid_sample(align_corners=False, zeros padding)を numpy の座標計算 + scipy の map_coordinates(order=1)に置き換えた。torch は 双線形の再標本化にしか使われておらず、torch を入れない環境(CI の py3.10 / 3.12)でこの op が ImportError になっていた。規約はそのまま写した: 出力ボクセル (d,h,w) の正規化座標は ((i+0.5)/N)*2-1、回転後に (g+1)/2*N-0.5 で入力の画素座標へ戻す(align_corners=False の定義)。 grid の最終軸は (x, y, z) = (W, H, D) の順。torch 版との実測差は最大 7.6e-06。
 
 ## `mathestimation.py`
 

@@ -13,7 +13,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 # icp_point2plane — 3D `refine` op
 
 - **データ種**: `points × points × normals` → `pose`
-- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu')` (実装を直接呼ぶなら `import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu')`、台帳から引くなら `ops3d.get("icp_point2plane")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu', reproducible=False)` (実装を直接呼ぶなら `import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device='cpu', reproducible=False)`、台帳から引くなら `ops3d.get("icp_point2plane")`)
 
 ## 使い方
 
@@ -44,6 +44,9 @@ RMSE 1.7e-16・回転誤差 0° に回復(point-to-point は 17 反復で RMSE 4
     trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
                        Trimmed ICP(部分重なり・外れ値に頑健)。
     device: "cpu"/"cuda" 等。torch device 文字列(device 非依存)。
+    reproducible: True なら正規方程式の ``JᵀJ``・``Jᵀb``(N 点の縮約)を ozakimm(Ozaki スキーム)で計算し、
+        点-面残差・姿勢の適用は要素ごとの演算、RMSE は math.fsum にする。src の点の順・BLAS のスレッド数に依らず
+        R・t・rmse がビット単位で同じ。既定 False は従来どおり(``J.T @ J``)。
 
 返り値:
     R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),

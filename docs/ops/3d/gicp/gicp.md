@@ -13,7 +13,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 # gicp — 3D `gicp` op
 
 - **データ種**: `points × points` → `pose`
-- **呼び出し**: `import fullseye as fs; fs.ledger.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None) -> 'dict'` (実装を直接呼ぶなら `import gicp; gicp.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None) -> 'dict'`、台帳から引くなら `ops3d.get("gicp")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None, reproducible: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import gicp; gicp.gicp(source, target, max_iter: 'int' = 30, k: 'int' = 20, epsilon: 'float' = 0.001, tol: 'float' = 1e-08, init=None, reproducible: 'bool' = False) -> 'dict'`、台帳から引くなら `ops3d.get("gicp")`)
 - **台帳経由の戻り値**: `fullseye.ledger.gicp(...)` は**宣言 out 型 `pose` の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは `fullseye.ledger.gicp.raw(...)`、または `gicp.gicp` を直接呼ぶ。
 
 ## 使い方
@@ -42,6 +42,10 @@ ICP はローカル最適化なので **近い初期化を前提**(粗マッチ�
     tol: 収束閾値。増分並進 ‖τ‖ が ``tol×(target のRMS半径)`` 未満かつ
          増分回転 ‖ω‖(rad)が ``tol`` 未満で打ち切り(スケール相対)。
     init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。
+    reproducible: True なら N 点の和 ``Σ J_iᵀ W_i J_i``・``Σ J_iᵀ W_i d_i`` を ozakimm(Ozaki スキーム)の縮約に、
+        姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず
+        R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。
+        既定 False は従来どおり。
 
 返り値:
     dict:

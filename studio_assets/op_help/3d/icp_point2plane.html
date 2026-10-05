@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2plane — 3D <code style="color:#22d3bf">refine</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points × normals</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;icp_point2plane&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import match3d; match3d.icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-09, init=None, trim=None, device=&#x27;cpu&#x27;, reproducible=False)</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;icp_point2plane&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。</p>
 <p>粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を</p>
@@ -27,6 +27,9 @@
 <p>trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる</p>
 <p>Trimmed ICP(部分重なり・外れ値に頑健)。</p>
 <p>device: &quot;cpu&quot;/&quot;cuda&quot; 等。torch device 文字列(device 非依存)。</p>
+<p>reproducible: True なら正規方程式の `<code style="color:#22d3bf">JᵀJ</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Jᵀb</code>`(N 点の縮約)を ozakimm(Ozaki スキーム)で計算し、</p>
+<p>点-面残差・姿勢の適用は要素ごとの演算、RMSE は math.fsum にする。src の点の順・BLAS のスレッド数に依らず</p>
+<p>R・t・rmse がビット単位で同じ。既定 False は従来どおり(`<code style="color:#22d3bf">J.T @ J</code>`)。</p>
 <p>返り値:</p>
 <p>R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),</p>
 <p>n_iter(実反復数)。</p>

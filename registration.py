@@ -18,17 +18,26 @@ __all__ = ["kabsch", "apply_transform", "icp", "point_to_plane_icp",
            "pca_align", "register", "feature_register"]
 
 
-def kabsch(src, dst):
+def kabsch(src, dst, reproducible: bool = False):
     """Optimal rigid transform mapping corresponded points *src* -> *dst*.
 
     *src*, *dst* are (N, 3) with row i of one corresponding to row i of the other.
     Returns ``(R, t)`` (3×3 rotation, 3-vector translation) minimizing
     ``|| (R·src + t) - dst ||`` — a proper rotation (det = +1, reflection-free).
+
+    ``reproducible=True`` computes the means with ``math.fsum`` and the cross-covariance
+    with :func:`ozakimm.cross_covariance_reproducible`, so ``(R, t)`` are bitwise the same
+    for any point order and any BLAS thread count (on the same LAPACK). It needs N >= 3 and
+    costs far more for large N (about 0.7 ms -> 170 ms at 200,000 points); the default
+    path is unchanged.
     """
     P = np.asarray(src, np.float64)
     Q = np.asarray(dst, np.float64)
     if P.shape != Q.shape or P.ndim != 2 or P.shape[0] < 1:
         raise ValueError("kabsch needs matching, non-empty (N, 3) point sets")
+    if reproducible:
+        import ozakimm
+        return ozakimm._kabsch_rt(P, Q)
     cp, cq = P.mean(0), Q.mean(0)
     H = (P - cp).T @ (Q - cq)
     U, _, Vt = np.linalg.svd(H)
@@ -44,7 +53,7 @@ def apply_transform(points, R, t):
 
 
 def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
-        init=None, trim: float | None = None):
+        init=None, trim: float | None = None, reproducible: bool = False):
     """Iterative Closest Point: align *src* to *dst* without known correspondences.
 
     Each iteration matches every source point to its nearest destination point and
@@ -58,11 +67,27 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     distance each iteration (Trimmed ICP) — this rejects outliers and non-overlap,
     the usual case when an observed cloud only partially matches a CAD model; the
     reported ``rmse`` is then over the kept inliers.
+
+    ``reproducible=True`` makes every reduction independent of the order of the source
+    points (Kabsch through :mod:`ozakimm`, the transform applied element by element, the
+    RMS with ``math.fsum``), so the returned ``R, t`` and ``rmse`` are bitwise the same for
+    any order of *src* and any BLAS thread count (``aligned`` follows the order of *src*).
+    Exact distance ties at the *trim* cut-off may still pick different points. The default
+    path is unchanged; the reproducible one is far slower per iteration for large clouds.
     """
     from scipy.spatial import cKDTree
 
     P0 = np.asarray(src, np.float64)
     Q = np.asarray(dst, np.float64)
+    if reproducible:
+        import ozakimm
+        move = ozakimm._apply_rigid
+        rms = ozakimm._rms
+    else:
+        move = apply_transform
+
+        def rms(d):
+            return float(np.sqrt(np.mean(d ** 2)))
     tree = cKDTree(Q)
     if init is None:
         R_tot = np.eye(3)
@@ -71,7 +96,7 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     else:
         R_tot = np.asarray(init[0], np.float64).copy()
         t_tot = np.asarray(init[1], np.float64).copy()
-        cur = apply_transform(P0, R_tot, t_tot)
+        cur = move(P0, R_tot, t_tot)
     keep_n = P0.shape[0]
     if trim is not None:
         keep_n = max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
@@ -83,9 +108,9 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
             sel = np.argpartition(dist, keep_n - 1)[:keep_n]
         else:
             sel = slice(None)
-        rmse = float(np.sqrt(np.mean(dist[sel] ** 2)))
-        R, t = kabsch(cur[sel], Q[idx[sel]])
-        cur = apply_transform(cur, R, t)
+        rmse = rms(dist[sel])
+        R, t = kabsch(cur[sel], Q[idx[sel]], reproducible=reproducible)
+        cur = move(cur, R, t)
         R_tot = R @ R_tot
         t_tot = R @ t_tot + t
         if abs(prev - rmse) < tol:
@@ -96,13 +121,13 @@ def icp(src, dst, max_iter: int = 50, tol: float = 1e-8,
     dist, _ = tree.query(cur)
     if keep_n < P0.shape[0]:
         dist = np.partition(dist, keep_n - 1)[:keep_n]
-    rmse = float(np.sqrt(np.mean(dist ** 2)))
+    rmse = rms(dist)
     return R_tot, t_tot, cur, rmse
 
 
 def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
                        max_iter: int = 50, tol: float = 1e-8,
-                       init=None, trim: float | None = None):
+                       init=None, trim: float | None = None, reproducible: bool = False):
     """Point-to-plane ICP: align *src* to *dst* minimizing the distance along the
     destination **surface normal**, not straight-line point distance.
 
@@ -111,7 +136,12 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     for leaving it (Low, 2004). *dst_normals* are estimated with
     :func:`pointcloud.estimate_normals` if not supplied. *init* and *trim* behave
     as in :func:`icp`. Returns ``(R, t, aligned, rmse)`` where ``rmse`` is the
-    point-to-plane residual."""
+    point-to-plane residual.
+
+    ``reproducible=True`` replaces the least-squares solve by the 6x6 normal equations
+    ``(JᵀJ) x = Jᵀb`` with both products from :mod:`ozakimm` (independent of point order
+    and BLAS threads), applies the transform element by element and sums the RMS with
+    ``math.fsum``. The default path (``lstsq``) is unchanged."""
     from scipy.spatial import cKDTree
     from scipy.spatial.transform import Rotation
     import pointcloud
@@ -121,6 +151,17 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     N = (np.asarray(dst_normals, np.float64) if dst_normals is not None
          else pointcloud.estimate_normals(Q, k=k_normals))
     tree = cKDTree(Q)
+    if reproducible:
+        import ozakimm
+        move, rowdot, rms = ozakimm._apply_rigid, ozakimm._rowdot, ozakimm._rms
+    else:
+        move = apply_transform
+
+        def rowdot(a, b):
+            return np.einsum("ij,ij->i", a, b)
+
+        def rms(d):
+            return float(np.sqrt(np.mean(d ** 2)))
     if init is None:
         R_tot = np.eye(3)
         t_tot = np.zeros(3)
@@ -128,7 +169,7 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     else:
         R_tot = np.asarray(init[0], np.float64).copy()
         t_tot = np.asarray(init[1], np.float64).copy()
-        cur = apply_transform(P0, R_tot, t_tot)
+        cur = move(P0, R_tot, t_tot)
     keep_n = P0.shape[0] if trim is None else max(3, int(round((1.0 - float(trim)) * P0.shape[0])))
     prev = np.inf
     rmse = np.inf
@@ -141,14 +182,18 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
         p, q, n = cur[sel], Q[idx[sel]], N[idx[sel]]
         # linearised (small-angle) point-to-plane: [cross(p,n) | n] · [r | t] = -(p-q)·n
         A = np.concatenate([np.cross(p, n), n], axis=1)
-        b = -np.einsum("ij,ij->i", p - q, n)
-        x, *_ = np.linalg.lstsq(A, b, rcond=None)
+        b = -rowdot(p - q, n)
+        if reproducible:
+            x = np.linalg.solve(ozakimm._matmul_repro_any(A.T, A) + 1e-12 * np.eye(6),
+                                ozakimm._matmul_repro_any(A.T, b[:, None])[:, 0])
+        else:
+            x, *_ = np.linalg.lstsq(A, b, rcond=None)
         R_inc = Rotation.from_rotvec(x[:3]).as_matrix()
         t_inc = x[3:]
-        cur = cur @ R_inc.T + t_inc
+        cur = move(cur, R_inc, t_inc) if reproducible else cur @ R_inc.T + t_inc
         R_tot = R_inc @ R_tot
         t_tot = R_inc @ t_tot + t_inc
-        rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q, n) ** 2)))
+        rmse = rms(rowdot(cur[sel] - q, n))
         if abs(prev - rmse) < tol:
             break
         prev = rmse
@@ -157,7 +202,7 @@ def point_to_plane_icp(src, dst, dst_normals=None, k_normals: int = 16,
     dist, idx = tree.query(cur)
     sel = (np.argpartition(dist, keep_n - 1)[:keep_n]
            if keep_n < P0.shape[0] else np.arange(P0.shape[0]))
-    rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - Q[idx[sel]], N[idx[sel]]) ** 2)))
+    rmse = rms(rowdot(cur[sel] - Q[idx[sel]], N[idx[sel]]))
     return R_tot, t_tot, cur, rmse
 
 

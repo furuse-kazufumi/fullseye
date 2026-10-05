@@ -1,4 +1,9 @@
 what changes	ordinary FP64: distinct results	Ozaki: distinct results
 point order (11 shuffles + original)	12	1
 BLAS threads 1 / 2 / 4 / 8 (cross-covariance H)	1	1
-time for the 3x3 H of 200000 points	0.68 ms	170 ms
+time for the 3x3 H of 200000 points	0.75 ms	170 ms
+registration.icp, 5 point orders (20000 pts)	5 (381 ms)	1 (1111 ms)
+registration.point_to_plane_icp, 5 point orders (20000 pts)	5 (68 ms)	1 (265 ms)
+match3d.icp_point2point_3d, 5 point orders (20000 pts)	5 (548 ms)	1 (1075 ms)
+match3d.icp_point2plane, 5 point orders (20000 pts)	5 (55 ms)	1 (257 ms)
+gicp.gicp, 5 point orders (20000 pts)	5 (323 ms)	1 (1119 ms)

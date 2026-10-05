@@ -34,6 +34,9 @@
 出力の行を分けて呼ぶと、分けた側ごとに分割数が選び直されるので、行を分けるなら ``n_slices`` を固定して :func:`matmul_ozaki` を使う。
 特異値分解など、この後に続く LAPACK の計算は同じ計算機の上でだけ同じビット(:func:`kabsch_reproducible`)。
 
+ICP の家族(registration.icp / registration.point_to_plane_icp / match3d.icp_point2point_3d / match3d.icp_point2plane /
+gicp.gicp)は引数 ``reproducible=True`` でこの module の縮約を使う(既定は従来の経路のまま。2 万点の ICP 全体で 2〜5 倍遅い)。
+
 限界: Inf / NaN は扱わない(``ValueError``)。符号付きのゼロは保たない。指数の幅が広い入力(φ = 4)は FP64 並みの精度に
 12〜13 枚(78〜91 回の積)が要る。出力が溢れたら ``ValueError``。
 """
@@ -286,6 +289,10 @@ def _ozaki1_auto(A, B, tol, max_slices, on_insufficient):
         if cap >= max_slices:
             break
         lo, cap = cap + 1, min(max_slices, cap + 3)
+    if on_insufficient == "max":            # 内部用(ICP): 決定的に最大の枚数で。精度は行・列の尺度に対し 2⁻¹¹² 級
+        C, info = _ozaki1_fixed(A, B, max_slices)
+        info["capped"] = True
+        return C, info
     if on_insufficient == "raise":
         raise ValueError("matmul_ozaki: tol=%g needs more than %d slices (the exponent span is too wide); "
                          "use float64, or on_insufficient='fallback'" % (tol, max_slices))
@@ -566,3 +573,51 @@ def _exact_matmul(A, B):
 def _test_matrix(m, k, phi, rng):
     """論文の試験入力 ``(rand − 0.5) · exp(φ · randn)``。φ が指数の幅。"""
     return (rng.random((m, k)) - 0.5) * np.exp(phi * rng.standard_normal((m, k)))
+
+
+# ----------------------------------------------------------------------------------------------
+# ICP の reproducible=True の経路が使う内部の道具(registration / match3d / gicp から呼ぶ。公開しない)
+# ----------------------------------------------------------------------------------------------
+def _matmul_repro_any(A, B):
+    """順序に依らない ``A @ B``。上界で ``tol = u`` に届けばその枚数、届かなければ 16 枚に固定(どちらも決定的)。
+
+    ICP の ``JᵀJ`` は、ある列が大きい点と別の列が大きい点が分かれていると、成分ごとの保証に 16 枚では足りないことがある。
+    ICP を ValueError で止める代わりに、行・列の尺度に対して 2⁻¹¹² 級の精度の 16 枚で返す(選ぶ規則は順序に依らない)。
+    """
+    A, B = _check_pair(A, B, "_matmul_repro_any")
+    C, _ = _ozaki1_auto(A, B, 2.0 ** -53, _MAX_SLICES, "max")
+    return _finite_out(C, "_matmul_repro_any")
+
+
+def _sum_rows(M):
+    """``M`` (N, d) の列ごとの和(行の順に依らない)。``ones(1, N) @ M`` を Ozaki で。"""
+    M = np.asarray(M, dtype=np.float64)
+    return _matmul_repro_any(np.ones((1, M.shape[0])), M)[0]
+
+
+def _apply_rigid(P, R, t):
+    """``P @ R.T + t`` を要素ごとの演算だけで(BLAS の核の選び方・FMA で行ごとの丸めが動かない)。"""
+    P = np.asarray(P, dtype=np.float64)
+    R = np.asarray(R, dtype=np.float64)
+    t = np.asarray(t, dtype=np.float64)
+    out = np.empty_like(P)
+    for i in range(3):
+        out[:, i] = ((P[:, 0] * R[i, 0] + P[:, 1] * R[i, 1]) + P[:, 2] * R[i, 2]) + t[i]
+    return out
+
+
+def _rowdot(a, b):
+    """行ごとの内積(3 列、足す順を固定)。"""
+    return (a[:, 0] * b[:, 0] + a[:, 1] * b[:, 1]) + a[:, 2] * b[:, 2]
+
+
+def _rms(x):
+    """``sqrt(mean(x²))``、和は ``math.fsum``(順序に依らない)。"""
+    x = np.asarray(x, dtype=np.float64).ravel()
+    return math.sqrt(math.fsum((x * x).tolist()) / max(1, x.size))
+
+
+def _kabsch_rt(P, Q):
+    """対応する点の Kabsch(順序に依らない)。返り ``(R, t)``。N ≥ 3 でなければ ValueError。"""
+    r = kabsch_reproducible(P, Q)
+    return r["R"], r["t"]

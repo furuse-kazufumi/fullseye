@@ -14,7 +14,7 @@
 
 門(既定): 階段(Ozaki-I・II)、上界の破れ 0、点の順 11 通りで Ozaki は 1 通り、スレッド数 1/2/4/8 で同じビット、
 2 の冪の定数倍で答えも正確に同じ倍率(2606.29129 の欠陥が無い)、Kabsch の回転の復元、fail-closed、探針が例外を出さない、
-入口、所要。--full: 点を 20 万に、CPU の速さを測り、GPU があれば cuBLAS を測る。
+入口、ICP の家族 5 本の ``reproducible=True``(点の順を入れ替えても姿勢が 1 通り、既定との差は丸めの範囲)、所要。--full: 点を 20 万に、CPU の速さを測り、GPU があれば cuBLAS を測る。
 図(既定の出力先は out/figures/<PoC 名>/、FULLSEYE_FIGURE_DIR で変更): 誤差の階段、点の順を入れ替えたときの回転の差、
 同じビットか違うビットかの表、GPU の FP64 相当の速さ(記録)、CPU の遅さの表。
 Run: py -3.11 examples/poc_reproducible_icp.py [--full]
@@ -214,6 +214,49 @@ def probe_and_entry() -> dict:
     return pr
 
 
+def icp_family() -> dict:
+    print("== ICP の家族(reproducible=True、波打つ面 %d 点)" % (20_000 if FULL else 4_000))
+    import gicp
+    import match3d
+    import pointcloud
+    import registration
+    rng = np.random.default_rng(4)
+    n = 20_000 if FULL else 4_000
+    u, v = rng.uniform(-1, 1, (2, n))
+    Q = np.stack([u, v, 0.2 * np.sin(3 * u) * np.cos(2 * v)], 1) + 50.0
+    th = 0.08
+    Rz = np.array([[np.cos(th), -np.sin(th), 0], [np.sin(th), np.cos(th), 0], [0, 0, 1.0]])
+    P = (Q - 50.0) @ Rz.T + 50.0 + np.array([0.03, -0.02, 0.01]) + 1e-5 * rng.normal(size=(n, 3))
+    Nq = pointcloud.estimate_normals(Q, k=16)
+    runs = {
+        "registration.icp": lambda X, **k: registration.icp(X, Q, **k)[:2],
+        "registration.point_to_plane_icp": lambda X, **k: registration.point_to_plane_icp(X, Q, Nq, **k)[:2],
+        "match3d.icp_point2point_3d": lambda X, **k: tuple(np.asarray(a) for a in match3d.icp_point2point_3d(X, Q, **k)[:2]),
+        "match3d.icp_point2plane": lambda X, **k: match3d.icp_point2plane(X, Q, Nq, **k)[:2],
+        "gicp.gicp": lambda X, **k: (lambda r: (r["R"], r["t"]))(gicp.gicp(X, Q, **k)),
+    }
+    assert len(runs) == 5
+    rows, ok_all = [], True
+    for name, fn in runs.items():
+        perms = [np.arange(n)] + [np.random.default_rng(s_).permutation(n) for s_ in range(4)]
+        t0 = time.perf_counter()
+        dflt = [fn(P[p]) for p in perms]
+        t1 = time.perf_counter()
+        repr_ = [fn(P[p], reproducible=True) for p in perms]
+        t2 = time.perf_counter()
+        n_d = len({r[0].tobytes() + r[1].tobytes() for r in dflt})
+        n_r = len({r[0].tobytes() + r[1].tobytes() for r in repr_})
+        dR = float(np.max(np.abs(dflt[0][0] - repr_[0][0])))
+        ok_all &= n_r == 1 and dR < 1e-12
+        rows.append({"name": name, "n_default": n_d, "n_repro": n_r, "dR": dR,
+                     "ms_default": 1e3 * (t1 - t0) / len(perms), "ms_repro": 1e3 * (t2 - t1) / len(perms)})
+        print("    %-32s 既定 %d 通り / reproducible %d 通り、|ΔR| %.1e、%.0f ms → %.0f ms"
+              % (name, n_d, n_r, dR, rows[-1]["ms_default"], rows[-1]["ms_repro"]))
+    gate("門 13 ICP の家族 5 本: reproducible=True は点の順 5 通りで姿勢が 1 通り(ビット単位)、既定との差は丸めの範囲(|ΔR| < 1e-12)",
+         ok_all, "既定は %s 通り" % "/".join(str(r["n_default"]) for r in rows))
+    return {"rows": rows, "n": n}
+
+
 def cpu_speed() -> list:
     print("== CPU の速さ(--full、正方行列)")
     rng = np.random.default_rng(5)
@@ -303,7 +346,7 @@ def _lg(v):
     return math.log10(v) if v > 0 else FLOOR
 
 
-def figures(st: dict, od: dict, cpu: list, gpu_live: list) -> None:
+def figures(st: dict, od: dict, cpu: list, gpu_live: list, icp: dict) -> None:
     print("== 図")
     ser, styles, colors = [], [], []
     col = {0.5: "reference", 2.0: "emphasis", 4.0: "wrong"}
@@ -346,7 +389,9 @@ def figures(st: dict, od: dict, cpu: list, gpu_live: list) -> None:
                     [["point order (%d shuffles + original)" % N_SHUFFLES, str(od["n_nat"]), str(od["n_oz"])],
                      ["BLAS threads 1 / 2 / 4 / 8 (cross-covariance H)", str(od["t_nat"]), str(od["t_oz"])],
                      ["time for the 3x3 H of %d points" % N_POINTS, "%.2f ms" % (1e3 * od["times"]["dgemm"]),
-                      "%.0f ms" % (1e3 * od["times"]["ozaki"])]],
+                      "%.0f ms" % (1e3 * od["times"]["ozaki"])]]
+                    + [["%s, 5 point orders (%d pts)" % (r["name"], icp["n"]), "%d (%.0f ms)" % (r["n_default"], r["ms_default"]),
+                        "%d (%.0f ms)" % (r["n_repro"], r["ms_repro"])] for r in icp["rows"]],
                     title="Same answer, bit for bit?",
                     caption="違う結果の数(1 = どの条件でも同じビット)。この計算機での値。普通の FP64 がスレッド数で動くかは BLAS の分け方次第。")
     rec = json.loads(RECORDED.read_text(encoding="utf-8"))
@@ -392,6 +437,7 @@ def main() -> int:
     od = order_and_threads()
     scale_and_fail_closed()
     pr = probe_and_entry()
+    icp = icp_family()
     cpu, gpu_live = [], []
     if FULL:
         cpu = cpu_speed()
@@ -401,9 +447,9 @@ def main() -> int:
             skip("GPU の測定", "cuBLAS 13 の FP64 エミュレーションが使えない(記録の表だけ描く)")
     dt = time.time() - t_all
     budget = 120 if FULL else 30
-    gate("門 13 所要 ≤ %d s" % budget, dt <= budget, "%.1f s" % dt)
+    gate("門 14 所要 ≤ %d s" % budget, dt <= budget, "%.1f s" % dt)
     if figs.enabled():
-        figures(st, od, cpu, gpu_live)
+        figures(st, od, cpu, gpu_live, icp)
     if figs.errors():
         print("図の書き出しで失敗:", "; ".join(figs.errors()))
     n_ng = sum(1 for _, ok in _GATES if not ok)

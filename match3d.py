@@ -1600,7 +1600,7 @@ def refine_rotation_z(scene, template, init_angle_deg=0.0, device="cpu",
 
 def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
                        tol=1e-6, max_corr_dist=None, trim_ratio=None,
-                       device="cpu"):
+                       device="cpu", reproducible=False):
     """点群を point-to-point ICP(Kabsch/SVD)で精緻化する。
 
     粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た
@@ -1624,6 +1624,10 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         trim_ratio: 0<r<=1。各反復で最近傍距離の小さい上位 r 割の対応のみ
             採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。
         device: torch デバイス("cpu" 等)。SVD をこのデバイス上で解く。
+        reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。
+            平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。
+            src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で
+            距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。
 
     返り値:
         R: (3,3) 回転。dst ~= src @ R.T + t を満たす。**torch がある環境では
@@ -1667,6 +1671,18 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
 
     src_np = np.ascontiguousarray(_s, np.float64)
     dst_np = np.ascontiguousarray(_d, np.float64)
+    if reproducible:
+        import ozakimm as _oz
+        _move = _oz._apply_rigid
+
+        def _rms_rows(diff):
+            return _oz._rms(_oz._rowdot(diff, diff) ** 0.5)
+    else:
+        def _move(P_, R_, t_):
+            return P_ @ R_.T + t_
+
+        def _rms_rows(diff):
+            return float(np.sqrt(np.mean(np.sum(diff ** 2, axis=1))))
 
     # --- 初期姿勢(累積 R, t)--------------------------------------------
     def _np3(a, shape):
@@ -1701,7 +1717,7 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
     for it in range(iters):
         used_iters = it + 1
 
-        src_moved = src_np @ R.T + t            # 現在の累積姿勢
+        src_moved = _move(src_np, R, t)         # 現在の累積姿勢
         dists, idx = tree.query(src_moved, k=1)
 
         keep = _select(dists)
@@ -1711,13 +1727,18 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         P = src_moved[keep]
         Q = dst_np[idx[keep]]
 
-        rmse = float(np.sqrt(np.mean(np.sum((P - Q) ** 2, axis=1))))
+        rmse = _rms_rows(P - Q)
         rmse_history.append(rmse)
 
         # --- Kabsch: P を Q に合わせる相対 (dR, dt) を SVD で解く ----------
-        p_bar = P.mean(axis=0)
-        q_bar = Q.mean(axis=0)
-        H = (P - p_bar).T @ (Q - q_bar)         # (3,3) 相互共分散
+        if reproducible:
+            p_bar = _oz._fsum_mean(P)
+            q_bar = _oz._fsum_mean(Q)
+            H = _oz.matmul_reproducible((P - p_bar).T, Q - q_bar)   # (3,3) 点の順に依らない
+        else:
+            p_bar = P.mean(axis=0)
+            q_bar = Q.mean(axis=0)
+            H = (P - p_bar).T @ (Q - q_bar)     # (3,3) 相互共分散
         U, _S, Vh = np.linalg.svd(H)
         V = Vh.T
         d = np.sign(np.linalg.det(V @ U.T))     # 反射補正
@@ -1739,11 +1760,11 @@ def icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None,
         prev_rmse = rmse
 
     # 収束後の最終 RMSE を採用対応(インライア)上で再評価
-    dists, _ = tree.query(src_np @ R.T + t, k=1)
+    dists, _ = tree.query(_move(src_np, R, t), k=1)
     fkeep = _select(dists)
     if fkeep.sum() < 1:
         fkeep = np.ones(len(dists), dtype=bool)
-    final_rmse = float(np.sqrt(np.mean(dists[fkeep] ** 2)))
+    final_rmse = _oz._rms(dists[fkeep]) if reproducible else float(np.sqrt(np.mean(dists[fkeep] ** 2)))
     rmse_history.append(final_rmse)
 
     info = {
@@ -1808,7 +1829,7 @@ def _nearest(cur, Q, chunk=4096):
 
 
 def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
-                    init=None, trim=None, device="cpu"):
+                    init=None, trim=None, device="cpu", reproducible=False):
     """点-面 ICP(Gauss-Newton, 小角近似)で剛体変換を高精度に精緻化する。
 
     粗マッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)の初期姿勢を
@@ -1836,6 +1857,9 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         trim (float|None): [0,1) の割合。点-面残差の大きい上位を毎反復捨てる
                            Trimmed ICP(部分重なり・外れ値に頑健)。
         device: "cpu"/"cuda" 等。torch device 文字列(device 非依存)。
+        reproducible: True なら正規方程式の ``JᵀJ``・``Jᵀb``(N 点の縮約)を ozakimm(Ozaki スキーム)で計算し、
+            点-面残差・姿勢の適用は要素ごとの演算、RMSE は math.fsum にする。src の点の順・BLAS のスレッド数に依らず
+            R・t・rmse がビット単位で同じ。既定 False は従来どおり(``J.T @ J``)。
 
     返り値:
         R (3,3), t (3,), aligned (N,3)=R·src+t, rmse(採用点の点-面 RMSE),
@@ -1884,6 +1908,15 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
     Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=1, keepdims=True), 1e-12)
 
     n_src = P0.shape[0]
+    if reproducible:
+        import ozakimm as _oz
+        _move, _dot = _oz._apply_rigid, _oz._rowdot
+    else:
+        def _move(P_, R_, t_):
+            return P_ @ R_.T + t_
+
+        def _dot(a, b):
+            return np.einsum("ij,ij->i", a, b)
     if init is None:
         R_tot = np.eye(3, dtype=np.float64)
         t_tot = np.zeros(3, dtype=np.float64)
@@ -1891,7 +1924,7 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
     else:
         R_tot = np.ascontiguousarray(np.asarray(init[0], np.float64)).reshape(3, 3).copy()
         t_tot = np.ascontiguousarray(np.asarray(init[1], np.float64)).reshape(3).copy()
-        cur = P0 @ R_tot.T + t_tot
+        cur = _move(P0, R_tot, t_tot)
     keep_n = n_src if trim is None else max(3, int(round((1.0 - float(trim)) * n_src)))
 
     prev = float("inf")
@@ -1904,7 +1937,7 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         _, idx = tree.query(cur, k=1)
         q = Q[idx]
         n = Nn[idx]
-        resid = np.einsum("ij,ij->i", cur - q, n)             # 符号付き点-面距離
+        resid = _dot(cur - q, n)                              # 符号付き点-面距離
         if keep_n < n_src:                                    # Trimmed: 残差小さい keep_n 点のみ
             sel = np.argsort(np.abs(resid))[:keep_n]
         else:
@@ -1912,14 +1945,21 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
         p_s, q_s, n_s, r_s = cur[sel], q[sel], n[sel], resid[sel]
         # J_i = [p×n | n],  b_i = -(p-q)·n = -r_s  (正規方程式 (JᵀJ)x=Jᵀb を 6×6 で)
         J = np.concatenate([np.cross(p_s, n_s), n_s], axis=1)  # (K,6)
-        x = np.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
+        if reproducible:
+            x = np.linalg.solve(_oz._matmul_repro_any(J.T, J) + reg,
+                                _oz._matmul_repro_any(J.T, (-r_s)[:, None])[:, 0])
+        else:
+            x = np.linalg.solve(J.T @ J + reg, J.T @ (-r_s))
         R_inc = _rodrigues_np(x[:3])
         t_inc = x[3:]
-        cur = cur @ R_inc.T + t_inc
+        cur = _move(cur, R_inc, t_inc)
         R_tot = R_inc @ R_tot
         t_tot = R_inc @ t_tot + t_inc
         # 更新後の点-面 RMSE(採用点のみで評価。同じ対応で単調性を判定)
-        rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
+        if reproducible:
+            rmse = _oz._rms(_dot(cur[sel] - q_s, n_s))
+        else:
+            rmse = float(np.sqrt(np.mean(np.einsum("ij,ij->i", cur[sel] - q_s, n_s) ** 2)))
         if abs(prev - rmse) < tol:
             break
         prev = rmse

@@ -1343,12 +1343,12 @@
 ## `match3d.py`
 
 - **L297** — ★2026-09-07：改用 numpy 的 FFT。式子相同(float32 的 fftn -> 僅相位 -> ifftn 的實部 -> argmax),沒有任何地方需要用 torch。在不裝 torch 的 CI(py3.10 / 3.12)上,這個 op 會變成 ImportError,PoC 隨之失敗。
-- **L1655** — ★2026-09-07：把主體改寫為 numpy。這個 ICP 是**最近鄰搜尋用 cKDTree、位姿更新用 3x3 的 SVD**,沒有一件事需要 torch,卻把 torch 設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,4 個 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落敗而暴露(本地有 torch 所以沒能察覺 -- 「門要立在事故發生的地方」的實例)。數值是相同的 float64 式,因此**結果不因環境而變**。回傳型別為相容而保留:有 torch 則 torch.Tensor,沒有則 numpy.ndarray(數值相同)。若請求 "cpu" 以外的 device 則 fail-closed。
-- **L1870** — ★2026-09-07：把主體改寫為 numpy。最近鄰搜尋、6x6 的正規方程、Rodrigues 都是 CPU 上的小型線性代數,本無需 torch,卻被設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落敗而暴露。式子是相同的 float64,故結果不變(實測與 torch 版之差在 R/t 上為 0、RMSE 上為 0)。
-- **L2832** — ★2026-09-07：**若環在影像之外則 fail-closed**。``r_in``/``r_out`` 以像素為單位,故若按 mm 傳入,會讀到視野之外,並無例外地回傳**全部 0**(在 `poc_pipe_wall_loss` 輸出一張漆黑的圖後暴露)。若沒有一個半徑小於從中心到影像四角的最大距離,則回傳值只可能為空。
-- **L2843** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替換為 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同樣的雙線性插值,在不裝 torch 的 CI(py3.10 / 3.12)上也能跑。實測差異最大為 6.0e-06(值域 0..1 的隨機影像;float32 與 float64 的捨入之差)。
-- **L2888** — ★2026-09-07：出於與 polar_unwrap 相同的理由,替換為 map_coordinates(雙線性、範圍外 0)。無 torch 也能跑。實測差異最大為 7.6e-06。
-- **L3139** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替換為 numpy 的座標計算 + scipy 的 map_coordinates(order=1)。torch 僅用於雙線性重取樣,在不裝 torch 的環境(CI 的 py3.10 / 3.12)中這個 op 會變成 ImportError。約定原樣照抄:輸出體素 (d,h,w) 的歸一化座標為 ((i+0.5)/N)*2-1,旋轉後用 (g+1)/2*N-0.5 換回輸入的像素座標(align_corners=False 的定義)。grid 的最末軸為 (x, y, z) = (W, H, D) 的順序。與 torch 版的實測差異最大為 7.6e-06。
+- **L1659** — ★2026-09-07：把主體改寫為 numpy。這個 ICP 是**最近鄰搜尋用 cKDTree、位姿更新用 3x3 的 SVD**,沒有一件事需要 torch,卻把 torch 設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,4 個 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落敗而暴露(本地有 torch 所以沒能察覺 -- 「門要立在事故發生的地方」的實例)。數值是相同的 float64 式,因此**結果不因環境而變**。回傳型別為相容而保留:有 torch 則 torch.Tensor,沒有則 numpy.ndarray(數值相同)。若請求 "cpu" 以外的 device 則 fail-closed。
+- **L1894** — ★2026-09-07：把主體改寫為 numpy。最近鄰搜尋、6x6 的正規方程、Rodrigues 都是 CPU 上的小型線性代數,本無需 torch,卻被設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落敗而暴露。式子是相同的 float64,故結果不變(實測與 torch 版之差在 R/t 上為 0、RMSE 上為 0)。
+- **L2872** — ★2026-09-07：**若環在影像之外則 fail-closed**。``r_in``/``r_out`` 以像素為單位,故若按 mm 傳入,會讀到視野之外,並無例外地回傳**全部 0**(在 `poc_pipe_wall_loss` 輸出一張漆黑的圖後暴露)。若沒有一個半徑小於從中心到影像四角的最大距離,則回傳值只可能為空。
+- **L2883** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替換為 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同樣的雙線性插值,在不裝 torch 的 CI(py3.10 / 3.12)上也能跑。實測差異最大為 6.0e-06(值域 0..1 的隨機影像;float32 與 float64 的捨入之差)。
+- **L2928** — ★2026-09-07：出於與 polar_unwrap 相同的理由,替換為 map_coordinates(雙線性、範圍外 0)。無 torch 也能跑。實測差異最大為 7.6e-06。
+- **L3179** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替換為 numpy 的座標計算 + scipy 的 map_coordinates(order=1)。torch 僅用於雙線性重取樣,在不裝 torch 的環境(CI 的 py3.10 / 3.12)中這個 op 會變成 ImportError。約定原樣照抄:輸出體素 (d,h,w) 的歸一化座標為 ((i+0.5)/N)*2-1,旋轉後用 (g+1)/2*N-0.5 換回輸入的像素座標(align_corners=False 的定義)。grid 的最末軸為 (x, y, z) = (W, H, D) 的順序。與 torch 版的實測差異最大為 7.6e-06。
 
 ## `mathestimation.py`
 

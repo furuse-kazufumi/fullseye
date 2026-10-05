@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">gicp — 3D <code style="color:#22d3bf">gicp</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
-<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>台帳経由の戻り値</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> は**宣言 out 型 <code style="color:#22d3bf">pose</code> の値だけ**を返す(本体は補助情報も返す)。捨てられた側が要るときは <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code>、または <code style="color:#22d3bf">gicp.gicp</code> を直接呼ぶ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。</p>
@@ -24,6 +24,10 @@
 <p>tol: 収束閾値。増分並進 ‖τ‖ が `<code style="color:#22d3bf">tol×(target のRMS半径)</code>` 未満かつ</p>
 <p>増分回転 ‖ω‖(rad)が `<code style="color:#22d3bf">tol</code>` 未満で打ち切り(スケール相対)。</p>
 <p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
+<p>reproducible: True なら N 点の和 `<code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code>` を ozakimm(Ozaki スキーム)の縮約に、</p>
+<p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
+<p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
+<p>既定 False は従来どおり。</p>
 <p>返り値:</p>
 <p>dict:</p>
 <p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>

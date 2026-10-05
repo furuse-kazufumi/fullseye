@@ -124,7 +124,7 @@ def estimate_covariances(points, k: int = 20, epsilon: float = 1e-3) -> np.ndarr
 # Generalized-ICP
 # ═══════════════════════════════════════════════════════════════════════════
 def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
-         tol: float = 1e-8, init=None) -> dict:
+         tol: float = 1e-8, init=None, reproducible: bool = False) -> dict:
     """Generalized-ICP(共分散重みマハラノビス ICP)で剛体変換 (R,t) を推定する。
 
     各反復で source→target の最近傍対応を張り、残差 ``d_i = R·s_i + t - q_i`` を
@@ -149,6 +149,10 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
         tol: 収束閾値。増分並進 ‖τ‖ が ``tol×(target のRMS半径)`` 未満かつ
              増分回転 ‖ω‖(rad)が ``tol`` 未満で打ち切り(スケール相対)。
         init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。
+        reproducible: True なら N 点の和 ``Σ J_iᵀ W_i J_i``・``Σ J_iᵀ W_i d_i`` を ozakimm(Ozaki スキーム)の縮約に、
+            姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず
+            R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。
+            既定 False は従来どおり。
 
     返り値:
         dict:
@@ -188,12 +192,18 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     cov_s = estimate_covariances(S, k=k, epsilon=epsilon)   # (N,3,3)
     cov_t = estimate_covariances(Q, k=k, epsilon=epsilon)   # (M,3,3)
     tree = cKDTree(Q)
+    if reproducible:
+        import ozakimm as _oz
+        _move = _oz._apply_rigid
+    else:
+        def _move(P_, R_, t_):
+            return P_ @ R_.T + t_
 
     n_iter = 0
     rmse = float("inf")
     for it in range(int(max_iter)):
         n_iter = it + 1
-        p = S @ R.T + t                                     # 変換後 source (N,3)
+        p = _move(S, R, t)                                  # 変換後 source (N,3)
         _, idx = tree.query(p, k=1)                         # 最近傍対応
         d = p - Q[idx]                                       # 残差 (N,3)
 
@@ -210,8 +220,12 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
 
         Jt = np.transpose(J, (0, 2, 1))                     # (N,6,3)
         JtW = np.einsum("nij,njk->nik", Jt, W)              # (N,6,3)
-        H = np.einsum("nik,nkl->nil", JtW, J).sum(axis=0)   # (6,6)
-        g = -np.einsum("nik,nk->ni", JtW, d).sum(axis=0)    # (6,)
+        if reproducible:                                     # N 点の和を点の順に依らない縮約で
+            H = _oz._sum_rows(np.einsum("nik,nkl->nil", JtW, J).reshape(-1, 36)).reshape(6, 6)
+            g = -_oz._sum_rows(np.einsum("nik,nk->ni", JtW, d))
+        else:
+            H = np.einsum("nik,nkl->nil", JtW, J).sum(axis=0)   # (6,6)
+            g = -np.einsum("nik,nk->ni", JtW, d).sum(axis=0)    # (6,)
 
         # スケール相対な微小正則化(縮退=平面などで H が特異になっても解ける)。
         # 未拘束 DOF(平面内の滑り/法線回り回転)には ~0 の更新を返し発散を防ぐ。
@@ -240,10 +254,13 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
             break
 
     # 最終 RMSE(採用対応上のユークリッド距離)
-    p = S @ R.T + t
+    p = _move(S, R, t)
     _, idx = tree.query(p, k=1)
     d = p - Q[idx]
-    rmse = float(np.sqrt(np.mean(np.sum(d ** 2, axis=1))))
+    if reproducible:
+        rmse = _oz._rms(np.sqrt(_oz._rowdot(d, d)))
+    else:
+        rmse = float(np.sqrt(np.mean(np.sum(d ** 2, axis=1))))
     if not (np.all(np.isfinite(R)) and np.all(np.isfinite(t)) and np.isfinite(rmse)):
         raise ValueError("GICP numerical divergence (non-finite result) = fail-closed")
 

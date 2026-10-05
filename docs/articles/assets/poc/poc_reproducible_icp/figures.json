@@ -34,8 +34,8 @@
   "name": "same_bits_or_not",
   "caption": "違う結果の数(1 = どの条件でも同じビット)。この計算機での値。普通の FP64 がスレッド数で動くかは BLAS の分け方次第。",
   "shape": [
-   152,
-   629,
+   272,
+   668,
    3
   ],
   "csv": "04_same_bits_or_not.csv",

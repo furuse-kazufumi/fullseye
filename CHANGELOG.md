@@ -12,6 +12,10 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   Ozaki-I の分割数は誤差の保証上界から自動で選び、選ぶのに使う量(|A||B| の下界を含む)も順序に依らない形にした(下書きは float32 の BLAS で見積もり、境目で分割数が入れ替わりえた)。
   Ozaki-II は定数倍で壊れない拡大(arXiv 2606.29129 の旧 fast mode の欠陥が無いことを門に)。正直に: CPU では DGEMM の 11〜83 倍遅い。GPU の速さは cuBLAS 13.4 の
   FP64 エミュレーション(opt-in、手元の n = 8192 で 17.8〜23.8 TFLOPS、ネイティブ 1.67)に任せ、`fp64_emulation_probe` で有無を確かめる(例外を出さない)。
+- **ICP の家族 5 本に `reproducible=True`**(`registration.icp` / `registration.point_to_plane_icp` / `match3d.icp_point2point_3d` / `match3d.icp_point2plane` /
+  `gicp.gicp`、+ `registration.kabsch`): 相互共分散 H・正規方程式 JᵀJ・Jᵀb・GICP の N 点の和を ozakimm の縮約に、姿勢の適用を要素ごとの演算に、RMS を math.fsum に。
+  点の順・BLAS のスレッド数に依らず R・t・rmse がビット単位で同じ。**既定は従来のまま**(既定の経路は HEAD とビット同一を 5 本とも確認)。
+  遅さ: 2 万点の ICP 全体で 2〜5 倍(例 point_to_plane 68 → 265 ms)、Kabsch 1 回は 20 万点で 0.75 → 170 ms。
 - ★**乳鉢の粉砕を測る**(新モジュール `grind` 13 op、facade なし、台帳 `grind`(opsdrive)、PoC `poc_powder_grinding_ae`、wing_metrology): 粉体の 3 本目。
   公開データ(Zenodo 10.5281/zenodo.18064323、CC BY 4.0)のレーザー回折の粒度分布 117 本と AE 6 本を外の真値に(repo の外、環境変数 `FULLSEYE_GRIND_DATA`、
   無い CI では numpy の 12 門)。D50 は装置の Dx(50) と同じ log 補間で 3.2e-15、解析コードの下の端の累積は 1 区間分 −12 % の偏り。粉砕則の当てはめと、
