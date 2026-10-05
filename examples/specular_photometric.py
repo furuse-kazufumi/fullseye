@@ -184,16 +184,16 @@ def main():
         nrm, alb, inl = SP.photometric_stereo_robust(shadowed, L, method=method)
         err = PM.angular_error_deg(nrm, surface)
         results[method] = err.mean()
-        print(f"   {method:7s}: 法線の平均角度誤差={err.mean():8.4f} deg  "
-              f"最大={err.max():8.4f} deg  アルベド最大誤差={np.abs(alb - alb_map).max():.2e}  "
+        print(f"   {method:7s}: 法線の平均角度誤差={err.mean():9.2e} deg  "
+              f"最大={err.max():9.2e} deg  アルベド最大誤差={np.abs(alb - alb_map).max():.2e}  "
               f"遮蔽灯を信じた率={inl[:blocked].mean():.3f}")
     assert results["lstsq"] > 25.0, "素の最小二乗が壊れていないと比較にならない"
     assert results["ransac"] < 1e-3 and results["median"] < 1e-3
     ok &= results["lstsq"] > 1e4 * results["ransac"]
 
     cast = PM.angular_error_deg(surface.astype(np.float32), surface).max()
-    print(f"   0.0001 deg は誤差ではなく**下限**: 真の法線を float32 に丸めた"
-          f"だけで {cast:.6f} deg(返り値が float32 = photometric と同じ規約)")
+    print(f"   これは誤差ではなく**下限**: 真の法線を float32 に丸めた"
+          f"だけで最大 {cast:.2e} deg(返り値が float32 = photometric と同じ規約)")
 
     resid_clean = SP.photometric_residual(clean, L, surface, alb_map).max()
     resid_shadow = SP.photometric_residual(shadowed, L, surface, alb_map).max()
@@ -215,7 +215,7 @@ def main():
         e = PM.angular_error_deg(nrm, surface)
         emean = float(np.nanmean(e)) if nanfrac < 1.0 else float("nan")
         print(f"6) 遮蔽 {k}/8 灯: 信じた灯={inl.sum(axis=0).min()} 本  "
-              f"平均誤差={emean:.4f} deg  解けない画素={100 * nanfrac:.0f}%")
+              f"平均誤差={emean:.2e} deg  解けない画素={100 * nanfrac:.0f}%")
         if k <= 5:
             assert nanfrac == 0.0 and emean < 1e-3
         else:

@@ -234,3 +234,29 @@ def test_shape_fail_closed():
         T.membrane_recover(np.zeros((8, 8)), LIGHTS, 1e-5)
     with pytest.raises(ValueError):
         T.contact_radius_fit(np.zeros((8, 8, 3)), np.zeros((8, 8)), np.zeros((9, 8)), R, 1e-5)
+
+
+def test_ring_default_search_reaches_a_contact_larger_than_a_quarter_of_the_window():
+    """回帰(2026-10-05): 既定の探索半径が窓の半分の半分で止まり、大きな接触を内側で切っていた。
+
+    101 px の窓に a = 30 px(窓の 0.3 倍、旧既定の打ち切り 25 px より外)の Hertz のへこみ(中心は副画素のずれつき)。
+    既定で中央値が真値の 2 px 以内、旧既定と同じ 25 px で打ち切ると届かない(= この入力が旧挙動を確かに見分ける)。"""
+    n, a_px, R_px = 101, 30.0, 400.0
+    yy, xx = np.mgrid[0:n, 0:n].astype(float)
+    cy, cx = 50.3, 49.8
+    r = np.hypot(yy - cy, xx - cx)
+    h = -T.hertz_surface_uz(r, a_px, a_px * a_px / R_px, R_px)
+    ring = T.contact_radius_ring(h, 1.0)
+    assert abs(ring["a"] - a_px) <= 2.0, ring["a"]
+    assert abs(ring["cy"] - cy) < 0.3 and abs(ring["cx"] - cx) < 0.3
+    old = T.contact_radius_ring(h, 1.0, r_max_px=0.5 * min(cy, cx, n - 1 - cy, n - 1 - cx))
+    assert old["a"] < a_px - 4.0, old["a"]
+    with pytest.raises(ValueError):
+        T.contact_radius_ring(_corner_dent(), 1.0)
+
+
+def _corner_dent():
+    """窓の角に寄ったへこみ(探索半径が 2 px 未満になる)。"""
+    g = np.zeros((40, 40))
+    g[0:2, 0:2] = -1.0
+    return g

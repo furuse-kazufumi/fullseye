@@ -25,8 +25,9 @@ version: 0.3.0  # fullseye lib version this note was generated for
 ``radii_px``(方位角ごとのピーク半径)、``centre``(重心 (cy, cx))、``bias_px_per_a``(分解能の限界の目安 = −0.7 px / a、
 双線形補間がカスプを約 1 px 平滑するので a が 14 px なら −5 %、21 px なら −3 % 内側に出る —— 実測値、模型なしの代償)。
 しきい値の帯の重心(試作 v1)が 9 % 内側に寄った反省から、帯でなくピーク位置を使い、半径方向の傾きは h の双線形標本の
-1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。
-**Raises** ``ValueError``: へこみが無い、pitch ≤ 0。
+1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。既定(``r_max_px=None``)は窓の縁 − 2 px まで探す。膜の裾の外側に
+別のピーク(隣の接触・縁の影)がある実機の画像では ``r_max_px`` を明示すること。
+**Raises** ``ValueError``: へこみが無い、pitch ≤ 0、探索半径が 2 px 未満(へこみが窓の縁に寄りすぎ)。
 
 ## 参考(サンプルデータ・文献)
 

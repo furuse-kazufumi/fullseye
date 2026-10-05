@@ -22,16 +22,18 @@
 <p>==== ========== ============ ============</p>
 <p>k    `<code style="color:#22d3bf">lstsq</code><code style="color:#22d3bf">  </code><code style="color:#22d3bf">median</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">ransac</code>`</p>
 <p>==== ========== ============ ============</p>
-<p>1    31.70 deg  0.00011 deg  0.00011 deg</p>
-<p>2    53.11 deg  0.00011 deg  0.00011 deg</p>
-<p>3    64.40 deg  0.00011 deg  0.00011 deg</p>
-<p>4    70.52 deg  0.00011 deg  0.00011 deg</p>
-<p>5    ---        <b>NaN</b>      0.00011 deg</p>
+<p>1    31.70 deg  2.3e-07 deg  2.3e-07 deg</p>
+<p>2    53.11 deg  2.3e-07 deg  2.3e-07 deg</p>
+<p>3    64.40 deg  2.3e-07 deg  2.3e-07 deg</p>
+<p>4    70.52 deg  2.3e-07 deg  2.3e-07 deg</p>
+<p>5    ---        <b>NaN</b>      2.3e-07 deg</p>
 <p>6    ---        <b>NaN</b>      <b>NaN</b></p>
 <p>==== ========== ============ ============</p>
-<p>0.00011 degrees is not &quot;almost right&quot;, it is <b>the floor</b>: the returned</p>
+<p>2.3e-07 degrees (max 7.5e-07) is not &quot;almost right&quot;, it is <b>the floor</b>: the returned</p>
 <p>normals are float32 (:mod:<code style="color:#22d3bf">photometric</code>&#x27;s convention), and casting the</p>
-<p>exact normals to float32 and back measures the same 0.000115 degrees.</p>
+<p>exact normals to float32 and back measures the same values to every digit.</p>
+<p>(Until 2026-10-05 both read 0.00011 degrees — that was the acos floor of</p>
+<p>:func:<code style="color:#22d3bf">photometric.angular_error_deg</code>, not float32.)</p>
 <p>`<code style="color:#22d3bf">NaN</code>` means *this pixel is not solvable from what was believed there* —</p>
 <p>see &quot;unsolvable pixels&quot; below.</p>
 <p style="margin:2px 0 2px 12px">• `<code style="color:#22d3bf">&quot;ransac&quot;</code>` — Fischler-Bolles maximum consensus. Every 3-light subset is</p>
@@ -75,10 +77,10 @@
 <p>zero albedo predicts it under *every* normal. The rule is exact, not</p>
 <p>heuristic: on a scene with one light at grazing incidence the believed mask</p>
 <p>equals `<code style="color:#22d3bf">I_n &gt; threshold * peak</code>` pixel for pixel (verified by array</p>
-<p>equality, 40x40, believed at 93.2 % of pixels, error 0.00011 deg).</p>
+<p>equality, 40x40, believed at 93.2 % of pixels, error 2.3e-07 deg).</p>
 <p>That single change also repairs the estimates, because the zeroed frames</p>
-<p>stop winning the consensus: `<code style="color:#22d3bf">k = 4</code>` goes from 70.52 to 0.00011 degrees for</p>
-<p>both methods, and `<code style="color:#22d3bf">ransac</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">k = 5</code>` from 8.99 degrees to 0.00011. It</p>
+<p>stop winning the consensus: `<code style="color:#22d3bf">k = 4</code>` goes from 70.52 to 2.3e-07 degrees for</p>
+<p>both methods, and `<code style="color:#22d3bf">ransac</code><code style="color:#22d3bf"> at </code><code style="color:#22d3bf">k = 5</code>` from 8.99 degrees to 2.3e-07. It</p>
 <p>does <b>not</b> repair a general outlier, and is not claimed to — a highlight</p>
 <p>is positive and the zero test cannot see it. Measured with `<code style="color:#22d3bf">j</code>` of 8 frames</p>
 <p>given a `<code style="color:#22d3bf">+3.0</code>` additive spike, the true 50 % breakdown is unchanged and</p>
@@ -86,14 +88,14 @@
 <p>==== ============ ============</p>
 <p>j    `<code style="color:#22d3bf">median</code><code style="color:#22d3bf">   </code><code style="color:#22d3bf">ransac</code>`</p>
 <p>==== ============ ============</p>
-<p>1    0.00011 deg  0.00011 deg</p>
-<p>2    0.00011 deg  0.00011 deg</p>
-<p>3    0.00011 deg  0.00011 deg</p>
+<p>1    2.3e-07 deg  2.3e-07 deg</p>
+<p>2    2.3e-07 deg  2.3e-07 deg</p>
+<p>3    2.3e-07 deg  2.3e-07 deg</p>
 <p>4    7.42 deg     65.42 deg</p>
 <p>==== ============ ============</p>
 <p><b>The error is not monotone in the number of blocked lights, and never was.</b></p>
 <p>Before the repair the sequence over `<code style="color:#22d3bf">k = 0..6</code><code style="color:#22d3bf"> for </code><code style="color:#22d3bf">&quot;median&quot;</code>` ran</p>
-<p>0.00011, 0.00011, 0.00011, 0.00011, <b>70.52</b>, 8.99, 8.99 — the worst value</p>
+<p>2.3e-07, 2.3e-07, 2.3e-07, 2.3e-07, <b>70.52</b>, 8.99, 8.99 — the worst value</p>
 <p>sits in the middle. That is the median&#x27;s 50 % breakdown point, not a bug: at</p>
 <p>`<code style="color:#22d3bf">k = 4</code>` the two hypotheses have equal support and the wrong one is picked</p>
 <p>at full confidence, while at `<code style="color:#22d3bf">k = 5, 6</code>` the &quot;black surface&quot; wins outright</p>
@@ -102,8 +104,8 @@
 <p>*threshold* is <b>relative to the brightest measurement at that pixel</b>, so</p>
 <p>the decision is invariant to exposure: scaling every image by 1e-3, 1e3 or</p>
 <p>1e6 returns a <b>bit-identical inlier mask</b> and normals that differ by at</p>
-<p>most 0.000115 degrees — the float32 output floor again, not an exposure</p>
-<p>effect. The word &quot;bit-identical&quot; applies to the mask and not to the normals,</p>
+<p>most 2.2e-13 degrees — rounding, not an exposure effect (until 2026-10-05 the</p>
+<p>acos floor of :func:<code style="color:#22d3bf">photometric.angular_error_deg</code> reported 0.000115). The word &quot;bit-identical&quot; applies to the mask and not to the normals,</p>
 <p>because the arithmetic downstream of the identical decision still rounds</p>
 <p>differently at a different scale.</p>
 <p>Enumeration is exhaustive and therefore deterministic whenever</p>

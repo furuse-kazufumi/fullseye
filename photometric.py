@@ -195,10 +195,14 @@ def synthesize_ps_images(normals, albedo, lights, ambient=0.0):
 
 
 def angular_error_deg(n_a, n_b):
-    """2 つの法線場の画素ごと角度誤差(度)。→ HxW。検証用。"""
+    """2 つの法線場の画素ごと角度誤差(度)。→ HxW。検証用。
+
+    角は atan2(|a × b|, a·b) で取る(正規化は要らない)。長さ 0 のベクトルを含む画素は従来どおり 90°。
+    ★2026-10-05 まで acos(â·b̂) で、さらに正規化の分母に足した 1e-12 が内積を 1 − 2e-12 にずらしていたため、平行に近い組は
+    約 1.15e-4° の床に張り付いた(1e-7° も 1e-5° も 1.146e-4° と答えた)。acos は 1 の近くで √ε の床を持つ —— 小さい角は外積の大きさで読む。"""
     a = np.asarray(n_a, float)
     b = np.asarray(n_b, float)
-    a = a / (np.linalg.norm(a, axis=-1, keepdims=True) + 1e-12)
-    b = b / (np.linalg.norm(b, axis=-1, keepdims=True) + 1e-12)
-    d = np.clip(np.sum(a * b, axis=-1), -1.0, 1.0)
-    return np.degrees(np.arccos(d))
+    cr = np.linalg.norm(np.cross(a, b), axis=-1)
+    dt = np.sum(a * b, axis=-1)
+    zero = (np.linalg.norm(a, axis=-1) == 0.0) | (np.linalg.norm(b, axis=-1) == 0.0)
+    return np.where(zero, 90.0, np.degrees(np.arctan2(cr, dt)))

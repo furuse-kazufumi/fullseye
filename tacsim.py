@@ -354,15 +354,21 @@ def contact_radius_ring(h, pitch: float, n_az: int = 72, step_px: float = 0.25, 
     ``radii_px``(方位角ごとのピーク半径)、``centre``(重心 (cy, cx))、``bias_px_per_a``(分解能の限界の目安 = −0.7 px / a、
     双線形補間がカスプを約 1 px 平滑するので a が 14 px なら −5 %、21 px なら −3 % 内側に出る —— 実測値、模型なしの代償)。
     しきい値の帯の重心(試作 v1)が 9 % 内側に寄った反省から、帯でなくピーク位置を使い、半径方向の傾きは h の双線形標本の
-    1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。
-    **Raises** ``ValueError``: へこみが無い、pitch ≤ 0。"""
+    1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。既定(``r_max_px=None``)は窓の縁 − 2 px まで探す。膜の裾の外側に
+    別のピーク(隣の接触・縁の影)がある実機の画像では ``r_max_px`` を明示すること。
+    **Raises** ``ValueError``: へこみが無い、pitch ≤ 0、探索半径が 2 px 未満(へこみが窓の縁に寄りすぎ)。"""
     h = np.asarray(h, np.float64)
     pitch = float(pitch)
     if not (pitch > 0.0):
         raise ValueError("contact_radius_ring: pitch must be > 0")
     cy, cx = _indent_centre(h)
     H, W = h.shape
-    rmax = float(r_max_px) if r_max_px is not None else 0.5 * min(cy, cx, H - 1 - cy, W - 1 - cx)
+    # ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で
+    #   打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。
+    #   tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
+    rmax = float(r_max_px) if r_max_px is not None else min(cy, cx, H - 1 - cy, W - 1 - cx) - 2.0
+    if not (rmax >= 2.0):
+        raise ValueError("contact_radius_ring: search radius %.3g px < 2 (indentation too close to the window edge)" % rmax)
     rs = np.arange(1.0, rmax, float(step_px))
     phis = np.linspace(0.0, 2.0 * math.pi, int(n_az), endpoint=False)
     radii, pts = [], []

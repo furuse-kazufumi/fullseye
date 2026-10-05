@@ -90,8 +90,9 @@ def _fuzzer_lights():
 
     Written out rather than imported so the test does not depend on the fuzzer,
     and **not rounded**: rounding these to three decimals moves the noise floor
-    of the recovered normals from 0.000115 to 0.052 degrees, which would have
-    quietly weakened the comparison below by a factor of 450.
+    of the recovered normals from 1.9e-14 to 0.052 degrees, which would have
+    quietly weakened the comparison below by twelve orders of magnitude (until
+    2026-10-05 the acos floor of angular_error_deg read the former as 0.000115).
     """
     L = np.array([[0.3, 0.3, 1.0], [-0.3, 0.3, 1.0], [0.3, -0.3, 1.0],
                   [-0.2, -0.2, 1.0]])
@@ -537,10 +538,11 @@ def test_robust_survives_cast_shadows_where_least_squares_collapses(k):
     """The whole reason this operator exists, as a measurement.
 
     Measured mean angular error, 8 lights, k blocked:
-        k=1  lstsq 31.70 deg   median 0.00011   ransac 0.00011
-        k=2  lstsq 53.11 deg   median 0.00011   ransac 0.00011
-        k=3  lstsq 64.40 deg   median 0.00011   ransac 0.00011
-    0.00011 deg is the float32 floor of the output, not a residual error.
+        k=1  lstsq 31.70 deg   median 2.3e-07   ransac 2.3e-07
+        k=2  lstsq 53.11 deg   median 2.3e-07   ransac 2.3e-07
+        k=3  lstsq 64.40 deg   median 2.3e-07   ransac 2.3e-07
+    2.3e-07 deg is the float32 floor of the output, not a residual error (until
+    2026-10-05 these read 0.00011 — the acos floor of angular_error_deg).
     """
     _clean, shadowed, L, nrm, alb = shadow_scene(k_blocked=k)
     plain = PM.angular_error_deg(
@@ -557,12 +559,12 @@ def test_robust_survives_cast_shadows_where_least_squares_collapses(k):
 
 
 def test_the_float32_floor_is_the_floor_and_not_an_error():
-    """0.00011 degrees is exactly what casting the truth to float32 costs."""
+    """The 2.3e-07 degrees left (max 7.5e-07) is exactly what casting the truth to float32 costs."""
     clean, _s, L, nrm, _a = shadow_scene(k_blocked=0)
     got = PM.angular_error_deg(
         S.photometric_stereo_robust(clean, L, method="ransac")[0], nrm)
     cast = PM.angular_error_deg(nrm.astype(np.float32), nrm)
-    assert got.max() == pytest.approx(cast.max(), rel=0.05)   # both 1.146e-04
+    assert got.max() == pytest.approx(cast.max(), rel=0.05)   # both 7.542e-07 (1.146e-04 was the acos floor until 2026-10-05)
 
 
 def test_robust_breakdown_point_is_disclosed_not_hidden():
@@ -570,7 +572,7 @@ def test_robust_breakdown_point_is_disclosed_not_hidden():
     see. A highlight is a *positive* measurement, so it carries an equation and
     is only rejectable by consensus; with 4 of 8 frames spiked by +3.0 the
     consensus is tied and the wrong hypothesis can win. Measured mean angular
-    error at j=4: median 7.42 deg, ransac 65.42 deg (j=1..3 are all 0.00011).
+    error at j=4: median 7.42 deg, ransac 65.42 deg (j=1..3 are all 2.3e-07).
 
     This test used to make the same point with 4 of 8 frames *zeroed*, which was
     not a breakdown at all but the black-surface bug — see
@@ -621,8 +623,8 @@ def test_robust_zeroed_lights_stop_winning_the_consensus():
     the estimate, because the black-surface hypothesis can no longer score.
     Measured mean angular error, 8 lights, k zeroed, before -> after:
 
-        k=4 median 70.5230 -> 0.000115     k=4 ransac 70.2048 -> 0.000115
-        k=5 ransac  8.9969 -> 0.000115     (exactly 3 live lights left)
+        k=4 median 70.5230 -> 2.3e-07      k=4 ransac 70.2048 -> 2.3e-07
+        k=5 ransac  8.9969 -> 2.3e-07      (exactly 3 live lights left)
     """
     for k, methods in ((4, ("median", "ransac")), (5, ("ransac",))):
         _c, shadowed, L, nrm, alb = shadow_scene(k_blocked=k)
@@ -712,7 +714,7 @@ def test_robust_decisions_are_exposure_invariant(scale):
     n0, _a0, i0 = S.photometric_stereo_robust(shadowed, L)
     n1, _a1, i1 = S.photometric_stereo_robust(shadowed * scale, L)
     assert np.array_equal(i0, i1)
-    assert PM.angular_error_deg(n0, n1).max() < 1e-3    # measured 1.146e-04
+    assert PM.angular_error_deg(n0, n1).max() < 1e-3    # measured 2.2e-13 (1.146e-04 was the acos floor until 2026-10-05)
 
 
 def test_robust_does_not_depend_on_the_order_of_the_lights():
@@ -1308,7 +1310,8 @@ def test_a_polariser_sweep_is_confidently_wrong_in_a_photometric_solver():
     with a plausible albedo (0.555) and a residual of only 21% of the peak
     radiance — the fit looks fittable because four frames over three unknowns
     always do. The same operator, the same lights, genuine photometric data of
-    the same flat surface: **0.000115 degrees**. A ratio of 296,000, so 34
+    the same flat surface: **1.9e-14 degrees** (the acos floor of angular_error_deg
+    read 0.000115 and a ratio of 296,000 until 2026-10-05). So 34
     degrees is not a failure, it is a confident lie.
     """
     h = w = 32
@@ -1328,7 +1331,7 @@ def test_a_polariser_sweep_is_confidently_wrong_in_a_photometric_solver():
     real = 0.6 * np.clip(np.einsum("hwc,nc->nhw", flat, L), 0.0, None)
     honest = PM.angular_error_deg(
         S.photometric_stereo_robust(real, L, method="ransac")[0], flat)
-    assert honest.max() < 1e-3                             # measured 0.00011
+    assert honest.max() < 1e-3                             # measured 1.9e-14
     assert err.mean() > 1e4 * honest.mean()
 
 

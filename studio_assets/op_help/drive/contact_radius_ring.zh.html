@@ -11,8 +11,9 @@
 <p>`<code style="color:#22d3bf">radii_px</code><code style="color:#22d3bf">(方位角ごとのピーク半径)、</code><code style="color:#22d3bf">centre</code><code style="color:#22d3bf">(重心 (cy, cx))、</code><code style="color:#22d3bf">bias_px_per_a</code>`(分解能の限界の目安 = −0.7 px / a、</p>
 <p>双線形補間がカスプを約 1 px 平滑するので a が 14 px なら −5 %、21 px なら −3 % 内側に出る —— 実測値、模型なしの代償)。</p>
 <p>しきい値の帯の重心(試作 v1)が 9 % 内側に寄った反省から、帯でなくピーク位置を使い、半径方向の傾きは h の双線形標本の</p>
-<p>1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。</p>
-<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: へこみが無い、pitch ≤ 0。</p>
+<p>1 px スパン差分(np.gradient の 2 px より平滑が少ない)で取る。既定(`<code style="color:#22d3bf">r_max_px=None</code>`)は窓の縁 − 2 px まで探す。膜の裾の外側に</p>
+<p>別のピーク(隣の接触・縁の影)がある実機の画像では `<code style="color:#22d3bf">r_max_px</code>` を明示すること。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: へこみが無い、pitch ≤ 0、探索半径が 2 px 未満(へこみが窓の縁に寄りすぎ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

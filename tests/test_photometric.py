@@ -1,5 +1,7 @@
 """photometric — フォトメトリックステレオ + 法線積分の ground-truth 検証。"""
 import numpy as np
+import pytest
+
 import photometric as PH
 
 
@@ -121,3 +123,28 @@ def test_photometric_stereo_lit_only_falls_back_when_too_few_lights():
     nr, al = P.photometric_stereo(imgs, L, lit_only=True)
     assert nr.shape == (8, 8, 3) and al.shape == (8, 8)
     assert np.isfinite(nr).all() and np.isfinite(al).all()
+
+
+def test_angular_error_has_no_floor_near_parallel():
+    """回帰(2026-10-05): acos と正規化の 1e-12 で、平行に近い組が約 1.15e-4° の床に張り付いていた。"""
+    n0 = np.array([0.3, -0.2, 0.93])
+    n0 = n0 / np.linalg.norm(n0)
+    ax = np.cross(n0, [1.0, 0.0, 0.0])
+    ax = ax / np.linalg.norm(ax)
+    angles = [1e-7, 1e-5, 1e-3, 1.0, 45.0, 120.0, 179.0]
+    assert len(angles) >= 7
+    for deg in angles:
+        t = np.radians(deg)
+        n1 = n0 * np.cos(t) + np.cross(ax, n0) * np.sin(t)        # ax ⟂ n0 なので Rodrigues の 3 項目は 0
+        got = float(PH.angular_error_deg(n0[None], (2.5 * n1)[None])[0])   # 長さに依らない
+        assert got == pytest.approx(deg, rel=1e-6, abs=1e-12), (deg, got)
+    assert float(PH.angular_error_deg(n0, n0)) == 0.0
+    assert float(PH.angular_error_deg(n0, -n0)) == pytest.approx(180.0, abs=1e-12)
+
+
+def test_angular_error_zero_length_is_90_degrees():
+    """長さ 0 のベクトル(未定義の法線)は従来どおり 90°(素の atan2 だと 0° になる)。"""
+    a = np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 1.0], [0.0, 0.0, 0.0]])
+    b = np.array([[0.0, 0.0, 1.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+    assert np.array_equal(PH.angular_error_deg(a, b), [90.0, 90.0, 90.0])
+    assert np.isnan(PH.angular_error_deg(np.array([np.nan, 0.0, 1.0]), np.array([0.0, 0.0, 1.0])))

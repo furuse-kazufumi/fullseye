@@ -526,7 +526,7 @@ def data_part(out: dict, root: str) -> dict:
         nc = nfull[y0:y0 + 2 * hw + 1, x0:x0 + 2 * hw + 1]
         z = PH.integrate_normals(nc)
         ring = TS.contact_radius_ring(z * pk["pitch"], pk["pitch"], r_max_px=hw - 10)
-        ring_def = TS.contact_radius_ring(z * pk["pitch"], pk["pitch"])            # 既定の探索半径(罠の記録)
+        ring_def = TS.contact_radius_ring(z * pk["pitch"], pk["pitch"])            # 既定の探索半径(2026-10-05 に窓の縁まで探すよう直した)
         rc = (c[0] - y0, c[1] - x0)
         rr, prof = height_from_normals_radial(nc, (ring["cy"], ring["cx"]), 0.8 * r["a"])
         true = pk["R_px"] - np.sqrt(pk["R_px"] ** 2 - rr ** 2)
@@ -544,9 +544,9 @@ def data_part(out: dict, root: str) -> dict:
     dr = np.array([x["ring"] - x["hand"] for x in ring_rows])
     dr_def = float(np.median([x["ring_default"] - x["hand"] for x in ring_rows]))
     gate("門 12 tacsim.contact_radius_ring(被験者: 位置つき LUT の法線を FFT 積分した高さ)vs 手当ての円: 半径の差 中央値 %+.2f px(MAD %.2f)、中心の差 "
-         "%.2f px(8 枚)/ 探索半径を既定のままにすると %+.1f px(窓の半分の半分で打ち切る罠 —— 直す案は INTEGRATE に)"
+         "%.2f px(8 枚)/ 探索半径を既定のまま(窓の縁 − 2 px まで)でも %+.2f px(2026-10-05 までの既定は窓の半分の半分で打ち切り −12.9 px だった)"
          % (np.median(dr), np.median(np.abs(dr - np.median(dr))), np.median([x["ctr"] for x in ring_rows]), dr_def),
-         abs(float(np.median(dr))) <= THR["D_ring_px"])
+         abs(float(np.median(dr))) <= THR["D_ring_px"] and abs(dr_def) <= THR["D_ring_px"])   # 既定も門(2026-10-05 の直しの回帰)
     rel = float(np.median([x["depth_rad"] / x["depth_true"] - 1.0 for x in ring_rows]))
     relf = float(np.median([x["depth_fft"] / x["depth_true"] - 1.0 for x in ring_rows]))
     rmsu = float(np.median([x["rms"] for x in ring_rows]))

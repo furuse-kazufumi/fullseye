@@ -39,17 +39,19 @@ system exactly on subsets and keeps the subset the data agrees with.
   ==== ========== ============ ============
   k    ``lstsq``  ``median``   ``ransac``
   ==== ========== ============ ============
-  1    31.70 deg  0.00011 deg  0.00011 deg
-  2    53.11 deg  0.00011 deg  0.00011 deg
-  3    64.40 deg  0.00011 deg  0.00011 deg
-  4    70.52 deg  0.00011 deg  0.00011 deg
-  5    ---        **NaN**      0.00011 deg
+  1    31.70 deg  2.3e-07 deg  2.3e-07 deg
+  2    53.11 deg  2.3e-07 deg  2.3e-07 deg
+  3    64.40 deg  2.3e-07 deg  2.3e-07 deg
+  4    70.52 deg  2.3e-07 deg  2.3e-07 deg
+  5    ---        **NaN**      2.3e-07 deg
   6    ---        **NaN**      **NaN**
   ==== ========== ============ ============
 
-  0.00011 degrees is not "almost right", it is **the floor**: the returned
+  2.3e-07 degrees (max 7.5e-07) is not "almost right", it is **the floor**: the returned
   normals are float32 (:mod:`photometric`'s convention), and casting the
-  exact normals to float32 and back measures the same 0.000115 degrees.
+  exact normals to float32 and back measures the same values to every digit.
+  (Until 2026-10-05 both read 0.00011 degrees — that was the acos floor of
+  :func:`photometric.angular_error_deg`, not float32.)
   ``NaN`` means *this pixel is not solvable from what was believed there* —
   see "unsolvable pixels" below.
 * ``"ransac"`` — Fischler-Bolles maximum consensus. Every 3-light subset is
@@ -97,11 +99,11 @@ that is itself inside the tolerance of zero is counting a tautology, since
 zero albedo predicts it under *every* normal. The rule is exact, not
 heuristic: on a scene with one light at grazing incidence the believed mask
 equals ``I_n > threshold * peak`` pixel for pixel (verified by array
-equality, 40x40, believed at 93.2 % of pixels, error 0.00011 deg).
+equality, 40x40, believed at 93.2 % of pixels, error 2.3e-07 deg).
 
 That single change also repairs the estimates, because the zeroed frames
-stop winning the consensus: ``k = 4`` goes from 70.52 to 0.00011 degrees for
-both methods, and ``ransac`` at ``k = 5`` from 8.99 degrees to 0.00011. It
+stop winning the consensus: ``k = 4`` goes from 70.52 to 2.3e-07 degrees for
+both methods, and ``ransac`` at ``k = 5`` from 8.99 degrees to 2.3e-07. It
 does **not** repair a general outlier, and is not claimed to — a highlight
 is positive and the zero test cannot see it. Measured with ``j`` of 8 frames
 given a ``+3.0`` additive spike, the true 50 % breakdown is unchanged and
@@ -110,15 +112,15 @@ still disclosed:
 ==== ============ ============
 j    ``median``   ``ransac``
 ==== ============ ============
-1    0.00011 deg  0.00011 deg
-2    0.00011 deg  0.00011 deg
-3    0.00011 deg  0.00011 deg
+1    2.3e-07 deg  2.3e-07 deg
+2    2.3e-07 deg  2.3e-07 deg
+3    2.3e-07 deg  2.3e-07 deg
 4    7.42 deg     65.42 deg
 ==== ============ ============
 
 **The error is not monotone in the number of blocked lights, and never was.**
 Before the repair the sequence over ``k = 0..6`` for ``"median"`` ran
-0.00011, 0.00011, 0.00011, 0.00011, **70.52**, 8.99, 8.99 — the worst value
+2.3e-07, 2.3e-07, 2.3e-07, 2.3e-07, **70.52**, 8.99, 8.99 — the worst value
 sits in the middle. That is the median's 50 % breakdown point, not a bug: at
 ``k = 4`` the two hypotheses have equal support and the wrong one is picked
 at full confidence, while at ``k = 5, 6`` the "black surface" wins outright
@@ -128,8 +130,8 @@ shallow surface. Do not read a small error at large ``k`` as recovery.
 *threshold* is **relative to the brightest measurement at that pixel**, so
 the decision is invariant to exposure: scaling every image by 1e-3, 1e3 or
 1e6 returns a **bit-identical inlier mask** and normals that differ by at
-most 0.000115 degrees — the float32 output floor again, not an exposure
-effect. The word "bit-identical" applies to the mask and not to the normals,
+most 2.2e-13 degrees — rounding, not an exposure effect (until 2026-10-05 the
+acos floor of :func:`photometric.angular_error_deg` reported 0.000115). The word "bit-identical" applies to the mask and not to the normals,
 because the arithmetic downstream of the identical decision still rounds
 differently at a different scale.
 

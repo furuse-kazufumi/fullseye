@@ -7,6 +7,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**既存 op の不具合 2 件を直す**: (1) `tacsim.contact_radius_ring` の既定の探索半径を「窓の半分の半分」から「窓の縁 − 2 px」へ。201 px の窓で半径 61 px の
+  実機の接触を 49 px と答えていた(tacscalib の門 12、実機データ: 既定 −12.9 px → −0.25 px = 明示した場合と同じ、既定も門に)。tacsim の合成は接触が窓の 1/4 より
+  内側なので門の結果は変わらない。(2) `photometric.angular_error_deg` を acos → atan2(|a × b|, a·b) に。正規化の 1e-12 と acos で平行に近い組が約 1.15e-4° の床に
+  張り付いていた(1e-7° も 1.146e-4°)。長さ 0 のベクトルは従来どおり 90°。★床が消えて分かったこと: specularity の docstring とテストが「float32 の床」と書いていた
+  0.00011° は acos の床で、本当の float32 の床は平均 2.3e-07°・最大 7.5e-07°(真値を float32 に丸めた値と全桁一致)、露出のスケール不変は 2.2e-13°、
+  偏光掃引の比較の「本物の測光データ」は 1.9e-14°(比 296,000 は床が作った数)。数字は実測に書き換え、閾値は変えていない。回帰テスト 3 本。
 - ★**ペグの対称性で回転の探索を 1/n に絞る**(新モジュール `pegsym` 15 op + mujoco の facade 6、台帳 `pegsym`(opsdrive)、PoC `poc_peg_symmetry_search`、
   wing_geometry): 題材は arXiv:2402.18002(Symmetry-aware RL)を学習なしで。輪郭の複素フーリエ位相で向きを 2π/n を法として読み(2 次モーメントは n ≥ 3 で等方)、
   回転の窓の閉形式(三角 4.75°・四角 8.72°・六角 20.85°)= 線形計画と 2.8e-11 rad。★六角形は摩擦で窓が縮む(導出 sin²β > (√(1 + 8μ²) − 1)/2、μ = 0.3 で 6.76°、
@@ -43,7 +49,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   位置の項を借りる」で 4.84° → 1.89° に(代償に平地の床 0.4° → 3.3°)。逆引きは内積 1 回 + 粗 → 細(総当たりと同じビン 90.0 %、2.4 倍速)。門 9 本(1.3 s)
   + `--full` 10 本(実機、42 s): hold-out の角誤差 線形 10.71° / 位置なし LUT 8.58° / 位置つき LUT 4.17°、復元深さ +4.7 %。drive 族で初めて normalmap を返す。
   正直に: 力・深さの真値なし、外部の較正済み LUT 3.57° は hold-out でない参考値、2 台目は球径・ピッチの一次情報なし(順位だけ)。既存 op の 2 件
-  (`tacsim.contact_radius_ring` の既定の探索半径、`photometric.angular_error_deg` の 1.15e-4° の床)は未修正。
+  (`tacsim.contact_radius_ring` の既定の探索半径、`photometric.angular_error_deg` の 1.15e-4° の床)はこの回では未修正(後の項で直した)。
 - ★**粉体の山を画像で測る**(新モジュール `granular` 23 op + mujoco の facade 2、台帳 `granular`(opsdrive)、PoC `poc_granular_heap_repose`、
   wing_metrology): 物理シミュ × Fullseye 系列。先行研究の粉体計量(Kadokawa ほか IROS 2023)は秤だけで視覚が無い —— ここは山の形(側面像・高さ図)から
   安息角・体積・質量・流動性・排出率を規則だけで読む。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> Table 1(Carr 1965、整数の度)、1 mm ガラス球の
