@@ -4824,6 +4824,86 @@ _SEGBATCH3_ENTRIES = {
 # --- /セグメンテーション 第 3 陣の 16 op ------------------------------------------------- #
 
 
+_FUZZ_TCAL = {}
+
+
+def _fuzz_tcal():
+    """視触覚の較正の小さな種(60×80・球 R 18 px・接触 a 13 px の合成 3 枚、LUT 2 種、較正パックの npz)を 1 回だけ作る(tacscalib)。"""
+    if "lut" not in _FUZZ_TCAL:
+        import tempfile
+        import tacscalib as TC
+        H, W, R, A = 60, 80, 18.0, 13.0
+        Ld = np.array([[0.0, 1.0, 1.0], [0.87, -0.5, 1.0], [-0.87, -0.5, 1.0]])
+        Ld /= np.linalg.norm(Ld, axis=1, keepdims=True)
+        scs = [TC.sphere_normals_known((H, W), c, A, R) for c in ((20.3, 22.6), (38.7, 55.2), (30.1, 40.4))]
+        imgs = [np.maximum(s["normals"] @ Ld.T, 0.0) * 60.0 for s in scs]
+        rows = np.concatenate([im[s["mask"]] for im, s in zip(imgs, scs)])
+        nrm = np.concatenate([s["normals"][s["mask"]] for s in scs])
+        pos = np.concatenate([np.argwhere(s["mask"]) for s in scs])
+        lut = TC.gradient_lut_build(rows, nrm, 31, positions=pos, image_shape=(H, W), min_rows_poly=6)
+        poly = {"bins": np.array(31), "grad_r": lut["coef"][..., 0], "grad_g": lut["coef"][..., 1], "grad_b": lut["coef"][..., 2]}
+        tmp = tempfile.mkdtemp(prefix="fuzz_tcal_")
+        pack = os.path.join(tmp, "pack.npz")
+        z = np.zeros((H, W, 3), np.uint8)
+        np.savez(pack, f0=z, imgs=np.stack([z, z]), touch_center=np.array([[22.6, 20.3], [55.2, 38.7]]), touch_radius=np.array([13.0, 13.0]))
+        _FUZZ_TCAL.update({"H": H, "W": W, "R": R, "A": A, "scs": scs, "imgs": imgs, "rows": rows, "nrm": nrm, "lut": lut, "poly": poly,
+                           "pack": pack, "fit": TC.lights_fit_from_sphere(imgs[:2], [s["normals"] for s in scs[:2]], [s["mask"] for s in scs[:2]])})
+    return _FUZZ_TCAL
+
+
+def _b_tcal_load(pool, rng):
+    return (_fuzz_tcal()["pack"], float(rng.uniform(0.01, 0.05)), float(rng.uniform(1.0, 4.0))), {}
+
+
+def _b_tcal_sphere(pool, rng):
+    f = _fuzz_tcal()
+    return ((f["H"], f["W"]), (float(rng.uniform(10, 50)), float(rng.uniform(10, 70))), float(rng.uniform(4, 20)), f["R"]), {}
+
+
+def _b_tcal_fit(pool, rng):
+    f = _fuzz_tcal()
+    k = int(rng.integers(0, 3))
+    return (f["imgs"][k], f["scs"][k]["normals"], f["scs"][k]["mask"]), {}
+
+
+def _b_tcal_predict(pool, rng):
+    f = _fuzz_tcal()
+    return (f["scs"][int(rng.integers(0, 3))]["normals"], f["fit"]), {}
+
+
+def _b_tcal_build(pool, rng):
+    f = _fuzz_tcal()
+    return (f["rows"], f["nrm"]), {"bins": int(rng.choice([16, 31, 63]))}
+
+
+def _b_tcal_invert(pool, rng):
+    f = _fuzz_tcal()
+    k = int(rng.integers(0, 3))
+    return (f["imgs"][k], f["lut"], f["scs"][k]["mask"]), {"method": str(rng.choice(["coarse", "exact"]))}
+
+
+def _b_tcal_error(pool, rng):
+    f = _fuzz_tcal()
+    return (f["scs"][0]["normals"], f["scs"][int(rng.integers(0, 3))]["normals"]), {}
+
+
+def _b_tcal_cap(pool, rng):
+    f = _fuzz_tcal()
+    return ((f["H"], f["W"]), (30.0, 40.0), float(rng.uniform(4, 20)), f["R"], float(rng.uniform(1e-5, 5e-5))), {}
+
+
+def _b_tcal_sweep(pool, rng):
+    f = _fuzz_tcal()
+    n = int(rng.integers(3, 9))
+    return (np.column_stack([rng.uniform(0, f["H"], n), rng.uniform(0, f["W"], n)]), rng.uniform(1, 10, n), (f["H"], f["W"])), {}
+
+
+def _b_tcal_poly(pool, rng):
+    f = _fuzz_tcal()
+    k = int(rng.integers(0, 3))
+    return (f["imgs"][k], f["poly"], f["scs"][k]["mask"]), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -5148,6 +5228,10 @@ OP_ARG_BUILDERS = {
     "container_synth": _b_gr_box, "container_fill_level": _b_gr_box_level, "heap_spheres_select": _b_gr_select,
     "spheres_to_heightmap": _b_gr_sph_hm, "spheres_to_silhouette": _b_gr_sph_sil, "spheres_render_shaded": _b_gr_sph_shade,
     "heap_scene_mjcf": _b_gr_mjcf,
+    "calib_pack_load": _b_tcal_load, "sphere_normals_known": _b_tcal_sphere, "lights_fit_from_sphere": _b_tcal_fit,
+    "membrane_predict_rgb": _b_tcal_predict, "gradient_lut_build": _b_tcal_build, "gradient_lut_invert": _b_tcal_invert,
+    "normal_error_map": _b_tcal_error, "sphere_cap_height": _b_tcal_cap, "field_position_sweep": _b_tcal_sweep,
+    "poly_lut_invert": _b_tcal_poly,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

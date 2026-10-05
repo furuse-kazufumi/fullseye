@@ -24,6 +24,7 @@
 エアホッケーのパック追跡・予測・打ち返し(puck: 学習なし、全部ルール。真値 = Coulomb の等減速と壁の 2 つの反発係数の閉形式(区間ごとに繋ぐ、鏡映法と一致)、5 節リンクの FK/IK(円と円の交点)、第 2 実装 = 外部シムの台の MJCF(粘性減衰 c/m = 0.5 /s で Coulomb ではない、e・kₜ は測って出る)。合成の真上カメラ(被覆率の反エイリアス、モーションブラー = v·τ/2)、検出は balltrack の facade、速度は向き固定の最小二乗、打点計画は一定角速度の規則。リンク寸法・サーボ速度・打具半径・守備線は仮定)。
 ペグ挿入の失敗検出と回復(pegfail: VLM の代わりに規則の分類表 12 行 × 接触計測。観測(接触の種別・深さの帯・停滞・くさびの境目・かじりの図の内外・穴中心からのずれ)を 6 欄の署名にし、当たる行は高々 1 つ、無ければ unknown(fail-closed)。真値 = Whitney 1982 のくさび θ > c/μ とかじりの平行四辺形(平面静力学から導き直して pegsim の頂点と一致)+ MuJoCo の接触と手首の力センサ。手首ばねのたわみから荷重を読む。失敗はわざと注入(ずれ・傾き・横目標・栓・囮)。回復は脚本のプリミティブ。mujoco が要る 3 本は facade)。
 粉体の山を画像で測る(granular: 安息角・体積・質量・流動性・排出率を規則だけで。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> の流動性の表(Carr 1965)、1 mm ガラス球の公表値 25.2 ± 0.8 度(arXiv 2009.10448)、第 2 実装 = MuJoCo の剛体球の山。側面像は縁の画素の被覆率を副画素の位置に読む(列和法は粉の画素値のずれで tan φ が縮む罠)、高さ図は勾配ヒストグラムの最頻、傾いた基準面は左右差 ≈ 2β の警報。mujoco が要る 2 本は facade)。
+視触覚センサの照明を実機の較正球で較正する(tacscalib: 既知球の法線の閉形式と手当ての接触円を真値に、線形 12 パラメタの照明模型(逆算は photometric_stereo = 被験者)と example-based の勾配 LUT(位置の 2 次式つき、行の少ないビンは近いビンの位置の項を借りて傾き 0〜15° の不感帯を消す、粗 → 細の逆引き)を 2 つの独立な経路にする。外部の位置 2 次 LUT の書式を読むアダプタつき。全部 numpy)。
 
 型語彙は既存のものだけを使う(新語なし):
   * ``table``   — コース(drivecourse の dict: polygon / centerline / entry / exit / params …)、世界(driveworld の dict:
@@ -68,6 +69,7 @@ import kendamaworld
 import lidarsim
 import pegsim
 import tacsim
+import tacscalib
 import tacslip
 import tactorque
 import puck
@@ -81,7 +83,7 @@ _MOD = {"drivecourse": drivecourse, "driveworld": driveworld, "lidarsim": lidars
         "rsssafety": rsssafety, "driveterrain": driveterrain,
         "ballistics": ballistics, "balltrack": balltrack, "ballworld": ballworld, "racket": racket,
         "roadjp": roadjp,
-        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular}
+        "kendama": kendama, "kendamaworld": kendamaworld, "gsplatnp": gsplatnp, "motionio": motionio, "drivehumanoid": drivehumanoid, "agvfleet": agvfleet, "carlabridge": carlabridge, "drivetown": drivetown, "drivejapan": drivejapan, "driveplateau": driveplateau, "drivecommonroad": drivecommonroad, "drivelong": drivelong, "driveenv": driveenv, "driveinf": driveinf, "drivetraffic": drivetraffic, "drivedecide": drivedecide, "drivelateral": drivelateral, "drivecrossing": drivecrossing, "drivepass": drivepass, "pegsim": pegsim, "tacsim": tacsim, "tacslip": tacslip, "tactorque": tactorque, "puck": puck, "pegfail": pegfail, "granular": granular, "tacscalib": tacscalib}
 
 # カテゴリ → [(op 名, module, [入力種別], 出力種別)]
 _CATALOG = {
@@ -792,6 +794,25 @@ _CATALOG = {
         ("spheres_to_silhouette", "granular", ["matrix", "scalar", "scalar", "scalar", "scalar"], "image2d"),
         ("spheres_render_shaded", "granular", ["matrix", "scalar", "scalar", "scalar", "scalar"], "rgb"),
         ("heap_scene_mjcf", "granular", ["scalar", "scalar"], "table"),
+    ],
+    # 視触覚センサの照明を実機の較正球で較正する(2026-10-05、物理シミュ × Fullseye 系列、tacsim の続き): 真値 = 既知球の半径(接触円の内側で
+    # 膜が球面にならう → 法線は閉形式、R は較正と評価の両辺に入る)+ 手当ての接触円(弱い真値)、データ = arXiv:2109.04027 の作者が MIT で
+    # 公開した較正パック(FULLSEYE_TAXIM_DATA)。線形 12 パラメタの照明(order=2 で位置つき 72)と、example-based の勾配 LUT(θ・φ を
+    # 125 × 125、位置の 2 次式つき)を独立な 2 経路に。自分で作ったのは「行の少ないビンが角度で最も近い多項式ビンの位置の項を借り定数項だけ
+    # 自分の平均に合わせる」(試作の不感帯 0〜15° を消す)、距離を特徴の内積 1 回にする書き換え(|k|² = AᵀQA)、粗 → 細の逆引き
+    # (総当たりと 9 割同じビン・角誤差の中央値の差 0.1° 以内を門に)、外部の位置 2 次 LUT の書式を同じ逆引きに通すアダプタ。
+    # 較正パックの path は text、形・中心の組は any(型が違えば ValueError)、マスクは image2d、行の列 (P, 3) は matrix。全部 numpy。
+    "tacscalib": [
+        ("calib_pack_load", "tacscalib", ["text", "scalar", "scalar"], "table"),
+        ("sphere_normals_known", "tacscalib", ["any", "any", "scalar", "scalar"], "table"),
+        ("lights_fit_from_sphere", "tacscalib", ["rgb", "normalmap", "image2d"], "table"),
+        ("membrane_predict_rgb", "tacscalib", ["normalmap", "table"], "rgb"),
+        ("gradient_lut_build", "tacscalib", ["matrix", "matrix"], "table"),
+        ("gradient_lut_invert", "tacscalib", ["rgb", "table", "image2d"], "normalmap"),
+        ("normal_error_map", "tacscalib", ["normalmap", "normalmap"], "image2d"),
+        ("sphere_cap_height", "tacscalib", ["any", "any", "scalar", "scalar", "scalar"], "table"),
+        ("field_position_sweep", "tacscalib", ["matrix", "signal", "any"], "table"),
+        ("poly_lut_invert", "tacscalib", ["rgb", "table", "image2d"], "normalmap"),
     ],
 }
 

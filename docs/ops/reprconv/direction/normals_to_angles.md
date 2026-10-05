@@ -4,7 +4,7 @@ dim: reprconv
 category: direction
 in: normals
 out: pairs
-examples: [representation_roundtrip]
+examples: [poc_tacscalib_sphere_lut, representation_roundtrip]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -43,6 +43,7 @@ Raises:
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 - [representation_roundtrip](../../../../examples/representation_roundtrip.py) — `py -3.11 examples/representation_roundtrip.py`
 
 ## 型が繋がる次の op(`pairs` を入力に取れる)

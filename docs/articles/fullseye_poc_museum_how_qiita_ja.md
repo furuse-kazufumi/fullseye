@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **77 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **78 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1350,7 +1350,7 @@ py -3.11 examples/poc_periodic_video_boundary.py
 
 ### 幾何・校正ウィング ―― 残差が小さいことは正しさの証明にならない
 
-カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 14 点はその読み方が成り立たない場面を、真値を握った上で並べています。
+カメラ校正の再投影誤差、パノラマの継ぎ目、点群位置合わせの残差。どれも「小さいほど良い」と読まれる数字ですが、この部屋の 15 点はその読み方が成り立たない場面を、真値を握った上で並べています。
 
 再投影誤差 0.0688〜0.0690 px で焦点距離の誤差が 0.026〜7.334 %。隣の継ぎ目が 0.12 px なのに閉じる 1 本だけ 1.5 px。球や円柱では残差が同じまま姿勢が任意。最小二乗は残差を雑音まで落とすのが仕事で、落ちた先が真値かどうかは別の話です。
 
@@ -1755,6 +1755,46 @@ py -3.11 examples/poc_peg_failure_recovery.py
 この回が作った図は全部で **6 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_peg_failure_recovery)
 
 使用 op(ノートへ): [`chamfer_capture`](https://furuse.work/ops/drive/pegsim/chamfer_capture.html) · [`failure_confusion`](https://furuse.work/ops/drive/pegfail/failure_confusion.html) · [`insertion_episode_summary`](https://furuse.work/ops/drive/pegfail/insertion_episode_summary.html) · [`insertion_failure_classify`](https://furuse.work/ops/drive/pegfail/insertion_failure_classify.html) · [`insertion_failure_presets`](https://furuse.work/ops/drive/pegfail/insertion_failure_presets.html) · [`insertion_failure_table`](https://furuse.work/ops/drive/pegfail/insertion_failure_table.html) · [`insertion_failure_validate`](https://furuse.work/ops/drive/pegfail/insertion_failure_validate.html) · [`insertion_recovery_primitive`](https://furuse.work/ops/drive/pegfail/insertion_recovery_primitive.html) · [`insertion_signature`](https://furuse.work/ops/drive/pegfail/insertion_signature.html) · [`insertion_stall_detect`](https://furuse.work/ops/drive/pegfail/insertion_stall_detect.html) · [`jamming_diagram`](https://furuse.work/ops/drive/pegsim/jamming_diagram.html) · [`jamming_force_check`](https://furuse.work/ops/drive/pegfail/jamming_force_check.html) · [`jamming_parallelogram_planar`](https://furuse.work/ops/drive/pegfail/jamming_parallelogram_planar.html) · [`peg_offset_from_rgbd`](https://furuse.work/ops/drive/pegsim/peg_offset_from_rgbd.html) · [`peg_params`](https://furuse.work/ops/drive/pegsim/peg_params.html) · [`peg_synthetic_rgbd`](https://furuse.work/ops/drive/pegsim/peg_synthetic_rgbd.html) · [`pegfail_scene_mjcf`](https://furuse.work/ops/drive/pegfail/pegfail_scene_mjcf.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`tip_force_ratios`](https://furuse.work/ops/drive/pegfail/tip_force_ratios.html) · [`vision_boundary_flip`](https://furuse.work/ops/drive/pegfail/vision_boundary_flip.html) · [`wedging_risk`](https://furuse.work/ops/drive/pegfail/wedging_risk.html) · [`whitney_clearance`](https://furuse.work/ops/drive/pegsim/whitney_clearance.html) · [`wrist_load_from_deflection`](https://furuse.work/ops/drive/pegfail/wrist_load_from_deflection.html)
+
+## No.2026.203 —— 視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする ―― 真値は球の半径と手当ての円
+
+[![視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする ―― 真値は球の半径と手当ての円](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/01_tacscalib_synthetic_error_maps.png)
+
+*↑ **視触覚センサの照明を実機の較正球で較正し、勾配 LUT を第 2 実装にする ―― 真値は球の半径と手当ての円** ―― 物理シミュ × Fullseye 系列、tacsim(弾性膜 + カメラ、2026.196)の続き。tacsim は 3 色照明の Lambertian を自分で合成して自分で逆算した —— 真値も被験者も手元で作った。ここは実機の画像(arXiv:2109.04027 の作者が MIT ライセンスで公開した較正パック)を持ち込み、順方向(法線 → 色)を較正して逆方向を独立な 2 経路で解く: 線形 12 パラメタの照明 I_c = a_c + l_c · n(逆算は photometric_stereo = 被験者)と、example-based の勾配 LUT(傾き θ・向き φ を 125 × 125 に切ってビンごとに色の平均、位置の 2 次式つきの版も)。新モジュール tacscalib 10 op(全部 numpy)。外から来る真値は 2 つ: 既知球の半径(接触円の内側で膜が球面にならう → 法線は閉形式 n = (−x, −y, √(R² − r²))/R)と、手で当てた接触円(整数 px・半径 2 px 刻み = 弱い真値)。R は較正にも評価にも入る(両辺)ので、門が見ているのは「別の画像に一般化するか」で R そのものではない —— 偶数 24 枚で較正し奇数 24 枚で測る。★試作の不感帯を直した: 位置の 2 次式を行の多いビンにだけ当てると傾きの小さいビンが全部落ち、傾き 0〜15° の画素が 0 か 15° に寄った(角誤差の中央値ではほとんど見えず、断面の図で初めて見えた)。行の少ないビンは角度で最も近い多項式ビンの位置の項を借り、定数項だけを自分の平均に合わせる —— 実機の hold-out で真の傾き < 15° の |Δθ| 中央値 4.84° → 1.89°。代償に平地の傾きの床は 0.4° → 3.3°(小さい傾きと平らの色の差が背景の揺らぎ 3.6 DN に埋もれる = 分解能の限界)。1 行だけのビンは色の平均がノイズそのもので深さが +18.5 % 偏る → 下限を行 10 にして +6.0 %。★逆引きは距離を特徴の内積 1 回に書き換え(|k|² = AᵀQA)、粗 → 細(3 × 3 ビンの区画の代表で上位 2 区画を選ぶ)で総当たりと同じビン 90.0 %・角誤差の中央値の差 最大 0.10°・2.4 倍速。門 9 本(合成、1.3 s)+ --full 10 本(実機、42 s): 照明の往復 4.8e-15、量子化の床 0.430°、位置利得 ±40 % で位置つき 0.726° vs 位置なし 4.600°、不感帯 13.24° → 0.58°、外部の位置 2 次 LUT の書式へ係数を閉形式で写して 7.1e-15 DN; 実機 hold-out 24 枚: RGB 残差 線形 7.92 DN(位置つき 72 パラメタ 4.63、背景の揺らぎ 3.60)、角誤差の中央値 線形 10.71° / 位置なし LUT 8.58° / 位置つき LUT 4.17° / 外部の較正済み LUT 3.57°*、contact_radius_ring(被験者)の半径 −0.25 px(既定の探索半径だと −12.9 px)、深さ 595 µm に対し +4.7 %・断面 RMS 7.1 µm、較正 1 / 4 / 24 枚で位置つき 7.59 / 8.83 / 3.70°、2 台目の線形の残差 30.8 DN = 1 台目の 3.9 倍。図: 合成の押し込みと 3 経路の誤差地図、光を 1 周させる GIF(復元 vs 真の球冠)、不感帯の前後; --full: 実機の 1 枚 → 復元 → 真の球冠、実機の GIF、断面、残差地図、誤差地図、センサ面の誤差地図、位置の散布、較正枚数、半径方向の傾き。全部等倍。正直に: 力・押し込み深さの真値は無い。角誤差は最近傍の LUT(補間なし)の値。*外部の較正済み LUT は同じ 48 枚から作られている = hold-out でない参考値。2 台目のパックは球径・ピッチの一次情報が無い(外部コードのコメントの 0.0266 mm/px だけ)ので、半径に依らない量(線形の残差の比)だけを門にし角誤差は順位だけ。位置つき LUT は画像の四隅で破れる(較正球の少ない所への外挿)。踏んだ罠: 中心が全部整数の合成では行の少ないビンが生まれず、不感帯が原理的に見えない(副画素のずれを入れて再現)。既存 op の 2 件(contact_radius_ring の既定の探索半径が窓の半分の半分で接触円を切る、photometric.angular_error_deg の 1.15e-4° の床)は直していない。*
+
+[![位置つき LUT の法線を Frankot–Chellappa で積分した面に光を 1 周させる(中央)、右は真の球冠。等倍 89×89、24 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/02_tacscalib_synthetic_relight.gif)
+
+*↑ 測定の図 ―― 位置つき LUT の法線を Frankot–Chellappa で積分した面に光を 1 周させる(中央)、右は真の球冠。等倍 89×89、24 コマ。*
+
+[![合成の 1 球、真の傾き < 15° の画素。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/03_tacscalib_deadband_before_after.png)
+
+*↑ 合成の 1 球、真の傾き < 15° の画素。*
+
+[![法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/06_tacscalib_height_profile.png)
+
+*↑ 法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。*
+
+[![法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/08_tacscalib_angle_error_maps.png)
+
+*↑ 法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。*
+
+[![接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/10_tacscalib_position_scatter.png)
+
+*↑ 接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。*
+
+[![実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。等倍 201×201、24 コマ。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut/05_tacscalib_real_relight.gif)
+
+*↑ 動く図 ―― 実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。等倍 201×201、24 コマ。*
+
+```
+py -3.11 examples/poc_tacscalib_sphere_lut.py
+```
+
+ソース: [examples/poc_tacscalib_sphere_lut.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_tacscalib_sphere_lut.py)
+
+この回が作った図は全部で **12 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_tacscalib_sphere_lut)
+
+使用 op(ノートへ): [`calib_pack_load`](https://furuse.work/ops/drive/tacscalib/calib_pack_load.html) · [`contact_radius_ring`](https://furuse.work/ops/drive/tacsim/contact_radius_ring.html) · [`field_position_sweep`](https://furuse.work/ops/drive/tacscalib/field_position_sweep.html) · [`gradient_lut_build`](https://furuse.work/ops/drive/tacscalib/gradient_lut_build.html) · [`gradient_lut_invert`](https://furuse.work/ops/drive/tacscalib/gradient_lut_invert.html) · [`integrate_normals`](https://furuse.work/ops/3d/photometric/integrate_normals.html) · [`invert`](https://furuse.work/ops/2d/gray/invert.html) · [`lights_fit_from_sphere`](https://furuse.work/ops/drive/tacscalib/lights_fit_from_sphere.html) · [`median`](https://furuse.work/ops/2d/rank/median.html) · [`membrane_predict_rgb`](https://furuse.work/ops/drive/tacscalib/membrane_predict_rgb.html) · [`normal_error_map`](https://furuse.work/ops/drive/tacscalib/normal_error_map.html) · [`normals_to_angles`](https://furuse.work/ops/reprconv/direction/normals_to_angles.html) · [`poly_lut_invert`](https://furuse.work/ops/drive/tacscalib/poly_lut_invert.html) · [`reflect`](https://furuse.work/ops/3d/optics/reflect.html) · [`sphere_cap_height`](https://furuse.work/ops/drive/tacscalib/sphere_cap_height.html) · [`sphere_normals_known`](https://furuse.work/ops/drive/tacscalib/sphere_normals_known.html) · [`surface_normals`](https://furuse.work/ops/3d/photometric/surface_normals.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html)
 
 ## No.2026.133 —— 公共カメラはどこを向いているか ―― 位置しか公開されない固定カメラの向きを、写真そのものから決める
 

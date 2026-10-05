@@ -1,8 +1,8 @@
 {
- "n_ops": 2894,
+ "n_ops": 2904,
  "tiers": {
   "color": 12,
-  "ledger": 1941,
+  "ledger": 1951,
   "nary": 17,
   "registry": 924
  },
@@ -2413,6 +2413,21 @@
    "dim": "cadmap",
    "in_sorts": [
     "mesh"
+   ]
+  },
+  {
+   "name": "calib_pack_load",
+   "halcon": "",
+   "in_sort": "text",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "text",
+    "scalar",
+    "scalar"
    ]
   },
   {
@@ -6818,6 +6833,21 @@
    ]
   },
   {
+   "name": "field_position_sweep",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "signal",
+    "any"
+   ]
+  },
+  {
    "name": "filled_polygon",
    "halcon": "",
    "in_sort": "image2d",
@@ -8495,6 +8525,35 @@
    "dim": "3d",
    "in_sorts": [
     "voxel"
+   ]
+  },
+  {
+   "name": "gradient_lut_build",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "matrix",
+    "matrix"
+   ]
+  },
+  {
+   "name": "gradient_lut_invert",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "normalmap",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "table",
+    "image2d"
    ]
   },
   {
@@ -11849,6 +11908,21 @@
    "in_sorts": []
   },
   {
+   "name": "lights_fit_from_sphere",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "normalmap",
+    "image2d"
+   ]
+  },
+  {
    "name": "line_from_2points",
    "halcon": "",
    "in_sort": "points",
@@ -12800,6 +12874,20 @@
    "in_sorts": [
     "scalar",
     "scalar"
+   ]
+  },
+  {
+   "name": "membrane_predict_rgb",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "rgb",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "table"
    ]
   },
   {
@@ -14151,6 +14239,20 @@
    "in_sorts": [
     "points",
     "normals"
+   ]
+  },
+  {
+   "name": "normal_error_map",
+   "halcon": "",
+   "in_sort": "normalmap",
+   "out_sort": "image2d",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "normalmap",
+    "normalmap"
    ]
   },
   {
@@ -16403,6 +16505,21 @@
    "in_sorts": [
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "poly_lut_invert",
+   "halcon": "",
+   "in_sort": "rgb",
+   "out_sort": "normalmap",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "rgb",
+    "table",
+    "image2d"
    ]
   },
   {
@@ -21013,6 +21130,39 @@
    "dim": "specular",
    "in_sorts": [
     "rgbimage"
+   ]
+  },
+  {
+   "name": "sphere_cap_height",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any",
+    "scalar",
+    "scalar",
+    "scalar"
+   ]
+  },
+  {
+   "name": "sphere_normals_known",
+   "halcon": "",
+   "in_sort": "any",
+   "out_sort": "table",
+   "category": "tacscalib",
+   "tier": "ledger",
+   "ledger": "opsdrive",
+   "dim": "drive",
+   "in_sorts": [
+    "any",
+    "any",
+    "scalar",
+    "scalar"
    ]
   },
   {

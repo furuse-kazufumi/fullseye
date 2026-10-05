@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gradient_lut_invert — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × table × image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gradient_lut_invert(rgb, table: &#x27;dict&#x27;, mask=None, min_count: &#x27;int&#x27; = 1, method: &#x27;str&#x27; = &#x27;coarse&#x27;, coarse: &#x27;int&#x27; = 3, topk: &#x27;int&#x27; = 2, chunk: &#x27;int&#x27; = 1024) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacscalib; tacscalib.gradient_lut_invert(rgb, table: &#x27;dict&#x27;, mask=None, min_count: &#x27;int&#x27; = 1, method: &#x27;str&#x27; = &#x27;coarse&#x27;, coarse: &#x27;int&#x27; = 3, topk: &#x27;int&#x27; = 2, chunk: &#x27;int&#x27; = 1024) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;gradient_lut_invert&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
+<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
+<p>RGB (H, W, 3) → 法線 (H, W, 3): 中身のあるビン(count ≥ `<code style="color:#22d3bf">min_count</code>`)のうち色が最も近いものの中心法線。位置依存版の</p>
+<p>表(:func:<code style="color:#22d3bf">gradient_lut_build</code> に positions を与えたもの)は画素の位置で各ビンの色を予測してから比べる。</p>
+<p>`<code style="color:#22d3bf">method=&quot;coarse&quot;</code><code style="color:#22d3bf">(既定): </code><code style="color:#22d3bf">coarse</code><code style="color:#22d3bf"> × </code><code style="color:#22d3bf">coarse</code><code style="color:#22d3bf"> ビンの区画ごとに代表(行の最も多いビン)を置いて色の近い上位 </code><code style="color:#22d3bf">topk</code>`</p>
+<p>区画を選び、それぞれの周り 3 × 3 区画だけ全ビンを比べる(粗 → 細)。`<code style="color:#22d3bf">&quot;exact&quot;</code>`: 全ビンの総当たり(基準)。</p>
+<p>色 → 法線は多峰(離れたビンがほぼ同じ色を持つ)なので、粗 → 細は総当たりと<b>同じビンを選ぶとは限らない</b>: 実機の 1 台目で</p>
+<p>一致は約 9 割、外れた画素も角誤差の中央値はほぼ同じ(門で測る)。</p>
+<p>`<code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> の外は (0, 0, 1)。</code><code style="color:#22d3bf">min_count</code>` は使うビンの行数の下限: ノイズの無い合成なら 1 でよいが、実機では 1 行だけのビン</p>
+<p>(1 台目の較正 24 枚で 624 個)の色の平均がノイズそのもので、1 のままだと復元した深さが +18 % 偏る(行 10 以上で +6 %)。</p>
+<p>逆に位置の項を当てたビンだけ(`<code style="color:#22d3bf">min_count=min_rows_poly</code>`)で引くと傾き 0〜15° が不感帯になる。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 形 / mask の形 / method の綴り / coarse・topk・chunk が 1 未満 / 使えるビンが 0 /</p>
+<p>位置依存版で画像の大きさが違う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
+<p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<p style="margin:2px 0 2px 12px">• The canonical algorithm (author, year) and its uses are named in the <b>family usage guide</b> above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">normalmap</code> as input)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Same category (<code style="color:#22d3bf">tacscalib</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:calib_pack_load">calib_pack_load</a> · <a style="color:#22d3bf" href="opdrive:sphere_normals_known">sphere_normals_known</a> · <a style="color:#22d3bf" href="opdrive:lights_fit_from_sphere">lights_fit_from_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_predict_rgb">membrane_predict_rgb</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_build">gradient_lut_build</a> · <a style="color:#22d3bf" href="opdrive:normal_error_map">normal_error_map</a> · <a style="color:#22d3bf" href="opdrive:sphere_cap_height">sphere_cap_height</a> · <a style="color:#22d3bf" href="opdrive:field_position_sweep">field_position_sweep</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacscalib.py — DRIVE operator registry. This per-op note is generated by <code style="color:#22d3bf">tools/opdocs.py md</code> (do not hand-edit).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -4,7 +4,7 @@ dim: drive
 category: tacsim
 in: image2d × scalar
 out: table
-examples: [poc_tacsim_elastic_membrane]
+examples: [poc_tacscalib_sphere_lut, poc_tacsim_elastic_membrane]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.3.0  # fullseye lib version this note was generated for
@@ -36,6 +36,7 @@ version: 0.3.0  # fullseye lib version this note was generated for
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [poc_tacscalib_sphere_lut](../../../../examples/poc_tacscalib_sphere_lut.py) — `py -3.11 examples/poc_tacscalib_sphere_lut.py`
 - [poc_tacsim_elastic_membrane](../../../../examples/poc_tacsim_elastic_membrane.py) — `py -3.11 examples/poc_tacsim_elastic_membrane.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)

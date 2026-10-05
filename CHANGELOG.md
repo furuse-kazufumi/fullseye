@@ -7,6 +7,14 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+- ★**視触覚センサの照明を実機の較正球で較正する**(新モジュール `tacscalib` 10 op、台帳 `tacscalib`(opsdrive)、PoC `poc_tacscalib_sphere_lut`、
+  wing_geometry): 物理シミュ × Fullseye 系列、tacsim の続き。実機の較正パック(arXiv:2109.04027 の作者が MIT で公開、`FULLSEYE_TAXIM_DATA`)を持ち込み、
+  順方向(法線 → 色)を較正して逆方向を 2 経路で解く: 線形 12 パラメタ + `photometric_stereo`(被験者)と example-based の勾配 LUT(位置の 2 次式つき)。
+  真値 = 既知球の法線の閉形式 + 手当ての接触円(弱い真値)、偶数 24 枚で較正・奇数 24 枚で測る。★試作の不感帯(傾き 0〜15°)を「行の少ないビンが近いビンの
+  位置の項を借りる」で 4.84° → 1.89° に(代償に平地の床 0.4° → 3.3°)。逆引きは内積 1 回 + 粗 → 細(総当たりと同じビン 90.0 %、2.4 倍速)。門 9 本(1.3 s)
+  + `--full` 10 本(実機、42 s): hold-out の角誤差 線形 10.71° / 位置なし LUT 8.58° / 位置つき LUT 4.17°、復元深さ +4.7 %。drive 族で初めて normalmap を返す。
+  正直に: 力・深さの真値なし、外部の較正済み LUT 3.57° は hold-out でない参考値、2 台目は球径・ピッチの一次情報なし(順位だけ)。既存 op の 2 件
+  (`tacsim.contact_radius_ring` の既定の探索半径、`photometric.angular_error_deg` の 1.15e-4° の床)は未修正。
 - ★**粉体の山を画像で測る**(新モジュール `granular` 23 op + mujoco の facade 2、台帳 `granular`(opsdrive)、PoC `poc_granular_heap_repose`、
   wing_metrology): 物理シミュ × Fullseye 系列。先行研究の粉体計量(Kadokawa ほか IROS 2023)は秤だけで視覚が無い —— ここは山の形(側面像・高さ図)から
   安息角・体積・質量・流動性・排出率を規則だけで読む。真値 = 円錐の閉形式、Beverloo 1961 の排出則、USP <1174> Table 1(Carr 1965、整数の度)、1 mm ガラス球の

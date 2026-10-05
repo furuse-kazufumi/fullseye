@@ -677,6 +677,10 @@
    "accessioned": "2026-09-30",
    "no": "2026.174"
   },
+  "poc_tacscalib_sphere_lut": {
+   "accessioned": "2026-10-05",
+   "no": "2026.203"
+  },
   "poc_tacsim_elastic_membrane": {
    "accessioned": "2026-10-04",
    "no": "2026.196"

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sphere_normals_known — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacscalib; tacscalib.sphere_normals_known(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, inner: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;sphere_normals_known&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>既知球の押し込み: 接触円(中心 `<code style="color:#22d3bf">centre</code><code style="color:#22d3bf"> = (行, 列)、半径 </code><code style="color:#22d3bf">a_px</code>`)の内側で法線を閉形式で返す。</p>
+<p>n = (−dx, −dy, √(R² − r²))/R(dx = 列 − 中心の列、dy = 行 − 中心の行)。マスクは r &lt; inner · min(a, R)(較正手順と同じく</p>
+<p>a と R の小さい方まで)。外側は (0, 0, 1)。返り: `<code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> (H, W, 3)、</code><code style="color:#22d3bf">mask</code><code style="color:#22d3bf"> (H, W) bool、</code><code style="color:#22d3bf">r</code>` (H, W) [px]、</p>
+<p>`<code style="color:#22d3bf">theta</code>`(傾き角 = atan2(r, √(R² − r²))、マスク外 0)。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: shape・centre の形、a・R ≤ 0、inner が 0 &lt; inner ≤ 1 の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">tacscalib</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:calib_pack_load">calib_pack_load</a> · <a style="color:#22d3bf" href="opdrive:lights_fit_from_sphere">lights_fit_from_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_predict_rgb">membrane_predict_rgb</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_build">gradient_lut_build</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_invert">gradient_lut_invert</a> · <a style="color:#22d3bf" href="opdrive:normal_error_map">normal_error_map</a> · <a style="color:#22d3bf" href="opdrive:sphere_cap_height">sphere_cap_height</a> · <a style="color:#22d3bf" href="opdrive:field_position_sweep">field_position_sweep</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacscalib.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

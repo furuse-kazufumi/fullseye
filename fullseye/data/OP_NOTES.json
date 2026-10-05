@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 2894,
- "n_notes": 2900,
+ "n_ops": 2904,
+ "n_notes": 2910,
  "notes": {
   "vol_dilate": [
    {
@@ -19297,6 +19297,106 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/rss/rss_worst_case_gap_opposite.md"
+   }
+  ],
+  "calib_pack_load": [
+   {
+    "op": "calib_pack_load",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "text × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/calib_pack_load.md"
+   }
+  ],
+  "field_position_sweep": [
+   {
+    "op": "field_position_sweep",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "matrix × signal × any",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/field_position_sweep.md"
+   }
+  ],
+  "gradient_lut_build": [
+   {
+    "op": "gradient_lut_build",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "matrix × matrix",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/gradient_lut_build.md"
+   }
+  ],
+  "gradient_lut_invert": [
+   {
+    "op": "gradient_lut_invert",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "rgb × table × image2d",
+    "out": "normalmap",
+    "path": "docs/ops/drive/tacscalib/gradient_lut_invert.md"
+   }
+  ],
+  "lights_fit_from_sphere": [
+   {
+    "op": "lights_fit_from_sphere",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "rgb × normalmap × image2d",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/lights_fit_from_sphere.md"
+   }
+  ],
+  "membrane_predict_rgb": [
+   {
+    "op": "membrane_predict_rgb",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "normalmap × table",
+    "out": "rgb",
+    "path": "docs/ops/drive/tacscalib/membrane_predict_rgb.md"
+   }
+  ],
+  "normal_error_map": [
+   {
+    "op": "normal_error_map",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "normalmap × normalmap",
+    "out": "image2d",
+    "path": "docs/ops/drive/tacscalib/normal_error_map.md"
+   }
+  ],
+  "poly_lut_invert": [
+   {
+    "op": "poly_lut_invert",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "rgb × table × image2d",
+    "out": "normalmap",
+    "path": "docs/ops/drive/tacscalib/poly_lut_invert.md"
+   }
+  ],
+  "sphere_cap_height": [
+   {
+    "op": "sphere_cap_height",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "any × any × scalar × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/sphere_cap_height.md"
+   }
+  ],
+  "sphere_normals_known": [
+   {
+    "op": "sphere_normals_known",
+    "dim": "drive",
+    "category": "tacscalib",
+    "in": "any × any × scalar × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/tacscalib/sphere_normals_known.md"
    }
   ],
   "combined_modulus": [

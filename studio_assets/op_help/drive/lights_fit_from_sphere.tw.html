@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lights_fit_from_sphere — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × normalmap × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lights_fit_from_sphere(diffs, normals, masks, order: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacscalib; tacscalib.lights_fit_from_sphere(diffs, normals, masks, order: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lights_fit_from_sphere&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
+<p>背景差分画像(1 枚か列)と既知法線から、チャネルごとの線形 Lambertian 模型を最小二乗で解く。</p>
+<p>`<code style="color:#22d3bf">order=0</code><code style="color:#22d3bf">: I_c = a_c + l_c · n(3 チャネル × 4 = 12 パラメタ)。</code><code style="color:#22d3bf">order=2</code>`(診断用): 4 つの係数それぞれが位置の 2 次式</p>
+<p>(チャネルあたり 24、計 72 パラメタ)—— 線形模型の残差が「照明の非一様」か「反射の非線形」かを分ける。</p>
+<p>`<code style="color:#22d3bf">diffs</code><code style="color:#22d3bf"> (H, W, 3) かその列、</code><code style="color:#22d3bf">normals</code><code style="color:#22d3bf"> (H, W, 3) の列、</code><code style="color:#22d3bf">masks</code>` (H, W) bool の列。</p>
+<p>返り: `<code style="color:#22d3bf">order</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">L</code><code style="color:#22d3bf"> (3, 3)(行 c = l_c、長さ = チャネルの強度。order 2 は画像中心の値)、</code><code style="color:#22d3bf">ambient</code><code style="color:#22d3bf"> (3,)、</code><code style="color:#22d3bf">rms</code>` (3,)</p>
+<p>(当てはめ残差)、`<code style="color:#22d3bf">n_rows</code><code style="color:#22d3bf">(使った画素数)、</code><code style="color:#22d3bf">cond</code><code style="color:#22d3bf">(設計行列の条件数)、order 2 は </code><code style="color:#22d3bf">coef</code><code style="color:#22d3bf"> (4, 6, 3) と </code><code style="color:#22d3bf">image_shape</code>`。</p>
+<p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code>`: 列の長さ・形の不一致 / order が 0・2 以外 / 画素が未知数より少ない / 法線が退化(平面上)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">tacscalib</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:calib_pack_load">calib_pack_load</a> · <a style="color:#22d3bf" href="opdrive:sphere_normals_known">sphere_normals_known</a> · <a style="color:#22d3bf" href="opdrive:membrane_predict_rgb">membrane_predict_rgb</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_build">gradient_lut_build</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_invert">gradient_lut_invert</a> · <a style="color:#22d3bf" href="opdrive:normal_error_map">normal_error_map</a> · <a style="color:#22d3bf" href="opdrive:sphere_cap_height">sphere_cap_height</a> · <a style="color:#22d3bf" href="opdrive:field_position_sweep">field_position_sweep</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacscalib.py — DRIVE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,130 @@
+[
+ {
+  "file": "01_tacscalib_synthetic_error_maps.png",
+  "name": "tacscalib_synthetic_error_maps",
+  "caption": "合成の押し込み(反射 max(n·l,0)^1.5、各灯は自分の側が ±40 % 明るい)と、法線の角誤差の地図 0〜20°(等倍 240×180)。線形模型は反射の非線形と位置の利得の両方を背負い、位置なし LUT は利得だけを背負う。位置つき LUT が残すのは 125 ビンの量子化だけ。",
+  "shape": [
+   180,
+   978,
+   3
+  ]
+ },
+ {
+  "file": "02_tacscalib_synthetic_relight.gif",
+  "name": "tacscalib_synthetic_relight",
+  "caption": "位置つき LUT の法線を Frankot–Chellappa で積分した面に光を 1 周させる(中央)、右は真の球冠。等倍 89×89、24 コマ。",
+  "shape": [
+   89,
+   279,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0
+ },
+ {
+  "file": "03_tacscalib_deadband_before_after.png",
+  "name": "tacscalib_deadband_before_after",
+  "caption": "合成の 1 球、真の傾き < 15° の画素。位置の 2 次式を当てたビン(8 行以上)だけで引くと小さい傾きのビンが全部落ち、0〜15° の画素が位置の項を持つ傾きの大きいビン(この合成では 21° 以上)に吸われる。行の少ないビンが角度で最も近い多項式ビンの位置の項を借りると真値の破線に乗る。",
+  "shape": [
+   360,
+   837,
+   3
+  ]
+ },
+ {
+  "file": "04_tacscalib_real_frame_to_sphere.png",
+  "name": "tacscalib_real_frame_to_sphere",
+  "caption": "実機の hold-out 1 枚(枠 1)→ 背景差分 → 位置つき LUT の法線を積分した面 → 真の球冠(R = 2.00 mm、手当ての円)。等倍 201×201。最近傍の LUT なので段々が見え、接触円の外にも膜の裾が続く(球冠の模型は縁で 0)。",
+  "shape": [
+   201,
+   1236,
+   3
+  ]
+ },
+ {
+  "file": "05_tacscalib_real_relight.gif",
+  "name": "tacscalib_real_relight",
+  "caption": "実機の 1 枚から復元した面に光を 1 周させる(中央)、右は真の球冠。等倍 201×201、24 コマ。",
+  "shape": [
+   201,
+   615,
+   3
+  ],
+  "animated": true,
+  "frames": 24,
+  "frames_written": 24,
+  "fps": 8.0
+ },
+ {
+  "file": "06_tacscalib_height_profile.png",
+  "name": "tacscalib_height_profile",
+  "caption": "法線の半径スロープを方位平均して 1D 積分した断面と真の球冠(破線)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "07_tacscalib_residual_maps.png",
+  "name": "tacscalib_residual_maps",
+  "caption": "hold-out 1 枚の背景差分、線形模型の予測、残差の大きさ 0〜25 DN(線形 12 パラメタ / 位置つき 72 パラメタ)。線形の残差は左右で偏る。",
+  "shape": [
+   201,
+   822,
+   3
+  ]
+ },
+ {
+  "file": "08_tacscalib_angle_error_maps.png",
+  "name": "tacscalib_angle_error_maps",
+  "caption": "法線の角誤差 0〜20°(同じ hold-out 1 枚、等倍)。*外部の較正済み LUT は同じ 48 枚から作られている = hold-out でない参考値。",
+  "shape": [
+   201,
+   1029,
+   3
+  ]
+ },
+ {
+  "file": "09_tacscalib_sensor_plane_error.png",
+  "name": "tacscalib_sensor_plane_error",
+  "caption": "hold-out 24 枚の角誤差をセンサ面の位置に置いた地図(等倍 640×480 を 2 枚)。位置つき LUT は四隅で破れる(較正球の少ない所への外挿)。",
+  "shape": [
+   480,
+   1286,
+   3
+  ]
+ },
+ {
+  "file": "10_tacscalib_position_scatter.png",
+  "name": "tacscalib_position_scatter",
+  "caption": "接触中心の画像中心からの距離 vs 角誤差の中央値(hold-out 各 1 点)。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "11_tacscalib_calibration_count.png",
+  "name": "tacscalib_calibration_count",
+  "caption": "較正枚数 1 / 4 / 24 枚(hold-out 4 枚)。線形は 1 枚でもほぼ同じ、位置つき LUT は位置の項に枚数が要る。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "12_tacscalib_where_it_breaks.png",
+  "name": "tacscalib_where_it_breaks",
+  "caption": "半径方向の傾き(方位平均)。試作(平らな例あり・30 行以上のビンだけ)は中心付近の小さい傾きが 0 か 15° に寄る(不感帯)。行の少ないビンが近いビンの位置の項を借りると真値の破線に乗るが、平地には約 3° の床が残る(分解能の限界)。a の外では実機の膜は傾き続ける(球冠の模型は 0)= 深さの門を 0.8a までに限る理由。",
+  "shape": [
+   360,
+   793,
+   3
+  ]
+ }
+]

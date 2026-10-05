@@ -1,4 +1,4 @@
-# DRIVE operator help — 510 ops in 36 categories
+# DRIVE operator help — 520 ops in 37 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -115,6 +115,10 @@
 ### rss (10)
 
 [rss_lateral](rss/rss_lateral.md) · [rss_lateral_check](rss/rss_lateral_check.md) · [rss_longitudinal_check](rss/rss_longitudinal_check.md) · [rss_longitudinal_opposite](rss/rss_longitudinal_opposite.md) · [rss_longitudinal_same](rss/rss_longitudinal_same.md) · [rss_params](rss/rss_params.md) · [rss_stopping_distance](rss/rss_stopping_distance.md) · [rss_worst_case_gap](rss/rss_worst_case_gap.md) · [rss_worst_case_gap_lateral](rss/rss_worst_case_gap_lateral.md) · [rss_worst_case_gap_opposite](rss/rss_worst_case_gap_opposite.md)
+
+### tacscalib (10)
+
+[calib_pack_load](tacscalib/calib_pack_load.md) · [field_position_sweep](tacscalib/field_position_sweep.md) · [gradient_lut_build](tacscalib/gradient_lut_build.md) · [gradient_lut_invert](tacscalib/gradient_lut_invert.md) · [lights_fit_from_sphere](tacscalib/lights_fit_from_sphere.md) · [membrane_predict_rgb](tacscalib/membrane_predict_rgb.md) · [normal_error_map](tacscalib/normal_error_map.md) · [poly_lut_invert](tacscalib/poly_lut_invert.md) · [sphere_cap_height](tacscalib/sphere_cap_height.md) · [sphere_normals_known](tacscalib/sphere_normals_known.md)
 
 ### tacsim (14)
 
