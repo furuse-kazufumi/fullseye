@@ -8,8 +8,8 @@ import threading
 
 import pytest
 
-import comm
-from comm import ModbusTcpChannel, ModbusTcpServer
+import fullseye_comm as comm
+from fullseye_comm import ModbusTcpChannel, ModbusTcpServer
 
 
 # ---- pure Modbus PDU build/parse (exact) --------------------------------- #
@@ -216,12 +216,12 @@ def test_the_door_gate_catches_a_protocol_with_no_entry_point():
 #: 上書き**した —— 出荷していれば利用者の点群処理が静かに別物になっていた
 #: (2026-09-25、既存の例の門が捕まえた)。同名は譲らず、内部名で使う。
 _NOT_ON_THE_FACADE = {
-    ("comm", "register"): "fullseye.register は点群のレジストレーション op。"
+    ("fullseye_comm", "register"): "fullseye.register は点群のレジストレーション op。"
                           "protocol の登録は comm.register のまま使う",
 }
 
 
-@pytest.mark.parametrize("mod_name", ["comm", "device"])
+@pytest.mark.parametrize("mod_name", ["fullseye_comm", "device"])
 def test_every_public_name_reaches_the_facade(mod_name):
     import importlib
 

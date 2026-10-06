@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import pytest
 
-import comm
+import fullseye_comm as comm
 
 
 # --------------------------------------------------------------------------- #

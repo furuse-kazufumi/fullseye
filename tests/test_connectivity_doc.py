@@ -26,7 +26,7 @@ import pytest
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 import acquire  # noqa: E402
-import comm  # noqa: E402
+import fullseye_comm as comm  # noqa: E402
 import device  # noqa: E402
 
 DOC = os.path.join(_ROOT, "docs", "CONNECTIVITY.md")

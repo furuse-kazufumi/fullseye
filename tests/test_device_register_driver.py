@@ -22,7 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-import comm  # noqa: E402
+import fullseye_comm as comm  # noqa: E402
 import device  # noqa: E402
 import fullseye as fs  # noqa: E402
 

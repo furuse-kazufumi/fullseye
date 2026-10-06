@@ -229,7 +229,7 @@ class DigitalIO:
         if self.backend == "memory":
             self._state = dict(self.opts.get("initial", {}))
         elif self.backend == "modbus":
-            import comm
+            import fullseye_comm as comm
             host = self.opts.get("host", "127.0.0.1")
             port = int(self.opts.get("port", 502))
             unit = int(self.opts.get("unit", 1))

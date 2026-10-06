@@ -84,7 +84,7 @@ def test_the_three_connectivity_layers_make_the_same_promise():
     どれも (1) 名簿を出し (2) 名簿の名前で開けて (3) 開けないときは何を入れれば
     よいか言う。片方だけ直すと穴が半分残るので、3 層をまとめて 1 か所で見る。
     """
-    import comm
+    import fullseye_comm as comm
     import device
 
     assert len(acquire.capabilities()) >= 10

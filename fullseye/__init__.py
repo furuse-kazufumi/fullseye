@@ -460,7 +460,7 @@ with warnings.catch_warnings():
     from acquire import (  # noqa: E402,F401  (image acquisition: cameras / framegrabbers)
         Camera, list_cameras, open_framegrabber, grab_image, close_framegrabber,
     )
-    from comm import (  # noqa: E402,F401  (communication transports / industrial protocols)
+    from fullseye_comm import (  # noqa: E402,F401  (communication transports / industrial protocols; 旧 comm)
         open_channel, protocols, Channel,
         TcpChannel, UdpChannel, HttpChannel, ModbusTcpChannel, ModbusTcpServer,
         ModbusRtuChannel, ModbusRtuLoopback, CommError, unregister_protocol,
@@ -504,7 +504,7 @@ def capabilities() -> dict:
     ★これら 3 つの数は ``tests/test_connectivity_doc.py`` が実装と突き合わせる ——
     2026-09-25 まで image sources は **9** のままで、zed と kinect を数えて
     いなかった(この説明文は wheel に入る)。"""
-    import comm
+    import fullseye_comm as comm
     import acquire
     import device
     return {"comm": comm.capabilities(),

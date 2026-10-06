@@ -4,7 +4,7 @@ The memory backend needs no hardware; the modbus backend is exercised against th
 in-process Modbus simulator from comm.py. GPIO is hardware-only and not tested here."""
 import time
 
-import comm
+import fullseye_comm as comm
 import device
 from device import DigitalIO
 

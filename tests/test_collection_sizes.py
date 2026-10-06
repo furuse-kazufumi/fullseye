@@ -55,7 +55,7 @@ def _ledger():
 
 def _measure():
     """環境に依らない大きさだけを測る。"""
-    import comm
+    import fullseye_comm as comm
     import device
     import examples2d
     import imgio

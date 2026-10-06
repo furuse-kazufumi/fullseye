@@ -1,4 +1,10 @@
-"""comm.py — communication transports & industrial protocols (a Channel registry).
+"""fullseye_comm.py — communication transports & industrial protocols (a Channel registry).
+
+★2026-10-07: 以前の名前は ``comm.py``(トップレベル ``comm``)。Jupyter / ipykernel が必ず入れる PyPI の
+``comm`` パッケージと同じ名前で、同じ site-packages ではパッケージの方が勝つため、その環境では
+``import fullseye`` が ``ImportError: cannot import name 'open_channel' from 'comm'`` で落ちていた
+(PyPI の 0.5.0 + ``pip install comm`` で再現)。利用者の入口は ``fullseye.open_channel`` などの facade で、
+そちらは変わらない。
 
 The comms half of a machine-vision cell: push an inspection result to a PLC, read
 a sensor register, hit a REST endpoint, subscribe to a broker. HALCON stops at raw
