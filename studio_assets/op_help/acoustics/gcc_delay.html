@@ -23,9 +23,15 @@
 <p>★<b>PHAT が常に勝つわけではない</b>: 反射が非対称な経路では遅延そのものが</p>
 <p>偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /</p>
 <p>PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。</p>
-<p>band: `<code style="color:#22d3bf">(lo_hz, hi_hz)</code><code style="color:#22d3bf"> で帯域を絞る(</code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> が要る)。</code><code style="color:#22d3bf">None</code>` で全帯域。</p>
-<p>全帯域の PHAT は信号の無いビンまで持ち上げるので、**帯域を切るほうが</p>
-<p>効くことが多い**(実測で 8 倍)。</p>
+<p>band: `<code style="color:#22d3bf">(lo_hz, hi_hz)</code><code style="color:#22d3bf"> で帯域を絞る(</code><code style="color:#22d3bf">rate</code><code style="color:#22d3bf"> と同じ単位。</code><code style="color:#22d3bf">rate=1.0</code>` なら</p>
+<p>cycles / 標本で 0〜0.5)。`<code style="color:#22d3bf">None</code>` で全帯域。</p>
+<p>★**`<code style="color:#22d3bf">weight=&quot;phat&quot;</code>`(既定)では必須**(2026-10-06、0.5.0 の破壊的変更)。</p>
+<p>PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い</p>
+<p>ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる</p>
+<p>(低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——</p>
+<p>`<code style="color:#22d3bf">tests/test_acoustics.py</code>` の回帰テスト)。信号が全帯域を占めると分かって</p>
+<p>いるなら `<code style="color:#22d3bf">band=(0.0, rate / 2)</code><code style="color:#22d3bf"> と**明示**する。</code><code style="color:#22d3bf">&quot;none&quot;</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">&quot;roth&quot;</code>` /</p>
+<p>`<code style="color:#22d3bf">&quot;scot&quot;</code>` では任意のまま。</p>
 <p>interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。</p>
 <p>切ると量子化の刻みが<b>散らばりでなく偏り</b>として残る(位置を固定すると</p>
 <p>毎回同じ方向に外す。PIV のピークロッキングと同じ)。</p>
@@ -41,7 +47,8 @@
 <p>返す。相関曲線も要るときは `<code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>`。</p>
 <p>Raises:</p>
 <p>ValueError: 長さが違う / 2 未満 / 非有限、`<code style="color:#22d3bf">weight</code><code style="color:#22d3bf"> が未知、</code><code style="color:#22d3bf">band</code>` が</p>
-<p>`<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> でない・</code><code style="color:#22d3bf">lo &gt;= hi</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rate</code>` に対して無効なとき。</p>
+<p>`<code style="color:#22d3bf">(lo, hi)</code><code style="color:#22d3bf"> でない・</code><code style="color:#22d3bf">lo &gt;= hi</code><code style="color:#22d3bf">・</code><code style="color:#22d3bf">rate</code>` に対して無効なとき、</p>
+<p>`<code style="color:#22d3bf">weight=&quot;phat&quot;</code><code style="color:#22d3bf"> で </code><code style="color:#22d3bf">band</code><code style="color:#22d3bf"> が </code><code style="color:#22d3bf">None</code>` のとき(fail-closed)。</p>
 <p><b>限界(honest)</b>: (1) 反射・分散・経路差が作る<b>偏り</b>は取れない ——</p>
 <p>取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、</p>
 <p>多重路で副次ピークが勝つと<b>不連続に</b>外す(`<code style="color:#22d3bf">snr_peak</code>` を見ること)。</p>

@@ -7,6 +7,17 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+### 破壊的変更(呼び方が変わる)
+
+- ★**`acoustics.gcc_delay` は `weight="phat"`(既定)のとき `band` が必須**(`band=None` なら ValueError)。
+  PHAT は相互スペクトルの全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無いビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる。
+  実測(低域 0〜0.04 cycles/標本の信号、雑音 0.3、遅れ ±40 標本を 20 本): 信号の帯域を渡した PHAT 20 / 20、全帯域の PHAT 3 / 20、素の相関(`weight="none"`)20 / 20。
+  0.4.0 の既定(band 無しの PHAT)は、この外れを例外も警告も無く返していた。メッセージに理由と渡し方を書いた。
+  **移行**: 信号の占める帯域を `band=(lo, hi)`(`rate` と同じ単位、`rate=1.0` なら cycles/標本で 0〜0.5)で渡す。信号が全帯域を占めると分かっているなら
+  `band=(0.0, rate / 2)` を明示する(0.4.0 の全帯域 PHAT と同じ数値)。帯域が分からなければ `weight="none"`。`"none"` / `"roth"` / `"scot"` では `band` は任意のまま。
+  呼び出し元: `examples/acoustic_condition_monitoring.py`(白色雑音なので全帯域を明示、数値は不変)、chain_fuzz の引数の作り手(`typed_catalog`、`band=(0.0, 0.5)`)。
+  `poc_leak_localization` は自前の GCC で gcc_delay を呼ばないので影響なし。門: test_acoustics に 3 本(band 無しの PHAT は ValueError、帯域ありで低域 20 / 20 と全帯域 3 / 20、`none` / `roth` / `scot` は band 無しで呼べる)。
+
 ### 挙動の変更(既定の数値が変わる —— CONTRIBUTING の Versioning により次の版は minor)
 
 - ★**`pegtactile` のパッドのねじりを部分滑りで合成し、部分滑りで読む**(`pad_tactile_read` / `pad_tactile_frame` / `pad_marker_displacement` に `torsion_model`、既定 `"partial_slip"`)。

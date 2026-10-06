@@ -2547,9 +2547,15 @@ def gcc_delay(a, b, rate=1.0, weight="phat", band=None, interpolate=True):
             ★**PHAT が常に勝つわけではない**: 反射が非対称な経路では遅延そのものが
             偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /
             PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。
-        band: ``(lo_hz, hi_hz)`` で帯域を絞る(``rate`` が要る)。``None`` で全帯域。
-            全帯域の PHAT は信号の無いビンまで持ち上げるので、**帯域を切るほうが
-            効くことが多い**(実測で 8 倍)。
+        band: ``(lo_hz, hi_hz)`` で帯域を絞る(``rate`` と同じ単位。``rate=1.0`` なら
+            cycles / 標本で 0〜0.5)。``None`` で全帯域。
+            ★**``weight="phat"``(既定)では必須**(2026-10-06、0.5.0 の破壊的変更)。
+            PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い
+            ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる
+            (低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——
+            ``tests/test_acoustics.py`` の回帰テスト)。信号が全帯域を占めると分かって
+            いるなら ``band=(0.0, rate / 2)`` と**明示**する。``"none"`` / ``"roth"`` /
+            ``"scot"`` では任意のまま。
         interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。
             切ると量子化の刻みが**散らばりでなく偏り**として残る(位置を固定すると
             毎回同じ方向に外す。PIV のピークロッキングと同じ)。
@@ -2568,7 +2574,8 @@ def gcc_delay(a, b, rate=1.0, weight="phat", band=None, interpolate=True):
 
     Raises:
         ValueError: 長さが違う / 2 未満 / 非有限、``weight`` が未知、``band`` が
-        ``(lo, hi)`` でない・``lo >= hi``・``rate`` に対して無効なとき。
+        ``(lo, hi)`` でない・``lo >= hi``・``rate`` に対して無効なとき、
+        ``weight="phat"`` で ``band`` が ``None`` のとき(fail-closed)。
 
     **限界(honest)**: (1) 反射・分散・経路差が作る**偏り**は取れない ——
     取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、
@@ -2586,6 +2593,16 @@ def gcc_delay(a, b, rate=1.0, weight="phat", band=None, interpolate=True):
                          % (x.size, y.size))
     fsr = _rate(rate)
     w = _check_choice(weight, ("none", "phat", "roth", "scot"), "weight", "gcc_delay")
+    if w == "phat" and band is None:
+        # ★fail-closed(2026-10-06): 全帯域の PHAT は帯域の限られた信号で黙って外す。
+        raise ValueError(
+            "gcc_delay: weight='phat' needs band=(lo_hz, hi_hz) — PHAT whitens every "
+            "frequency bin to the same weight, so with a band-limited signal the bins "
+            "that carry no signal (noise, leakage, rounding) count as much as the signal "
+            "and the peak lands in the wrong place. Pass the band the signal occupies "
+            "(same unit as rate; with rate=1.0 it is cycles/sample in 0..0.5), "
+            "band=(0.0, rate / 2) if it truly fills the whole band, or choose "
+            "weight='none' for the plain cross-correlation")
 
     n = int(x.size)
     nfft = int(2 ** int(np.ceil(np.log2(2 * n - 1))))

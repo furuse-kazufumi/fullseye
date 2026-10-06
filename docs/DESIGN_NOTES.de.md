@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1214. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1217. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -23,6 +23,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1173** — ★``med == 0`` wurde pauschal als inf behandelt —— **selbst wenn ``peak`` ebenfalls 0 war (Stille, nichts im Band), meldete es einen „unendlich dominanten Peak“**. Wie das Docstring sagt, sind diese zwei Zahlen ein Ehrlichkeitsindikator dafür, dass „auch ohne Signal eine Peak-Frequenz zurückgegeben wird“ — doch es schlug in die unehrlichste Richtung aus. Die Antwort für 0/0 ist 0.0. (2026-09-05: auf Linux / numpy 2.5.2 zutage getreten. Die alte Version hatte nur einen kleinen Filterrest, sodass med > 0 war; **der Fehler war schon immer da**.)
 - **L1181** — ★Der globale Median **kehrt seine Reihenfolge um, wenn man das Band verengt** (reines Rauschen 11375 vs. ein echter Defekt 9433; gemessen 2026-09-06, siehe die _local_prominence-Tabelle). Für ein bandbreitenunabhängiges Urteil diesen verwenden. Die bestehenden zwei bleiben mit unveränderter Bedeutung —— ein gleicher Name mit geändertem Inhalt ist gefährlicher als einer mehr.
 - **L1789** — ★``med == 0`` wurde pauschal als inf behandelt —— **selbst wenn ``peak`` ebenfalls 0 war (Stille, nichts im Band), meldete es einen „unendlich dominanten Peak“**. Wie das Docstring sagt, sind diese zwei Zahlen ein Ehrlichkeitsindikator dafür, dass „auch ohne Signal eine Peak-Frequenz zurückgegeben wird“ — doch es schlug in die unehrlichste Richtung aus. Die Antwort für 0/0 ist 0.0. (2026-09-05: auf Linux / numpy 2.5.2 zutage getreten. Die alte Version hatte nur einen kleinen Filterrest, sodass med > 0 war; **der Fehler war schon immer da**.)
+- **L2597** _(ja)_ — ★fail-closed(2026-10-06): 全帯域の PHAT は帯域の限られた信号で黙って外す。
 
 ## `acquire.py`
 
@@ -248,7 +249,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `examples/acoustic_condition_monitoring.py`
 
-- **L467** — ★Die parabolische Interpolation behält eine **Verzerrung, die zu ganzen Zahlen zieht** (weil die Spitze sinc-artig ist und nicht vollständig durch eine Quadratische approximiert werden kann). Wir sweepen von 0 bis 1, messen die Verzerrung und zeigen, dass sie eine S-Kurve bildet —— hört man bei "wir konnten bis zum Sub-Sample lesen" auf, reitet diese Verzerrung still im Ergebnis mit.
+- **L469** — ★Die parabolische Interpolation behält eine **Verzerrung, die zu ganzen Zahlen zieht** (weil die Spitze sinc-artig ist und nicht vollständig durch eine Quadratische approximiert werden kann). Wir sweepen von 0 bis 1, messen die Verzerrung und zeigen, dass sie eine S-Kurve bildet —— hört man bei "wir konnten bis zum Sub-Sample lesen" auf, reitet diese Verzerrung still im Ergebnis mit.
 
 ## `examples/annotate_paper_tour.py`
 
@@ -454,6 +455,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_connectome_across_decades.py`
 
 - **L147** _(ja)_ — ★2 匹の平均(半整数)を丸めると偶数丸めで奇数/偶数のギザギザが出る —— 合計(整数)で数える
+
+## `examples/poc_connectome_motor_bottleneck.py`
+
+- **L326** _(ja)_ — ★2026-10-06: G1 / evis のデータが無い環境(CI・初見の人)では系列が合成歩容 1 本だけになり、 折れ線は点 1 個で描けず図が消えて PoC 自身の assert で exit 1 だった(手元は G1 があって緑)。 系列が 2 本未満なら点で描き、図注は実際に使ったデータを言う。門 = tests/test_poc_connectome_motor_figures.py
 
 ## `examples/poc_crop_phenotyping.py`
 
@@ -2330,7 +2335,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
 - **L301** — ★ Der Fall, in dem der Standardwert selbst schwer ist, wird gesondert behandelt —— wir schrieben eine Kostentabelle in den Docstring und beließen ihn in docs/KNOWN_ISSUES.md als "ungelöst". Es hier leichter zu machen dient dazu, die Prüfung zu bestehen, nicht dazu, die Langsamkeit zu verbergen. Das keep von fourier_smooth(points, keep) ist ein Pflichtargument ohne Standardwert. Kann es nicht gebunden werden, wird es für immer als "Argumente nicht zusammensetzbar" übersprungen und erscheint in der Coverage-Tabelle nur als nicht erreicht (bei der ersten Messung am 2026-09-06 fiel von 13 ops nur dieses eine heraus). Oberflächenrauheit. Die Einschränkungen sind 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel-Messung. Der op zur Erzeugung der Messlinie nimmt keine Eingabe, daher braucht jedes Argument einen Hinweis.
 - **L355** — ★ Ohne dies wird surface_params jedes Mal fail-closed abgelehnt, und an der einen Coverage-Zahl sieht es "aufrufbar" aus, während es in Wirklichkeit nie ausgeführt wird.
-- **L543** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
+- **L528** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L545** — ★ **Mache die Normale nicht achsenparallel**. Ist sie achsenparallel, variiert das Distanzfeld nur entlang einer Achse, und das "GIF aus gestapelten Schnitten", das der Abbildungsgenerator erzeugt, kollabiert zu einem einzigen Frame (gemessen 2026-09-08). Bei einer geneigten Normale ändert sich jeder Schnitt. Die Länge hat keine Wirkung (der op normiert), also übergib einen nicht normierten Vektor, um auch diese Spezifikation zu zeigen.
 
 ## `unified.py`
 

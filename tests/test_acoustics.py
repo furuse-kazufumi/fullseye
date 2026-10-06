@@ -1075,3 +1075,61 @@ def test_nothing_at_all_still_reports_zero_not_infinity():
     e = A.envelope_spectrum(np.ones(int(fs)), rate=fs, low=2000.0, high=4000.0)
     assert np.isfinite(e["local_prominence"])
     assert e["local_prominence"] < 5.0
+
+
+# --------------------------------------------------------------------------- #
+# gcc_delay: PHAT は band が必須(0.5.0 の破壊的変更、2026-10-06)               #
+# --------------------------------------------------------------------------- #
+def _lowband_pair(seed, n=2048, cutoff=0.04, noise=0.3):
+    """低域(0..cutoff cycles/標本)だけを占める信号の 2 チャンネル。真の遅れ(標本)も返す。"""
+    rng = np.random.default_rng(seed)
+    w = rng.normal(size=n + 256)
+    F = np.fft.rfft(w)
+    F[np.fft.rfftfreq(w.size) > cutoff] = 0.0
+    s = np.fft.irfft(F, w.size)
+    lag = int(rng.integers(-40, 41))
+    a = s[128:128 + n]
+    b = s[128 - lag:128 - lag + n]                 # b(t) = a(t - lag)
+    a = a / a.std() + noise * rng.normal(size=n)
+    b = b / b.std() + noise * rng.normal(size=n)
+    return a, b, lag
+
+
+def test_gcc_delay_phat_without_band_is_refused():
+    """band 無しの PHAT は ValueError。理由(全白色化)と band の渡し方をメッセージに書く。"""
+    a, b, _ = _lowband_pair(0)
+    with pytest.raises(ValueError, match="band") as exc:
+        A.gcc_delay(a, b)                          # 既定 weight="phat"
+    msg = str(exc.value)
+    assert "whitens" in msg and "rate / 2" in msg and "weight='none'" in msg
+    with pytest.raises(ValueError, match="band"):
+        A.gcc_delay(a, b, weight="phat", band=None)
+
+
+def test_gcc_delay_phat_with_band_recovers_lowband_delays():
+    """低域の信号 20 本: 信号の帯域を渡した PHAT はほぼ全部当て、全帯域の PHAT は大きく外す
+    (band を必須にした理由そのもの。全帯域を明示すれば今も呼べるが当たらない)。"""
+    hits_band = hits_full = 0
+    for seed in range(20):
+        a, b, lag = _lowband_pair(seed)
+        d_band, _ = A.gcc_delay(a, b, weight="phat", band=(0.0, 0.04))
+        d_full, _ = A.gcc_delay(a, b, weight="phat", band=(0.0, 0.5))
+        hits_band += abs(d_band - lag) < 0.5
+        hits_full += abs(d_full - lag) < 0.5
+    assert hits_band >= 18, hits_band              # 実測 20 / 20
+    assert hits_full <= 10, hits_full              # 実測 3 / 20
+    assert hits_band > hits_full
+
+
+def test_gcc_delay_none_weight_keeps_band_optional():
+    """weight="none"(roth / scot も)は従来どおり band 無しで呼べ、低域の信号でも当てる。"""
+    hits = 0
+    for seed in range(20):
+        a, b, lag = _lowband_pair(seed)
+        d, _ = A.gcc_delay(a, b, weight="none")
+        hits += abs(d - lag) < 0.5
+    assert hits >= 18, hits                        # 実測 20 / 20
+    a, b, _ = _lowband_pair(0)
+    for w in ("roth", "scot"):
+        d, tbl = A.gcc_delay(a, b, weight=w)       # 例外にならない
+        assert np.isfinite(d) and tbl["r"].size == 2 * a.size - 1

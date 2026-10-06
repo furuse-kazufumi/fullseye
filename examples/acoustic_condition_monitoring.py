@@ -445,7 +445,9 @@ def main():
         rec_a = src_g
         rec_b = np.roll(src_g, lag_true) + 0.05 * rng_g.normal(size=n_g)
         for w in ("none", "phat"):
-            d, tbl = A.gcc_delay(rec_a, rec_b, rate=fs, weight=w)
+            # 白色雑音は全帯域を占める → PHAT には全帯域を**明示**する(band 無しの PHAT は ValueError)
+            d, tbl = A.gcc_delay(rec_a, rec_b, rate=fs, weight=w,
+                                 band=(0.0, fs / 2) if w == "phat" else None)
             err = d * fs - lag_true
             print(f"      真値 {lag_true:+4d} 標本 / weight={w:<5s} -> {d * fs:+9.3f} 標本 "
                   f"(誤差 {err:+.3f}, ピーク比 {tbl['snr_peak']:.1f})")
@@ -503,6 +505,11 @@ def main():
         raise AssertionError("空の帯域が通った")
     except ValueError:
         print("      信号の無い帯域: ValueError(黙ってゼロの相関を返さない)")
+    try:
+        A.gcc_delay(src_g, src_g, rate=fs, weight="phat")
+        raise AssertionError("band 無しの PHAT が通った")
+    except ValueError:
+        print("      band 無しの PHAT: ValueError(全白色化は帯域の限られた信号で外れる)")
     print("\nPASS: acoustics 20 op すべてが閉形式のグラウンドトゥルースと一致")
     return True
 

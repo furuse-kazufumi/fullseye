@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1214. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1217. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -23,6 +23,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1173** — ★``med == 0`` was unconditionally treated as inf —— **it reported "an infinitely dominant peak" even when ``peak`` was also 0 (silence, nothing in the band)**. As the docstring says, these two numbers are an honesty indicator for "it returns a peak frequency even when there is nothing there", yet it was swinging in the most dishonest direction. The answer for 0/0 is 0.0. (2026-09-05: surfaced on Linux / numpy 2.5.2. The old version merely had a slight filter residual left so med > 0; **the bug was there all along**.)
 - **L1181** — ★The global median **reverses its order when you narrow the band** (pure noise 11375 vs a real defect 9433; measured 2026-09-06, see the _local_prominence table). Use this one for a bandwidth-independent verdict. The existing two are kept with their meaning unchanged —— a same name whose content changes is more dangerous than adding one.
 - **L1789** — ★``med == 0`` was unconditionally treated as inf —— **it reported "an infinitely dominant peak" even when ``peak`` was also 0 (silence, nothing in the band)**. As the docstring says, these two numbers are an honesty indicator for "it returns a peak frequency even when there is nothing there", yet it was swinging in the most dishonest direction. The answer for 0/0 is 0.0. (2026-09-05: surfaced on Linux / numpy 2.5.2. The old version merely had a slight filter residual left so med > 0; **the bug was there all along**.)
+- **L2597** _(ja)_ — ★fail-closed(2026-10-06): 全帯域の PHAT は帯域の限られた信号で黙って外す。
 
 ## `acquire.py`
 
@@ -248,7 +249,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `examples/acoustic_condition_monitoring.py`
 
-- **L467** — ★Parabolic interpolation retains a **bias that pulls toward integers** (because the peak is sinc-like and cannot be fully approximated by a quadratic). We sweep from 0 to 1, measure the bias, and show that it forms an S-curve —— if we stop at "we could read down to the sub-sample", this bias silently rides along in the result.
+- **L469** — ★Parabolic interpolation retains a **bias that pulls toward integers** (because the peak is sinc-like and cannot be fully approximated by a quadratic). We sweep from 0 to 1, measure the bias, and show that it forms an S-curve —— if we stop at "we could read down to the sub-sample", this bias silently rides along in the result.
 
 ## `examples/annotate_paper_tour.py`
 
@@ -454,6 +455,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_connectome_across_decades.py`
 
 - **L147** _(ja)_ — ★2 匹の平均(半整数)を丸めると偶数丸めで奇数/偶数のギザギザが出る —— 合計(整数)で数える
+
+## `examples/poc_connectome_motor_bottleneck.py`
+
+- **L326** _(ja)_ — ★2026-10-06: G1 / evis のデータが無い環境(CI・初見の人)では系列が合成歩容 1 本だけになり、 折れ線は点 1 個で描けず図が消えて PoC 自身の assert で exit 1 だった(手元は G1 があって緑)。 系列が 2 本未満なら点で描き、図注は実際に使ったデータを言う。門 = tests/test_poc_connectome_motor_figures.py
 
 ## `examples/poc_crop_phenotyping.py`
 
@@ -2330,7 +2335,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
 - **L301** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
 - **L355** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L543** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L528** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L545** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 
