@@ -102,7 +102,7 @@
  {
   "file": "10_pegtactile_timeline_run_C.png",
   "name": "pegtactile_timeline_run_C",
-  "caption": "走行 C の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 99.0 %。",
+  "caption": "走行 C の接触力の大きさと把持点まわりの M_y(破線 = MuJoCo の露光平均、実線 = 膜 2 枚から)。状態の一致は 98.1 %。",
   "shape": [
    360,
    720,

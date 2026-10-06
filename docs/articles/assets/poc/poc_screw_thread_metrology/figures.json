@@ -15,7 +15,7 @@
   "caption": "片側のフランクだけで測ると 1 度あたり約 1 % 狂う。",
   "shape": [
    360,
-   560,
+   741,
    3
   ]
  },
@@ -25,7 +25,7 @@
   "caption": "半差が θ、半和が α。",
   "shape": [
    360,
-   560,
+   735,
    3
   ]
  },
@@ -66,13 +66,23 @@
   "name": "sampling_frames",
   "caption": "",
   "shape": [
-   678,
-   350,
+   1159,
+   670,
    3
   ]
  },
  {
-  "file": "08_scene.png",
+  "file": "08_sampling_sweep.png",
+  "name": "sampling_sweep",
+  "caption": "測れなかった点は描かない。FFT は Nyquist(2 px/山)まで当たり、その先は折り返す。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "09_scene.png",
   "name": "scene",
   "caption": "",
   "shape": [

@@ -39,7 +39,7 @@
   "caption": "refit with each sun frame removed: yaw barely moves, roll and the focal length are the weak directions of a 1-hour low-elevation arc — this is why the PoC reports them with their spread instead of a single number",
   "shape": [
    360,
-   560,
+   707,
    3
   ]
  },
