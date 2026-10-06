@@ -273,8 +273,9 @@ def main() -> int:
     walks = [pr for name, pr, _ in pr_ai if "walk" in name or "run" in name or "gait" in name]
     if walks:
         print("  locomotion PR median %.2f  vs  MN command PR %.1f" % (np.median(walks), prk[3]))
-        rows.append(("locomotion (G1 walk / run) PR median", "%.2f" % np.median(walks), "MN %.1f" % prk[3]))
-    for name, pr, _ in pr_ai[:12]:
+        src_walk = "G1 walk / run" if any(nm.startswith("G1 ") for nm, _p, _s in pr_ai) else "synthetic gait"
+        rows.append(("locomotion (%s) PR median" % src_walk, "%.2f" % np.median(walks), "MN %.1f" % prk[3]))
+    for name, pr, _ in pr_ai[:14]:                       # 図 physical_ai と同じ 14 本(図の横軸の番号 = この表の順)
         rows.append(("PR " + name, "%.2f" % pr, "-"))
 
     if figs.enabled():
@@ -322,11 +323,25 @@ def main() -> int:
                        caption="the %d stimuli projected on the first two principal components of the MN states: real wiring folds them onto a few directions, the shuffled control spreads them" % N)
         names = [nm for nm, _pr, _s in pr_ai][:14]
         vals = np.array([pr for _nm, pr, _s in pr_ai][:14])
+        # ★2026-10-06: G1 / evis のデータが無い環境(CI・初見の人)では系列が合成歩容 1 本だけになり、
+        #   折れ線は点 1 個で描けず図が消えて PoC 自身の assert で exit 1 だった(手元は G1 があって緑)。
+        #   系列が 2 本未満なら点で描き、図注は実際に使ったデータを言う。門 = tests/test_poc_connectome_motor_figures.py
+        kind = "line" if len(vals) >= 2 else "scatter"
+        srcs = []
+        if any(nm.startswith("G1 ") for nm in names):
+            srcs.append("joint-angle trajectories (G1 humanoid, RL policies and mocap retargets)")
+        if any(nm.startswith("evis ") for nm in names):
+            srcs.append("muscle activations (evis)")
+        if not srcs:
+            srcs.append("a synthetic gait (29 joints, 2 phases; no G1 / evis data on this machine)")
         figs.save_plot("physical_ai", [("Physical AI sequences", np.arange(len(vals), dtype=float), vals),
                                        ("fly MN command PR", np.arange(len(vals), dtype=float), np.full(len(vals), prk[3]))],
                        xlabel="sequence index (names in the numbers table)", size=(720, 400),
                        ylabel="participation ratio", title="the same formula on Physical AI",
-                       caption="participation ratio of joint-angle trajectories (G1 humanoid, RL policies and mocap retargets) and of muscle activations (evis), next to the fly's MN command dimension under random brain input")
+                       kinds=[kind, kind if kind == "scatter" else "line"],
+                       styles=[None, "dashed"] if kind == "line" else None,
+                       caption="participation ratio of %s, next to the fly's MN command dimension (%.1f) under random brain input"
+                       % (" and of ".join(srcs), prk[3]))
         figs.save_table("numbers", ["quantity", "value", "bar"], rows, title="motor bottleneck PoC numbers",
                         caption="every number, with the bar it had to clear")
         assert not figs.errors(), figs.errors()

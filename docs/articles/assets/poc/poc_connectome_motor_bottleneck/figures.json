@@ -46,7 +46,7 @@
  {
   "file": "05_physical_ai.png",
   "name": "physical_ai",
-  "caption": "participation ratio of joint-angle trajectories (G1 humanoid, RL policies and mocap retargets) and of muscle activations (evis), next to the fly's MN command dimension under random brain input",
+  "caption": "participation ratio of joint-angle trajectories (G1 humanoid, RL policies and mocap retargets), next to the fly's MN command dimension (2.4) under random brain input",
   "shape": [
    400,
    720,
@@ -58,7 +58,7 @@
   "name": "numbers",
   "caption": "every number, with the bar it had to clear",
   "shape": [
-   560,
+   608,
    727,
    3
   ],
