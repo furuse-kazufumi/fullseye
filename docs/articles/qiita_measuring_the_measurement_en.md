@@ -116,7 +116,7 @@ Recomputing with pooling:
 | part PV | 1.042327 | 1.042327 | 4.9e-07 |
 | % contribution | 3.4 / 4.4 / 7.8 / 92.2 % | same | **exact match** |
 
-![Model choice moves the answer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/03_pooling.png)
+![Model choice moves the answer](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/07_pooling.png)
 
 *↑ Same 90 points. Keeping the interaction or pooling it moves EV by 7.3 %, and nothing else changes.*
 
@@ -139,7 +139,7 @@ In the end-standard calibration example the coverage factor came out as **2.1132
 
 The standard requires that when the effective degrees of freedom is not an integer, you **truncate to the next lower integer immediately before** entering the t-table. Reading `ν_eff = 16.64` directly gives 2.1132; truncating to 16 first gives **2.1199**.
 
-![The coverage-factor staircase](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/07_coverage_staircase.png)
+![The coverage-factor staircase](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/11_coverage_staircase.png)
 
 *↑ Effective degrees of freedom need not be an integer, so the standard says to **truncate down first**, then read the table (it errs on the safe side). Against the smooth `t₀.₉₇₅(ν)`, the required procedure is a **staircase**. As ν → ∞ both converge on the normal 1.959964.*
 
@@ -174,7 +174,7 @@ In the example that derives resistance and reactance simultaneously from voltage
 | reactance `u_c(X)` | 0.2961 | 0.2009 | underestimate |
 | impedance `u_c(Z)` | 0.2367 | 0.2041 | underestimate |
 
-![Which way the error goes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/08_correlation_sweep.png)
+![Which way the error goes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/12_correlation_sweep.png)
 
 *↑ Three quantities derived from one set of observations. Drop the correlation and the direction of the error flips depending on which quantity you look at.*
 
@@ -210,17 +210,17 @@ The inputs are uncertain; the output has no uncertainty at all.
 
 **This is not an implementation error.** It is the method's own limit: a first-order approximation loses all of its information at a stationary point. In the same situation Monte Carlo returns `δy = 50×10⁻⁶ / u = 50×10⁻⁶ / [0, 150×10⁻⁶]` — matching the published value.
 
-![Where the law of propagation breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/11_breakdown.png)
+![Where the law of propagation breaks](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/15_breakdown.png)
 
 *↑ Move the evaluation point and near the extremum the propagated interval contains **negative loss**, which is physically impossible. Move away and the two approaches converge.*
 
-![The true distribution at the stationary point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/10_stationary_density.png)
+![The true distribution at the stationary point](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/14_stationary_density.png)
 
 *↑ At `x₁ = x₂ = 0`, `X₁²+X₂²` is **`u²χ²₂` — an exponential distribution with mean `2u²`**: strongly asymmetric with its shoulder at the origin, and its 95 % point is the closed form **`2u²ln20 = 149.79×10⁻⁶`** (the published value is 150). The law of propagation, with `c = 2x₁` equal to zero, can only return the single point at the origin.*
 
 **And the breakdown is not continuous.**
 
-![From breakdown to catching up](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/12_breakdown_movie.gif)
+![From breakdown to catching up](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)
 
 *↑ The evaluation point `x₁` moving from 0 to 0.026 (random seed fixed). At the left edge the true distribution is exponential and the propagated interval **collapses to a point**. Move a little and the interval instead **extends into negative loss**. Move further and the true distribution approaches normal, and the two finally overlap — **three distinct stages**.*
 
@@ -274,7 +274,7 @@ With that, the two failures separate:
 
 The rectangular case comes out structurally wider because the **excess kurtosis of Irwin–Hall(4) is `−6/(5n) = −0.3`**: lighter tails than the normal.
 
-![Exact solution for the rectangular sum](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/13_rectangular.png)
+![Exact solution for the rectangular sum](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/17_rectangular.png)
 
 ### And then the fifth
 
@@ -299,7 +299,7 @@ I also added agreement measures for attribute (pass/fail) inspection. There is a
 
 On a process with a 95 % pass rate, **two inspectors stamping completely at random** still agree more than 90 % of the time.
 
-![Agreement and kappa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/06_kappa.png)
+![Agreement and kappa](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/10_kappa.png)
 
 *↑ The judgements are **completely independent** (random). The higher the pass rate, the higher the raw agreement — while kappa stays pinned near zero.*
 
@@ -321,7 +321,7 @@ g["clamped"]   # [False, True, False, False, False] ← reproducibility was clam
 
 Nor does it hide the jitter in the estimators. Repeatability with a true value of 0.4 came out over 40 seeds as mean 0.39710, sd 0.00788 (theory `σ/√(2df)` is 0.00913 at 960 degrees of freedom). Reproducibility, by contrast, is estimated from 4 operators — 3 degrees of freedom — so against a true value of 0.5 its sd is **0.159**: a quantity where **getting the order of magnitude right is a good day**.
 
-![Spread of the estimators](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/04_spread.png)
+![Spread of the estimators](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/08_spread.png)
 
 ---
 

@@ -2,7 +2,7 @@
 sonar,-,-,-,0 (—),音響測深そのもの
 swath,-,-,-,0 (—),swath(扇状の帯)の処理
 bathym,-,-,-,0 (—),測深・海底地形
-sound_speed,-,-,-,15 (read_audio),音速プロファイル
+sound_speed,-,-,-,16 (read_audio),音速プロファイル
 raytrace_layers,-,-,-,9 (gcode_layer_image),層に切ったレイトレース
 tvu,-,-,-,0 (—),測量の不確かさ規格(IHO S-44)
 footprint,-,-,-,2 (sk_local_maxima),ビームの海底フットプリント

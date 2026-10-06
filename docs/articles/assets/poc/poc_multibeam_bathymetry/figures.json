@@ -17,7 +17,7 @@
   "caption": "長さは 125 / 2271 / 21396 µs(170 倍の開き)。直下はほぼ左右対称、外側は頂点がビーム軸より**手前**へずれる —— 振幅検出はその頂点を取るので、深さが浅く出る。",
   "shape": [
    360,
-   560,
+   775,
    3
   ]
  },
@@ -73,7 +73,7 @@
   "caption": "どの曲線も 2·b·c₀/|Δc| の漸近値へ落ちる。浅い所ほど広い swath が使える。",
   "shape": [
    360,
-   560,
+   697,
    3
   ]
  },
@@ -127,7 +127,7 @@
   "caption": "直下は較正済みで一致。端 65 度で +2.70 m 持ち上がる —— 平らな海底が口角を上げた形に記録される。",
   "shape": [
    360,
-   560,
+   677,
    3
   ]
  },
@@ -205,7 +205,7 @@
   "caption": "音速一定は左 43.9 / 右 41.0 度で Order 1a(−2.41 m)を割る。左右平均(偶部)の崖 42.4 度は、一定勾配の閉形式 43.4 度と -1.0 度、キャストの形のまま追跡した予測 42.4 度と +0.05 度。光線追跡は ±61 度の中で割らない。NOT FOR NAVIGATION。出典: National Oceanic and Atmospheric Administration (NOAA) (2014): Multibeam collection for NF-14-06: Multibeam data collected aboard NOAA Ship NANCY FOSTER (R352) from 03-Sep-14 to 11-Sep-14, Fort Pierce, Florida to Cape Canaveral, FL. NOAA National Centers for Environmental Information. https://www.ngdc.noaa.gov/ships/nancy_foster/NF-14-06_mb.html, accessed 2026-10-02. 改変: 生の HSX を姿勢補正・光線追跡し、BAG との差を 1 度ごとの中央値にして直下の偏りを引いた。",
   "shape": [
    520,
-   900,
+   1126,
    3
   ]
  },

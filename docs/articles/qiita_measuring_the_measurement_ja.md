@@ -116,7 +116,7 @@ assert abs(ev ** 2 - by_cell.mean()) < 1e-12 * by_cell.mean()   # 通る
 | 部品 PV | 1.042327 | 1.042327 | 4.9e-07 |
 | 寄与率 | 3.4 / 4.4 / 7.8 / 92.2 % | 同左 | **完全一致** |
 
-![モデルの選択が答えを動かす](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/03_pooling.png)
+![モデルの選択が答えを動かす](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/07_pooling.png)
 
 *↑ 同じ 90 点のデータで、交互作用を残すか畳むかだけで EV が 7.3 % 動く。*
 
@@ -139,7 +139,7 @@ g["pool_alpha"]           # 0.25
 
 規格は「有効自由度が整数でなければ、**t 表を引く直前に**次に小さい整数へ切り捨てる」と要求しています。`ν_eff = 16.64` をそのまま引くと 2.1132、16 に切り捨ててから引くと **2.1199**。
 
-![包含係数の階段](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/07_coverage_staircase.png)
+![包含係数の階段](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/11_coverage_staircase.png)
 
 *↑ 有効自由度は整数とは限らないので、規格は**次に小さい整数へ切り捨ててから** t 表を引けと定めます(安全側へ倒すため)。滑らかな `t₀.₉₇₅(ν)` に対して、規格の手順は**階段**になります。ν → ∞ ではどちらも正規の 1.959964 に収束します。*
 
@@ -174,7 +174,7 @@ g["pool_alpha"]           # 0.25
 | リアクタンス `u_c(X)` | 0.2961 | 0.2009 | 過小 |
 | インピーダンス `u_c(Z)` | 0.2367 | 0.2041 | 過小 |
 
-![相関を無視した誤りの向き](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/08_correlation_sweep.png)
+![相関を無視した誤りの向き](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/12_correlation_sweep.png)
 
 *↑ 同じ 1 組の観測から 3 つの量を出している。相関を落とすと、量によって向きが逆に出る。*
 
@@ -210,17 +210,17 @@ u_c = 0,  95 % 区間 = [0, 0]
 
 **これは実装の誤りではありません。** 1 次近似が極値で情報を全部失う、という手法そのものの限界です。同じ状況でモンテカルロは `δy = 50×10⁻⁶ / u = 50×10⁻⁶ / [0, 150×10⁻⁶]` を返します(公表値と一致)。
 
-![伝播則が破綻する場所](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/11_breakdown.png)
+![伝播則が破綻する場所](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/15_breakdown.png)
 
 *↑ 評価点を動かすと、伝播則の区間は極値付近で**負の損失**を含む(物理的にありえない)。離れれば両者は近づく。*
 
-![停留点の本当の分布](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/10_stationary_density.png)
+![停留点の本当の分布](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/14_stationary_density.png)
 
 *↑ `x₁ = x₂ = 0` では `X₁²+X₂²` は **`u²χ²₂` = 平均 `2u²` の指数分布**になります —— 原点に肩を持つ強く非対称な分布で、95 % 点は **`2u²ln20 = 149.79×10⁻⁶`** という閉形式(公表値 150 と一致)。伝播則は感度 `c = 2x₁` が 0 になるので、原点の一点しか返せません。*
 
 **そして、壊れ方は連続ではありません。**
 
-![伝播則が壊れて追いつくまで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/12_breakdown_movie.gif)
+![伝播則が壊れて追いつくまで](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/16_breakdown_movie.gif)
 
 *↑ 評価点 `x₁` を 0 から 0.026 へ動かしたもの(乱数の種は固定)。左端では真の分布が指数で、伝播則の区間は**1 点に潰れる**。少し動かすと今度は区間が**負の損失**へ張り出す。さらに離れると真の分布が正規に近づき、両者はようやく重なる —— **3 つの段階**があります。*
 
@@ -274,7 +274,7 @@ y₂.₅% = √3 (2 · 0.6^(1/4) − 4) = −3.879407
 
 矩形のほうが構造的に広く出るのは、Irwin–Hall(4) の**超過尖度が `−6/(5n) = −0.3`** で正規より裾が薄いからです。
 
-![矩形和の厳密解](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/13_rectangular.png)
+![矩形和の厳密解](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/17_rectangular.png)
 
 ### そして 5 件目
 
@@ -299,7 +299,7 @@ docstring を「対称(または近対称)の出力に限る」に直し、機�
 
 合格率 95 % の工程では、**2 人の検査員がでたらめに判を押しても**素の一致率は 9 割を超えます。
 
-![一致率とカッパ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/06_kappa.png)
+![一致率とカッパ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/10_kappa.png)
 
 *↑ 判定は**完全に独立**(でたらめ)。合格率が上がるほど素の一致率は上がるが、カッパは 0 付近に張り付いたまま。*
 
@@ -321,7 +321,7 @@ g["clamped"]   # [False, True, False, False, False] ← 再現性が丸められ
 
 推定量の揺れも隠しません。真値 0.4 の繰り返し性は種 40 本で平均 0.39710・標準偏差 0.00788(理論 `σ/√(2df)` は自由度 960 で 0.00913)。一方、再現性は測定者 4 人 = 自由度 3 からの推定なので、真値 0.5 に対し標準偏差 **0.159** —— **桁が合えば上等**という量です。
 
-![推定量の揺れ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/04_spread.png)
+![推定量の揺れ](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_measurement_system_analysis/08_spread.png)
 
 ---
 

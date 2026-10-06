@@ -42,7 +42,27 @@
   ]
  },
  {
-  "file": "05_failure_intercept.png",
+  "file": "05_cliff_break_sweep.png",
+  "name": "cliff_break_sweep",
+  "caption": "面積法は 1 本の途切れで 2 粒が融合するので、切片法の 6 分の 1 の途切れで 1 段落ちる。",
+  "shape": [
+   360,
+   803,
+   3
+  ]
+ },
+ {
+  "file": "06_cliff_prediction.png",
+  "name": "cliff_prediction",
+  "caption": "切片法は f_eff で引き直せば並走する。面積法の木近似は早すぎる(短い隙間は二値化後もつながらない)。",
+  "shape": [
+   360,
+   832,
+   3
+  ]
+ },
+ {
+  "file": "07_failure_intercept.png",
   "name": "failure_intercept",
   "caption": "",
   "shape": [
@@ -52,17 +72,17 @@
   ]
  },
  {
-  "file": "06_failure_area.png",
+  "file": "08_failure_area.png",
   "name": "failure_area",
   "caption": "融合した塊の数は f = 5 % を頂点に減る(塊どうしがさらに融合して 1 つになる)が、飲まれた粒の数は増え続ける。",
   "shape": [
    360,
-   560,
+   724,
    3
   ]
  },
  {
-  "file": "07_duplex_map.png",
+  "file": "09_duplex_map.png",
   "name": "duplex_map",
   "caption": "",
   "shape": [
@@ -72,7 +92,7 @@
   ]
  },
  {
-  "file": "08_intercept_cdf.png",
+  "file": "10_intercept_cdf.png",
   "name": "intercept_cdf",
   "caption": "",
   "shape": [
@@ -82,7 +102,7 @@
   ]
  },
  {
-  "file": "09_duplex_table.png",
+  "file": "11_duplex_table.png",
   "name": "duplex_table",
   "caption": "",
   "shape": [
@@ -90,7 +110,7 @@
    298,
    3
   ],
-  "csv": "09_duplex_table.csv",
-  "tsv": "09_duplex_table.tsv"
+  "csv": "11_duplex_table.csv",
+  "tsv": "11_duplex_table.tsv"
  }
 ]
