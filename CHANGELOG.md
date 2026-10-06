@@ -40,6 +40,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   影響: 同じ入力に対する返りのずれ(旧で外れていた場面)、`correlation` と `peak` の値(白色化の度合いが変わる)。呼び出し元は `fullseye.golden`(良品画像の位置合わせ、test_golden は緑)。
   返りの dict に `window`・`whitening` が増えた。形の違う入力・綴り違いは ValueError(旧は形が違うと numpy の例外)。
 
+- ★**`match3d.match_phase_3d` の既定を Tukey 窓(α 0.5)+ |R|^0.25 の白色化に**(引数 `window`(`"tukey"` / `"hann"` / `None`)・`whitening`(0〜1)を追加)。
+  挙動の変更(既定の数値が変わる → CONTRIBUTING の Versioning では minor)。`phase_correlation_fft` と同じ罠: 0.4.0 の「窓なし + 全白色化(eps 1e-9)」は、帯域の限られた volume の
+  周期的でない切り出しで正しいずれを返さなかった(低域通過した 32³ の切り出しでずれ 10 通りが 0 / 10、64³ でも 0 / 10)。np.roll の周期的なずれでは厳密なので、既存の門(test_match3d)は見なかった。
+  3 次元の値は測って選んだ(2 次元の Hann + 0.5 をそのまま使わなかった理由): 32³・ずれ ±6(辺の 2 割)では窓が 3 軸で重なりを削り、低域の切り出しの当たりは
+  Hann + 0.5 が 11 / 30、Hann + 0.25 が 19 / 30、Tukey + 0.25 が 28 / 30、周期的なずれは 9 / 30・18 / 30・27 / 30(旧 30 / 30)。64³ と (1, 256, 256) は 3 つとも全部当たる。
+  窓は平均を引いてから掛け、長さ 8 未満の軸には掛けない((1, H, W) で 2-D の像を通す使い方はそのまま)。旧の挙動は `window=None, whitening=1.0`(0.4.0 と同じ式)。
+  影響: 同じ入力に対する返りのずれ(旧で外れていた場面)。小さい volume の大きな周期的なずれでは既定が外すことがある(上の 27 / 30)—— 周期的と分かっているなら旧の引数で。
+  呼び出し元: `poc_change_detection_misreg`(位相相関の経路、(1, H, W))は新旧で出力・図が全部同じ(真のずれ (+1.30, −0.80) の整数の答え (+1, −1) は変わらない)、
+  `examples_3d/shape_desc_pose`・`representation_conversion`・test_match3d(周期的なずれ)も同じ答え。門: tests/test_match3d_phase.py(5 本、torch 不要)。既定を旧に戻すと 3 本が赤(Hann + 0.5 にすると 1 本が赤)。
+
 ### 追加
 
 - ★**惑星ローバーの車輪の滑りを不確かさ付きで予測し、滑りのリスクを避ける経路を引く**(新モジュール `roverslip` 15 op、facade なし、台帳 `roverslip`(opsdrive)、PoC `poc_rover_slip_risk_path`、wing_astroenv):
