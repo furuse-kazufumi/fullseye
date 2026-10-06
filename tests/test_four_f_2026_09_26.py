@@ -380,11 +380,15 @@ def test_the_exhibit_runs_including_the_figure_and_the_animation(tmp_path):
     import sys
     from pathlib import Path
     root = Path(__file__).resolve().parents[1]
+    # ★2026-10-07: 以前は finally で ``sys.path.pop(0)`` していたが、読み込んだ PoC 自身が repo 直下を
+    #   先頭に足すので、pop で消えるのは**repo 直下の方**で、examples/ がワーカーの終わりまで先頭に残った
+    #   (event_camera の取り違えと同じ型の漏れ)。丸ごと保存して戻す。
+    saved = sys.path[:]
     sys.path.insert(0, str(root / "examples"))
     try:
         mod = importlib.import_module("optics_four_f_processor")
     finally:
-        sys.path.pop(0)
+        sys.path[:] = saved
     mod.report()                                   # text 経路
     png = tmp_path / "four_f.png"
     gif = tmp_path / "morph.gif"

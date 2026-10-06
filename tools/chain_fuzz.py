@@ -7259,7 +7259,10 @@ def _step_rng(chain_seed, name, occurrence, fallback):
 
 
 #: 連鎖の実行中だけ cwd を移す先。``tempfile.gettempdir()`` の下に 1 つ作る。
-_SCRATCH = "fullseye_chain_fuzz_scratch"
+#: ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の
+#:   テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている
+#:   ファイルの unlink が PermissionError)。
+_SCRATCH = "fullseye_chain_fuzz_scratch_%d" % os.getpid()
 
 
 @contextlib.contextmanager

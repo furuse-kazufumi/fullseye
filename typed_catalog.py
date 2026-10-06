@@ -229,17 +229,19 @@ OP_PARAM_HINTS = {
     ("dem_enu_from_geodetic", "lon0_deg"): lambda rng: 139.600,
     ("dem_geodetic_from_enu", "lat0_deg"): lambda rng: 35.600,
     ("dem_geodetic_from_enu", "lon0_deg"): lambda rng: 139.600,
+    # ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを
+    #   同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。
     # printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で
     # 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
     ("gcode_read", "path"): lambda rng: __import__("printpath").gcode_write(
         __import__("printpath").contours_to_gcode({"ring": __import__("numpy").zeros(4, int),
                                                    "x": __import__("numpy").array([0.0, 4.0, 4.0, 0.0]),
                                                    "y": __import__("numpy").array([0.0, 0.0, 3.0, 3.0])}, 0.2),
-        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath.gcode")),
-    ("gcode_write", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath_w.gcode"),
-    ("write_3mf", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath.3mf"),
+        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_%d_" % __import__("os").getpid() + "printpath.gcode")),
+    ("gcode_write", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_%d_" % __import__("os").getpid() + "printpath_w.gcode"),
+    ("write_3mf", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_%d_" % __import__("os").getpid() + "printpath.3mf"),
     ("read_3mf", "path"): lambda rng: __import__("printpath").write_3mf(
-        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_printpath_r.3mf"),
+        __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_%d_" % __import__("os").getpid() + "printpath_r.3mf"),
         (__import__("numpy").array([[0.0, 0, 0], [1, 0, 0], [0, 1, 0], [0, 0, 1]]), __import__("numpy").array([[0, 2, 1], [0, 1, 3], [1, 2, 3], [0, 3, 2]]))),
     ("mesh_slice_contours", "z"): lambda rng: 0.5,
     ("contours_to_gcode", "z"): lambda rng: 0.2,
@@ -273,7 +275,7 @@ OP_PARAM_HINTS = {
     ("volseq_pathline_render", "n_seeds"): lambda rng: 10,
     # videocube(2026-09-21)。GIF の書き出し先は必須引数なので、fuzz では一時ディレクトリの 1 ファイルに書く
     # (無いと束縛に失敗して op が永久にスキップされる)。
-    ("video_write_gif", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_video_cube.gif"),
+    ("video_write_gif", "path"): lambda rng: __import__("os").path.join(__import__("tempfile").gettempdir(), "fullseye_fuzz_%d_" % __import__("os").getpid() + "video_cube.gif"),
     # conngraph(2026-09-20)。`graph_rich_club` の `k` に既定は無い(次数の閾値は
     # グラフの大きさで意味が変わる)。束縛しないとファザーからは永久に未実行。
     # 種(12 ノード 2 クリーク)の総次数は 10 前後なので、部分グラフが残る 2 にする。
