@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">residue_integer_crt — RESIDUE <code style="color:#22d3bf">theorem</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import residue; residue.residue_integer_crt(residues, moduli) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsresidue.get(&quot;residue_integer_crt&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>Exakter ganzzahliger chinesischer Restsatz (Garners Mixed-Radix-Algorithmus) -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
+<p>`<code style="color:#22d3bf">residues</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">moduli</code>` are equal-length integer sequences; the moduli must</p>
+<p>be pairwise coprime and &gt;= 2. Returns ``{&quot;value&quot;: int, &quot;modulus&quot;: int,</p>
+<p>&quot;mixed_radix&quot;: [digits]}`<code style="color:#22d3bf"> where </code><code style="color:#22d3bf">value</code>` is the unique solution in</p>
+<p>`<code style="color:#22d3bf">[0, prod(moduli))</code><code style="color:#22d3bf">. Arithmetic is Python&#x27;s arbitrary-precision </code><code style="color:#22d3bf">int</code>` —</p>
+<p>there is no rounding anywhere, which is why this op is the oracle for</p>
+<p>:func:<code style="color:#22d3bf">residue_crt</code>.</p>
+<p>The mixed-radix digits `<code style="color:#22d3bf">d_k</code><code style="color:#22d3bf"> satisfy </code><code style="color:#22d3bf">value = d_0 + d_1 m_0 + d_2 m_0 m_1 + ...</code>`:</p>
+<p>the *positional* (coarse-to-fine) reading of the same residues, i.e. the</p>
+<p>bridge between the residue view and the place-value view.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">theorem</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: residue.py — RESIDUE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

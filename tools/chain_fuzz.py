@@ -1315,6 +1315,37 @@ def _b_vx_nonlinear(pool, rng):
     return (_b_vx_u8(pool, rng)[0][0], np.array([[0, 1, 0], [1, 1, 1], [0, 1, 0]], bool)), {"function": "median", "border": "replicate"}
 
 
+# --- 中国剰余定理。整数の剰余と法 / 帯域が先頭の剰余行列と周期 / 純音の絵 2 枚 / 部品の絵 2 枚。 --- #
+def _b_residue_int(pool, rng):
+    v = int(rng.integers(0, 693))
+    return ([v % 7, v % 9, v % 11], [7, 9, 11]), {}
+
+
+def _b_residue_real(pool, rng):
+    p = np.array([7.0, 9.0, 11.0, 13.0])
+    v = rng.uniform(-30.0, 30.0, 16)
+    return ((v[None] % p[:, None]), p), {"lo": -40.0, "hi": 40.0}
+
+
+def _b_residue_tones(pool, rng):
+    xx = np.arange(96)[None, :] * np.ones((64, 1))
+    per = 96.0 / np.array([13, 11, 9, 7])
+    a = sum(np.cos(2 * np.pi * xx / p + i) for i, p in enumerate(per))
+    F = np.fft.fft2(a)
+    b = np.real(np.fft.ifft2(F * np.exp(-2j * np.pi * np.fft.fftfreq(96)[None, :] * 9.5)))
+    return (a, b), {"periods": tuple(per), "sigma_px": 12.0, "max_disp": 20.0}
+
+
+def _b_residue_part(pool, rng):
+    yy, xx = np.mgrid[0:81, 0:81] - 40.0
+    r, a = np.hypot(xx, yy), np.arctan2(-yy, xx)
+
+    def part(t):
+        return (((r > 8) & (r < 14) & (np.cos(3 * (a - t)) > 0.3)).astype(float)
+                + ((r > 18) & (r < 24) & (np.cos(4 * (a - t)) > 0)).astype(float))
+    return (part(0.7), part(0.0)), {"orders": (3, 4), "rings": ((8, 14), (18, 24))}
+
+
 def _b_graph_adj(pool, rng):
     B = (rng.random((40, 40)) < 0.12).astype(int)
     np.fill_diagonal(B, 0)
@@ -6399,6 +6430,11 @@ OP_ARG_BUILDERS = {
     "vx_nonlinear_filter": _b_vx_nonlinear,
     "text_candidates": _b_text_swt,
     "text_lines": _b_text_boxes,
+    "residue_integer_crt": _b_residue_int,
+    "residue_crt": _b_residue_real,
+    "residue_fault_locate": _b_residue_real,
+    "crt_displacement": _b_residue_tones,
+    "harmonic_rotation": _b_residue_part,
     # --- 描画: 32x32 では物理的に収まらない 13 op ---------------------------- #
     "text_box": _b_draw(["image2d", "text"]),
     "leader_line": _b_leader_line,

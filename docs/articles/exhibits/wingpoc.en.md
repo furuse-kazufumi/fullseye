@@ -996,7 +996,7 @@ Ops used (notes): [`blob_features`](https://furuse.work/ops/blob/measure/blob_fe
 
 To state that a part is 50.50 pixels wide, you need bias (the part that always shifts the same way) and scatter (the part that changes from shot to shot) as two separate numbers. Pass/fail is decided by bias; repeatability by scatter. Merge them into one 'error' and you no longer know which countermeasure to take.
 
-The 35 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
+The 36 exhibits here hold their ground truth in closed form or analytic rendering — a signed-distance-function part, an involute gear, a roughness surface synthesised from a prescribed PSD, a white-light interferometry stack, analytic speckle, Frocht's stress field, a perfectly symmetric synthetic skull — and then score caliper, correlation and phase readings against it.
 
 The recurring finding is that a number without its definition cannot be compared: crack widths that differ by 0.20 mm between two distance-transform conventions, a D50 that differs by 1.66x between number- and area-weighting, an Sz that never plateaus as the evaluation area grows, an orientation index that moves 5 % depending on whether the truth is counted by fibre or by length. These are not instrument errors; they are questions of what you are comparing against.
 
@@ -2239,6 +2239,38 @@ Source: [examples/poc_attention_identities.py](https://github.com/furuse-kazufum
 This run produced **10 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_attention_identities)
 
 Ops used (notes): [`attention_apply`](https://furuse.work/ops/llmcore/score/attention_apply.html) · [`attention_grouped`](https://furuse.work/ops/llmcore/attend/attention_grouped.html) · [`attention_linear`](https://furuse.work/ops/llmcore/attend/attention_linear.html) · [`attention_scores`](https://furuse.work/ops/llmcore/score/attention_scores.html) · [`attention_softmax`](https://furuse.work/ops/llmcore/attend/attention_softmax.html) · [`attention_tiled`](https://furuse.work/ops/llmcore/attend/attention_tiled.html) · [`attention_weights`](https://furuse.work/ops/llmcore/score/attention_weights.html) · [`kv_cache_decode`](https://furuse.work/ops/llmcore/decode/kv_cache_decode.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`rms_norm`](https://furuse.work/ops/llmcore/prepare/rms_norm.html) · [`rope_rotate`](https://furuse.work/ops/llmcore/prepare/rope_rotate.html)
+
+## No.2026.218 —— Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods — the Chinese Remainder Theorem in Images
+
+[![Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods — the Chinese Remainder Theorem in Images](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth.png)
+
+*↑ **Angles and Shifts No Single Phase Can Pin Down, Fixed by Bundling Phases of Different Periods — the Chinese Remainder Theorem in Images** ―― A phase reports a quantity only modulo its period: a part with four holes cannot tell its orientation apart every 90 degrees, and the phase of a 9 px band cannot tell displacements apart every 9 px. When the periods share no common divisor, the residues fix the value uniquely over their least common multiple (the Chinese remainder theorem) — the same arithmetic Ozaki scheme II uses to rebuild an exact FP64 product from INT8 products. The new family `residue` (5 ops) is graded in three steps. The theorem: integer CRT (Garner's mixed radix) matches brute force over all of 0..692, and the real-valued version reproduces it bit for bit on integer input; with one redundant band it names the corrupted band (88.5 % of 3,000 cases) and otherwise answers 'undecidable' — never blaming the wrong band. Orientation: a part carrying 3-, 4- and 5-fold rings, each of which folds back every 120 / 90 / 72 degrees on its own (the sawtooth in the figure), is fixed over the full 360 degrees with a maximum error of 0.05 degrees, 0.84 degrees with 40 % of one ring smudged, and the ring with the worst residual pointed at the smudged one 27 of 30 times. Displacement: two regions of the public scikit-image textures moving separately by 20–30 px leave 1.8–2.9 % of the grass pixels far from the boundary off by more than 1 px, against about 50 % for the best pyramid Lucas-Kanade (3–6 levels), 100 % for an ideal single-band phase method, and a single value from global phase correlation. Where it breaks is in the same table: within 1.5 sigma of the boundary (36–85 %), photographs with large flat areas (camera, 23–36 %), and fields that change inside the window (50 % at 6 px amplitude) — a band narrow enough to keep the local frequency stable needs a window too wide to follow the field.*
+
+[![measurement](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/01_residue_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/01_residue_part.png)
+
+*↑ The measurement (figure labels are in Japanese; the numbers are the same)*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/04_residue_two_regions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/04_residue_two_regions.png)
+
+*↑ この回の図*
+
+[![遠 = 境界から 60 px 以上。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/05_residue_displacement_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/05_residue_displacement_table.png)
+
+*↑ 遠 = 境界から 60 px 以上。*
+
+[![針 = CRT で決めた向き(1 フレームごとに独立に推定)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif)
+
+*↑ The animation ―― 針 = CRT で決めた向き(1 フレームごとに独立に推定)*
+
+```
+py -3.11 examples/poc_residue_crt.py
+```
+
+Source: [examples/poc_residue_crt.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_residue_crt.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_residue_crt)
+
+Ops used (notes): [`crt_displacement`](https://furuse.work/ops/residue/image/crt_displacement.html) · [`harmonic_rotation`](https://furuse.work/ops/residue/image/harmonic_rotation.html) · [`residue_crt`](https://furuse.work/ops/residue/robust/residue_crt.html) · [`residue_fault_locate`](https://furuse.work/ops/residue/robust/residue_fault_locate.html) · [`residue_integer_crt`](https://furuse.work/ops/residue/theorem/residue_integer_crt.html)
 
 ### The Medical and Biological Wing — The Count Is Right and the Contents Are Wrong
 

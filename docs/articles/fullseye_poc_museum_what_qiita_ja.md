@@ -4,7 +4,7 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **114 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **115 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
@@ -1004,7 +1004,7 @@ py -3.11 examples/poc_am_thermal_to_ct.py
 
 「この部品の幅は 50.50 画素だ」と言い切るには、偏り(いつも同じ向きにずれる分)と散らばり(撮るたびに変わる分)を別々に出す必要があります。合否は偏りで決まり、繰り返し精度は散らばりで決まる。1 つの「誤差」にまとめた瞬間、どちらの対策を打つべきかが分からなくなります。
 
-この部屋の 35 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
+この部屋の 36 点は、符号つき距離関数の部品、インボリュート歯形、指定 PSD の粗さ面、白色干渉のスタック、解析スペックル、Frocht の応力場、対称な合成頭蓋と、いずれも閉形式か解析描画で真値を握った上で、キャリパーや相関や位相の読みを採点しています。
 
 共通して出てきたのは「定義を書かない数字は比較できない」ということです。距離変換の 2 通りの規約で 0.20 mm 違うひび割れ幅、個数基準と面積基準で 1.66 倍違う D50、評価領域を広げると頭打ちにならない Sz、本数基準か長さ基準かで 5 % 動く配向度。測定器の誤差ではなく、比べる相手の問題として現れます。
 
@@ -2247,6 +2247,38 @@ py -3.11 examples/poc_attention_identities.py
 この回が作った図は全部で **10 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_attention_identities)
 
 使用 op(ノートへ): [`attention_apply`](https://furuse.work/ops/llmcore/score/attention_apply.html) · [`attention_grouped`](https://furuse.work/ops/llmcore/attend/attention_grouped.html) · [`attention_linear`](https://furuse.work/ops/llmcore/attend/attention_linear.html) · [`attention_scores`](https://furuse.work/ops/llmcore/score/attention_scores.html) · [`attention_softmax`](https://furuse.work/ops/llmcore/attend/attention_softmax.html) · [`attention_tiled`](https://furuse.work/ops/llmcore/attend/attention_tiled.html) · [`attention_weights`](https://furuse.work/ops/llmcore/score/attention_weights.html) · [`kv_cache_decode`](https://furuse.work/ops/llmcore/decode/kv_cache_decode.html) · [`project`](https://furuse.work/ops/3d/bundle_adjust/project.html) · [`rms_norm`](https://furuse.work/ops/llmcore/prepare/rms_norm.html) · [`rope_rotate`](https://furuse.work/ops/llmcore/prepare/rope_rotate.html)
+
+## No.2026.218 —— 1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める ―― 中国剰余定理を画像に
+
+[![1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める ―― 中国剰余定理を画像に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/02_residue_rotation_sawtooth.png)
+
+*↑ **1 つずつでは決まらない角度と変位を、周期の違う位相を束ねて決める ―― 中国剰余定理を画像に** ―― 位相は量を**周期を法として**しか教えない。4 つ穴の部品の向きは 90° ごとに区別できず、波長 9 px の縞の位相は 9 px ごとにしか変位を区別できない。周期どうしに公約数が無ければ、剰余の組は最小公倍数の範囲で値を 1 つに決める(中国剰余定理)—— INT8 の行列積の剰余から FP64 の積を正確に組み直す Ozaki scheme II と同じ算術である。新しい族 `residue`(5 op)を 3 段で採点した。定理: 整数 CRT(Garner の混合基数)が 0..692 の全数で総当たりと一致し、実数版は整数入力で 1 ビットも違わない。帯域を 1 本余分に持つと**どの帯域が壊れたか**を当て(3,000 件で 88.5 %)、当てられないときは「判定不能」と返して取り違えは 0 件。向き: 3・4・5 回対称の輪を持つ部品は、どの輪も単独では 120°/90°/72° で折り返す(図ののこぎり歯)が、束ねると 360° で一意になり最大誤差 0.05°、輪の 1 つを約 4 割汚しても 0.84° で、残差が最大の輪が汚れた輪を 27/30 回指した。変位: scikit-image 同梱の実写テクスチャの 2 領域を別々に 20〜30 px 動かすと、境界から遠い画素で 1 px 以上外したのは grass 1.8〜2.9 %、ピラミッド Lucas-Kanade(3〜6 段の最良)は約 50 %、1 帯域の位相法は理想でも 100 %、大域の位相相関は片方の変位しか返さない。**壊れる場所も同じ表に出す**: 境界から 1.5 σ 以内(36〜85 %)、平坦な領域の多い写真(camera 23〜36 %)、窓の中で変位が変わる場(振幅 6 px で 50 %)—— 局所周波数を安定させる狭い帯域と、場に追従する狭い窓は両立しない。*
+
+[![測定の図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/01_residue_part_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/01_residue_part.png)
+
+*↑ 測定の図*
+
+[![図](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/04_residue_two_regions_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/04_residue_two_regions.png)
+
+*↑ この回の図*
+
+[![遠 = 境界から 60 px 以上。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/05_residue_displacement_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/05_residue_displacement_table.png)
+
+*↑ 遠 = 境界から 60 px 以上。*
+
+[![針 = CRT で決めた向き(1 フレームごとに独立に推定)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_residue_crt/03_residue_rotation_needle.gif)
+
+*↑ 動く図 ―― 針 = CRT で決めた向き(1 フレームごとに独立に推定)*
+
+```
+py -3.11 examples/poc_residue_crt.py
+```
+
+ソース: [examples/poc_residue_crt.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_residue_crt.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_residue_crt)
+
+使用 op(ノートへ): [`crt_displacement`](https://furuse.work/ops/residue/image/crt_displacement.html) · [`harmonic_rotation`](https://furuse.work/ops/residue/image/harmonic_rotation.html) · [`residue_crt`](https://furuse.work/ops/residue/robust/residue_crt.html) · [`residue_fault_locate`](https://furuse.work/ops/residue/robust/residue_fault_locate.html) · [`residue_integer_crt`](https://furuse.work/ops/residue/theorem/residue_integer_crt.html)
 
 ### 医用・生物ウィング ―― 個数が合っていて中身が外れている
 

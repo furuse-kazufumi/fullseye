@@ -692,7 +692,7 @@ def _registry_adapters():
                  "opsimgforensics", "opsastrostack", "opsdem", "opspiv",
                  "opsprofile", "opsshapestat", "opsshape2d", "opsroughness",
                  "opsmeasure1d", "opsblob", "opsflyvision", "opsspc",
-                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsgenerative",
+                 "opsgraph", "opstext", "opsvx", "opsdrive", "opsresidue", "opsgenerative",
                  "opssegmentation"):
         try:
             d.update(getattr(__import__(_mod), "RESULT_ADAPTERS", {}))
@@ -849,6 +849,14 @@ def catalog():
     for n, m in opstext.OPSTEXT.items():
         if m["func"] is not None:
             ops.append((n, "text", list(m["in"]), m["out"], m["func"]))
+    # 中国剰余定理(opsresidue 台帳)。**新しい型語彙を 1 つも作らない**判断: 整数の剰余と法は
+    # signal、多数の標本の剰余は matrix(帯域の軸が先頭)、画像 op は image2d 2 枚、返りは全部
+    # table(値・余裕・帯域ごとの残差・犯人の帯域)。真値は定理(任意精度の整数 CRT)と
+    # 解析的に作った絵(2026-10-06)。
+    import opsresidue
+    for n, m in opsresidue.OPSRESIDUE.items():
+        if m["func"] is not None:
+            ops.append((n, "residue", list(m["in"]), m["out"], m["func"]))
     # OpenVX 1.3.1 の素の口(opsvx 台帳)。**新しい型語彙を 1 つも作らない**判断: U8 / S16 は image2d の dtype として
     # 呼び出し時に検査して止める(黙って丸めない)。真値は規範文 [REQ-NNNN] を画素ごとに写した第 2 実装(2026-10-01)。
     import opsvx

@@ -1,0 +1,58 @@
+[
+ {
+  "file": "01_residue_part.png",
+  "name": "residue_part",
+  "caption": "",
+  "shape": [
+   285,
+   523,
+   3
+  ]
+ },
+ {
+  "file": "02_residue_rotation_sawtooth.png",
+  "name": "residue_rotation_sawtooth",
+  "caption": "真値は解析的に描いた角度。のこぎり歯 = 剰余、対角線 = 中国剰余定理で戻した値。",
+  "shape": [
+   360,
+   560,
+   3
+  ]
+ },
+ {
+  "file": "03_residue_rotation_needle.gif",
+  "name": "residue_rotation_needle",
+  "caption": "針 = CRT で決めた向き(1 フレームごとに独立に推定)",
+  "shape": [
+   161,
+   161,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 6.0
+ },
+ {
+  "file": "04_residue_two_regions.png",
+  "name": "residue_two_regions",
+  "caption": "",
+  "shape": [
+   349,
+   1586,
+   3
+  ]
+ },
+ {
+  "file": "05_residue_displacement_table.png",
+  "name": "residue_displacement_table",
+  "caption": "遠 = 境界から 60 px 以上。位相相関は大域なので値 1 つ。",
+  "shape": [
+   272,
+   469,
+   3
+  ],
+  "csv": "05_residue_displacement_table.csv",
+  "tsv": "05_residue_displacement_table.tsv"
+ }
+]

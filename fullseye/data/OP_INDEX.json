@@ -1,8 +1,8 @@
 {
- "n_ops": 3078,
+ "n_ops": 3083,
  "tiers": {
   "color": 12,
-  "ledger": 2125,
+  "ledger": 2130,
   "nary": 17,
   "registry": 924
  },
@@ -4759,6 +4759,20 @@
    "dim": "drive",
    "in_sorts": [
     "table"
+   ]
+  },
+  {
+   "name": "crt_displacement",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "image",
+   "tier": "ledger",
+   "ledger": "opsresidue",
+   "dim": "residue",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -10142,6 +10156,20 @@
    "in_sorts": [
     "signal",
     "signal"
+   ]
+  },
+  {
+   "name": "harmonic_rotation",
+   "halcon": "",
+   "in_sort": "image2d",
+   "out_sort": "table",
+   "category": "image",
+   "tier": "ledger",
+   "ledger": "opsresidue",
+   "dim": "residue",
+   "in_sorts": [
+    "image2d",
+    "image2d"
    ]
   },
   {
@@ -20362,6 +20390,48 @@
    "in_sorts": [
     "conn_graph",
     "matrix"
+   ]
+  },
+  {
+   "name": "residue_crt",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "robust",
+   "tier": "ledger",
+   "ledger": "opsresidue",
+   "dim": "residue",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "residue_fault_locate",
+   "halcon": "",
+   "in_sort": "matrix",
+   "out_sort": "table",
+   "category": "robust",
+   "tier": "ledger",
+   "ledger": "opsresidue",
+   "dim": "residue",
+   "in_sorts": [
+    "matrix",
+    "signal"
+   ]
+  },
+  {
+   "name": "residue_integer_crt",
+   "halcon": "",
+   "in_sort": "signal",
+   "out_sort": "table",
+   "category": "theorem",
+   "tier": "ledger",
+   "ledger": "opsresidue",
+   "dim": "residue",
+   "in_sorts": [
+    "signal",
+    "signal"
    ]
   },
   {

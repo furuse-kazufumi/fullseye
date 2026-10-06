@@ -735,6 +735,10 @@ from treemorph import tree_from_swc, tree_morphometry, tree_sholl  # noqa: E402,
 import textregion  # noqa: E402  (where is the text, without a recogniser)
 import vxcore  # noqa: E402  (OpenVX 1.3.1 primitive ports: gradients, LUT, histogram, NMS)
 from textregion import swt_map, text_candidates, text_lines  # noqa: E402,F401
+import residue  # noqa: E402  (values known modulo several periods -> Chinese remainder theorem)
+from residue import (  # noqa: E402,F401
+    residue_integer_crt, residue_crt, residue_fault_locate, crt_displacement, harmonic_rotation,
+)
 # 画像 → CAD 面の**逆写像**: 既存の align_cad_to_scan / ICP / ppf は「姿勢は出す」
 # が、2-D 画像上で見つけた欠陥が CAD 面のどの座標かに落とす経路が空だった。
 # 姿勢は**既知として受け取る**側で、一度も推定しない(推定は pipeline3d /
@@ -1319,7 +1323,7 @@ __all__ = [
     "peak_subbin", "point_spectrum",
     "signal_features", "resample", "zero_crossing_rate",
     "specularity", "motionmag", "pose_quat", "quatimage", "rangedoppler",
-    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore",
+    "acoustics", "interferometry", "flyvision", "spc", "graphinv", "treemorph", "segcompare", "textregion", "vxcore", "residue",
     "gfx2d", "alpha_composite", "alpha_composite_premul", "blend_mode", "bloom",
     "chromatic_aberration", "color_grade", "color_lut", "dither", "film_grain",
     "layer_stack", "light_mask", "linear_to_srgb", "nine_slice",

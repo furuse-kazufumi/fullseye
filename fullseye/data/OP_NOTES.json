@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3078,
- "n_notes": 3084,
+ "n_ops": 3083,
+ "n_notes": 3089,
  "notes": {
   "vol_dilate": [
    {
@@ -29220,6 +29220,56 @@
     "in": "score",
     "out": "position",
     "path": "docs/ops/reprconv/score/score_to_position.md"
+   }
+  ],
+  "crt_displacement": [
+   {
+    "op": "crt_displacement",
+    "dim": "residue",
+    "category": "image",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/residue/image/crt_displacement.md"
+   }
+  ],
+  "harmonic_rotation": [
+   {
+    "op": "harmonic_rotation",
+    "dim": "residue",
+    "category": "image",
+    "in": "image2d × image2d",
+    "out": "table",
+    "path": "docs/ops/residue/image/harmonic_rotation.md"
+   }
+  ],
+  "residue_crt": [
+   {
+    "op": "residue_crt",
+    "dim": "residue",
+    "category": "robust",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/residue/robust/residue_crt.md"
+   }
+  ],
+  "residue_fault_locate": [
+   {
+    "op": "residue_fault_locate",
+    "dim": "residue",
+    "category": "robust",
+    "in": "matrix × signal",
+    "out": "table",
+    "path": "docs/ops/residue/robust/residue_fault_locate.md"
+   }
+  ],
+  "residue_integer_crt": [
+   {
+    "op": "residue_integer_crt",
+    "dim": "residue",
+    "category": "theorem",
+    "in": "signal × signal",
+    "out": "table",
+    "path": "docs/ops/residue/theorem/residue_integer_crt.md"
    }
   ],
   "profile_params": [

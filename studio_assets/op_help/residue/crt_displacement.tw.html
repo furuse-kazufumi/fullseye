@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">crt_displacement — RESIDUE <code style="color:#22d3bf">image</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import residue; residue.crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), sigma_px=40.0, max_disp=40.0, axis=&#x27;x&#x27;, refine=2) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsresidue.get(&quot;crt_displacement&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>由多個波長頻帶的相位求局部位移，並以中國剩餘定理解除相位捲繞 -&gt; `<code style="color:#22d3bf">dict</code>`。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
+<p>A band of wavelength `<code style="color:#22d3bf">p</code><code style="color:#22d3bf"> measures the local shift only modulo </code><code style="color:#22d3bf">p</code>`, so</p>
+<p>any single-band phase method breaks at `<code style="color:#22d3bf">|d| = p/2</code><code style="color:#22d3bf"> (</code><code style="color:#22d3bf">motionmag.phase_displacement</code>`</p>
+<p>reports this as `<code style="color:#22d3bf">wrap_limit_px</code>`). Bands at *coprime* wavelengths each break</p>
+<p>there too, but together they fix `<code style="color:#22d3bf">d</code>` over the least common multiple —</p>
+<p>693 px for 7/9/11 — so the limit becomes `<code style="color:#22d3bf">max_disp</code>`, the search half-width.</p>
+<p>`<code style="color:#22d3bf">image1</code><code style="color:#22d3bf"> is </code><code style="color:#22d3bf">image0</code><code style="color:#22d3bf"> with its content moved by </code><code style="color:#22d3bf">d(y, x)</code><code style="color:#22d3bf"> along </code><code style="color:#22d3bf">axis</code>`</p>
+<p>(`<code style="color:#22d3bf">&quot;x&quot;</code><code style="color:#22d3bf"> = columns, </code><code style="color:#22d3bf">&quot;y&quot;</code>` = rows; positive towards increasing index). For each</p>
+<p>wavelength a Gaussian band-pass (analytic, one-sided, spatial std `<code style="color:#22d3bf">sigma_px</code>`)</p>
+<p>gives a local phase and a *local* wavelength (measured, not nominal — see</p>
+<p>`<code style="color:#22d3bf">_band_measure</code><code style="color:#22d3bf">); their phase differences are residues of </code><code style="color:#22d3bf">d</code>`; amplitude</p>
+<p>products are the weights; every pixel is solved by the phasor-agreement search</p>
+<p>of :func:<code style="color:#22d3bf">residue_crt</code>. `<code style="color:#22d3bf">refine</code><code style="color:#22d3bf"> iterations then warp </code><code style="color:#22d3bf">image1</code>` back by the</p>
+<p>current estimate and add the (now small, wrap-free) weighted residual.</p>
+<p>Returns `<code style="color:#22d3bf">{&quot;d&quot;, &quot;weight&quot;, &quot;margin&quot;, &quot;residual&quot;, &quot;valid&quot;, &quot;wrap_limit_single_px&quot;}</code>`.</p>
+<p>`<code style="color:#22d3bf">valid</code>` = enough contrast in the bands *and* a margin above 0.05; a pixel</p>
+<p>that fails is still returned but should not be trusted.</p>
+<p><b>Where it applies</b>: textured regions that each move (nearly) rigidly by a</p>
+<p>large amount — measured on two regions of the public scikit-image textures moving</p>
+<p>+20 / -15 px, pixels farther than 1.5 `<code style="color:#22d3bf">sigma_px</code>` from the region boundary are</p>
+<p>off by more than 1 px on 2 % (grass) / 5 % (gravel) / 6 % (brick), where the</p>
+<p>best pyramid Lucas-Kanade (3-6 levels) is off on 49 / 50 / 67 %.</p>
+<p><b>Where it does not</b>: within ~1.5 `<code style="color:#22d3bf">sigma_px</code>` of a motion boundary; where the</p>
+<p>displacement changes inside the window (a 6 px field with gradient 0.07 is</p>
+<p>already off on half the pixels — a band narrow enough to keep the local</p>
+<p>frequency stable needs a window too wide to follow the field); flat regions</p>
+<p>(`<code style="color:#22d3bf">weight</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">valid</code>` say where); occlusions. A single global translation is</p>
+<p>better served by phase correlation. Numbers: `<code style="color:#22d3bf">examples/poc_residue_crt.py</code>`.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料・文獻)</h3>
+<p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
+<p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<p style="margin:2px 0 2px 12px">• 演算法的正典(作者・年份)與用途見上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">table</code> 作為輸入)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同類別(<code style="color:#22d3bf">image</code>)</h3>
+<p><a style="color:#22d3bf" href="opresidue:harmonic_rotation">harmonic_rotation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: residue.py — RESIDUE 運算子登記表。本條目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自動產生(請勿手動編輯)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

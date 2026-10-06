@@ -209,7 +209,7 @@ def test_pending_exposure_shrinks_when_fixed():
 #: 2026-09-14: 1231 -> 1235。opsspc 台帳の内部 API(_build/list_ops/categories/get/call/
 #: info/missing の非公開分)と spc.py の入力バリデータ(_as_float_array/_as_1d)。op 自身
 #: (spc_xbar_r/spc_cusum/spc_capability/spc_hotelling_t2)は typed_catalog と api から引ける。
-_HIDDEN_FUNCTIONS_TODAY = 843   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832、2026-10-03 に Studio の GUI 部品 5 本(studio は内部専用)と examplefig.render_plot(図の書き出しの内側)で 838、エディタへ繋ぐ Studio の部品 5 本で 843(ratchet)
+_HIDDEN_FUNCTIONS_TODAY = 844   # 2026-10-02: facade 経路を数えて 1235 → 901、unified registry を数えて 901 → 861、train_class_mlp/svm を facade に載せて 859、watershed3d を台帳に載せて 856、棚卸しの 18 本を fs.<名前> に出して 838、pipeline3d の 6 本を出して 832、2026-10-03 に Studio の GUI 部品 5 本(studio は内部専用)と examplefig.render_plot(図の書き出しの内側)で 838、エディタへ繋ぐ Studio の部品 5 本で 843、2026-10-06 に中国剰余定理の台帳 opsresidue の内部アクセサ 4 本(call/get/info/missing、他の台帳と同じ形 —— 5 op 本体は fs.ledger に載る)で 844(本線の目減り 3 本ぶんの余裕を差し引いた数)(ratchet)
 
 
 def _hidden_total():

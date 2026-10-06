@@ -89,6 +89,8 @@ LEDGER_DIMS = {
               "module": "graphinv", "family": "graph_invariants"},
     "text": {"registry": "opstext", "table": "OPSTEXT",
              "module": "textregion", "family": "text_region"},
+    "residue": {"registry": "opsresidue", "table": "OPSRESIDUE",
+                "module": "residue", "family": "residue_crt"},
     "vx": {"registry": "opsvx", "table": "OPSVX",
            "module": "vxcore", "family": "openvx_ports"},
     "drive": {"registry": "opsdrive", "table": "OPSDRIVE",

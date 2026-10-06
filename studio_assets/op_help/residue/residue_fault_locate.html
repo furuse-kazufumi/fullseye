@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">residue_fault_locate — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import residue; residue.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>、台帳から引くなら <code style="color:#22d3bf">opsresidue.get(&quot;residue_fault_locate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>Which band is corrupted? (redundant residue number system) -&gt; `<code style="color:#22d3bf">dict</code>`.</p>
+<p>With more bands than `<code style="color:#22d3bf">[lo, hi)</code>` needs, the bands check each other. Each</p>
+<p>band is left out in turn and the rest are solved; the band whose removal</p>
+<p>leaves a consistent set (every residual within `<code style="color:#22d3bf">tol</code>` x its period) while</p>
+<p>itself disagreeing by more than `<code style="color:#22d3bf">tol</code>` is the corrupted one. If no single</p>
+<p>removal is consistent, or two different removals both are, the answer is</p>
+<p><b>undecidable</b> and the value is NaN — never a guess.</p>
+<p>Returns `<code style="color:#22d3bf">{&quot;value&quot;, &quot;faulty&quot;, &quot;consistent_all&quot;, &quot;worst_leave_one_out&quot;}</code>`:</p>
+<p>`<code style="color:#22d3bf">faulty</code><code style="color:#22d3bf"> is the band index, </code><code style="color:#22d3bf">-1</code>` = all bands agree (no fault),</p>
+<p>`<code style="color:#22d3bf">-2</code>` = undecidable. Localising one fault needs the range to be resolvable by</p>
+<p>every subset of `<code style="color:#22d3bf">N-1</code>` bands (it is refused otherwise); the narrower</p>
+<p>`<code style="color:#22d3bf">[lo, hi)</code>` is relative to the periods&#x27; least common multiple, the more of</p>
+<p>the redundancy is left to localise with.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">table</code> を入力に取れる)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">robust</code>)</h3>
+<p><a style="color:#22d3bf" href="opresidue:residue_crt">residue_crt</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: residue.py — RESIDUE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

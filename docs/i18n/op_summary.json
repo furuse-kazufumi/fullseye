@@ -15343,6 +15343,46 @@
    "tw": "**一般**方陣的特徵分解 ``A V = V diag(w)``(一般為複數)。",
    "ko": "**일반** 정방행렬의 고유분해 ``A V = V diag(w)`` (일반적으로 복소수).",
    "de": "Eigenzerlegung einer **allgemeinen** quadratischen Matrix ``A V = V diag(w)`` (im Allgemeinen komplex)."
+  },
+  "residue/residue_integer_crt": {
+   "fp": "addf649d53c7",
+   "ja": "整数の中国剰余定理(Garner の混合基数法)-> ``dict``。",
+   "zh": "精确的整数中国剩余定理（Garner 混合基数算法）-> ``dict``。",
+   "tw": "精確的整數中國剩餘定理（Garner 混合基數演算法）-> ``dict``。",
+   "ko": "정확한 정수 중국인의 나머지 정리(Garner 혼합 기수 알고리즘) -> ``dict``.",
+   "de": "Exakter ganzzahliger chinesischer Restsatz (Garners Mixed-Radix-Algorithmus) -> ``dict``."
+  },
+  "residue/residue_crt": {
+   "fp": "37253131f53b",
+   "ja": "実数の周期に対する重み付きの頑健な中国剰余定理 -> ``dict``。",
+   "zh": "针对实数周期的加权鲁棒中国剩余定理 -> ``dict``。",
+   "tw": "針對實數週期的加權強健中國剩餘定理 -> ``dict``。",
+   "ko": "실수 주기에 대한 가중 강건 중국인의 나머지 정리 -> ``dict``.",
+   "de": "Gewichteter robuster chinesischer Restsatz über reelle Perioden -> ``dict``."
+  },
+  "residue/residue_fault_locate": {
+   "fp": "beb86b6ab1e1",
+   "ja": "どの帯域が壊れているか(冗長剰余数系)-> ``dict``。",
+   "zh": "哪个频带损坏了？（冗余剩余数系统）-> ``dict``。",
+   "tw": "哪個頻帶損壞了？（冗餘剩餘數系統）-> ``dict``。",
+   "ko": "어느 대역이 손상되었는가? (중복 잉여 수 체계) -> ``dict``.",
+   "de": "Welches Band ist verfälscht? (redundantes Restklassen-Zahlensystem) -> ``dict``."
+  },
+  "residue/crt_displacement": {
+   "fp": "ad0f610f016b",
+   "ja": "複数の波長の帯域の位相から局所変位を求め、中国剰余定理で折り返しを解く -> ``dict``。",
+   "zh": "由多个波长频带的相位求局部位移，并用中国剩余定理解除相位卷绕 -> ``dict``。",
+   "tw": "由多個波長頻帶的相位求局部位移，並以中國剩餘定理解除相位捲繞 -> ``dict``。",
+   "ko": "여러 파장 대역의 위상으로부터 국소 변위를 구하고, 중국인의 나머지 정리로 위상 접힘을 푼다 -> ``dict``.",
+   "de": "Lokale Verschiebung aus Bandphasen bei mehreren Wellenlängen, per chinesischem Restsatz entfaltet -> ``dict``."
+  },
+  "residue/harmonic_rotation": {
+   "fp": "d55e465cc6ae",
+   "ja": "``reference`` に対する ``image`` の面内回転角を 360° の範囲で一意に求める -> ``dict``。",
+   "zh": "求 ``image`` 相对于 ``reference`` 的平面内绝对旋转角（360° 范围）-> ``dict``。",
+   "tw": "求 ``image`` 相對於 ``reference`` 的平面內絕對旋轉角（360° 範圍）-> ``dict``。",
+   "ko": "``reference`` 에 대한 ``image`` 의 면내 절대 회전각을 360° 범위에서 구한다 -> ``dict``.",
+   "de": "Absolute Drehung von ``image`` gegenüber ``reference`` in der Ebene über volle 360 Grad -> ``dict``."
   }
  }
 }
