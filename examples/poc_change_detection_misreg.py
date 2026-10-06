@@ -954,8 +954,15 @@ def section_registration(sc: dict, sh: dict) -> dict:
                    kinds=["line", "line", "scatter"],
                    xlabel="残留ずれ [px](画像全体の平均変位、真値との差)", ylabel="偽陽性面積 [px]",
                    title="位置合わせ後の残留ずれと偽陽性 —— 同じ崖に乗る",
-                   caption="点は 3 条件 × (ゼロ点 + 4 経路)。残留 0.05 px 以下の 3 経路は原点近く、"
-                           "整数精度の位相相関は崖の途中に落ちる。")
+                   # 数字は実行から差し込む(2026-10-06: 固定文言「残留 0.05 px 以下の 3 経路」が
+                   #   実測 0.017〜0.127 px と食い違っていた —— 特徴点経路は 0.127 px)。
+                   caption="点は 3 条件 × (ゼロ点 + 4 経路)。ずれ+回転の条件では 3 経路(残留 %.3f〜%.3f px)が"
+                           "偽陽性 %s px で原点に乗り、整数精度の位相相関(残留 %.3f px、偽陽性 %d px)は"
+                           "崖の途中に落ちる。"
+                           % (min(r[2] for r in good), max(r[2] for r in good),
+                              ("%d" % min(r[3] for r in good)) if min(r[3] for r in good) == max(r[3] for r in good)
+                              else "%d〜%d" % (min(r[3] for r in good), max(r[3] for r in good)),
+                              ph[2], ph[3]))
     figs.save_table("table_registration",
                     ["条件", "方法", "θ [deg]", "dy [px]", "dx [px]", "残留 [px]", "偽陽性 [px]", "IoU"]
                     + list(CHANGE_TYPES), rows, title="位置合わせの公開経路 4 本 × 3 条件")
