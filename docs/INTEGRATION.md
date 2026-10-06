@@ -114,7 +114,7 @@ language wins, and the losses were SIMD losses; see `CHANGELOG.md` 0.1.11.
 
 ### Every operator through one function: `fs_apply`
 
-**Every operator of the 2-D registry (901 single-input operators; the 918 2-D operators of the
+**Every operator of the 2-D registry (936 single-input operators; the 953 2-D operators of the
 index minus the 17 n-ary ones; those whose backend is installed) is reachable through
 `fs_apply`; the five contract operators also have a native route. Look at `route`.** The typed
 ledgers (2,130 operators whose inputs are point clouds, signals, tables …) and the n-ary

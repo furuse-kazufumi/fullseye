@@ -73,7 +73,7 @@ overlaps, where it stops, and which file format or process boundary connects the
 - Find by HALCON name: notes carry a `halcon:` frontmatter field — grep it.
 - Chain by type: each note lists `in:`/`out:` sorts and **related ops whose types
   connect** — follow those links instead of guessing.
-- Before implementing anything from scratch, check the index: with ~2000 notes the
+- Before implementing anything from scratch, check the index: with 3089 notes the
   thing you need usually exists.
 
 ## Calling conventions

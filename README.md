@@ -72,7 +72,7 @@ Two more doors, both new since 0.1.11 and both honest about their limits:
 | Door | For | Run this first | Status |
 |---|---|---|---|
 | **From an LLM (MCP)** | Claude Code / Claude Desktop users | `py -3.11 -m fullseye.mcp --demo` — search an op, read its note, load a sample, run a pipeline, get a verdict | PoC. 9 tools, strict by default, runs from the wheel (the catalog index and the notes' front matter ship as package data; note bodies fall back to the shipped help HTML). [`docs/MCP.md`](docs/MCP.md) |
-| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (901 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 1,049 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
+| **From C / C++ / C# / Lua** (and Python `ctypes`) | embedding into an existing product | `cargo build --release` in `rust/fullseye_core`, then one example per language in [`rust/fullseye_core/examples/`](rust/fullseye_core/examples/README.md) — all four print the same five lines | A C ABI (`fullseye_abi.h`) with **one generic entry point, `fs_apply`, that reaches the whole 2-D registry** (936 single-input operators, by name + JSON parameters; 0.2.0, the registry runs in an embedded CPython, `cargo build --features embed` — the 17 n-ary 2-D operators and the 1,049 typed-ledger operators, whose inputs are not one image or region, are refused with a reason, not yet routed), plus a **5-operator contract** that also has a native Rust route. The contract's job is to find specification bugs by being a second implementation (nine found so far); `fs_apply` always reports which route ran |
 
 ## Install
 
@@ -116,8 +116,8 @@ knobs in `[0, 1]`. Feature operators return a Python float; contour operators a 
 
 ## Operator library
 
-**~1200 typed operators** (measured 2026-09-03: 870 distinct 2-D across 47 categories + 344 3-D
-across 63 categories), covering denoising, smoothing, sharpening,
+**3,083 typed operators** (953 2-D in the registry, 17 of them n-ary, + 2,130 in the typed ledgers,
+the 3-D ledger among them), covering denoising, smoothing, sharpening,
 thresholding/segmentation, morphology, edge/corner/blob detection, distance
 transforms, color-space conversion, texture/shape features, contours, and the 3-D
 modality (point clouds / meshes / volumes / SDF / 6-DoF pose). Sorts: `image` (gray
@@ -154,7 +154,7 @@ stacking) lets you develop and test perception pipelines without hardware:
 
 ![Physical-AI sensor simulation suite — pseudo-LiDAR, stereo depth, event camera (DVS), focus stacking, polarization, camera+IMU Kalman fusion](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/physical_ai_montage.png)
 
-The **3-D side is where Fullseye differentiates most**: 265 typed 3-D operators
+The **3-D side is where Fullseye differentiates most**: 372 typed 3-D operators
 spanning point clouds / meshes / volumes / SDF — 3-D feature descriptors
 (SHOT, FPFH, spin images), TSDF fusion, fringe projection, photometric stereo,
 superquadric fitting, medial axis, geodesic distance, visual hull, and
