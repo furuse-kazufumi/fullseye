@@ -264,7 +264,12 @@ def main(argv=None):
     print("   %s  %dx%d  平均 %.3f  p5/50/95 = %.2f %.2f %.2f"
           % (os.path.basename(photo_path), h, w, img.mean(),
              *np.percentile(img, [5, 50, 95])))
-    print("   出典 葛飾北斎「神奈川沖浪裏」1830-32 年頃 / メトロポリタン美術館 Open Access (CC0、object 45434)")
+    # ★2026-10-06: 図の見出しが「photograph (NASA AS11-45-6709)」のまま北斎を描いていた(前の題材の名残)。
+    #   出典は入力から決める(--image で自分の写真を渡したときに北斎と名乗らない)。
+    default_photo = os.path.abspath(photo_path) == os.path.abspath(PHOTO)
+    src_label = "Hokusai, Great Wave (Met CC0, DP130155)" if default_photo else os.path.basename(photo_path)
+    if default_photo:
+        print("   出典 葛飾北斎「神奈川沖浪裏」1830-32 年頃 / メトロポリタン美術館 Open Access (CC0、object 45434)")
 
     # ------------------------------------------------------------------ #
     # 1 章 濃淡を点の密度に写す                                            #
@@ -299,8 +304,9 @@ def main(argv=None):
        all(energies[i + 1] <= energies[i] * (1 + 1e-9) for i in range(len(energies) - 1)))
 
     figs.save_grid("stipple", [img, draw_points(img.shape, pts)],
-                   captions=["photograph (NASA AS11-45-6709)",
+                   captions=["input: %s" % src_label,
                              "%d stipple points" % len(pts)], ncols=2,
+                   gray=True,                     # 濃淡の図なので疑似カラーにしない(点は黒、地は白)
                    title="tone becomes density",
                    caption=("weighted Lloyd puts points where the picture is dark. The claim is "
                             "measured, not looked at: on a ramp the count per band correlates "
@@ -560,7 +566,7 @@ def main(argv=None):
        abs(secs - seg_mm / (FEED_MM_MIN / 60.0)) < 1e-6 * secs + 1e-9)
 
     rows = [
-        ["photograph", "%dx%d" % (h, w), "Hokusai, Great Wave (Met CC0, DP130155)"],
+        ["photograph", "%dx%d" % (h, w), src_label],
         ["stipple points", "%d" % len(pts), "%.1f s" % t_stipple],
         ["density vs darkness (ramp)", "%.4f" % corr_ramp, "control: flat image cv %.2f" % cv_flat],
         ["tour length", "%.0f px" % length_px, "%.1f s" % t_tour],

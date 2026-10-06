@@ -4,8 +4,8 @@
   "name": "stipple",
   "caption": "weighted Lloyd puts points where the picture is dark. The claim is measured, not looked at: on a ramp the count per band correlates 0.995 with darkness, and on a flat image the points spread evenly (nearest-neighbour cv 0.13 against 0.37 for the ramp)",
   "shape": [
-   295,
-   630,
+   497,
+   1230,
    3
   ]
  },
@@ -32,7 +32,7 @@
  {
   "file": "04_tone.png",
   "name": "tone",
-  "caption": "the tone of a line drawing exists at a scale coarser than the line, so both pictures are compared after a Gaussian of sigma 6 px: correlation 0.984 against +0.013 for the same number of random points, and the mean tone is off by 0.029 once the pen width is solved from ink = length x width / area",
+  "caption": "the tone of a line drawing exists at a scale coarser than the line, so both pictures are compared after a Gaussian of sigma 6 px: correlation 0.983 against +0.013 for the same number of random points, and the mean tone is off by 0.029 once the pen width is solved from ink = length x width / area",
   "shape": [
    901,
    2430,
@@ -52,7 +52,7 @@
  {
   "file": "06_harmonics.png",
   "name": "harmonics",
-  "caption": "Parseval makes this a prediction, not a measurement: the squared error of the order-K reconstruction equals the energy of the coefficients above K, exactly. Checked against an actual reconstruction the two agree to 7e-15 px. 64 circles already carry 99.0 % of the drawing",
+  "caption": "Parseval makes this a prediction, not a measurement: the squared error of the order-K reconstruction equals the energy of the coefficients above K, exactly. Checked against an actual reconstruction the two agree to 7e-15 px. 64 circles already carry 99.2 % of the drawing",
   "shape": [
    360,
    560,
@@ -62,7 +62,7 @@
  {
   "file": "07_epicycles.gif",
   "name": "epicycles",
-  "caption": "the actual chain of rotating circles, not a sweep of truncations: each arm is one Fourier term, its length |c_k| and its speed k. The number of arms rises 1, 3, 8, 24, 80, 300 and the picture gives itself away — carrying 76.5% / 85.6% / 95.9% / 99.4% / 100.0% / 100.0% of the drawing's energy, every figure predicted before it was drawn.",
+  "caption": "the actual chain of rotating circles, not a sweep of truncations: each arm is one Fourier term, its length |c_k| and its speed k. The number of arms rises 1, 3, 8, 24, 80, 300 and the picture gives itself away — carrying 40.3% / 83.5% / 94.6% / 99.5% / 100.0% / 100.0% of the drawing's energy, every figure predicted before it was drawn.",
   "shape": [
    404,
    600,

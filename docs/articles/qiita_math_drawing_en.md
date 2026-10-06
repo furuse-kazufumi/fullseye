@@ -82,17 +82,17 @@ Measured on Hokusai's *Great Wave* (202×300 px) with 9,000 points. The truths u
 | Claim | Measured | Where the truth comes from | Control |
 |---|---|---|---|
 | Density follows tone | correlation **0.9946** | banded darkness of a ramp image | evenly spread on a uniform image (cv 0.13 vs 0.37) |
-| Tour quality | **1.146 ×** MST | a closed tour cannot beat the MST | joining in coordinate order: **41.4 ×** |
-| Tone reproduction | correlation **0.984** | direct comparison with the target | the same number of random lines: **+0.013** |
-| Pen width | **0.900 px** | ink ≈ length × width / area | 0.890 × of target; the missing 11 % is overlap |
-| Number of circles | **99.0 %** at K=64 | Parseval's identity | prediction vs measurement differ by **7e-15 px** |
-| On paper | **15.57 m / 8.6 min** | converted to G-code and measured | — |
+| Tour quality | **1.142 ×** MST | a closed tour cannot beat the MST | joining in coordinate order: **41.3 ×** |
+| Tone reproduction | correlation **0.983** | direct comparison with the target | the same number of random lines: **+0.013** |
+| Pen width | **0.903 px** | ink ≈ length × width / area | 0.891 × of target; the missing 11 % is overlap |
+| Number of circles | **99.2 %** at K=64 | Parseval's identity | prediction vs measurement differ by **7e-15 px** |
+| On paper | **15.51 m / 8.6 min** | converted to G-code and measured | — |
 
 [![The original print and the stipple](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/01_stipple_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/01_stipple.png)
 
 [![One line, and the control](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/03_tour_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_one_stroke_epicycles/03_tour.png)
 
-*↑ Left: the single stroke (1.146 × MST). Right: the same points joined in coordinate order (41.4 ×). Same points — the difference is entirely in the joining.*
+*↑ Left: the single stroke (1.142 × MST). Right: the same points joined in coordinate order (41.3 ×). Same points — the difference is entirely in the joining.*
 
 ### ★ Where you will get it wrong
 
@@ -112,15 +112,15 @@ Measure the exponent directly (the slope of `log density` against `log darkness`
 
 When the tour is resampled to equal arc length, **a sample spacing coarser than the segments cuts the corners and shortens the line itself**. Information is lost before the transform, so any later "the prediction was right" rests on nothing.
 
-On a tour whose segments are 2.08 px on average and **1.57 px** at the median:
+On a tour whose segments are 2.07 px on average and **1.57 px** at the median:
 
 | Resample points | Spacing | Length retained | Shortest representable period |
 |---|---|---|---|
-| 16,384 | 1.140 px | **0.935** | 2.28 px |
-| 32,768 | 0.570 px | 0.967 | 1.14 px |
-| 65,536 | 0.285 px | 0.984 | 0.57 px |
+| 16,384 | 1.136 px | **0.934** | 2.27 px |
+| 32,768 | 0.568 px | 0.968 | 1.14 px |
+| 65,536 | 0.284 px | 0.984 | 0.57 px |
 
-At 1.14 px the dense regions are unresolved and **the line shrinks by 6.5 %**. The error falls cleanly as 1/N, so the rule of thumb is to raise N **until the spacing is below the median segment length**.
+At 1.14 px the dense regions are unresolved and **the line shrinks by 6.6 %**. The error falls cleanly as 1/N, so the rule of thumb is to raise N **until the spacing is below the median segment length**.
 
 #### 3. An even point count double-counts a Fourier coefficient
 
@@ -134,7 +134,7 @@ While the lines do not overlap, `ink ≈ length × width / area` holds, so **you
 
 Two caveats. First, stamping the line with integer-pixel discs makes **the width a staircase** — 0.5 / 1.0 / 1.5 px give the same picture. Fill by coverage and it becomes a continuous knob.
 
-Second, **even the solved width undershoots**. Measured ink was **0.890 ×** the target. A union is smaller than a sum, so the measurement is always below the prediction, and **that 11 % gap is the amount of overlap**. Reading it as a measurement of overlap rather than as an error is the point.
+Second, **even the solved width undershoots**. Measured ink was **0.891 ×** the target. A union is smaller than a sum, so the measurement is always below the prediction, and **that 11 % gap is the amount of overlap**. Reading it as a measurement of overlap rather than as an error is the point.
 
 ### What it is bad at
 

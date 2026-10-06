@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1217. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1218. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -748,10 +748,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L209** _(ja)_ — ★線画なので**灰色のまま**出す。(H,W) を渡すと save_gif が疑似カラーに 塗って黄緑の絵になる(実測)—— 強度そのものを見せる図では色は邪魔。
 - **L246** _(ja)_ — ★env は examplefig が **呼ばれるたび**に読むので、ここで入れれば効く (import 時に固定されていたら --out が黙って無視される、の回避)。
-- **L412** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
-- **L416** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
-- **L451** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
-- **L517** _(ja)_ — ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。 72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた —— スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・ 全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。 数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
+- **L267** _(ja)_ — ★2026-10-06: 図の見出しが「photograph (NASA AS11-45-6709)」のまま北斎を描いていた(前の題材の名残)。 出典は入力から決める(--image で自分の写真を渡したときに北斎と名乗らない)。
+- **L418** _(ja)_ — ★この絵では既定のペン幅 1.0 px がたまたまほぼ当たっており(偏り -0.0031)、 解いた幅 0.900 px のほうが偏りは大きい(-0.0294)。**閉形式が当てるのは 偏りではなくインク率**なので、門はそちらに置く —— 偏りで門を作ると 「元から合っていた絵」で落ちる(実測でそうなった)。
+- **L422** _(ja)_ — ★偏りで門を作ると「元から合っていた絵」で落ちる(この絵では既定 1.0 px の 偏りが -0.0031 と既にほぼ 0 で、解いた 0.903 px のほうが偏りは大きい)。 閉形式が当てるのは**インク率**で、線が重なるぶん実測は必ず下回る —— 門はその向きと大きさに置く。
+- **L457** _(ja)_ — ★**ナイキストを満たしているか**を先に測る。等弧長の打ち直しは、標本間隔が 線分より粗いと角を切って線そのものが短くなる —— フーリエに載せる**前**の 段階で情報が落ちるので、ここを見ないと「予言が当たった」の土台が崩れる。
+- **L523** _(ja)_ — ★図を出さない設定のときは**組む前に**やめる(examplefig.enabled はそのためにある)。 72 コマを描いてから捨てていたので、この PoC だけで 322 秒かかっていた —— スイートは FULLSEYE_FIGURES=off で全 PoC を並列に走らせ、1 本 600 秒・ 全体 5400 秒の上限があるので、共有ランナーで timeout に落ちる(CI py3.12)。 数値の門はフレームに依らないので、ここを飛ばしても採点は 1 つも減らない。
 
 ## `examples/poc_pallet_load_utilization.py`
 
