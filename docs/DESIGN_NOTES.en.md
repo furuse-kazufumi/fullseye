@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1218. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1219. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -464,10 +464,11 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L209** — ★**Always draw the random numbers up front in the shape (n_plant, NESTED_MAX)**. If you change how many you draw per leaf count, the random sequence shifts, and increasing n_leaf by just 1 gives a different canopy (2026-09-07: the vegetation coverage stopped being monotonic in leaf count and the cliff could not be measured).
 - **L525** — ★``grid_coords`` places the **voxel centers** (center spacing = span/res, not span/(res-1)). At first I multiplied by span/(res-1) and produced errors of +12 % area and +18 % volume on a sphere —— a unit mix-up "is wrong in a plausible way".
-- **L971** — ★Take both the ground truth and the leaf-angle distribution from **the very canopy this section is looking at**. Reusing the k of the reference condition (7 leaves) shifts the ground truth by the gradient of upper leaves standing more upright.
-- **L980** — ★The largest plane is not necessarily the ground (once the canopy closes, part of the crown becomes the largest). The version that took the first plane as the ground answered an elevation of 1.69 m (stepped on this 2026-09-07). It only stabilized once we added the rule to **take the lowest plane**.
-- **L1007** — ★Control group: apply the same formula to the **true normals** (which the buffer holds).
-- **L1136** — ★The axes of ``occupancy_grid`` are (x, y, z). ``render_volume_projection`` collapses **axis 0 as the line-of-sight direction**, so if you want a nadir view, swap to (z, y, x). Calling it without swapping produces a "nadir view that was meant to be a side view" (a silently-wrong pattern).
+- **L933** _(ja)_ — ★2026-10-06: 題が「当たる」と外れた予想のほうを言っていた(本文は「予想が外れた」)。実測を言う。
+- **L972** — ★Take both the ground truth and the leaf-angle distribution from **the very canopy this section is looking at**. Reusing the k of the reference condition (7 leaves) shifts the ground truth by the gradient of upper leaves standing more upright.
+- **L981** — ★The largest plane is not necessarily the ground (once the canopy closes, part of the crown becomes the largest). The version that took the first plane as the ground answered an elevation of 1.69 m (stepped on this 2026-09-07). It only stabilized once we added the rule to **take the lowest plane**.
+- **L1008** — ★Control group: apply the same formula to the **true normals** (which the buffer holds).
+- **L1137** — ★The axes of ``occupancy_grid`` are (x, y, z). ``render_volume_projection`` collapses **axis 0 as the line-of-sight direction**, so if you want a nadir view, swap to (z, y, x). Calling it without swapping produces a "nadir view that was meant to be a side view" (a silently-wrong pattern).
 
 ## `examples/poc_ct_fidelity.py`
 

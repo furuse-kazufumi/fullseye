@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1218. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1219. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -464,10 +464,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L209** — ★**Ziehe die Zufallszahlen immer vorab in der Form (n_plant, NESTED_MAX)**. Änderst du, wie viele du pro Blattzahl ziehst, verschiebt sich die Zufallsfolge, und ein um nur 1 erhöhtes n_leaf ergibt einen anderen Bestand (2026-09-07: die Vegetationsdeckung war nicht mehr monoton in der Blattzahl, und die Klippe ließ sich nicht messen).
 - **L525** — ★``grid_coords`` platziert die **Voxelzentren** (Zentrumsabstand = span/res, nicht span/(res-1)). Zunächst multiplizierte ich mit span/(res-1) und erzeugte Fehler von +12 % Fläche und +18 % Volumen bei einer Kugel —— eine Einheitenverwechslung "irrt auf plausible Weise".
-- **L971** — ★Nimm sowohl den wahren Wert als auch die Blattwinkelverteilung aus **genau dem Bestand, den dieser Abschnitt betrachtet**. Wiederverwendung des k der Referenzbedingung (7 Blätter) verschiebt den wahren Wert um den Gradienten, mit dem obere Blätter steiler stehen.
-- **L980** — ★Die größte Ebene ist nicht unbedingt der Boden (schließt sich der Bestand, wird ein Teil der Krone am größten). Die Version, die die erste Ebene als Boden nahm, antwortete mit einer Höhe von 1.69 m (am 2026-09-07 hineingetreten). Erst mit der Regel, **die niedrigste Ebene zu nehmen**, wurde es stabil.
-- **L1007** — ★Kontrollgruppe: wende dieselbe Formel auf die **wahren Normalen** an (die der Puffer enthält).
-- **L1136** — ★Die Achsen von ``occupancy_grid`` sind (x, y, z). ``render_volume_projection`` kollabiert **Achse 0 als Blickrichtung**, daher tausche für eine Zenitansicht auf (z, y, x). Ruft man es ohne Tausch auf, entsteht eine "Zenitansicht, die als Seitenansicht gemeint war" (ein still fehlerhaftes Muster).
+- **L933** _(ja)_ — ★2026-10-06: 題が「当たる」と外れた予想のほうを言っていた(本文は「予想が外れた」)。実測を言う。
+- **L972** — ★Nimm sowohl den wahren Wert als auch die Blattwinkelverteilung aus **genau dem Bestand, den dieser Abschnitt betrachtet**. Wiederverwendung des k der Referenzbedingung (7 Blätter) verschiebt den wahren Wert um den Gradienten, mit dem obere Blätter steiler stehen.
+- **L981** — ★Die größte Ebene ist nicht unbedingt der Boden (schließt sich der Bestand, wird ein Teil der Krone am größten). Die Version, die die erste Ebene als Boden nahm, antwortete mit einer Höhe von 1.69 m (am 2026-09-07 hineingetreten). Erst mit der Regel, **die niedrigste Ebene zu nehmen**, wurde es stabil.
+- **L1008** — ★Kontrollgruppe: wende dieselbe Formel auf die **wahren Normalen** an (die der Puffer enthält).
+- **L1137** — ★Die Achsen von ``occupancy_grid`` sind (x, y, z). ``render_volume_projection`` kollabiert **Achse 0 als Blickrichtung**, daher tausche für eine Zenitansicht auf (z, y, x). Ruft man es ohne Tausch auf, entsteht eine "Zenitansicht, die als Seitenansicht gemeint war" (ein still fehlerhaftes Muster).
 
 ## `examples/poc_ct_fidelity.py`
 
