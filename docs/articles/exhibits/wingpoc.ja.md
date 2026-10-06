@@ -518,13 +518,21 @@ py -3.11 examples/poc_solder_fillet_aoi.py
 
 *↑ 測定の図 ―― Shewhart 3σ は 0 件、CUSUM は #46(ドリフト開始の直後)で h=5 を超えて警報。*
 
+[![EWMA も #46 で管理限界を越えて警報 —— Shewhart 3σ が見逃す小シフトを CUSUM と同様に捕らえる(限界は最初の数点で漸近値へ広がる)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/03_spc_ewma_chart_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/03_spc_ewma_chart.png)
+
+*↑ EWMA も #46 で管理限界を越えて警報 —— Shewhart 3σ が見逃す小シフトを CUSUM と同様に捕らえる(限界は最初の数点で漸近値へ広がる)。*
+
+[![末尾の行は**どの特徴も単独では 3σ 内**(当たり 0 件)なのに MD=7.78 —— 正常行の最大 1.10 に対して 7.1 倍。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/04_spc_mt_distance_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_spc/04_spc_mt_distance.png)
+
+*↑ 末尾の行は**どの特徴も単独では 3σ 内**(当たり 0 件)なのに MD=7.78 —— 正常行の最大 1.10 に対して 7.1 倍。*
+
 ```
 py -3.11 examples/poc_spc.py
 ```
 
 ソース: [examples/poc_spc.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_spc.py)
 
-この回が作った図は全部で **2 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_spc)
+この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_spc)
 
 使用 op(ノートへ): [`spc_capability`](https://furuse.work/ops/spc/capability/spc_capability.html) · [`spc_cusum`](https://furuse.work/ops/spc/change/spc_cusum.html) · [`spc_ewma`](https://furuse.work/ops/spc/change/spc_ewma.html) · [`spc_hotelling_t2`](https://furuse.work/ops/spc/multivariate/spc_hotelling_t2.html) · [`spc_mt_distance`](https://furuse.work/ops/spc/mt/spc_mt_distance.html) · [`spc_mt_sn_ratio`](https://furuse.work/ops/spc/mt/spc_mt_sn_ratio.html) · [`spc_mt_unit_space`](https://furuse.work/ops/spc/mt/spc_mt_unit_space.html) · [`spc_xbar_r`](https://furuse.work/ops/spc/chart/spc_xbar_r.html)
 

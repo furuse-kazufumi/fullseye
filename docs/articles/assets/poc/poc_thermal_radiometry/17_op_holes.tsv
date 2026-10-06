@@ -1,6 +1,6 @@
 語幹	fs	fs.op	fs.ledger	op_find 件数(先頭)	何が欲しかったか
 planck	-	-	-	0 (—)	Planck 則そのもの
-blackbody	-	-	-	4 (morph_blackhat3d)	黒体の帯域放射輝度
+blackbody	-	-	-	5 (raw_black_level)	黒体の帯域放射輝度
 emissiv	-	-	-	0 (—)	放射率の補正
 temperature	-	-	-	0 (—)	放射輝度 ↔ 温度
 radiom	-	-	-	0 (—)	放射測定(ラジオメトリ)
@@ -9,6 +9,6 @@ infrared	-	-	-	0 (—)	赤外の帯域
 stefan	-	-	-	0 (—)	Stefan–Boltzmann
 kelvin	-	-	-	0 (—)	温度の単位
 atmos	-	-	-	0 (—)	大気の透過
-uncert	-	-	-	1 (photon_uncertainty)	測定の不確かさ
-montecarlo	-	-	-	1 (tolerance_analysis)	相関つき Monte Carlo 伝播
+uncert	-	-	-	6 (photon_uncertainty)	測定の不確かさ
+montecarlo	-	-	-	2 (gum_monte_carlo)	相関つき Monte Carlo 伝播
 guard	-	-	-	0 (—)	guard band(合否判定)
