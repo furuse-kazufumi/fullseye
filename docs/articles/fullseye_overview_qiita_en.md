@@ -17,7 +17,7 @@ This is the real shape model of asteroid **25143 Itokawa** — the Gaskell model
 ## TL;DR
 
 - **Fullseye** (a pun on "Bullseye" — the dead center of a target) is a self-built library of classical image-processing and geometric-vision algorithms: **roughly 1,000 operators, implemented from scratch in numpy, sitting behind one typed interface**. The goal is to make "explainable vision" — vision whose internals you can actually account for — something you can carry around as the eyes of **Physical AI** (AI that acts in the physical world with a body, i.e. robots).
-- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **984 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
+- I use **HALCON**, the industrial machine-vision standard, as a "map of coverage." As measured, Fullseye has a self-built counterpart for **982 of 2,313 HALCON operators (42.5%)** — not a number from memory, but a mechanical tally against the operator list from the official reference.
 - On top of the library sit an **evolutionary mode that "designs" algorithms through evolutionary computation**, a **Physical AI perception stack** that chains stereo → depth → point cloud → 6-DoF pose, and an **HDevelop-style IDE, Fullseye Studio**.
 - **The single most recommended way to use it is as an AI's RAG knowledge base.** Feed it to Claude Code or similar, and a plain conversational request like "detect X in this image" gets you a **pipeline assembled from ~1,000 ops, executed, with the results appearing on Studio's screen** — that's the foundation this is designed to be.
 - The undercurrent of this article is **making "honest disclosure" a mechanism** — never showing only the good numbers, never erasing failures, always stating the limitations. I include cases where the quality gates actually caught bugs, **including six I fixed just now**, exactly as they happened.
@@ -434,13 +434,13 @@ To avoid talking about "coverage" subjectively, I use the industrial-vision gian
 
 Let me pause on why a yardstick is needed at all. "There are about 1,000 ops" tells a reader nothing on its own — is that a lot, or a little? **The number 1,000 has no meaning until it's compared against something.** But declaring "it's comprehensive" subjectively would violate this article's undercurrent, honest disclosure. So the method I chose was: **measure with the same yardstick as the giant actually used in industry, and produce the number by mechanical tally**. I picked HALCON not merely because it's famous, but because **its operator list is organized and published as an official reference** — that is, for its high comparability.
 
-> **imgevolve maps to 984 / 2313 HALCON operators (42.5%)** — not from memory, but measured against the scraped list.
+> **imgevolve maps to 982 / 2313 HALCON operators (42.5%)** — not from memory, but measured against the scraped list.
 
 To be honest, that's **still under half**. Chapters like Tuple handling, System, Classification, and OCR are almost entirely untouched (they sit outside the core of image processing, so I've deprioritized them). Matching, Morphology, Filtering, and geometric measurement, on the other hand, are where I've built thick. The heart of this number is that **a per-chapter table showing "what's filled in and what's empty" stays open for anyone to see, at all times.**
 
 ### The Per-Chapter Map — Thick Spots and Empty Spots
 
-HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 984 counterparts are **not** spread evenly across them.
+HALCON's 2,313 operators are divided into **30 chapters**. Fullseye's 982 counterparts are **not** spread evenly across them.
 
 Where I've built thick is the chapters at the heart of image processing: **Filtering** (smoothing, edges, frequency-domain filters), **Morphology** (dilation, erosion, opening, closing), **Regions** (region operations and feature measurement), **Segmentation** (thresholding and region splitting), and **Matching** (template and deformable matching) — all painted **far denser** than the overall 42.5% average. The thin spots are chapters like **Tuple handling** (numeric-tuple operations, the programming-language side of HDevelop), **System** (process and thread control), and **Classification / OCR** (machine-learning-based classification and character recognition). Those are nearly untouched — that's the honest state of things.
 
@@ -4344,7 +4344,7 @@ If you enjoyed it, please click the ♡ — it is what keeps the next one coming
 
 <!--
 Publication notes (not shown in the article body):
-- All numbers are measured (ops 877, 3D 346, HALCON 984/2313=42.5%, tests 10982). Re-measure before updating any of them.
+- All numbers are measured (ops 877, 3D 346, HALCON 982/2313=42.5%, tests 10982). Re-measure before updating any of them.
 - Prefer Mermaid over images where possible (native to Qiita; avoids SVG path/cache issues). If figures become SVG, always apply raw absolute URL + HTTP 200 check + ?v=N cache-bust.
 - Apache-2.0 and reimplemented-from-public-knowledge are stated explicitly (the no-derivation-from-commercial-products line).
 - Release logistics: queue as a private draft, and publish when a slot opens, avoiding Qiita's consecutive-post 502.

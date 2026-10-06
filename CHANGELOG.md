@@ -17,6 +17,12 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   `band=(0.0, rate / 2)` を明示する(0.4.0 の全帯域 PHAT と同じ数値)。帯域が分からなければ `weight="none"`。`"none"` / `"roth"` / `"scot"` では `band` は任意のまま。
   呼び出し元: `examples/acoustic_condition_monitoring.py`(白色雑音なので全帯域を明示、数値は不変)、chain_fuzz の引数の作り手(`typed_catalog`、`band=(0.0, 0.5)`)。
   `poc_leak_localization` は自前の GCC で gcc_delay を呼ばないので影響なし。門: test_acoustics に 3 本(band 無しの PHAT は ValueError、帯域ありで低域 20 / 20 と全帯域 3 / 20、`none` / `roth` / `scot` は band 無しで呼べる)。
+- **削除: `contours_xld2.gen_contour_nurbs_xld` / `gen_nurbs_interp`**(0.4.0 で非推奨・「0.5.0 で削除」と予告済み)と、使い手が 0 になった下請け `_interp_bspline_contour`。
+  名前に反して NURBS ではなく、重みを持たず全点を通る補間 B スプライン(`splprep(s=0)`)だった。OP_INDEX の op ではない(op の消失は 0)。
+  **移行**: 重みつきの本物の NURBS は `mathgeometry.nurbs_curve`(`fs.nurbs_curve`)、円は `nurbs_circle`。点を通す補間が要るなら `scipy.interpolate.splprep(s=0)` を直接。
+  HALCON 名の facade 表から 2 行を外し、`halcon_stubs` の 2 本を `covered: false` に(HALCON の 2 本は重みと節点を取る本物の NURBS で、消した関数は当たっていなかった)。
+  HALCON 対応は 984 → **982 / 2313(42.5 %、率は不変)**、XLD 章 88 → 86 / 97。`docs/HALCON_COVERAGE.md` を作り直し、概観記事(ja / en)の手書きの 984 を 982 に。
+  門: 「名前がもう無く移行先は在る」(test_hidden_function_defects の parametrize に 3 本、test_mathgeometry)、facade 表と stubs が消した関数を指さないこと。
 
 ### 挙動の変更(既定の数値が変わる —— CONTRIBUTING の Versioning により次の版は minor)
 
