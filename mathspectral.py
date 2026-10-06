@@ -110,6 +110,17 @@ def _cov_subspace(X, n_sources):
     return R, vals[::-1], vecs[:, ::-1], n, M
 
 
+def _spacing(spacing, who: str) -> float:
+    """素子間隔(波長単位)を検査する。★2026-10-07: 0 で [90, 90] / [] を、負で角の符号反転を黙って返していた。"""
+    try:
+        d = float(spacing)
+    except (TypeError, ValueError):
+        raise ValueError("%s: spacing は正の有限な数(波長単位)、得たのは %r" % (who, spacing)) from None
+    if not (math.isfinite(d) and d > 0):
+        raise ValueError("%s: spacing は正の有限な数(波長単位)、得たのは %r" % (who, spacing))
+    return d
+
+
 def music_doa(X, n_sources: int | None = None, *, spacing: float = 0.5, grid_deg=None) -> dict:
     """MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。
 
@@ -118,10 +129,11 @@ def music_doa(X, n_sources: int | None = None, *, spacing: float = 0.5, grid_deg
     ``n_sources=None`` なら :func:`n_sources_mdl` で推定し、返り値の ``n_sources_estimated`` を True にする。
     返り値 ``{"grid_deg", "pseudo_spectrum_db", "doa_deg", "eigenvalues"}``(doa は峰の大きい順に n 個、格子の分解能)。
     """
+    d = _spacing(spacing, "music_doa")
     _R, vals, vecs, n, M = _cov_subspace(X, n_sources)
     g = np.linspace(-90, 90, 3601) if grid_deg is None else np.asarray(grid_deg, dtype=np.float64)
     En = vecs[:, n:]
-    A = _steer(M, float(spacing), np.radians(g))
+    A = _steer(M, d, np.radians(g))
     denom = np.sum(np.abs(En.conj().T @ A) ** 2, axis=0)
     P = 1.0 / np.maximum(denom, 1e-300)
     Pdb = 10 * np.log10(P / P.max())
@@ -138,8 +150,8 @@ def esprit_doa(X, n_sources: int | None = None, *, spacing: float = 0.5) -> dict
     θ_k = arcsin(−arg λ_k / (2π d))。雑音なし・無相関なら厳密(格子の分解能に縛られない)。
     ``n_sources=None`` なら MDL で推定する。返り値 ``{"doa_deg", "eigenvalues", "n_sources", "n_sources_estimated"}``。
     """
+    d = _spacing(spacing, "esprit_doa")
     _R, vals, vecs, n, M = _cov_subspace(X, n_sources)
-    d = float(spacing)
     Es = vecs[:, :n]
     Phi = np.linalg.lstsq(Es[:-1], Es[1:], rcond=None)[0]
     lam = np.linalg.eigvals(Phi)

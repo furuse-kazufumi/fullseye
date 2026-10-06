@@ -857,7 +857,7 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
     H, W = im.shape
     rr, cc = np.mgrid[0:H, 0:W].astype(np.float64)
     off = (np.arange(ss) + 0.5) / ss - 0.5
-    vals, tths, wts = [], [], []
+    vals, tths, wts, cors = [], [], [], []
     for dy in off:
         for dx in off:
             tth, chi, om = _tth_chi(rr + dy, cc + dx, g)
@@ -871,11 +871,13 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
                 c0, c1 = (_num(c, "chi_range") for c in chi_range)
                 sel &= (chi >= c0) & (chi < c1) if c0 < c1 else (chi >= c0) | (chi < c1)
             vals.append((im / corr)[sel])
+            cors.append(corr[sel])
             tths.append(tth[sel])
             wts.append(np.full(int(sel.sum()), 1.0 / ss ** 2))
     val = np.concatenate(vals)
     tt = np.concatenate(tths)
     wt = np.concatenate(wts)
+    cr = np.concatenate(cors)
     if tt.size == 0:
         raise ValueError("no pixel left to integrate (mask / chi_range removed everything)")
     if two_theta_range is None:
@@ -892,7 +894,8 @@ def azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask
     ok = (idx >= 0) & (idx < nb)
     s_w = np.bincount(idx[ok], weights=wt[ok], minlength=nb)
     s_v = np.bincount(idx[ok], weights=(val * wt)[ok], minlength=nb)
-    s_va = np.bincount(idx[ok], weights=(np.abs(val) * wt)[ok], minlength=nb)
+    # ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
+    s_va = np.bincount(idx[ok], weights=(np.abs(val) / cr * wt)[ok], minlength=nb)
     with np.errstate(invalid="ignore", divide="ignore"):
         mean = s_v / s_w
         # Poisson: 画素の分散 ≈ 値。1 画素の副画素の重みの和は 1 なので、平均の分散 ≈ Σ w |v| / (Σ w)²

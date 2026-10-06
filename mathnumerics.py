@@ -223,8 +223,12 @@ def interp_barycentric(xk, yk, x) -> np.ndarray:
         raise ValueError("interp_barycentric: xk に重複がある")
     d = xk[:, None] - xk[None, :]
     np.fill_diagonal(d, 1.0)
-    w = 1.0 / np.prod(d, axis=1)
-    w = w / np.max(np.abs(w))
+    # ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で
+    # 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、
+    # 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
+    logabs = np.sum(np.log(np.abs(d)), axis=1)
+    sign = np.where(np.count_nonzero(d < 0, axis=1) % 2 == 1, -1.0, 1.0)
+    w = sign * np.exp(np.min(logabs) - logabs)
     xs = x.ravel()
     diff = xs[:, None] - xk[None, :]
     exact = diff == 0
@@ -380,17 +384,23 @@ def chebyshev_eval_nd(coeffs, points, box=None) -> np.ndarray:
             raise ValueError("chebyshev_eval_nd: 点が box の外(外挿はしない)")
         return np.cos(np.arange(C.shape[ax])[None, :] * np.arccos(np.clip(t, -1, 1))[:, None])
 
-    if isinstance(points, (tuple, list)) and len(points) == d and all(np.ndim(p) == 1 for p in points):
+    # ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が
+    # ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ
+    # (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
+    if isinstance(points, tuple) and len(points) == d and all(np.ndim(p) == 1 for p in points):
         out = C
         for ax in range(d):
             out = np.tensordot(_T(points[ax], ax), out, axes=([1], [ax]))
             out = np.moveaxis(out, 0, ax)
         return out
-    P = np.asarray(points, dtype=np.float64)
+    try:
+        P = np.asarray(points, dtype=np.float64)
+    except ValueError:                       # 長さの揃わない list(以前は格子扱いだった)
+        raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})(軸ごとの格子なら 1-D 配列 {d} 本の tuple)") from None
     if P.ndim == 1 and d == 1:
         P = P[:, None]
     if P.ndim != 2 or P.shape[1] != d:
-        raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})")
+        raise ValueError(f"chebyshev_eval_nd: 点は (M, {d})(軸ごとの格子なら 1-D 配列 {d} 本の tuple)")
     ks = _LETTERS[:d]
     spec = ks + "," + ",".join("m" + k for k in ks) + "->m"
     return np.einsum(spec, C, *[_T(P[:, ax], ax) for ax in range(d)], optimize=True)

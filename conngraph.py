@@ -354,17 +354,61 @@ def _spectral_radius(W: np.ndarray) -> float:
     実・非負で絶対値最大なので ARPACK が確実に届く。その条件の外は密のまま(遅いが正確)。
     """
     n = W.shape[0]
+    # ★2026-10-07: 非零の向きつきグラフに閉路(自己ループ含む)が無ければ W は冪零 = 半径はちょうど 0。
+    #   ARPACK は冪零(Jordan 塊)で擬スペクトルの縁を返す(鎖 500 個で 0.366、層状 DAG で 3.6e-5 →
+    #   reservoir_from_graph が 0 を拒否せず 2.5 万倍に拡大した)。残差では見分けられないので構造で判定する。
+    lab = _strong_components(W)
+    if lab is not None and int(lab.max()) + 1 == n and not np.any(np.diag(W) != 0):
+        return 0.0
     if n > 400 and np.count_nonzero(W) > 0 and bool((W >= 0.0).all()):
-        try:
-            import scipy.sparse as sp
-            import scipy.sparse.linalg as spl
-            v = spl.eigs(sp.csr_matrix(W), k=1, which="LM", return_eigenvectors=False, tol=1e-10, maxiter=20000)
-            r = float(np.abs(v).max())
-            if np.isfinite(r):
-                return r
-        except Exception:                                  # noqa: BLE001 - 未収束 / scipy 無し → 密で正確に
-            pass
+        if lab is not None and int(lab.max()) + 1 > 1:
+            # ★2026-10-07: 強連結成分で並べ替えると W はブロック三角 → 固有値は対角ブロックの和集合。
+            #   既約な非負ブロックなら Perron 根に ARPACK が確実に届く(冪零な DAG 部分は 0 に寄与)。
+            sizes = np.bincount(lab)
+            d = np.abs(np.diag(W))
+            r = float(d[sizes[lab] == 1].max()) if np.any(sizes == 1) else 0.0
+            for c in np.nonzero(sizes > 1)[0]:
+                idx = np.nonzero(lab == c)[0]
+                r = max(r, _irreducible_radius(W[np.ix_(idx, idx)]))
+            return r
+        r = _arpack_radius(W)
+        if r is not None:
+            return r
     return float(np.max(np.abs(np.linalg.eigvals(W))))
+
+
+def _strong_components(W: np.ndarray) -> np.ndarray | None:
+    """非零パターンの強連結成分ラベル(scipy 無しなら None = 構造判定を省いて従来どおり)。"""
+    try:
+        import scipy.sparse as sp
+        from scipy.sparse.csgraph import connected_components
+    except Exception:                                      # noqa: BLE001 - scipy 無し → 判定なし
+        return None
+    _, lab = connected_components(sp.csr_matrix(W != 0), directed=True, connection="strong")
+    return np.asarray(lab, dtype=np.int64)
+
+
+def _arpack_radius(W: np.ndarray) -> float | None:
+    """ARPACK で最大絶対値の固有値 1 本の絶対値。未収束 / scipy 無し / 非有限は None。"""
+    try:
+        import scipy.sparse as sp
+        import scipy.sparse.linalg as spl
+        v = spl.eigs(sp.csr_matrix(W), k=1, which="LM", return_eigenvectors=False, tol=1e-10, maxiter=20000)
+        r = float(np.abs(v).max())
+        if np.isfinite(r):
+            return r
+    except Exception:                                      # noqa: BLE001 - 未収束 / scipy 無し → 密で正確に
+        pass
+    return None
+
+
+def _irreducible_radius(B: np.ndarray) -> float:
+    """既約(強連結)な非負ブロックの半径: 400 超は ARPACK、それ以下と失敗時は密の eigvals。"""
+    if B.shape[0] > 400:
+        r = _arpack_radius(B)
+        if r is not None:
+            return r
+    return float(np.max(np.abs(np.linalg.eigvals(B))))
 
 
 def graph_spectral_radius(W: Any) -> float:
@@ -1024,6 +1068,14 @@ def graph_layer_propagate(W: Any, labels: Any, U: Any, activation: str = "kwta",
         dst = lab == a + 1
         B = A[src][:, dst]
         col = B.sum(axis=0)
+        # ★2026-10-07: 入力の和が 0 以下の受け手(負の重みが勝つ)は「和を 1 に正規化」できない。
+        #   以前は 1e-300 で割って 1e300 倍に吹き飛び、linear の正規化で他の列が 4e-301 に潰れた。
+        bad = (col <= 0.0) & np.any(B != 0.0, axis=0)
+        if bad.any():
+            node = int(np.nonzero(dst)[0][bad][0])
+            raise ValueError(f"{op}: receiver node {node} (layer {a + 1}) has input-weight sum "
+                             f"{float(col[bad][0]):.6g} <= 0 — cannot normalise its inputs to sum 1; "
+                             f"{int(bad.sum())} such receiver(s) (use non-negative weights)")
         B = B / np.maximum(col, 1e-300)[None, :]
         u = x @ B
         if activation == "linear":

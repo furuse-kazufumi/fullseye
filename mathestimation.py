@@ -243,6 +243,9 @@ def kalman_smooth(z, F, H, Q, R, x0, P0) -> dict:
         raise ValueError("kalman_smooth: 行列の形が合わない(状態 %d、観測 %d)" % (n, m))
     if z.shape[1] != m:
         raise ValueError("kalman_smooth: 観測は (T, %d)" % m)
+    if np.isinf(z).any():
+        # ★2026-10-07: ±inf は欠測(NaN)と区別する。以前は黙って欠測扱いで更新を飛ばしていた。
+        raise ValueError("kalman_smooth: 観測に ±inf がある(欠測は NaN で表す)")
     xf, Pf, xp, Pp = np.empty((T, n)), np.empty((T, n, n)), np.empty((T, n)), np.empty((T, n, n))
     nll = 0.0
     for k in range(T):
@@ -331,14 +334,26 @@ def se3_log(T) -> np.ndarray:
     R, t = T[:3, :3], T[:3, 3]
     if np.abs(R @ R.T - np.eye(3)).max() > 1e-6 or abs(np.linalg.det(R) - 1) > 1e-6:
         raise ValueError("se3_log: 左上 3×3 が回転行列でない")
-    c = float(np.clip((np.trace(R) - 1) / 2, -1.0, 1.0))
-    th = math.acos(c)
+    # ★2026-10-07: acos は π の近くで桁落ち(π−1.5e-6 で ω の誤差 4e-4 rad)→ 角は atan2(sinθ, cosθ)、
+    # π の近くの軸は対称部 (R+Rᵀ)/2 = cosθ I + (1−cosθ) a aᵀ の最大対角の列から、符号は歪対称部から取る。
+    sv = 0.5 * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])   # = sinθ · a
+    s = float(np.linalg.norm(sv))
+    c = float((np.trace(R) - 1) / 2)
+    th = math.atan2(s, c)
     if th < 1e-8:
-        w = 0.5 * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
-    elif math.pi - th < 1e-6:
-        raise ValueError("se3_log: 回転角が π に近く軸の向きが定まらない")
+        w = sv
+    elif th < math.pi - 0.1:
+        w = (th / s) * sv
     else:
-        w = th / (2 * math.sin(th)) * np.array([R[2, 1] - R[1, 2], R[0, 2] - R[2, 0], R[1, 0] - R[0, 1]])
+        if s < 1e-12:                       # θ = π(丸めの範囲): ω と −ω の区別が付かない(定義域は θ < π)
+            raise ValueError("se3_log: 回転角が π に近く軸の向きが定まらない")
+        aa = (0.5 * (R + R.T) - c * np.eye(3)) / (1.0 - c)     # = a aᵀ
+        i = int(np.argmax(np.diag(aa)))
+        a = aa[:, i] / math.sqrt(aa[i, i])
+        a = a / np.linalg.norm(a)
+        if float(a @ sv) < 0:
+            a = -a
+        w = th * a
     W = _hat(w)
     th = float(np.linalg.norm(w))
     if th < 1e-8:

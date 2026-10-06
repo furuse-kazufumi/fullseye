@@ -607,8 +607,9 @@ def add_asset(world: dict, name: str, x: float, y: float, yaw: float, *, dims=No
               asset_root=None, paint=None) -> int:
     """資産(車・コーン・標識 …)を姿勢に置いて世界に足す。``paint`` = 車の車体色(:func:`load_asset` と同じ)。"""
     m = load_asset(name, dims, root=asset_root, paint=paint)
+    # ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
     return world_add(world, place_mesh(m["V"], x, y, yaw, z), m["F"], m["label"], m["color"],
-                     name=name, pose=(x, y, yaw), extra={"dims": tuple(float(v) for v in m["dims"])})
+                     name=name, pose=(x, y, yaw), extra={"dims": tuple(float(v) for v in m["dims"]), "z": float(z)})
 
 
 def add_signal(world: dict, x: float, y: float, yaw: float, *, state: str = "red", height: float = 5.0,

@@ -199,6 +199,8 @@ def vx_nonmax_suppression(image, *, window, mask=None):
         for dx in range(-r, r + 1):
             if dy == 0 and dx == 0:
                 continue
+            if abs(dy) >= h or abs(dx) >= wd:
+                continue                                                  # ★2026-10-07: 画像の外だけの隣(窓 > 画像で負の添字が回り込み numpy が落ちた)
             before = dy < 0 or (dy == 0 and dx < 0)
             ys0, ys1 = max(0, -dy), min(h, h - dy)
             xs0, xs1 = max(0, -dx), min(wd, wd - dx)

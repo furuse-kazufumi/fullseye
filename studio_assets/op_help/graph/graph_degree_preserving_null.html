@@ -4,14 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import graphinv; graphinv.graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0)</code>、台帳から引くなら <code style="color:#22d3bf">opsgraph.get(&quot;graph_degree_preserving_null&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Compare 3-cycles and reciprocity against a degree-preserving null model.</p>
-<p>Each null sample rewires the graph by `<code style="color:#22d3bf">swaps_per_edge * |E|</code>` edge swaps that keep</p>
-<p>every node&#x27;s in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002). The sample&#x27;s</p>
+<p>Each null sample requests `<code style="color:#22d3bf">swaps_per_edge * |E|</code>` edge swaps that keep every node&#x27;s</p>
+<p>in- and out-degree <b>exactly</b> (Maslov &amp; Sneppen 2002); a swap that would create a</p>
+<p>self-loop or duplicate edge is skipped, so dense graphs accept fewer</p>
+<p>(`<code style="color:#22d3bf">swaps_accepted</code>`). The sample&#x27;s</p>
 <p>degree sequences are checked against the original before it is used — a null that</p>
 <p>drifted would make every ratio a lie, so this fails closed.</p>
 <p>Returns a dict with the observed `<code style="color:#22d3bf">cycles3</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">reciprocal_pairs</code>`, the null</p>
 <p>`<code style="color:#22d3bf">*_null_mean</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">*_null_sd</code><code style="color:#22d3bf">, the </code><code style="color:#22d3bf">*_ratio</code><code style="color:#22d3bf"> (observed / null mean) and </code><code style="color:#22d3bf">*_z</code>`,</p>
-<p>plus `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf"> and </code><code style="color:#22d3bf">swaps</code>`. Ratios are what let graphs of different size be</p>
-<p>compared; raw counts cannot.</p>
+<p>plus `<code style="color:#22d3bf">n_samples</code><code style="color:#22d3bf">, </code><code style="color:#22d3bf">swaps</code><code style="color:#22d3bf"> (requested per sample) and </code><code style="color:#22d3bf">swaps_accepted</code>` (list,</p>
+<p>accepted per sample). Ratios are what let graphs of different size be compared;</p>
+<p>raw counts cannot.</p>
 <p><b>Raises</b> `<code style="color:#22d3bf">ValueError</code><code style="color:#22d3bf">: as :func:</code>graph_degree_summary<code style="color:#22d3bf">; </code><code style="color:#22d3bf">n_samples &lt; 2</code>`</p>
 <p>(no spread to estimate); `<code style="color:#22d3bf">swaps_per_edge &lt; 1</code>`; a graph with fewer than 2 edges</p>
 <p>(nothing to swap).</p>

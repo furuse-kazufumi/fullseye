@@ -24,7 +24,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)
 3) L φ = ∇·X を解き、source で 0 になるようずらす
 門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。
-返り値 ``{"distance", "t"}``。
+返り値 ``{"distance", "t"}``(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。
 
 ## ファミリ共通の入力契約(fail-closed)
 

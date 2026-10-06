@@ -162,6 +162,15 @@ def _rewire(B: np.ndarray, rng, n_swaps: int) -> np.ndarray:
     leaves every in- and out-degree unchanged — that is the whole point, and the
     caller checks it.
     """
+    return _rewire_counted(B, rng, n_swaps)[0]
+
+
+def _rewire_counted(B: np.ndarray, rng, n_swaps: int):
+    """:func:`_rewire` plus the number of swaps actually accepted (``(R, accepted)``).
+
+    ★2026-10-07: 試行は ``3 * n_swaps`` 回で打ち切るので、密なグラフ(密度 0.9)では
+    7005 回を頼んで通るのは 1 割未満 —— 頼んだ数だけを ``swaps`` と報告すると混ぜ具合を過大に見せる。
+    """
     R = B.copy()
     edges = np.argwhere(R == 1)
     m = len(edges)
@@ -178,21 +187,24 @@ def _rewire(B: np.ndarray, rng, n_swaps: int) -> np.ndarray:
         R[a, d] = 1; R[c, b] = 1
         edges[i] = (a, d); edges[j] = (c, b)
         done += 1
-    return R
+    return R, done
 
 
 def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
     """Compare 3-cycles and reciprocity against a degree-preserving null model.
 
-    Each null sample rewires the graph by ``swaps_per_edge * |E|`` edge swaps that keep
-    every node's in- and out-degree **exactly** (Maslov & Sneppen 2002). The sample's
+    Each null sample requests ``swaps_per_edge * |E|`` edge swaps that keep every node's
+    in- and out-degree **exactly** (Maslov & Sneppen 2002); a swap that would create a
+    self-loop or duplicate edge is skipped, so dense graphs accept fewer
+    (``swaps_accepted``). The sample's
     degree sequences are checked against the original before it is used — a null that
     drifted would make every ratio a lie, so this fails closed.
 
     Returns a dict with the observed ``cycles3`` and ``reciprocal_pairs``, the null
     ``*_null_mean`` / ``*_null_sd``, the ``*_ratio`` (observed / null mean) and ``*_z``,
-    plus ``n_samples`` and ``swaps``. Ratios are what let graphs of different size be
-    compared; raw counts cannot.
+    plus ``n_samples``, ``swaps`` (requested per sample) and ``swaps_accepted`` (list,
+    accepted per sample). Ratios are what let graphs of different size be compared;
+    raw counts cannot.
 
     **Raises** ``ValueError``: as :func:`graph_degree_summary`; ``n_samples < 2``
     (no spread to estimate); ``swaps_per_edge < 1``; a graph with fewer than 2 edges
@@ -213,9 +225,10 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
     c3 = int(np.trace(M @ M @ M)) // 3
     rec = int((B * B.T).sum()) // 2
     rng = np.random.default_rng(seed)
-    null_c3, null_rec = [], []
+    null_c3, null_rec, accepted = [], [], []
     for _ in range(int(n_samples)):
-        R = _rewire(B, rng, int(swaps_per_edge) * E)
+        R, acc = _rewire_counted(B, rng, int(swaps_per_edge) * E)
+        accepted.append(int(acc))
         if not (np.array_equal(R.sum(axis=0), kin) and np.array_equal(R.sum(axis=1), kout)
                 and int(R.sum()) == E):
             raise ValueError("%s: a null sample changed the degree sequence — the "
@@ -239,6 +252,7 @@ def graph_degree_preserving_null(adj, n_samples=20, swaps_per_edge=5, seed=0):
         "reciprocal_pairs": rec, "reciprocal_null_mean": rm, "reciprocal_null_sd": rs,
         "reciprocal_ratio": ratio(rec, rm), "reciprocal_z": z(rec, rm, rs),
         "n_samples": int(n_samples), "swaps": int(swaps_per_edge) * E,
+        "swaps_accepted": accepted,                     # ★2026-10-07: 実際に通った入れ替え数(標本ごと)
     }
 
 
@@ -683,8 +697,11 @@ def graph_rich_club_curve(adj, mode="total", n_null=20, swaps_per_edge=5, seed=0
     rng = np.random.default_rng(seed)
     kin, kout = B.sum(axis=0), B.sum(axis=1)
     null = np.zeros((int(n_null), len(ks)))
+    accepted = []
     for si in range(int(n_null)):
-        R = _rewire(B.astype(np.int8), rng, int(swaps_per_edge) * E).astype(np.int64)
+        R, acc = _rewire_counted(B.astype(np.int8), rng, int(swaps_per_edge) * E)
+        R = R.astype(np.int64)
+        accepted.append(int(acc))
         if not (np.array_equal(R.sum(axis=0), kin) and np.array_equal(R.sum(axis=1), kout)):
             raise ValueError("%s: null sample %d changed a degree sequence — refusing to report" % (op, si))
         null[si], _ = _rich_club_phi(R, _deg(R), ks)
@@ -698,6 +715,7 @@ def graph_rich_club_curve(adj, mode="total", n_null=20, swaps_per_edge=5, seed=0
     return {
         "k": ks, "count": cnt, "phi": phi, "null_mean": mean, "null_sd": sd, "ratio": ratio, "z": z,
         "regime": regime, "n_null": int(n_null), "mode": mode, "swaps": int(swaps_per_edge) * E,
+        "swaps_accepted": accepted,                     # ★2026-10-07: 実際に通った入れ替え数(標本ごと)
     }
 
 
@@ -707,7 +725,9 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
     ``adjs`` is a list of K square matrices or a table ``{name: matrix}`` on the **same**
     node order (a node absent from an individual is a zero row and column). For each
     individual the innermost core of :func:`graph_kcore` (same ``mode`` / ``weighted``) is
-    taken; ``appearances[v]`` counts the individuals whose innermost core contains v.
+    taken; ``appearances[v]`` counts the individuals whose innermost core contains v. An
+    individual whose innermost index is 0 (e.g. no edges) has no core and contributes
+    no member.
     Following Yadav & Singh 2026, a node is **persistent** if it is in the core of all K,
     **recurrent** if in 2 .. K−1, **transient** if in exactly 1, and **never** otherwise.
 
@@ -748,7 +768,9 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
             raise ValueError("%s: adjs[%s] has %d nodes but adjs[%s] has %d — put every "
                              "individual on one node order first" % (op, names[i], r["n"], names[0], n))
         cores.append(r)
-    membership = np.stack([r["inner"] for r in cores])
+    # ★2026-10-07: kmax = 0 の個体(辺 0 本など)は「0-core = 全員」を最内殻にして全ノードを数えていた
+    #   (三角形 2 個体 + 空 1 個体で appearances [3,3,3,1,1])。殻が無い個体は誰も含まない。
+    membership = np.stack([r["inner"] & (r["kmax"] > 0) for r in cores])
     app = membership.sum(axis=0).astype(np.int64)
     persistent = app == K
     transient = app == 1
@@ -759,6 +781,6 @@ def graph_core_persistence(adjs, mode="in", weighted=False):
         "persistent": persistent, "recurrent": recurrent, "transient": transient, "never": never,
         "n_persistent": int(persistent.sum()), "n_recurrent": int(recurrent.sum()),
         "n_transient": int(transient.sum()), "n_never": int(never.sum()),
-        "kmax": np.array([r["kmax"] for r in cores]), "n_inner": np.array([r["n_inner"] for r in cores], dtype=np.int64),
+        "kmax": np.array([r["kmax"] for r in cores]), "n_inner": membership.sum(axis=1).astype(np.int64),
         "mode": mode, "weighted": bool(weighted),
     }

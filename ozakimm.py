@@ -338,12 +338,20 @@ def _ozaki2_fixed(A, B, n_moduli):
     moduli = _INT8_MODULI[:n_moduli]
     log2M = sum(math.log2(m) for m in moduli)
     K = int(math.floor((log2M - 2) / 2))
-    na = np.sqrt(np.sort(A * A, axis=1).sum(axis=1))
-    nb = np.sqrt(np.sort(B * B, axis=0).sum(axis=0))
+    # ★2026-10-07: 行・列の最大値で 2 の冪に先に正規化してからノルムを取る(1e-200 × 1e200 で
+    # 二乗がアンダー/オーバーフローし 0 を返していた)。2 の冪の倍率は正確なので通常域の結果はビット同一。
+    _, sa = np.frexp(np.abs(A).max(axis=1))
+    _, sb = np.frexp(np.abs(B).max(axis=0))
+    sa = sa.astype(np.int32)
+    sb = sb.astype(np.int32)
+    As = np.ldexp(A, -sa[:, None])
+    Bs = np.ldexp(B, -sb[None, :])
+    na = np.sqrt(np.sort(As * As, axis=1).sum(axis=1))
+    nb = np.sqrt(np.sort(Bs * Bs, axis=0).sum(axis=0))
     _, ea = np.frexp(na)
     _, eb = np.frexp(nb)
-    ea = ea.astype(np.int32)
-    eb = eb.astype(np.int32)
+    ea = ea.astype(np.int32) + sa
+    eb = eb.astype(np.int32) + sb
     Ai = np.trunc(np.ldexp(A, (K - ea)[:, None]))
     Bi = np.trunc(np.ldexp(B, (K - eb)[None, :]))
     res = []

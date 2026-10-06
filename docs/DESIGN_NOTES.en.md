@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1221. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1255. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -175,18 +175,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L225** — ★Enforce the headline honesty claim ("a DNA op is added only when it beats the hand baseline on a LOCKED holdout") — previously this flag was printed but never gated, so a worse-than-hand macro could be registered and then selected by the next evolution. The gate refuses that unless it is explicitly overridden.
 
-## `comm.py`
-
-- **L387** _(ja)_ — ★CRC は**公表された検査値**で裏を取る。CRC-16/MODBUS の諸元は ``width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0x0000 check=0x4b37``(CRC catalogue)—— ``check`` は ASCII ``"123456789"`` の CRC である。 自分で作った入力の往復だけで試すと、**反射入力と反射出力を同時に取り違えた実装が 緑になる**(自分で包んで自分で開けるので、向きの誤りが打ち消し合う)。 外の値と突き合わせて初めて、線の向こうの装置と話が通じることが言える。
-- **L635** _(ja)_ — ★表は 1 つに畳む —— 同じ PDU 処理を RTU の装置役 (:class:`ModbusRtuLoopback`)でも使う。2 つ書くと、FC を足した ときに片方だけ増える。
-- **L745** _(ja)_ — ★``modbus-rtu`` は 2026-09-25 まで「名簿に載るだけ」の行で、開こうとすると 「pymodbus を入れて直接使え」と断っていた。だが RTU は Modbus TCP と**同じ PDU** を別の框で包んだものにすぎず、その PDU の組み立てと解釈は**既にここに在って 単体試験も付いていた**。足りなかったのは框(アドレス + CRC)と線の口だけで、 断り続ける理由は無かった —— **名簿は「持っていないもの」だけでなく、 「持っているのに繋いでいないもの」も隠す。**
-- **L758** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
-- **L765** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
-- **L811** _(ja)_ — ★同梱の顔ぶれを**ここで**凍らせる(名簿を全部登録し終えた後)。これより前に 呼ぶと空を覚えてしまい、``unregister`` が同梱の protocol を消せてしまう。
-
 ## `conngraph.py`
 
-- **L677** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L357** _(ja)_ — ★2026-10-07: 非零の向きつきグラフに閉路(自己ループ含む)が無ければ W は冪零 = 半径はちょうど 0。 ARPACK は冪零(Jordan 塊)で擬スペクトルの縁を返す(鎖 500 個で 0.366、層状 DAG で 3.6e-5 → reservoir_from_graph が 0 を拒否せず 2.5 万倍に拡大した)。残差では見分けられないので構造で判定する。
+- **L365** _(ja)_ — ★2026-10-07: 強連結成分で並べ替えると W はブロック三角 → 固有値は対角ブロックの和集合。 既約な非負ブロックなら Perron 根に ARPACK が確実に届く(冪零な DAG 部分は 0 に寄与)。
+- **L721** _(ja)_ — ★ 軸ごとに [0,1] へ伸ばすと(成分が横一列のとき)縦だけ 3 倍に伸びて 成分内の距離が成分間より大きくなる —— 全体は**一様に**縮める。
+- **L1071** _(ja)_ — ★2026-10-07: 入力の和が 0 以下の受け手(負の重みが勝つ)は「和を 1 に正規化」できない。 以前は 1e-300 で割って 1e300 倍に吹き飛び、linear の正規化で他の列が 4e-301 に潰れた。
 
 ## `deform3d.py`
 
@@ -220,6 +214,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `driveinf.py`
 
 - **L209** _(ja)_ — ★道の帯は step ごとに切る: 描画器(render3d)は頂点が 1 つでもカメラの後ろにある三角形を捨てるので、100 m 級の 1 枚の帯は車載カメラから丸ごと消えた(2026-10-01)
+
+## `driveworld.py`
+
+- **L610** _(ja)_ — ★2026-10-07: 置いた高さ z を物体に残す(残さないと world_move が元の z を外せず、z=2 で置いて z=2 へ動かすと底が 4 になった)
 
 ## `engine.py`
 
@@ -1301,6 +1299,15 @@ This repository records *why* things are the way they are in **comments in the s
 - **L733** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
 - **L1014** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
+## `fullseye_comm.py`
+
+- **L393** _(ja)_ — ★CRC は**公表された検査値**で裏を取る。CRC-16/MODBUS の諸元は ``width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0x0000 check=0x4b37``(CRC catalogue)—— ``check`` は ASCII ``"123456789"`` の CRC である。 自分で作った入力の往復だけで試すと、**反射入力と反射出力を同時に取り違えた実装が 緑になる**(自分で包んで自分で開けるので、向きの誤りが打ち消し合う)。 外の値と突き合わせて初めて、線の向こうの装置と話が通じることが言える。
+- **L641** _(ja)_ — ★表は 1 つに畳む —— 同じ PDU 処理を RTU の装置役 (:class:`ModbusRtuLoopback`)でも使う。2 つ書くと、FC を足した ときに片方だけ増える。
+- **L751** _(ja)_ — ★``modbus-rtu`` は 2026-09-25 まで「名簿に載るだけ」の行で、開こうとすると 「pymodbus を入れて直接使え」と断っていた。だが RTU は Modbus TCP と**同じ PDU** を別の框で包んだものにすぎず、その PDU の組み立てと解釈は**既にここに在って 単体試験も付いていた**。足りなかったのは框(アドレス + CRC)と線の口だけで、 断り続ける理由は無かった —— **名簿は「持っていないもの」だけでなく、 「持っているのに繋いでいないもの」も隠す。**
+- **L764** _(ja)_ — ★**断り文句が「install 'None'」と言っていた。** `cclink` は pure-python の master が存在しないので pip 名も import 名も持たない —— そこを場合分けせずに 書式へ流し込んだ結果、`open_channel("cclink")` は 「install 'None' and use the None client directly」と答えていた。 **入っていないものを名指しする口は、名指しできない相手で必ず崩れる。** 2026-09-25、`device.open_driver` を足すときに同じ分岐を書いて気づいた(隣の 層を直したら、元の層を読み返すこと)。
+- **L771** _(ja)_ — ★もう 1 つ: 相手が**入っている**ときに「install しろ」と言っていた。入って いるのに入れろと言う案内は、読んだ人をそこで止める。
+- **L817** _(ja)_ — ★同梱の顔ぶれを**ここで**凍らせる(名簿を全部登録し終えた後)。これより前に 呼ぶと空を覚えてしまい、``unregister`` が同梱の protocol を消せてしまう。
+
 ## `g1_policy_bridge.py`
 
 - **L33** — ★Do not bake a local absolute path into the distribution (in the 2026-09-05 audit, a private sibling project name was riding in the PyPI wheel). Give the default via an environment variable. The scene XML of the Unitree G1. Points to MuJoCo Menagerie's `unitree_g1/scene.xml`.
@@ -1323,6 +1330,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1148** _(ja)_ — ★2026-09-18: ここを「大津 + 外周で極性」に替えて**退行した**(既存 12 枚で 見逃し 0 -> 6、誤検出 4/14 -> 9/22)。出荷済み ``_ink_mask`` と同じ規則でも、 **1 マスに当てるのと画像全体に当てるのでは別物** —— 全体の大津は壁や板の 明暗で閾値が動き、字の縁を取り込む。固定の暗さ閾値に戻す。白字の看板は この経路では取れない(既知の穴として記録)。
 - **L1164** _(ja)_ — ★枠 = 中身が薄く、大きく、**他の成分(字)の外接箱よりずっと大きい**成分。3 つ目の 条件は 2026-09-18 に足した: 無いと、小さな画像(280x432)で 96 px の「中」(外接箱 9216 px > 画像の 2 %、中身 0.3)が枠と見なされ、行が丸ごと消えた。PoC を育てた 1,000 px 級の画像では字が 2 % を超えないので見えなかった尺度依存。「画像の半分以上に 渡る」で切ると生成ポスター 10 枚で誤検出 5/8 → 7/8 に退行した(半分に届かない枠の 切れ端が残る)ので、字の大きさ(成分の外接箱の中央値)を物差しにする。
 - **L1180** _(ja)_ — 行は**水平投影の帯**で取る。★成分をまとめる方法は使えない —— 漢字は部品に 分かれて出る(``電`` は 3 つ)ので、重なりや中心距離で束ねると行間の狭い 看板で 2 行が 1 行に融け、逆に離れた部品が 3 行目になった(実測 6/12 枚)。
+
+## `graphinv.py`
+
+- **L771** _(ja)_ — ★2026-10-07: kmax = 0 の個体(辺 0 本など)は「0-core = 全員」を最内殻にして全ノードを数えていた (三角形 2 個体 + 空 1 個体で appearances [3,3,3,1,1])。殻が無い個体は誰も含まない。
 
 ## `halcon_coverage.py`
 
@@ -1377,11 +1388,20 @@ This repository records *why* things are the way they are in **comments in the s
 ## `mathestimation.py`
 
 - **L90** _(ja)_ — ★床(eps)は q が**ちょうど 0** の所だけに掛ける。最初は q 全体を np.maximum(q, eps) で床上げしていて、 1e-49 のような小さな q が 1e-12 に持ち上がり p より大きくなって、KL(p‖p) が −3e-10(負!)になった (KL ≥ 0 の門で 2026-10-03 に捕まえた)。
+- **L247** _(ja)_ — ★2026-10-07: ±inf は欠測(NaN)と区別する。以前は黙って欠測扱いで更新を飛ばしていた。
+- **L337** _(ja)_ — ★2026-10-07: acos は π の近くで桁落ち(π−1.5e-6 で ω の誤差 4e-4 rad)→ 角は atan2(sinθ, cosθ)、 π の近くの軸は対称部 (R+Rᵀ)/2 = cosθ I + (1−cosθ) a aᵀ の最大対角の列から、符号は歪対称部から取る。
 
 ## `mathgeometry.py`
 
 - **L224** _(ja)_ — ★最初は発散を np.gradient(中心差分)で取り、Poisson を 5 点 Laplacian で解いていた —— 2 つが互いの随伴でなく、 縁で発散の総和も釣り合わず、隅で距離が真値の 0.52 倍に縮んだ(2026-10-03)。同じ G から両方を作ると Poisson は「勾配が X に最も近い φ」の最小二乗そのものになり、縁(断熱)でも無矛盾になる。
 - **L247** _(ja)_ — ★熱の段は直接法で解く: u は距離とともに e^{−r/h} で 1e-30 まで落ち、遠くの勾配の「向き」はその極小値の 相対精度に乗っている。CG は絶対誤差 ~1e-12 で止まり、極小値を塗りつぶして遠くの向きを壊した (3-D で誤差 0.045 → 0.279、2026-10-03)。定数のずれが無害な Poisson の段だけ CG にする。
+- **L303** _(ja)_ — ★2026-10-07: 面に使われない頂点が 1 個あると M と L にその行が 0 で入り、熱の段が特異 → 全頂点 NaN (513 頂点で例外なし)。始点と繋がらない成分は φ が任意の定数(実測 0.755)で有限に見えた。 始点を含む連結成分だけで解き、残り(未使用・非連結)は inf にする(geodesic_heat_grid と同じ約束)。
+- **L355** _(ja)_ — ★2026-10-07: 始点が別々の成分にあると φ の定数は成分ごとに任意 → 成分ごとに始点で 0 に合わせる
+
+## `mathnumerics.py`
+
+- **L226** _(ja)_ — ★2026-10-07: 重みを差の直接の積で作ると、Chebyshev 1200 点や区間 [0, 1e-4] で 積が 0 / inf に飛び全点 NaN になっていた。重みは共通の定数倍を除いて決まるので、 対数で和を取り最大で正規化してから exp する(符号は別に数える)。
+- **L387** _(ja)_ — ★2026-10-07: list も格子扱いしていたので、d 点 x d 次元の点列 [[x, y], [x, y]] が ndarray なら点ごと、list なら外積格子と、同じ数値で答えが変わっていた。格子は tuple のみ (文書の呼び方 ``(gx, gy)`` は tuple)、list は ndarray と同じく点 (M, d) として読む。
 
 ## `mathops.py`
 
@@ -1390,12 +1410,18 @@ This repository records *why* things are the way they are in **comments in the s
 - **L2167** _(ja)_ — ★もう一方の臨界点 -b は円の**内側**になければならない。外に出ると dz/dzeta = 0 が流れの領域に現れ、そこで速度が発散する(翼でなく尖りが 2 つある図形になる)。
 - **L2280** _(ja)_ — ★どれも「きれいな図」だが、**採ったのはきれいだからではなく、 正しさを定理が言えるから**である。数学の図はきれいなので、合って いるかを誰も確かめない —— だから絵の外に真値を置く: circle_packing_apollonian デカルトの円定理(厳密な代数等式)+ 整数充填 ford_circles 接するのは |ps - qr| = 1 のときに限る(整数で厳密) phyllotaxis_pattern 隣の番号差がフィボナッチ数(黄金角のときだけ) ifs_fractal モランの式 sum r^d = 1 と、既存 fractal_dimension space_filling_curve 4^n 点をちょうど 1 回ずつ・隣は必ず距離 1 相棒(neighbour_index_gaps / ifs_similarity_dimension / curve_locality)は **主張を数にする側**で、これが無いと「それらしい絵」しか残らない。 ------------------------------------------------------------------------- #
 - **L2393** _(ja)_ — ★四つ組の**最後**が「直前に生まれた円」。それを落とす反射は**親をもう一度** 作るので、種の四つ組だけ 4 方向、以降は 3 方向に進む。ここを間違えると depth 3 で 56 個のはずが 88 個になった(実測。一意な円は 56 のままなので、 絵は正しく見えるが同じ円を何度も描き、以降の段が指数的に太る)。
-- **L2789** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
-- **L2895** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
-- **L3239** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
-- **L3243** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
-- **L3414** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
-- **L3717** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
+- **L2725** _(ja)_ — ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
+- **L2734** _(ja)_ — ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
+- **L2802** _(ja)_ — ★ムーア曲線 = ヒルベルト曲線 4 本を輪に閉じたもの。四分割の**向きと進む方向**は 総当たり(8 対称 x 反転、4096 通り)で「継ぎ目 3 か所と折り返しが全部距離 1」を 満たす 32 解を出し、その 1 つを固定した。手で置くと隣接条件が静かに壊れる (最初の実装は隣接 False・閉 False のまま、絵としては正しく見えていた)。
+- **L2908** _(ja)_ — ★クラドニ図形は「板」ではなく**膜**の解である。よく見る cos*cos - cos*cos は ヘルムホルツ方程式 + ノイマン境界の膜のモードで、実際のクラドニ板は **重調和方程式**に従う別物。砂が節線に集まる絵は同じでも周波数比は合わない。 ここでは膜と明記し、膜の真値(閉形式の固有値・ベッセル零点)だけで採点する。 干渉と回折の真値は既存 op(grating_wavelengths / fraunhofer_pattern)。 ------------------------------------------------------------------------- #
+- **L2998** _(ja)_ — ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
+- **L3006** _(ja)_ — ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を 「固有モード」として返していた。拒否する。
+- **L3011** _(ja)_ — ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
+- **L3080** _(ja)_ — ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。 j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を 超えた時点で打ち切れば取りこぼしは無い。
+- **L3275** _(ja)_ — ★真値は**公表値か閉形式だけ**: 線形系は expm(At)x0 が厳密解で刻み半分に すると誤差が 1/16(4 次)、Lorenz のリアプノフ指数の**和**はトレース恒等式 により厳密に -(sigma+1+beta)、ロジスティック写像の周期倍分岐は 3 と 1+sqrt6、 相関次元は円 1・カントール log2/log3。絵では何も確かめられない。
+- **L3279** _(ja)_ — ★関数(callable)を引数に取らない —— 型付き台帳は入力を sort で登録し、 連鎖ファザーがデータから引数を組むので callable は載らない。系は族名か係数配列。 ------------------------------------------------------------------------- #
+- **L3450** _(ja)_ — ★`table` は**列名 -> 1-D 配列**。状態を (S, n) のまま 1 列に入れると型の嘘に なるので、成分ごとの列に開く(x0, x1, ... と時刻 t)。
+- **L3753** _(ja)_ — ★上限は 60 パーセンタイルにしていたが、有界な集合では大きい r で C(r) が 飽和して**傾きが下がる**(充填した正方形で 1.83、真値 2.0)。飽和の 手前に寄せる。下限は近傍の離散化(雑音の床)を避ける。
 
 ## `medial.py`
 
@@ -1548,6 +1574,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L882** _(ja)_ — ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを 返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を 厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。 離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
 - **L2100** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
 
+## `ozakimm.py`
+
+- **L341** _(ja)_ — ★2026-10-07: 行・列の最大値で 2 の冪に先に正規化してからノルムを取る(1e-200 × 1e200 で 二乗がアンダー/オーバーフローし 0 を返していた)。2 の冪の倍率は正確なので通常域の結果はビット同一。
+
 ## `pcseg.py`
 
 - **L448** — ★ ``full_matrices=True`` (default) allocates the (N, N) U and **throws it away**. Measured 2026-09-06: for 20000 points, 3.73 s / 3.2 GB, whereas ``full_matrices=False`` is 0.876 ms (**4263x**) with Vt bit-identical. For 100k points it dies at 80 GB. The same pattern was in pcseg.fit_plane / measure / ops / camera / pnp3d (all throwing away U). The static gate is tests/test_svd_full_matrices.py.
@@ -1594,11 +1624,14 @@ This repository records *why* things are the way they are in **comments in the s
 ## `printpath.py`
 
 - **L45** _(ja)_ — 様式化(npr、2026-09-23)。★test_printpath の門が `set(OPSPRINTPATH) == set(__all__) - {定数}` を要求するので、 台帳とここの**両方**に書く必要がある。
-- **L667** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
-- **L768** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
-- **L984** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
-- **L1036** _(ja)_ — ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。 既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、 被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が 測る)、セル平均が L2 最適であること。 ------------------------------------------------------------------------- #
-- **L1247** _(ja)_ — ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその **直交方向**に向ける(線は周波数ベクトルに直交に走る)。 この 90 度を入れ忘れていて、docstring は「沿う」と書きながら 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
+- **L183** _(ja)_ — ★2026-10-07: 行番号 N123 とチェックサム *71 を外す(外さないと N が命令に見え、その行の移動が黙って落ちた)
+- **L193** _(ja)_ — ★2026-10-07: G の無い座標だけの行(modal な移動)などは黙って捨てず拒否する
+- **L679** _(ja)_ — ★ペンプロッタの経路と 3D プリンタの経路は**同じ対象**(順に回る線分の列)で、 # 出口も同じ(contours_to_gcode → gcode_write / gcode_time_estimate)。 # だから族を新しく立てず、ここに stroke カテゴリとして足す。 # 参考: Kaplan & Bosch, "TSP Art", Computational Aesthetics 2005。 # --------------------------------------------------------------------------- # 点描の距離。"euclidean" 以外は将来。
+- **L780** _(ja)_ — ★画素ごとの最近傍を**KD 木**で引く。以前は各反復で (画素 x 点) の距離行列を まるごと作っていたので、202x300 の絵に 9,000 点を置くだけで 60,600 x 9,000 = 5.5 億要素(4.4 GB 相当)を 18 回組み直していた —— 手元で 101 秒、共有ランナーでは PoC の実行門(1 本 600 秒)に迫る。KD 木は**厳密に同じ最近傍**を返すので答えは 変わらない(同距離の並びだけは実装依存になるため、種を固定した回帰検査を置く)。
+- **L996** _(ja)_ — ★被覆率で塗る。整数画素の円板で塗っていたときはペン幅が**階段**になり (0.5 / 1.0 / 1.5 px がインク率 0.1900 で一致し、2.0 で 0.4853 へ跳ねた)、 「目標の濃さに合うペン幅」を解くことができなかった。画素中心から標本までの 距離で被覆率を出すと、ペン幅が連続なノブになる。
+- **L1038** _(ja)_ — ★2026-10-07: 反射の詰め物を手で切ると r ≥ 辺の長さで足りず出力が縮んだ((8, 12), σ=3 → (4, 12))。 np.pad の reflect は繰り返し反射するので形が保たれる(r < 辺の長さでは従来と同じ値)
+- **L1048** _(ja)_ — ★「きれいな絵」を返す op ではなく、**保った量と捨てた量を数で返す** op にする。 既存の NPR ライブラリは絵しか返さない —— 差はそこ。真値はモアレ周期の予言、 被覆率 w/d の閉形式、既知の縞の向き、Lloyd の単調減少(既存 stipple_energy が 測る)、セル平均が L2 最適であること。 ------------------------------------------------------------------------- #
+- **L1259** _(ja)_ — ★ストロークを**構造に沿わせる**なら、縞の周波数ベクトルはその **直交方向**に向ける(線は周波数ベクトルに直交に走る)。 この 90 度を入れ忘れていて、docstring は「沿う」と書きながら 実装は「横切る」だった —— 既知の角度の縞を渡す門で掴んだ (2026-09-23)。絵を見るだけではどちらも「それらしい線」に見える。
 
 ## `problems.py`
 
@@ -1610,6 +1643,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L276** — ★ When the trailing edge is open, the 2 farthest points pick **one of the corners** of the trailing edge and the chord tilts. We re-take it at the midpoint of the gap, then decide the leading edge as "the point farthest from that midpoint". Without doing this, even a symmetric airfoil shows camber by the half-gap of the trailing edge (measured 0.001257).
 - **L642** — ★ Before comparing, **re-take by the same method**. The chord frame (especially the trailing-edge midpoint) depends slightly on the placement of points, so matching a raw contour against a re-taken contour injects a 0.02 degree rotation and 7.8e-4 translation even for an identical shape —— that itself became the floor of the deviation (measured rms 6.05e-4). Put what you compare on the same footing.
 - **L653** — ★ Measure not point-to-point but **point-to-polyline**. Even after re-taking at equal arc length, the phases of the two do not coincide, so taking correspondence by index makes the phase shift become the deviation directly (measured: comparing the same shape against itself gives rms 6.05e-4 —— the same order as the defect we want to detect).
+
+## `pxrd.py`
+
+- **L897** _(ja)_ — ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
 
 ## `realdata.py`
 
@@ -1627,6 +1664,12 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L149** — ★ For conversion to an integer dtype, inspect the raw value **before the cast**. A hole found by adversarial inspection (2026-09-02): ``np.asarray(nan, dtype=int64)`` raises no exception and returns INT_MIN, and after the cast ``dtype.kind == 'i'`` so it slips past the non-finite check below. A non-integer like 3.7 is also silently truncated to 3 —— **a result off by 1 in the index is returned with no exception**. This is exactly the lie of a conversion op.
 - **L1080** — ★ Regression point of a real bug. At first this was ``np.maximum(sigma, finfo.tiny)``. At a duplicate point sigma = 2.2e-308, and ``sigma ** 3`` in ``gaussians_to_voxel`` **underflows to 0**, causing division by zero -> NaN. What was meant to "avoid 0" was replaced with a value that produces NaN downstream (part of the volume becomes NaN with no exception = the textbook silent error). Since a duplicate point means "the spacing cannot be measured", fail-closed instead of padding with a sentinel.
+
+## `residue.py`
+
+- **L245** _(ja)_ — ★2026-10-07: [lo, hi) に候補が 1 つも無い標本は範囲外の値・score -inf・margin 2.0(最大の確信)を 返していた → 値と score は NaN、margin 0(residue_fault_locate の「決められない = NaN」と同じ約束)。
+- **L448** _(ja)_ — ★2026-10-07: 範囲内に候補が無い画素は margin 0(= valid にしない)。値は warp 用に有限のまま残す。
+- **L529** _(ja)_ — ★2026-10-07: refine 後に |d| が探索範囲 max_disp を越えた画素は黙って切らず valid=False にする。
 
 ## `rust/fullseye_core/examples/python_ctypes.py`
 
@@ -1650,6 +1693,10 @@ This repository records *why* things are the way they are in **comments in the s
 ## `sdf_ops.py`
 
 - **L293** — ★ Reason for adding it, based on measurement: `poc_dfm_thickness_overhang` and `poc_cad_scan_deviation` reported that # "a machine part is made of cylindrical holes, chamfers, and fillets, but since the primitives are only sphere and # box, it cannot be assembled with CSG", and both wrote per-face analytic formulas themselves. The 4 here are **all closed-form and exact** (outside is the # Euclidean distance to the nearest surface, inside is the negative to the nearest face), so a synthetic part with # ground truth can now be assembled with CSG alone. # --------------------------------------------------------------------------- #
+
+## `segcompare.py`
+
+- **L216** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
 
 ## `spc.py`
 
@@ -1693,6 +1740,8 @@ This repository records *why* things are the way they are in **comments in the s
 ## `tacsim.py`
 
 - **L366** _(ja)_ — ★既定の探索半径は窓の縁まで(双線形 ±0.5 px の余白に 2 px)。2026-10-05 までは窓の半分の半分(0.5 × 縁までの距離)で 打ち切っていて、201 px の窓では 50 px で止まり、半径 61 px の実機の接触を 49 px と答えた(tacscalib の門 12: −12.9 px)。 tacsim の合成(256 px・Hertz)は接触が窓の 1/4 より内側なので、直しても結果は 1 桁も変わらない。
+- **L402** _(ja)_ — ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
+- **L488** _(ja)_ — ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
 
 ## `tests/conftest.py`
 
@@ -1846,10 +1895,15 @@ This repository records *why* things are the way they are in **comments in the s
 - **L112** _(ja)_ — ★残差の正体は burn-in 。短い burn での誤差は 3 倍以上大きい。
 - **L123** _(ja)_ — ★r の列を**1 本だけ**選ぶ。横に幅を持たせると、隣の r の不動点が 別の柝に見えて r = 2.9 でも「3 本」になる(一度それで誤判定した)。
 
+## `tests/test_example_names_do_not_shadow.py`
+
+- **L46** _(ja)_ — ★2026-10-07(同日): 範囲を 2 つ広げる。 # --------------------------------------------------------------------------- #
+
 ## `tests/test_example_scripts_run.py`
 
 - **L48** — ★2026-09-09, on the first CI after adding this gate, **7 failed on py3.12** (py3.11 was green). CI deliberately installs torch / kornia / mahotas / opencv-contrib **only on py3.11** and not on other versions. The test side already had a declaration mechanism called ``requires_backend``, yet **the gate that runs the examples did not have it** —— that a mechanism exists and that every path goes through it are different things. ``gallery2d_*`` is a gallery that "runs all ops of that family", so its very contract **depends on which backends are installed** (it hard-codes op names and reconciles against the registry, failing with "extra in OPS" if even one is missing). So declare per family. The remaining 2 use torch directly (``fit_zernike`` / ``match_logpolar_z``). In a full environment (CI's py3.11, ``FULLSEYE_REQUIRE_OPTIONAL=1``) a skip becomes a **failure**, so both over-declaring and forgetting to declare fail in both directions.
 - **L87** — ★Do not pass PYTHONPATH (the whole point of this gate). Users do not set environment variables.
+- **L125** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
 ## `tests/test_features_do_not_saturate_2026_09_26.py`
 
@@ -1868,6 +1922,7 @@ This repository records *why* things are the way they are in **comments in the s
 
 - **L202** _(ja)_ — ★ナイキストのビンを 0 にしたので、この対称性は 1e-16 台で成り立つ
 - **L288** _(ja)_ — この一覧に門がある種類。★``FOURIER_PLANE_KINDS`` に足したらここも足す。
+- **L383** _(ja)_ — ★2026-10-07: 以前は finally で ``sys.path.pop(0)`` していたが、読み込んだ PoC 自身が repo 直下を 先頭に足すので、pop で消えるのは**repo 直下の方**で、examples/ がワーカーの終わりまで先頭に残った (event_camera の取り違えと同じ型の漏れ)。丸ごと保存して戻す。
 
 ## `tests/test_fslib.py`
 
@@ -2016,7 +2071,8 @@ This repository records *why* things are the way they are in **comments in the s
 - **L92** — ★On failure, also return the tail of stdout. A PoC prints its findings and "which check failed" to stdout before SystemExit(1), so with stderr alone you **only learn "exit 1" with nothing else** (2026-09-07 CI, py3.10 poc_ct_fidelity).
 - **L95** _(ja)_ — ★stdout は 4000 文字残す。1200 だと**章の後ろだけ**が見えて、前半で 落ちた検査の実測値が CI から読めない(2026-09-24、poc_endless_zoom の 10 番目が落ちたとき「NG が残っている(10 番目)」しか分からなかった)。
 - **L104** — ★2026-09-07: this long **returned 0**, passing straight through the `assert code == 0` below —— a gate that discards its verdict right after computing it (measured: 3 PoCs never print PASS —— poc_dic_strain / poc_photoelasticity / poc_thermography_ndt). Return -2 so it fails.
-- **L126** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
+- **L136** _(ja)_ — ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+- **L152** — ★This gate runs the 84 PoCs **in one batch** (session fixture). That time is charged to the first test, so pyproject's default timeout (900 seconds) fails on shared runners. Widen only here —— relaxing the default would also dull hang detection for other tests.
 
 ## `tests/test_printpath.py`
 
@@ -2142,6 +2198,7 @@ This repository records *why* things are the way they are in **comments in the s
 - **L1241** _(ja)_ — ★単位空間は渡さない(渡すなら 3 つ全部)。渡さない形は「データ自身から 作る」訓練時の呼び方で、ファザーが最も広く回せる。
 - **L6836** — ★Until 2026-09-02 it was ``lambda v: True`` = **since the predicate is counted as "present", it's worse than absent** (the inspection script also counts it as "has a predicate"). Measured, it let through even None / 42 / a string / a dict. The canon was decided by **running all** of the 6 consuming op (reprconv's pairs_to_signal / pairs_to_image2d / pairs_to_table / angles_to_normals / shape_index_to_curvature / polar_to_cscalar): all 6 op accept only the two shapes above, and everything else becomes a named fail-closed with "pairs: must be (N, 2) or a 2-tuple of equal-length 1-D arrays" (measured). Since **(2,N) is not accepted**, the 3 adapters that were collapsing a 2-tuple into (2,N) with np.stack were fixed to axis=1. Two arrays of differing length (histogram's counts/edges) are also not a "pair" and are rejected.
 - **L6954** — ★"Exactly 2 elements" is **deliberately different** from pose (which allows info via `len >= 2`). Measured 2026-09-02: the 4 existing consumers that take a mesh as one argument (face_normals / vertex_normals / mesh_area / vertex_curvature) emit "mesh must be a 2-element tuple (vertices, faces)" for a 3-tuple, and cadmap's `_mesh` and render3d._mesh_arrays also accept only 2 elements. In other words **the canon for this repo's mesh sort is a 2-tuple**, and an extra element is not "more information" but a type-level lie that wipes out everything downstream. The sole exception `voxel_to_mesh` (which returns (v, f, n)) now has the canonical order extracted in ops3d.RESULT_ADAPTERS (treated the same as gicp / vol_label).
+- **L7262** _(ja)_ — ★2026-10-07: プロセスごとに分ける。固定名だと xdist の別ワーカーが同じ捨て場を共有し、片方の テストが「中身を消してから、何か落ちたことを確かめる」間に相手が消す/書く(Windows では開いている ファイルの unlink が PermissionError)。
 
 ## `tools/chain_mine.py`
 
@@ -2340,10 +2397,11 @@ This repository records *why* things are the way they are in **comments in the s
 ## `typed_catalog.py`
 
 - **L222** _(ja)_ — ★打ち直しは**入力の頂点数より少ない標本を拒否する**(角を切って線が短くなり、 濃淡の再現が壊れるため)。探針より確実に多い数を渡す。
-- **L301** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
-- **L355** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
-- **L528** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
-- **L545** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
+- **L232** _(ja)_ — ★2026-10-07: 一時ファイル名にはプロセス番号を入れる(固定名だと xdist の別ワーカーが同じファイルを 同時に書き直し、読む側が壊れた zip や途中の G-code を掴む)。 printpath(2026-09-21)。読む op のパスは、その場で書いた小さな本物のファイルにする(無いパスは CONTRACT で 永久に走らない)。書く op のパスは一時ディレクトリ。z は種の mesh(単位立方体あたり)に当たる高さ。
+- **L303** — ★ The case where the default itself is heavy is handled separately —— we wrote a cost table in the docstring and left it in docs/KNOWN_ISSUES.md as "unsolved." Making it lighter here is to pass the check, not to hide the slowness. The keep of fourier_smooth(points, keep) is a required argument with no default. If it cannot be bound, it is skipped forever as "cannot assemble arguments" and appears in the coverage table only as unreached (in the first measurement on 2026-09-06, only this one of 13 ops fell out). Surface roughness. Constraints are 2*dx <= lambda_lo < lambda_hi <= n*dx / 0<hurst<1 / sq>0 / n>=8. Subpixel measurement. The measurement-line generation op takes no input, so every argument needs a hint.
+- **L357** — ★ Without this, surface_params is rejected fail-closed every time, and by the single coverage number it looks "callable" while in reality it is never executed.
+- **L530** _(ja)_ — して探針の値が読みやすいようにする。★既定の weight="phat" は band が必須(0.5.0、 全白色化は帯域の限られた信号で外れる)。rate=1.0 なので band は cycles/標本で全帯域を明示。
+- **L547** — ★ **Do not make the normal parallel to an axis**. If it is axis-parallel, the distance field varies along only one axis, and the "GIF of stacked slices" the figure generator makes collapses into a single frame (measured 2026-09-08). With a tilted normal, every slice changes. The length has no effect (the op normalizes), so pass an unnormalized vector to also show that spec.
 
 ## `unified.py`
 

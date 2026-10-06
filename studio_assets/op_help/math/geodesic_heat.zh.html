@@ -10,7 +10,7 @@
 <p>2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
 <p>3) L φ = ∇·X を解き、source で 0 になるようずらす</p>
 <p>門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>`。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>`(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• **complex 输入一律 <code style="color:#22d3bf">ValueError</code>** —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

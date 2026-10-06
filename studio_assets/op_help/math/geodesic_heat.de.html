@@ -10,7 +10,7 @@
 <p>2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
 <p>3) L φ = ∇·X を解き、source で 0 になるようずらす</p>
 <p>門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。</p>
-<p>返り値 `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>`。</p>
+<p>返り値 `<code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>`(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• **Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus** — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

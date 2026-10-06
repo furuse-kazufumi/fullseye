@@ -887,6 +887,8 @@ def risk_aware_path(cost_map, start, goal) -> dict:
             if c == math.inf:
                 continue
             ni, nj = i + offs[k][0], j + offs[k][1]
+            if not (0 <= ni < H and 0 <= nj < W):
+                continue                                                  # ★2026-10-07: 負の添字が反対側へ回り込んでいた
             nd = d + c
             if nd < dist[ni, nj]:
                 dist[ni, nj] = nd

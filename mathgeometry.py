@@ -283,7 +283,7 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
     2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)
     3) L φ = ∇·X を解き、source で 0 になるようずらす
     門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。
-    返り値 ``{"distance", "t"}``。
+    返り値 ``{"distance", "t"}``(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。
     """
     V, F = _mesh(vertices, faces)
     n = V.shape[0]
@@ -297,11 +297,30 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
         raise ValueError("geodesic_heat: 面積 0 の三角形がある")
     Nf = nrm / area2[:, None]
     A = 0.5 * area2
-    M = np.zeros(n)
-    np.add.at(M, F.ravel(), np.repeat(A / 3.0, 3))
     E, _ = _edges(F)
     h = float(np.mean(np.linalg.norm(V[E[:, 0]] - V[E[:, 1]], axis=1)))
     t = h * h if t is None else float(t)
+    # ★2026-10-07: 面に使われない頂点が 1 個あると M と L にその行が 0 で入り、熱の段が特異 → 全頂点 NaN
+    #   (513 頂点で例外なし)。始点と繋がらない成分は φ が任意の定数(実測 0.755)で有限に見えた。
+    #   始点を含む連結成分だけで解き、残り(未使用・非連結)は inf にする(geodesic_heat_grid と同じ約束)。
+    from scipy.sparse.csgraph import connected_components
+    used = np.zeros(n, dtype=bool)
+    used[F.ravel()] = True
+    if not used[src].all():
+        raise ValueError("geodesic_heat: source がどの面にも使われていない頂点(距離が定義できない)")
+    _, comp = connected_components(
+        sparse.coo_matrix((np.ones(len(E)), (E[:, 0], E[:, 1])), shape=(n, n)), directed=False)
+    keep = np.isin(comp, comp[src])
+    n_all = n
+    if not keep.all():
+        remap = -np.ones(n_all, dtype=np.int64)
+        remap[keep] = np.arange(int(keep.sum()))
+        fk = keep[F[:, 0]]                                        # 面は 1 つの成分に丸ごと属する
+        V, F, A, Nf = V[keep], remap[F[fk]], A[fk], Nf[fk]
+        src = remap[src]
+        n = V.shape[0]
+    M = np.zeros(n)
+    np.add.at(M, F.ravel(), np.repeat(A / 3.0, 3))
     L = _cotan_laplacian(V, F)
     delta = np.zeros(n)
     delta[src] = 1.0
@@ -327,8 +346,22 @@ def geodesic_heat(vertices, faces=None, source=0, *, t: float | None = None) -> 
         np.add.at(div, i, 0.5 * (cot_l * np.einsum("ij,ij->i", e_ij, X) + cot_j * np.einsum("ij,ij->i", e_il, X)))
     Lr = (L + 1e-12 * sparse.eye(n)).tocsc()
     phi = splinalg.spsolve(Lr, div)
-    phi = phi - phi[src].mean()
-    return {"distance": phi - phi[src].min(), "t": t}
+    ck = comp[keep]
+    cs = np.unique(ck[src])
+    if cs.size == 1:
+        phi = phi - phi[src].mean()
+        dist = phi - phi[src].min()
+    else:
+        # ★2026-10-07: 始点が別々の成分にあると φ の定数は成分ごとに任意 → 成分ごとに始点で 0 に合わせる
+        dist = np.empty(n)
+        for c in cs:
+            sel = ck == c
+            s_c = src[ck[src] == c]
+            pc = phi[sel] - phi[s_c].mean()
+            dist[sel] = pc - (phi[s_c] - phi[s_c].mean()).min()
+    D = np.full(n_all, np.inf)
+    D[keep] = dist
+    return {"distance": D, "t": t}
 
 
 # ── NURBS(非一様有理 B スプライン)——重みつきで、制御点を通らない本物 ─────────────────────────── #

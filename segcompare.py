@@ -212,7 +212,12 @@ def _points(p, name, op, ndim):
 
 
 def _lookup(labels, pts, spacing, name, op):
-    idx = np.floor(pts / spacing).astype(np.int64)
+    q = pts / spacing
+    # ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。
+    #   整数のごく近く(相対 1e-9)は整数に寄せてから floor
+    q_int = np.rint(q)
+    q = np.where(np.abs(q - q_int) < 1e-9 * np.maximum(1.0, np.abs(q)), q_int, q)
+    idx = np.floor(q).astype(np.int64)
     bad = (idx < 0) | (idx >= np.asarray(labels.shape))
     if bad.any():
         i = int(np.nonzero(bad.any(axis=1))[0][0])

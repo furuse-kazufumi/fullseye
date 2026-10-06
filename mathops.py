@@ -2722,7 +2722,20 @@ def ifs_similarity_dimension(preset="sierpinski", maps=None, tol=1e-13):
                              % (op, i, s[0], s[1]))
         rs.append(float(s[0]))
     r = np.asarray(rs)
+    # ★2026-10-07: 縮小しない写像(r >= 1)を黙って通すと二分法が上端 8.0 に張り付き
+    # (r=1.2 の 2 枚で 7.99999…)、恒等写像 1 枚では 0 を返していた。Moran の式は
+    # 全写像が縮小(r < 1)のときだけ意味を持つので、ここで明示的に拒否する。
+    bad = [i for i, ri in enumerate(rs) if not (np.isfinite(ri) and ri < 1.0)]
+    if bad:
+        raise ValueError("%s: map #%d has contraction ratio %.6g >= 1 — an IFS needs "
+                         "every map to contract (r < 1), otherwise Moran's equation "
+                         "has no meaningful root" % (op, bad[0], rs[bad[0]]))
     lo, hi = 0.0, 8.0
+    # ★2026-10-07: 写像の数が多いと解が 8 を超えうる —— 上端を広げてから二分する。
+    while (r ** hi).sum() > 1.0:
+        lo, hi = hi, 2.0 * hi
+        if hi > 1e6:
+            raise ValueError("%s: Moran's equation has no root below %g" % (op, hi))
     for _ in range(200):
         mid = 0.5 * (lo + hi)
         if (r ** mid).sum() > 1.0:
@@ -2982,11 +2995,26 @@ def wave_membrane_mode(kind="rectangular", m=2, n=3, shape=(256, 256), aspect=1.
         raise ValueError("%s: aspect must be finite and > 0, got %r" % (op, aspect))
     mm, nn = int(m), int(n)
 
-    y = np.linspace(0.0, 1.0, h)[:, None]
+    # ★2026-10-07: 矩形は [0,1] x [0,aspect](wave_mode_frequencies の
+    # pi**2 (m**2 + n**2/aspect**2) と同じ規約)。以前は y を [0,1] で取りつつ n pi y/aspect を
+    # 使っていたので、aspect != 1 で y=1 の辺が境界条件(Dirichlet なら 0)を破っていた。
+    y = np.linspace(0.0, a if kind == "rectangular" else 1.0, h)[:, None]
     x = np.linspace(0.0, 1.0, w)[None, :]
     if kind == "rectangular":
         if mm < 0 or nn < 0:
             raise ValueError("%s: m and n must be >= 0 for a rectangle" % op)
+        # ★2026-10-07: Dirichlet(sin x sin)は m=0 か n=0 で恒等的に 0 —— 全ゼロの場を
+        # 「固有モード」として返していた。拒否する。
+        if not free_edge and (mm < 1 or nn < 1):
+            raise ValueError("%s: a fixed-edge (Dirichlet) mode needs m >= 1 and n >= 1 "
+                             "(got m=%d, n=%d) — sin(0) vanishes identically" % (op, mm, nn))
+        # ★2026-10-07: 組合せ (m,n)-(n,m) の 2 項は aspect != 1 だと固有値が
+        # pi**2 (m**2 + n**2/a**2) と pi**2 (n**2 + m**2/a**2) で異なり、和は固有モードでない。
+        if free_edge and abs(a - 1.0) > 1e-12:
+            raise ValueError("%s: the combined free-edge mode is an eigenmode only on a "
+                             "square (aspect=1, got %r) — its two terms have different "
+                             "eigenvalues otherwise; use free_edge=False for a rectangle"
+                             % (op, aspect))
         if free_edge:
             if mm == nn:
                 raise ValueError("%s: the combined free-edge mode vanishes identically "
@@ -3049,13 +3077,21 @@ def wave_mode_frequencies(kind="rectangular", count=10, aspect=1.0):
         mm, nn = np.meshgrid(np.arange(1, k + 1), np.arange(1, k + 1))
         lam = np.pi ** 2 * (mm ** 2 + nn ** 2 / a ** 2)
         return np.sort(lam.ravel())[:c]
-    out = []
-    order = 0
-    while len(out) < c + 8:
-        out.extend(_wave_bessel_j_zeros(order, c) ** 2)
-        order += 1
-        if order > c + 4:
+    # ★2026-10-07: 以前は「集めた数が c+8 を超えたら止める」で、低い次数(m=0..2)の
+    # 高い零点ばかり集めて m>=3 の低い固有値(j'_{3,1}**2 = 17.65 …)を落としていた。
+    # j'_{m,1} は m について単調増加なので、次の次数の最初の零点が、集めた中の c 番目を
+    # 超えた時点で打ち切れば取りこぼしは無い。
+    out = list(np.asarray(_wave_bessel_j_zeros(0, c), dtype=np.float64) ** 2)
+    order = 1
+    while True:
+        thr = float(np.sort(np.asarray(out))[c - 1])
+        first = float(_wave_bessel_j_zeros(order, 1)[0]) ** 2
+        if first > thr:
             break
+        # この次数で thr 以下に入りうる零点の数(隣り合う零点の間隔はほぼ pi 以上)
+        need = min(c, int((np.sqrt(thr) - np.sqrt(first)) / np.pi) + 2)
+        out.extend(np.asarray(_wave_bessel_j_zeros(order, need), dtype=np.float64) ** 2)
+        order += 1
     return np.sort(np.asarray(out, dtype=np.float64))[:c]
 
 def wave_nodal_lines(field, tol=0.0):

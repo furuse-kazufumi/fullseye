@@ -399,8 +399,12 @@ def _radial_slope_profile(normals, X, Y, centre_xy, pitch: float):
     r = np.hypot(dx, dy)
     with np.errstate(invalid="ignore", divide="ignore"):
         s_r = np.where(r > 1e-12, (p * dx + q * dy) / np.maximum(r, 1e-15), 0.0)
-    rmax = float(min(np.abs(X).max(), np.abs(Y).max()))          # 四隅を除いた円の中まで
-    nb = int(rmax / pitch)
+    # ★2026-10-07: 窓の端までの距離は中心から測る(原点 = 窓の中心と仮定していて、X・Y・中心を +8 mm ずらすと δ が 11 % 縮んだ)
+    c_x, c_y = float(centre_xy[0]), float(centre_xy[1])
+    rmax = float(min(c_x - X.min(), X.max() - c_x, c_y - Y.min(), Y.max() - c_y))   # 四隅を除いた円の中まで
+    nb = int(rmax / pitch) if np.isfinite(rmax) else 0
+    if nb < 1:
+        raise ValueError("centre (%g, %g) is outside the window or within one pitch of its edge" % (c_x, c_y))
     idx = np.clip((r / (rmax / nb)).astype(int), 0, nb)
     prof = np.zeros(nb + 1)
     cnt = np.zeros(nb + 1)
@@ -479,30 +483,43 @@ def contact_radius_fit_pixelwise(normals, X, Y, R: float, a0: float, centre_xy=(
     dy = Y - float(centre_xy[1])
     r = np.hypot(dx, dy)
     pitch = float(abs(X[0, 1] - X[0, 0]))
-    sel = (r > 1e-12) & (r < float(r_max_over_a) * a0) & (np.abs(r - a0) > float(excl_px) * pitch)
-    if int(sel.sum()) < 16:
-        raise ValueError("contact_radius_fit_pixelwise: only %d usable pixels (need >= 16)" % int(sel.sum()))
-    s_r = (p[sel] * dx[sel] + q[sel] * dy[sel]) / r[sel]
-    rs = r[sel]
+    a0_in = a0
+    moved = False
+    # ★2026-10-07: a0 が 20 % 超ずれると黄金分割が区間の端 0.8·a0 / 1.2·a0 をそのまま返していた。端に張り付いたら
+    #   その端を新しい a0 にして画素の選び(縁の除外の輪)ごとやり直す。8 回で内側に収まらなければ ValueError
+    for _attempt in range(8):
+        sel = (r > 1e-12) & (r < float(r_max_over_a) * a0) & (np.abs(r - a0) > float(excl_px) * pitch)
+        if int(sel.sum()) < 16:
+            raise ValueError("contact_radius_fit_pixelwise: only %d usable pixels (need >= 16)" % int(sel.sum()))
+        s_r = (p[sel] * dx[sel] + q[sel] * dy[sel]) / r[sel]
+        rs = r[sel]
 
-    def sse(a):
-        return float(np.sum((s_r - _hertz_slope(rs, a, R)) ** 2))
+        def sse(a, s_r=s_r, rs=rs):
+            return float(np.sum((s_r - _hertz_slope(rs, a, R)) ** 2))
 
-    lo, hi = 0.8 * a0, 1.2 * a0
-    g = (math.sqrt(5.0) - 1.0) / 2.0
-    c, d = hi - g * (hi - lo), lo + g * (hi - lo)
-    fc, fd = sse(c), sse(d)
-    for _ in range(40):
-        if fc < fd:
-            hi, d, fd = d, c, fc
-            c = hi - g * (hi - lo)
-            fc = sse(c)
-        else:
-            lo, c, fc = c, d, fd
-            d = lo + g * (hi - lo)
-            fd = sse(d)
-    a = 0.5 * (lo + hi)
-    return {"a": float(a), "delta": float(a * a / R), "rms": float(np.sqrt(sse(a) / rs.size)), "n": int(rs.size)}
+        lo0, hi0 = 0.8 * a0, 1.2 * a0
+        lo, hi = lo0, hi0
+        g = (math.sqrt(5.0) - 1.0) / 2.0
+        c, d = hi - g * (hi - lo), lo + g * (hi - lo)
+        fc, fd = sse(c), sse(d)
+        for _ in range(40):
+            if fc < fd:
+                hi, d, fd = d, c, fc
+                c = hi - g * (hi - lo)
+                fc = sse(c)
+            else:
+                lo, c, fc = c, d, fd
+                d = lo + g * (hi - lo)
+                fd = sse(d)
+        a = 0.5 * (lo + hi)
+        if min(a - lo0, hi0 - a) > 1e-4 * a0:
+            if moved:                                                     # 区間を動かしたら、縁の除外の輪を a に合わせてもう 1 回
+                moved, a0 = False, a
+                continue
+            return {"a": float(a), "delta": float(a * a / R), "rms": float(np.sqrt(sse(a) / rs.size)), "n": int(rs.size)}
+        a0, moved = a, True
+    raise ValueError("contact_radius_fit_pixelwise: the fit kept hitting the search bracket edge (a0 = %g, last a = %g); "
+                     "a0 is far from the contact radius or the slope field holds no Hertz contact" % (a0_in, a0))
 
 
 def membrane_delta_from_normals(normals, X, Y, pitch: float, tail: str = "boussinesq", centre_xy=None) -> float:

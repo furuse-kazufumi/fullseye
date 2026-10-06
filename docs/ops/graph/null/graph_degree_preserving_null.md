@@ -19,15 +19,18 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 Compare 3-cycles and reciprocity against a degree-preserving null model.
 
-Each null sample rewires the graph by ``swaps_per_edge * |E|`` edge swaps that keep
-every node's in- and out-degree **exactly** (Maslov & Sneppen 2002). The sample's
+Each null sample requests ``swaps_per_edge * |E|`` edge swaps that keep every node's
+in- and out-degree **exactly** (Maslov & Sneppen 2002); a swap that would create a
+self-loop or duplicate edge is skipped, so dense graphs accept fewer
+(``swaps_accepted``). The sample's
 degree sequences are checked against the original before it is used — a null that
 drifted would make every ratio a lie, so this fails closed.
 
 Returns a dict with the observed ``cycles3`` and ``reciprocal_pairs``, the null
 ``*_null_mean`` / ``*_null_sd``, the ``*_ratio`` (observed / null mean) and ``*_z``,
-plus ``n_samples`` and ``swaps``. Ratios are what let graphs of different size be
-compared; raw counts cannot.
+plus ``n_samples``, ``swaps`` (requested per sample) and ``swaps_accepted`` (list,
+accepted per sample). Ratios are what let graphs of different size be compared;
+raw counts cannot.
 
 **Raises** ``ValueError``: as :func:`graph_degree_summary`; ``n_samples < 2``
 (no spread to estimate); ``swaps_per_edge < 1``; a graph with fewer than 2 edges

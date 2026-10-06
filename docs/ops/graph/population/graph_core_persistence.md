@@ -22,7 +22,9 @@ Which nodes sit in the innermost core of every individual — K wirings on one n
 ``adjs`` is a list of K square matrices or a table ``{name: matrix}`` on the **same**
 node order (a node absent from an individual is a zero row and column). For each
 individual the innermost core of :func:`graph_kcore` (same ``mode`` / ``weighted``) is
-taken; ``appearances[v]`` counts the individuals whose innermost core contains v.
+taken; ``appearances[v]`` counts the individuals whose innermost core contains v. An
+individual whose innermost index is 0 (e.g. no edges) has no core and contributes
+no member.
 Following Yadav & Singh 2026, a node is **persistent** if it is in the core of all K,
 **recurrent** if in 2 .. K−1, **transient** if in exactly 1, and **never** otherwise.
 

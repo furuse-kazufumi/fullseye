@@ -43,6 +43,7 @@ are all refused with ``ValueError`` — never clipped.
 """
 from __future__ import annotations
 
+import operator
 from fractions import Fraction
 from math import gcd
 
@@ -136,6 +137,28 @@ def _rational_lcm(periods: np.ndarray, max_den: int = 64):
 # --------------------------------------------------------------------------- #
 # 1. the theorem                                                              #
 # --------------------------------------------------------------------------- #
+def _exact_int(x, op: str) -> int:
+    """One element -> Python ``int`` with exact integer semantics, else ``ValueError``.
+
+    ★2026-10-07: 以前は ``int(x)`` で切り捨ててから float で比較していた → 生成器だと 2 回目の走査が空で
+    1.5 が 1 に化け、1e308 超の int は float 化で OverflowError。int / numpy 整数は float を通さず、
+    float は有限かつ整数値のときだけ受ける。"""
+    if isinstance(x, (bool, np.bool_)):
+        return int(x)
+    if isinstance(x, (float, np.floating)):
+        xf = float(x)
+        if not (np.isfinite(xf) and xf.is_integer()):
+            raise ValueError("%s: residues and moduli must be integer-valued, got %r" % (op, x))
+        return int(xf)
+    try:
+        return operator.index(x)            # int / numpy integer: arbitrary precision, no float
+    except TypeError:
+        pass
+    if isinstance(x, Fraction) and x.denominator == 1:
+        return int(x)
+    raise ValueError("%s: residues and moduli must be integers, got %r (%s)" % (op, x, type(x).__name__))
+
+
 def residue_integer_crt(residues, moduli) -> dict:
     """Exact integer CRT (Garner's mixed-radix algorithm) -> ``dict``.
 
@@ -151,13 +174,12 @@ def residue_integer_crt(residues, moduli) -> dict:
     bridge between the residue view and the place-value view."""
     op = "residue_integer_crt"
     try:
-        r = [int(x) for x in residues]
-        m = [int(x) for x in moduli]
-    except (TypeError, ValueError) as e:
-        raise ValueError("%s: residues and moduli must be integers (%s)" % (op, e)) from None
-    if any(float(x) != float(y) for x, y in zip(residues, r)) or \
-            any(float(x) != float(y) for x, y in zip(moduli, m)):
-        raise ValueError("%s: residues and moduli must be integer-valued" % op)
+        r_in, m_in = list(residues), list(moduli)     # ★2026-10-07: 生成器は 1 回だけ走査する
+    except TypeError:
+        raise ValueError("%s: residues and moduli must be sequences of integers" % op) from None
+    r = [_exact_int(x, op) for x in r_in]
+    m = [_exact_int(x, op) for x in m_in]
+    assert len(r) == len(r_in) and len(m) == len(m_in)
     if len(r) != len(m) or len(m) < 1:
         raise ValueError("%s: need equal, non-zero lengths, got %d residues / %d moduli"
                          % (op, len(r), len(m)))
@@ -214,8 +236,19 @@ def _crt_core(r, p, w, lo, hi, ref):
     resid = _wrap_signed(r - val[None], pb)
     wsum = w.sum(0)
     safe = np.where(wsum > 0, wsum, 1.0)
-    margin = np.where(np.isfinite(s2), (s1 - s2) / safe, 2.0)
-    return val, np.where(wsum > 0, s1 / safe, 0.0), np.where(wsum > 0, margin, 0.0), resid, cand.shape[0]
+    with np.errstate(invalid="ignore"):
+        margin = np.where(np.isfinite(s2), (s1 - s2) / safe, 2.0)
+    score_out = np.where(wsum > 0, s1 / safe, 0.0)
+    margin = np.where(wsum > 0, margin, 0.0)
+    empty = ~np.isfinite(s1)
+    if empty.any():
+        # ★2026-10-07: [lo, hi) に候補が 1 つも無い標本は範囲外の値・score -inf・margin 2.0(最大の確信)を
+        # 返していた → 値と score は NaN、margin 0(residue_fault_locate の「決められない = NaN」と同じ約束)。
+        val = np.where(empty, np.nan, val)
+        score_out = np.where(empty, np.nan, score_out)
+        margin = np.where(empty, 0.0, margin)
+        resid = np.where(empty[None], np.nan, resid)
+    return val, score_out, margin, resid, cand.shape[0]
 
 
 def residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -> dict:
@@ -410,7 +443,10 @@ def _crt_core_var(r, pb, w, lo, hi):
     val = best + np.where(ivs > 0, (iv * e).sum(0) / np.where(ivs > 0, ivs, 1.0), 0.0)
     wsum = w.sum(0)
     safe = np.where(wsum > 0, wsum, 1.0)
-    margin = np.where(np.isfinite(s2), (s1 - s2) / safe, 2.0)
+    with np.errstate(invalid="ignore"):
+        margin = np.where(np.isfinite(s2), (s1 - s2) / safe, 2.0)
+    # ★2026-10-07: 範囲内に候補が無い画素は margin 0(= valid にしない)。値は warp 用に有限のまま残す。
+    margin = np.where(np.isfinite(s1), margin, 0.0)
     return val, np.where(wsum > 0, margin, 0.0), _wrap_signed(r - val[None], pb)
 
 
@@ -490,7 +526,8 @@ def crt_displacement(image0, image1, periods=(5.0, 7.0, 9.0, 11.0, 13.0, 16.0), 
         d = d + np.where(ivs > 0, (iv * e).sum(0) / np.where(ivs > 0, ivs, 1.0), 0.0)
     weight = wts.sum(0)
     floor = 1e-3 * float(weight.max()) if weight.size and weight.max() > 0 else 0.0
-    valid = (weight > floor) & (margin > 0.05)
+    # ★2026-10-07: refine 後に |d| が探索範囲 max_disp を越えた画素は黙って切らず valid=False にする。
+    valid = (weight > floor) & (margin > 0.05) & np.isfinite(d) & (np.abs(d) <= max_disp)
     return {"d": d, "weight": weight, "margin": margin, "residual": resid,
             "valid": valid, "wrap_limit_single_px": float(p.max() / 2.0)}
 

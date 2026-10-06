@@ -57,6 +57,9 @@ MAX_LAYER_PIXELS = 2 ** 26
 _SEG_COLS = ("x0", "y0", "z0", "x1", "y1", "z1", "e", "f", "layer")
 _WORD = re.compile(r"([A-Za-z])\s*([-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?)")
 _LAYER_TAG = re.compile(r";\s*LAYER\s*[:=]?\s*(\d+)", re.IGNORECASE)
+_LINE_NO = re.compile(r"^[Nn]\s*\d+\s*")                                  # Marlin の行番号 N123
+_CHECKSUM = re.compile(r"\*\s*\d+\s*$")                                    # Marlin のチェックサム *71
+_EXT_CMD = re.compile(r"^[A-Za-z_][A-Za-z_][A-Za-z0-9_]*(?=\s|$)")           # Klipper の拡張命令(SET_VELOCITY_LIMIT …)
 
 
 # --------------------------------------------------------------------------- #
@@ -177,11 +180,20 @@ def gcode_read(path: str, layer_from: str = "auto") -> dict[str, np.ndarray]:
         if m:
             tag_layer = int(m.group(1))
         code = raw.split(";", 1)[0].strip()
+        # ★2026-10-07: 行番号 N123 とチェックサム *71 を外す(外さないと N が命令に見え、その行の移動が黙って落ちた)
+        code = _CHECKSUM.sub("", _LINE_NO.sub("", code, count=1)).strip()
         if not code:
             continue
+        lead = _WORD.match(code)
+        if lead is None:
+            if _EXT_CMD.match(code):
+                continue                                                  # Klipper の拡張命令: 位置を動かさない
+            raise ValueError(f"{op}: line {ln_no}: cannot parse {raw.strip()!r} (no leading G/M/T word)")
+        if lead.group(1).upper() not in ("G", "M", "T"):
+            # ★2026-10-07: G の無い座標だけの行(modal な移動)などは黙って捨てず拒否する
+            raise ValueError(f"{op}: line {ln_no}: unsupported leading word {lead.group(0)!r} in {raw.strip()!r} "
+                             "(only G/M/T commands; modal moves without G are not read)")
         words = _WORD.findall(code)
-        if not words:
-            continue
         letter, num = words[0][0].upper(), words[0][1]
         cmd = "%s%d" % (letter, int(float(num)))
         params = {k.upper(): float(v) for k, v in words[1:]}
@@ -1023,10 +1035,10 @@ def _stroke_gauss(a, sigma):
     x = np.arange(-r, r + 1, dtype=np.float64)
     k = np.exp(-0.5 * (x / sigma) ** 2)
     k /= k.sum()
-    out = np.apply_along_axis(lambda v: np.convolve(
-        np.concatenate([v[r:0:-1], v, v[-2:-r - 2:-1]]), k, mode="valid"), 0, a)
-    out = np.apply_along_axis(lambda v: np.convolve(
-        np.concatenate([v[r:0:-1], v, v[-2:-r - 2:-1]]), k, mode="valid"), 1, out)
+    # ★2026-10-07: 反射の詰め物を手で切ると r ≥ 辺の長さで足りず出力が縮んだ((8, 12), σ=3 → (4, 12))。
+    #   np.pad の reflect は繰り返し反射するので形が保たれる(r < 辺の長さでは従来と同じ値)
+    out = np.apply_along_axis(lambda v: np.convolve(np.pad(v, r, mode="reflect"), k, mode="valid"), 0, a)
+    out = np.apply_along_axis(lambda v: np.convolve(np.pad(v, r, mode="reflect"), k, mode="valid"), 1, out)
     return out
 
 
