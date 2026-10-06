@@ -386,7 +386,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **コヒーレンス走査干渉(interferometry)で段差表面を測る** — 位相シフト法(fringe)が 2π 周期で壊れる段差を、同じ表面で白色干渉の包絡線ピークから正しく測り、両者の差を数値に出す。 `py -3.11 examples/coherence_scanning.py`
 - **光沢面の外観検査(specularity 13 op)** — Lambertian 前提の形状復元がハイライトで壊れる場所を見せてから、二色性射影分離・影下の頑健最小二乗・偏光分離を順に通し、破綻点(4 灯遮蔽)も隠さず出す。 `py -3.11 examples/specular_photometric.py`
 - **コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる** — FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 `py -3.11 examples/fmcw_range_doppler.py`
-- **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/event_camera.py`
+- **通常フレームからイベントカメラ(DVS)表現を作り運動を復元** — フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 `py -3.11 examples/events_from_frames.py`
 
 **appearance**
 - **構造色を波長から作る(回折・薄膜干渉・異方性)** — 色を塗らず分光反射率→CIE等色関数→線形sRGB。等色関数ȳピーク554nm、反射率1が白(1,1,1)、膜厚0が基板フレネルに厳密一致、λ/4が解析値0.077113、CD 1.6µm・Δsin0.35の1次が560nm、異方性ローブの伸び39:5。同条件でBD 0.32µmは可視域に届かず総量が1/3以下。 `py -3.11 examples/appearance_structural_colour.py`

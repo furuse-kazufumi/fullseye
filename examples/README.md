@@ -188,7 +188,7 @@ FULLSEYE_FIGURE_DIR=out/figs py -3.11 examples/<name>.py
 | script | 何を示すか |
 |---|---|
 | [`coherence_scanning.py`](coherence_scanning.py)<br>コヒーレンス走査干渉(interferometry)で段差表面を測る | 位相シフト法(fringe)が 2π 周期で壊れる段差を、同じ表面で白色干渉の包絡線ピークから正しく測り、両者の差を数値に出す。 |
-| [`event_camera.py`](event_camera.py)<br>通常フレームからイベントカメラ(DVS)表現を作り運動を復元 | フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 |
+| [`events_from_frames.py`](events_from_frames.py)<br>通常フレームからイベントカメラ(DVS)表現を作り運動を復元 | フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。 |
 | [`fmcw_range_doppler.py`](fmcw_range_doppler.py)<br>コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる | FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い速度軸を既知ターゲットの GT と照合。 |
 | [`illumination_design_demo.py`](illumination_design_demo.py)<br>検査照明を設計する(illumdesign)— リング/ドーム/同軸/バックライトの照度と欠陥コントラスト | light_source → irradiance_map(cos⁴ 則で検証)→ illumination_uniformity、defect_contrast で暗視野/明視野の傷斜面コントラストとグレアによる顔料コントラスト希釈、lighting_sweep の最良仰角 = 90°−2×斜面、illumination_design の順位表と経験則の照合。 |
 | [`lens_calibration_loop_demo.py`](lens_calibration_loop_demo.py)<br>設計レンズでカメラ校正を閉ループ検証する(calibration_views → calib) | 処方の実歪曲で平面ターゲットの多視点対応点を合成し、calib.camera_calibration がK_true(EFL/画素ピッチ)をどこまで再現するかを、無歪曲の放物面鏡(1e-6)と樽型歪曲の singlet(焦点距離バイアス+再投影 RMS)で突き合わせる。 |

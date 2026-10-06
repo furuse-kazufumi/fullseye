@@ -10,7 +10,7 @@
 
 *Six acts, all real operator output: edge orientation, blob selection, sub-pixel calipers, SDF to mesh, LiDAR clustering, lens defocus.*
 
-**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **936** operators (as counted in the registry), provides genuine implementations of **980/2313** actual HALCON operators, and spans 48 categories.
+**Fullseye** (working name: imgevolve) is a HALCON/HDevelop-class production tool. It combines a numpy-native library of image-processing operators with an HDevelop-style visual pipeline design environment (Fullseye Studio) and an execution runtime (FullseyeEngine). It carries roughly **936** operators (as counted in the registry), provides genuine implementations of **981/2313** actual HALCON operators, and spans 48 categories.
 
 ★ **Rare for an image-processing library, Fullseye also includes virtual optical design** — thin/thick lenses, ray tracing, Seidel aberrations and PSF/MTF, plus damped-least-squares (Levenberg–Marquardt) optimisation of the lens prescription itself (`optimize_lens`). You can **design the imaging system and then inspect its image with the operators above, end to end** — a differentiator that matters for semiconductor and precision metrology.
 
@@ -163,7 +163,7 @@ Search by name with `py -3.11 imgevolve.py ops --search edge`; the full cross-li
 
 | Document | Contents |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | Genuine implementation status (980/2313): whether an operator truly does the same work, rather than merely sharing a name |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | Genuine implementation status (981/2313): whether an operator truly does the same work, rather than merely sharing a name |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | Coverage measured by actually scraping the official reference (v2605) |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | Cross-library coverage (distinctive operators taken in from beyond HALCON) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | Parity evidenced by cross-backend agreement between independent implementations (scipy/cv2/skimage) |

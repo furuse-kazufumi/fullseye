@@ -1151,7 +1151,7 @@ EXAMPLES = [
      "name": "コヒーレント測距 op(rangedoppler)で 4D レーダを仕立てる",
      "summary": "FMCW の位相を保つビート信号から距離-速度マップと角度を出す。lidar_scan には無い"
                 "速度軸を既知ターゲットの GT と照合。"},
-    {"id": "event_camera", "task": "optics_sensing", "data": "synthetic",
+    {"id": "events_from_frames", "task": "optics_sensing", "data": "synthetic",
      "name": "通常フレームからイベントカメラ(DVS)表現を作り運動を復元",
      "summary": "フレーム対/短クリップを events 表現(タイムサーフェス等)に変換し、"
                 "コントラスト最大化で注入した運動を回収する(events.py ファサード、終了コードで判定)。"},

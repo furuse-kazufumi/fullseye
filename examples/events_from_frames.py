@@ -7,7 +7,10 @@ frames into the standard event representations, and recovers global motion by
 contrast maximisation. A Fullseye consumer (onocollo / evis / hillco physics
 clips) with only rendered frames can prototype an event pipeline this way.
 
-Run:  py -3.11 examples/event_camera.py
+Run:  py -3.11 examples/events_from_frames.py
+(2026-10-07 に event_camera.py から改名: ルートの event_camera.py(MuJoCo の DVS デモ・unified の op)と
+ 同名で、examples/ が sys.path に入った後の ``import event_camera`` がこちらを拾い、公開経路の門が
+ ワーカーへの振り分け次第で落ちていた。tests/test_example_names_do_not_shadow.py が再発を止める。)
 Smoke test: it prints an honest one-line summary per representation. Exit 0 means
 every step produced a finite, shaped result and contrast maximisation recovered
 the injected motion.

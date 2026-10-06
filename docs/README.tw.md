@@ -10,7 +10,7 @@
 
 *六幕，全部是真實的運算子輸出：邊緣方向 / 連通域篩選 / 次像素量測 / SDF 轉網格 / 點雲分群 / 鏡頭離焦。*
 
-**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **936** 個（以 registry 計），其中 **980/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
+**Fullseye**（開發代號 imgevolve）是一套 HALCON/HDevelop 等級的實用軟體：由 numpy 原生的影像處理運算子函式庫、HDevelop 風格的視覺化管線設計環境（Fullseye Studio），以及負責執行的 runtime（FullseyeEngine）三者組成。運算子約 **936** 個（以 registry 計），其中 **981/2313** 個真實的 HALCON 運算子做到 genuine（真正等效）的實作，涵蓋 48 個類別。
 
 ★ **在影像處理函式庫中少見，Fullseye 還內建「虛擬光學設計」** —— 薄/厚透鏡、光線追蹤、Seidel 像差與 PSF/MTF，並以阻尼最小二乘（Levenberg–Marquardt）最佳化透鏡處方本身（`optimize_lens`）。可從**設計成像系統，到用上述運算子檢查其成像，一氣呵成** —— 在半導體與精密計量中是明確的差異化。
 
@@ -163,7 +163,7 @@
 
 | 文件 | 內容 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）實作的進度（980/2313）：不是「只有名字一樣」，而是確實做得到同樣的處理 |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine（真正等效）實作的進度（981/2313）：不是「只有名字一樣」，而是確實做得到同樣的處理 |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 實際抓取官方參考手冊（v2605）後量出的涵蓋率 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 跨多個函式庫的涵蓋情形（納入 HALCON 以外具特色的運算子） |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 以多個獨立實作（scipy／cv2／skimage）之間的跨後端一致性，來佐證對等性 |

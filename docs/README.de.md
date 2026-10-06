@@ -10,7 +10,7 @@
 
 *Sechs Akte, ausschließlich echte Operator-Ausgaben: Kantenorientierung, Blob-Auswahl, Subpixel-Messung, SDF zu Mesh, LiDAR-Clustering, Objektiv-Defokus.*
 
-**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **936** Operatoren (gezählt in der Registry), bietet für **980/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
+**Fullseye** (Arbeitsname imgevolve) ist ein Werkzeug auf HALCON-/HDevelop-Niveau: eine numpy-native Bibliothek von Bildverarbeitungs-Operatoren, dazu eine visuelle Pipeline-Entwurfsumgebung im Stil von HDevelop (Fullseye Studio) und eine ausführende Laufzeitumgebung (FullseyeEngine). Es umfasst rund **936** Operatoren (gezählt in der Registry), bietet für **981/2313** tatsächliche HALCON-Operatoren eine genuine (wirklich gleichwertige) Implementierung und deckt 48 Kategorien ab.
 
 ★ **Selten für eine Bildverarbeitungsbibliothek, bringt Fullseye auch virtuelles optisches Design mit** — dünne/dicke Linsen, Raytracing, Seidel-Aberrationen und PSF/MTF, dazu eine Damped-Least-Squares-Optimierung (Levenberg–Marquardt) der Linsenverordnung selbst (`optimize_lens`). Man kann **das abbildende System entwerfen und sein Bild dann mit den obigen Operatoren prüfen — durchgängig**, ein Unterscheidungsmerkmal für Halbleiter und Präzisionsmesstechnik.
 
@@ -163,7 +163,7 @@ Nach Namen suchen mit `py -3.11 imgevolve.py ops --search edge`; die vollständi
 
 | Dokument | Inhalt |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (980/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | Stand der genuine (wirklich gleichwertigen) Implementierungen (981/2313) — ob ein Operator tatsächlich dasselbe leistet und nicht bloß denselben Namen trägt |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | Abdeckung, gemessen durch tatsächliches Scrapen der offiziellen Referenz (v2605) |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | Bibliotheksübergreifende Abdeckung (Aufnahme markanter Operatoren jenseits von HALCON) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | Parität, belegt durch die Übereinstimmung unabhängiger Implementierungen (scipy/cv2/skimage) über die Backends hinweg |

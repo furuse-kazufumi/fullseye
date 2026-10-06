@@ -10,7 +10,7 @@
 
 *여섯 장면 모두 실제 연산자 출력입니다: 에지 방향 / 연결 성분 선별 / 서브픽셀 계측 / SDF에서 메시로 / 포인트 클라우드 클러스터링 / 렌즈 디포커스.*
 
-**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **936**개(레지스트리 기준), 실제 HALCON 연산자 **980/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 48개 카테고리를 아우릅니다.
+**Fullseye**(작업명 imgevolve)는 HALCON/HDevelop 급의 실용 도구입니다. numpy 네이티브 이미지 처리 연산자 라이브러리에, HDevelop 스타일의 비주얼 파이프라인 설계 환경(Fullseye Studio)과 실행 런타임(FullseyeEngine)을 갖추고 있습니다. 연산자는 약 **936**개(레지스트리 기준), 실제 HALCON 연산자 **981/2313**개를 genuine(이름만이 아니라 진짜로 같은 동작을 하는) 구현으로 제공하며, 48개 카테고리를 아우릅니다.
 
 ★ **이미지 처리 라이브러리에서는 드물게, Fullseye 는 「가상 광학 설계」까지 내장** —— 얇은/두꺼운 렌즈·광선 추적·Seidel 수차·PSF/MTF 에 더해, damped-least-squares(Levenberg–Marquardt)로 렌즈 처방 자체를 최적화(`optimize_lens`). **촬상계를 설계하고 그 상을 위 연산자로 검사하기까지 일관되게** 할 수 있다 —— 반도체·정밀 계측에서 효과적인 차별화.
 
@@ -163,7 +163,7 @@
 
 | 문서 | 내용 |
 |---|---|
-| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine(진짜) 구현 현황(980/2313) — "이름만 같은" 것이 아니라 실제로 같은 처리를 해내는지 |
+| [HALCON_PARITY.md](HALCON_PARITY.md) | genuine(진짜) 구현 현황(981/2313) — "이름만 같은" 것이 아니라 실제로 같은 처리를 해내는지 |
 | [HALCON_COVERAGE.md](HALCON_COVERAGE.md) | 공식 레퍼런스(v2605)를 실제로 스크레이핑해서 측정한 커버리지 |
 | [LIB_COVERAGE.md](LIB_COVERAGE.md) | 여러 라이브러리를 가로지르는 커버리지(HALCON 밖의 특색 있는 연산자 흡수) |
 | [PARITY_CROSSBACKEND.md](PARITY_CROSSBACKEND.md) | 독립적으로 만든 구현(scipy／cv2／skimage) 사이의 백엔드 간 일치로 패리티를 입증 |
