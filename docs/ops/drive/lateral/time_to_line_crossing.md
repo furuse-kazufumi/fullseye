@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_driving_lateral]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # time_to_line_crossing — DRIVE `lateral` op

@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_knife_tactile_toughness, poc_tacsim_elastic_membrane, poc_tacsim_marker_shear, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # combined_modulus — DRIVE `tacsim` op

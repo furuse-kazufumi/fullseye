@@ -7,7 +7,7 @@ out: matrix
 examples: [poc_beats_fringes_and_screens]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # wave_membrane_mode — MATH `wave` op

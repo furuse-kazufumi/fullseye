@@ -7,7 +7,7 @@ out: table
 examples: [poc_calipers_under_illusion, poc_dimensional_inspection]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # apply_metrology_model — MEASURE1D `apply` op

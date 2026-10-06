@@ -8,7 +8,7 @@ halcon: boundary
 examples: [gallery2d_region, poc_complex_plane_fields, poc_driving_commonroad, voxel_labels_color]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # boundary — 2D `region` op

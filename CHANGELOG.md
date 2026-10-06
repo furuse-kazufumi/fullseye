@@ -7,7 +7,35 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
-### 破壊的変更(呼び方が変わる)
+## 0.5.0 — 2026-10-06
+
+### 破壊的変更(Breaking)
+
+**op は 1 本も消えていない**(OP_INDEX 3,057 → 3,078、増分 21 = roverslip 15・cuttouch 3・doseunif 3(台帳 2,104 → 2,125)、
+消失 0、既存 3,057 本の in/out の sort・分類・モジュールの変化 0。v0.4.0 の索引と機械で突き合わせた)。
+minor を上げるのは、0.4.0 の利用者のコードが**例外で止まる**変更 2 つと、**同じ呼び方で数値が変わる**変更 4 つを含むため
+(CONTRIBUTING の Versioning:「名前が消える」「既存の数値が変わる」「fail-soft → fail-closed」はどれも minor)。
+
+| 項目 | 分類 | 根拠(Versioning のどの行か) |
+|---|---|---|
+| `acoustics.gcc_delay` の PHAT は `band` 必須 | minor | fail-soft → fail-closed(band 無しの PHAT が ValueError) |
+| `contours_xld2.gen_contour_nurbs_xld` / `gen_nurbs_interp` の削除 | minor | 公開名の削除(0.4.0 で非推奨・予告済み、op ではない) |
+| `pegtactile` のねじりを部分滑りで | minor | 既定の数値が変わる(`torsion`、0.4.0 の値は `torsion_model="no_slip"`) |
+| `tactorque.torque_decompose` の `Mz` を部分滑りで | minor | 既定の数値が変わる + `a` だけ渡すと ValueError(fail-closed) |
+| `filters_freq.phase_correlation_fft` の既定を Hann + 半分の白色化に | minor | 既定の数値が変わる(0.4.0 は `window=None, whitening=1.0`) |
+| `match3d.match_phase_3d` の既定を Tukey + \|R\|^0.25 に | minor | 既定の数値が変わる(0.4.0 は `window=None, whitening=1.0`) |
+| 新モジュール roverslip / cuttouch / doseunif(21 op) | patch | 新しい op と族 |
+| motor bottleneck PoC の図の経路の直し | patch | 壊れていた経路を動くようにする直し |
+
+移行の要点:
+
+- `gcc_delay(..., weight="phat")` には信号の帯域 `band=(lo, hi)` を渡す。全帯域と分かっていれば `band=(0.0, rate / 2)`(0.4.0 と同じ数値)、分からなければ `weight="none"`。
+- `gen_contour_nurbs_xld` / `gen_nurbs_interp` → 重みつきの NURBS は `mathgeometry.nurbs_curve` / `nurbs_circle`、点を通す補間は `scipy.interpolate.splprep(s=0)`。
+- 0.4.0 の数値に戻すには: `pad_tactile_read(..., torsion_model="no_slip")`、`torque_decompose(..., torsion_model="no_slip")`(平頭の押し込み子はこちらが正しい)、
+  `phase_correlation_fft(..., window=None, whitening=1.0)`、`match_phase_3d(..., window=None, whitening=1.0)`。
+- `torque_decompose` に `a` を渡すなら `P`・`mu` も渡す(部分滑りの補正に要る)。
+
+### 呼び方が変わる(詳細)
 
 - ★**`acoustics.gcc_delay` は `weight="phat"`(既定)のとき `band` が必須**(`band=None` なら ValueError)。
   PHAT は相互スペクトルの全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無いビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる。
@@ -24,7 +52,7 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   HALCON 対応は 984 → **982 / 2313(42.5 %、率は不変)**、XLD 章 88 → 86 / 97。`docs/HALCON_COVERAGE.md` を作り直し、概観記事(ja / en)の手書きの 984 を 982 に。
   門: 「名前がもう無く移行先は在る」(test_hidden_function_defects の parametrize に 3 本、test_mathgeometry)、facade 表と stubs が消した関数を指さないこと。
 
-### 挙動の変更(既定の数値が変わる —— CONTRIBUTING の Versioning により次の版は minor)
+### 既定の数値が変わる(詳細)
 
 - ★**`pegtactile` のパッドのねじりを部分滑りで合成し、部分滑りで読む**(`pad_tactile_read` / `pad_tactile_frame` / `pad_marker_displacement` に `torsion_model`、既定 `"partial_slip"`)。
   Hertz 接触のねじりのトラクションは縁で発散するので、どんな小さなねじりでも縁から滑る。0.4.0 の読み手は無滑り(Reissner–Sagoci、M = 16Ga³ω/3)の関係で読むので、
@@ -66,6 +94,13 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   影響: 同じ入力に対する返りのずれ(旧で外れていた場面)。小さい volume の大きな周期的なずれでは既定が外すことがある(上の 27 / 30)—— 周期的と分かっているなら旧の引数で。
   呼び出し元: `poc_change_detection_misreg`(位相相関の経路、(1, H, W))は新旧で出力・図が全部同じ(真のずれ (+1.30, −0.80) の整数の答え (+1, −1) は変わらない)、
   `examples_3d/shape_desc_pose`・`representation_conversion`・test_match3d(周期的なずれ)も同じ答え。門: tests/test_match3d_phase.py(5 本、torch 不要)。既定を旧に戻すと 3 本が赤(Hann + 0.5 にすると 1 本が赤)。
+
+### 直し
+
+- **`poc_connectome_motor_bottleneck` が図つきの実行で exit 1 だった**(G1 / evis のデータが無い環境では Physical AI の系列が合成歩容 1 本になり、
+  折れ線が点 1 個で描けず PoC 自身の `assert not figs.errors()` で止まった)。系列が 2 本未満なら点で描き、図注は実際に使ったデータを名乗る。
+  CI は図の経路を走らせないので、縮小予算を図つきで回す門 `tests/test_poc_connectome_motor_figures.py` を足した。展示文言の数字を実行ログに合わせた
+  (歩行・走行 2.4〜4.1 → 1.5〜4.1、evis 6〜9 → 5.8〜9.6)。
 
 ### 追加
 

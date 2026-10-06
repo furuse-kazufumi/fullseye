@@ -7,7 +7,7 @@ out: scalar
 examples: [poc_driving_school, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # add_sign — DRIVE `roadjp` op

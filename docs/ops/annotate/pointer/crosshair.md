@@ -7,7 +7,7 @@ out: image2d
 examples: [annotate_gallery, poc_air_hockey_intercept, poc_ball_bounce, poc_kendama, poc_table_tennis_bounce, poc_ttc_rss, poc_world_terrain]
 author: Kazufumi Furuse
 license: Apache-2.0
-version: 0.4.0  # fullseye lib version this note was generated for
+version: 0.5.0  # fullseye lib version this note was generated for
 ---
 
 # crosshair — ANNOTATE `pointer` op
