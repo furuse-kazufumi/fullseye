@@ -1,0 +1,7 @@
+﻿detector,tau (train),train AUC,test AUC,test TPR,test FPR,test pos / neg
+merge: membrane chord,0.810,0.76,0.83,0.12,0.01,8 / 71
+merge: random scores,0.955,0.43,0.53,0.00,0.08,
+merge: size only (area),18721.000,0.66,0.70,0.12,0.08,
+split: boundary gap,0.156,1.00,1.00,1.00,0.11,6 / 334
+split: random scores,0.963,0.50,0.65,0.00,0.03,
+split: size only (short boundary),-63.000,0.42,0.54,0.00,0.06,

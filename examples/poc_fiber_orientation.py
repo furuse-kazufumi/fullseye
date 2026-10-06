@@ -567,7 +567,7 @@ def section_density() -> dict:
                     ("平均角度の誤差 [deg]", cross, errs),
                     ("偏りゼロ", cross, [0.0] * len(cross))],
                    xlabel="視野内の交差点 [件]", ylabel="偏り / 誤差 [deg]",
-                   title="交差は配向度を **高め** にずらす(予想と逆)")
+                   title="交差は配向度を高めにずらす(予想と逆)")   # 図の題は Markdown を解さない(** がそのまま出ていた)
     return {"n": ns, "cross": cross, "R": rs, "bias": bias, "err": errs}
 
 

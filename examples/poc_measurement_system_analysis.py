@@ -255,7 +255,7 @@ def chapter_report_panels(G):
                     ("上限 %.3f" % hi_l, np.array([1.0, 10.0]), np.full(2, hi_l)),
                     ("下限 %.3f" % lo_l, np.array([1.0, 10.0]), np.full(2, lo_l))],
                    xlabel="部品", ylabel="3 回の平均",
-                   title="平均管理図 —— ここだけは**外に出るほうが良い**",
+                   title="平均管理図 —— ここだけは外に出るほうが良い",   # 図の題は Markdown を解さない
                    kinds=["line", "line", "line", "line", "line"],
                    caption="管理図というと「限界の外は異常」ですが、ゲージ R&R の"
                            "平均図だけは**逆**です。この限界は**測定のばらつきだけ**から"

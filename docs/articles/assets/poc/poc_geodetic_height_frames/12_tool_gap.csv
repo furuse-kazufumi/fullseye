@@ -1,10 +1,10 @@
 ﻿語幹,fs.,fs.op.,fs.ledger.,op_find,中身
 geoid,0,0,1,1,dem_geoid_height
-enu,0,0,2,2,"dem_enu_from_geodetic, dem_geodetic_from_enu"
-datum,0,0,1,1,dem_datum_shift_3param
-ortho,0,0,0,1,xsp_dct
-vertical,0,0,0,5,"alpha_shape_mesh, boundary_vertices, mesh_di"
-msl,0,0,0,0,—
+enu,0,0,2,3,"dem_enu_from_geodetic, dem_geodetic_from_enu"
+datum,0,0,2,2,"datum_tilt_check, dem_datum_shift_3param"
+ortho,0,0,0,2,"mat_qr, xsp_dct"
+vertical,0,0,0,6,"alpha_shape_mesh, boundary_vertices, mesh_di"
+msl,0,0,0,2,"piv_streamline_image, piv_streamlines"
 epoch,0,0,0,0,—
 crs,0,0,0,0,—
 utm,0,0,0,0,—

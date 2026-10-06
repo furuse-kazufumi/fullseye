@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1219. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1220. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -573,6 +573,10 @@ This repository records *why* things are the way they are in **comments in the s
 - **L499** — ★Because angle is a periodic quantity, coloring it with colorize_depth makes 0 degrees and 179 degrees opposite colors. fullseye has no name for a cyclic LUT, but passing (cos2θ, sin2θ) to colorize_flow gives a double-angle cyclic LUT (see "tool gaps" (f) at the end).
 - **L693** — ★The name "coherence" exists, but it is the two-signal coherence of signal processing (a different thing).
 - **L724** — (e) ★Two members of the same family disagree in their input checks.
+
+## `examples/poc_fly_optomotor_steering.py`
+
+- **L503** _(ja)_ — ★2026-10-06: 6 系列に配色の役が 5 つしかなく、motor right が HS left と同じ色だった。 層ごとに 1 色、左 = 実線・右 = 破線にする。
 
 ## `examples/poc_fly_vision.py`
 

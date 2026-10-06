@@ -45,7 +45,7 @@
   "caption": "the wiring is written by hand as a synapse table and run as a conductance circuit; the state is a convex combination of the reversal potentials, so it cannot diverge whatever the input does",
   "shape": [
    360,
-   560,
+   684,
    3
   ]
  },

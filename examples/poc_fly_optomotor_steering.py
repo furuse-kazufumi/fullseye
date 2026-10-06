@@ -500,6 +500,10 @@ def main():
                        [(CIRCUIT_NAMES[i], tt, volts[:, i]) for i in range(len(CIRCUIT_NAMES))],
                        xlabel="時間 [s]", ylabel="膜電位(反転電位の間)",
                        title="8 シナプスの操舵回路(学習なし)",
+                       # ★2026-10-06: 6 系列に配色の役が 5 つしかなく、motor right が HS left と同じ色だった。
+                       #   層ごとに 1 色、左 = 実線・右 = 破線にする。
+                       colors=["emphasis", "emphasis", "right", "right", "wrong", "wrong"],
+                       styles=[None, "dashed", None, "dashed", None, "dashed"],
                        caption="the wiring is written by hand as a synapse table and run as a "
                                "conductance circuit; the state is a convex combination of the reversal "
                                "potentials, so it cannot diverge whatever the input does")

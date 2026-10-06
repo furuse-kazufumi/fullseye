@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1219. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1220. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -573,6 +573,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L499** — ★Da der Winkel eine periodische Größe ist, macht das Einfärben mit colorize_depth 0 Grad und 179 Grad zu entgegengesetzten Farben. fullseye hat keinen Namen für eine zyklische LUT, aber übergibt man (cos2θ, sin2θ) an colorize_flow, ergibt sich eine zyklische LUT des doppelten Winkels (siehe "Werkzeuglücken" (f) am Ende).
 - **L693** — ★Der Name "coherence" existiert, aber es ist die Zwei-Signal-Kohärenz aus der Signalverarbeitung (etwas anderes).
 - **L724** — (e) ★Zwei Vertreter derselben Familie weichen in ihren Eingabeprüfungen voneinander ab.
+
+## `examples/poc_fly_optomotor_steering.py`
+
+- **L503** _(ja)_ — ★2026-10-06: 6 系列に配色の役が 5 つしかなく、motor right が HS left と同じ色だった。 層ごとに 1 色、左 = 実線・右 = 破線にする。
 
 ## `examples/poc_fly_vision.py`
 

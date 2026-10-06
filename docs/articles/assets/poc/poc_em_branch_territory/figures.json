@@ -29,7 +29,7 @@
   "caption": "both readings recover the radius of every branch to within half a voxel (the surface voxel centre sits half a voxel inside the boundary, hence the +0.5); the displacement gives a radius at every surface voxel, the classic only on the skeleton",
   "shape": [
    360,
-   560,
+   985,
    3
   ]
  },
