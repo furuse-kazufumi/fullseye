@@ -3832,7 +3832,8 @@ def _b_tq_fit(pool, rng):
 
 def _b_tq_decompose(pool, rng):
     f = _fuzz_tq()
-    return (f["mk_m"], f["um"], f["area"], f["G"], f["nu"]), {"a": f["a"], "radius": f["fit_r"], "window": (0.0, 0.0, f["a"] + f["fit_r"])}
+    return (f["mk_m"], f["um"], f["area"], f["G"], f["nu"]), {"a": f["a"], "radius": f["fit_r"], "window": (0.0, 0.0, f["a"] + f["fit_r"]),
+                                                              "torsion_model": "no_slip"}       # 平頭押し込み子(無滑りが厳密)
 
 
 def _b_tq_resolution(pool, rng):
@@ -3842,7 +3843,7 @@ def _b_tq_resolution(pool, rng):
 
 def _b_tq_frame(pool, rng):
     f = _fuzz_tq()
-    return (f["m_ref"], f["m_cur"], 0.85, 4.0, 1.5, f["pitch"], f["G"], f["nu"]), {"a": f["a"]}
+    return (f["m_ref"], f["m_cur"], 0.85, 4.0, 1.5, f["pitch"], f["G"], f["nu"]), {"a": f["a"], "torsion_model": "no_slip"}
 
 
 _FUZZ_PK = {}

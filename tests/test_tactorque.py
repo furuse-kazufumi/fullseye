@@ -4,7 +4,8 @@
  1. 閉形式の自己検算: 平頭圧の格子積分(Σp h² = P、Σx p h² = M)、離れの fail-closed、楕円 Hertz 圧の P、ずらした Hertz 圧の 1 次モーメント = P·d
  2. Boussinesq 核 vs Johnson 3.41b / 3.42a / 平頭の u_z、Gauss の恒等式 ∇·ū = −(1−2ν)p/2G(ν 2 点)
  3. 双極子: 純法線で 0(3 形式)、D ∝ M(R²・係数・原点不変)、基線形式は符号を知らない、3 形状で係数が同じ
- 4. ねじり: Reissner–Sagoci の β を Cerruti 畳み込みで、剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl(符号規約)
+ 4. ねじり: Reissner–Sagoci の β を Cerruti 畳み込みで、剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl(符号規約)、
+    平頭押し込み子では q/(μp) < 1(無滑りが厳密)、Hertz 接触の部分滑りの像は既定の読みで直り、無滑りの関係のままだと過大(2026-10-06)
  5. 分解: 重ね合わせ、純せん断の漏れと窓、雑音 ∝ σ、散在最小二乗 = 中心差分、nan ≠ 0、綴り壊し
  6. 像から: 描画 → marker_track → torque_decompose
  7. 有限要素(FULLSEYE_TAXIM_DATA があるときだけ): 有限厚は膨らむ(符号が逆)、斜め荷重の双極子はせん断漏れの符号
@@ -240,12 +241,57 @@ def test_rigid_rotation_fit_curl_and_piv_vorticity_convention(grid):
     assert curl[m8].mean() / (2 * tf["beta"]) == pytest.approx(1.0, abs=0.02)
     vort = pivops.piv_vorticity(np.stack([tf["uy"], tf["ux"]]), spacing=PITCH)          # 規約 (dy, dx): −curl
     assert np.abs(vort[m8] + curl[m8]).max() / np.abs(curl[m8]).max() < 1e-9
-    dec = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, 0.9 * A), radius=FIT_R)
+    dec = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, 0.9 * A), radius=FIT_R, torsion_model="no_slip")
     assert dec["Mz"] / MZ == pytest.approx(1.0, abs=0.01)
+    # 平頭押し込み子では q_θ/(μp) = 3M_z r/(2μPa²) が縁で有限(最大 0.25)→ 無滑りの場が厳密に成り立つ(no_slip を選ぶ根拠)
+    pfl = TQ.punch_pressure(X, Y, A, P, (0.0, 0.0), pitch=PITCH)
+    inside = r < 0.95 * A
+    qmu = np.hypot(tf["qx"], tf["qy"])[inside] / (MU * pfl[inside])
+    assert qmu.max() == pytest.approx(3 * MZ * 0.95 / (2 * MU * P * A), rel=0.03) and qmu.max() < 1.0
     assert np.abs(dec["M1"]).max() < 0.01e-3                                 # ねじりは傾きへ 0.01 N·mm 未満しか漏れない
     assert dec["omega_curl"] / tf["beta"] < 0.95                               # 平均 curl/2 は縁で低い(剛体回転の当てはめを使う理由)
     with pytest.raises(ValueError):
         TQ.rigid_rotation_fit(grid["mk_m"][:2], um[:2])
+
+
+def test_hertz_partial_slip_twist_is_read_without_the_no_slip_overestimate():
+    """Hertz 接触のねじりは縁から必ず滑る(2026-10-06)。部分滑りの像(:func:`cuttouch.torsion_partial_slip` の場、指先パッドの寸法)を
+    0.4.0 の Mz(無滑りの関係)で読むと、全滑りまでの比 0.5 で +33 %、0.8 で +85 % 過大。既定の読み(部分滑りの数値解で直す)は 1 % 以内。
+    0.4.0 の門は合成も読みも無滑りだったので、この場面を持たなかった。"""
+    import cuttouch as CT
+    import pegtactile as PT
+    pad = PT.pad_params(n=128)
+    ctx = PT.pad_context(pad, jitter_px=0.0)
+    Pg = pad["grip"]
+    a = T.hertz_sphere(Pg, pad["R"], pad["Es"])["a"]
+    Mf = (3.0 * math.pi / 16.0) * pad["mu"] * Pg * a
+    n = pad["n"]
+    pts = (ctx["pts_flat"] - (n - 1) / 2.0) * pad["pitch"]
+    area, fit_r = pad["marker_pitch"] ** 2, 1.5 * pad["marker_pitch"]
+    win = (0.0, 0.0, 0.6 * a)
+    for m, lo_old, hi_old in ((0.5, 1.30, 1.36), (0.8, 1.80, 1.90)):
+        u = CT.torsion_partial_slip(m * Mf, Pg, pad, ctx=ctx, field=True)["u_markers"]
+        d = TQ.torque_decompose(pts, u, area, pad["G"], pad["nu"], a=a, window=win, radius=fit_r, P=Pg, mu=pad["mu"])
+        assert d["torsion_model"] == "partial_slip" and d["Mz_readable"]
+        assert abs(d["Mz"] / (m * Mf) - 1.0) < 0.01, (m, d["Mz"] / (m * Mf))
+        assert d["Mz_ratio"] == pytest.approx(m, abs=0.01)
+        assert lo_old < d["Mz_no_slip"] / (m * Mf) < hi_old, (m, d["Mz_no_slip"] / (m * Mf))
+        old = TQ.torque_decompose(pts, u, area, pad["G"], pad["nu"], a=a, window=win, radius=fit_r, torsion_model="no_slip")
+        assert old["Mz"] == d["Mz_no_slip"] and old["torsion_model"] == "no_slip" and "Mz_ratio" not in old
+    # 補正の正本は cuttouch の公開の入口: 接触半径で渡しても、パッドで渡しても同じ数(1e-12)
+    via_pad = CT.torsion_partial_slip(0.6 * Mf, Pg, pad, from_no_slip_read=True)
+    via_contact = CT.torsion_partial_slip(0.6 * Mf, Pg, contact={"a": a, "mu": pad["mu"], "G": pad["G"]}, from_no_slip_read=True)
+    assert via_contact["M"] == pytest.approx(via_pad["M"], rel=1e-12) and via_contact["c_over_a"] == pytest.approx(via_pad["c_over_a"], rel=1e-12)
+    # 窓が固着円より大きいと読めない印、全滑りを超える読みは全滑りのトルクで印
+    big = TQ.torque_decompose(pts, u, area, pad["G"], pad["nu"], a=a, window=(0.0, 0.0, 0.9 * a), radius=fit_r, P=Pg, mu=pad["mu"])
+    assert not big["Mz_readable"]
+    for bad in ({"a": a, "mu": pad["mu"]}, {"a": -a, "mu": 1.0, "G": pad["G"]}):
+        with pytest.raises(ValueError):
+            CT.torsion_partial_slip(1e-3, Pg, contact=bad)
+    with pytest.raises(ValueError):
+        CT.torsion_partial_slip(1e-3, Pg, pad, contact={"a": a, "mu": 1.0, "G": pad["G"]})       # 両方は渡せない
+    with pytest.raises(ValueError):
+        CT.torsion_partial_slip(1e-3, Pg, contact={"a": a, "mu": 1.0, "G": pad["G"]}, field=True)  # 場はパッドの格子が要る
 
 
 # ── 5. 分解 ─────────────────────────────────────────────────────────────────────
@@ -255,14 +301,15 @@ def test_superposition_decomposes_into_tilt_torsion_translation(grid, tilt):
     tf = TQ.torsion_stick_field(X, Y, A, MZ, grid["kc"], G)
     ux = tilt["dp"]["ux"] + tf["ux"] + 1.0 * PITCH; uy = tilt["dp"]["uy"] + tf["uy"]
     um = _sample((ux, uy), grid["mk_px"])
-    out = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, A + FIT_R), radius=FIT_R)
-    inn = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, 0.9 * A), radius=FIT_R)
+    out = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, A + FIT_R), radius=FIT_R, torsion_model="no_slip")
+    inn = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=A, window=(0.0, 0.0, 0.9 * A), radius=FIT_R, torsion_model="no_slip")
     assert out["M1"][0] / grid["M1g"] == pytest.approx(1.0, abs=0.04)        # ねじり → 傾きの漏れ込み(実測 2.4 %)
     assert inn["Mz"] / MZ == pytest.approx(1.0, abs=0.01)
     assert np.abs(inn["translation"] / PITCH - [1.0, 0.0]).max() < 0.05
     assert out["tau"][1] == pytest.approx(out["M1"][0])
     assert 0.4 < inn["M1"][0] / grid["M1g"] < 0.55                           # 小さい窓は固定比(較正で吸収)
-    tilt_only = TQ.torque_decompose(grid["mk_m"], tilt["um"], MK_AREA, G, NU, a=A, window=(0.0, 0.0, A + FIT_R), radius=FIT_R)
+    tilt_only = TQ.torque_decompose(grid["mk_m"], tilt["um"], MK_AREA, G, NU, a=A, window=(0.0, 0.0, A + FIT_R), radius=FIT_R,
+                                    torsion_model="no_slip")
     assert tilt_only["M1"][0] / grid["M1g"] == pytest.approx(1.0, abs=5e-3)
     assert "Mz" not in TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, radius=FIT_R)
 
@@ -273,10 +320,10 @@ def test_pure_shear_leaks_only_outside_the_stick_window(grid, qr):
     mp = S.mindlin_partial_slip(qr * MU * P, hz, MU, G, NU)
     fld = S.membrane_shear_field(hz, mp, grid["X"], grid["Y"], grid["kc"])
     um = _sample((fld["ux"], fld["uy"]), grid["mk_px"])
-    inn = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=hz["a"], window=(0.0, 0.0, mp["c"] - FIT_R), radius=FIT_R)
+    inn = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=hz["a"], window=(0.0, 0.0, mp["c"] - FIT_R), radius=FIT_R, P=P, mu=MU)
     assert np.abs(inn["M1"]).max() * 1e3 < 0.005                              # 固着円内は変位一様 → 発散 0
     assert inn["translation"][0] / mp["delta_x"] == pytest.approx(1.0, abs=0.01)
-    full = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=hz["a"], window=None, radius=FIT_R)
+    full = TQ.torque_decompose(grid["mk_m"], um, MK_AREA, G, NU, a=hz["a"], window=None, radius=FIT_R, P=P, mu=MU)
     pred = (1 - NU) / (1 - 2 * NU) * qr * MU * P * (FOV / 2)                 # 導出(円窓)、正方窓なので 15 %
     assert abs(full["M1"][0]) / pred == pytest.approx(1.0, abs=0.15)
     assert abs(full["M1"][0]) > 100 * np.abs(inn["M1"]).max()
@@ -336,8 +383,11 @@ def test_spelling_break_and_fail_closed(grid, tilt):
         lambda: TQ.torque_decompose(mk, um, MK_AREA, G, 0.7, radius=FIT_R),
         lambda: TQ.torque_decompose(mk, um, MK_AREA, G, NU, radius=FIT_R, window=(0.0, 0.0, 1e-9)),
         lambda: TQ.pressure_first_moment(grid["p0"], grid["X"], grid["Y"], 0.0),
+        lambda: TQ.torque_decompose(mk, um, MK_AREA, G, NU, a=A, radius=FIT_R),                         # 部分滑り(既定)で P・mu が無い
+        lambda: TQ.torque_decompose(mk, um, MK_AREA, G, NU, a=A, radius=FIT_R, P=P, mu=float("nan")),
+        lambda: TQ.torque_decompose(mk, um, MK_AREA, G, NU, a=A, radius=FIT_R, torsion_model="noslip"),
     ]
-    assert len(bad) == 13
+    assert len(bad) == 16
     for fn in bad:
         with pytest.raises(ValueError):
             fn()
@@ -371,7 +421,7 @@ def test_image_pipeline_render_track_decompose():
     m_ref = S.marker_image(S.membrane_render_markers(bg, pts, 2.5, 0.85), bg)
     m_cur = S.marker_image(S.membrane_render_markers(bg, p_cur, 2.5, 0.85), bg)
     c2 = (N2 - 1) / 2.0
-    fr = TQ.grasp_torque_frame(m_ref, m_cur, 0.85, 8.0, 2.5, P2, G, NU, a=A, window=(c2, c2, (A + 1.5 * 8.0 * P2) / P2))
+    fr = TQ.grasp_torque_frame(m_ref, m_cur, 0.85, 8.0, 2.5, P2, G, NU, a=A, window=(c2, c2, (A + 1.5 * 8.0 * P2) / P2), torsion_model="no_slip")
     M1g = TQ.pressure_first_moment(pb - pa, X2, Y2, P2)["M1"][0]
     assert fr["M1"][0] / M1g == pytest.approx(1.0, abs=0.10)
     assert fr["track"]["matched"] >= 600

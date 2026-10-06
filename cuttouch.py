@@ -150,9 +150,31 @@ def _pad_hertz(P, pad, op):
     return hz, _FULL_SLIP_COEF * pad["mu"] * float(P) * hz["a"]
 
 
+def _contact_hertz(P, pad, contact, op):
+    """(pad か contact のどちらか一方)→ (a, p₀, G, μ, 全滑りのトルク)。``contact`` = 接触半径が分かっている Hertz 接触
+    ``{"a", "mu", "G"}``(:func:`tactorque.torque_decompose` が使う)。p₀ = 3P/(2πa²)。"""
+    if (pad is None) == (contact is None):
+        raise ValueError("%s: pass exactly one of pad (pegtactile.pad_params) or contact ({'a', 'mu', 'G'})" % op)
+    if pad is not None:
+        hz, Mf = _pad_hertz(P, PT._pad(pad), op)
+        return hz["a"], hz["p0"], pad["G"], pad["mu"], Mf
+    if not isinstance(contact, dict) or any(k not in contact for k in ("a", "mu", "G")):
+        raise ValueError("%s: contact must be a dict with a, mu, G (Hertz contact radius, friction, shear modulus)" % op)
+    vals = {}
+    for k in ("a", "mu", "G"):
+        v = contact[k]
+        if isinstance(v, bool) or not isinstance(v, (int, float, np.integer, np.floating)) or not (math.isfinite(float(v)) and float(v) > 0):
+            raise ValueError("%s: contact[%r] must be finite and > 0, got %r" % (op, k, v))
+        vals[k] = float(v)
+    if not (isinstance(P, (int, float, np.integer, np.floating)) and not isinstance(P, bool) and math.isfinite(float(P)) and float(P) > 0):
+        raise ValueError("%s: P must be a finite normal force > 0 (in contact), got %r" % (op, P))
+    a = vals["a"]
+    return a, 3.0 * float(P) / (2.0 * math.pi * a * a), vals["G"], vals["mu"], _FULL_SLIP_COEF * vals["mu"] * float(P) * a
+
+
 # ======================================================================================================================
-def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = False, na: int = 64,
-                         from_no_slip_read: bool = False) -> dict:
+def torsion_partial_slip(M: float, P: float, pad: dict | None = None, ctx=None, field: bool = False, na: int = 64,
+                         from_no_slip_read: bool = False, contact: dict | None = None) -> dict:
     """球面パッド(Hertz、法線力 ``P``)に法線まわりのねじり ``M`` [N·m] を掛けたときの部分滑り: 固着半径 c、ねじれ角 β、全滑りまでの比。
 
     数値解はモジュール冒頭(環 ``na`` 本の影響行列、無次元の 1 本の曲線を一度だけ)。返り: ``ratio`` = |M| / ((3π/16)μPa)、``c_over_a``、
@@ -164,21 +186,25 @@ def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = 
     (Reissner–Sagoci、:func:`pegtactile.pad_tactile_read` の ``torsion_model="no_slip"``)と見て、部分滑りの M に直してから同じ表を返す
     (``M`` = 直した値、``M_read`` = 渡した読み。読みが全滑りの像を超えていれば ``M`` = 全滑りのトルクで ``slipping``)。
     ``ratio_table_max`` は表の最後の行の比(これ以上は固着円が環 1 本より小さく、場を作らない)。
-    **Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、na < 24。"""
+    パッドの代わりに ``contact={"a": 接触半径 [m], "mu": 摩擦係数, "G": せん断弾性率 [Pa]}`` を渡すと、接触半径が分かっている Hertz 接触
+    (圧力 p₀√(1 − r²/a²)、p₀ = 3P/(2πa²))として同じ数値解を返す —— :func:`tactorque.torque_decompose` の ``Mz`` の補正はこの入口を通る
+    (``field=True`` はパッドの格子が要るので ``pad`` だけ)。
+    **Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、pad と contact の両方 / どちらも無い、
+    contact の a・mu・G が正の有限でない、field=True で pad が無い、na < 24。"""
     op = "torsion_partial_slip"
-    pad = PT._pad(pad)
+    if field and pad is None:
+        raise ValueError("%s: field=True needs pad (the membrane grid comes from pegtactile.pad_context)" % op)
     Mv = float(M) if not isinstance(M, bool) else float("nan")
     if not math.isfinite(Mv):
         raise ValueError("%s: M must be finite, got %r" % (op, M))
     if int(na) != na or int(na) < 24:
         raise ValueError("%s: na must be an integer >= 24" % op)
-    hz, Mf = _pad_hertz(P, pad, op)
-    a, p0, G, mu = hz["a"], hz["p0"], pad["G"], pad["mu"]
+    a, p0, G, mu, Mf = _contact_hertz(P, pad, contact, op)
     tab = _torsion_table(int(na))
     M_read = None
     if from_no_slip_read:
         M_read = Mv
-        Mv = _true_torsion_from_stick_read(Mv, float(P), pad, int(na))[0]
+        Mv = _true_torsion_from_stick_read(Mv, float(P), pad, int(na), contact=contact)[0]
     ratio = abs(Mv) / Mf
     beta_ns = 3.0 * Mv / (16.0 * G * a ** 3)
     out = {"ratio": float(ratio), "a": float(a), "p0": float(p0), "M_full": float(Mf), "beta_no_slip": float(beta_ns), "M": Mv,
@@ -212,9 +238,9 @@ def torsion_partial_slip(M: float, P: float, pad: dict, ctx=None, field: bool = 
     return out
 
 
-def _true_torsion_from_stick_read(tau_read, P, pad, na):
+def _true_torsion_from_stick_read(tau_read, P, pad, na, contact=None):
     """無滑りの関係で読んだねじり τ_read(= M·β/β_RS)→ 部分滑りの M。m·bias(m) は単調なので表で逆に引く。"""
-    hz, Mf = _pad_hertz(P, pad, "knife_load_from_pads")
+    Mf = _contact_hertz(P, pad, contact, "knife_load_from_pads")[4]
     tab = _torsion_table(na)
     bias_tab = tab["beta"] / (3.0 * tab["M"] / 16.0)
     x = tab["ratio"] * bias_tab                         # 読み / M_full

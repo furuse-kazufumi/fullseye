@@ -7,7 +7,8 @@ p = (1/N) Σ r_i (∇·v)_i、原点は正負の電荷の重心の中点、ト�
 読まず、本文の式だけから書いた。外から来るものは 2 系統:
   * **閉形式**(Johnson, *Contact Mechanics*, CUP 1985): 平頭押し込み子の圧 p = P/(2πa√(a²−r²))(式 3.34)+ 傾きモーメントの反対称項
     3Mx/(2πa³√(a²−r²))(∫ x p dA = M、導出)、Boussinesq の点荷重解(§3.2)、Hertz 圧の表面変位(式 3.41b・3.42a)、楕円 Hertz 圧(式 4.24)、
-    無滑りねじり(Reissner–Sagoci)q_θ = 3M_z r/(4πa³√(a²−r²))・β = 3M_z/(16Ga³)、Cattaneo–Mindlin の部分滑り(:mod:`tacslip`)。
+    無滑りねじり(Reissner–Sagoci)q_θ = 3M_z r/(4πa³√(a²−r²))・β = 3M_z/(16Ga³)、Cattaneo–Mindlin の部分滑り(:mod:`tacslip`)、
+    Hertz 接触のねじりの部分滑り(:func:`cuttouch.torsion_partial_slip` の数値解、両端は Reissner–Sagoci と全滑りのトルク (3π/16)μPa)。
   * **有限要素の節点変位**(有限厚ドーム状ゲル、Robo-Touch/Taxim リポジトリ同梱、MIT ライセンス、環境変数 FULLSEYE_TAXIM_DATA の下、無ければ [skip])。
 自分で導いたのは 3 つ(全部門に): **Gauss の法則は半空間で厳密** ∇·ū = −(1−2ν)p/(2G)(だから面積重みの双極子は圧力の 1 次モーメント = M に比例し、
 押し込み子の形に依らない)、Cerruti 点荷重の場の発散 −(1−ν)Qx/(2πGr³)(純せん断が窓全体に偽の傾き (1−ν)/(1−2ν)·Q·R を作る → 窓を固着円に限る)、
@@ -16,17 +17,19 @@ p = (1/N) Σ r_i (∇·v)_i、原点は正負の電荷の重心の中点、ト�
 :func:`sceneflow.flow_divergence` / :func:`flow_curl`(格子の第 2 実装)、:func:`pivops.piv_vorticity`(符号規約 (dy, dx) で −curl)、
 :func:`tacsim.hertz_sphere` ほか。新モジュール :mod:`tactorque` 17 op。
 
-門(16、FEM の 2 本はデータがあるとき、門だけ 1.6 s): 平頭圧の格子積分(Σp h² = P・Σx p h² = M、縁 1/√ で 0.9 %)と離れの fail-closed、Boussinesq 核 vs
+門(17、FEM の 2 本はデータがあるとき): 平頭圧の格子積分(Σp h² = P・Σx p h² = M、縁 1/√ で 0.9 %)と離れの fail-closed、Boussinesq 核 vs
 3.41b / 3.42a / 平頭 u_z、Gauss 恒等式(ν 0.48 と 0.3、0.2 %)、純法線で双極子 0(3 形式、1e-15)、D ∝ M(R² = 1.000000、係数は閉形式と 0.04 %、
-原点不変)、基線形式は符号を知らない、3 形状(平頭・球・稜)で係数が同じ(密 0.001 %・格子 0.25 %)、ねじり(∫r q dA = M_z、β を畳み込みで、
-剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl)、重ね合わせの分解(傾き 2.4 %・ねじり 0.5 %・並進 0.04 px)、純せん断の漏れ(窓 c − 1.5 ピッチで
+原点不変)、基線形式は符号を知らない、3 形状(平頭・球・稜)で係数が同じ(密 0.001 %・格子 0.25 %)、ねじり(平頭押し込み子は q/(μp) の最大 0.24 で
+無滑りが厳密、∫r q dA = M_z、β を畳み込みで、剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl)、Hertz 接触のねじりの部分滑り(比 0.5 / 0.8 の像を
+既定の読みで ×0.999 / ×1.000、0.4.0 の無滑りの関係なら ×1.330 / ×1.851 過大 —— 2026-10-06 の直し)、重ね合わせの分解(傾き 2.4 %・ねじり 0.5 %・並進 0.04 px)、純せん断の漏れ(窓 c − 1.5 ピッチで
 ≤ 0.001 N·mm、全窓で 32 N·mm)、雑音 0.03 px → σ_M = 0.11 N·mm(∝ σ)、綴り壊し 11 本 + nan ≠ 0、散在最小二乗 = 中心差分(1e-15)、像から
 (描画 → 追跡 → 分解、M1 誤差 0.7 %・追跡 0.005 px・961/961)、FEM の符号(有限厚は膨らむ: 発散 + の核と − の環、半空間と逆)、FEM の斜め荷重の
 双極子はせん断漏れの符号。
 図(FULLSEYE_FIGURE_DIR があるとき 6 枚): マーカー像 + 追跡ベクトル + 双極子矢印(等倍切り出し)と追跡場の発散、M を上げる GIF、分解の地図、
 FEM の法線 vs 斜め、壊れる場所(雑音・窓半径・窓中心)、3 形状の係数。
 正直に: 半空間の係数 −(1−2ν)/(2G) は実機(有限厚・ほぼ非圧縮)の大きさを与えない(ν 0.48 で 1 N·mm が 0.06 px)—— 実機は較正、という論文の立場と
-同じ。Johnson の式番号のうち傾いた平頭・平頭の u_z・Reissner–Sagoci は本文で未確認(独立実装で数値検証)。Lubkin の部分滑りねじりは未実装。
+同じ。Johnson の式番号のうち傾いた平頭・平頭の u_z・Reissner–Sagoci は本文で未確認(独立実装で数値検証)。Lubkin の部分滑りねじりの閉形式は未実装
+(部分滑りは数値解で扱う。0.4.0 の Mz は Hertz 接触でも無滑りの関係のままで、合成も無滑りだったので門が過大に気づかなかった)。
 Run: py -3.11 examples/poc_tactile_dipole_torque.py        (FULLSEYE_TAXIM_DATA=<FEM 節点ファイルの親> で FEM の 2 門も)
 """
 from __future__ import annotations
@@ -239,16 +242,47 @@ def numpy_part() -> dict:
     m8 = r < 0.8 * A_PUNCH
     e_curl = float(curl[m8].mean() / (2.0 * tf["beta"]) - 1.0)
     e_vort = float(np.abs(vort[m8] + curl[m8]).max() / np.abs(curl[m8]).max())
-    dec_t = TQ.torque_decompose(mk_m, um_t, MK_AREA, G_GEL, NU, a=A_PUNCH, window=(0.0, 0.0, 0.9 * A_PUNCH), radius=FIT_R)
+    dec_t = TQ.torque_decompose(mk_m, um_t, MK_AREA, G_GEL, NU, a=A_PUNCH, window=(0.0, 0.0, 0.9 * A_PUNCH), radius=FIT_R, torsion_model="no_slip")
+    # 平頭押し込み子では q_θ/(μp) = 3M_z r/(2μPa²) が縁で有限 → 無滑りが厳密(no_slip を選ぶ根拠、Hertz 接触なら縁で発散 → 門 8b)
+    in95 = r < 0.95 * A_PUNCH
+    qmu = float((np.hypot(tf["qx"], tf["qy"])[in95] / (MU * p0[in95])).max())
+    qmu_cf = 3.0 * MZ * 0.95 / (2.0 * MU * P_LOAD * A_PUNCH)
     leak_t = float(np.abs(dec_t["M1"]).max())
-    _NUM.update({"torsion_torque_quad": tq, "torsion_beta_err": e_beta, "torsion_beta_unif": s_beta, "torsion_omega_fit_err": rf["omega"] / tf["beta"] - 1,
+    _NUM.update({"torsion_flat_q_over_mup_max": qmu, "torsion_torque_quad": tq, "torsion_beta_err": e_beta, "torsion_beta_unif": s_beta, "torsion_omega_fit_err": rf["omega"] / tf["beta"] - 1,
                  "torsion_curl_err": e_curl, "torsion_Mz_rel": dec_t["Mz"] / MZ, "torsion_tilt_leak_Nmm": leak_t * 1e3, "torsion_omega_curl_rel": dec_t["omega_curl"] / tf["beta"]})
-    gate("門 8 ねじり(無滑り): ∫r q dA = M_z、畳み込みの円内 u_θ/r が一様に β = 3M_z/16Ga³、剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl",
-         abs(tq - 1.0) < 0.015 and abs(e_beta) < 0.01 and s_beta < 3e-3 and abs(rf["omega"] / tf["beta"] - 1.0) < 0.01 and abs(e_curl) < 0.02
+    gate("門 8 ねじり(平頭押し込み子・無滑り): q/(μp) < 1 で無滑りが成り立つ、∫r q dA = M_z、畳み込みの円内 u_θ/r が一様に β = 3M_z/16Ga³、"
+         "剛体回転の当てはめ、curl = 2β、piv_vorticity = −curl",
+         qmu < 1.0 and abs(qmu / qmu_cf - 1.0) < 0.03 and abs(tq - 1.0) < 0.015 and abs(e_beta) < 0.01 and s_beta < 3e-3 and abs(rf["omega"] / tf["beta"] - 1.0) < 0.01 and abs(e_curl) < 0.02
          and e_vort < 1e-9 and abs(dec_t["Mz"] / MZ - 1.0) < 0.01 and leak_t < 0.01e-3,
-         "積分 %.4f、β %.2f %%、一様性 %.2f %%、ω_fit %.2f %%、curl %.2f %%、piv_vorticity = −curl %.1e、M_z/真 %.4f、傾きへの漏れ %.4f N·mm(平均 curl/2 は %.2f β: 縁のバイアス)"
-         % (tq, 100 * e_beta, 100 * s_beta, 100 * (rf["omega"] / tf["beta"] - 1), 100 * e_curl, e_vort, dec_t["Mz"] / MZ, leak_t * 1e3, dec_t["omega_curl"] / tf["beta"]))
+         "q/(μp) の最大 %.3f(r < 0.95a、閉形式 %.3f)、積分 %.4f、β %.2f %%、一様性 %.2f %%、ω_fit %.2f %%、curl %.2f %%、piv_vorticity = −curl %.1e、"
+         "M_z/真 %.4f、傾きへの漏れ %.4f N·mm(平均 curl/2 は %.2f β: 縁のバイアス)"
+         % (qmu, qmu_cf, tq, 100 * e_beta, 100 * s_beta, 100 * (rf["omega"] / tf["beta"] - 1), 100 * e_curl, e_vort, dec_t["Mz"] / MZ, leak_t * 1e3, dec_t["omega_curl"] / tf["beta"]))
     ctx["torsion"] = {"tf": tf, "curl": curl, "um": um_t}
+
+    # ── 8b. Hertz 接触のねじりは縁から必ず滑る: 部分滑りの像を既定の読みと 0.4.0 の読み(無滑りの関係)で(2026-10-06)
+    import cuttouch as CT                                       # 部分滑りの数値解の正本(Cerruti 核の影響行列)
+    import pegtactile as PT
+    pad = PT.pad_params(n=128)                                  # 指先パッド(R 20 mm、E 3 MPa、μ 1、把持 4 N、a 2.49 mm)
+    pctx = PT.pad_context(pad, jitter_px=0.0)
+    Pg = pad["grip"]
+    a_h = T.hertz_sphere(Pg, pad["R"], pad["Es"])["a"]
+    Mf_h = (3.0 * math.pi / 16.0) * pad["mu"] * Pg * a_h
+    pts_h = (pctx["pts_flat"] - (pad["n"] - 1) / 2.0) * pad["pitch"]
+    ar_h, fr_h, win_h = pad["marker_pitch"] ** 2, 1.5 * pad["marker_pitch"], (0.0, 0.0, 0.6 * a_h)
+    ps_rows = []
+    for m in (0.5, 0.8):
+        sf = CT.torsion_partial_slip(m * Mf_h, Pg, pad, ctx=pctx, field=True)
+        d = TQ.torque_decompose(pts_h, sf["u_markers"], ar_h, pad["G"], pad["nu"], a=a_h, window=win_h, radius=fr_h, P=Pg, mu=pad["mu"])
+        ps_rows.append({"ratio": m, "c_over_a": sf["c_over_a"], "default": d["Mz"] / (m * Mf_h), "no_slip": d["Mz_no_slip"] / (m * Mf_h),
+                        "readable": d["Mz_readable"]})
+    ps_fail = [_raises(lambda: TQ.torque_decompose(pts_h, sf["u_markers"], ar_h, pad["G"], pad["nu"], a=a_h, window=win_h, radius=fr_h)),
+               _raises(lambda: TQ.torque_decompose(pts_h, sf["u_markers"], ar_h, pad["G"], pad["nu"], a=a_h, radius=fr_h, torsion_model="stick"))]
+    _NUM["torsion_partial_slip"] = [{k: (float(v) if not isinstance(v, bool) else v) for k, v in row.items()} for row in ps_rows]
+    gate("門 8b ねじり(Hertz 接触・部分滑り): 比 0.5 / 0.8 の像を既定の読みで 1 % 以内、0.4.0 の無滑りの関係は ×1.30〜1.36 / ×1.80〜1.90 過大",
+         all(abs(rw["default"] - 1.0) < 0.01 and rw["readable"] for rw in ps_rows)
+         and 1.30 < ps_rows[0]["no_slip"] < 1.36 and 1.80 < ps_rows[1]["no_slip"] < 1.90 and all(ps_fail),
+         "、".join("比 %.1f: 固着円 c/a %.3f、既定 ×%.4f、無滑りの関係 ×%.3f" % (rw["ratio"], rw["c_over_a"], rw["default"], rw["no_slip"]) for rw in ps_rows)
+         + "; P・μ 無し / 綴り違いは ValueError %d / %d" % (sum(ps_fail), len(ps_fail)))
 
     # ── 9. 重ね合わせ(傾き + ねじり + 並進)の分解
     dpM = TQ.tilt_shear_field(p0, pM, kb)
@@ -257,13 +291,14 @@ def numpy_part() -> dict:
     um_s = sample_markers((ux_s, uy_s), mk_px)
     win_out = (0.0, 0.0, A_PUNCH + FIT_R)
     win_in = (0.0, 0.0, 0.9 * A_PUNCH)
-    dec_out = TQ.torque_decompose(mk_m, um_s, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_out, radius=FIT_R)
-    dec_in = TQ.torque_decompose(mk_m, um_s, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_in, radius=FIT_R)
+    dec_out = TQ.torque_decompose(mk_m, um_s, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_out, radius=FIT_R, torsion_model="no_slip")
+    dec_in = TQ.torque_decompose(mk_m, um_s, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_in, radius=FIT_R, torsion_model="no_slip")
     eM_out = abs(dec_out["M1"][0] / ctx["M1_grid"] - 1.0)
     eMz_in = abs(dec_in["Mz"] / MZ - 1.0)
     e_t = float(np.abs(dec_in["translation"] / PITCH - np.array([T_PX, 0.0])).max())
     um_tilt = sample_markers((dpM["ux"], dpM["uy"]), mk_px)
-    eM_tilt = abs(TQ.torque_decompose(mk_m, um_tilt, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_out, radius=FIT_R)["M1"][0] / ctx["M1_grid"] - 1.0)
+    eM_tilt = abs(TQ.torque_decompose(mk_m, um_tilt, MK_AREA, G_GEL, NU, a=A_PUNCH, window=win_out, radius=FIT_R,
+                                      torsion_model="no_slip")["M1"][0] / ctx["M1_grid"] - 1.0)
     _NUM.update({"super_M1_err_out": eM_out, "super_Mz_err_in": eMz_in, "super_t_err_px": e_t, "tilt_fraction_window_09a": dec_in["M1"][0] / ctx["M1_grid"],
                  "tilt_only_err_out": eM_tilt})
     gate("門 9 重ね合わせ 傾き 1 N·mm + ねじり 0.5 N·mm + 並進 1 px → 発散双極子で傾き(窓 a + 1.5 ピッチ)、剛体回転でねじり(窓 0.9a)、平均で並進",
@@ -281,7 +316,7 @@ def numpy_part() -> dict:
         row = {"qr": qr, "Q": qr * MU * P_LOAD, "c": mp["c"], "delta_x_px": mp["delta_x"] / PITCH, "um": um}
         for tag, Rw in (("stick-fit", mp["c"] - FIT_R), ("stick", mp["c"]), ("contact", hz["a"]), ("full", None)):
             win = None if Rw is None else (0.0, 0.0, Rw)
-            dec = TQ.torque_decompose(mk_m, um, MK_AREA, G_GEL, NU, a=hz["a"], window=win, radius=FIT_R)
+            dec = TQ.torque_decompose(mk_m, um, MK_AREA, G_GEL, NU, a=hz["a"], window=win, radius=FIT_R, P=P_LOAD, mu=MU)
             row[tag] = {"M1_leak_Nmm": float(np.abs(dec["M1"]).max() * 1e3), "t_px": float(dec["translation"][0] / PITCH), "n": dec["n"]}
         shear_rows.append(row)
     leak_in = max(rw["stick-fit"]["M1_leak_Nmm"] for rw in shear_rows)
@@ -357,7 +392,8 @@ def numpy_part() -> dict:
     img_ref = S.membrane_render_markers(bg, pts2, 2.5, 0.85); img_cur = S.membrane_render_markers(bg, p_cur, 2.5, 0.85)
     m_ref = S.marker_image(img_ref, bg); m_cur = S.marker_image(img_cur, bg)
     c2 = (N2 - 1) / 2.0
-    frame = TQ.grasp_torque_frame(m_ref, m_cur, 0.85, 8.0, 2.5, P2, G_GEL, NU, a=A_PUNCH, window=(c2, c2, (A_PUNCH + 1.5 * 8.0 * P2) / P2))
+    frame = TQ.grasp_torque_frame(m_ref, m_cur, 0.85, 8.0, 2.5, P2, G_GEL, NU, a=A_PUNCH, window=(c2, c2, (A_PUNCH + 1.5 * 8.0 * P2) / P2),
+                                  torsion_model="no_slip")
     M1g2 = TQ.pressure_first_moment(pb2 - pa2, X2, Y2, P2)["M1"][0]
     u_true = sample_markers((dp2["ux"], dp2["uy"]), frame["track"]["p0"])
     trk_rms = float(np.sqrt(((frame["track"]["u"] * P2 - u_true) ** 2).mean()) / P2)
@@ -594,7 +630,7 @@ def figures(ctx: dict) -> None:
     Rs = np.linspace(1.0e-3, 7.5e-3, 14); leaks = []
     for Rw in Rs:
         try:
-            leaks.append(abs(TQ.torque_decompose(mk_m, um_q, MK_AREA, G_GEL, NU, a=hz["a"], window=(0, 0, Rw), radius=FIT_R)["M1"][0]) * 1e3)
+            leaks.append(abs(TQ.torque_decompose(mk_m, um_q, MK_AREA, G_GEL, NU, a=hz["a"], window=(0, 0, Rw), radius=FIT_R, P=P_LOAD, mu=MU)["M1"][0]) * 1e3)
         except ValueError:
             leaks.append(np.nan)
     leaks = np.array(leaks); kk = np.isfinite(leaks) & (leaks > 0)
@@ -605,7 +641,7 @@ def figures(ctx: dict) -> None:
                           size=(520, 380), kinds=["scatter", "line", "line"], styles=[None, "dashed", "dashed"], colors=["emphasis", "right", "wrong"])
     offs = np.linspace(0, 2.0e-3, 9); errs = []
     for ox in offs:
-        dd = TQ.torque_decompose(mk_m, um1, MK_AREA, G_GEL, NU, a=A_PUNCH, window=(ox, 0.0, A_PUNCH + FIT_R), radius=FIT_R)
+        dd = TQ.torque_decompose(mk_m, um1, MK_AREA, G_GEL, NU, a=A_PUNCH, window=(ox, 0.0, A_PUNCH + FIT_R), radius=FIT_R, torsion_model="no_slip")
         errs.append(100 * (dd["M1"][0] / ctx["M1_grid"] - 1.0))
     pc = figs.render_plot([("tilt error", offs * 1e3, np.array(errs)), ("zero", np.array([0.0, 2.0]), np.array([0.0, 0.0]))],
                           xlabel="window centre offset from the contact [mm]", ylabel="tilt error [%]", title="(c) window off-centre",

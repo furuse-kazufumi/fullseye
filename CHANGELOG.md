@@ -19,7 +19,19 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
   一方 0.4.0 の数値は 1 語(`torsion_model="no_slip"`)で戻せる。ねじりが小さい(比 0.1)場面では差は 3 % 以内。
   影響: 同じ像に対する `pad_tactile_read(...)["torsion"]`、同じ荷重に対する `pad_tactile_frame` の像、それを通る `pegtactile_process_episode` の M̂。ねじりを使う最初の呼び出しで数値解の表を 1 回作る(約 0.7 s)。
   門: test_pegtactile に部分滑りの場面 2 本、PoC poc_peg_insertion_tactile に門 2b(比 0.5 / 0.8)。読みの補正を外すと両方が赤になることを確かめた。
-  同じ無滑りの仮定は `tactorque.torque_decompose` の `Mz` にも残る(Hertz 接触に使えば同じ向きに過大。今回は直していない)。
+  同じ無滑りの仮定は `tactorque.torque_decompose` の `Mz` にも残っていた(次の項で直した)。
+
+- ★**`tactorque.torque_decompose` の `Mz` を Hertz 接触の部分滑りで読む**(`torque_decompose` / `grasp_torque_frame` に `P`・`mu`・`torsion_model`、既定 `"partial_slip"`)。
+  挙動の変更(既定の数値が変わる → CONTRIBUTING の Versioning では minor)。pegtactile と同じ欠陥: 0.4.0 の `Mz` は剛体回転 ω を無滑り(Reissner–Sagoci)の M = 16Ga³ω/3 で換算していたので、
+  Hertz 接触の部分滑りの像では全滑りまでの比 0.5 で ×1.330、0.8 で ×1.851 過大に読んでいた。合成側(`torsion_stick_field`)も無滑りの場だけだったので、0.4.0 の門はこれを見なかった。
+  既定の `Mz` は `cuttouch.torsion_partial_slip` で直した値(同じ 2 比で ×0.999 / ×1.000)。補正の正本は cuttouch のまま、`torsion_partial_slip` に `contact={"a", "mu", "G"}`
+  (接触半径の分かっている Hertz 接触、p₀ = 3P/(2πa²))の公開の入口を足し、tactorque はそこを通る(パッドで渡したときと 1e-12 で一致)。
+  0.4.0 の値は `Mz_no_slip` に残し、`torsion_model="no_slip"` で 0.4.0 の挙動。返りに `Mz_no_slip`・`torsion_model`(a があるとき)、部分滑りでは `Mz_ratio`・`Mz_c_over_a`・
+  `Mz_readable`(全滑りでなく固着円が当てはめの窓を含む、偽なら数は返すが当てにならない)が増えた。
+  ★**呼び出しの変更**: 既定(部分滑り)で `a` を渡し `P`・`mu` を渡さないと ValueError(補正できないのに無滑りの値を黙って返さない)。平頭押し込み子は q/(μp) = 3M_z r/(2μPa²) が縁で有限で
+  全滑りの 8/(3π) ≈ 0.85 倍まで無滑りが厳密なので、`torsion_model="no_slip"` を明示する(tactorque の PoC・test・chain_fuzz の平頭の場面はそうした。PoC の門 8 に q/(μp) の最大 0.238 < 1 を足した)。
+  門: test_tactorque に部分滑りの場面 1 本(比 0.5 / 0.8、パッドの寸法)、PoC poc_tactile_dipole_torque に門 8b(既定 17 門、FEM なしで 15)。補正を外すと両方が赤になることを確かめた。
+  図は変わらない(平頭の場面は no_slip で 0.4.0 と同じ数、画素単位で一致を確かめた)。
 
 - ★**`filters_freq.phase_correlation_fft` の既定を Hann 窓 + 半分の白色化に**(引数 `window`(`"hann"` / `None`)・`whitening`(0〜1)を追加、既定 `"hann"`・0.5)。
   0.4.0 までの「窓なし + 全白色化」は、帯域の限られた像(地面・自然な写真)の周期的でない切り出しで、信号の無い周波数のビン(縁の漏れと丸め)が白色化で同じ重みになり、

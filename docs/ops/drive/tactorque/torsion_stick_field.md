@@ -20,7 +20,8 @@ version: 0.4.0  # fullseye lib version this note was generated for
 無滑りねじり(Reissner–Sagoci、Johnson 1985 §3.9 相当、式番号は未確認 → 畳み込みで数値検証)の表面変位場: トラクション
 q_θ = 3M_z r/(4πa³√(a²−r²)) を :func:`tacslip.cerruti_kernel` の核で畳んだ ``ux``・``uy`` [m] と、閉形式 ``beta`` = 3M_z/(16Ga³)、
 円内の剛体回転 ``ux_cf`` = −βy・``uy_cf`` = βx(r < a)、トラクション ``qx``・``qy``。畳み込みが円内で一様な u_θ/r = β を返すことで β の式を
-独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。Lubkin 1951 の部分滑り(固着半径 c)は未実装(docstring 参照)。
+独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。これは無滑りの場: 平頭押し込み子なら全滑りの 8/(3π) 倍まで厳密だが、Hertz 接触では
+縁から必ず滑る —— Hertz 接触の部分滑りの場は :func:`cuttouch.torsion_partial_slip` の ``field=True``(モジュール docstring 参照)。
 **Raises** ValueError: G ≤ 0、a ≤ 0、X と Y の形が違う、核の格子が合わない。
 
 ## 参考(サンプルデータ・文献)

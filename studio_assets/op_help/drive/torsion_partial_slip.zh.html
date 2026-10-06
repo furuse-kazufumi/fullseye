@@ -1,7 +1,7 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">torsion_partial_slip — DRIVE <code style="color:#22d3bf">cuttouch</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict&#x27;, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64, from_no_slip_read: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cuttouch; cuttouch.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict&#x27;, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64, from_no_slip_read: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;torsion_partial_slip&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict | None&#x27; = None, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64, from_no_slip_read: &#x27;bool&#x27; = False, contact: &#x27;dict | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cuttouch; cuttouch.torsion_partial_slip(M: &#x27;float&#x27;, P: &#x27;float&#x27;, pad: &#x27;dict | None&#x27; = None, ctx=None, field: &#x27;bool&#x27; = False, na: &#x27;int&#x27; = 64, from_no_slip_read: &#x27;bool&#x27; = False, contact: &#x27;dict | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;torsion_partial_slip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
 <p>球面パッド(Hertz、法線力 `<code style="color:#22d3bf">P</code><code style="color:#22d3bf">)に法線まわりのねじり </code><code style="color:#22d3bf">M</code>` [N·m] を掛けたときの部分滑り: 固着半径 c、ねじれ角 β、全滑りまでの比。</p>
@@ -14,13 +14,18 @@
 <p>(Reissner–Sagoci、:func:<code style="color:#22d3bf">pegtactile.pad_tactile_read</code> の `<code style="color:#22d3bf">torsion_model=&quot;no_slip&quot;</code>`)と見て、部分滑りの M に直してから同じ表を返す</p>
 <p>(`<code style="color:#22d3bf">M</code><code style="color:#22d3bf"> = 直した値、</code><code style="color:#22d3bf">M_read</code><code style="color:#22d3bf"> = 渡した読み。読みが全滑りの像を超えていれば </code><code style="color:#22d3bf">M</code><code style="color:#22d3bf"> = 全滑りのトルクで </code><code style="color:#22d3bf">slipping</code>`)。</p>
 <p>`<code style="color:#22d3bf">ratio_table_max</code>` は表の最後の行の比(これ以上は固着円が環 1 本より小さく、場を作らない)。</p>
-<p><b>Raises</b> ValueError: P ≤ 0・非有限、M が非有限、pad が :func:<code style="color:#22d3bf">pegtactile.pad_params</code> の表でない、na &lt; 24。</p>
+<p>パッドの代わりに `<code style="color:#22d3bf">contact={&quot;a&quot;: 接触半径 [m], &quot;mu&quot;: 摩擦係数, &quot;G&quot;: せん断弾性率 [Pa]}</code>` を渡すと、接触半径が分かっている Hertz 接触</p>
+<p>(圧力 p₀√(1 − r²/a²)、p₀ = 3P/(2πa²))として同じ数値解を返す —— :func:<code style="color:#22d3bf">tactorque.torque_decompose</code> の `<code style="color:#22d3bf">Mz</code>` の補正はこの入口を通る</p>
+<p>(`<code style="color:#22d3bf">field=True</code><code style="color:#22d3bf"> はパッドの格子が要るので </code><code style="color:#22d3bf">pad</code>` だけ)。</p>
+<p><b>Raises</b> ValueError: P ≤ 0・非有限、M が非有限、pad が :func:<code style="color:#22d3bf">pegtactile.pad_params</code> の表でない、pad と contact の両方 / どちらも無い、</p>
+<p>contact の a・mu・G が正の有限でない、field=True で pad が無い、na &lt; 24。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
 <p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_knife_tactile_toughness">poc_knife_tactile_toughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_knife_tactile_toughness.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
 <p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">cuttouch</code>)</h3>

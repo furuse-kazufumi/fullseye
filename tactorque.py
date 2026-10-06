@@ -24,8 +24,14 @@ ICRA 2024, arXiv 2404.15626 —— 学習なし・光学模型なし。マーカ
     (有限要素で符号が逆、下記)。半空間は対称性・直線性・形状不変・分解の門であって、大きさの門ではない(正直に)。
   * ねじり(法線まわり): 剛体円形領域の無滑りねじり(Reissner–Sagoci、Johnson §3.9 相当)q_θ = 3M_z r/(4πa³√(a²−r²))、ねじれ角
     β = 3M_z/(16Ga³)、円内の表面変位 u_θ = βr(剛体回転)。β の式は Cerruti 核の畳み込み(:mod:`tacslip`、独立実装)で円内の u_θ/r が一様に β と
-    一致することで数値検証する。Lubkin (1951) の部分滑りねじり(固着半径 c と M_z、楕円積分)は一次資料で式を確かめられなかったので
-    **実装しない・未検証と明記**。q_θ/(μp) は r → a で発散するので、どんな小さな M_z でも縁から滑る(Johnson の定性的注意)。
+    一致することで数値検証する。Lubkin (1951) の部分滑りねじり(固着半径 c と M_z、楕円積分)の閉形式は一次資料で式を確かめられなかったので
+    実装しない。**どちらの接触かで無滑りが成り立つ範囲が違う**(本モジュールの導出): 平頭押し込み子の圧 p = P/(2πa√(a²−r²)) なら
+    q_θ/(μp) = 3M_z r/(2μPa²) は縁で有限(最大 3M_z/(2μPa))で、全滑りのトルク πμPa/4 の 8/(3π) ≈ 0.85 倍までは無滑りが厳密。
+    Hertz 接触(球、p = p₀√(1 − r²/a²))では q_θ/(μp) が r → a で発散するので、どんな小さな M_z でも縁から滑る(Johnson の定性的注意)。
+    ★部分滑りでは同じ M_z でもねじれ角が無滑りより大きいので、無滑りの関係 M_z = (16Ga³/3)ω で読むと過大になる(全滑りまでの比 0.5 で
+    +33 %、0.8 で +85 %)。2026-10-06 から :func:`torque_decompose` の既定(``torsion_model="partial_slip"``)は Hertz 接触の部分滑りの
+    数値解(:func:`cuttouch.torsion_partial_slip`、Cerruti 核の影響行列、両端は Reissner–Sagoci と全滑りのトルク (3π/16)μPa)で直す。
+    平頭押し込み子(上の範囲)や接着した円盤は ``torsion_model="no_slip"``(0.4.0 までの値)。
   * 接線荷重 Q(Cattaneo–Mindlin、:mod:`tacslip`)の表面変位の発散(本モジュールの導出): Cerruti 点荷重の場の発散は −(1−ν)Qx/(2πGr³)、
     固着円内は変位が一様なので発散 0。**半空間では純せん断も窓全体に発散双極子を作る**(半径 R の円窓で −(1−ν)QR/(2G)、傾きモーメント
     M_eq = (1−ν)/(1−2ν)·Q·R に相当、ν 0.48 で 13·Q·R)。双極子を傾きだけに効かせるには窓を固着円に限る —— :func:`torque_decompose` の窓の根拠。
@@ -270,7 +276,8 @@ def torsion_stick_field(X, Y, a: float, Mz: float, kern: dict, G: float) -> dict
     """無滑りねじり(Reissner–Sagoci、Johnson 1985 §3.9 相当、式番号は未確認 → 畳み込みで数値検証)の表面変位場: トラクション
     q_θ = 3M_z r/(4πa³√(a²−r²)) を :func:`tacslip.cerruti_kernel` の核で畳んだ ``ux``・``uy`` [m] と、閉形式 ``beta`` = 3M_z/(16Ga³)、
     円内の剛体回転 ``ux_cf`` = −βy・``uy_cf`` = βx(r < a)、トラクション ``qx``・``qy``。畳み込みが円内で一様な u_θ/r = β を返すことで β の式を
-    独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。Lubkin 1951 の部分滑り(固着半径 c)は未実装(docstring 参照)。
+    独立実装で検証する(−0.5 %、一様性 0.14 %、実測)。これは無滑りの場: 平頭押し込み子なら全滑りの 8/(3π) 倍まで厳密だが、Hertz 接触では
+    縁から必ず滑る —— Hertz 接触の部分滑りの場は :func:`cuttouch.torsion_partial_slip` の ``field=True``(モジュール docstring 参照)。
     **Raises** ValueError: G ≤ 0、a ≤ 0、X と Y の形が違う、核の格子が合わない。"""
     if not (float(G) > 0.0):
         raise ValueError("torsion_stick_field: G must be > 0")
@@ -431,18 +438,39 @@ def dipole_to_torque_fit(D, M) -> dict:
             "rmse_M": float(np.sqrt((res ** 2).mean())) / abs(k) if k != 0 else float("inf")}
 
 
+#: ねじりの換算の模型(:func:`torque_decompose`、綴り違いは fail-closed)。
+TORSION_MODELS = ("partial_slip", "no_slip")
+
+
 def torque_decompose(pts, u, area: float, G: float, nu: float, a: float | None = None, window=None, radius: float | None = None,
-                     coef: float | None = None) -> dict:
+                     coef: float | None = None, P: float | None = None, mu: float | None = None,
+                     torsion_model: str = "partial_slip") -> dict:
     """マーカー場を 3 つの力学量に分ける: ``translation`` = 窓内の平均変位(せん断 Q、単向成分)、``omega`` = 剛体回転角
-    (:func:`rigid_rotation_fit`)→ ねじり ``Mz`` = (16Ga³/3) ω(無滑り Reissner–Sagoci、a が要る; ``omega_curl`` = 平均 curl/2 は参考)、
+    (:func:`rigid_rotation_fit`)→ ねじり ``Mz``(a が要る; ``omega_curl`` = 平均 curl/2 は参考)、
     ``D`` = 発散双極子(面積重み)→ 傾き ``M1`` = D / coef(coef 既定 = 半空間の閉形式 −(1−2ν)/(2G)、実機は較正値を渡す)、``tau`` = (−M1_y, M1_x)。
     発散・curl は平均変位を引いても変わらない(定数の微分は 0)ので順序に依らない。窓 (cx, cy, R) は接触円に限る(半空間では純せん断が
     窓全体に発散双極子を作るため、モジュール docstring 参照)。``radius`` = 発散の近傍半径(必須)。
-    **Raises** ValueError: area, G ≤ 0、ν が [0, 0.5] の外、点の形、radius 無し、窓内の点が 3 未満。"""
+
+    ねじり: 無滑りの関係(Reissner–Sagoci)M = (16Ga³/3)ω を ``Mz_no_slip`` に残す。★``torsion_model="partial_slip"``(既定、2026-10-06 から)
+    では、Hertz 接触(法線力 ``P``、摩擦 ``mu``、接触半径 ``a``)の部分滑りの数値解(:func:`cuttouch.torsion_partial_slip` の
+    ``contact`` と ``from_no_slip_read``)で直した値を ``Mz`` に返す —— Hertz 接触のねじりは縁から必ず滑るので、無滑りの関係のままだと
+    M を過大に読む(全滑りまでの比 0.5 で +33 %、0.8 で +85 %)。``Mz_ratio``(全滑りまでの比)、``Mz_c_over_a``(固着円の半径 / a)、
+    ``Mz_readable``(全滑りでなく、固着円が当てはめの窓の半径を含む —— 偽なら数は返すが当てにならない。窓が無ければ偽)も返す。
+    a を渡して P か mu が無いと補正できないので ValueError(黙って無滑りの値を返さない)。``"no_slip"`` は 0.4.0 までの値
+    (``Mz`` = ``Mz_no_slip``)—— 平頭押し込み子(全滑りの 8/(3π) 倍まで無滑りが厳密)や接着した円盤の場合。
+    **Raises** ValueError: area, G ≤ 0、ν が [0, 0.5] の外、点の形、radius 無し、窓内の点が 3 未満、torsion_model の綴り違い、
+    partial_slip で a があるのに P・mu が正の有限でない。"""
     if not (float(area) > 0.0 and float(G) > 0.0) or not (0.0 <= float(nu) <= 0.5):
         raise ValueError("torque_decompose: need area > 0, G > 0, 0 <= nu <= 0.5")
     if radius is None:
         raise ValueError("torque_decompose: radius (neighbourhood for the divergence/curl fit) is required")
+    if torsion_model not in TORSION_MODELS:
+        raise ValueError("torque_decompose: torsion_model must be 'partial_slip' or 'no_slip', got %r" % (torsion_model,))
+    if torsion_model == "partial_slip" and a is not None and float(a) > 0.0:
+        for nm, v in (("P", P), ("mu", mu)):
+            if v is None or isinstance(v, bool) or not (math.isfinite(float(v)) and float(v) > 0.0):
+                raise ValueError("torque_decompose: torsion_model='partial_slip' needs the normal force P and friction mu of the Hertz "
+                                 "contact to correct Mz (got %s=%r); pass torsion_model='no_slip' for a flat punch or a bonded disc" % (nm, v))
     pts = np.asarray(pts, np.float64); u = np.asarray(u, np.float64)
     if pts.ndim != 2 or pts.shape[1] != 2 or u.shape != pts.shape:
         raise ValueError("torque_decompose: pts and u must be (N, 2)")
@@ -463,7 +491,14 @@ def torque_decompose(pts, u, area: float, G: float, nu: float, a: float | None =
     out = {"translation": t, "omega": omega, "omega_curl": omega_curl, "D": dp["D"], "M1": M1, "tau": np.array([-M1[1], M1[0]]), "coef": c,
            "n": int(keep.sum()), "div": dc["div"], "curl": dc["curl"], "origin": dp["origin"], "rot_resid_rms": rf["resid_rms"]}
     if a is not None and float(a) > 0.0:
-        out["Mz"] = 16.0 * float(G) * float(a) ** 3 / 3.0 * omega
+        mz_ns = 16.0 * float(G) * float(a) ** 3 / 3.0 * omega
+        out.update({"Mz": mz_ns, "Mz_no_slip": mz_ns, "torsion_model": torsion_model})
+        if torsion_model == "partial_slip":
+            import cuttouch as _CT                              # 遅延 import(cuttouch → pegtactile → tactorque の循環を避ける)
+            info = _CT.torsion_partial_slip(mz_ns, float(P), contact={"a": float(a), "mu": float(mu), "G": float(G)}, from_no_slip_read=True)
+            r_core = float(window[2]) if window is not None else float("inf")
+            out.update({"Mz": float(info["M"]), "Mz_ratio": float(info["ratio"]), "Mz_c_over_a": float(info["c_over_a"]),
+                        "Mz_readable": bool(not info["slipping"] and info["c_over_a"] * float(a) >= r_core)})
     return out
 
 
@@ -487,11 +522,13 @@ def dipole_torque_resolution(pts, u, sigma_px: float, pitch: float, coef: float,
 
 
 def grasp_torque_frame(m_ref, m_cur, dark: float, pitch_px: float, r_px: float, pitch: float, G: float, nu: float, a: float | None = None,
-                       window=None, coef: float | None = None) -> dict:
+                       window=None, coef: float | None = None, P: float | None = None, mu: float | None = None,
+                       torsion_model: str = "partial_slip") -> dict:
     """像から 1 回で: 基準・現在のマーカー像(:func:`tacslip.marker_image`)→ :func:`tacslip.marker_track` → m 単位の場 → :func:`torque_decompose`。
     ``pitch_px``・``r_px`` = マーカー格子と半径 [px]、``pitch`` = m/px、``window`` は [px] の (cx, cy, R)。マーカー 1 個あたりの面積 = (pitch_px·pitch)²、
-    発散の近傍半径 = 1.5 ピッチ。返り = torque_decompose の表 + ``track``(matched・n0・n1・p0・u [px])。
-    **Raises** ValueError: 追跡の対応が 9 個未満(双極子に足りない)、pitch ≤ 0。"""
+    発散の近傍半径 = 1.5 ピッチ。``P``・``mu``・``torsion_model`` はねじりの換算(:func:`torque_decompose`、既定は Hertz 接触の部分滑りで
+    P と mu が要る、平頭押し込み子は ``"no_slip"``)。返り = torque_decompose の表 + ``track``(matched・n0・n1・p0・u [px])。
+    **Raises** ValueError: 追跡の対応が 9 個未満(双極子に足りない)、pitch ≤ 0、torque_decompose の ValueError。"""
     if not (float(pitch) > 0.0):
         raise ValueError("grasp_torque_frame: pitch (m per px) must be > 0")
     tr = _S.marker_track(m_ref, m_cur, dark, pitch_px, r_px)
@@ -503,7 +540,8 @@ def grasp_torque_frame(m_ref, m_cur, dark: float, pitch_px: float, r_px: float, 
     win = None
     if window is not None:
         win = (float(window[0]) * pitch, float(window[1]) * pitch, float(window[2]) * pitch)
-    out = torque_decompose(pts_m, u_m, area, G, nu, a=a, window=win, radius=1.5 * float(pitch_px) * float(pitch), coef=coef)
+    out = torque_decompose(pts_m, u_m, area, G, nu, a=a, window=win, radius=1.5 * float(pitch_px) * float(pitch), coef=coef,
+                           P=P, mu=mu, torsion_model=torsion_model)
     out["track"] = {"matched": tr["matched"], "n0": tr["n0"], "n1": tr["n1"], "p0": tr["p0"], "u": tr["u"]}
     return out
 

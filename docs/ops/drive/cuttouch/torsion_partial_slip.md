@@ -4,7 +4,7 @@ dim: drive
 category: cuttouch
 in: scalar × scalar × table
 out: table
-examples: [poc_knife_tactile_toughness]
+examples: [poc_knife_tactile_toughness, poc_tactile_dipole_torque]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.4.0  # fullseye lib version this note was generated for
@@ -13,7 +13,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # torsion_partial_slip — DRIVE `cuttouch` op
 
 - **データ種**: `scalar × scalar × table` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict', ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False) -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_partial_slip")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict | None' = None, ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False, contact: 'dict | None' = None) -> 'dict'` (実装を直接呼ぶなら `import cuttouch; cuttouch.torsion_partial_slip(M: 'float', P: 'float', pad: 'dict | None' = None, ctx=None, field: 'bool' = False, na: 'int' = 64, from_no_slip_read: 'bool' = False, contact: 'dict | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("torsion_partial_slip")`)
 
 ## 使い方
 
@@ -28,7 +28,11 @@ version: 0.4.0  # fullseye lib version this note was generated for
 (Reissner–Sagoci、:func:`pegtactile.pad_tactile_read` の ``torsion_model="no_slip"``)と見て、部分滑りの M に直してから同じ表を返す
 (``M`` = 直した値、``M_read`` = 渡した読み。読みが全滑りの像を超えていれば ``M`` = 全滑りのトルクで ``slipping``)。
 ``ratio_table_max`` は表の最後の行の比(これ以上は固着円が環 1 本より小さく、場を作らない)。
-**Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、na < 24。
+パッドの代わりに ``contact={"a": 接触半径 [m], "mu": 摩擦係数, "G": せん断弾性率 [Pa]}`` を渡すと、接触半径が分かっている Hertz 接触
+(圧力 p₀√(1 − r²/a²)、p₀ = 3P/(2πa²))として同じ数値解を返す —— :func:`tactorque.torque_decompose` の ``Mz`` の補正はこの入口を通る
+(``field=True`` はパッドの格子が要るので ``pad`` だけ)。
+**Raises** ValueError: P ≤ 0・非有限、M が非有限、pad が :func:`pegtactile.pad_params` の表でない、pad と contact の両方 / どちらも無い、
+contact の a・mu・G が正の有限でない、field=True で pad が無い、na < 24。
 
 ## 参考(サンプルデータ・文献)
 
@@ -39,6 +43,7 @@ version: 0.4.0  # fullseye lib version this note was generated for
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_knife_tactile_toughness](../../../../examples/poc_knife_tactile_toughness.py) — `py -3.11 examples/poc_knife_tactile_toughness.py`
+- [poc_tactile_dipole_torque](../../../../examples/poc_tactile_dipole_torque.py) — `py -3.11 examples/poc_tactile_dipole_torque.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

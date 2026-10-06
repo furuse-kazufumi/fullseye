@@ -13,14 +13,15 @@ version: 0.4.0  # fullseye lib version this note was generated for
 # grasp_torque_frame — DRIVE `tactorque` op
 
 - **データ種**: `image2d × image2d × scalar × scalar × scalar × scalar × scalar × scalar` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None) -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None) -> 'dict'`、台帳から引くなら `opsdrive.get("grasp_torque_frame")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None, P: 'float | None' = None, mu: 'float | None' = None, torsion_model: 'str' = 'partial_slip') -> 'dict'` (実装を直接呼ぶなら `import tactorque; tactorque.grasp_torque_frame(m_ref, m_cur, dark: 'float', pitch_px: 'float', r_px: 'float', pitch: 'float', G: 'float', nu: 'float', a: 'float | None' = None, window=None, coef: 'float | None' = None, P: 'float | None' = None, mu: 'float | None' = None, torsion_model: 'str' = 'partial_slip') -> 'dict'`、台帳から引くなら `opsdrive.get("grasp_torque_frame")`)
 
 ## 使い方
 
 像から 1 回で: 基準・現在のマーカー像(:func:`tacslip.marker_image`)→ :func:`tacslip.marker_track` → m 単位の場 → :func:`torque_decompose`。
 ``pitch_px``・``r_px`` = マーカー格子と半径 [px]、``pitch`` = m/px、``window`` は [px] の (cx, cy, R)。マーカー 1 個あたりの面積 = (pitch_px·pitch)²、
-発散の近傍半径 = 1.5 ピッチ。返り = torque_decompose の表 + ``track``(matched・n0・n1・p0・u [px])。
-**Raises** ValueError: 追跡の対応が 9 個未満(双極子に足りない)、pitch ≤ 0。
+発散の近傍半径 = 1.5 ピッチ。``P``・``mu``・``torsion_model`` はねじりの換算(:func:`torque_decompose`、既定は Hertz 接触の部分滑りで
+P と mu が要る、平頭押し込み子は ``"no_slip"``)。返り = torque_decompose の表 + ``track``(matched・n0・n1・p0・u [px])。
+**Raises** ValueError: 追跡の対応が 9 個未満(双極子に足りない)、pitch ≤ 0、torque_decompose の ValueError。
 
 ## 参考(サンプルデータ・文献)
 
