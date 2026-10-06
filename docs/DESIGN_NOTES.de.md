@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1220. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1221. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -841,6 +841,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `examples/poc_real_coin_metrology.py`
 
 - **L136** — ★Auch wenn die Anzahlen übereinstimmen, zählt man nicht zwangsläufig dasselbe. Prüfen, ob genau ein Kreis in genau eine Komponente fällt (eins zu eins) —— ohne das gilt "24 = 24" auch zufällig (ein Blob aus zwei zusammenklebenden + ein Stück Müll, trotzdem 24).
+- **L341** _(ja)_ — ★2026-10-06: 題の「46 %」が固定文言で、実行の値(+0.40 で -50.41 %)から外れていた。実行の値を差し込む。
 
 ## `examples/poc_real_deblur_honesty.py`
 

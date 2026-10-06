@@ -4278,7 +4278,7 @@ EM 連続断面から切り出したニューロンは骨格化すれば枝の�
 
 ![yaw を一周させながら DEM の稜線(マゼンタ)を写真に重ねる。黄のメーターが噛み合いで、抜いた境界(シアン)に稜線が噛み合う yaw で最大になる](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/02_yaw_sweep.gif)
 
-スカイライン経路は、カメラ位置から DEM で描いた 360° の稜線と、写真から動的計画法で抜いた空と地形の境界を照合し、**yaw を一周した残差曲線**と 2 番目の谷との差(margin)をそのまま返します。太陽経路は、太陽の見かけの位置が時刻と場所の閉形式(NOAA)であることを使い、写真の飽和した円盤を 2 点以上拾えば回転が Wahba 問題の SVD 解で一意に決まります。真値つきの合成カメラで、スカイライン経路の誤差 **0.11°**、太陽経路 **0.02°**(朝夕の 2 コマだけでも 0.004°)、2 経路の一致 0.09°。
+スカイライン経路は、カメラ位置から DEM で描いた 360° の稜線と、写真から動的計画法で抜いた空と地形の境界を照合し、**yaw を一周した残差曲線**と 2 番目の谷との差(margin)をそのまま返します。太陽経路は、太陽の見かけの位置が時刻と場所の閉形式(NOAA)であることを使い、写真の飽和した円盤を 2 点以上拾えば回転が Wahba 問題の SVD 解で一意に決まります。真値つきの合成カメラで、スカイライン経路の誤差 **0.058°**、太陽経路 **0.002°**(朝夕の 2 コマだけでも 0.001°)、2 経路の一致 0.061°。
 
 ![yaw ごとの残差曲線: 山では谷が 1 つ(真値の線)、平地の DEM では平ら = op が ambiguous を返す](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_public_camera_heading/03_yaw_profile.png)
 

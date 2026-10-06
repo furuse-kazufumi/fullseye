@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1220. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1221. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -841,6 +841,7 @@ This repository records *why* things are the way they are in **comments in the s
 ## `examples/poc_real_coin_metrology.py`
 
 - **L136** — ★Even if the counts match, you are not necessarily counting the same thing. Verify that one circle fits exactly into one component (one-to-one) —— without this, "24 = 24" holds even by chance (one blob of two stuck together + one piece of garbage, still 24).
+- **L341** _(ja)_ — ★2026-10-06: 題の「46 %」が固定文言で、実行の値(+0.40 で -50.41 %)から外れていた。実行の値を差し込む。
 
 ## `examples/poc_real_deblur_honesty.py`
 
