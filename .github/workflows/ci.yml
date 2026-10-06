@@ -195,8 +195,10 @@ jobs:
           COVERAGE_FILE: .coverage.shard${{ matrix.shard }}
         # `-ra` = 合格以外を全部要約に出す。`-rs`(skip だけ)だと**どのテストが
         # 失敗したのか要約に出ず**、生ログを掘る羽目になる(2026-09-05 に実際に踏んだ)。
+        # ★2026-10-07: --cov は py3.11 だけ。3.10/3.12 の coverage データはアップロードせず捨てていた
+        #   (計測の上乗せだけ払っていた)。結合ジョブが読むのは py3.11 の 4 片。
         run: >
-          pytest -q -ra --cov
+          pytest -q -ra ${{ matrix.python-version == '3.11' && '--cov' || '' }}
           --splits 4 --group ${{ matrix.shard }} --splitting-algorithm least_duration
           --durations-path .test_durations
       - name: Upload coverage data (py3.11, this shard)

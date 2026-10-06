@@ -112,10 +112,36 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     return path.name, r.returncode, tail
 
 
+class _OnDemand(dict):
+    """``{名前: (exit, 抜粋)}`` を**引かれたときに 1 本ずつ**走らせて埋める辞書(xdist のワーカー用)。"""
+
+    def __init__(self, run):
+        super().__init__()
+        self._run = run
+
+    def __missing__(self, name):
+        self[name] = self._run(name)
+        return self[name]
+
+
+def _selected(session, func_name: str) -> list[str]:
+    """このセッションで**実際に走る**パラメータ名(pytest-split / -k / --deselect で外れたものは入らない)。"""
+    return sorted({it.callspec.params["name"] for it in session.items
+                   if getattr(it, "originalname", None) == func_name and hasattr(it, "callspec")})
+
+
 @pytest.fixture(scope="session")
-def poc_results() -> dict:
-    """全 PoC をまとめて並列に走らせ、``{名前: (exit, 抜粋)}`` を返す。"""
-    paths = _poc_paths()
+def poc_results(request) -> dict:
+    """このセッションで走る PoC を走らせ、``{名前: (exit, 抜粋)}`` を返す。"""
+    # ★2026-10-07: 以前は**全本を**走らせていた。session fixture はセッションごと(CI のシャードごと・
+    #   xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全本を走らせていた
+    #   (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全本を
+    #   WORKERS 並列で回し、最大 48 本が同時に走って単独 286 秒の PoC が 600 秒を超えていた。
+    #   いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる
+    #   (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+    if os.environ.get("PYTEST_XDIST_WORKER"):
+        return _OnDemand(lambda name: _run_one(ROOT / "examples" / name)[1:])
+    paths = [ROOT / "examples" / n for n in _selected(request.session, "test_the_poc_runs_clean")]
     out: dict = {}
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as ex:
         for name, code, tail in ex.map(_run_one, paths):

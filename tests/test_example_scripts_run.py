@@ -101,14 +101,41 @@ def _run_one(path: Path) -> tuple[str, int, str]:
     return path.name, r.returncode, tail
 
 
+class _OnDemand(dict):
+    """``{名前: (exit, 抜粋)}`` を**引かれたときに 1 本ずつ**走らせて埋める辞書(xdist のワーカー用)。"""
+
+    def __init__(self, run):
+        super().__init__()
+        self._run = run
+
+    def __missing__(self, name):
+        self[name] = self._run(name)
+        return self[name]
+
+
+def _selected(session, func_name: str) -> list[str]:
+    """このセッションで**実際に走る**パラメータ名(pytest-split / -k / --deselect で外れたものは入らない)。"""
+    return sorted({it.callspec.params["name"] for it in session.items
+                   if getattr(it, "originalname", None) == func_name and hasattr(it, "callspec")})
+
+
 @pytest.fixture(scope="session")
-def example_results() -> dict:
-    """対象をまとめて並列に走らせ、``{名前: (exit, 抜粋)}`` を返す。"""
+def example_results(request) -> dict:
+    """このセッションで走る対象を走らせ、``{名前: (exit, 抜粋)}`` を返す。"""
+    # ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・
+    #   xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた
+    #   (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を
+    #   WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。
+    #   いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる
+    #   (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
+    if os.environ.get("PYTEST_XDIST_WORKER"):
+        return _OnDemand(lambda name: _run_one(ROOT / "examples" / name)[1:])
+    chosen = set(_selected(request.session, "test_the_example_runs_from_a_bare_checkout"))
     out: dict = {}
     # backend が足りない例は**走らせない**(走らせれば必ず ImportError で落ちる)。
     # 合否は各テスト先頭の `requires_backend` が決める —— skip として正直に出る。
     runnable = [p for p in _targets()
-                if all(_have_backend(b) for b in _needs(p.stem))]
+                if p.name in chosen and all(_have_backend(b) for b in _needs(p.stem))]
     with concurrent.futures.ThreadPoolExecutor(max_workers=WORKERS) as ex:
         for name, code, tail in ex.map(_run_one, runnable):
             out[name] = (code, tail)
