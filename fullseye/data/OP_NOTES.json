@@ -10,8 +10,8 @@
   "halcon",
   "path"
  ],
- "n_ops": 3078,
- "n_notes": 3084,
+ "n_ops": 3090,
+ "n_notes": 3096,
  "notes": {
   "vol_dilate": [
    {
@@ -15977,6 +15977,126 @@
     "in": "table",
     "out": "table",
     "path": "docs/ops/drive/ballworld/table_world.md"
+   }
+  ],
+  "braid_artin_images": [
+   {
+    "op": "braid_artin_images",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/braid_artin_images.md"
+   }
+  ],
+  "braid_class_representatives": [
+   {
+    "op": "braid_class_representatives",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/braid_class_representatives.md"
+   }
+  ],
+  "braid_equivalent": [
+   {
+    "op": "braid_equivalent",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "signal × signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/braid_equivalent.md"
+   }
+  ],
+  "braid_from_trajectories": [
+   {
+    "op": "braid_from_trajectories",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/braid_from_trajectories.md"
+   }
+  ],
+  "braid_reduce": [
+   {
+    "op": "braid_reduce",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "signal × scalar",
+    "out": "signal",
+    "path": "docs/ops/drive/braidpath/braid_reduce.md"
+   }
+  ],
+  "dynnikov_act": [
+   {
+    "op": "dynnikov_act",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any × signal",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/dynnikov_act.md"
+   }
+  ],
+  "dynnikov_coordinates": [
+   {
+    "op": "dynnikov_coordinates",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "signal × scalar",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/dynnikov_coordinates.md"
+   }
+  ],
+  "grid_hole_points": [
+   {
+    "op": "grid_hole_points",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "image2d",
+    "out": "matrix",
+    "path": "docs/ops/drive/braidpath/grid_hole_points.md"
+   }
+  ],
+  "grid_paths_to_xy": [
+   {
+    "op": "grid_paths_to_xy",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any",
+    "out": "any",
+    "path": "docs/ops/drive/braidpath/grid_paths_to_xy.md"
+   }
+  ],
+  "homotopy_class_compare": [
+   {
+    "op": "homotopy_class_compare",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any × any",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/homotopy_class_compare.md"
+   }
+  ],
+  "homotopy_shortest_paths": [
+   {
+    "op": "homotopy_shortest_paths",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "image2d × any × any",
+    "out": "table",
+    "path": "docs/ops/drive/braidpath/homotopy_shortest_paths.md"
+   }
+  ],
+  "pairwise_winding": [
+   {
+    "op": "pairwise_winding",
+    "dim": "drive",
+    "category": "braidpath",
+    "in": "any",
+    "out": "matrix",
+    "path": "docs/ops/drive/braidpath/pairwise_winding.md"
    }
   ],
   "camera_pose_to_carla": [

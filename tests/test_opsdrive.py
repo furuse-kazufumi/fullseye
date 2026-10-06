@@ -15,7 +15,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     assert set(opsdrive.categories()) == {"course", "world", "lidar", "ttc", "rss", "terrain",
                                           "ball", "balltrack", "ballworld", "racket", "roadjp",
                                           "kendama", "kendamaworld", "gsplat", "long", "env", "inf", "traffic", "decide", "lateral", "crossing", "pass",
-                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish", "scoop", "grind", "ozaki", "swarmflow", "pxrd", "doseunif", "cuttouch", "roverslip"}
+                                          "motion_io", "humanoid", "agv", "carla", "town", "japan", "commonroad", "pegsim", "tacsim", "tacslip", "tactorque", "puck", "pegfail", "granular", "tacscalib", "pegtactile", "cutting", "diabolo", "tacdome", "pegsym", "polish", "scoop", "grind", "ozaki", "swarmflow", "pxrd", "doseunif", "cuttouch", "roverslip", "braidpath"}
     # 288 → 292: gs_read_file + 動きのデータの入口 3(read_bvh / read_events / events_to_frames、2026-10-03)
     # 292 → 296: 歩くヒューマノイド 4(humanoid_clip_mesh / world_pose_humanoid / humanoid_impostors / world_camera_impostors)
     # 296 → 309: 工場・倉庫の AGV の群れ 13(agvfleet: 格子・CBS / 焦点探索 / 結合 A* / 優先度付き・ADG・VDA 5050)
@@ -47,7 +47,8 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     # 673 → 676: 粉の粒径から含量の CV と粉砕時間 3(doseunif: 対数正規の閉形式と Monte Carlo・測った粒径(画像の標本 / 粒度分布の表)からの CV と区間・粉砕則での逆算と合格の確率、2026-10-06。numpy + scipy)
     # 676 → 679: 包丁を指先の視触覚で持って切る 3(cuttouch: 部分滑りのねじりの数値解・2 パッドの読みから V・H・M_x と当たり位置・靱性、2026-10-06。numpy + scipy)
     # 679 → 694: 惑星ローバーの車輪の滑り 15(roverslip: Bekker の圧力・沈下の近似 2・Wong–Reece の力・沈下・牽引–滑り 3・斜面の滑り・視覚オドメトリ 2・ガウス過程・分位点回帰・予測・CVaR 4・コスト地図・経路・経路の評価 3、2026-10-06。numpy)
-    assert len(opsdrive.OPSDRIVE) == 694
+    # 694 → 706: 複数ロボットの計画を組紐でホモトピー類に分ける 12(braidpath: 軌道 → 組紐語・簡約・Artin 表現・Dynnikov 座標と作用 5・同じ組紐か / 同じ類か 2・巻き数・格子の類ごとの最短・候補の類分け 3・格子の穴の点と経路の写し 2、2026-10-06。numpy + scipy)
+    assert len(opsdrive.OPSDRIVE) == 706
     # 台帳の op は実装モジュールの __all__ に在る(逆は要らない: 補助関数は台帳に載せない)
     import drivecourse, driveworld, lidarsim, drivettc, rsssafety, driveterrain, ballistics, balltrack, ballworld, racket
     import roadjp
@@ -91,6 +92,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
     import doseunif
     import cuttouch
     import roverslip
+    import braidpath
     pub = (set(drivecourse.__all__) | set(driveworld.__all__) | set(lidarsim.__all__) | set(drivettc.__all__)
            | set(rsssafety.__all__) | set(driveterrain.__all__) | set(ballistics.__all__) | set(balltrack.__all__)
            | set(ballworld.__all__) | set(racket.__all__) | set(roadjp.__all__)
@@ -98,7 +100,7 @@ def test_the_ledger_lists_every_op_and_nothing_is_missing():
            | set(driveenv.__all__) | set(driveinf.__all__) | set(drivetraffic.__all__)
            | set(drivedecide.__all__) | set(drivelateral.__all__)
            | set(drivecrossing.__all__) | set(drivepass.__all__) | set(motionio.__all__)
-           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__) | set(pegsym.__all__) | set(polish.__all__) | set(scoop.__all__) | set(grind.__all__) | set(ozakimm.__all__) | set(swarmflow.__all__) | set(pxrd.__all__) | set(doseunif.__all__) | set(cuttouch.__all__) | set(roverslip.__all__))
+           | set(drivehumanoid.__all__) | set(agvfleet.__all__) | set(carlabridge.__all__) | set(drivetown.__all__) | set(drivejapan.__all__) | set(driveplateau.__all__) | set(drivecommonroad.__all__) | set(pegsim.__all__) | set(tacsim.__all__) | set(tacslip.__all__) | set(tactorque.__all__) | set(puck.__all__) | set(pegfail.__all__) | set(granular.__all__) | set(tacscalib.__all__) | set(pegtactile.__all__) | set(cutting.__all__) | set(diabolo.__all__) | set(tacdome.__all__) | set(pegsym.__all__) | set(polish.__all__) | set(scoop.__all__) | set(grind.__all__) | set(ozakimm.__all__) | set(swarmflow.__all__) | set(pxrd.__all__) | set(doseunif.__all__) | set(cuttouch.__all__) | set(roverslip.__all__) | set(braidpath.__all__))
     assert set(opsdrive.OPSDRIVE) <= pub, set(opsdrive.OPSDRIVE) - pub
 
 
@@ -115,7 +117,7 @@ def test_the_typed_catalog_declares_the_family():
     import typed_catalog as tc
 
     rows = [r for r in tc.catalog() if r[1] == "drive"]
-    assert len(rows) == 694
+    assert len(rows) == 706
     assert {r[3] for r in rows} == {"table", "image2d", "signal", "matrix", "scalar", "any", "points", "rgba", "rgb", "voxel", "normalmap"}
 
 

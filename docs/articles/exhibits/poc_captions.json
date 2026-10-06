@@ -2032,6 +2032,17 @@
    "run": "py -3.11 examples/poc_agv_fleet.py"
   },
   {
+   "id": "poc_braid_homotopy_classes",
+   "wing": "wing_industrial",
+   "added": "2026-10-06",
+   "numbers_source": "log",
+   "title_ja": "同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に",
+   "title_en": "Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes",
+   "caption_ja": "平面を動く台車と動かない柱を時間の向きに積むと組紐になり、端を止めたまま連続に移り合える計画 ⇔ 同じ組紐。射影の軸の上で隣の紐と順が入れ替わる時刻を閉形式で求めて交差の符号列(組紐語)にし、Dynnikov 座標・Dehornoy の取っ手簡約・Artin 表現の 3 つの独立な判定で同じ組紐かを決める(背景は平面の複数エージェント経路計画のホモトピー、doi:10.1613/jair.1.19243)。図は 3 台の計画のうち類の違う 3 つを時空の組紐として回したもの。門: 組紐の関係式 1311 通りが Dynnikov の作用で整数のずれ 0・実数 2.8e-14、関係式でない σ₁σ₂ = σ₂σ₁ は 100/100 で破れる。3 つの判定が同じ組紐 100/100・違う組紐 100/100 で一致、参照実装(MIT)の出力と Dynnikov 座標 240/240。1 台が柱を回る類ごとの最短 [14, 14, 30, 30, 46] = 閉形式 14 + 16m。agvfleet の計画器の候補 61 本(CBS + 経由点つきの優先度付き)→ 26 類、CBS の最適 40 は最も安い類の代表。交換子 a b a⁻¹ b⁻¹ は巻き数が全部 0 なのに組紐は自明でない。罠: 格子の点対称な動きは射影の三重点を作り、角度を変えても消えない → 紐ごとの小さな一定のずらしで取り直す。正直に: 類は無限にあり、候補の抽出が見つけた類しか並ばない(経由点の抽出は 8 類中 3 類)。",
+   "caption_en": "Stack moving vehicles and fixed pillars along time and you get a braid; two plans that deform into each other with their ends held fixed are exactly the plans with the same braid. The times at which neighbouring strands swap order along a projection axis are solved in closed form into a signed crossing sequence (a braid word), and three independent deciders — Dynnikov coordinates, Dehornoy handle reduction and the Artin representation — decide whether two words are the same braid (background: homotopy in planar multi-agent path planning, doi:10.1613/jair.1.19243). The figure spins three differently wound plans of three robots as space-time braids. Gates: the braid relations hold under the Dynnikov action in 1311 cases with integer error 0 and real error 2.8e-14, while the non-relation σ₁σ₂ = σ₂σ₁ breaks in 100/100. The three deciders agree on 100/100 equal and 100/100 different braids; Dynnikov coordinates match the MIT-licensed reference implementation in 240/240. One robot around a pillar: shortest cost per class [14, 14, 30, 30, 46] = closed form 14 + 16m. 61 candidates from the agvfleet planners (CBS + prioritised with waypoints) fall into 26 classes, and the CBS optimum 40 represents the cheapest one. A commutator a b a⁻¹ b⁻¹ has all windings 0 yet a non-trivial braid. Trap: point-symmetric grid moves create projection triple points that no change of angle removes — a tiny constant per-strand offset resolves them. Honestly: there are infinitely many classes, and only those the candidate sampler finds are listed (waypoint sampling found 3 of 8).",
+   "run": "py -3.11 examples/poc_braid_homotopy_classes.py"
+  },
+  {
    "id": "poc_carla_bridge",
    "wing": "wing_geometry",
    "added": "2026-10-04",

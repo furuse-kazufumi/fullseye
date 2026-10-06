@@ -1,0 +1,58 @@
+[
+ {
+  "file": "01_braid_classes_spacetime.gif",
+  "name": "braid_classes_spacetime",
+  "caption": "同じ始点と終点を結ぶ 3 台の計画の、類の違う 3 つ(安い順)を時空の組紐として回す。灰色の柱が障害物、時間は上向き。類 1 は最適な計画(CBS)。",
+  "shape": [
+   480,
+   1260,
+   3
+  ],
+  "animated": true,
+  "frames": 36,
+  "frames_written": 36,
+  "fps": 10.0
+ },
+ {
+  "file": "02_braid_classes_spacetime_still.png",
+  "name": "braid_classes_spacetime_still",
+  "caption": "図 01 の最初のコマ(等倍・可逆 PNG)。",
+  "shape": [
+   480,
+   1260,
+   3
+  ]
+ },
+ {
+  "file": "03_braid_classes_floor.png",
+  "name": "braid_classes_floor",
+  "caption": "同じ 3 つの計画を床の上から見る(× は柱の代表の点)。",
+  "shape": [
+   360,
+   1260,
+   3
+  ]
+ },
+ {
+  "file": "04_braid_single_agent_classes.png",
+  "name": "braid_single_agent_classes",
+  "caption": "1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。",
+  "shape": [
+   400,
+   1500,
+   3
+  ]
+ },
+ {
+  "file": "05_braid_class_table.png",
+  "name": "braid_class_table",
+  "caption": "候補を類に分けた表(費用の安い順)。巻き数は柱のまわりの回転数。",
+  "shape": [
+   272,
+   472,
+   3
+  ],
+  "csv": "05_braid_class_table.csv",
+  "tsv": "05_braid_class_table.tsv"
+ }
+]

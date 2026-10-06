@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">braid_artin_images — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_artin_images(word, n_strands, max_length=200000)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_artin_images(word, n_strands, max_length=200000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_artin_images&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>組紐の Artin 表現: 自由群 F_n の生成元 x₁..xₙ の像(自由簡約した語)。</p>
+<p>σᵢ: xᵢ ↦ xᵢ xᵢ₊₁ xᵢ⁻¹、xᵢ₊₁ ↦ xᵢ、ほかは動かさない。語 w = σ_{i1} σ_{i2} … の像は左から順に代入して作る。</p>
+<p>この表現は忠実(Artin 1925)なので、<b>像が全部一致 ⇔ 同じ組紐</b>。自由簡約だけの厳密な判定で、Dynnikov 座標と</p>
+<p>独立に「等しい」を確かめる第 2 実装になる。像の長さは語の長さに対して指数で伸びうるので `<code style="color:#22d3bf">max_length</code>` で止める。</p>
+<p>Returns: dict `<code style="color:#22d3bf">images</code><code style="color:#22d3bf">(長さ n の list、各要素は符号つき整数の list で ±k = x_k^(±1))、</code><code style="color:#22d3bf">lengths</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">identity</code>`</p>
+<p>(全部 xₖ そのものか)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• (暂无)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_from_trajectories">braid_from_trajectories</a> · <a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

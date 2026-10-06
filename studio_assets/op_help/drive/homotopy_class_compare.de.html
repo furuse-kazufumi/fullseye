@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">homotopy_class_compare — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, tol=1e-09, jitter=&#x27;auto&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import braidpath; braidpath.homotopy_class_compare(traj_a, traj_b, obstacles=None, angle=0.1, tol=1e-09, jitter=&#x27;auto&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;homotopy_class_compare&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
+<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
+<p>始点と終点が同じ 2 つの経路族(複数エージェントの計画)が、同じホモトピー類か。</p>
+<p>衝突せずに(エージェント同士も障害物の点とも重ならずに)始点と終点を止めたまま連続に変形できる ⇔ 組紐が等しい。</p>
+<p>組紐は :func:<code style="color:#22d3bf">braid_from_trajectories</code>、比較は Dynnikov 座標。射影の角度に依らない(門で複数の角度を振る)。</p>
+<p>Returns: dict `<code style="color:#22d3bf">same</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">word_a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">word_b</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">key_a</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">key_b</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">quotient</code>`(a b⁻¹ を簡約した語 —— 空なら同じ類、</p>
+<p>空でなければ「どう回り方が違うか」の語)、`<code style="color:#22d3bf">endpoint_error</code>`(始点・終点の最大のずれ)。</p>
+<p>Raises: ValueError(台数が違う、始点か終点が `<code style="color:#22d3bf">tol</code>` より離れている、衝突)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
+<p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
+<p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
+<p style="margin:2px 0 2px 12px">• Der kanonische Algorithmus (Autor, Jahr) und seine Anwendungen stehen im <b>Familienleitfaden</b> oben.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführbare Beispiele (verifizierte Samples, die diesen Operator wirklich aufrufen)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Typkompatible Folge-Operatoren (nehmen <code style="color:#22d3bf">table</code> als Eingabe)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Gleiche Kategorie (<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_from_trajectories">braid_from_trajectories</a> · <a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE Operator-Registry. Diese Notiz wird von <code style="color:#22d3bf">tools/opdocs.py md</code> erzeugt (nicht von Hand bearbeiten).*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">braid_reduce — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_reduce(word, n_strands)</code> (実装を直接呼ぶなら <code style="color:#22d3bf">import braidpath; braidpath.braid_reduce(word, n_strands)</code>、台帳から引くなら <code style="color:#22d3bf">opsdrive.get(&quot;braid_reduce&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
+<p>組紐語を Dehornoy の取っ手簡約で簡約する。<b>空の語が返る ⇔ 自明な組紐</b>(同じ類)。</p>
+<p>取っ手 = σⱼ^e u σⱼ^(−e)(u に σⱼ^(±1)・σⱼ₋₁^(±1) が無い)。u の中の σⱼ₊₁^d を σⱼ₊₁^(−e) σⱼ^d σⱼ₊₁^e に替え、外側の</p>
+<p>2 文字を消す(関係式だけを使うので組紐は変わらない)。左から最初に閉じる取っ手を選ぶ —— その中には別の取っ手が</p>
+<p>無いので Dehornoy の意味で許され、有限回で止まる。返りの語は取っ手を持たず、空でなければ現れる最小の添字の</p>
+<p>文字の符号がそろう(σ 正 / σ 負)。</p>
+<p>Returns: int の 1-D 配列(簡約した語)。</p>
+<p>Raises: ValueError(添字が範囲の外・0)、RuntimeError(語が `<code style="color:#22d3bf">MAX_WORD</code>` を超えて膨らんだ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
+<p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
+<p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<p style="margin:2px 0 2px 12px">• アルゴリズムの正典(著者・年)と用途は上記<b>ファミリ使い方ガイド</b>に記載。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">signal</code> を入力に取れる)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同カテゴリ(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_from_trajectories">braid_from_trajectories</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE operator registry. この per-op ノートは <code style="color:#22d3bf">tools/opdocs.py md</code> が自動生成(手編集しない)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

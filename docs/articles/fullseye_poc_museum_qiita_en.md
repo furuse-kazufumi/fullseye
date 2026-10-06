@@ -34,7 +34,7 @@ The museum is split across several articles; **each wing reads on its own** — 
 
 | Article | Wings | Exhibits |
 |---|---|---:|
-| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 114 |
+| [A Metrology Museum on Paper — The What-Is-Measured Wing (industrial, dimensional, biomedical, sky and ground)](https://qiita.com/furuse-kazufumi/items/4f65e33d11099a1ebbca) | The Industrial Inspection / The Dimensional and Shape Metrology / The Medical and Biological / The Astronomy and Environment | 115 |
 | [A Metrology Museum on Paper — The How-It-Is-Measured Wing (restoration, space-time, calibration, colour, forensics, 3-D shape)](https://qiita.com/furuse-kazufumi/items/9468b213793e3f6b1dc8) | The Image Quality and Restoration / The Time-as-3-D / The Geometry and Calibration / The Colour and Separation / The Forensics and Documents / The 3-D Shape | 83 |
 | [Nobody Checks a Mathematical Picture, Because It Already Looks Right — A PoC Series Where the Theorem Is the Test](https://qiita.com/furuse-kazufumi/items/dc100e7ea90e9575c40b) | Mathematical pictures | 7 |
 | [Self-Driving Demos Move, So Nobody Measures Whether They Are Right — A PoC Series Scored by Theorems and Second Implementations](https://qiita.com/furuse-kazufumi/items/05de90f4d316cd7c681c) | Autonomous driving | 13 |
@@ -60,6 +60,7 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 
 ## Recently added (newest first)
 
+- 2026-10-06 — No.2026.218 Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes
 - 2026-10-06 — No.2026.213 A Swarm That Flows Like a Fluid Senses an Invisible Obstacle from the Disturbance of Its Velocity Field Alone — Reading the Impact Point and the Obstacle Outline by Tracking and PIV on Overhead Video, from Upstream Before Contact, and Saying Nothing When There Is No Obstacle
 - 2026-10-06 — No.2026.214 Peeling Phases One at a Time off a 2-D Powder X-ray Diffraction Image — Calibration, Azimuthal Integration, NNLS and the Unknown Phase in the Residual; References from the NIST SRM 640g Certificate and COD CIFs, with the Shared-Model Leak Measured by Deliberate Mismatch
 - 2026-10-06 — No.2026.215 How Long to Grind for a Uniform Dose — Content Uniformity from Particle Size by Closed Form and Monte Carlo, Inverted through Comminution Laws; the Low CV from Photos Was the Same 12 Images at Different Scales
@@ -67,7 +68,6 @@ Three rules survive even if the author is forgotten. **Count failures by kind** 
 - 2026-10-06 — No.2026.217 Predicting Wheel Slip with Uncertainty on Real Martian Terrain and Planning a Path that Avoids the Slip Risk — Bekker / Wong–Reece and CVaR on a HiRISE DTM; outside the Data a Gaussian Process Calls a Stuck Slope 'Slip 0.29'
 - 2026-10-05 — No.2026.202 Measuring a Powder Heap from Images — Angle of Repose, Volume, Mass, Flowability and Discharge by Rules, with Closed Forms, Published Values and MuJoCo as the Truth
 - 2026-10-05 — No.2026.203 Calibrating a Vision-Based Tactile Sensor's Illumination on Real Calibration Spheres, with a Gradient LUT as the Second Implementation — the Ball Radius and Hand-Marked Circles as the Truth
-- 2026-10-05 — No.2026.204 Reading Peg-in-Hole Insertion through Two Fingertip Membranes — Contact Wrench, Whitney's Contact States, Wall Friction and Wrist Stiffness from Shear Images; at the Wedging Boundary the Wrench Alone Is Blind
 
 ## Applying it to your own problem
 

@@ -4,13 +4,13 @@
 
 > One wing of **[A Metrology Museum on Paper — the entrance](https://qiita.com/furuse-kazufumi/items/8a8f23e53b19ee8cdc10)**, where the other wings, the glossary and the thesis live.
 
-**114 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
+**115 exhibits** hang in this wing. The numbers are accession numbers: they do not change when an exhibit moves or when an article is split.
 
 > The "Ops used" line under each exhibit links to that op's note (type contract, pitfalls, figures, a runnable Studio program): [Operator catalogue](https://furuse.work/OP_CATALOG.html) / [Op notes index](https://furuse.work/ops/INDEX.html).
 
 ### The Industrial Inspection Wing — A Passing Number and a Failing Number Can Coexist
 
-Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 32 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
+Numbers on an inspection line decide pass or fail, so there is a strong pull toward collapsing them into a single figure. The 33 exhibits in this room show what disappears the moment you do: a pooled ROC that hides one defect class's blind spot in woven fabric, veiling glare that leaves the MTF passing while the black level fails, a barcode decoder that looks better by read rate alone because it never says 'unreadable'.
 
 Every ground truth is planted: a closed-form periodic background, the laser-profile h(x), the analytic 1-D heat-conduction solution, closed-form bearing defect frequencies. That is what lets each exhibit measure 'where detection stops working' instead of 'detection worked', without fitting the threshold afterwards.
 
@@ -959,6 +959,38 @@ Source: [examples/poc_agv_fleet.py](https://github.com/furuse-kazufumi/fullseye/
 This run produced **4 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_agv_fleet)
 
 Ops used (notes): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html) · [`adg_execute`](https://furuse.work/ops/drive/agv/adg_execute.html) · [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_ecbs`](https://furuse.work/ops/drive/agv/mapf_ecbs.html) · [`mapf_joint_astar`](https://furuse.work/ops/drive/agv/mapf_joint_astar.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`naive_execute`](https://furuse.work/ops/drive/agv/naive_execute.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`vda5050_check`](https://furuse.work/ops/drive/agv/vda5050_check.html) · [`vda5050_order`](https://furuse.work/ops/drive/agv/vda5050_order.html) · [`warehouse_grid`](https://furuse.work/ops/drive/agv/warehouse_grid.html)
+
+## No.2026.218 —— Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes
+
+[![Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)
+
+*↑ **Sorting Multi-Robot Plans with the Same Starts and Goals by How They Wind — Counting Homotopy Classes with Space-Time Braids and Dynnikov Coordinates, 61 Planner Candidates in 26 Classes** ―― Stack moving vehicles and fixed pillars along time and you get a braid; two plans that deform into each other with their ends held fixed are exactly the plans with the same braid. The times at which neighbouring strands swap order along a projection axis are solved in closed form into a signed crossing sequence (a braid word), and three independent deciders — Dynnikov coordinates, Dehornoy handle reduction and the Artin representation — decide whether two words are the same braid (background: homotopy in planar multi-agent path planning, doi:10.1613/jair.1.19243). The figure spins three differently wound plans of three robots as space-time braids. Gates: the braid relations hold under the Dynnikov action in 1311 cases with integer error 0 and real error 2.8e-14, while the non-relation σ₁σ₂ = σ₂σ₁ breaks in 100/100. The three deciders agree on 100/100 equal and 100/100 different braids; Dynnikov coordinates match the MIT-licensed reference implementation in 240/240. One robot around a pillar: shortest cost per class [14, 14, 30, 30, 46] = closed form 14 + 16m. 61 candidates from the agvfleet planners (CBS + prioritised with waypoints) fall into 26 classes, and the CBS optimum 40 represents the cheapest one. A commutator a b a⁻¹ b⁻¹ has all windings 0 yet a non-trivial braid. Trap: point-symmetric grid moves create projection triple points that no change of angle removes — a tiny constant per-strand offset resolves them. Honestly: there are infinitely many classes, and only those the candidate sampler finds are listed (waypoint sampling found 3 of 8).*
+
+[![図 01 の最初のコマ(等倍・可逆 PNG)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still.png)
+
+*↑ The measurement ―― 図 01 の最初のコマ(等倍・可逆 PNG)。 (figure labels are in Japanese; the numbers are the same)*
+
+[![同じ 3 つの計画を床の上から見る(× は柱の代表の点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor.png)
+
+*↑ 同じ 3 つの計画を床の上から見る(× は柱の代表の点)。*
+
+[![1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes.png)
+
+*↑ 1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。*
+
+[![候補を類に分けた表(費用の安い順)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table.png)
+
+*↑ 候補を類に分けた表(費用の安い順)。*
+
+```
+py -3.11 examples/poc_braid_homotopy_classes.py
+```
+
+Source: [examples/poc_braid_homotopy_classes.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_braid_homotopy_classes.py)
+
+This run produced **5 figures** in total - [see them all](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
+
+Ops used (notes): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
 
 ## No.2026.185 —— From Melt-Pool Thermography to X-ray CT in Metal Additive Manufacturing — Raw Signal Is Not Temperature, Time Axis and Pixel Pitch, and Powder That Clings Only to Down-Facing Surfaces
 

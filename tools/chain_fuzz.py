@@ -5981,6 +5981,76 @@ def _b_rs_risk(pool, rng):
     return (f["path"], f["Z"], 1.0, f["qr"]), {"alpha": float(rng.uniform(0, 0.95))}
 
 
+_FUZZ_BP = {}
+
+
+def _fuzz_bp():
+    """柱のある格子と、2 台が入れ替わる軌道(柱の上を回る / 下を回る)を 1 回だけ作る(braidpath、numpy + scipy)。"""
+    if "grid" not in _FUZZ_BP:
+        g = np.ones((7, 9), bool)
+        g[2:5, 3:6] = False
+        t = np.linspace(0.0, 1.0, 41)
+        up = np.stack([np.stack([-3 + 6 * t, 2.2 * np.sin(np.pi * t)], -1), np.stack([3 - 6 * t, 1.2 * np.sin(np.pi * t)], -1)])
+        down = up * np.array([1.0, -1.0])
+        _FUZZ_BP.update({"grid": g, "up": up, "down": down, "obs": np.array([[0.0, 0.0]]),
+                         "paths": [[(3, 0), (2, 0), (1, 0), (1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6), (2, 6), (3, 6)],
+                                   [(3, 8), (4, 8), (5, 8), (5, 7), (5, 6), (5, 5), (5, 4), (5, 3), (5, 2), (4, 2), (3, 2)]]})
+    return _FUZZ_BP
+
+
+def _b_bp_traj(pool, rng):
+    f = _fuzz_bp()
+    return (f["up"] if rng.integers(0, 2) else f["down"],), {"obstacles": f["obs"], "angle": float(rng.uniform(-1.0, 1.0))}
+
+
+def _b_bp_word(pool, rng):
+    n = int(rng.integers(2, 6))
+    w = [int(rng.choice([-1, 1]) * rng.integers(1, n)) for _ in range(int(rng.integers(0, 12)))]
+    return (np.asarray(w, dtype=np.int64), n), {}
+
+
+def _b_bp_act(pool, rng):
+    n = int(rng.integers(2, 6))
+    co = rng.integers(-9, 10, 2 * (n - 1)).astype(np.int64)
+    w = [int(rng.choice([-1, 1]) * rng.integers(1, n)) for _ in range(int(rng.integers(0, 8)))]
+    return (co, np.asarray(w, dtype=np.int64)), {}
+
+
+def _b_bp_equiv(pool, rng):
+    (w, n), _ = _b_bp_word(pool, rng)
+    v = np.concatenate([w, [1, -1]]).astype(np.int64)
+    return (w, v, n), {"method": str(rng.choice(["dynnikov", "handle", "artin", "all"]))}
+
+
+def _b_bp_compare(pool, rng):
+    f = _fuzz_bp()
+    return (f["up"], f["down"] if rng.integers(0, 2) else f["up"]), {"obstacles": f["obs"]}
+
+
+def _b_bp_wind(pool, rng):
+    f = _fuzz_bp()
+    return (f["up"],), {"obstacles": f["obs"]}
+
+
+def _b_bp_hsp(pool, rng):
+    f = _fuzz_bp()
+    return (f["grid"], (3, 0), (3, 8)), {"k": int(rng.integers(1, 5))}
+
+
+def _b_bp_reps(pool, rng):
+    f = _fuzz_bp()
+    plans = [f["up"], f["down"], f["up"] + rng.normal(0, 0.01, f["up"].shape) * np.sin(np.linspace(0, np.pi, 41))[None, :, None]]
+    return (plans,), {"obstacles": f["obs"]}
+
+
+def _b_bp_holes(pool, rng):
+    return (_fuzz_bp()["grid"],), {}
+
+
+def _b_bp_paths(pool, rng):
+    return (_fuzz_bp()["paths"],), {}
+
+
 OP_ARG_BUILDERS = {
     # --- 測定システム解析 / 測定の不確かさ(表の列が合わないと一度も計算しない) --- #
     "perpetual_step": _b_perpetual_state,
@@ -6367,6 +6437,10 @@ OP_ARG_BUILDERS = {
     "ground_shift_track": _b_rs_track, "odometry_slip": _b_rs_odo, "slip_gp_fit": _b_rs_gp,
     "slip_quantile_fit": _b_rs_qr, "slip_predict": _b_rs_pred, "slip_cvar": _b_rs_cvar,
     "cvar_cost_map": _b_rs_costmap, "risk_aware_path": _b_rs_path, "path_slip_risk": _b_rs_risk,
+    "braid_from_trajectories": _b_bp_traj, "braid_reduce": _b_bp_word, "braid_artin_images": _b_bp_word,
+    "dynnikov_coordinates": _b_bp_word, "dynnikov_act": _b_bp_act, "braid_equivalent": _b_bp_equiv,
+    "homotopy_class_compare": _b_bp_compare, "pairwise_winding": _b_bp_wind, "homotopy_shortest_paths": _b_bp_hsp,
+    "braid_class_representatives": _b_bp_reps, "grid_hole_points": _b_bp_holes, "grid_paths_to_xy": _b_bp_paths,
     "luma_limited_u8": _b_luma_limited_u8, "rank_data": _b_rank_data, "rank_spearman": _b_rank_pair, "rank_kendall_b": _b_rank_pair,
     "tid2013_published": _b_noargs, "tid2013_root": _b_noargs, "tid2013_index": _b_tid_root, "tid2013_metric_values": _b_tid_metric_values,
     "tid2013_evaluate": _b_tid_evaluate, "tid2013_compare": _b_tid_compare, "tid2013_by_distortion": _b_tid_by_distortion,

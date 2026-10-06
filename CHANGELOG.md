@@ -7,6 +7,16 @@ What makes a release 0.1.x vs 0.2.0 is written down in `CONTRIBUTING.md`
 
 ## Unreleased
 
+新しい op と族だけ(既存の op の名前・引数・数値の変化 0)なので、CONTRIBUTING の Versioning では patch 相当。
+
+### 追加
+
+- ★**同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける**(新モジュール `braidpath` 12 op、facade なし、台帳 `braidpath`(opsdrive)、PoC `poc_braid_homotopy_classes`、wing_industrial):
+  軌道群と障害物の点を時空の組紐にして交差の符号列(組紐語)を作り、Dynnikov 座標・Dehornoy の取っ手簡約・Artin 表現の 3 つの独立な判定で同じ組紐か(= 同じホモトピー類か)を決める。
+  対ごとの巻き数、格子の上で類ごとの最短経路を短い順に(類で持ち上げた Dijkstra)、既存の計画器(agvfleet)の候補を類に分けて代表を選ぶ。numpy + scipy。
+  外の真値は組紐の関係式の恒等性(1311 通りで整数のずれ 0)、巻き数の閉形式、参照実装(MIT)の出力 240 件(`tests/data/braidpath_reference.json`、wheel には入らない)。
+  正直に: 類は無限にあり、候補の抽出が見つけた類しか並ばない。類で持ち上げた探索は 1 台と止まった障害物だけ。
+
 ## 0.5.0 — 2026-10-06
 
 ### 破壊的変更(Breaking)

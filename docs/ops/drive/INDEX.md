@@ -1,4 +1,4 @@
-# DRIVE operator help — 694 ops in 51 categories
+# DRIVE operator help — 706 ops in 52 categories
 
 自動生成(`tools/opdocs.py toc`)。フォルダ階層 `docs/ops/drive/<category>/<op>.md` を走査。
 
@@ -19,6 +19,10 @@
 ### ballworld (9)
 
 [add_ball](ballworld/add_ball.md) · [ball_mesh](ballworld/ball_mesh.md) · [ball_set_pose](ballworld/ball_set_pose.md) · [ball_truth](ballworld/ball_truth.md) · [camera_rig](ballworld/camera_rig.md) · [icosphere](ballworld/icosphere.md) · [rotation_from_omega](ballworld/rotation_from_omega.md) · [table_params](ballworld/table_params.md) · [table_world](ballworld/table_world.md)
+
+### braidpath (12)
+
+[braid_artin_images](braidpath/braid_artin_images.md) · [braid_class_representatives](braidpath/braid_class_representatives.md) · [braid_equivalent](braidpath/braid_equivalent.md) · [braid_from_trajectories](braidpath/braid_from_trajectories.md) · [braid_reduce](braidpath/braid_reduce.md) · [dynnikov_act](braidpath/dynnikov_act.md) · [dynnikov_coordinates](braidpath/dynnikov_coordinates.md) · [grid_hole_points](braidpath/grid_hole_points.md) · [grid_paths_to_xy](braidpath/grid_paths_to_xy.md) · [homotopy_class_compare](braidpath/homotopy_class_compare.md) · [homotopy_shortest_paths](braidpath/homotopy_shortest_paths.md) · [pairwise_winding](braidpath/pairwise_winding.md)
 
 ### carla (25)
 

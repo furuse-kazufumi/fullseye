@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">braid_from_trajectories — DRIVE <code style="color:#22d3bf">braidpath</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import braidpath; braidpath.braid_from_trajectories(trajectories, obstacles=None, angle=0.1, jitter=&#x27;auto&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;braid_from_trajectories&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
+<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
+<p>平面の軌道群(と動かない障害物の点)から組紐語を作る(交差の符号列)。</p>
+<p>各刻みの間は直線で動くとして、射影の軸 x&#x27; = x cos θ + y sin θ の上で隣り合う 2 本の紐の順が入れ替わる時刻を</p>
+<p>閉形式で求め(相対の動きも直線なので零点は高々 1 つ)、時刻の順に文字にする。左の紐が<b>下</b>(y&#x27; の小さい側)を</p>
+<p>通って右へ出れば `<code style="color:#22d3bf">+i</code><code style="color:#22d3bf">(反時計回りの半回転)、上を通れば </code><code style="color:#22d3bf">−i</code>`。</p>
+<p>★射影の三重点: 格子の対称な動き(2 台が障害物の点をはさんで点対称に動く等)では 3 本が一直線のまま回り、</p>
+<p>どの角度でも 3 つの交差が同時になる。`<code style="color:#22d3bf">jitter=&quot;auto&quot;</code>` は、そのときだけ紐ごとに一定の小さなずらし</p>
+<p>(最小距離 × `<code style="color:#22d3bf">JITTER_FRACTION</code>`、向きは黄金角)を足して取り直す。ずらしは最小距離よりずっと小さいので組紐は</p>
+<p>変わらない(門で確かめる)。</p>
+<p>Parameters</p>
+<p>----------</p>
+<p>trajectories : numpy の (K, T, 2) = [x, y]、または list の格子の経路(各台の (row, col) の列)/ 計画器の dict(`<code style="color:#22d3bf">paths</code>`)。</p>
+<p>obstacles : (M, 2) の点、任意。穴を 1 点で代表させる(穴の中の点ならどれでも類は変わらない)。</p>
+<p>angle : 射影の軸の角度 [rad]。類の判定(:func:<code style="color:#22d3bf">homotopy_class_compare</code>)は角度に依らないが、語そのものは変わる。</p>
+<p>jitter : `<code style="color:#22d3bf">&quot;auto&quot;</code>` か、ずらしの大きさ(0 = ずらさない、上限は最小距離の 1 %)。</p>
+<p>Returns</p>
+<p>-------</p>
+<p>dict: `<code style="color:#22d3bf">word</code><code style="color:#22d3bf"> (int の 1-D 配列)、</code><code style="color:#22d3bf">n_strands</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">n_agents</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">start_order</code><code style="color:#22d3bf"> / </code><code style="color:#22d3bf">end_order</code>`(位置の順の紐の番号)、</p>
+<p>`<code style="color:#22d3bf">times</code><code style="color:#22d3bf">(各文字の時刻、刻みの単位)、</code><code style="color:#22d3bf">angle</code><code style="color:#22d3bf">、</code><code style="color:#22d3bf">jitter</code><code style="color:#22d3bf">(使ったずらし)、</code><code style="color:#22d3bf">clearance</code>`(紐どうしの最小距離)。</p>
+<p>Raises</p>
+<p>------</p>
+<p>ValueError: 2 本の紐が同じ点に来る(衝突に組紐は無い)、jitter=0 で三重点(TriplePointError)、形が違う、NaN。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据・文献)</h3>
+<p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
+<p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>
+<p style="margin:2px 0 2px 12px">• 算法的正典(作者・年份)与用途见上面的<b>族使用指南</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">可运行的示例(实际调用该算子并已验证的样例)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_braid_homotopy_classes">poc_braid_homotopy_classes</a> — <code style="color:#22d3bf">py -3.11 examples/poc_braid_homotopy_classes.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">类型可衔接的下一个算子(可接受 <code style="color:#22d3bf">table</code> 作为输入)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同类别(<code style="color:#22d3bf">braidpath</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:braid_reduce">braid_reduce</a> · <a style="color:#22d3bf" href="opdrive:braid_artin_images">braid_artin_images</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_coordinates">dynnikov_coordinates</a> · <a style="color:#22d3bf" href="opdrive:dynnikov_act">dynnikov_act</a> · <a style="color:#22d3bf" href="opdrive:braid_equivalent">braid_equivalent</a> · <a style="color:#22d3bf" href="opdrive:homotopy_class_compare">homotopy_class_compare</a> · <a style="color:#22d3bf" href="opdrive:pairwise_winding">pairwise_winding</a> · <a style="color:#22d3bf" href="opdrive:homotopy_shortest_paths">homotopy_shortest_paths</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: braidpath.py — DRIVE 算子登记表。本条目由 <code style="color:#22d3bf">tools/opdocs.py md</code> 自动生成(请勿手工编辑)。*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

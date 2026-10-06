@@ -4,7 +4,7 @@ dim: drive
 category: agv
 in: image2d
 out: table
-examples: [poc_agv_fleet]
+examples: [poc_agv_fleet, poc_braid_homotopy_classes]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -32,6 +32,7 @@ Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。総コストが�
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 - [poc_agv_fleet](../../../../examples/poc_agv_fleet.py) — `py -3.11 examples/poc_agv_fleet.py`
+- [poc_braid_homotopy_classes](../../../../examples/poc_braid_homotopy_classes.py) — `py -3.11 examples/poc_braid_homotopy_classes.py`
 
 ## 型が繋がる次の op(`table` を入力に取れる)
 

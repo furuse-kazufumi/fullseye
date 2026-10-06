@@ -4,13 +4,13 @@
 
 > **[紙面の計測館 総合案内](https://qiita.com/furuse-kazufumi/items/c1606bcfa2085d204ad6)** の一棟です。ほかの棟・用語・テーゼは案内にあります。
 
-この棟には **114 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
+この棟には **115 点**を掛けています。番号は**収蔵番号**で、棟を移しても分けても変わりません。
 
 > 各展示の「使用 op」から、その op のノート(型契約・罠・図・Studio で走るプログラム)へ飛べます: [オペレータ目録](https://furuse.work/OP_CATALOG.html) / [op ノートの索引](https://furuse.work/ops/INDEX.html)。
 
 ### 産業検査ウィング ―― 合格の数字と不合格の数字は両立する
 
-検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 32 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
+検査ラインの数字は合否に直結するので、1 つの指標に畳みたくなります。この部屋の 33 点は、畳んだ瞬間に消えるものを並べたものです。まとめた ROC が種類別の盲点を隠す織物、MTF が合格のまま黒レベルが不合格になる迷光、読取率だけ見ると寛容なデコーダが良く見えるバーコード。
 
 真値はどれも自分で仕込んであります。周期地の閉形式、レーザー断面の h(x)、1 次元熱伝導の解析解、閉形式の欠陥周波数。だから「検出できました」の先にある「どこで検出できなくなるか」を、しきい値を後から合わせずに測れます。
 
@@ -959,6 +959,38 @@ py -3.11 examples/poc_agv_fleet.py
 この回が作った図は全部で **4 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_agv_fleet)
 
 使用 op(ノートへ): [`adg_build`](https://furuse.work/ops/drive/agv/adg_build.html) · [`adg_execute`](https://furuse.work/ops/drive/agv/adg_execute.html) · [`arrow`](https://furuse.work/ops/annotate/pointer/arrow.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_ecbs`](https://furuse.work/ops/drive/agv/mapf_ecbs.html) · [`mapf_joint_astar`](https://furuse.work/ops/drive/agv/mapf_joint_astar.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`naive_execute`](https://furuse.work/ops/drive/agv/naive_execute.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`text_box`](https://furuse.work/ops/annotate/text/text_box.html) · [`vda5050_check`](https://furuse.work/ops/drive/agv/vda5050_check.html) · [`vda5050_order`](https://furuse.work/ops/drive/agv/vda5050_order.html) · [`warehouse_grid`](https://furuse.work/ops/drive/agv/warehouse_grid.html)
+
+## No.2026.218 —— 同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に
+
+[![同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/01_braid_classes_spacetime.gif)
+
+*↑ **同じ始点と終点を結ぶ複数ロボットの計画を回り方で分ける ―― 時空の組紐と Dynnikov 座標でホモトピー類を数え、計画器の候補 61 本を 26 類に** ―― 平面を動く台車と動かない柱を時間の向きに積むと組紐になり、端を止めたまま連続に移り合える計画 ⇔ 同じ組紐。射影の軸の上で隣の紐と順が入れ替わる時刻を閉形式で求めて交差の符号列(組紐語)にし、Dynnikov 座標・Dehornoy の取っ手簡約・Artin 表現の 3 つの独立な判定で同じ組紐かを決める(背景は平面の複数エージェント経路計画のホモトピー、doi:10.1613/jair.1.19243)。図は 3 台の計画のうち類の違う 3 つを時空の組紐として回したもの。門: 組紐の関係式 1311 通りが Dynnikov の作用で整数のずれ 0・実数 2.8e-14、関係式でない σ₁σ₂ = σ₂σ₁ は 100/100 で破れる。3 つの判定が同じ組紐 100/100・違う組紐 100/100 で一致、参照実装(MIT)の出力と Dynnikov 座標 240/240。1 台が柱を回る類ごとの最短 [14, 14, 30, 30, 46] = 閉形式 14 + 16m。agvfleet の計画器の候補 61 本(CBS + 経由点つきの優先度付き)→ 26 類、CBS の最適 40 は最も安い類の代表。交換子 a b a⁻¹ b⁻¹ は巻き数が全部 0 なのに組紐は自明でない。罠: 格子の点対称な動きは射影の三重点を作り、角度を変えても消えない → 紐ごとの小さな一定のずらしで取り直す。正直に: 類は無限にあり、候補の抽出が見つけた類しか並ばない(経由点の抽出は 8 類中 3 類)。*
+
+[![図 01 の最初のコマ(等倍・可逆 PNG)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/02_braid_classes_spacetime_still.png)
+
+*↑ 測定の図 ―― 図 01 の最初のコマ(等倍・可逆 PNG)。*
+
+[![同じ 3 つの計画を床の上から見る(× は柱の代表の点)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/03_braid_classes_floor.png)
+
+*↑ 同じ 3 つの計画を床の上から見る(× は柱の代表の点)。*
+
+[![1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/04_braid_single_agent_classes.png)
+
+*↑ 1 台が柱を避けて左から右へ: 類ごとの最短経路を短い順に 5 本(費用 14・14・30・30・46 = 14 + 16m)。*
+
+[![候補を類に分けた表(費用の安い順)。](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table_720.jpg)](https://raw.githubusercontent.com/furuse-kazufumi/fullseye/master/docs/articles/assets/poc/poc_braid_homotopy_classes/05_braid_class_table.png)
+
+*↑ 候補を類に分けた表(費用の安い順)。*
+
+```
+py -3.11 examples/poc_braid_homotopy_classes.py
+```
+
+ソース: [examples/poc_braid_homotopy_classes.py](https://github.com/furuse-kazufumi/fullseye/blob/master/examples/poc_braid_homotopy_classes.py)
+
+この回が作った図は全部で **5 枚**あります —— [全部見る](https://github.com/furuse-kazufumi/fullseye/tree/master/docs/articles/assets/poc/poc_braid_homotopy_classes)
+
+使用 op(ノートへ): [`braid_class_representatives`](https://furuse.work/ops/drive/braidpath/braid_class_representatives.html) · [`braid_equivalent`](https://furuse.work/ops/drive/braidpath/braid_equivalent.html) · [`braid_from_trajectories`](https://furuse.work/ops/drive/braidpath/braid_from_trajectories.html) · [`braid_reduce`](https://furuse.work/ops/drive/braidpath/braid_reduce.html) · [`dynnikov_act`](https://furuse.work/ops/drive/braidpath/dynnikov_act.html) · [`dynnikov_coordinates`](https://furuse.work/ops/drive/braidpath/dynnikov_coordinates.html) · [`grid_distances`](https://furuse.work/ops/drive/agv/grid_distances.html) · [`grid_hole_points`](https://furuse.work/ops/drive/braidpath/grid_hole_points.html) · [`grid_paths_to_xy`](https://furuse.work/ops/drive/braidpath/grid_paths_to_xy.html) · [`homotopy_class_compare`](https://furuse.work/ops/drive/braidpath/homotopy_class_compare.html) · [`homotopy_shortest_paths`](https://furuse.work/ops/drive/braidpath/homotopy_shortest_paths.html) · [`mapf_cbs`](https://furuse.work/ops/drive/agv/mapf_cbs.html) · [`mapf_prioritized`](https://furuse.work/ops/drive/agv/mapf_prioritized.html) · [`pairwise_winding`](https://furuse.work/ops/drive/braidpath/pairwise_winding.html) · [`plan_conflicts`](https://furuse.work/ops/drive/agv/plan_conflicts.html) · [`plan_cost`](https://furuse.work/ops/drive/agv/plan_cost.html)
 
 ## No.2026.185 —— 金属積層造形の熱画像から X 線 CT へ ―― 生信号を温度と呼ばない、時間軸と画素ピッチ、下向き面だけに付く粉
 
