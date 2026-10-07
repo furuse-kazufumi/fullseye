@@ -626,8 +626,11 @@ def _regrid(flow, info, win, overlap, shape):
     step = max(1, int(round(win * (1.0 - overlap))))
     rows = np.arange(0, h - win + 1, step) + (win - 1) / 2.0
     cols = np.arange(0, w - win + 1, step) + (win - 1) / 2.0
-    ri = np.clip(np.searchsorted(info["rows"], rows), 0, len(info["rows"]) - 1)
-    ci = np.clip(np.searchsorted(info["cols"], cols), 0, len(info["cols"]) - 1)
+    # 真の最近傍(searchsorted は「右隣」を返し、粗い格子の中点より左の窓も右の粗ベクトルを取っていた)
+    r0 = np.asarray(info["rows"], dtype=np.float64)
+    c0 = np.asarray(info["cols"], dtype=np.float64)
+    ri = np.argmin(np.abs(rows[:, None] - r0[None, :]), axis=1)
+    ci = np.argmin(np.abs(cols[:, None] - c0[None, :]), axis=1)
     out = flow[:, ri][:, :, ci]
     return np.nan_to_num(out, nan=0.0)
 

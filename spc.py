@@ -1069,6 +1069,11 @@ def gum_expanded(table, u="u", sensitivity="sensitivity", dof="dof", level=0.95,
     base = gum_propagate(table, u=u, sensitivity=sensitivity, correlation=correlation)
     c = _cols(table, op, (dof,))
     nu = np.asarray(c[dof], dtype=np.float64)
+    # ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた
+    #   (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+    if np.isnan(nu).any():
+        raise ValueError("%s: degrees of freedom contain NaN (a missing value is not "
+                         "infinite — use numpy.inf only for a component known exactly)" % op)
     if (nu <= 0).any():
         raise ValueError("%s: degrees of freedom must be positive (use numpy.inf for "
                          "a component known exactly)" % op)
@@ -1383,8 +1388,9 @@ def _mt_unit_space(arr: np.ndarray, op: str):
 
     A feature with zero spread carries no information. Rather than dividing by
     zero (or refusing the whole matrix), its standard deviation is set to 1 and
-    its correlation row/column to the identity contribution, so the feature
-    contributes exactly nothing to the distance and the matrix stays invertible.
+    its correlation row/column to the identity contribution (so the matrix stays
+    invertible), and its row/column of the *inverse* correlation is zeroed, so
+    the feature contributes exactly nothing to the distance of any observation.
     The count of such features is reported, because silently ignoring a dead
     sensor is how a unit space starts lying.
     """
@@ -1421,6 +1427,15 @@ def _mt_unit_space(arr: np.ndarray, op: str):
         singular = True
     else:
         singular = False
+    if n_flat:
+        # ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new
+        #   observation that leaves the flat value is scored in raw units, so the
+        #   same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review).
+        #   Zero its row and column of the inverse correlation instead — then its
+        #   z drops out of z' R^-1 z whatever the new value is.
+        inv_corr = np.array(inv_corr, dtype=float, copy=True)
+        inv_corr[flat, :] = 0.0
+        inv_corr[:, flat] = 0.0
     return mean, std, corr, inv_corr, n_flat, singular
 
 

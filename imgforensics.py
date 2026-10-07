@@ -188,8 +188,10 @@ def _as_image(image, name: str = "image", *, allow_color: bool = True) -> np.nda
     黙ってやらないよう docstring に書いてある。
     """
     a = np.asarray(image)
-    if a.dtype == object:
-        raise ValueError(f"{name}: object dtype は受け取らない")
+    if a.dtype.kind not in "biuf":
+        # ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。
+        #   文字列・object も同じく受け取らない
+        raise ValueError(f"{name}: 実数の画素(bool / int / float)が要る、dtype={a.dtype} は受け取らない")
     a = a.astype(np.float64, copy=False)
     if a.ndim == 3:
         if not allow_color:
@@ -835,7 +837,8 @@ def _estimate_step(vals: np.ndarray, max_step: int = 64, *,
 def _ijg_table(quality: int) -> np.ndarray:
     """IJG の公開スケーリング規則で品質 → 輝度量子化表。"""
     q = int(np.clip(quality, 1, 100))
-    s = 5000.0 / q if q < 50 else 200.0 - 2.0 * q
+    # libjpeg jcparam.c は整数除算(5000 / q)。浮動小数の 5000/q は q=9..48 の 34 品質で表がずれた
+    s = float(5000 // q) if q < 50 else 200.0 - 2.0 * q
     t = np.floor((JPEG_LUMA_Q * s + 50.0) / 100.0)
     return np.clip(t, 1, 255)
 

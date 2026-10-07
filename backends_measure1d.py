@@ -57,7 +57,8 @@ def _as_image(v):
     /65535, int8/int16 by their positive max; wider ints such as python-list input
     are scaled by 255 / 65535 / their max according to the data range), so a 0..255
     step is no longer clipped flat and edge-less (2026-09-02). Floats are used
-    as-is and clipped to [0, 1]; bool -> {0, 1}.
+    as-is; a finite value above 1 raises ValueError (a 0..255 float image
+    would otherwise be clipped flat); bool -> {0, 1}.
     """
     arr = np.asarray(v)
     if arr.dtype == bool:
@@ -75,7 +76,15 @@ def _as_image(v):
     if x.ndim == 3:
         x = x.mean(-1)
     if x.ndim != 2 or x.shape[0] < 2 or x.shape[1] < 2:
-        return None
+        return None                                       # unusable shape: fail-soft as before
+    if arr.dtype.kind == "f":
+        fin = x[np.isfinite(x)]
+        if fin.size and float(fin.max()) > 1.0 + 1e-6:
+            # ★ A float image in 0..255 (cv2.imread(...).astype(float)) was clipped
+            #   to a flat 1.0 above 1 — every edge brighter than 1 vanished silently.
+            raise ValueError("measure1d: float image values must lie in [0, 1], got max %g "
+                             "(divide a 0..255 image by 255, or pass the integer array)"
+                             % float(fin.max()))
     x = np.nan_to_num(x, nan=0.0, posinf=1.0, neginf=0.0)
     return np.clip(x, 0.0, 1.0)
 

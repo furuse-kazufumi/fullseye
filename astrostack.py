@@ -1022,10 +1022,19 @@ def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
     rows = np.arange(h, dtype=np.float64)[:, None]
     cols = np.arange(w, dtype=np.float64)[None, :]
 
+    # ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。
+    #   画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので
+    #   ``truncated`` で印を付ける(area_px は欠けた後の面積)。
+    for r0, c0 in ctr:
+        if not (-0.5 <= r0 <= h - 0.5 and -0.5 <= c0 <= w - 0.5):
+            raise ValueError("%s: centre (%g, %g) lies outside the %dx%d image"
+                             % (op, r0, c0, h, w))
     out = []
     for r0, c0 in ctr:
         wgt, _ = _circle_weights(h, w, r0, c0, ra, ss)
         area = float(wgt.sum())
+        truncated = bool(r0 - ra < -0.5 or r0 + ra > h - 0.5
+                         or c0 - ra < -0.5 or c0 + ra > w - 0.5)
         rad2 = (rows - r0) ** 2 + (cols - c0) ** 2
         ann = (rad2 >= ri * ri) & (rad2 <= ro * ro)
         n_ann = int(ann.sum())
@@ -1041,6 +1050,7 @@ def aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0,
             "mag_instrumental": float(-2.5 * np.log10(flux)) if flux > 0
             else float("nan"),
             "r_aperture": ra, "r_inner": ri, "r_outer": ro,
+            "truncated": truncated,
         })
     return out
 
@@ -1246,7 +1256,13 @@ def sigma_clip_stack(frames, mode="sigma_clip", kappa=3.0, iters=5,
                 sc = np.nanstd(masked, axis=0)
             else:
                 sc = MAD_TO_SIGMA * np.nanmedian(np.abs(masked - ctr), axis=0)
-        sc = np.where(np.isfinite(sc) & (sc > 0.0), sc, np.inf)
+        # 尺度が 0 に潰れた画素(整数 DN で過半数が同じ値)は、全画素で束ねた
+        # 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので
+        # **何も落とさず**、宇宙線がそのまま平均に入った。
+        bad = ~(np.isfinite(sc) & (sc > 0.0))
+        if bad.any():
+            floor = _pooled_residual_sigma(masked - ctr)
+            sc = np.where(bad, floor if floor > 0.0 else np.inf, sc)
         new = np.abs(cube - ctr) <= k * sc
         # 全部落ちる画素を作らない(最低 1 枚は残す = 答えが nan にならない)
         empty = ~new.any(axis=0)
@@ -1509,6 +1525,32 @@ def cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1):
     return np.ascontiguousarray(work), mask
 
 
+def _pooled_residual_sigma(res):
+    """全画素・全フレームを束ねた残差の頑健な sigma(画素ごとの MAD が 0 に潰れたときの床)。
+
+    まず束ねた MAD。整数 DN で読み出し雑音が 1 DN 未満だと残差の過半数が
+    ちょうど 0 になり束ねた MAD も 0 になるので、そのときは 5σ の反復クリップを
+    掛けた RMS(宇宙線のような少数の巨大な外れ値は 1〜2 周で外れる)。
+    有限の残差が無い・全部 0 なら 0.0 を返す(呼び手が扱いを決める)。
+    """
+    r = np.abs(np.asarray(res, dtype=np.float64))
+    r = r[np.isfinite(r)]
+    if r.size == 0:
+        return 0.0
+    s = MAD_TO_SIGMA * float(np.median(r))
+    if s > 0.0:
+        return s
+    s = float(np.sqrt(np.mean(r * r)))
+    for _ in range(50):
+        if not s > 0.0:
+            return 0.0
+        s_new = float(np.sqrt(np.mean(np.square(r[r <= 5.0 * s]))))
+        if s_new == s:
+            break
+        s = s_new
+    return s
+
+
 def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None,
                             gain=1.0):
     """フレーム間比較による宇宙線除去 —— **同じ場所に二度は当たらない**。
@@ -1570,9 +1612,18 @@ def cosmic_ray_reject_stack(frames, kappa=5.0, min_frames=3, read_sigma=None,
     n = cube.shape[0]
     med = _median_over_frames(cube)
     mad = _median_over_frames(np.abs(cube - med)) * MAD_TO_SIGMA * _mad_correction(n)
-    # MAD が 0 に潰れる(同じ値が並ぶ)画素は、全体の雑音で下支えする
-    _, global_sigma = _robust_background(med, "mad")
-    scale = np.where(mad > 0.0, mad, max(global_sigma, 1e-12))
+    # MAD が 0 に潰れる(同じ値が並ぶ)画素は、フレーム方向の残差を全画素で
+    # 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、
+    # 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が
+    # 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
+    scale = mad
+    if np.any(~(mad > 0.0)):
+        pooled = _pooled_residual_sigma(cube - med[None, :, :]) * _mad_correction(n)
+        if not pooled > 0.0 and rs is None:
+            raise ValueError(
+                "cosmic_ray_reject_stack: the frame-to-frame scatter is 0 at some pixels and "
+                "also 0 pooled over the whole stack, so no noise scale exists; pass read_sigma")
+        scale = np.where(mad > 0.0, mad, pooled if pooled > 0.0 else 0.0)
     if rs is not None:
         model = np.sqrt(np.maximum(med, 0.0) / g + rs * rs)
         scale = np.maximum(scale, model)

@@ -171,6 +171,22 @@ def _iradon_np(sino, thetas_deg, filt):
 # --------------------------------------------------------------------------- #
 # operators (module-level so tests can call them directly)                    #
 # --------------------------------------------------------------------------- #
+def _pad_to_diagonal_square(x):
+    """Zero-pad a non-square 2-D slice to a centred square of side
+    ``ceil(hypot(H, W))`` so its whole rectangle lies inside the inscribed
+    circle that ``radon(circle=True)`` integrates over. Square input is
+    returned unchanged."""
+    H, W = x.shape[:2]
+    if H == W:
+        return x
+    D = int(np.ceil(np.hypot(H, W)))
+    top = (D - H) // 2
+    left = (D - W) // 2
+    out = np.zeros((D, D), dtype=np.float64)
+    out[top:top + H, left:left + W] = x
+    return out
+
+
 def tm_radon_forward(v, a, b):
     """Forward Radon projection: treat ``v`` as a slice image and integrate it
     along parallel rays to build a sinogram (rows = angles, cols = detector),
@@ -192,6 +208,13 @@ def tm_radon_forward(v, a, b):
     # forward->fbp chain reconstructed at corr 0.75 instead of 0.99.
     span = 180.0 * float(np.clip(0.5 + float(b), 0.5, 1.0))
     thetas = _thetas(n_ang, span)
+    # 2026-10-07: radon(circle=True) (and the rotate-and-sum fallback) only see
+    # the circle inscribed in the image; for H != W everything outside the
+    # central min(H, W) disc vanished from the sinogram (an object near the
+    # left edge of a 48x96 slice gave an all-zero sinogram). Non-square slices
+    # are zero-padded to a centred square whose side is the diagonal, so the
+    # whole rectangle lies inside the circle. Square slices are unchanged.
+    x = _pad_to_diagonal_square(x)
     if _HAVE_SKI:
         sino = radon(x, theta=thetas, circle=True).T        # (angles, detector)
     else:
