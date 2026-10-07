@@ -154,9 +154,18 @@ def _pose_to_R(pose):
 
 
 def _R_to_euler(R):
-    ry = np.arcsin(-np.clip(R[2, 0], -1, 1))
-    rx = np.arctan2(R[2, 1], R[2, 2])
-    rz = np.arctan2(R[1, 0], R[0, 0])
+    # ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が
+    # どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。
+    # cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に
+    # 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
+    cy = float(np.hypot(R[0, 0], R[1, 0]))
+    ry = np.arctan2(-R[2, 0], cy)
+    if cy < np.sqrt(np.finfo(float).eps):
+        rx = 0.0
+        rz = np.arctan2(-R[0, 1], R[1, 1])
+    else:
+        rx = np.arctan2(R[2, 1], R[2, 2])
+        rz = np.arctan2(R[1, 0], R[0, 0])
     return rx, ry, rz
 
 
@@ -202,7 +211,11 @@ def pose_average(poses):
     poses = np.asarray(poses, float).reshape(-1, 6)
     t = poses[:, :3].mean(0)
     qs = np.array([pose_to_quat(p) for p in poses])
-    qs *= np.sign(qs[:, :1] + 1e-12)
+    # ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が
+    # 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
+    s = np.sign(qs @ qs[0])
+    s[s == 0.0] = 1.0
+    qs *= s[:, None]
     qm = quat_normalize(qs.mean(0))
     return quat_to_pose(qm, *t)
 
@@ -298,6 +311,14 @@ def dual_quat_to_screw(dq):
     dq = _q(dq)
     qr, qd = dq[:4], dq[4:8]
     theta = 2 * np.arccos(np.clip(qr[0], -1, 1))
+    if float(np.linalg.norm(qr[1:])) < 1e-9:
+        # ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は
+        # 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので
+        # t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
+        tv = 2.0 * np.sign(qr[0] if qr[0] != 0 else 1.0) * qd[1:]
+        tn = float(np.linalg.norm(tv))
+        axis = tv / tn if tn > 0.0 else np.zeros(3)
+        return {"theta": float(theta), "d": tn, "axis": axis}
     st = np.sqrt(max(1 - qr[0] ** 2, 0)) + 1e-12
     l = qr[1:] / st
     d = -2 * qd[0] / st

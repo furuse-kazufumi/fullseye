@@ -988,8 +988,13 @@ def hough_plane_3d(vol, device="cpu", ndir=200, nd=128, mc=0.0, iso=0.5, tol=1.0
     idx = torch.nonzero(surf, as_tuple=False).float()
     if len(idx) < 10:
         return None
-    P = idx
     n = torch.stack([gz[surf], gy[surf], gx[surf]], 1)
+    # ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel
+    # 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に
+    # その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。
+    # 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、
+    # 斜め面は投影の離散化で ±0.3 以内が残る。
+    P = idx - 0.5 * n.abs().sum(1, keepdim=True) * n
     flip = n[:, 0] < 0
     n[flip] *= -1                                        # 半球に畳む(n と -n は同一平面)
     d = (n * P).sum(1)
@@ -1042,6 +1047,12 @@ def hough_sphere_3d(vol, device="cpu", radii=None, mc=0.0, iso=0.5, subvoxel=Tru
     if len(idx) < 10:
         return None
     n = torch.stack([gz[surf], gy[surf], gx[surf]], 1)
+    # ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel
+    # 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。
+    # 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。
+    # 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel
+    # (残りは丸め投票と放物線補間の偏り)。
+    idx = idx - 0.5 * n.abs().sum(1, keepdim=True) * n
     D, H, W = surf.shape
     dims = torch.tensor([D, H, W], device=device)
     radii = list(radii) if radii is not None else list(range(4, 16))
@@ -1950,6 +1961,14 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
     Q = np.ascontiguousarray(_d, np.float64)
     Nn = np.ascontiguousarray(_n, np.float64)
     Nn = Nn / np.maximum(np.linalg.norm(Nn, axis=1, keepdims=True), 1e-12)
+    # ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い
+    # 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、
+    # 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。
+    # dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。
+    # 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
+    _c = 0.5 * (Q.min(axis=0) + Q.max(axis=0))
+    P0 = P0 - _c
+    Q = Q - _c
 
     n_src = P0.shape[0]
     if reproducible:
@@ -1968,6 +1987,7 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
     else:
         R_tot = np.ascontiguousarray(np.asarray(init[0], np.float64)).reshape(3, 3).copy()
         t_tot = np.ascontiguousarray(np.asarray(init[1], np.float64)).reshape(3).copy()
+        t_tot = t_tot + R_tot @ _c - _c          # 世界の t → 中心化座標の t'
         cur = _move(P0, R_tot, t_tot)
     keep_n = n_src if trim is None else max(3, int(round((1.0 - float(trim)) * n_src)))
 
@@ -2008,7 +2028,8 @@ def icp_point2plane(src, dst, dst_normals, iters=30, tol=1e-9,
             break
         prev = rmse
 
-    return R_tot, t_tot, cur, rmse, n_iter
+    # 中心化座標 → 世界座標(x' = x − c なので t = t' + c − R·c、aligned = cur + c)
+    return R_tot, t_tot + _c - R_tot @ _c, cur + _c, rmse, n_iter
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -2772,10 +2793,13 @@ def fit_sphere_3d(points):
     voxel からの検出は ``hough_sphere_3d``。
     """
     P = _pts(points, "fit_sphere_3d", 4)
+    # ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし
+    # 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
+    p0 = P.mean(0); P = P - p0
     A = np.hstack([2 * P, np.ones((len(P), 1))]); b = (P ** 2).sum(1)
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
     c = sol[:3]
-    return c, float(np.sqrt(max(sol[3] + c @ c, 0.0)))
+    return c + p0, float(np.sqrt(max(sol[3] + c @ c, 0.0)))
 
 
 def fit_circle_3d(points):
@@ -3017,18 +3041,26 @@ def _zernike_basis(nr, nt, n_max):
     return np.stack(rows, 0), idx, R.ravel()
 
 
-def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72):
+def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72, center=None, radius=None):
     """円板画像 → Zernike 係数(光学/波面計測の**極座標曲面近似**)。返り値 {(n,m): coef}。
 
     直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/
     coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。
 
-    honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では
-    理論上直交のモード間に**最大 ~10% のクロストーク**が残る(例: 純 (2,0) defocus 入力で
-    係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が
-    要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。
+    瞳(単位円板 ρ=1)は既定で画像中心 ``((H-1)/2, (W-1)/2)``、半径 ``min(H, W)/2 - 1`` 画素に
+    置かれる。画像の瞳がこれと違うなら ``center=(row, col)`` と ``radius``(画素)で渡す —— 渡さないと
+    半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を
+    既定で読むと (2,0)=0.984 / (0,0)=−0.015、``radius=(H-1)/2`` を渡せば 0.999999)。瞳の円が画像から
+    はみ出す ``center`` / ``radius`` は ValueError。
 
-    Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
+    honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% の
+    クロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が
+    合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は
+    (1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で
+    いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと
+    (examples/poc_zernike_aberrations.py の実測)。
+
+    Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。
     """
     img = _f32_finite(disk_image, "fit_zernike: disk_image")
     if img.ndim != 2:
@@ -3042,6 +3074,22 @@ def fit_zernike(disk_image, n_max=6, device="cpu", nr=48, nt=72):
     nr, nt = int(nr), int(nt)
     B, idx, rho = _zernike_basis(nr, nt, n_max)
     cy, cx = (H - 1) / 2, (W - 1) / 2; rad = min(H, W) / 2 - 1
+    # ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+    if center is not None:
+        try:
+            cy, cx = (float(v) for v in center)
+        except (TypeError, ValueError) as e:
+            raise ValueError("fit_zernike: center must be (row, col), got %r" % (center,)) from e
+    if radius is not None:
+        rad = float(radius)
+    if not (np.isfinite(cy) and np.isfinite(cx) and np.isfinite(rad) and rad > 0):
+        raise ValueError("fit_zernike: pupil center/radius must be finite with radius > 0 "
+                         "(got center=(%r, %r), radius=%r)" % (cy, cx, rad))
+    _eps = 1e-9 * max(H, W)
+    if (cy - rad < -_eps or cy + rad > H - 1 + _eps
+            or cx - rad < -_eps or cx + rad > W - 1 + _eps):
+        raise ValueError("fit_zernike: the pupil circle (center=(%g, %g), radius=%g) leaves the "
+                         "%dx%d image — samples outside would read as 0" % (cy, cx, rad, H, W))
     rr = np.linspace(0, 1, nr); th = np.linspace(0, 2 * np.pi, nt, endpoint=False)
     Rg, Tg = np.meshgrid(rr, th, indexing="ij")
     ys = cy + Rg * rad * np.sin(Tg); xs = cx + Rg * rad * np.cos(Tg)

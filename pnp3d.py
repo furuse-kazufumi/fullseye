@@ -235,12 +235,16 @@ def _refine_lm(X, x, K, R, t, iters=30):
     cost = float(r @ r)
     lam = 1e-3
     for _ in range(int(iters)):
-        Xc = X @ R.T + t                                        # (N,3)
-        # d Xc / d[δω, δt] = [ -[Xc]x | I ]  (R ← exp(δω) R)
+        Xr = X @ R.T                                            # (N,3)
+        Xc = Xr + t
+        # d Xc / d[δω, δt] = [ -[R X]x | I ]  (R ← exp(δω) R, t ← t + δt)
+        # ★2026-10-07 レビュー修正: 旧式は回転ブロックに -[Xc]x(= t も回す更新の微分)を使い、
+        # 実際の更新(t は回さない)と食い違っていた。初期値が良いほど収束が線形に遅くなり、
+        # 30 反復で最小に届かないことがあった(重心中心化した DLT 初期値で 50 反復要した)。
         J3 = np.zeros((N, 3, 6))
-        J3[:, 0, 1] = Xc[:, 2]; J3[:, 0, 2] = -Xc[:, 1]
-        J3[:, 1, 0] = -Xc[:, 2]; J3[:, 1, 2] = Xc[:, 0]
-        J3[:, 2, 0] = Xc[:, 1]; J3[:, 2, 1] = -Xc[:, 0]
+        J3[:, 0, 1] = Xr[:, 2]; J3[:, 0, 2] = -Xr[:, 1]
+        J3[:, 1, 0] = -Xr[:, 2]; J3[:, 1, 2] = Xr[:, 0]
+        J3[:, 2, 0] = Xr[:, 1]; J3[:, 2, 1] = -Xr[:, 0]
         J3[:, 0, 3] = J3[:, 1, 4] = J3[:, 2, 5] = 1.0
         A = np.einsum("ij,njk->nik", K, J3)                     # d(K Xc)/dξ (N,3,6)
         p = Xc @ K.T                                            # (N,3)
@@ -302,6 +306,12 @@ def pnp_pose(points_3d, points_2d, K, refine=True, iters=30):
         raise ValueError(
             "PnP requires 3D points spanning at least a plane "
             "(all points collinear/coincident: pose is not determined)")
+    # ★2026-10-07 レビュー修正: 世界原点から遠い点群(オフセット 1e4、画素ノイズ 0.5 px)で
+    # DLT の脱正規化 M = T2⁻¹·Pn·T3 の並進列が桁落ちし、t が壊れた初期値から LM が
+    # 回転誤差 175° の別解へ落ちていた。入口で重心 c を引いて解き、最後に t − R·c で戻す
+    # (Xc = R(X − c) + t' = R X + (t' − R c))。
+    c_world = X.mean(0)
+    X = X - c_world
     m = _normalized_rays(x, K)
     candidates = []
     planar = coplanarity_ratio(X) < _COPLANAR_TOL
@@ -319,7 +329,7 @@ def pnp_pose(points_3d, points_2d, K, refine=True, iters=30):
         if best is None or score > best[0]:
             best = (score, R0, t0, rms)
     _, R, t, rms = best
-    return R, t, float(rms)
+    return R, t - R @ c_world, float(rms)
 
 
 def dlt_pose(points_3d, points_2d, K):

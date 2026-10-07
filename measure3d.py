@@ -113,17 +113,21 @@ def fit_sphere3(points) -> dict:
     ``center`` (``cd/cr/cc``), radius ``r``, and the RMS radial residual. Raises
     ``ValueError`` on < 4 points or a coplanar set (no finite sphere)."""
     p = _as_points3(points, 4, "points")
-    A = np.hstack([2.0 * p, np.ones((len(p), 1))])
-    b = (p ** 2).sum(1)
+    # 2026-10-07 review fix: solve in centroid-centred coordinates. The uncentred
+    # |P|^2 cancels catastrophically far from the origin (offset 1e6 -> radius off by 7.5e5).
+    p0 = p.mean(0)
+    q = p - p0
+    A = np.hstack([2.0 * q, np.ones((len(q), 1))])
+    b = (q ** 2).sum(1)
     # coplanar / degenerate <=> A is rank-deficient in its point columns.
-    sv = np.linalg.svd(p - p.mean(0), compute_uv=False)
+    sv = np.linalg.svd(q, compute_uv=False)
     if sv[-1] <= 1e-9 * sv[0]:
         raise ValueError("points are coplanar or degenerate; no finite sphere fits")
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
-    c = sol[:3]
-    r = float(np.sqrt(max(sol[3] + c @ c, 0.0)))
-    rms = float(np.sqrt(np.mean((np.linalg.norm(p - c, axis=1) - r) ** 2)))
-    return {**_center_keys(c), "r": r, "rms": rms}
+    cq = sol[:3]
+    r = float(np.sqrt(max(sol[3] + cq @ cq, 0.0)))
+    rms = float(np.sqrt(np.mean((np.linalg.norm(q - cq, axis=1) - r) ** 2)))
+    return {**_center_keys(cq + p0), "r": r, "rms": rms}
 
 
 def fit_circle3(points) -> dict:

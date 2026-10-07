@@ -69,15 +69,24 @@ def _fit_plane_ls(P):
 
 
 def _fit_sphere_ls(P):
-    """点群 → 代数最小二乗球。返り (center(3,), radius)。coplanar 等で失敗時 None。"""
-    A = np.hstack([2.0 * P, np.ones((len(P), 1))])
-    b = (P ** 2).sum(1)
+    """点群 → 代数最小二乗球。返り (center(3,), radius)。coplanar 等で失敗時 None。
+
+    ★2026-10-07 レビュー修正: (1) 重心へ寄せて解く(未中心化の |p|² は原点から遠い点群で
+    桁落ちし、オフセット 1e6 で半径が 8e5 狂った)。(2) 同一平面上・共線の点は球が定まらない
+    (lstsq の最小ノルム解が黙って返っていた)ので measure3d.fit_sphere3 と同じ判定で None。"""
+    p0 = P.mean(0)
+    Q = P - p0
+    sv = np.linalg.svd(Q, compute_uv=False)
+    if not np.all(np.isfinite(sv)) or sv[-1] <= 1e-9 * sv[0]:
+        return None
+    A = np.hstack([2.0 * Q, np.ones((len(Q), 1))])
+    b = (Q ** 2).sum(1)
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
     c = sol[:3]
     r2 = sol[3] + c @ c
     if not np.isfinite(r2) or r2 < 0:
         return None
-    return c, float(np.sqrt(r2))
+    return c + p0, float(np.sqrt(r2))
 
 
 def _fit_line_ls(P):
@@ -88,7 +97,12 @@ def _fit_line_ls(P):
 
 
 def _fit_circle_2d(q):
-    """2D 点 (M,2) → 代数最小二乗円。返り (center2d(2,), radius) or None。"""
+    """2D 点 (M,2) → 代数最小二乗円。返り (center2d(2,), radius) or None。
+
+    ★2026-10-07 レビュー修正: 重心へ寄せて解く(未中心化の |q|² は軸が原点から遠い円筒で
+    桁落ちし、オフセット 1e6 で半径が 7e5 狂った)。"""
+    q0 = q.mean(0)
+    q = q - q0
     A = np.hstack([2.0 * q, np.ones((len(q), 1))])
     b = (q ** 2).sum(1)
     sol, *_ = np.linalg.lstsq(A, b, rcond=None)
@@ -96,7 +110,7 @@ def _fit_circle_2d(q):
     r2 = sol[2] + c2 @ c2
     if not np.isfinite(r2) or r2 < 0:
         return None
-    return c2, float(np.sqrt(r2))
+    return c2 + q0, float(np.sqrt(r2))
 
 
 def _info(mask, iters, degenerate=False):

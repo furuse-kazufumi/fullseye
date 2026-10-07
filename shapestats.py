@@ -530,10 +530,26 @@ def mirror_plane_from_pairs(landmarks, pairs=None, midline=None):
         raise ValueError("need >= 3 midline points to fit a plane (got %d)"
                          % mids.shape[0])
     c = mids.mean(0)
-    _, _, vt = np.linalg.svd(mids - c, full_matrices=False)
+    _, sv, vt = np.linalg.svd(mids - c, full_matrices=False)
     normal = vt[-1]
-    # 法線の向きを「左の対 -> 右の対」に揃える(符号が任意だと符号つき偏差が裏返る)
     lr = (p[idx[:, 1]] - p[idx[:, 0]]).mean(0)
+    lr_n = float(np.linalg.norm(lr))
+    collinear = sv[0] <= 0.0 or sv[1] <= 1e-3 * sv[0]
+    contradicts = lr_n > 0.0 and abs(float(normal @ lr)) < 0.5 * lr_n
+    if collinear or contradicts:
+        # ★2026-10-07 レビュー修正: 中点がほぼ一直線(2 番目の広がりが 1 番目の 1e-3 未満)
+        # または一点だと、面は直線まわりに決まらず vt[-1] は雑音で決まる(真の面から 90 度
+        # ずれうる)。中点の面の法線が左→右の平均ベクトルと 60 度以上食い違う場合も、鏡映面と
+        # して左右の対と矛盾する。どちらも左→右の平均ベクトルの、中点の主方向に直交する成分を
+        # 法線にする(面の位置は従来どおり中点の重心)。それも決まらなければ ValueError。
+        line = vt[0] if sv[0] > 0.0 else np.zeros(3)
+        cand = lr - float(lr @ line) * line
+        if float(np.linalg.norm(cand)) <= 1e-9 * max(float(np.linalg.norm(lr)), 1e-300):
+            raise ValueError("mirror_plane_from_pairs: the pair midpoints are collinear and the "
+                             "left->right direction is parallel to that line — the mirror plane "
+                             "is not determined (add midline landmarks or non-collinear pairs)")
+        normal = cand / float(np.linalg.norm(cand))
+    # 法線の向きを「左の対 -> 右の対」に揃える(符号が任意だと符号つき偏差が裏返る)
     if float(normal @ lr) < 0.0:
         normal = -normal
     return np.vstack([c, normal / max(float(np.linalg.norm(normal)), 1e-12)])

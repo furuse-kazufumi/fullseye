@@ -202,12 +202,13 @@ def registration_recall(source, target, gt_transform, est_transform,
 def rotation_translation_error(gt, est):
     """2 つの 4×4 変換間の相対回転誤差(測地角[度], RRE)と相対並進誤差(RTE)。
 
-    RRE = 角度(gt_R^T · est_R) = arccos((tr−1)/2) を度で。任意軸まわりの角 θ の
+    RRE = 角度(gt_R^T · est_R) = atan2(|axial(dR − dRᵀ)|/2, (tr−1)/2) を度で。任意軸まわりの角 θ の
     回転差なら RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。
     非 4×4 は ValueError(fail-closed)。
 
     - ``gt`` / ``est``: 4×4 同次変換(左上 3×3 が回転、右列が並進)。非有限を含むと ``ValueError``。
-    - ``rre_deg`` は [0, 180] の度(cos は [-1,1] にクリップしてから arccos)。``rte`` は並進列の差の
+    - ``rre_deg`` は [0, 180] の度(sin を歪対称部、cos を trace から取る atan2。arccos は 1 の近くで
+      √ε の床を持ち 1e-6° 以下を 0 と答えていた —— 2026-10-07 修正)。``rte`` は並進列の差の
       ノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠い
       ほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。
     - 回転行列が直交でなくても検査しないので、``gicp`` 等の出力 (R,t) を同モジュールの
@@ -217,7 +218,8 @@ def rotation_translation_error(gt, est):
     G = _as_transform(gt, "gt")
     E = _as_transform(est, "est")
     dR = G[:3, :3].T @ E[:3, :3]
-    cos = np.clip((np.trace(dR) - 1.0) / 2.0, -1.0, 1.0)
-    rre = float(np.degrees(np.arccos(cos)))
+    s = 0.5 * float(np.linalg.norm([dR[2, 1] - dR[1, 2], dR[0, 2] - dR[2, 0], dR[1, 0] - dR[0, 1]]))
+    c = 0.5 * (float(np.trace(dR)) - 1.0)
+    rre = float(np.degrees(np.arctan2(s, c)))
     rte = float(np.linalg.norm(G[:3, 3] - E[:3, 3]))
     return rre, rte

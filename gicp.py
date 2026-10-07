@@ -175,6 +175,14 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     if S.shape[0] < 3 or Q.shape[0] < 3:
         raise ValueError("both source and target need at least 3 points (degenerate)")
 
+    # ★2026-10-07 レビュー修正: 小角線形化 R ← (I+[ω]×)R は原点まわりの回転なので、原点から
+    # 遠い点群(オフセット 1e3 で回転誤差 20°)では回転と並進がほぼ縮退して誤った姿勢に落ちた。
+    # target の外接箱の中心 c へ両点群を寄せて解き、t = t' + c − R·c で世界へ戻す
+    # (外接箱の中心は点の順に依らない = reproducible=True のビット一致を保つ)。
+    _c = 0.5 * (Q.min(axis=0) + Q.max(axis=0))
+    S = S - _c
+    Q = Q - _c
+
     # 初期姿勢
     if init is None:
         R = np.eye(3, dtype=np.float64)
@@ -182,6 +190,7 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     else:
         R = np.asarray(init[0], np.float64).reshape(3, 3).copy()
         t = np.asarray(init[1], np.float64).reshape(3).copy()
+        t = t + R @ _c - _c                      # 世界の t → 中心化座標の t'
 
     # スケール相対な収束判定のための特徴長(target の RMS 半径)
     q_center = Q.mean(axis=0)
@@ -264,4 +273,5 @@ def gicp(source, target, max_iter: int = 30, k: int = 20, epsilon: float = 1e-3,
     if not (np.all(np.isfinite(R)) and np.all(np.isfinite(t)) and np.isfinite(rmse)):
         raise ValueError("GICP numerical divergence (non-finite result) = fail-closed")
 
+    t = t + _c - R @ _c                          # 中心化座標 → 世界座標
     return {"R": R, "t": t, "rmse": rmse, "iterations": n_iter}

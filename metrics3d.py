@@ -256,9 +256,10 @@ def pose_error(R_est, t_est, R_gt, t_gt):
     """姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。
 
     計算:
-    - 回転: ``dR = R_est.T @ R_gt`` の回転角 ``arccos((trace(dR) - 1) / 2)`` を度に
-      直す(``cos`` は ``[-1, 1]`` にクリップして丸め誤差で NaN にしない)。値域
-      ``[0, 180]`` 度。``R_est == R_gt`` なら 0。
+    - 回転: ``dR = R_est.T @ R_gt`` の回転角 ``atan2(|axial(dR − dRᵀ)| / 2, (trace(dR) − 1) / 2)``
+      を度に直す(sin を歪対称部、cos を trace から取る。arccos は 1 の近くで √ε の床を持ち
+      1e-6° 以下を 0 と答えていた —— 2026-10-07 修正)。値域 ``[0, 180]`` 度。
+      ``R_est == R_gt`` なら 0。
     - 並進: ``|t_est - t_gt|``(ユークリッドノルム、座標と同じ単位)。
 
     引数: ``R_est``, ``R_gt`` は ``(3, 3)``、``t_est``, ``t_gt`` は長さ 3。float に
@@ -276,10 +277,19 @@ def pose_error(R_est, t_est, R_gt, t_gt):
     Re = np.asarray(R_est, float)
     Rg = np.asarray(R_gt, float)
     dR = Re.T @ Rg
-    cos = np.clip((np.trace(dR) - 1.0) / 2.0, -1.0, 1.0)
-    rot = float(np.degrees(np.arccos(cos)))
+    rot = _rotation_angle_deg(dR)
     trans = float(np.linalg.norm(np.asarray(t_est, float) - np.asarray(t_gt, float)))
     return rot, trans
+
+
+def _rotation_angle_deg(dR):
+    """回転行列の回転角[度] = atan2(sin, cos)。sin は歪対称部 |axial(dR − dRᵀ)|/2、cos は (tr−1)/2。
+
+    arccos((tr−1)/2) は 1 の近くで √ε の床を持ち、1e-6° 以下を 0 と答える
+    (photometric.angular_error_deg と同じ理由で atan2 に揃えた)。"""
+    s = 0.5 * float(np.linalg.norm([dR[2, 1] - dR[1, 2], dR[0, 2] - dR[2, 0], dR[1, 0] - dR[0, 1]]))
+    c = 0.5 * (float(np.trace(dR)) - 1.0)
+    return float(np.degrees(np.arctan2(s, c)))
 
 
 def m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4):
@@ -356,10 +366,17 @@ def m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4):
 
     # 円筒に入りうる点は「半径 sqrt(r^2 + md^2) の球」の中にしかない。球で粗く絞って
     # から軸・半径で厳密に判定する(全点との内積を M 回やるより速い)。
-    reach = r if md is None else float(np.hypot(r, md))
-    ta, tb = cKDTree(A), cKDTree(B)
-    ia = ta.query_ball_point(C, reach)
-    ib = tb.query_ball_point(C, reach)
+    # ★2026-10-07 レビュー修正: md=None(軸方向は無制限)で球の半径を r にしていたため、
+    # 実際は「半径 r の球」で切り取っていた(面が法線方向に r 以上動くと両側が揃わず nan)。
+    # 無制限の円筒は球で絞れないので、全点を候補にして軸・半径で判定する。
+    if md is None:
+        ia = [list(range(len(A)))] * len(C)
+        ib = [list(range(len(B)))] * len(C)
+    else:
+        reach = float(np.hypot(r, md))
+        ta, tb = cKDTree(A), cKDTree(B)
+        ia = ta.query_ball_point(C, reach)
+        ib = tb.query_ball_point(C, reach)
 
     dist = np.full(len(C), np.nan)
     lod = np.full(len(C), np.nan)
