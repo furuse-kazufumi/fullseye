@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>언샤프 마스크(선명화). 5x5 커널로 <code style="color:#22d3bf">kornia.filters.unsharp_mask</code>를 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>a は未使用</b>、b がぼかしのシグマ（<code style="color:#22d3bf">0.5 + 2.0 * b</code>、範囲 0.5〜2.5）を振る。元画像から低周波成分（ぼかし版）を引いた差分を強調して足し戻す古典的な鮮鋭化。</p>
+<p><b>a는 사용하지 않으며</b>, b가 블러의 시그마(<code style="color:#22d3bf">0.5 + 2.0 * b</code>, 범위 0.5~2.5)를바꾼다. 원래 영상에서 저주파 성분(블러판)을 뺀 차분을 강조하여 다시 더하는고전적인 샤프닝.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복하지 않고 접는다 (d c b | a b c d, OpenCV의 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;wetness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>젖은 면의 바탕색. <b>확산이 어두워집니다</b>(그리고 정반사가 늘어납니다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
+<p>base_rgb: 마른 상태의 색 (H,W,3) 또는 (3,). wet: 젖은 정도(0–1).</p>
+<p>ior: 수막의 굴절률.</p>
+<p>반환값: 젖은 상태의 확산색(같은 형태).</p>
+<p>왜 어두워지는가: 수막의 안쪽에서 전반사가 일어나, 확산광이 몇 번이고 표면으로 되돌려져그때마다 흡수된다. 근사로서, 마른 반사율 ρ에 대해 내부 반사율 Ri = 1 − (1 − Ri0)/n² 상당의 재흡수를 곱한다 ―― 젖은 모래가 검게 보이는 현상 그 자체(경면이 늘어나는 것은 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code>를 겹쳐서 나타낸다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

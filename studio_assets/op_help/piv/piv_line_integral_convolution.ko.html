@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선적분 컨볼루션(LIC) —— 흐름을 따라 백색 잡음을 흐리게 한 무늬의 영상.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ベクトルの矢印は密にすると潰れ、疎にすると構造を見落とす。LIC は<b>画素ごと</b> に流線に沿って雑音を平均するので、密度の選択が要らない。向きの情報は落ちる(前後を区別しない)ので、<b>回転の向きを見たいときは矢印か色相図と併用する</b>。</p>
+<p>벡터의 화살표는 촘촘하게 하면 뭉개지고, 성기게 하면 구조를 놓친다. LIC는 <b>화소마다</b> 유선을 따라 잡음을 평균하므로 밀도의 선택이 필요 없다. 방향의 정보는 떨어진다(앞뒤를 구별하지 않는다)므로, <b>회전 방향을 보고 싶을 때는 화살표나 색상도와 병용한다</b>.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>length: 流線に沿って積分する片側の歩数。長いほど滑らかになるが、</p>
-<p>渦の芯のような曲率の大きい場所では<b>構造が伸びて嘘になる</b>。</p>
-<p>upsample: 出力の解像度倍率(格子は粗いので拡大してから積分する)。</p>
-<p>seed: 白色雑音の種。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>length: 유선을 따라 적분하는 한쪽 걸음 수. 길수록 매끄러워지지만,</p>
+<p>소용돌이의 심처럼 곡률이 큰 곳에서는 <b>구조가 늘어나 거짓이 된다</b>.</p>
+<p>upsample: 출력의 해상도 배율(격자는 거칠므로 확대한 뒤 적분한다).</p>
+<p>seed: 백색 잡음의 시드.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h * upsample, w * upsample)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h * upsample, w * upsample)</code> float64, 값 범위 [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -6,23 +6,22 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>同一批粒子被反复移动而得到的图像序列。返回 <code style="color:#22d3bf">(frames, truth)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
+<p><code style="color:#22d3bf">piv_synth_pair</code> 生成 2 幅，而这里生成<b>持续追踪 1 个流动的序列</b>。集合相关和时间统计只有用它才能验证 —— 若把独立的图像对排起来称为序列，相邻 2 幅之间没有对应关系，统计就失去意义(实测：相对平均 0.73 px，脉动 RMS 竟为 4.05 px，测到的是生成方式而不是流动)。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 1 コマあたりの変位(<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
-<p>n_frames: コマ数(2 以上)。</p>
-<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
-<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
-<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
-<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
-<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
-<p>それは PIV の性質であって間違いではないが、<b>時間統計の検証には使えない</b>ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>displacement: 每 1 帧的位移(与 <code style="color:#22d3bf">piv_synth_pair</code> 相同的格式)。</p>
+<p>n_frames: 帧数(2 以上)。</p>
+<p>jitter: 每帧<b>对整个场</b>施加的扰动的标准差 [px]。0 则为定常流。</p>
+<p>要试验时间统计(脉动、雷诺应力)，请让它大于 0。</p>
+<p>★ 不是逐粒子独立的扰动，而是<b>每帧一个</b>扰动。</p>
+<p>若逐粒子施加，会在窗口内被平均，缩小为 N 的平方根分之一，</p>
+<p>注入值与测量值对不上(实测：注入 0.3 测得 0.15)。</p>
+<p>这是 PIV 的性质而不是错误，但<b>不能用于验证时间统计</b>，因此这里做成模拟非定常流动本身的形式。</p>
 <p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p>与 <code style="color:#22d3bf">piv_synth_pair</code> 相同。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は</p>
-<p><b>1 コマあたり</b>の平均変位。</p>
+<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>。<code style="color:#22d3bf">truth</code> 是</p>
+<p><b>每 1 帧</b>的平均位移。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

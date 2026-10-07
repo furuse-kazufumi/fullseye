@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Charakterisierung defekter Pixel (Abschnitt 8.8): logarithmisches Histogramm (Gl. 73–75) und kumuliertes Histogramm (Gl. 77) sowie die Anzahl der Pixel oberhalb einer Schwelle.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>
+<p>*avg_image*: Mittelwertbild aus L Bildern (zeitliches Rauschen durch Mittelung entfernt). *L*: Anzahl gemittelter Bilder (macht die Bin-Breite zu einem ganzzahligen Vielfachen von 1/L). *threshold* (erforderlich) [DN]: zählt die Pixel, deren absolute Abweichung vom Mittelwert diesen Wert <b>überschreitet</b> (das &quot;Sperrband&quot; der Anwendung).</p>
+<p>Rückgabewert <code style="color:#22d3bf">{&quot;hist_centers&quot;: Abweichung vom Mittelwert, &quot;hist_counts&quot;, &quot;accum_x&quot;: absolute Abweichung, &quot;accum_percent&quot;: % der Pixel mit mindestens dieser Abweichung, &quot;n_above&quot;: Anzahl, &quot;mu&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: nicht 2-D / L keine positive ganze Zahl / threshold negativ / Bild konstant (Histogrammbreite 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

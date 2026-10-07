@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">optscene.camera_rays</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>카메라 dict → 모든 화소의 광선: origins (H·W, 3), directions (H·W, 3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので <code style="color:#22d3bf">reshape(height, width, 3)</code> で像に戻せる。K の逆写像で作っているため、交点を K で再投影すると元の画素に<b>厳密に</b>戻る(往復誤差 &lt; 1e-9)。</p>
+<p>방향은 단위 벡터, 원점은 모두 시점. 화소 (u, v)는 행 우선으로 늘어서므로 <code style="color:#22d3bf">reshape(height, width, 3)</code>으로 상으로 되돌릴 수 있다. K의 역사상으로 만들고 있으므로, 교점을 K로 재투영하면 원래 화소로 <b>정확히</b> 돌아온다(왕복 오차 &lt; 1e-9).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

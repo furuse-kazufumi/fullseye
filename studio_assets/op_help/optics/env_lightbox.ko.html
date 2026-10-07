@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;env_lightbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>촬영 박스의 환경(넓은 천장 조명 + 은은하게 밝은 주변). <b>무채색</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で分かった 2 つの条件を満たすように作ってある:</p>
-<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が黒く写るのは、映るものが黒いから)。</p>
-<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を目方向に引き伸ばすからである。</p>
-<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に集中し、環境の勾配を掃かない)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 程度が目安。</p>
+<p><code style="color:#22d3bf">env_studio</code>가 &quot;극적으로 보이기&quot; 위한 어두운 방 + 작은 소프트박스 2등인 데비해, 이쪽은 <b>가공면이 가공면으로 보이기</b> 위한 환경이다. 2026-09-05의 실측으로알게 된 2가지 조건을 만족하도록 만들어 두었다:</p>
+<p style="margin:2px 0 2px 12px">• 주위가 밝을 것 ―― 어두운 환경에서는 알루미늄이 새까매진다(반사율 ~0.9의 금속이검게 찍히는 것은 비치는 것이 검기 때문이다).</p>
+<p style="margin:2px 0 2px 12px">• 그래도 <b>그라데이션이 있을 것</b> ―― 완전히 균일한 환경에서는 어떤 이방성 로브라도같은 값을 반환하므로 가공 자국이 사라진다. 브러시 자국이 보이는 것은 자국이 환경의 명암을자국 방향으로 늘이기 때문이다.</p>
+<p>가공 자국은 <b>비스듬히 보지 않으면 나오지 않는다</b>(바로 위에서 본 평면은 반사 방향이 전 화소에서 천정에집중되어 환경의 그라데이션을 훑지 않는다). <code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 정도가 기준이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

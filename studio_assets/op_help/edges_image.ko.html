@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Canny 에지 검출(<code style="color:#22d3bf">skimage.feature.canny</code>, 시그마 <code style="color:#22d3bf">0.5+2*a</code>)에 의한 영역 추출. 가우시안 평활화→그래디언트→비최대 억제→히스테리시스 임계값이라는 여러 단계의 처리를 한데 모아 수행하는, 널리 쓰이는 에지 검출법이다. HALCON의 <code style="color:#22d3bf">edges_image</code>(Detect edges using Deriche, Lanser, Shen, or Canny filters.)에 해당한다(HALCON은 Deriche/Lanser/Shen/Canny 중 선택할 수 있지만, 여기서는 Canny로 고정한다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用(内部のヒステリシスしきい値は skimage の既定値)。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>가 가우스 평활화의 시그마를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다(내부의 히스테리시스임계값은 skimage의 기본값). skimage가 없는 환경에서는 이 분기를 호출할 수 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

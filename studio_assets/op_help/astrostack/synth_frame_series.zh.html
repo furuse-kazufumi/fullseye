@@ -6,13 +6,12 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把同一星场重拍 <code style="color:#22d3bf">n_frames</code> 次,<b>各自带不同噪声与不同抖动</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>星の座標・フラックスは全フレームで同じ(<code style="color:#22d3bf">field_seed</code> を固定して星の抽選を再現し、観測ごとの <code style="color:#22d3bf">seed</code> と <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code> だけを振る)ので、位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる —— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと <code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
-<p>ディザは <code style="color:#22d3bf">dither_px</code> を半径とする決定的な螺旋(<code style="color:#22d3bf">i</code> 番目のフレームを <code style="color:#22d3bf">dither_px * (i / (n-1))</code> の半径・黄金角の方向へ置く)。乱数でないのでフレーム数を変えても並びが安定し、図が再現する。</p>
-<p>Returns <code style="color:#22d3bf">(frames, truth)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frames</code> —— 長さ <code style="color:#22d3bf">n_frames</code> の list、各要素は <code style="color:#22d3bf">(H, W)</code> float64。<b><code style="color:#22d3bf">images</code> 語彙そのもの</b>なので、合成 op へそのまま渡せる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truth</code> —— <code style="color:#22d3bf">synth_starfield</code> の truth に、<code style="color:#22d3bf">shifts</code> <code style="color:#22d3bf">(N, 2)</code> (各フレームの <code style="color:#22d3bf">(dr, dc)</code>)と <code style="color:#22d3bf">fwhms</code> <code style="color:#22d3bf">(N,)</code> を足したもの。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> は<b>ディザ前</b>(フレーム 0 の位置)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">synth_starfield</code> の条件に加えて、*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
+<p>星的坐标、通量在所有帧中相同(固定 <code style="color:#22d3bf">field_seed</code> 来复现星的抽取，只改变每次观测的 <code style="color:#22d3bf">seed</code> 与 <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code>)，所以配准、叠加、drizzle 的正确答案 1 组就够。给出 *fwhm_jitter* 时 FWHM 会逐帧波动 —— 这就是 lucky imaging 的“视宁度波动”条件，保持 0 的话 <code style="color:#22d3bf">lucky_select</code> 就没有挑选的理由了。</p>
+<p>抖动是以 <code style="color:#22d3bf">dither_px</code> 为半径的确定性螺旋(把第 <code style="color:#22d3bf">i</code> 帧放在 <code style="color:#22d3bf">dither_px * (i / (n-1))</code> 的半径、黄金角的方向上)。因为不是随机数，改变帧数时排列也保持稳定，图可以复现。</p>
+<p>Returns <code style="color:#22d3bf">(frames, truth)</code>：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frames</code> —— 长度 <code style="color:#22d3bf">n_frames</code> 的 list，各元素为 <code style="color:#22d3bf">(H, W)</code> float64。<b>就是 <code style="color:#22d3bf">images</code> 词汇本身</b>，所以可以直接传给叠加 op。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truth</code> —— 在 <code style="color:#22d3bf">synth_starfield</code> 的 truth 上，加上 <code style="color:#22d3bf">shifts</code> <code style="color:#22d3bf">(N, 2)</code> (各帧的 <code style="color:#22d3bf">(dr, dc)</code>)与 <code style="color:#22d3bf">fwhms</code> <code style="color:#22d3bf">(N,)</code>。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> 为<b>抖动前</b>(第 0 帧的位置)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：除 <code style="color:#22d3bf">synth_starfield</code> 的条件外，*n_frames* 小于 1、*dither_px* 为负、*fwhm_jitter* 为负时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Streamline plot (MATLAB&#x27;s <code style="color:#22d3bf">streamslice</code>). Returns <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
+<p>Lines are drawn with the evenly spaced placement of <code style="color:#22d3bf">piv_streamlines</code>, and 1 arrowhead showing direction is placed midway along each line&#x27;s arc length (unlike LIC, <b>forward and backward can be read</b>). Since the line spacing is uniform, <b>line density does not represent speed</b> —— to see speed, lay <code style="color:#22d3bf">piv_flow_magnitude</code> or a hue map in <code style="color:#22d3bf">background</code>.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
-<p>arrows: 矢じりを置くか。</p>
-<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code> へ素通し(<code style="color:#22d3bf">separation</code> など)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>upsample / background / color / width: same as <code style="color:#22d3bf">piv_quiver</code>.</p>
+<p>arrows: whether to place arrowheads.</p>
+<p>**stream_kw: passed through to <code style="color:#22d3bf">piv_streamlines</code> (<code style="color:#22d3bf">separation</code> etc.).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64, range [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

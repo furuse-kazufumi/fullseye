@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>h-minima transform (skimage <code style="color:#22d3bf">morphology.h_minima</code>). Flattens shallow valleys (local minima) with depth less than <code style="color:#22d3bf">h</code>, then binary-marks the remaining minima - a valley-picking process similar to xmh_regmin, but one that can explicitly exclude shallow, noise-derived valleys by depth.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は深さしきい値 <code style="color:#22d3bf">h</code>(<code style="color:#22d3bf">0.05+0.3*a</code> で 0.05〜0.35)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the depth threshold <code style="color:#22d3bf">h</code> (0.05–0.35 via <code style="color:#22d3bf">0.05+0.3*a</code>). <code style="color:#22d3bf">b</code> is unused.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

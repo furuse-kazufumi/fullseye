@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code>,或直接调用 <code style="color:#22d3bf">surfacelib.rough_transmission</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把毛玻璃的透射分成「直透分量」与「扩散分量」。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
-<p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<p>cos_i：入射角的 cos。roughness：面的粗糙度(0 = 透明，1 = 完全漫射)。</p>
+<p>返回值：(直进 T_spec, 漫射 T_diff) 2 个值。合计与透明板的透射率一致(不凭空产生能量 ―― 已由测试确认)。隔着磨砂玻璃的观感，只需用这个直进成分下降、漫射成分增加即可解释。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>결함 화소의 특성화(8.8절): 로그 히스토그램(식 73~75)과 누적 히스토그램(식 77), 임계값을 넘는 화소의 수.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>
+<p>*avg_image*: L장의 평균 이미지(시간 잡음을 평균으로 없앤 것). *L*: 평균한 장수(빈 폭을 1/L의 정수배로 한다). *threshold*(필수)[DN]: 평균으로부터의 절대 편차가 이것을 <b>넘는</b> 화소를 센다(용도의 &quot;저지 대역&quot;).</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 평균으로부터의 편차, &quot;hist_counts&quot;, &quot;accum_x&quot;: 절대 편차, &quot;accum_percent&quot;: 그 편차 이상인 화소의 %, &quot;n_above&quot;: 수, &quot;mu&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D가 아님 / L이 양의 정수가 아님 / threshold가 음수 / 이미지가 일정(히스토그램 폭 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

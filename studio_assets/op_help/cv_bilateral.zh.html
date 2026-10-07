@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>双边滤波器(OpenCV 实现)。这是一种同时以空间接近度与亮度值接近度为权重的高斯式平滑,能在不模糊边缘(亮度差较大的边界)的情况下,只平滑平坦区域。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)に相当。実装は <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— カーネル直径 d は 5 に固定、<b>a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る</b>(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)。实现为 <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— 核直径 d 固定为 5，<b>a 将空间方向的扩展 sigmaSpace 在 1.0〜4.0 间调节，b 将亮度方向的容差 sigmaColor 在 0.05〜0.45 间调节</b>(参数顺序是 sigmaColor、sigmaSpace，所以 a/b 的对应关系容易弄反，请注意)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

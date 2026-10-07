@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>From 2 images taken at the same exposure, computes the mean, temporal variance and spatial variance (Eqs. 16, 18, 32).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2(式 16)、<code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2(式 18: 2 枚の平均の差の補正は Release 4 の新規)、<code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (式 32、負にならないことが示されている)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の実数でない / 形が違う / NaN・inf / 画素が 2 未満。</p>
+<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2 (eq. 16), <code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2 (eq. 18: the correction for the difference of the 2 frame means is new in Release 4), <code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (eq. 32, shown never to be negative).</p>
+<p>Returns <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not 2-D real / different shapes / NaN, inf / fewer than 2 pixels.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

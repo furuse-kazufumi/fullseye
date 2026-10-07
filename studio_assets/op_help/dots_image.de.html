@@ -13,8 +13,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Laplacian-of-Gaussian-Filter (LoG). Bildet den Laplace-Operator eines Gauß-Kerns mit sigma = 0.5+2.5a und normiert mit signed01 (ein vorzeichenbehafteter Wert wird auf [0,1] abgebildet, 0,5 = keine Antwort). b wird nicht verwendet. Da kreisförmige Punktmuster (Dots) aufgrund der Isotropie des Gauß-Kerns eine starke LoG-Antwort zeigen, wird dies zur Hervorhebung kreisförmiger Punkte verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">dots_image</code>（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
+<p>Eine Näherung, die HALCONs <code style="color:#22d3bf">dots_image</code> (eine Operation, die kreisförmige Punkte im Bild hervorhebt) entspricht; statt eines eigenen Punkterkennungs-Kernels wird ersatzweise ein allgemeiner LoG-Filter verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SLIC(Simple Linear Iterative Clustering)에 의한 슈퍼픽셀 분할. 색상(여기서는 그레이값)과 좌표를 결합한 공간에서 k-means 클러스터링을 수행하여, 거의 균일한 크기의 영역으로 분할한다. 여기서는 분할 결과의 경계선을 영역으로 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))</code> —— a はおおよそのセグメント数を 10〜90 に振る(大きいほど細かく分割される)。b は未使用。</p>
+<p>HALCON에는 직접 대응하는 것이 없다. 구현은 <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))</code> —— a는 대략적인 세그먼트 수를 10~90으로 바꾼다(클수록 잘게 분할된다). b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;clearcoat_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Legt einen transparenten Klarlack über die Oberfläche (Autolack, Keramikglasur, glänzender Kunststoff).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。</p>
-<p>ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。</p>
-<p>coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB。</p>
-<p>★ 要点は<b>エネルギーの引き算</b>: 上塗りで反射した分だけ下地に届く光が減る。下地は (1 − F(入射)) × (1 − F(出射)) で減衰する ―― これを掛けないと、上塗りを足すほど全体が明るくなる(物理的にありえない)。</p>
+<p>base_rgb: Grundfarbe (H,W,3) oder (3,). normals / light / view: wie oben.</p>
+<p>ior: Brechungsindex des Klarlacks (Klarlack ~1.5). coat: Stärke des Klarlacks (0–1).</p>
+<p>coat_roughness: Rauheit des Klarlacks (0 = perfekter Spiegel, größer = unschärfer).</p>
+<p>Rückgabewert: (H, W, 3) lineares sRGB.</p>
+<p>★ Entscheidend ist die <b>Subtraktion der Energie</b>: Was der Klarlack reflektiert, erreicht den Untergrund nicht mehr. Der Untergrund wird mit (1 − F(Einfall)) × (1 − F(Ausfall)) gedämpft ―― ohne diesen Faktor würde mehr Klarlack alles heller machen (physikalisch unmöglich).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

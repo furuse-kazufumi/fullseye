@@ -13,10 +13,9 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Grenzlinienextraktion mittels markergesteuertem Watershed-Verfahren.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">watersheds</code>(ウォーターシェッドと分水嶺盆地を抽出する)に相当するが、ここでは盆地のラベルではなく <b>分水嶺の境界線</b> だけを region として返す(近似)。</p>
-<p>手順は古典的な OpenCV レシピ: Otsu 二値化 -&gt; 膨張で「確実な背景」推定 -&gt; 距離変換のしきい値で「確実な前景」推定 -&gt; 両者の差分を「不明」領域とし、確実な前景の連結成分をマーカーに <code style="color:#22d3bf">cv2.watershed</code> を実行。</p>
-<p><code style="color:#22d3bf">a</code> が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合の傾向が変わる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">watersheds</code> (extrahiert Wasserscheiden und Einzugsbecken), gibt hier jedoch statt der Becken-Labels nur <b>die Grenzlinien der Wasserscheide</b> als region zurück (Näherung).</p>
+<p>Das Vorgehen ist das klassische OpenCV-Rezept: Otsu-Binarisierung -&gt; Schätzung des &quot;sicheren Hintergrunds&quot; per Dilatation -&gt; Schätzung des &quot;sicheren Vordergrunds&quot; per Schwellwert auf der Distanztransformation -&gt; die Differenz beider gilt als &quot;unbekannte&quot; Region, und <code style="color:#22d3bf">cv2.watershed</code> wird mit den Zusammenhangskomponenten des sicheren Vordergrunds als Marker ausgeführt.</p>
+<p><code style="color:#22d3bf">a</code> variiert den Schwellwert, der den sicheren Vordergrund bestimmt, im Bereich 30%–70% des Maximums der Distanztransformation (je größer, desto kleiner und konservativer werden die Vordergrund-Marker, und die Tendenz zu Übersegmentierung/Überverschmelzung ändert sich). <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

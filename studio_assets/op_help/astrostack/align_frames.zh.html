@@ -6,20 +6,21 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把一串帧对齐到一张基准帧上。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各フレームについて <code style="color:#22d3bf">frame_align</code> で変換を推定し、<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
-<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を <code style="color:#22d3bf">(0.5, 0.5)</code> px だけずらして戻した実測::</p>
-<p>order=1 (双一次)   総フラックス -0.016 %   星のピーク -11.437 %</p>
-<p>order=3 (スプライン) 総フラックス -0.016 %   星のピーク  -0.312 %</p>
-<p>総フラックスはどちらでもほぼ保たれるのに、<b>星のピークは双一次だと 1 割以上落ちる</b> —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う 4 画素の単純平均になるからである。既定を <code style="color:#22d3bf">order=3</code> にしてあるのはこの実測による(<code style="color:#22d3bf">order=3</code> は星の周りに極小の負の縁を作るが、上の測定では最小値 -0.0000 で目に見える量ではなかった)。</p>
-<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> <code style="color:#22d3bf">drizzle_resample</code> へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
-<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す <code style="color:#22d3bf">matrices</code> の並進は「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>对每一帧用 <code style="color:#22d3bf">frame_align</code> 估计变换，</p>
+<p>用 <code style="color:#22d3bf">scipy.ndimage.affine_transform</code> 做逆映射并重采样。</p>
+<p><b>坦白的提醒</b>：插值不保持图像。将无噪声的 64x64 / 12 颗星平移 <code style="color:#22d3bf">(0.5, 0.5)</code> px 再移回的实测::</p>
+<p>order=1 (双线性)   总通量 -0.016 %   星峰值 -11.437 %</p>
+<p>order=3 (样条)     总通量 -0.016 %   星峰值  -0.312 %</p>
+<p>总通量两者都几乎保持，但<b>双线性时星的峰值下降 1 成以上</b> —— 0.5 px 平移对双线性是最坏的相位，会变成相邻 4 像素的简单平均。默认设为 <code style="color:#22d3bf">order=3</code> 正是基于这一实测(<code style="color:#22d3bf">order=3</code> 会在星周围产生极小的负边缘，但在上面的测量中最小值为 -0.0000，不是肉眼可见的量)。</p>
+<p><b>若要严格保持通量和峰值，就不要插值</b>，而是交给 <code style="color:#22d3bf">drizzle_resample</code> —— 不插值正是 drizzle 存在的理由。不过</p>
+<p><b>不能直接传入估计的平移</b>：这里返回的 <code style="color:#22d3bf">matrices</code> 的平移是 “拉回基准”的方向，与 drizzle 需要的方向符号相反。</p>
+<p>请经过 <code style="color:#22d3bf">drizzle_shifts</code>::</p>
 <p>aligned, mats = align_frames(frames)</p>
 <p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
 <p>Returns <code style="color:#22d3bf">(aligned, matrices)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 語彙)。基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせるので、通す理由が無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(3, 3)</code>。基準は単位行列。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない / 枚数が 2 未満 / *reference* が範囲外 / *order* が 0〜5 の外 / <code style="color:#22d3bf">frame_align</code> がどれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— 长度 <code style="color:#22d3bf">N</code> 的 list，每个为 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 词汇)。基准帧<b>不经变换原样</b>返回(即使是恒等变换，插值也会使像变钝，所以没有理由经过变换)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— 长度 <code style="color:#22d3bf">N</code> 的 list，每个为 <code style="color:#22d3bf">(3, 3)</code>。基准为单位矩阵。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：*frames* 不是 list / tuple / 帧数少于 2 / *reference* 超出范围 / *order* 不在 0〜5 内 / <code style="color:#22d3bf">frame_align</code> 在任意 1 帧上失败时(<b>不把失败默默降级为恒等变换</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

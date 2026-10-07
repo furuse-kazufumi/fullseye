@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>트레이서 입자를 뿌린 영상 1장을 만든다. 반환값은 <code style="color:#22d3bf">(image, positions)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
-<p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>입자는 가우스 휘점(직경 = 1/e^2 폭이 아니라 <b>표준편차의 2배</b>를 <code style="color:#22d3bf">diameter_px</code>라고 부르는 PIV의 관행). 위치는 연속값이므로 서브픽셀의참값을 가진 이미지를 만들 수 있다.</p>
+<p><code style="color:#22d3bf">density</code>는 1 화소당 입자 수. PIV의 경험칙으로는 <b>창당 5-10개</b>가기준이며, 32x32 창이라면 0.005-0.01에 해당한다. 너무 적으면 상관 피크가 서지 않고, 너무 많으면 입자상이 겹쳐 개개의 대응이 사라진다.</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>density: 画素あたりの粒子数(&gt; 0)。</p>
-<p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
-<p>seed: 乱数種。</p>
-<p>intensity: 粒子の明るさの範囲 <code style="color:#22d3bf">(lo, hi)</code>。</p>
-<p>background: 一様な下駄。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>density: 화소당 입자 수(&gt; 0).</p>
+<p>diameter_px: 입자상의 직경 [px] (&gt; 0).</p>
+<p>seed: 난수 시드.</p>
+<p>intensity: 입자 밝기의 범위 <code style="color:#22d3bf">(lo, hi)</code>.</p>
+<p>background: 균일한 바닥값.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>。</p>
+<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2)의 (row, col))</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

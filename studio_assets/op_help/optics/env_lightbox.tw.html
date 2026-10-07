@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;env_lightbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>攝影燈箱的環境(寬大的頂光 + 略亮的周圍)。<b>無彩色</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で分かった 2 つの条件を満たすように作ってある:</p>
-<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が黒く写るのは、映るものが黒いから)。</p>
-<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を目方向に引き伸ばすからである。</p>
-<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に集中し、環境の勾配を掃かない)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 程度が目安。</p>
+<p><code style="color:#22d3bf">env_studio</code> 是為了「戲劇化地呈現」的暗房 + 2 盞小柔光箱，而這個則是讓<b>加工面看起來就是加工面</b>的環境。它被設計為滿足 2026-09-05 實測中發現的 2 個條件：</p>
+<p style="margin:2px 0 2px 12px">• 周圍要亮 ―― 在暗環境中鋁會變得漆黑(反射率 ~0.9 的金屬拍成黑色，是因為映入的東西是黑的)。</p>
+<p style="margin:2px 0 2px 12px">• 即便如此也<b>要有梯度</b> ―― 在完全均勻的環境中，任何異向性波瓣都回傳相同的值，加工紋理就會消失。髮絲紋路能被看見，是因為紋路把環境的明暗沿紋路方向拉伸了。</p>
+<p>加工紋理<b>不斜著看就不會出現</b>(從正上方看的平面，所有像素的反射方向都集中在天頂，不會掃過環境的梯度)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 左右為參考。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

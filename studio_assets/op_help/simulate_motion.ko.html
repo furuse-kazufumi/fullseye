@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 모션 블러(움직임 흐림)를 시뮬레이션한다. 각도 <code style="color:#22d3bf">π*a</code>(0~180°) 방향으로 길이 <code style="color:#22d3bf">5+10*b</code> 픽셀의 선분 커널을 만들어 합성곱한다. HALCON의 <code style="color:#22d3bf">simulate_motion</code>(Simulation of (linearly) motion blur.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がぶれの方向角を、<code style="color:#22d3bf">b</code> がぶれの長さを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code>가 흔들림의 방향각을, <code style="color:#22d3bf">b</code>가 흔들림의 길이를 바꾼다. 둘 다 사용된다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

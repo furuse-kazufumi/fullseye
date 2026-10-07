@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 지각 해시의 해밍 거리(다른 비트 수).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>dtype と長さを検査して fail-closed</b> する。float の 1-D を受け取って <code style="color:#22d3bf">!=</code> で数えると、ほぼ確実に「全ビット違う」= 最大距離という *もっともらしい* 値が出る —— それは型の取り違えであって画像の違いではない。</p>
-<p>返りは Python の <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 語彙)。ビット長で割った正規化距離が欲しければ <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>。</p>
+<p><b>dtype과 길이를 검사해 fail-closed(실패 시 거부)</b> 한다. float의 1-D를 받아 <code style="color:#22d3bf">!=</code>로 세면, 거의 확실하게 &quot;모든 비트가 다르다&quot; = 최대 거리라는 *그럴듯한* 값이 나온다 —— 그것은 형의 혼동이지 화상의 차이가 아니다.</p>
+<p>반환은 Python의 <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 어휘). 비트 길이로 나눈정규화 거리가 필요하면 <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

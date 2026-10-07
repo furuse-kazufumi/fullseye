@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;weave_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>织纹的法线场(布・碳纤维・金属网)。两组正交周期的隆起。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>shape: (H, W)。warp_px / weft_px: 経糸 / 緯糸の間隔 [px]。depth: 畝の深さ。</p>
-<p>angle_deg: 織りの向き [deg]。</p>
-<p>返り値: (H, W, 3) の単位法線場。<b>2 方向に周期がある</b>のが要点(FFT に 2 本のピークが立つ、テストで確認)。カーボンは warp/weft を変えて綾織りにする。</p>
+<p>shape：(H, W)。warp_px / weft_px：经纱 / 纬纱的间隔 [px]。depth：凸纹的深度。</p>
+<p>angle_deg：织纹方向 [deg]。</p>
+<p>返回值：(H, W, 3) 的单位法线场。要点是<b>在 2 个方向上都有周期</b>(FFT 中出现 2 个峰，已由测试确认)。碳纤维通过改变 warp/weft 做成斜纹。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

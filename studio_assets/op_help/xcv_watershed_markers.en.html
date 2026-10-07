@@ -13,10 +13,9 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Boundary extraction via marker-controlled watershed.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">watersheds</code>(ウォーターシェッドと分水嶺盆地を抽出する)に相当するが、ここでは盆地のラベルではなく <b>分水嶺の境界線</b> だけを region として返す(近似)。</p>
-<p>手順は古典的な OpenCV レシピ: Otsu 二値化 -&gt; 膨張で「確実な背景」推定 -&gt; 距離変換のしきい値で「確実な前景」推定 -&gt; 両者の差分を「不明」領域とし、確実な前景の連結成分をマーカーに <code style="color:#22d3bf">cv2.watershed</code> を実行。</p>
-<p><code style="color:#22d3bf">a</code> が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合の傾向が変わる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Corresponds to HALCON&#x27;s <code style="color:#22d3bf">watersheds</code> (extracts watersheds and watershed basins), but here, instead of the basin labels, only <b>the watershed boundary lines</b> are returned as a region (approximation).</p>
+<p>The procedure is the classic OpenCV recipe: Otsu binarisation -&gt; estimate the &quot;sure background&quot; by dilation -&gt; estimate the &quot;sure foreground&quot; by thresholding the distance transform -&gt; treat the difference of the two as the &quot;unknown&quot; region, and run <code style="color:#22d3bf">cv2.watershed</code> with the connected components of the sure foreground as markers.</p>
+<p><code style="color:#22d3bf">a</code> sweeps the threshold that determines the sure foreground in the range 30%–70% of the distance-transform maximum (the larger it is, the smaller and more conservative the foreground markers become, and the tendency towards over-segmentation/over-merging changes). <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

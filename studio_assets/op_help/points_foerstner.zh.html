@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于 Förstner 算子的角点强度图（<code style="color:#22d3bf">skimage.feature.corner_foerstner</code> 的权重 <code style="color:#22d3bf">w</code> 与稳健形状指标 <code style="color:#22d3bf">q</code> 之积，NaN 替换为 0）。通过组合误差椭圆的大小（w）与其圆度（q）来评估某位置的点特征程度。相当于 HALCON 的 <code style="color:#22d3bf">points_foerstner</code>（Detect points of interest using the Förstner operator.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐自体が呼べない(<code style="color:#22d3bf">_HAS_SK</code> ガード)。</p>
+<p><code style="color:#22d3bf">a</code> 将梯度计算所用高斯窗口的 sigma 在 0.5~2.5 范围内调节。<code style="color:#22d3bf">b</code> 未使用。在没有 skimage 的环境中无法调用该分支本身(<code style="color:#22d3bf">_HAS_SK</code> 守卫)。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

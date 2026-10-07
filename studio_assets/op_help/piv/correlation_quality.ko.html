@@ -4,62 +4,61 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주어진 변위장이 <b>얼마나 맞는지</b>를 점마다 반환하는 ZNCC 맵.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>引数</p>
-<p>ref     基準画像。</p>
-<p>cur     変形後画像。<code style="color:#22d3bf">ref</code> と同じ形。</p>
-<p>flow    <code style="color:#22d3bf">pivops</code> の <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>、成分は <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p><code style="color:#22d3bf">info</code> を渡さないなら <code style="color:#22d3bf">(2, H, W)</code> の<b>全画素</b>の場。</p>
-<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> が返した dict。渡すと窓格子の <code style="color:#22d3bf">flow</code> を</p>
-<p>画素へ双一次で広げてから測る。</p>
-<p>subset  相関を取る正方サブセットの一辺 [px]。<b>奇数</b>。</p>
-<p>戻り値は入力画像と同じ形の float 配列。値は <code style="color:#22d3bf">[-1, 1]</code> の ZNCC で、<b>測れなかった点は NaN</b>(サブセットが画像からはみ出す縁、変形後の標本点が画像の外へ出る点、分散の無いサブセット)。</p>
-<p>★ これは相関器ではない —— <b>既にある変位場の採点係</b></p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> も <code style="color:#22d3bf">optical_flow_lk</code> も <code style="color:#22d3bf">demons_register</code> も、</p>
-<p>出した変位が正しいかは返さない。ここは <code style="color:#22d3bf">cur</code> を <code style="color:#22d3bf">flow</code> で基準側へ</p>
-<p>引き戻し(双一次)、<code style="color:#22d3bf">ref</code> との ZNCC を <code style="color:#22d3bf">subset</code> の箱で測るだけ。</p>
-<p><b>どの推定器の出力でも同じ口で採点できる</b>のが要点で、相関器を</p>
-<p>もう 1 つ増やさずに品質だけを足せる。</p>
-<p>平均と標準偏差の両方を割り引くので、<b>ゲインとオフセットには不変</b>。</p>
-<p>露出が変わった対でも「合っているか」だけを見る。</p>
-<p>★★ 既存の <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> では足りない場面がある(実測)</p>
-<p><code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、</p>
-<p><b>相関面に競合する峰が立つ</b>種類の失敗を捕まえる。捕まえないのは</p>
-<p>「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素</p>
-<p>だけを無関係な模様に差し替えた実測:</p>
-<p>指標                    差し替え領域   健全領域   区別</p>
-<p>peak_ratio                 1.207        1.304    7.5 % 差(重なる)</p>
-<p>correlation_quality        0.1101       0.9993   9 倍差</p>
-<p>品質で切って変位誤差 RMS がどう変わるか:</p>
-<p>門                  残る割合   誤差 RMS [px]</p>
-<p>なし                 100.0 %      1.8110</p>
-<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 倍改善</p>
-<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 倍</p>
-<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6 割捨てて<b>悪化</b></p>
-<p><b>両方見るのが正しい。</b> peak_ratio は競合ピークを、ZNCC は</p>
-<p>デコリレーションを見る。片方だけでは穴が開く。</p>
-<p>★★ 落とし穴 —— <b>品質が高いことは精度が高いことではない</b></p>
-<p>ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に</p>
-<p>わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):</p>
-<p>変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
-<p>zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
-<p><b>0.05 px 間違えても 0.9992</b> —— 完全に合っている 0.99945 との差は</p>
-<p>2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな</p>
-<p>ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。</p>
-<p>一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは</p>
-<p>21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——</p>
-<p><b>効くのは失敗が局所的なときだけ。</b></p>
-<p>★ 引き戻しはサブセットごとの平行移動ではなく<b>場そのもの</b></p>
-<p>普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの</p>
-<p><code style="color:#22d3bf">flow</code> で <code style="color:#22d3bf">cur</code> を歪めてから箱で相関を取る。<code style="color:#22d3bf">flow</code> が滑らかなら</p>
-<p>両者は一致し、そうでないなら<b>こちらのほうが正しい</b>(サブセット内の</p>
-<p>変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。</p>
+<p>인수</p>
+<p>ref     기준 이미지.</p>
+<p>cur     변형 후 이미지. <code style="color:#22d3bf">ref</code>와 같은 형태.</p>
+<p>flow    <code style="color:#22d3bf">pivops</code>의 <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>, 성분은 <code style="color:#22d3bf">(dy, dx)</code> [px].</p>
+<p><code style="color:#22d3bf">info</code>를 넘기지 않으면 <code style="color:#22d3bf">(2, H, W)</code>의 <b>전 화소</b> 장.</p>
+<p>info    <code style="color:#22d3bf">piv_cross_correlate</code>가 반환한 dict. 넘기면 창 격자의 <code style="color:#22d3bf">flow</code>를</p>
+<p>화소로 쌍선형으로 넓힌 뒤 잰다.</p>
+<p>subset  상관을 취하는 정사각 서브셋의 한 변 [px]. <b>홀수</b>.</p>
+<p>반환값은 입력 이미지와 같은 형태의 float 배열. 값은 <code style="color:#22d3bf">[-1, 1]</code>의 ZNCC이며, <b>잴 수 없었던 점은 NaN</b>(서브셋이 이미지에서 삐져나오는 가장자리, 변형 후의표본점이 이미지 밖으로 나가는 점, 분산이 없는 서브셋).</p>
+<p>★ 이것은 상관기가 아니다 —— <b>이미 있는 변위장의 채점 담당</b></p>
+<p><code style="color:#22d3bf">piv_cross_correlate</code>도 <code style="color:#22d3bf">optical_flow_lk</code>도 <code style="color:#22d3bf">demons_register</code>도,</p>
+<p>내놓은 변위가 옳은지는 반환하지 않는다. 여기서는 <code style="color:#22d3bf">cur</code>를 <code style="color:#22d3bf">flow</code>로 기준 쪽으로</p>
+<p>되돌리고(쌍선형), <code style="color:#22d3bf">ref</code>와의 ZNCC를 <code style="color:#22d3bf">subset</code>의 상자로 잴 뿐이다.</p>
+<p><b>어느 추정기의 출력이든 같은 창구로 채점할 수 있는</b> 것이 요점으로, 상관기를</p>
+<p>1개 더 늘리지 않고 품질만을 더할 수 있다.</p>
+<p>평균과 표준편차 양쪽을 할인하므로 <b>게인과 오프셋에는 불변</b>.</p>
+<p>노출이 바뀐 쌍에서도 &quot;맞고 있는가&quot;만을 본다.</p>
+<p>★★ 기존의 <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code>로는 부족한 장면이 있다(실측)</p>
+<p><code style="color:#22d3bf">peak_ratio</code>(제1 피크 / 제2 피크)는 PIV의 표준적인 SN비로,</p>
+<p><b>상관면에 경합하는 봉우리가 서는</b> 종류의 실패를 잡는다. 잡지 못하는 것은</p>
+<p>&quot;그 장소가 다른 것이 되었다&quot; 종류의 실패. u=0.37 px의 쌍 중 60x60 화소</p>
+<p>만을 무관한 무늬로 바꾼 실측:</p>
+<p>지표                    교체 영역      건전 영역  구별</p>
+<p>peak_ratio                 1.207        1.304    7.5 % 차(겹침)</p>
+<p>correlation_quality        0.1101       0.9993   9배 차</p>
+<p>품질로 잘랐을 때 변위 오차 RMS가 어떻게 바뀌는가:</p>
+<p>게이트              남는 비율  오차 RMS [px]</p>
+<p>없음                 100.0 %      1.8110</p>
+<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584배 개선</p>
+<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5배</p>
+<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6할을 버리고 <b>악화</b></p>
+<p><b>양쪽을 보는 것이 옳다.</b> peak_ratio는 경합 피크를, ZNCC는</p>
+<p>상관 소실을 본다. 한쪽만으로는 구멍이 뚫린다.</p>
+<p>★★ 함정 —— <b>품질이 높은 것은 정밀도가 높은 것이 아니다</b></p>
+<p>ZNCC는 서브픽셀의 오차에 거의 반응하지 않는다. 참 변위 0.37 px의 쌍에</p>
+<p>일부러 오차를 넣은 장을 채점한 실측(반점의 직경 3.8 px):</p>
+<p>변위의 오차 [px]  0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
+<p>zncc 중앙값      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
+<p><b>0.05 px 틀려도 0.9992</b> —— 완전히 맞는 0.99945와의 차이는</p>
+<p>2.5e-4밖에 없다. 이 지표가 잴 수 있는 것은 &quot;반점의 크기에 비해 큰</p>
+<p>어긋남·결측·다른 것으로의 교체&quot;이지, 0.01 px의 정밀도가 아니다.</p>
+<p>균일한 잡음으로 모든 점이 똑같이 열화한 경우(σ=0.15)도, 게이트로 잘라 남는 것은</p>
+<p>21.8 %이고 오차 RMS는 0.1736 → 0.1292의 1.34배 개선에 그친다 ——</p>
+<p><b>효과가 있는 것은 실패가 국소적일 때뿐.</b></p>
+<p>★ 되돌리기는 서브셋별 평행 이동이 아니라 <b>장 그 자체</b></p>
+<p>보통의 DIC는 서브셋을 강체적으로 어긋나게 하여 상관을 취하지만, 여기서는 화소별</p>
+<p><code style="color:#22d3bf">flow</code>로 <code style="color:#22d3bf">cur</code>를 왜곡한 뒤 상자로 상관을 취한다. <code style="color:#22d3bf">flow</code>가 매끄러우면</p>
+<p>둘은 일치하고, 그렇지 않다면 <b>이쪽이 더 옳다</b>(서브셋 안의</p>
+<p>변형도 포함하여 잔차를 보기 때문). 비용도 O(N)으로 끝난다(256²에서 0.003초).</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> が 2 次元でない、形が違う、NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> が <code style="color:#22d3bf">(2, h, w)</code> でない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 無しで <code style="color:#22d3bf">flow</code> が画像と違う形(直し方つきで拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> に <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> が無い、格子と <code style="color:#22d3bf">flow</code> の形が食い違う、格子がどちらかの軸で 2 未満。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> が偶数・3 未満・画像より大きい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code>가 2차원이 아님, 형태가 다름, NaN·Inf를 포함.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code>가 <code style="color:#22d3bf">(2, h, w)</code>가 아님.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 없이 <code style="color:#22d3bf">flow</code>가 이미지와 다른 형태(고치는 법을 붙여 거부).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code>에 <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>가 없음, 격자와 <code style="color:#22d3bf">flow</code>의 형태가 어긋남, 격자가 어느 한 축에서 2 미만.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code>이 짝수·3 미만·이미지보다 큼.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

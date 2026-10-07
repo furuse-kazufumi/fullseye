@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code> oder rufe <code style="color:#22d3bf">surfacelib.wood_grain</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt die <b>Farbmodulation</b> der Holzmaserung (Jahresringe) und die <b>Faserrichtung</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>shape: (H, W)。ring_px: 年輪の間隔 [px]。angle_deg: 木取りの向き [deg]。</p>
-<p>wobble: 年輪のうねり(0 で同心の直線)。seed: 乱数種。</p>
-<p>返り値: (modulation (H,W) 0–1, tangent (H,W,3)) —— 変調は木の色(明るい早材と暗い晩材)に掛け、接線は繊維方向なので <code style="color:#22d3bf">matappear.ward_anisotropic</code> に渡すと <b>木目に沿った光沢</b>になる(木は繊維方向に異方性を持つ)。</p>
+<p>shape: (H, W). ring_px: Abstand der Jahresringe [px]. angle_deg: Schnittrichtung des Holzes [deg].</p>
+<p>wobble: Welligkeit der Jahresringe (0 = konzentrische Geraden). seed: Zufallsstartwert.</p>
+<p>Rückgabewert: (modulation (H,W) 0–1, tangent (H,W,3)) —— die Modulation wird auf die Holzfarbe angewandt (helles Frühholz und dunkles Spätholz); die Tangente ist die Faserrichtung, an <code style="color:#22d3bf">matappear.ward_anisotropic</code> übergeben ergibt sie <b>Glanz entlang der Maserung</b> (Holz ist in Faserrichtung anisotrop).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

@@ -12,9 +12,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>채우기(flood fill)에 의한 영역 추출.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像中心の画素を種点とし、skimage.segmentation.flood でその画素値から <code style="color:#22d3bf">tolerance</code> 以内の連結画素を region として広げる。</p>
-<p><code style="color:#22d3bf">a</code> が許容差 <code style="color:#22d3bf">tolerance</code> を 0.05〜0.35 の範囲で振る(大きいほど広く塗りつぶす)。<code style="color:#22d3bf">b</code> は未使用。中心が背景か前景かで結果が大きく変わる(種点固定の単純な実装)。</p>
+<p>영상 중심의 화소를 시드점으로 하고, skimage.segmentation.flood로 그 화소값으로부터 <code style="color:#22d3bf">tolerance</code> 이내의 연결 화소를 region으로 넓힌다.</p>
+<p><code style="color:#22d3bf">a</code>가 허용차 <code style="color:#22d3bf">tolerance</code>를 0.05~0.35 범위에서 바꾼다(클수록넓게 칠한다). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 중심이 배경인지 전경인지에 따라 결과가 크게달라진다(시드점 고정의 단순한 구현).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

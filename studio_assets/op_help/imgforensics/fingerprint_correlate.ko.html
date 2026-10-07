@@ -4,38 +4,37 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 한 장을 지문에 대조합니다. <b>판정은 돌려주지 않습니다</b> —— 증거량과 주의서를 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>残差 <code style="color:#22d3bf">W = I - denoise(I)</code> と参照信号 <code style="color:#22d3bf">I·K</code> の巡回相互相関を FFT で取り、正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
-<p>返り(<code style="color:#22d3bf">table</code> 語彙の dict):</p>
-<p><code style="color:#22d3bf">pce</code>          PCE。<b>しきい値は同梱しない</b>(下の caveats 参照)</p>
-<p><code style="color:#22d3bf">ncc_peak</code>     正規化相互相関のピーク値([-1, 1])</p>
-<p><code style="color:#22d3bf">peak_shift</code>   ピークの位置 <code style="color:#22d3bf">(dy, dx)</code>。<b>(0, 0) でなければ位置がずれている</b></p>
-<p>= 切り出し / 手ぶれ補正 / リサイズを疑う手がかり</p>
-<p><code style="color:#22d3bf">n_pixels</code>     使った画素数</p>
-<p><code style="color:#22d3bf">caveats</code>      この数値が言えないことの列(文字列)</p>
-<p><code style="color:#22d3bf">peak_shift</code> を返すのは重要で、<code style="color:#22d3bf">(0, 0)</code> 以外のピークは「同じセンサだが切り出されている」か「<b>たまたまの相関</b>」のどちらかである。どちらかはこの op には決められない。実測では別センサの照合はいつも <code style="color:#22d3bf">(0, 0)</code> 以外にピークが立ち(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> など毎回ばらばら)、同一センサは必ず <code style="color:#22d3bf">(0, 0)</code> に立つ。</p>
-<p><b>再圧縮で PRNU は消える</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>、8 枚から作った指紋・128x128):</p>
+<p>잔차 <code style="color:#22d3bf">W = I - denoise(I)</code>와 참조 신호 <code style="color:#22d3bf">I·K</code>의 순환 상호상관을 FFT로 구해, 정규화 상호상관의 피크와 <b>PCE</b>(peak-to-correlation energy)를 반환한다.</p>
+<p>반환(<code style="color:#22d3bf">table</code> 어휘의 dict):</p>
+<p><code style="color:#22d3bf">pce</code>          PCE. <b>임계값은 동봉하지 않는다</b>(아래 caveats 참조)</p>
+<p><code style="color:#22d3bf">ncc_peak</code>     정규화 상호상관의 피크값([-1, 1])</p>
+<p><code style="color:#22d3bf">peak_shift</code>   피크의 위치 <code style="color:#22d3bf">(dy, dx)</code>. <b>(0, 0)이 아니면 위치가 어긋나 있다</b></p>
+<p>= 잘라내기 / 손떨림 보정 / 리사이즈를 의심할 단서</p>
+<p><code style="color:#22d3bf">n_pixels</code>     사용한 화소 수</p>
+<p><code style="color:#22d3bf">caveats</code>      이 수치가 말할 수 없는 것의 열(문자열)</p>
+<p><code style="color:#22d3bf">peak_shift</code>를 반환하는 것은 중요하며, <code style="color:#22d3bf">(0, 0)</code> 이외의 피크는 &quot;같은 센서이지만잘려 있다&quot;이거나 &quot;<b>우연한 상관</b>&quot; 중 하나이다. 어느 쪽인지는이 op로는 정할 수 없다. 실측에서는 다른 센서와의 대조는 항상 <code style="color:#22d3bf">(0, 0)</code> 이외에피크가 서고(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> 등 매번 제각각), 동일 센서는반드시 <code style="color:#22d3bf">(0, 0)</code>에 선다.</p>
+<p><b>재압축으로 PRNU는 사라진다</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>, 8장으로 만든 지문·128x128):</p>
 <p>========== ========== ==========</p>
-<p>再圧縮      PCE        無圧縮比</p>
+<p>재압축     PCE        무압축 대비</p>
 <p>========== ========== ==========</p>
-<p>無圧縮     7246       1.00</p>
-<p>品質 95    6174       0.85</p>
-<p>品質 90    4214       0.58</p>
-<p>品質 75    1412       0.19</p>
-<p>品質 50     530       0.07</p>
-<p>品質 30     207       0.03</p>
+<p>무압축     7246       1.00</p>
+<p>품질 95    6174       0.85</p>
+<p>품질 90    4214       0.58</p>
+<p>품질 75    1412       0.19</p>
+<p>품질 50     530       0.07</p>
+<p>품질 30     207       0.03</p>
 <p>========== ========== ==========</p>
-<p>つまり <b>低い PCE は「別のカメラ」ではなく「情報が残っていない」かもしれない</b>。ここでしきい値を同梱すると、圧縮された画像を機械的に「別カメラ」と判定する道具になってしまう。</p>
-<p><b>黙って間違う経路(実測)</b>: <code style="color:#22d3bf">fingerprint</code> に指紋ではなく普通の画像を渡すと、shape は合っているので例外は出ず、PCE も有限値が返る。指紋は <code style="color:#22d3bf">(H, W)</code> の float64 なので既存の <code style="color:#22d3bf">image2d</code> 述語を完全に満たし、<b>実行時には区別できない</b>。そこで入口で「ゼロ平均でない」ものを <code style="color:#22d3bf">ValueError</code> で弾く(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)。実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
+<p>즉 <b>낮은 PCE는 &quot;다른 카메라&quot;가 아니라 &quot;정보가 남아 있지 않다&quot;일지도 모른다</b>. 여기서 임계값을 동봉하면, 압축된 화상을 기계적으로 &quot;다른 카메라&quot;로 판정하는도구가 되어 버린다.</p>
+<p><b>조용히 틀리는 경로(실측)</b>: <code style="color:#22d3bf">fingerprint</code>에 지문이 아니라 보통의 화상을 넘기면, shape는 맞으므로 예외는 나지 않고 PCE도 유한값이 반환된다. 지문은 <code style="color:#22d3bf">(H, W)</code>의 float64이므로 기존 <code style="color:#22d3bf">image2d</code> 술어를 완전히 만족하며, <b>실행 시에는 구별할 수 없다</b>. 그래서 입구에서 &quot;제로 평균이 아닌&quot; 것을 <code style="color:#22d3bf">ValueError</code>로 튕긴다(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>). 실측(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
 <p>============================== ==============</p>
-<p>渡したもの                     <code style="color:#22d3bf">|mean|/std</code></p>
-<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> の返り 4.8e-18</p>
-<p>普通の自然画像                 4.626</p>
-<p>暗い画像(平均 0.015)         4.626</p>
-<p>高コントラスト画像             1.801</p>
+<p>넘긴 것                        <code style="color:#22d3bf">|mean|/std</code></p>
+<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code>의 반환 4.8e-18</p>
+<p>보통의 자연 화상               4.626</p>
+<p>어두운 화상(평균 0.015)        4.626</p>
+<p>고콘트라스트 화상              1.801</p>
 <p>============================== ==============</p>
-<p>比は<b>スケール不変</b>なので、暗い画像でも明るい画像でも同じように弾ける(0.05 のしきい値から 1.5 桁以上離れている)。</p>
-<p><b>それでも完全ではない</b>: 自分でゼロ平均化した画像を渡すとゲートは通り、PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは <b>片側しか守れない</b>。これが「指紋を <code style="color:#22d3bf">image2d</code> に相乗りさせず語彙を分ける」判断の根拠で、詳細は <code style="color:#22d3bf">opsimgforensics</code> の docstring にある。</p>
+<p>비는 <b>스케일 불변</b>이므로 어두운 화상이든 밝은 화상이든 똑같이 튕길 수 있다(0.05의 임계값에서 1.5자릿수 이상 떨어져 있다).</p>
+<p><b>그래도 완전하지는 않다</b>: 직접 제로 평균화한 화상을 넘기면 게이트는 통과하고, PCE = -5.97이라는 유한값이 반환된다(실측). 즉 실행 시 검사는 <b>한쪽밖에 지킬 수 없다</b>. 이것이 &quot;지문을 <code style="color:#22d3bf">image2d</code>에 편승시키지 않고 어휘를 나눈다&quot;는판단의 근거이며, 자세한 내용은 <code style="color:#22d3bf">opsimgforensics</code>의 docstring에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

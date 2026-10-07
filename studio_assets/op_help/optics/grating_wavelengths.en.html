@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Solve the grating equation d(sinθ_out − sinθ_in) = mλ for λ.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
-<p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>
-<p>返り値: (..., len(orders)) の波長 [nm]。可視域外の解もそのまま返す(呼び手が等色関数に通せば自動的に 0 になる — ここで黙って切ると「なぜ色が出ないか」が消える)。</p>
+<p>pitch_um: groove spacing d [µm]. 1.6 for CD, 0.74 for DVD (published standard values). sin_in / sin_out: sin of the in-plane component of the incident / outgoing direction along the grating (array allowed, broadcast).</p>
+<p>orders:   sequence of orders m (0 is excluded because it gives infinity).</p>
+<p>Returns: wavelengths [nm] of shape (..., len(orders)). Solutions outside the visible range are returned as they are (if the caller passes them through the colour-matching functions they become 0 automatically — cutting them silently here would hide &quot;why no colour appears&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

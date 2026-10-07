@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metalfinish; metalfinish.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;tangent_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把<b>紋路的方向</b>做成 (H, W, 3) 的切向場。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>shape: (H, W)。kind: <code style="color:#22d3bf">FINISHES</code> のいずれか。</p>
-<p>angle_deg: linear / crosshatch の筋の向き [deg] (画像座標、+x から反時計回り)。</p>
-<p>center: circular / radial の中心 (row, col)。既定は画像中心。</p>
-<p>返り値: (H, W, 3) の単位接線場(z 成分 0 = 面内)。<code style="color:#22d3bf">random</code> は画素ごとに向きを散らす(無方向 = ビーズブラスト)。</p>
-<p>★ 定ベクトルではなく<b>場</b>なのが要点: 旋盤の削り目は同心円なので、一定方向の接線ではハイライトが物理的に成立しない。</p>
+<p>shape：(H, W)。kind：<code style="color:#22d3bf">FINISHES</code> 之一。</p>
+<p>angle_deg：linear / crosshatch 的紋路方向 [deg] (影像座標，從 +x 逆時針)。</p>
+<p>center：circular / radial 的中心 (row, col)。預設為影像中心。</p>
+<p>回傳值：(H, W, 3) 的單位切線場(z 分量 0 = 面內)。<code style="color:#22d3bf">random</code> 逐像素打散方向(無方向 = 玻璃珠噴砂)。</p>
+<p>★ 重點在於它是<b>場</b>而非常向量：車床的切削紋是同心圓，用固定方向的切線，高光在物理上就無法成立。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

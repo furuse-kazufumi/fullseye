@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;slab_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Transmission einer planparallelen Platte (Fensterglas). Enthält <b>Mehrfachreflexion an beiden Flächen</b> und innere Absorption.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm は上記と同じ。</p>
-<p>返り値: 全透過率 T。式は T = (1−R)²·a / (1 − R²·a²)、a = 内部透過率(板内の斜め光路 L = d/cosθ_t を使う)。無限級数の和 = 多重反射を数え落とさない形。</p>
-<p>検算: 吸収 0・垂直入射の air→BK7(n=1.5)板は T = 0.9231(= 2n/(n²+1) のよく知られた値)。σ を上げると単調に下がり、臨界角超(板の内側から)では 0。</p>
+<p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm wie oben.</p>
+<p>Rückgabewert: Gesamttransmissionsgrad T. Die Formel lautet T = (1−R)²·a / (1 − R²·a²), a = innerer Transmissionsgrad (mit dem schrägen Weg in der Platte L = d/cosθ_t). Die Summe der unendlichen Reihe = eine Form, die keine Mehrfachreflexion auslässt.</p>
+<p>Gegenprobe: Eine air→BK7-Platte (n=1.5) mit Absorption 0 bei senkrechtem Einfall ergibt T = 0.9231 (= der bekannte Wert 2n/(n²+1)). Mit steigendem σ fällt T monoton, jenseits des Grenzwinkels (von innerhalb der Platte) ist es 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

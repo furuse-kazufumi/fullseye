@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>镜头能否覆盖该传感器(像圈 对 对角线)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>覆えないと<b>四隅が黒く落ちる</b>(ケラレ)。カタログの「1 インチまで」等はこの判定を形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。</p>
+<p>覆盖不了就会<b>四角发黑</b>(渐晕)。目录上的“最大 1 英寸”等只是用画幅名表述这一判定，所以用实际尺寸比较更可靠 ―― 尤其是线阵传感器，长度直接起作用(16k x 7 µm = 115 mm)，面阵用镜头完全不够。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

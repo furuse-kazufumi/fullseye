@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>箭头图(MATLAB 的 <code style="color:#22d3bf">quiver</code>)。返回 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p>每 <code style="color:#22d3bf">spacing</code> 个网格画 1 根，起点放在网格点上，箭头尖画到 <code style="color:#22d3bf">起点 + scale * v</code> 处。省略 <code style="color:#22d3bf">scale</code> 时<b>最长的箭头为间隔的 0.9 倍</b>(与 MATLAB 的自动倍率相同的思路，不与相邻箭头重叠)。<b>倍率每张图都会变</b>，因此并排比较的图请固定 <code style="color:#22d3bf">scale</code>。长度不足 1 像素的箭头不画(没有方向的点会被读作标记)。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
-<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
-<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
-<p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
-<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
-<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
-<p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
-<p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
+<p>spacing: 箭头的间隔 [网格]。<code style="color:#22d3bf">None</code> 时长边约 20 根。</p>
+<p>scale: 箭头长度 = <code style="color:#22d3bf">scale * 速度</code> [网格]。</p>
+<p>upsample: 输出的倍数(放大到足以画出箭头尖)。</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> 或 <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> 为白色。</p>
+<p>可以铺色相图(把 <code style="color:#22d3bf">piv_flow_to_rgbimage</code> 放大后的图)或 LIC。</p>
+<p>color / width: 箭头颜色(palette 的角色名或 RGB)和箭杆粗细 [px]。</p>
+<p>默认为接近黑色的墨色(铺了色相图也能读)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64，值域 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

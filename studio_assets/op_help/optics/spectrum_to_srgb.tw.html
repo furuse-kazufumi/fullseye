@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>分光反射率 → <b>線性 sRGB</b>(伽瑪前)。正規化使白面(反射率 1)成為 (1,1,1)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>nm:           波長格子 (K,) [nm]。単調増加。</p>
-<p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
-<p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>
-<p>返り値: (..., 3) の線形 sRGB。<b>負の値はクリップしない</b> — 色域外は負で返るのが正直で、クリップしたい呼び手が明示的にやる(黙って丸めると「表現できない色」が見えなくなる)。</p>
-<p>正規化: 反射率 1 の完全拡散面が sRGB の基準白 D65 に落ちるよう、同じ光源・同じ格子で計算した白の XYZ で<b>成分ごとに</b>割る(von Kries 型の白色順応の最小形)。実測で反射率 1 → (1.000000, 1.000000, 0.999999)、0.5 → 0.5。したがって<b>絶対輝度ではなく相対値</b>であり、レンダラの露出に掛ける使い方を想定している。</p>
+<p>nm:           波長網格 (K,) [nm]。單調遞增。</p>
+<p>reflectance:  (..., K) 的光譜反射率(假定 0–1，超出範圍也能計算)。</p>
+<p>illuminant:   (K,) 的光源光譜分布。預設為 D65 的平滑近似。</p>
+<p>回傳值：(..., 3) 的線性 sRGB。<b>不裁切負值</b> — 色域外以負值回傳才是誠實的，想裁切的呼叫端自行明確處理(默默捨入會讓「無法表示的顏色」看不見)。</p>
+<p>正規化：為使反射率 1 的完全漫射面落在 sRGB 的基準白 D65 上，以同一光源、同一網格計算的白色 XYZ <b>逐分量</b>相除(von Kries 型白色適應的最小形式)。實測反射率 1 → (1.000000, 1.000000, 0.999999)，0.5 → 0.5。因此這是<b>相對值而非絕對輝度</b>，設想的用法是乘以渲染器的曝光。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

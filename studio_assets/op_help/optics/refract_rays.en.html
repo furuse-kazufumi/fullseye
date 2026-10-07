@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">points</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> or call <code style="color:#22d3bf">glassmirror.refract_rays</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The vector form of Snell refraction. <b>Total internal reflection is decided per ray</b>; returns (direction, TIR mask).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。n1 / n2: 入射側 / 透過側の屈折率。</p>
-<p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、マスクを True にする(NaN を返さない: 下流のレンダが黙って穴を開けるより、物理的に正しい「全反射した」方向を返す方が使える)。</p>
-<p>★ <code style="color:#22d3bf">match3d.refract</code> との違い: あちらは「1 本でも TIR ならバッチ全体が None」。画像サイズのバッチでは 1 画素の全反射で<b>全部が消える</b>ので、per-ray に直した。</p>
+<p>directions: (..., 3) incident directions (toward the surface). normals: (..., 3) outward normals on the incident side. n1 / n2: refractive index of the incident / transmitted side.</p>
+<p>Returns: (refracted (...,3), tir (...,)) —— for TIR rays the direction is filled with the <b>specular reflection</b>, and the mask is set to True (no NaN is returned: rather than letting a downstream renderer silently punch holes, returning the physically correct &quot;totally reflected&quot; direction is more useful).</p>
+<p>★ Difference from <code style="color:#22d3bf">match3d.refract</code>: there, &quot;if even 1 ray is TIR, the whole batch is None&quot;. For image-sized batches, total internal reflection at 1 pixel would make <b>everything vanish</b>, so this was changed to per-ray.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

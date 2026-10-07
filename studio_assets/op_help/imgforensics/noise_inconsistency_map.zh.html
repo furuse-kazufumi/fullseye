@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>逐块噪声标准差</b>的地图。<code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Immerkær 1996 の 3x3 マスクで高周波成分を取り、<code style="color:#22d3bf">block</code> 角の非重複ブロックごとに <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code> を出してブロック定数で戻す。貼り付けた領域が別の露出・別の圧縮率・別のカメラから来ていれば、この値がまわりと <b>段差</b>になる。</p>
-<p><b>精度は良い</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が固定)。真の σ が上半分 0.01・下半分 0.04(8 bit で 2.55 と 10.20、比 4.0)の合成画像で、推定は <b>2.533 と 10.214、比 4.033</b> —— 絶対値も比も 1% 以内。</p>
-<p><b>この地図が言えないこと</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>テクスチャは雑音として数えられる</b>。Immerkær のマスクはラプラシアン風なので、細かい模様の領域は σ が高く出る。実測:<b>雑音は上下とも同じ σ=0.01</b> で、下半分にだけ市松模様を足した画像では、模様側 15.97 / 平坦側 2.58 = <b>6.2 倍</b>。段差があっても「改竄」ではなく「模様」かもしれない。</p>
-<p style="margin:2px 0 2px 12px">• 逆に <b>平滑化された改竄は σ が下がる</b>ので見えるが、平坦な背景に平坦な物を貼った場合は差が出ない。</p>
-<p style="margin:2px 0 2px 12px">• JPEG は雑音をブロックごとに削るので、圧縮済みの画像では <code style="color:#22d3bf">block</code> を 8 の倍数にしないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。</p>
-<p style="margin:2px 0 2px 12px">• ★ <b>画像の縁に、改竄と無関係な段差が必ず出る</b>(2026-09-06 実測)。畳み込みが <code style="color:#22d3bf">mode=&quot;reflect&quot;</code> で折り返すため、外周のブロックでは高周波が減って σ が低く出る。<b>改竄ゼロ・一様雑音</b>の 256x256 で、最外ブロック帯 8.815 に対し中心 9.537(<b>-7.6 %</b>)。同じ画像の生の局所 std は 0.03491 と 0.03563(-2.0 %)しか違わないので、差の大半は推定器が作っている。中央値からの隔たりで見ると最外 0.7173 / 中心 0.5948 = <b>1.21 倍</b>。画素ごとの ROC を取るとこれだけでゼロ点 AUC が 0.5 から外れる(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code> の実測で 0.447)。<b>外周 1 ブロックを判定から外す</b>か、中央値を場所ごとに取ること。</p>
+<p>用 Immerkær 1996 的 3x3 掩模取高频成分，对 <code style="color:#22d3bf">block</code> 见方的非重叠块分别求出 <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code>，以块常数还原。若贴入的区域来自不同的曝光、不同的压缩率、不同的相机，该值就会与周围形成<b>台阶</b>。</p>
+<p><b>精度很好</b>(由 <code style="color:#22d3bf">tests/test_imgforensics.py</code> 固定)。在真实 σ 上半为 0.01、下半为 0.04(8 bit 下为 2.55 与 10.20，比 4.0)的合成图像上，估计为 <b>2.533 与 10.214，比 4.033</b> —— 绝对值和比都在 1% 以内。</p>
+<p><b>这张图无法断言的事</b>：</p>
+<p style="margin:2px 0 2px 12px">• <b>纹理会被算作噪声</b>。Immerkær 的掩模类似拉普拉斯算子，所以细纹理区域的 σ 会偏高。实测：在<b>上下噪声同为 σ=0.01</b>、只在下半加了棋盘格的图像中，纹理侧 15.97 / 平坦侧 2.58 = <b>6.2 倍</b>。即使有台阶，也可能不是“篡改”而是“纹理”。</p>
+<p style="margin:2px 0 2px 12px">• 反之，<b>被平滑过的篡改 σ 会下降</b>所以能看见，但在平坦背景上贴入平坦物体时不会出现差异。</p>
+<p style="margin:2px 0 2px 12px">• JPEG 逐块削减噪声，所以对已压缩的图像，若 <code style="color:#22d3bf">block</code> 不是 8 的倍数，就会与块网格干涉而出现条纹(默认 16 是 8 的倍数)。</p>
+<p style="margin:2px 0 2px 12px">• ★ <b>图像边缘必定会出现与篡改无关的台阶</b>(2026-09-06 实测)。由于卷积以 <code style="color:#22d3bf">mode=&quot;reflect&quot;</code> 折返，外围块的高频减少，σ 偏低。在<b>零篡改、均匀噪声</b>的 256x256 上，最外层块带为 8.815，中心为 9.537(<b>-7.6 %</b>)。同一图像的原始局部 std 为 0.03491 与 0.03563(-2.0 %)，差别很小，所以差异的大半是估计器造成的。以与中位数的偏离来看，最外层 0.7173 / 中心 0.5948 = <b>1.21 倍</b>。逐像素取 ROC 的话，仅此一项就会使零点 AUC 偏离 0.5 (<code style="color:#22d3bf">examples/poc_forensics_roc.py</code> 实测为 0.447)。<b>请把外围 1 个块排除在判定之外</b>，或按位置分别取中位数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

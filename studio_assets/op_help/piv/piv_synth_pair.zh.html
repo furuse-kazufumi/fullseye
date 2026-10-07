@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成具有已知位移场的图像对。返回 <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
+<p><b>先移动粒子再绘制第 2 幅</b>(不是用插值扭曲第 1 幅)。若用插值生成，插值的平滑会造出“PIV 容易测准的图”，等于用对自己有利的输入来测量自己的实现。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 変位の与え方。次のいずれか。</p>
-<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 位置に依存する場。引数は粒子の連続座標の配列。</p>
-<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
-<p>noise_sigma: 2 枚それぞれに独立に足す加法ガウス雑音の標準偏差。</p>
+<p>displacement: 位移的给法。以下之一。</p>
+<p style="margin:2px 0 2px 12px">• 长度 2 的序列 —— 均匀平移 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 依赖位置的场。参数是粒子连续坐标的数组。</p>
+<p>density / diameter_px / seed / intensity / background: 与 <code style="color:#22d3bf">piv_synth_particles</code> 相同。</p>
+<p>noise_sigma: 对 2 幅分别独立叠加的加性高斯噪声的标准差。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は<b>画素ごと</b>の</p>
-<p>真の変位で、窓の格子に落とすには <code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
+<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> 是<b>逐像素</b>的</p>
+<p>真实位移，要落到窗口网格上请用 <code style="color:#22d3bf">piv_sample_at_windows</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

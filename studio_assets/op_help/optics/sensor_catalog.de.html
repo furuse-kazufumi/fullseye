@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;sensor_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Datenblatt realer Sensoren (mit Baslers EMVA1288-Messwerten).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">status</code> に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは載せていない。新規設計は <code style="color:#22d3bf">status=&quot;current&quot;</code>(Pregius S、2.74 µm 裏面照射)から選ぶ。</p>
-<p><b>ここに載っているのは「カメラ側の値」</b>である。出典が Basler のカメラ実測表なので:</p>
-<p style="margin:2px 0 2px 12px">• 解像度は<b>そのカメラが出す画素数</b>で、センサの全有効画素とは限らない(メーカーは端を切って少し低くすることがある)。</p>
-<p style="margin:2px 0 2px 12px">• フレームレートは<b>接続インターフェース</b>(USB3 / GigE / 5GigE / CXP-12)で変わるので、センサの属性として持たない ―― だからこの表には入れていない。</p>
-<p style="margin:2px 0 2px 12px">• QE / ダークノイズ / 飽和容量 / ダイナミックレンジ / 最大 SNR は <b>カメラの EMVA1288 実測</b>(ace / ace 2 / boost)。センサ単体の理論値ではなく実装込みなので、別のカメラなら少し変わる。</p>
-<p style="margin:2px 0 2px 12px">• 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。</p>
-<p><b>自社でセンサを作っているカメラメーカーはここに載せられない</b>(Canon / Photron / Vision Research(Phantom) / Teledyne DALSA / Hamamatsu の一部)。型番から引けず、カメラのデータシートが唯一の出所だからである。画素ピッチが桁違いのものがあり(Phantom の高感度機は 28 µm、Pregius S は 2.74 µm)、回折律速に入る F 値も飽和容量も一桁変わるので、<b>実機の値を直接 sensor_spec に渡すこと</b>。</p>
-<p>世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の <b>3 倍</b>。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は 9.7 ke- で 2nd と同等を保っている(裏面照射)。</p>
-<p>Sony 以外(<code style="color:#22d3bf">maker</code> で引ける)も同じ表から取ってあるので、<b>同じ測定法で横並び比較できる</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>(3.2 µm)は APS-C / 35 mm の<b>大判</b>が本領。Sony にこの判は無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>(4.8 µm)は小型・高速だが、ダークノイズが 11-12 e- と Pregius の 5 倍。暗い場面では効いてくる。</p>
-<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>(2.5 µm)は<b>ダークノイズ 1 e- 級</b>が売り(GMAX2505/2509)。飽和容量は 4-5 ke- と小さいので、ダイナミックレンジは 70 dB でほぼ同等。GMAX3265 は 65 MP(9344x7000)で、超高解像度なら選択肢がここしかない。</p>
-<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>(5.5 µm)は飽和容量が大きい代わりにダークノイズも 14 e-。</p>
+<p>Mit current / mature / legacy für <code style="color:#22d3bf">status</code> lässt sich die Liste eingrenzen. Abgekündigte, zu alte Teile sind nicht aufgeführt. Für Neuentwicklungen aus <code style="color:#22d3bf">status=&quot;current&quot;</code> wählen (Pregius S, 2.74 µm rückseitenbelichtet).</p>
+<p><b>Was hier steht, sind &quot;Werte der Kameraseite&quot;</b>. Da die Quelle Baslers Tabelle mit Kameramessungen ist:</p>
+<p style="margin:2px 0 2px 12px">• Die Auflösung ist <b>die Pixelzahl, die diese Kamera ausgibt</b>, nicht unbedingt alle effektiven Pixel des Sensors (Hersteller beschneiden manchmal die Ränder und machen sie etwas kleiner).</p>
+<p style="margin:2px 0 2px 12px">• Die Bildrate <b>ändert sich mit der Anschlussschnittstelle</b> (USB3 / GigE / 5GigE / CXP-12), daher wird sie nicht als Sensorattribut geführt ―― deshalb steht sie nicht in dieser Tabelle.</p>
+<p style="margin:2px 0 2px 12px">• QE / Dunkelrauschen / Full-Well-Kapazität / Dynamikbereich / max. SNR sind <b>die EMVA1288-Messungen der Kamera</b> (ace / ace 2 / boost). Sie sind keine theoretischen Werte des Sensors allein, sondern schließen die Implementierung ein, daher ändern sie sich bei einer anderen Kamera etwas.</p>
+<p style="margin:2px 0 2px 12px">• Pixelabstand, Verschlussart und Generation stammen vom Sensor und ändern sich daher nicht, wenn die Kamera wechselt.</p>
+<p><b>Kamerahersteller, die ihre Sensoren selbst bauen, können hier nicht aufgeführt werden</b> (Canon / Photron / Vision Research (Phantom) / Teledyne DALSA / ein Teil von Hamamatsu). Sie lassen sich nicht über die Typenbezeichnung nachschlagen, weil das Datenblatt der Kamera die einzige Quelle ist. Manche haben um eine Größenordnung verschiedene Pixelabstände (Phantoms hochempfindliche Modelle 28 µm, Pregius S 2.74 µm), und sowohl die Blendenzahl, ab der die Beugung begrenzt, als auch die Full-Well-Kapazität ändern sich um eine Größenordnung, daher <b>die Werte des realen Geräts direkt an sensor_spec übergeben</b>.</p>
+<p>Was sich zwischen den Generationen ändert, zeigt sich in der Full-Well-Kapazität: Pregius 1st hat 31.8 ke-, das ist das <b>3-fache</b> der 2nd (10.4 ke-). Das ist der Preis für die Verkleinerung des Pixels von 5.86 µm auf 3.45 µm. Pregius S (2.74 µm) hält mit 9.7 ke- das Niveau der 2nd (rückseitenbelichtet).</p>
+<p>Hersteller außer Sony (über <code style="color:#22d3bf">maker</code> abrufbar) stammen aus derselben Tabelle, daher <b>lassen sie sich mit derselben Messmethode nebeneinander vergleichen</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b> (3.2 µm) spielt seine Stärke in <b>Großformaten</b> aus, APS-C / 35 mm. Sony hat dieses Format nicht.</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b> (4.8 µm) ist klein und schnell, aber sein Dunkelrauschen beträgt 11-12 e-, das 5-fache von Pregius. In dunklen Szenen macht sich das bemerkbar.</p>
+<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b> (2.5 µm) punktet mit <b>Dunkelrauschen der 1-e--Klasse</b> (GMAX2505/2509). Die Full-Well-Kapazität ist mit 4-5 ke- klein, daher ist der Dynamikbereich mit 70 dB etwa gleich. GMAX3265 hat 65 MP (9344x7000); für Ultrahochauflösung ist es die einzige Option.</p>
+<p style="margin:2px 0 2px 12px">• <b>ams CMV</b> (5.5 µm) hat eine große Full-Well-Kapazität, dafür aber auch 14 e- Dunkelrauschen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

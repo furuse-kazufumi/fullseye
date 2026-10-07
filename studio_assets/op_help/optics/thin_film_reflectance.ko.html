@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>박막(두께 d, 굴절률 n_film)의 분광 반사율. Airy(다중 반사)의 닫힌 식.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>nm:           波長 [nm] (配列可)。</p>
-<p>thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。</p>
-<p>cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。</p>
-<p>返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。</p>
-<p>物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。λ/4 の奇数倍で反射が極大(n_film &gt; n_sub のとき)になり、<b>厚みを変えると色が動く</b>のがシャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。</p>
+<p>nm:           파장 [nm] (배열 가능).</p>
+<p>thickness_nm: 막 두께 [nm]. 비눗방울이라면 200–800, 양극 산화 피막이라면 50–300. n_film/n_sub/n_out: 막 / 기판 / 입사 측의 굴절률(실수, 흡수 없음).</p>
+<p>cos_theta:    입사 측에서의 입사각의 cos(배열 가능, nm과 브로드캐스트할 수 있는 형태).</p>
+<p>반환값: 반사율 R(0–1). nm과 cos_theta의 브로드캐스트 형태.</p>
+<p>물리: 막 안의 전파에 의한 위상차 δ = 2π·(2 n_film d cosθ_film)/λ. 경계의 프레넬 계수(s 편광과 p 편광의 평균 = 무편광)를 r1, r2로 하여 R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|². λ/4의 홀수배에서 반사가 극대(n_film &gt; n_sub일 때)가 되며, <b>두께를 바꾸면 색이 움직이는</b> 것이비눗방울의 색이다. 막 두께 0에서는 R이 기판 단독의 프레넬 반사와 일치한다(테스트로 확인).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

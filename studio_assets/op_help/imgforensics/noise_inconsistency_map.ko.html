@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>블록별 <b>잡음 표준편차</b>를 늘어놓은 지도. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Immerkær 1996 の 3x3 マスクで高周波成分を取り、<code style="color:#22d3bf">block</code> 角の非重複ブロックごとに <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code> を出してブロック定数で戻す。貼り付けた領域が別の露出・別の圧縮率・別のカメラから来ていれば、この値がまわりと <b>段差</b>になる。</p>
-<p><b>精度は良い</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が固定)。真の σ が上半分 0.01・下半分 0.04(8 bit で 2.55 と 10.20、比 4.0)の合成画像で、推定は <b>2.533 と 10.214、比 4.033</b> —— 絶対値も比も 1% 以内。</p>
-<p><b>この地図が言えないこと</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>テクスチャは雑音として数えられる</b>。Immerkær のマスクはラプラシアン風なので、細かい模様の領域は σ が高く出る。実測:<b>雑音は上下とも同じ σ=0.01</b> で、下半分にだけ市松模様を足した画像では、模様側 15.97 / 平坦側 2.58 = <b>6.2 倍</b>。段差があっても「改竄」ではなく「模様」かもしれない。</p>
-<p style="margin:2px 0 2px 12px">• 逆に <b>平滑化された改竄は σ が下がる</b>ので見えるが、平坦な背景に平坦な物を貼った場合は差が出ない。</p>
-<p style="margin:2px 0 2px 12px">• JPEG は雑音をブロックごとに削るので、圧縮済みの画像では <code style="color:#22d3bf">block</code> を 8 の倍数にしないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。</p>
-<p style="margin:2px 0 2px 12px">• ★ <b>画像の縁に、改竄と無関係な段差が必ず出る</b>(2026-09-06 実測)。畳み込みが <code style="color:#22d3bf">mode=&quot;reflect&quot;</code> で折り返すため、外周のブロックでは高周波が減って σ が低く出る。<b>改竄ゼロ・一様雑音</b>の 256x256 で、最外ブロック帯 8.815 に対し中心 9.537(<b>-7.6 %</b>)。同じ画像の生の局所 std は 0.03491 と 0.03563(-2.0 %)しか違わないので、差の大半は推定器が作っている。中央値からの隔たりで見ると最外 0.7173 / 中心 0.5948 = <b>1.21 倍</b>。画素ごとの ROC を取るとこれだけでゼロ点 AUC が 0.5 から外れる(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code> の実測で 0.447)。<b>外周 1 ブロックを判定から外す</b>か、中央値を場所ごとに取ること。</p>
+<p>Immerkær 1996의 3x3 마스크로 고주파 성분을 구하고, <code style="color:#22d3bf">block</code> 정사각의 비중첩 블록마다 <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code>를 내어 블록 상수로 되돌린다. 붙인 영역이 다른 노출·다른 압축률·다른 카메라에서 왔다면, 이 값이주위와 <b>단차</b>가 된다.</p>
+<p><b>정확도는 좋다</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code>가 고정). 참 σ가 위쪽 절반 0.01· 아래쪽 절반 0.04(8 bit로 2.55와 10.20, 비 4.0)인 합성 화상에서 추정은 <b>2.533과 10.214, 비 4.033</b> —— 절댓값도 비도 1% 이내.</p>
+<p><b>이 지도가 말할 수 없는 것</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>텍스처는 잡음으로 세어진다</b>. Immerkær의 마스크는 라플라시안 같은 것이므로, 세밀한 무늬의 영역은 σ가 높게 나온다. 실측: <b>잡음은 위아래 모두 같은 σ=0.01</b>이고, 아래쪽 절반에만 체크무늬를 더한 화상에서는 무늬 쪽 15.97 / 평탄 쪽 2.58 = <b>6.2배</b>. 단차가 있어도 &quot;변조&quot;가 아니라 &quot;무늬&quot;일지도 모른다.</p>
+<p style="margin:2px 0 2px 12px">• 반대로 <b>평활화된 변조는 σ가 내려가므로</b> 보이지만, 평탄한 배경에 평탄한 물체를붙인 경우에는 차이가 나오지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• JPEG는 잡음을 블록마다 깎으므로, 압축된 화상에서는 <code style="color:#22d3bf">block</code>을 8의 배수로하지 않으면 블록 격자와 간섭하여 줄무늬가 나온다(기본값 16은 8의 배수).</p>
+<p style="margin:2px 0 2px 12px">• ★ <b>화상의 가장자리에 변조와 무관한 단차가 반드시 나온다</b>(2026-09-06 실측). 합성곱이 <code style="color:#22d3bf">mode=&quot;reflect&quot;</code>로 되접기 때문에 바깥 둘레의 블록에서는 고주파가줄어 σ가 낮게 나온다. <b>변조 제로·균일 잡음</b>의 256x256에서 최외곽 블록 띠 8.815에 대해 중심 9.537(<b>-7.6 %</b>). 같은 화상의 생 국소 std는 0.03491과 0.03563(-2.0 %)밖에 다르지 않으므로, 차이의 대부분은 추정기가 만들고 있다. 중앙값으로부터의 떨어짐으로 보면 최외곽 0.7173 / 중심 0.5948 = <b>1.21배</b>. 화소별 ROC를 구하면 이것만으로 제로점 AUC가 0.5에서 벗어난다(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>의 실측으로 0.447). <b>바깥 둘레 1블록을판정에서 제외하거나</b>, 중앙값을 위치별로 구할 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

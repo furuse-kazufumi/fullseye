@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_catalog() -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.material_catalog() -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;material_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Material name → its defaults (diffuse roughness / clear-coat strength and roughness / the sheen of cloth).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>実測の物性値ではなく見え方の設計値。意味があるのは順序(上塗り: 紙 &lt; プラ &lt; 陶器 &lt; 車の塗装 / 拡散の粗さ: コンクリート &gt; 紙 &gt; プラ)。</p>
+<p>Not measured physical properties but design values for appearance. What matters is the order (clear coat: paper &lt; plastic &lt; ceramic &lt; car paint / diffuse roughness: concrete &gt; paper &gt; plastic).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

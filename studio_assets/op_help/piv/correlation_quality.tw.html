@@ -4,62 +4,61 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐點回傳給定位移場<b>吻合程度</b>的 ZNCC 圖。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>引数</p>
-<p>ref     基準画像。</p>
-<p>cur     変形後画像。<code style="color:#22d3bf">ref</code> と同じ形。</p>
-<p>flow    <code style="color:#22d3bf">pivops</code> の <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>、成分は <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p><code style="color:#22d3bf">info</code> を渡さないなら <code style="color:#22d3bf">(2, H, W)</code> の<b>全画素</b>の場。</p>
-<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> が返した dict。渡すと窓格子の <code style="color:#22d3bf">flow</code> を</p>
-<p>画素へ双一次で広げてから測る。</p>
-<p>subset  相関を取る正方サブセットの一辺 [px]。<b>奇数</b>。</p>
-<p>戻り値は入力画像と同じ形の float 配列。値は <code style="color:#22d3bf">[-1, 1]</code> の ZNCC で、<b>測れなかった点は NaN</b>(サブセットが画像からはみ出す縁、変形後の標本点が画像の外へ出る点、分散の無いサブセット)。</p>
-<p>★ これは相関器ではない —— <b>既にある変位場の採点係</b></p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> も <code style="color:#22d3bf">optical_flow_lk</code> も <code style="color:#22d3bf">demons_register</code> も、</p>
-<p>出した変位が正しいかは返さない。ここは <code style="color:#22d3bf">cur</code> を <code style="color:#22d3bf">flow</code> で基準側へ</p>
-<p>引き戻し(双一次)、<code style="color:#22d3bf">ref</code> との ZNCC を <code style="color:#22d3bf">subset</code> の箱で測るだけ。</p>
-<p><b>どの推定器の出力でも同じ口で採点できる</b>のが要点で、相関器を</p>
-<p>もう 1 つ増やさずに品質だけを足せる。</p>
-<p>平均と標準偏差の両方を割り引くので、<b>ゲインとオフセットには不変</b>。</p>
-<p>露出が変わった対でも「合っているか」だけを見る。</p>
-<p>★★ 既存の <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> では足りない場面がある(実測)</p>
-<p><code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、</p>
-<p><b>相関面に競合する峰が立つ</b>種類の失敗を捕まえる。捕まえないのは</p>
-<p>「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素</p>
-<p>だけを無関係な模様に差し替えた実測:</p>
-<p>指標                    差し替え領域   健全領域   区別</p>
-<p>peak_ratio                 1.207        1.304    7.5 % 差(重なる)</p>
-<p>correlation_quality        0.1101       0.9993   9 倍差</p>
-<p>品質で切って変位誤差 RMS がどう変わるか:</p>
-<p>門                  残る割合   誤差 RMS [px]</p>
-<p>なし                 100.0 %      1.8110</p>
-<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 倍改善</p>
+<p>參數</p>
+<p>ref     基準影像。</p>
+<p>cur     變形後影像。與 <code style="color:#22d3bf">ref</code> 同形。</p>
+<p>flow    <code style="color:#22d3bf">pivops</code> 的 <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>，分量為 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
+<p>不傳 <code style="color:#22d3bf">info</code> 時為 <code style="color:#22d3bf">(2, H, W)</code> 的<b>全像素</b>場。</p>
+<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> 回傳的 dict。傳入時，把窗口網格的 <code style="color:#22d3bf">flow</code></p>
+<p>以雙線性擴展到像素後再量測。</p>
+<p>subset  取相關的正方子區的邊長 [px]。<b>奇數</b>。</p>
+<p>回傳值是與輸入影像同形的 float 陣列。值為 <code style="color:#22d3bf">[-1, 1]</code> 的 ZNCC，<b>量不到的點為 NaN</b>(子區超出影像的邊緣、變形後的取樣點落到影像外的點、沒有變異數的子區)。</p>
+<p>★ 這不是相關器 —— <b>而是對既有位移場的評分員</b></p>
+<p><code style="color:#22d3bf">piv_cross_correlate</code>、<code style="color:#22d3bf">optical_flow_lk</code>、<code style="color:#22d3bf">demons_register</code> 都</p>
+<p>不回傳所給位移是否正確。這裡只是以 <code style="color:#22d3bf">flow</code> 把 <code style="color:#22d3bf">cur</code> 拉回基準側</p>
+<p>(雙線性)，再以 <code style="color:#22d3bf">subset</code> 的箱量測與 <code style="color:#22d3bf">ref</code> 的 ZNCC。</p>
+<p>重點是<b>任何估計器的輸出都能以同一個介面評分</b>，無需</p>
+<p>再增加 1 個相關器就能只補上品質。</p>
+<p>平均與標準差兩者都被扣除，因此<b>對增益與偏移不變</b>。</p>
+<p>即使是曝光改變的影像對，也只看「是否吻合」。</p>
+<p>★★ 存在僅憑既有 <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> 不夠的場合(實測)</p>
+<p><code style="color:#22d3bf">peak_ratio</code>(第 1 峰 / 第 2 峰)是 PIV 的標準 SN 比，</p>
+<p>能捕捉<b>相關面上出現競爭峰</b>這類失敗。捕捉不到的是</p>
+<p>「那個地方變成了別的東西」這類失敗。在 u=0.37 px 的影像對中只把 60x60 像素</p>
+<p>替換為無關圖案的實測：</p>
+<p>指標                    替換區域       健全區域   區分</p>
+<p>peak_ratio                 1.207        1.304    相差 7.5 %(重疊)</p>
+<p>correlation_quality        0.1101       0.9993   相差 9 倍</p>
+<p>以品質截斷後位移誤差 RMS 如何變化：</p>
+<p>門檻                保留比例   誤差 RMS [px]</p>
+<p>無                   100.0 %      1.8110</p>
+<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 改善 584 倍</p>
 <p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 倍</p>
-<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6 割捨てて<b>悪化</b></p>
-<p><b>両方見るのが正しい。</b> peak_ratio は競合ピークを、ZNCC は</p>
-<p>デコリレーションを見る。片方だけでは穴が開く。</p>
-<p>★★ 落とし穴 —— <b>品質が高いことは精度が高いことではない</b></p>
-<p>ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に</p>
-<p>わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):</p>
-<p>変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
-<p>zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
-<p><b>0.05 px 間違えても 0.9992</b> —— 完全に合っている 0.99945 との差は</p>
-<p>2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな</p>
-<p>ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。</p>
-<p>一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは</p>
-<p>21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——</p>
-<p><b>効くのは失敗が局所的なときだけ。</b></p>
-<p>★ 引き戻しはサブセットごとの平行移動ではなく<b>場そのもの</b></p>
-<p>普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの</p>
-<p><code style="color:#22d3bf">flow</code> で <code style="color:#22d3bf">cur</code> を歪めてから箱で相関を取る。<code style="color:#22d3bf">flow</code> が滑らかなら</p>
-<p>両者は一致し、そうでないなら<b>こちらのほうが正しい</b>(サブセット内の</p>
-<p>変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。</p>
+<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 丟掉 6 成反而<b>惡化</b></p>
+<p><b>兩者都看才是正確的。</b> peak_ratio 看競爭峰，ZNCC 看</p>
+<p>去相關。只看一個就會留下漏洞。</p>
+<p>★★ 陷阱 —— <b>品質高不等於精度高</b></p>
+<p>ZNCC 對次像素誤差幾乎沒有反應。對真實位移 0.37 px 的影像對</p>
+<p>故意加入誤差的場進行評分的實測(斑點直徑 3.8 px)：</p>
+<p>位移誤差 [px]     0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
+<p>zncc 中位數      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
+<p><b>錯了 0.05 px 仍為 0.9992</b> —— 與完全吻合的 0.99945 之差</p>
+<p>只有 2.5e-4。這個指標能量的是「相對斑點大小較大的</p>
+<p>偏移、缺測、被替換成別的東西」，而不是 0.01 px 的精度。</p>
+<p>在均勻雜訊使所有點同等劣化的情況(σ=0.15)下，以門檻截斷後保留</p>
+<p>21.8 %，誤差 RMS 只從 0.1736 → 0.1292，改善 1.34 倍 ——</p>
+<p><b>只有在失敗是局部的時候才有效。</b></p>
+<p>★ 拉回用的不是逐子區的平移，而是<b>場本身</b></p>
+<p>一般的 DIC 剛性地錯開子區來取相關，這裡則以逐像素的</p>
+<p><code style="color:#22d3bf">flow</code> 扭曲 <code style="color:#22d3bf">cur</code> 後再以箱取相關。<code style="color:#22d3bf">flow</code> 平滑時</p>
+<p>兩者一致，否則<b>這邊較正確</b>(因為連子區內的</p>
+<p>變形也一併看殘差)。成本也只需 O(N)(256² 時 0.003 秒)。</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> が 2 次元でない、形が違う、NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> が <code style="color:#22d3bf">(2, h, w)</code> でない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 無しで <code style="color:#22d3bf">flow</code> が画像と違う形(直し方つきで拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> に <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> が無い、格子と <code style="color:#22d3bf">flow</code> の形が食い違う、格子がどちらかの軸で 2 未満。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> が偶数・3 未満・画像より大きい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> 不是 2 維、形狀不同、含 NaN、Inf。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> 不是 <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p style="margin:2px 0 2px 12px">• 沒有 <code style="color:#22d3bf">info</code> 而 <code style="color:#22d3bf">flow</code> 與影像形狀不同(附上修正方法拒絕)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 中沒有 <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>、網格與 <code style="color:#22d3bf">flow</code> 的形狀不符、網格在任一軸上小於 2。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> 為偶數、小於 3、比影像還大。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

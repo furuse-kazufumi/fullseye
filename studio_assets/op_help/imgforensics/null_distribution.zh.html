@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知<b>未被篡改</b>的样本汇总证据量的零分布。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は <code style="color:#22d3bf">PCE 1832</code> のような数値を渡されて<b>解釈する手段が無い</b>。かといってしきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値ではない。</p>
-<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<p>这一族一贯不返回判定。这是正确的，但照此下去，用户拿到 <code style="color:#22d3bf">PCE 1832</code> 这样的数值却<b>没有解读它的手段</b>。然而附带阈值又会成为谎言 ―― 分离点随张数、分辨率、压缩率、拍摄对象而变，不是出厂时能定下的值。</p>
+<p>因此<b>从用户自己的干净数据测出分布</b>。附带的不是“阈值”，而是“阈值的测法”，这样即使条件改变也依然正确。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>values : array_like</p>
-<p>改竄が無いと分かっている組で測った証拠量(<code style="color:#22d3bf">hash_distance</code> や</p>
-<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> など)。<b>同じ条件</b>で集めること。</p>
+<p>在已知未被篡改的组上测得的证据量(<code style="color:#22d3bf">hash_distance</code> 或</p>
+<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> 等)。要在<b>相同条件</b>下收集。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">quantiles</code></p>
-<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
-<p>ので <code style="color:#22d3bf">n &lt; 20</code> は <code style="color:#22d3bf">caveats</code> に出す(黙って外挿しない)。</p>
+<p>(5, 25, 50, 75, 95, 99 百分位)。样本少时无法测出尾部，</p>
+<p>所以 <code style="color:#22d3bf">n &lt; 20</code> 会在 <code style="color:#22d3bf">caveats</code> 中给出(不会默默外推)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

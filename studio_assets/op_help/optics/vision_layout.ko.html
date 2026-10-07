@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;vision_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>센서·렌즈·조명·장면을 묶어 <b>도출량을 닫힌 식으로</b> 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値 dict: <code style="color:#22d3bf">camera</code>(<code style="color:#22d3bf">optical_camera</code> と同じ規約)/ <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>)。</p>
-<p>撮る前にここを見れば、視野に部品が収まるか・欠陥が分解できるか・被写界深度が足りるかが分かる ―― 「見えるか」ではなく「必要なコントラストで写るか」を先に判断するのが、光学デジタルツインを持つ理由。</p>
+<p>반환값 dict: <code style="color:#22d3bf">camera</code>(<code style="color:#22d3bf">optical_camera</code>와 같은 규약) / <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>).</p>
+<p>촬영 전에 여기를 보면 시야에 부품이 들어가는지, 결함을 분해할 수 있는지, 피사계 심도가충분한지 알 수 있다 ―― &quot;보이는가&quot;가 아니라 &quot;필요한 콘트라스트로 찍히는가&quot;를먼저 판단하는 것이 광학 디지털 트윈을 갖는 이유이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ESF로부터 SFR(에지로 측정하는 MTF)을 구한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>
-<p>*window*(必須、px): 切り出す半幅。★迷光(裾)は窓の外に居るので、窓を狭くするほど SFR から見えなくなる。*correction*(必須): 標本化が作る sinc の割り戻し。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> — 割り戻さない(離散の段差を離散の PSF で畳んだ像なら前進差分が離散 LSF そのもので、これが正しい)。</p>
-<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 連続のエッジを点で標本した ESF の前進差分は幅 Δ の箱で LSF を均すので sinc(fΔ) で割る。</p>
-<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> の升(幅 Δ)の平均がもう 1 つの箱なので sinc(fΔ)² で割る。</p>
-<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> か <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017 の LSF の窓)。</p>
-<p>返り値 <code style="color:#22d3bf">(n, 2)</code> の pairs: 列 0 = 周波数 [cyc/px] (エッジに垂直)、列 1 = SFR。0 〜 min(1.0, 0.5/Δ) cyc/px (升の刻み Δ の Nyquist まで、ただし画素の Nyquist の 2 倍 = 1 cyc/px で打ち切る。その先は sinc の割り戻しが暴れる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf が空・NaN / window が正の有限でない・ESF の長さを越える / ends が window 以上 / correction・apodize が一覧に無い / 黒と白の基準が等しい(エッジが無い)。</p>
+<p>*esf*는 <code style="color:#22d3bf">edge_spread</code>의 반환값(딕셔너리) 또는 1 px 스텝의 1-D 배열(<code style="color:#22d3bf">oversample</code> = 1로 간주)이다. 가장자리 중심(차분 절댓값의 최대)에서 ±*window* px를 잘라, 양 끝 *ends* px의 평균을 흑/백 기준으로 정규화하고, 전진 차분으로 LSF를 만들어 푸리에 변환의 절댓값을 DC로 나눈다.</p>
+<p>*window*(필수, px): 잘라낼 반폭. ★미광(꼬리)은 창 바깥에 있으므로, 창을 좁힐수록 SFR에서 보이지 않게 된다. *correction*(필수): 표본화가 만드는 sinc의 되돌림.</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> — 되돌리지 않는다(이산 계단을 이산 PSF로 합성곱한 상이라면 전진 차분이 이산 LSF 그 자체이며, 이것이 옳다).</p>
+<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 연속 가장자리를 점으로 표본화한 ESF의 전진 차분은 폭 Δ의 상자로 LSF를 평활하므로 sinc(fΔ)로 나눈다.</p>
+<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code>의 빈(폭 Δ) 평균이 상자 1개를 더하므로 sinc(fΔ)²로 나눈다.</p>
+<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> 또는 <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017의 LSF 창).</p>
+<p>반환값은 <code style="color:#22d3bf">(n, 2)</code>의 pairs: 열 0 = 주파수 [cyc/px] (가장자리에 수직), 열 1 = SFR. 0 – min(1.0, 0.5/Δ) cyc/px (빈 스텝 Δ의 Nyquist까지, 단 화소 Nyquist의 2배 = 1 cyc/px에서 잘라낸다. 그 너머는 sinc 되돌림이 날뛴다).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf가 비어 있음·NaN / window가 양의 유한값이 아님·ESF 길이를 넘음 / ends가 window 이상 / correction·apodize가 목록에 없음 / 흑과 백의 기준이 같음(가장자리가 없음).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

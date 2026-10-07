@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_rays(directions, normals)</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.reflect_rays(directions, normals)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;reflect_rays&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>鏡面反射 d − 2(d·n)n。<code style="color:#22d3bf">glassmirror.refract_rays</code> 的夥伴(此前缺反射側)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入射・法線ともに (..., 3)。法線の向き(表裏)には依存しない。返り値は単位ベクトル。</p>
-<p>手順: <code style="color:#22d3bf">directions</code> と <code style="color:#22d3bf">normals</code> をそれぞれ単位化してから <code style="color:#22d3bf">r = d - 2 (d·n) n</code> を取り、もう一度単位化する。<code style="color:#22d3bf">n</code> を <code style="color:#22d3bf">-n</code> にしても <code style="color:#22d3bf">(d·n) n</code> は変わらないので、法線の符号を気にせず <code style="color:#22d3bf">trace_rays(...)[&quot;normal&quot;]</code> をそのまま渡せる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">directions</code>, <code style="color:#22d3bf">normals</code>: 最後の軸が 3、有限。形が違えば numpy の規則でブロードキャスト(1 本の法線を全光線に、など)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">ValueError</code>): 最後の軸が 3 でない / 非有限 / <b>長さ 0 のベクトル</b>を含む(交差しなかった光線の法線 0 を混ぜると落ちる ―― <code style="color:#22d3bf">index &gt;= 0</code> で絞ってから)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: ブロードキャスト後の形の float64 単位ベクトル。</p>
-<p><code style="color:#22d3bf">trace_rays</code> → <code style="color:#22d3bf">reflect_rays</code> → <code style="color:#22d3bf">trace_rays</code> で鏡面の 2 次反射を追える。屈折側は <code style="color:#22d3bf">refract_rays</code>。</p>
+<p>入射與法線皆為 (..., 3)。不依賴法線的朝向(正反面)。回傳值為單位向量。</p>
+<p>步驟：先將 <code style="color:#22d3bf">directions</code> 和 <code style="color:#22d3bf">normals</code> 分別單位化，再取 <code style="color:#22d3bf">r = d - 2 (d·n) n</code>，然後再單位化一次。將 <code style="color:#22d3bf">n</code> 換成 <code style="color:#22d3bf">-n</code>，<code style="color:#22d3bf">(d·n) n</code> 也不變，所以不必在意法線的正負號，<code style="color:#22d3bf">trace_rays(...)[&quot;normal&quot;]</code> 可以直接傳入。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">directions</code>, <code style="color:#22d3bf">normals</code>：最後一個軸為 3，有限值。形狀不同則依 numpy 的規則廣播(將 1 條法線用於所有光線等)。</p>
+<p style="margin:2px 0 2px 12px">• 失敗(<code style="color:#22d3bf">ValueError</code>)：最後一個軸不是 3 / 非有限 / 含有<b>長度 0 的向量</b> (混入未相交光線的法線 0 就會失敗 ―― 先以 <code style="color:#22d3bf">index &gt;= 0</code> 篩選)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值：廣播後形狀的 float64 單位向量。</p>
+<p><code style="color:#22d3bf">trace_rays</code> → <code style="color:#22d3bf">reflect_rays</code> → <code style="color:#22d3bf">trace_rays</code> 可以追蹤鏡面的 2 次反射。折射側用 <code style="color:#22d3bf">refract_rays</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

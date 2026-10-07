@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>粗糙漫反射面的著色(Oren–Nayar)。紙、石膏、混凝土與月亮的樣子。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>normals: (H, W, 3)。light / view: 面から光源 / 視点への方向。</p>
-<p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
-<p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
-<p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>normals：(H, W, 3)。light / view：從面到光源 / 視點的方向。</p>
+<p>roughness_deg：微面傾斜的標準差 [deg]。<b>為 0 時與 Lambert 嚴格一致</b>。</p>
+<p>albedo：漫反射率(純量或 (H,W))。</p>
+<p>回傳值：(H, W) 的輻射亮度係數(0 以上)。</p>
+<p>為什麼 Lambert 不夠：Lambert 在邊緣(terminator)按 cos 成比例下降，但粗糙面由於微面的相互遮蔽與相互反射，<b>邊緣仍保持平坦明亮</b>。滿月看起來像圓盤一樣均勻就是這個原因，用 Lambert 則邊緣變暗而看起來像球。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

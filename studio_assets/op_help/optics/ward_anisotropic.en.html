@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;ward_anisotropic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ward&#x27;s anisotropic reflection (an elliptical-Gaussian microfacet). The <b>stretched highlight</b> of a hairline finish.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>normals: (H, W, 3) 法線マップ。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 研磨の筋の方向(3,)。面内へ射影して使う。alpha_x / alpha_y: 筋方向 / 直交方向の粗さ。<b>この比がハイライトの伸び</b>になる</p>
-<p>(等方なら円、alpha_x &gt;&gt; alpha_y なら筋に沿って伸びた線)。</p>
-<p>返り値: (H, W) の鏡面反射強度(非負)。背景は 0。</p>
-<p>式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。</p>
+<p>normals: (H, W, 3) normal map. light / view: direction from the surface to the light source / viewpoint (3,).</p>
+<p>tangent: direction of the polishing streaks (3,). Projected into the surface plane before use. alpha_x / alpha_y: roughness along / across the streaks. <b>This ratio is the elongation of the highlight</b></p>
+<p>(a circle if isotropic; if alpha_x &gt;&gt; alpha_y, a line stretched along the streaks).</p>
+<p>Returns: (H, W) specular reflection intensity (non-negative). Background is 0.</p>
+<p>Formula: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)), where δ is the angle between the half vector and the normal, and φ the azimuth from the tangent (Ward 1992).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

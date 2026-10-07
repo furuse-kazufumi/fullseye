@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自引导滤波器（guided filter，引导图像＝输入自身，torch 实现）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>局所窓内の線形回帰 <code style="color:#22d3bf">q = a_lin*I + b_lin</code> を箱フィルタで解くエッジ保存平滑化。<code style="color:#22d3bf">a</code> は窓半径 <code style="color:#22d3bf">r</code> を 1〜5 に振り（<code style="color:#22d3bf">r = 1 + int(a*4)</code>）、<code style="color:#22d3bf">b</code> は正則化項 <code style="color:#22d3bf">eps</code> を 0.001〜0.051 に振る（<code style="color:#22d3bf">eps = 0.001 + 0.05*b</code>、大きいほど強く平滑化されエッジ保存が弱まる）。バイラテラルフィルタの高速な代替として知られる手法で、ガイド画像を入力自身にしているのでセルフガイド付きのエッジ保存平滑化として働く。HALCON の <code style="color:#22d3bf">guided_filter</code>（画像のガイデッドフィルタリングを行う）に相当するが、同じ結果になるとは限らない近似実装。</p>
+<p>在局部窗口内用箱式滤波求解线性回归 <code style="color:#22d3bf">q = a_lin*I + b_lin</code> 的保边平滑。<code style="color:#22d3bf">a</code> 将窗口半径 <code style="color:#22d3bf">r</code> 在 1〜5 间调节（<code style="color:#22d3bf">r = 1 + int(a*4)</code>），<code style="color:#22d3bf">b</code> 将正则化项 <code style="color:#22d3bf">eps</code> 在 0.001〜0.051 间调节（<code style="color:#22d3bf">eps = 0.001 + 0.05*b</code>，越大平滑越强、边缘保持越弱）。这是作为双边滤波的快速替代而知名的方法，由于引导图像就是输入本身，它作为自引导的保边平滑来工作。相当于 HALCON 的 <code style="color:#22d3bf">guided_filter</code>（对图像进行引导滤波），但这是不一定得到相同结果的近似实现。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>工业镜头的规格表(可按型号查)。可用 <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code> 筛选。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>スペックシートに載る項目だけ</b>を持つ ―― 焦点距離・F 値の範囲・対応形式・マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとのグラフでしか出ないため<b>持たない</b>(持つと実測だと誤解させる)。</p>
-<p>返り値の各項目に <code style="color:#22d3bf">image_circle_mm</code> が入るので、センサの対角と比べて「そのセンサを覆えるか」を機械で判定できる。</p>
+<p><b>只持有规格表上列出的项目</b> ―― 焦距、F 值范围、对应画幅、卡口、像圈。正如用户指出的，“镜头本身规格上列出的参数并没有那么多”，所以这样就够了。像差、MTF、畸变只以各机型的曲线图给出，所以<b>不持有</b>(持有会让人误以为是实测)。</p>
+<p>返回值的各项中含有 <code style="color:#22d3bf">image_circle_mm</code>，与传感器对角线比较即可由机器判定“能否覆盖该传感器”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

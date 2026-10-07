@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Sauvola局部自適應二值化(<code style="color:#22d3bf">skimage.filters.threshold_sauvola</code>,視窗大小為<code style="color:#22d3bf">2*int(a*6)+3</code>)。由於同時利用局部平均值與局部標準差來決定閾值,因此比<code style="color:#22d3bf">dyn_threshold</code>更能應對照明不均或低對比度的文件。相當於HALCON<code style="color:#22d3bf">var_threshold</code>(Threshold an image by local mean and standard deviation analysis.)的近似(公式化的構想相似,但Sauvola的公式與HALCON的公式係數不同——數值結果並不相同)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が局所窓のサイズを振る。<code style="color:#22d3bf">b</code> は未使用(Sauvola の k, r は skimage の既定値に固定)。</p>
+<p><code style="color:#22d3bf">a</code> 調整局部視窗的大小。<code style="color:#22d3bf">b</code> 未使用(Sauvola 的 k、r 固定為 skimage 的預設值)。</p>
 <p><b>邊界處理</b>：不重複端點的鏡像折返 (d c b | a b c d，OpenCV 的 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

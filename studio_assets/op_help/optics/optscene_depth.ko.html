@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이의 <b>정답</b> (H, W) [mm]. <b>광축 방향의 z</b> 이지 시점에서의 사거리가 아닙니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、しかも中心では一致するので気づけない)。生の光線距離が要るなら trace_rays(...)[&quot;t&quot;] を使う。</p>
-<p>当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。</p>
+<p>깊이 카메라·스테레오·광절단이 반환하는 것은 모두 광축 방향의 z이므로, 그에 맞춘다(경사 거리와 섞으면 시야의 끝일수록 계통적으로 어긋난 참값으로 채점하게 되며, 게다가 중심에서는 일치하므로 알아차릴 수 없다). 날 광선 거리가 필요하면 trace_rays(...)[&quot;t&quot;]를 쓴다.</p>
+<p>맞지 않는 화소는 NaN. 0으로 채우지 않는다 ―― &quot;거리 0의 면&quot;과 구별할 수 없게 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

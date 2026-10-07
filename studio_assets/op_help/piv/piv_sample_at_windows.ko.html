@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>픽셀별 장 <code style="color:#22d3bf">(2, H, W)</code>를 창 중심의 격자로 떨어뜨린다(최근접).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。<b>比べる前に同じ格子へ持ってくる</b>必要があり、その持ってき方(最近傍か窓内平均か)で誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の平滑化と区別がつかなくなる。</p>
+<p>참값은 화소 해상도로 만들어지지만, PIV의 출력은 창의 격자에 놓인다. <b>비교하기 전에같은 격자로 가져올</b> 필요가 있으며, 그 가져오는 방식(최근접인가 창 내 평균인가)으로오차가 바뀐다. 여기서는 최근접 —— 창 내 평균으로 하면, 기울기가 있는 장에서 PIV 자신의평활화와 구별이 되지 않게 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

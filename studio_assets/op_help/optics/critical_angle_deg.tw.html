@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全反射臨界角 [deg] = asin(n2/n1)。若非 n1 &gt; n2 則 ValueError(不存在)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
-<p>式: <code style="color:#22d3bf">degrees(asin(n2 / n1))</code>。入射角(法線からの角)がこれ以上なら屈折光が</p>
-<p>存在せず全反射する。例: N-BK7 相当 <code style="color:#22d3bf">n1 = 1.5</code> → 空気 <code style="color:#22d3bf">n2 = 1.0</code> で 41.8 度、水 <code style="color:#22d3bf">n1 = 1.333</code> → 空気で 48.6 度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>: 光が出ていく側(密な媒質)の屈折率、<code style="color:#22d3bf">n2</code>: 入る側(疎な媒質)の屈折率。どちらも正の有限スカラ(<code style="color:#22d3bf">float()</code> で変換するので配列は受けない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1 &lt;= n2</code> は臨界角が存在しないので <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">NaN</code> や 90 度でごまかさない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float [deg]、<code style="color:#22d3bf">(0, 90)</code>。</p>
-<p style="margin:2px 0 2px 12px">• 波長依存は入れない。分散込みで評価するなら硝材の Sellmeier から求めた <code style="color:#22d3bf">n1</code> を渡す(<code style="color:#22d3bf">prism_min_deviation_deg</code> は内部でそれをやる)。</p>
-<p><code style="color:#22d3bf">fresnel_dielectric</code> に臨界角以上の <code style="color:#22d3bf">cos_i</code> を渡した場合の挙動はそちらを参照。Brewster 角(p 偏光の反射が 0 になる角)は <code style="color:#22d3bf">brewster_angle_deg</code>。</p>
+<p>只在光從玻璃射向空氣時發生。是光纖、稜鏡全反射面的設計值。</p>
+<p>公式：<code style="color:#22d3bf">degrees(asin(n2 / n1))</code>。入射角(與法線的夾角)不小於此值時折射光</p>
+<p>不存在而發生全反射。例：相當於 N-BK7 的 <code style="color:#22d3bf">n1 = 1.5</code> → 空氣 <code style="color:#22d3bf">n2 = 1.0</code> 為 41.8 度，水 <code style="color:#22d3bf">n1 = 1.333</code> → 空氣為 48.6 度。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>：光射出一側(光密介質)的折射率，<code style="color:#22d3bf">n2</code>：射入一側(光疏介質)的折射率。兩者都是正的有限純量(以 <code style="color:#22d3bf">float()</code> 轉換，所以不接受陣列)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1 &lt;= n2</code> 時不存在臨界角，因此 <code style="color:#22d3bf">ValueError</code>(不用 <code style="color:#22d3bf">NaN</code> 或 90 度敷衍)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值：float [deg]，<code style="color:#22d3bf">(0, 90)</code>。</p>
+<p style="margin:2px 0 2px 12px">• 不含波長依賴。若要計入色散來評估，請傳入由玻璃材料的 Sellmeier 求得的 <code style="color:#22d3bf">n1</code>(<code style="color:#22d3bf">prism_min_deviation_deg</code> 在內部就是這樣做的)。</p>
+<p>向 <code style="color:#22d3bf">fresnel_dielectric</code> 傳入臨界角以上的 <code style="color:#22d3bf">cos_i</code> 時的行為請參見該函式。Brewster 角(p 偏振的反射為 0 的角度)見 <code style="color:#22d3bf">brewster_angle_deg</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

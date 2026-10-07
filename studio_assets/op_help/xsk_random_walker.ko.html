@@ -13,9 +13,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>랜덤 워커(random walker) 기법에 의한 그래프 기반 영역 분할.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した 2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す(返り値は領域そのものではなく、領域の境界線 region)。</p>
-<p><code style="color:#22d3bf">a</code> がシードの閾値幅を振る(暗側シード <code style="color:#22d3bf">&lt; 0.3+0.2a</code>、明側シード <code style="color:#22d3bf">&gt; 0.7-0.2a</code>。<code style="color:#22d3bf">a</code> が大きいほどシードが広がり不定領域が減る)。<code style="color:#22d3bf">b</code> は拡散のしやすさを決める <code style="color:#22d3bf">beta</code>(10〜210)を振り、大きいほどエッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
+<p>skimage.segmentation.random_walker로, 명암 임계값에서 자동 생성한 2 클래스의 시드(marker)를 출발점으로 하여, 각 화소가 어느 시드 쪽으로 확산전파되기 쉬운지를 풀어 2값 라벨로 분할하고, 그 라벨 경계를 반환한다(반환값은 영역 그 자체가 아니라 영역의 경계선 region).</p>
+<p><code style="color:#22d3bf">a</code>가 시드의 임계값 폭을 바꾼다(어두운 쪽 시드 <code style="color:#22d3bf">&lt; 0.3+0.2a</code>, 밝은 쪽 시드 <code style="color:#22d3bf">&gt; 0.7-0.2a</code>. <code style="color:#22d3bf">a</code>가 클수록 시드가 넓어지고 미정 영역이 줄어든다). <code style="color:#22d3bf">b</code>는 확산의 용이성을 정하는 <code style="color:#22d3bf">beta</code>(10~210)를 변화시키며, 클수록에지를 넘는 전파가 억제되어 경계가 선명해진다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

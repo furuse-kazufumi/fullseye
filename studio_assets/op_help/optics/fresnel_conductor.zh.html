@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_conductor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>金属(复折射率 n + ik)界面的反射率。入射侧假设为真空/空气。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>cos_i: 入射角の cos。n / k: 実部 / 消衰係数(配列可、cos_i とブロードキャスト)。</p>
-<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R。<b>金属に「臨界角」は無い</b> — k&gt;0 なので透過波は減衰波であり、どの角度でも一部が吸収される(R&lt;1)。</p>
-<p>式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2 の複素形)。</p>
+<p>cos_i：入射角的 cos。n / k：实部 / 消光系数(可为数组，与 cos_i 广播)。</p>
+<p>polarization：&quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;。</p>
+<p>返回值：反射率 R。<b>金属没有“临界角”</b> — 由于 k&gt;0，透射波是衰减波，在任何角度都有一部分被吸收(R&lt;1)。</p>
+<p>公式：令 η² = (n+ik)² − sin²θ，则 rs = (cosθ − η)/(cosθ + η)，rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2 的复数形式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

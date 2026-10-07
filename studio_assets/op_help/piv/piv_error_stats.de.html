@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Aufschlüsselung der Abweichung von der Ground Truth. Gibt <b>Bias und Streuung getrennt</b> zurück.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>Gibt man nur eines von beiden aus, kommt eine systematisch versetzte Implementierung als &quot;Fehler 0.3 px&quot; durch. Verzerrung (mittlerer Fehler) und Streuung (Standardabweichung) weisen auf verschiedene Ursachen hin.</p>
 <p>Args:</p>
-<p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>truth: 同じ格子の真値 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> の返り)。</p>
-<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
-<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>flow: Schätzung <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>truth: Ground Truth auf demselben Gitter <code style="color:#22d3bf">(2, h, w)</code> (Rückgabe von <code style="color:#22d3bf">piv_sample_at_windows</code>).</p>
+<p>trim: Anzahl der vom äußeren Rand entfernten Gitterzellen. Berührt ein Fenster den Bildrand, sinkt die Korrelation, daher</p>
+<p>wird per Default 1 Ring entfernt. 0 heißt das ganze Gitter.</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">bias_dy</code> / <code style="color:#22d3bf">bias_dx</code> / <code style="color:#22d3bf">std_dy</code> / <code style="color:#22d3bf">std_dx</code> / <code style="color:#22d3bf">rms</code></p>
-<p>(2 成分合わせた二乗平均平方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
-<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>。</p>
+<p>(quadratisches Mittel der 2 Komponenten zusammen) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
+<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯差分（Difference of Gaussians, DoG）。相当于 HALCON 的 <code style="color:#22d3bf">diff_of_gauss</code>（Approximate the LoG operator (Laplace of Gaussian).）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が細かい方のぼかし σ₁ を <code style="color:#22d3bf">0.5〜2.5</code> に、<code style="color:#22d3bf">b</code> が粗い方のぼかし σ₂ を <code style="color:#22d3bf">1.0〜5.0</code> に振る（<code style="color:#22d3bf">|gauss(σ₁) - gauss(σ₂)|</code> を <code style="color:#22d3bf">_norm</code> で正規化）。2 つのスケールの中間の大きさを持つ斑点・エッジを強調する、LoG の近似。σ₁ と σ₂ が近いほど応答は弱くなる。</p>
+<p><code style="color:#22d3bf">a</code> 将较细的模糊 σ₁ 在 <code style="color:#22d3bf">0.5〜2.5</code> 内调节，<code style="color:#22d3bf">b</code> 将较粗的模糊 σ₂ 在 <code style="color:#22d3bf">1.0〜5.0</code> 内调节（将 <code style="color:#22d3bf">|gauss(σ₁) - gauss(σ₂)|</code> 用 <code style="color:#22d3bf">_norm</code> 归一化）。这是强调大小介于 2 个尺度之间的斑点与边缘的 LoG 近似。σ₁ 与 σ₂ 越接近，响应越弱。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>

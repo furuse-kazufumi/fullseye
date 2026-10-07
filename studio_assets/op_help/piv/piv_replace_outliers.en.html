@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fills outliers from their neighbourhood. With <code style="color:#22d3bf">method=&quot;nan&quot;</code> they are <b>not filled but marked as missing</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>埋めた場所と実測を区別できなくなるのが埋め込みの代償なので、どこを埋めたかは呼ぶ側が <code style="color:#22d3bf">mask</code> として持っている前提にしてある(この op は mask を返さない —— 入力として受け取ったものだから)。</p>
+<p>The price of filling is that filled places can no longer be told apart from measured ones, so it is assumed that the caller keeps where filling happened as <code style="color:#22d3bf">mask</code> (this op does not return mask —— it is something received as input).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

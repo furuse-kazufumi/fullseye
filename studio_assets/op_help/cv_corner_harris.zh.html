@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Harris 角点响应（OpenCV 实现）。与 sk_corner_harris 相同的 Harris 思路，但 OpenCV 版本以固定参数（如梯度计算、平滑的区块大小等）来计算。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">points_harris</code> に相当(近似)。実装は <code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— blockSize(近傍サイズ)・ksize(Sobel 開口)・k(Harris の自由パラメータ)はすべて固定。a, b は未使用 —— skimage 版と違いスケールを振る仕組みが無い、素の Harris 応答。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">points_harris</code>(近似)。实现为用 <code style="color:#22d3bf">signed01</code> 将 <code style="color:#22d3bf">cv2.cornerHarris(v, blockSize=2, ksize=3, k=0.04)</code> 映射到 <code style="color:#22d3bf">[0,1]</code> 的值 —— blockSize(邻域尺寸)、ksize(Sobel 孔径)、k(Harris 的自由参数)全部固定。a、b 未使用 —— 与 skimage 版不同，没有调节尺度的机制，是原始的 Harris 响应。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

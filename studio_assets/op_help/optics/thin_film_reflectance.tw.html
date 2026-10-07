@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的閉合式。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>nm:           波長 [nm] (配列可)。</p>
-<p>thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。</p>
-<p>cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。</p>
-<p>返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。</p>
-<p>物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。λ/4 の奇数倍で反射が極大(n_film &gt; n_sub のとき)になり、<b>厚みを変えると色が動く</b>のがシャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。</p>
+<p>nm:           波長 [nm] (可為陣列)。</p>
+<p>thickness_nm: 膜厚 [nm]。肥皂泡為 200–800，陽極氧化膜為 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側的折射率(實數，無吸收)。</p>
+<p>cos_theta:    入射側入射角的 cos(可為陣列，須能與 nm 廣播)。</p>
+<p>回傳值：反射率 R(0–1)。為 nm 與 cos_theta 的廣播形狀。</p>
+<p>物理：膜內傳播造成的相位差 δ = 2π·(2 n_film d cosθ_film)/λ。以界面的菲涅耳係數(s 偏振與 p 偏振的平均 = 無偏振)為 r1, r2，則 R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。在 λ/4 的奇數倍處反射達到極大(n_film &gt; n_sub 時)，<b>改變厚度顏色就會移動</b>，這就是肥皂泡的顏色。膜厚為 0 時 R 與基板單獨的菲涅耳反射一致(已由測試確認)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

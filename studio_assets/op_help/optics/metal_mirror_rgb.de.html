@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;metal_mirror_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Farbe</b> eines Metallspiegels (lineares sRGB). n,k → spektraler Reflexionsgrad → CIE-Farbabgleichfunktionen → sRGB.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>metal: <code style="color:#22d3bf">METALS</code> のいずれか。cos_i: 入射角の cos(スカラまたは配列)。</p>
-<p>samples: 380–780 nm を刻む点数。</p>
-<p>返り値: cos_i の形 + 末尾 3 の線形 sRGB。<b>色を塗っていない</b>ので、金が黄色いのも銀が中性なのも表の n,k から出る(テストで R&gt;G&gt;B の順序と銀の中性を固定)。</p>
+<p>metal: eines von <code style="color:#22d3bf">METALS</code>. cos_i: cos des Einfallswinkels (Skalar oder Array).</p>
+<p>samples: Anzahl der Stützpunkte über 380–780 nm.</p>
+<p>Rückgabewert: lineares sRGB mit der Form von cos_i + einer abschließenden 3. <b>Es wird keine Farbe aufgemalt</b>, sodass das Gelb von Gold und das Neutrale von Silber aus den n,k der Tabelle hervorgehen (Tests fixieren die Reihenfolge R&gt;G&gt;B und die Neutralität von Silber).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

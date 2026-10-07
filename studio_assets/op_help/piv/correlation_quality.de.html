@@ -4,62 +4,61 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine ZNCC-Karte, die punktweise zurückgibt, <b>wie gut</b> ein gegebenes Verschiebungsfeld passt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>引数</p>
-<p>ref     基準画像。</p>
-<p>cur     変形後画像。<code style="color:#22d3bf">ref</code> と同じ形。</p>
-<p>flow    <code style="color:#22d3bf">pivops</code> の <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>、成分は <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p><code style="color:#22d3bf">info</code> を渡さないなら <code style="color:#22d3bf">(2, H, W)</code> の<b>全画素</b>の場。</p>
-<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> が返した dict。渡すと窓格子の <code style="color:#22d3bf">flow</code> を</p>
-<p>画素へ双一次で広げてから測る。</p>
-<p>subset  相関を取る正方サブセットの一辺 [px]。<b>奇数</b>。</p>
-<p>戻り値は入力画像と同じ形の float 配列。値は <code style="color:#22d3bf">[-1, 1]</code> の ZNCC で、<b>測れなかった点は NaN</b>(サブセットが画像からはみ出す縁、変形後の標本点が画像の外へ出る点、分散の無いサブセット)。</p>
-<p>★ これは相関器ではない —— <b>既にある変位場の採点係</b></p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> も <code style="color:#22d3bf">optical_flow_lk</code> も <code style="color:#22d3bf">demons_register</code> も、</p>
-<p>出した変位が正しいかは返さない。ここは <code style="color:#22d3bf">cur</code> を <code style="color:#22d3bf">flow</code> で基準側へ</p>
-<p>引き戻し(双一次)、<code style="color:#22d3bf">ref</code> との ZNCC を <code style="color:#22d3bf">subset</code> の箱で測るだけ。</p>
-<p><b>どの推定器の出力でも同じ口で採点できる</b>のが要点で、相関器を</p>
-<p>もう 1 つ増やさずに品質だけを足せる。</p>
-<p>平均と標準偏差の両方を割り引くので、<b>ゲインとオフセットには不変</b>。</p>
-<p>露出が変わった対でも「合っているか」だけを見る。</p>
-<p>★★ 既存の <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> では足りない場面がある(実測)</p>
-<p><code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、</p>
-<p><b>相関面に競合する峰が立つ</b>種類の失敗を捕まえる。捕まえないのは</p>
-<p>「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素</p>
-<p>だけを無関係な模様に差し替えた実測:</p>
-<p>指標                    差し替え領域   健全領域   区別</p>
-<p>peak_ratio                 1.207        1.304    7.5 % 差(重なる)</p>
-<p>correlation_quality        0.1101       0.9993   9 倍差</p>
-<p>品質で切って変位誤差 RMS がどう変わるか:</p>
-<p>門                  残る割合   誤差 RMS [px]</p>
-<p>なし                 100.0 %      1.8110</p>
-<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 倍改善</p>
-<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 倍</p>
-<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6 割捨てて<b>悪化</b></p>
-<p><b>両方見るのが正しい。</b> peak_ratio は競合ピークを、ZNCC は</p>
-<p>デコリレーションを見る。片方だけでは穴が開く。</p>
-<p>★★ 落とし穴 —— <b>品質が高いことは精度が高いことではない</b></p>
-<p>ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に</p>
-<p>わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):</p>
-<p>変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
-<p>zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
-<p><b>0.05 px 間違えても 0.9992</b> —— 完全に合っている 0.99945 との差は</p>
-<p>2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな</p>
-<p>ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。</p>
-<p>一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは</p>
-<p>21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——</p>
-<p><b>効くのは失敗が局所的なときだけ。</b></p>
-<p>★ 引き戻しはサブセットごとの平行移動ではなく<b>場そのもの</b></p>
-<p>普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの</p>
-<p><code style="color:#22d3bf">flow</code> で <code style="color:#22d3bf">cur</code> を歪めてから箱で相関を取る。<code style="color:#22d3bf">flow</code> が滑らかなら</p>
-<p>両者は一致し、そうでないなら<b>こちらのほうが正しい</b>(サブセット内の</p>
-<p>変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。</p>
+<p>Argumente</p>
+<p>ref     Referenzbild.</p>
+<p>cur     Bild nach der Verformung. Gleiche Form wie <code style="color:#22d3bf">ref</code>.</p>
+<p>flow    <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code> von <code style="color:#22d3bf">pivops</code>, Komponenten <code style="color:#22d3bf">(dy, dx)</code> [px].</p>
+<p>Ohne <code style="color:#22d3bf">info</code> ein Feld über <b>alle Pixel</b> der Form <code style="color:#22d3bf">(2, H, W)</code>.</p>
+<p>info    das von <code style="color:#22d3bf">piv_cross_correlate</code> gelieferte dict. Wird es übergeben, wird das <code style="color:#22d3bf">flow</code> des Fenstergitters</p>
+<p>vor der Messung bilinear auf Pixel ausgedehnt.</p>
+<p>subset  Seitenlänge des quadratischen Subsets für die Korrelation [px]. <b>Ungerade</b>.</p>
+<p>Der Rückgabewert ist ein float-Array derselben Form wie das Eingabebild. Die Werte sind ZNCC in <code style="color:#22d3bf">[-1, 1]</code>; <b>nicht messbare Punkte sind NaN</b> (Ränder, an denen das Subset über das Bild hinausragt, Punkte, deren verformte Abtastpunkte das Bild verlassen, Subsets ohne Varianz).</p>
+<p>★ Das ist kein Korrelator —— <b>sondern ein Bewerter für ein bereits vorhandenes Verschiebungsfeld</b></p>
+<p>Weder <code style="color:#22d3bf">piv_cross_correlate</code> noch <code style="color:#22d3bf">optical_flow_lk</code> noch <code style="color:#22d3bf">demons_register</code></p>
+<p>sagt, ob die gelieferte Verschiebung stimmt. Hier wird nur <code style="color:#22d3bf">cur</code> mit <code style="color:#22d3bf">flow</code> zur Referenzseite</p>
+<p>zurückgezogen (bilinear) und die ZNCC mit <code style="color:#22d3bf">ref</code> in einer <code style="color:#22d3bf">subset</code>-Box gemessen.</p>
+<p>Der Kern ist, dass <b>sich die Ausgabe jedes Schätzers über dieselbe Schnittstelle bewerten lässt</b>: ohne</p>
+<p>1 weiteren Korrelator wird allein die Qualität hinzugefügt.</p>
+<p>Mittelwert und Standardabweichung werden beide herausgerechnet, daher ist es <b>invariant gegenüber Verstärkung und Offset</b>.</p>
+<p>Auch bei einem Paar mit geänderter Belichtung zählt nur, &quot;ob es passt&quot;.</p>
+<p>★★ Es gibt Fälle, in denen das bestehende <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> nicht reicht (gemessen)</p>
+<p><code style="color:#22d3bf">peak_ratio</code> (1. Gipfel / 2. Gipfel) ist das übliche SN-Verhältnis von PIV und</p>
+<p>fängt Fehler der Art ab, bei denen <b>auf der Korrelationsfläche konkurrierende Gipfel entstehen</b>. Nicht abgefangen werden</p>
+<p>Fehler der Art &quot;diese Stelle ist etwas anderes geworden&quot;. Gemessen an einem Paar mit u=0.37 px, in dem nur 60x60 Pixel</p>
+<p>durch ein unabhängiges Muster ersetzt wurden:</p>
+<p>Kennzahl                ersetzt        gesund     Unterscheidung</p>
+<p>peak_ratio                 1.207        1.304    7.5 % Abstand (überlappend)</p>
+<p>correlation_quality        0.1101       0.9993   9-facher Abstand</p>
+<p>Wie sich der RMS-Verschiebungsfehler beim Abschneiden nach Qualität ändert:</p>
+<p>Gate                verbleibt  Fehler-RMS [px]</p>
+<p>keines               100.0 %      1.8110</p>
+<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584-fach besser</p>
+<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5-fach</p>
+<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← verwirft 6 Zehntel und wird <b>schlechter</b></p>
+<p><b>Richtig ist, beides anzusehen.</b> peak_ratio sieht konkurrierende Gipfel, ZNCC sieht</p>
+<p>Dekorrelation. Eines allein lässt eine Lücke.</p>
+<p>★★ Falle —— <b>hohe Qualität heißt nicht hohe Genauigkeit</b></p>
+<p>ZNCC reagiert kaum auf Subpixel-Fehler. Gemessen durch Bewertung von Feldern mit absichtlich eingefügtem Fehler bei einem Paar mit wahrer Verschiebung 0.37 px</p>
+<p>(Speckle-Durchmesser 3.8 px):</p>
+<p>Verschiebungsfehler [px] 0.00    0.05     0.10     0.25     0.50    1.00    2.00</p>
+<p>zncc Median      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
+<p><b>Um 0.05 px falsch und dennoch 0.9992</b> —— der Abstand zur perfekten Übereinstimmung 0.99945 beträgt</p>
+<p>nur 2.5e-4. Messen kann diese Kennzahl &quot;Versätze, die groß gegenüber der Speckle-</p>
+<p>größe sind, Fehlstellen, Ersetzung durch etwas anderes&quot;, nicht eine Genauigkeit von 0.01 px.</p>
+<p>Verschlechtern sich alle Punkte gleichmäßig durch gleichförmiges Rauschen (σ=0.15), behält das Gate nur</p>
+<p>21.8 %, und die Fehler-RMS verbessert sich lediglich um das 1.34-fache, 0.1736 → 0.1292 ——</p>
+<p><b>es hilft nur, wenn der Fehlschlag lokal ist.</b></p>
+<p>★ Das Zurückziehen nutzt <b>das Feld selbst</b>, keine Translation pro Subset</p>
+<p>Übliches DIC verschiebt das Subset starr und korreliert, hier wird dagegen <code style="color:#22d3bf">cur</code> mit dem pixelweisen</p>
+<p><code style="color:#22d3bf">flow</code> verzerrt und dann in einer Box korreliert. Ist <code style="color:#22d3bf">flow</code> glatt,</p>
+<p>stimmen beide überein; sonst <b>ist dieses richtiger</b> (weil das Residuum einschließlich der</p>
+<p>Verformung innerhalb des Subsets betrachtet wird). Die Kosten bleiben bei O(N) (0.003 Sekunden bei 256²).</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> が 2 次元でない、形が違う、NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> が <code style="color:#22d3bf">(2, h, w)</code> でない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 無しで <code style="color:#22d3bf">flow</code> が画像と違う形(直し方つきで拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> に <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> が無い、格子と <code style="color:#22d3bf">flow</code> の形が食い違う、格子がどちらかの軸で 2 未満。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> が偶数・3 未満・画像より大きい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> nicht 2-D, verschiedene Formen, enthalten NaN / Inf.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> nicht <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p style="margin:2px 0 2px 12px">• ohne <code style="color:#22d3bf">info</code> ein <code style="color:#22d3bf">flow</code> mit anderer Form als das Bild (mit Korrekturhinweis abgelehnt).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> ohne <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>, Formen von Gitter und <code style="color:#22d3bf">flow</code> passen nicht zusammen, Gitter entlang einer Achse kleiner als 2.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> gerade / kleiner als 3 / größer als das Bild.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

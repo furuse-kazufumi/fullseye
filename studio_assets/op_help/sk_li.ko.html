@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Li의 최소 교차 엔트로피법(Minimum Cross Entropy)에 의한 전역 임계값 이진화. 전경/배경 분포 간의 교차 엔트로피를 반복적으로 최소화하여 임계값을 결정하는, 오츠법과는 다른 계열의 자동 임계값 기법이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似。アルゴリズムは別物)。実装は <code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code> —— a, b は未使用。大津法よりノイズや裾の重いヒストグラムに強いとされる場面がある。</p>
+<p>HALCON의 <code style="color:#22d3bf">binary_threshold</code>에 해당한다(근사. 알고리즘은 별개). 구현은 <code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code> —— a, b는 사용하지 않는다. 오츠(Otsu) 방법보다 잡음이나 꼬리가 두꺼운 히스토그램에 강하다고 여겨지는 경우가 있다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

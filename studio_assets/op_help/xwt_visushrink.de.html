@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>VisuShrink-artige Wavelet-Rauschunterdrückung. Zerlegt mit <code style="color:#22d3bf">db4</code> über 2 Stufen, wendet Soft-Thresholding auf die Detailkoeffizienten jeder Stufe an und rekonstruiert anschließend per inverser Transformation (VisuShrink bestimmt diesen Schwellenwert normalerweise automatisch aus dem Rauschpegel, hier jedoch handelt es sich um eine vereinfachte Version, bei der er direkt über <code style="color:#22d3bf">a</code> vorgegeben wird).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は閾値(<code style="color:#22d3bf">0.05+0.5*a</code> で 0.05〜0.55)を振る —— 大きいほど強く平滑化されディテールが失われる。<code style="color:#22d3bf">b</code> は未使用。出力は元画像サイズに切り詰めて [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Schwellwert (0.05–0.55 über <code style="color:#22d3bf">0.05+0.5*a</code>) —— je größer, desto stärker die Glättung und desto mehr Details gehen verloren. <code style="color:#22d3bf">b</code> wird nicht verwendet. Die Ausgabe wird auf die ursprüngliche Bildgröße zugeschnitten und auf [0,1] geclippt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

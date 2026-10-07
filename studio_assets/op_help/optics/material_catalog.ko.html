@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_catalog() -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import surfacelib; surfacelib.material_catalog() -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;material_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>소재 이름 → 기본 매개변수(확산 거칠기 / 상도의 세기·거칠기 / 천의 가장자리 광택).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>実測の物性値ではなく見え方の設計値。意味があるのは順序(上塗り: 紙 &lt; プラ &lt; 陶器 &lt; 車の塗装 / 拡散の粗さ: コンクリート &gt; 紙 &gt; プラ)。</p>
+<p>실측 물성값이 아니라 외관의 설계값. 의미가 있는 것은 순서(상도: 종이 &lt; 플라스틱 &lt; 도기 &lt; 자동차 도장 / 확산의 거칠기: 콘크리트 &gt; 종이 &gt; 플라스틱).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

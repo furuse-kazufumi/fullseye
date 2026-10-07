@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Q 기준 <code style="color:#22d3bf">-tr(J^2)/2</code>. <b>회전이 변형률을 웃도는</b> 곳에서 양수가 된다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出にはこちらを使う。閉形式(解析場を直接与えた実測):</p>
-<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
-<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
-<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>せん断は渦ではない</b>、が要点)</p>
-<p>★ 閾値を必要とする量である。<code style="color:#22d3bf">Q &gt; 0</code> だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
+<p>와도만 보면 전단층도 빛나므로(층류의 벽 근방이 소용돌이로 보인다), 소용돌이의 추출에는이쪽을 쓴다. 닫힌 식(해석장을 직접 준 실측):</p>
+<p style="margin:2px 0 2px 12px">• 강체 회전 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
+<p style="margin:2px 0 2px 12px">• 균일 팽창 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
+<p style="margin:2px 0 2px 12px">• 단순 전단 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>전단은 소용돌이가 아니다</b>가 요점)</p>
+<p>★ 임계값을 필요로 하는 양이다. <code style="color:#22d3bf">Q &gt; 0</code>만으로는 옅은 영역까지 줍기 때문에, 임계값을 어떻게 정했는지 쓰지 않은 소용돌이 가시화는 그림의 아름다움이 임계값의 산물일가능성을 숨기고 있다. 임계값을 흔들었을 때의 면적 변화를 함께 적을 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

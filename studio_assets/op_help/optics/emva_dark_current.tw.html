@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>暗電流(7.1 節)：將暗影像的平均(及變異數)對曝光時間作直線擬合所得的斜率。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>μ_I.y [DN/s] = 平均の傾き、μ_I.e [e⁻/s] = μ_I.y / K。*var_y_dark* を渡すと分散の傾き [DN²/s] / K² も出す(暗電流の補正があるカメラは分散からしか測れない)。露光時間は <b>6 点以上</b>・等間隔を規格が求める。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;mu_I_y&quot;, &quot;mu_I_e&quot;, &quot;offset_y&quot;, &quot;var_slope&quot;, &quot;mu_I_e_from_var&quot;, &quot;n_points&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 6 点未満 / 長さが違う / 露光時間がすべて同じ / K が正でない。</p>
+<p>μ_I.y [DN/s] = 平均值的斜率，μ_I.e [e⁻/s] = μ_I.y / K。傳入 *var_y_dark* 時還會給出變異數的斜率 [DN²/s] / K² (帶暗電流校正的相機只能從變異數量測)。標準要求曝光時間 <b>6 點以上</b>且等間隔。</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;mu_I_y&quot;, &quot;mu_I_e&quot;, &quot;offset_y&quot;, &quot;var_slope&quot;, &quot;mu_I_e_from_var&quot;, &quot;n_points&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：少於 6 點 / 長度不同 / 曝光時間全部相同 / K 不為正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

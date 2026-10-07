@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DSNU와 PRNU(식 33~42·66·67).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*dark_stack*, *bright_stack*: 同じ露光で撮った L 枚(<code style="color:#22d3bf">(L, M, N)</code>、L ≥ 2)。bright は飽和の約 50 % で撮る。平均画像の空間分散から時間雑音の残り σ²_y/L を引き(式 36)、列・行・画素に分け(式 42)、DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67、比)。★規格は 8.1 節の高域フィルタ(照明のむら除去)をかけた画像で求める —— この op は渡された画像をそのまま使う(照明のむらを除いた画像を渡すこと)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 3-D でない / L &lt; 2 / 形が違う / K が正でない / bright の平均が dark 以下 / s²_y.50 &lt; s²_y.dark。</p>
+<p>*dark_stack*, *bright_stack*: 같은 노출로 찍은 L장(<code style="color:#22d3bf">(L, M, N)</code>, L ≥ 2). bright는 포화의 약 50 %에서 찍는다. 평균 이미지의 공간 분산에서 시간 잡음의 잔여 σ²_y/L을 빼고(식 36), 열·행·화소로 나누어(식 42), DSNU1288 = s_y.dark / K [e⁻] (식 66), PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(식 67, 비). ★규격은 8.1절의 고역 필터(조명 불균일 제거)를 건 이미지로 구한다 —— 이 op는 넘겨받은 이미지를 그대로 쓴다(조명 불균일을 제거한 이미지를 넘길 것).</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 3-D가 아님 / L &lt; 2 / 형태가 다름 / K가 양이 아님 / bright의 평균이 dark 이하 / s²_y.50 &lt; s²_y.dark.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

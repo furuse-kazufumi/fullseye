@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将逐像素的场 <code style="color:#22d3bf">(2, H, W)</code> 落到窗口中心的网格上(最近邻)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。<b>比べる前に同じ格子へ持ってくる</b>必要があり、その持ってき方(最近傍か窓内平均か)で誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の平滑化と区別がつかなくなる。</p>
+<p>真值以像素分辨率生成，而 PIV 的输出落在窗口网格上。<b>比较之前必须把它带到同一网格上</b>，而带过去的方式(最近邻或窗口内平均)会改变误差。这里用最近邻 —— 若用窗口内平均，在有梯度的场中就无法与 PIV 自身的平滑区分开。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

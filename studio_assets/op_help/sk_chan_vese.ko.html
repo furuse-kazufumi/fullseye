@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Chan-Vese 분할. 레벨셋(등위 집합)을 영역 내 밝기 분산이 최소가 되도록 반복적으로 움직이는 능동 윤곽 모델로, 에지가 뚜렷하지 않은 대상에서도 영역을 검출할 수 있다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)</code> —— a は&#x27;edge length&#x27; 重み mu を 0.1〜0.5 に振る(大きいほど輪郭が丸く滑らかになり細部を無視しやすくなる)。反復回数は 60 に固定。b は未使用。初期レベルセットは既定の &#x27;checkerboard&#x27;(チェッカーボード状)。</p>
+<p>HALCON에는 직접 대응하는 것이 없다. 구현은 <code style="color:#22d3bf">segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)</code> —— a는 &#x27;edge length&#x27; 가중치 mu를 0.1~0.5로 바꾼다(클수록 윤곽이 둥글고 매끄러워져 세부를 무시하기 쉬워진다). 반복 횟수는 60으로 고정. b는 사용하지 않는다. 초기 레벨 셋은 기본값인 &#x27;checkerboard&#x27;(체커보드 모양).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

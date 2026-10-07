@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">points</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code>,或直接调用 <code style="color:#22d3bf">optscene.camera_rays</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相机 dict → 全部像素的光线:origins (H·W, 3)、directions (H·W, 3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので <code style="color:#22d3bf">reshape(height, width, 3)</code> で像に戻せる。K の逆写像で作っているため、交点を K で再投影すると元の画素に<b>厳密に</b>戻る(往復誤差 &lt; 1e-9)。</p>
+<p>方向为单位向量，原点全部是视点。像素 (u, v) 按行优先排列，所以用 <code style="color:#22d3bf">reshape(height, width, 3)</code> 即可还原为图像。由于是用 K 的逆映射生成的，把交点用 K 重投影会<b>严格</b>回到原像素(往返误差 &lt; 1e-9)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

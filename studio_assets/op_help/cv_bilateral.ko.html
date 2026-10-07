@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>양방향 필터(OpenCV 구현). 공간적 근접도와 밝기값 근접도를 모두 가중치로 사용하는 가우시안 방식의 평활화로, 에지(밝기 차가 큰 경계)는 흐리지 않고 평탄부만 매끄럽게 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)に相当。実装は <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— カーネル直径 d は 5 に固定、<b>a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る</b>(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。</p>
+<p>HALCON의 <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)에 해당한다. 구현은 <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— 커널 지름 d는 5로 고정, <b>a는 공간 방향의 퍼짐 sigmaSpace를 1.0~4.0으로, b는 휘도 방향의 허용차 sigmaColor를 0.05~0.45로 바꾼다</b>(인수 순서가 sigmaColor, sigmaSpace 순이라 a/b의 대응이 어긋나기 쉬운 점에 주의).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

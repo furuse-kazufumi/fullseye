@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>웨이블릿 변환에 의한 노이즈 제거. 이미지를 웨이블릿 영역으로 분해하고, BayesShrink 기준의 임계값 처리로 작은(=노이즈로 간주할 수 있는) 계수를 제거한 뒤 역변환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> をそのまま <code style="color:#22d3bf">[0,1]</code> に clip したもので、しきい値やウェーブレット基底はすべて skimage の既定値まかせ —— a, b は未使用(調整点が無い、最も枯れた設定でとりあえずノイズを落としたい時用)。</p>
+<p>HALCON에는 직접 대응하는 것이 없다. 구현은 <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code>를 그대로 <code style="color:#22d3bf">[0,1]</code>로 clip한 것으로, 임계값과 웨이블릿 기저는 모두 skimage의 기본값에 맡긴다 —— a, b는 사용하지 않는다(조정할 곳이 없으며, 가장 검증된 설정으로 일단 잡음을 없애고 싶을 때용).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

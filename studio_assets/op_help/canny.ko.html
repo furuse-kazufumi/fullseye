@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>간이 Canny 스타일 에지 검출(region을 반환). HALCON의 <code style="color:#22d3bf">edges_image</code>(Extract edges using Deriche, Lanser, Shen, or Canny filters.)에 대응되지만, 비최대 억제(non-maximum suppression)와 히스테리시스 임계값 처리를 수행하지 않는 간략화된 버전(근사)이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が事前平滑化のガウシアン σ を <code style="color:#22d3bf">0.5〜2.0</code> に、<code style="color:#22d3bf">b</code> がしきい値を <code style="color:#22d3bf">0.1〜0.6</code> に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を <code style="color:#22d3bf">b</code> で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。</p>
+<p><code style="color:#22d3bf">a</code>가 사전 평활화의 가우시안 σ를 <code style="color:#22d3bf">0.5〜2.0</code>으로, <code style="color:#22d3bf">b</code>가 임계값을 <code style="color:#22d3bf">0.1〜0.6</code>으로 바꾼다. 가우시안으로 블러 처리한 영상에 Sobel 기울기 강도를 적용하고, 정규화한 값을 <code style="color:#22d3bf">b</code>로 이진화할 뿐이다——원래 Canny의 세선화(1화소 폭으로의 수렴)가 없으므로, 에지는 본래의 Canny보다 굵고 여러 화소에 걸쳐 남는다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>实现与<code style="color:#22d3bf">bilateral_filter</code>完全相同(<code style="color:#22d3bf">kind: &quot;bilateral&quot;</code>)。真正的引导滤波(guided filter,基于局部线性模型的保边平滑)在数学上是不同的算法,但此替代实现以双边滤波代替(为满足相似用途=保边平滑的近似,结果数值并不一致)。是HALCON<code style="color:#22d3bf">guided_filter</code>(Guided filtering of an image.)的代用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が空間シグマ、<code style="color:#22d3bf">b</code> が輝度シグマを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节空间 sigma，<code style="color:#22d3bf">b</code> 调节亮度 sigma。两者都会使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

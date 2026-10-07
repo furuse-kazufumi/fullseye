@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Prägt die Bearbeitungsspuren selbst <b>in die Normalen</b> (Drehvorschubriefen, die Grate einer Rändelung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>normals: (H, W, 3) の法線マップ。kind / angle_deg / center: <code style="color:#22d3bf">tangent_field</code> と同じ。</p>
-<p>pitch_px: 痕の間隔 [px]。depth: 傾ける強さ(0 で無加工)。</p>
-<p>返り値: 摂動後の単位法線マップ。背景(長さ 0)はそのまま 0。</p>
-<p><code style="color:#22d3bf">random</code> は方向を持たないので何もしない(そちらは <code style="color:#22d3bf">blast_normals</code>)。痕は<b>筋に直交する向き</b>へ傾ける ―― 筋に沿って傾けても筋にならない。</p>
+<p>normals: (H, W, 3) Normalenkarte. kind / angle_deg / center: wie bei <code style="color:#22d3bf">tangent_field</code>.</p>
+<p>pitch_px: Abstand der Riefen [px]. depth: Stärke der Neigung (0 = unbearbeitet).</p>
+<p>Rückgabewert: gestörte Einheitsnormalenkarte. Hintergrund (Länge 0) bleibt 0.</p>
+<p><code style="color:#22d3bf">random</code> hat keine Richtung und bewirkt daher nichts (dafür gibt es <code style="color:#22d3bf">blast_normals</code>). Die Riefen werden <b>senkrecht zu den Streifen</b> geneigt ―― eine Neigung entlang der Streifen ergäbe keine Streifen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

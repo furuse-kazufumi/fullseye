@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>滞后阈值处理。使用两级阈值,先确定超过高阈值的像素,再追加采用超过低阈值且与已确定像素相连通的像素 —— 这是将 Canny 边缘连接步骤的相同思路应用于通用响应图像的方法。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">hysteresis_threshold</code>(Perform a hysteresis threshold operation on an image.)に相当。実装は <code style="color:#22d3bf">filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)</code> —— a は低い方のしきい値を 0.2〜0.5 に、b は高い方のしきい値を 0.5〜0.8 に振る。a を大きく・b を小さくすると 2 つが逆転しうる(low &gt; high)ので、極端な組み合わせでは skimage 側の挙動に委ねられる点に注意。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">hysteresis_threshold</code>(Perform a hysteresis threshold operation on an image.)。实现为 <code style="color:#22d3bf">filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)</code> —— a 将较低的阈值在 0.2～0.5 范围内、b 将较高的阈值在 0.5～0.8 范围内调节。注意 a 调大、b 调小时 2 者可能逆转(low &gt; high)，因此极端组合下的行为取决于 skimage 一侧。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

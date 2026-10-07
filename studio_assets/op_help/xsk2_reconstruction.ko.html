@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>형태학적 재구성(reconstruction by dilation, 팽창에 의한 재구성). method=&quot;dilation&quot;으로 <code style="color:#22d3bf">skimage.morphology.reconstruction</code>을 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」（<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>）として自動生成し、そのシードをマスク画像（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きいほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
+<p>시드 영상을 &quot;원 영상을 a에 따른 깊이만큼 어둡게 한 것&quot; (<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>)으로 자동 생성하고, 그 시드를 마스크 영상(원 영상 그 자체)까지 측지적으로 팽창시킨다. a는 시드의 깊이(클수록많은 봉우리가 사라진다)를 바꾼다. b는 사용하지 않는다. 작은 밝은 반점이나 잡음을지우면서 큰 구조의 윤곽은 유지한다(열림 연산보다 형상이 덜 무너진다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

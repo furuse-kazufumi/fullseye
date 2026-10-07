@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Betrag der Verzerrungsrate <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>. Bei einer Starrkörperrotation ist er 0.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>実測: 剛体回転 0.0 / 一様膨張 s=0.01 で 0.02 (= 2s) / 単純せん断 g=0.02 で 0.02 (= g)。<b>回転だけを取り除いた変形の強さ</b>なので、Q 基準や λ_ci と合わせて見ると「渦かせん断か」が分かれる。</p>
+<p>Gemessen: Starrkörperrotation 0.0 / gleichförmige Expansion s=0.01 ergibt 0.02 (= 2s) / einfache Scherung g=0.02 ergibt 0.02 (= g). Es ist <b>die Stärke der Verformung mit allein entfernter Rotation</b>; zusammen mit dem Q-Kriterium oder λ_ci betrachtet, trennt es &quot;Wirbel oder Scherung&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

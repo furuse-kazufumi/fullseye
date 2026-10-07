@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>ground-truth depth</b> (H, W) [mm]. It is <b>z along the optical axis</b>, not the slant range from the viewpoint.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、しかも中心では一致するので気づけない)。生の光線距離が要るなら trace_rays(...)[&quot;t&quot;] を使う。</p>
-<p>当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。</p>
+<p>Depth cameras, stereo and light sectioning all return z along the optical axis, so this matches that (mixing in slant range would mean scoring against ground truth that is systematically off toward the edges of the field of view, and since it matches at the centre you would not notice). If you need the raw ray distance, use trace_rays(...)[&quot;t&quot;].</p>
+<p>Pixels that hit nothing are NaN. They are not filled with 0 ―― that would be indistinguishable from &quot;a surface at distance 0&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

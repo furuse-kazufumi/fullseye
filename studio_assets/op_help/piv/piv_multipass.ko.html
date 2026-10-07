@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거친 창에서 세밀한 창으로 단계를 낮춰 가는 다단 PIV. 반환값은 <code style="color:#22d3bf">(flow, info)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各段の結果を<b>次の段の予測変位</b>として使う(整数量だけ 2 枚目の窓をずらす)。段の間で外れ値を除いて埋めるのは意図的 —— 外れたベクトルをそのまま予測に使うと、その窓は次の段でも外れたまま固定される。</p>
+<p>각 단의 결과를 <b>다음 단의 예측 변위</b>로 사용한다(정수량만큼 2번째 장의 창을 어긋나게 한다). 단 사이에서 이상값을 제거하고 메우는 것은 의도적이다 —— 벗어난 벡터를 그대로 예측에쓰면, 그 창은 다음 단에서도 벗어난 채로 고정된다.</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>windows: 大きい順の窓列。各段は前段の<b>倍数関係でなくてよい</b>が、</p>
-<p>格子が変わるので予測は最近傍で載せ替える。</p>
-<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
-<p>outlier_threshold: 段間の正規化中央値検定の閾値。<code style="color:#22d3bf">None</code> で無効。</p>
+<p>a, b: 이미지 쌍.</p>
+<p>windows: 큰 순서의 창 열. 각 단은 전단의 <b>배수 관계가 아니어도 되지만</b>,</p>
+<p>격자가 바뀌므로 예측은 최근접으로 옮겨 싣는다.</p>
+<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code>와 같다.</p>
+<p>outlier_threshold: 단 사이의 정규화 중앙값 검정의 임계값. <code style="color:#22d3bf">None</code>이면 무효.</p>
 <p>Returns:</p>
-<p>最終段の <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> に各段の窓の大きさ。</p>
+<p>최종 단의 <code style="color:#22d3bf">(flow, info)</code>. <code style="color:#22d3bf">info[&quot;passes&quot;]</code>에 각 단의 창 크기.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

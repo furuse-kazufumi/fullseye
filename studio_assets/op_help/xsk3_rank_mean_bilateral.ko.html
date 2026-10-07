@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>국소 양방향 평균(skimage <code style="color:#22d3bf">filters.rank.mean_bilateral</code>). 원판 이웃 중, 중심 화소 값에서 아래로 <code style="color:#22d3bf">s0</code>~위로 <code style="color:#22d3bf">s1</code> 범위에 들어오는 화소만 평균하는 에지 보존형 평활화.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は円盤半径(<code style="color:#22d3bf">2+int(a*6)</code> で 2〜8)と下方許容幅 <code style="color:#22d3bf">s0</code>(<code style="color:#22d3bf">int(10+40*a)</code> で 10〜50)の両方を兼ねる。<code style="color:#22d3bf">b</code> は上方許容幅 <code style="color:#22d3bf">s1</code>(<code style="color:#22d3bf">int(10+40*b)</code> で 10〜50)を振る。</p>
+<p><code style="color:#22d3bf">a</code>는 원판 반경(<code style="color:#22d3bf">2+int(a*6)</code>로 2~8)과 하방 허용 폭 <code style="color:#22d3bf">s0</code>(<code style="color:#22d3bf">int(10+40*a)</code>로 10~50)를 겸한다. <code style="color:#22d3bf">b</code>는 상방 허용 폭 <code style="color:#22d3bf">s1</code>(<code style="color:#22d3bf">int(10+40*b)</code>로 10~50)을 바꾼다.</p>
 <p><b>정밀도(실측)</b>: 내부에서 <b>8 bit(256단계)로 양자화</b>한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 <b>그 정밀도는 유지되지 않는다</b> —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

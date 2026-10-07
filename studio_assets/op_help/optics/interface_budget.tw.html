@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interface_budget(sensor: &#x27;dict&#x27;, interface: &#x27;str&#x27; = &#x27;CXP-12&#x27;, links: &#x27;int&#x27; = 4, efficiency: &#x27;float&#x27; = 0.85, line_scan: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.interface_budget(sensor: &#x27;dict&#x27;, interface: &#x27;str&#x27; = &#x27;CXP-12&#x27;, links: &#x27;int&#x27; = 4, efficiency: &#x27;float&#x27; = 0.85, line_scan: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;interface_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由傳輸頻寬回傳<b>受頻寬限制的最大幀率 / 行頻</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>高解像度・高速・ラインスキャンでは、律速がセンサではなく<b>伝送帯域</b>になることが普通にある。撮る前にどちらが律速かを知るための op(光学の <code style="color:#22d3bf">optical_budget</code> と対になる)。</p>
-<p><code style="color:#22d3bf">efficiency</code> は符号化・パケットの実効効率(CoaXPress で概ね 0.8-0.9)。<code style="color:#22d3bf">line_scan=True</code> なら 1 ライン(幅 x 1 画素)あたりで計算し、ラインレート [kHz] を返す。</p>
-<p>返り値 dict: <code style="color:#22d3bf">gbps</code>(総帯域)/ <code style="color:#22d3bf">bytes_per_frame</code> / <code style="color:#22d3bf">max_fps</code> / <code style="color:#22d3bf">max_line_rate_khz</code>(line_scan のとき)/ <code style="color:#22d3bf">interface</code> / <code style="color:#22d3bf">links</code>。</p>
-<p>実測の目安: CXP-12 x4 = 50 Gbps = 5 GB/s は、8 bit・16k ラインセンサを 300 kHz で回せる帯域にちょうど一致する(Vieworks VT の TDI がこの前提)。一方エリアスキャンの IMX541(20.3 MP・8 bit)は 1 枚 20.3 MB なので理論 246 fps 出るが、センサ自体が 18-42 fps なので<b>帯域は余る</b>。</p>
+<p>在高解析度、高速、線掃描中，瓶頸常常不是感測器而是<b>傳輸頻帶</b>。這是在拍攝前了解哪一方是瓶頸的 op(與光學的 <code style="color:#22d3bf">optical_budget</code> 成對)。</p>
+<p><code style="color:#22d3bf">efficiency</code> 是編碼、封包的實際效率(CoaXPress 大致為 0.8-0.9)。<code style="color:#22d3bf">line_scan=True</code> 時以每 1 條線(寬 x 1 像素)計算，並回傳線速率 [kHz]。</p>
+<p>回傳值 dict：<code style="color:#22d3bf">gbps</code>(總頻帶)/ <code style="color:#22d3bf">bytes_per_frame</code> / <code style="color:#22d3bf">max_fps</code> / <code style="color:#22d3bf">max_line_rate_khz</code>(line_scan 時)/ <code style="color:#22d3bf">interface</code> / <code style="color:#22d3bf">links</code>。</p>
+<p>實測參考：CXP-12 x4 = 50 Gbps = 5 GB/s 恰好等於以 300 kHz 運作 8 bit、16k 線掃描感測器所需的頻帶(Vieworks VT 的 TDI 以此為前提)。另一方面，面掃描的 IMX541(20.3 MP、8 bit)每張 20.3 MB，理論上可達 246 fps，但感測器本身只有 18-42 fps，所以<b>頻帶有餘</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

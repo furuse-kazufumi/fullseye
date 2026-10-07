@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.env_lightbox(directions, base: &#x27;float&#x27; = 0.45, key: &#x27;float&#x27; = 4.0, elevation: &#x27;float&#x27; = 0.85, width: &#x27;float&#x27; = 0.55, azimuth_width: &#x27;float&#x27; = 1.1, floor: &#x27;float&#x27; = 0.25)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;env_lightbox&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>摄影灯箱的环境(宽大的顶光 + 略亮的周围)。<b>无彩色</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">env_studio</code> が「劇的に見せる」ための暗い部屋 + 小さいソフトボックス 2 灯なのに対し、こちらは<b>加工面が加工面に見える</b>ための環境。2026-09-05 の実測で分かった 2 つの条件を満たすように作ってある:</p>
-<p style="margin:2px 0 2px 12px">• 周囲が明るいこと ―― 暗い環境だとアルミが真っ黒になる(反射率 ~0.9 の金属が黒く写るのは、映るものが黒いから)。</p>
-<p style="margin:2px 0 2px 12px">• それでも<b>勾配があること</b> ―― 完全に一様な環境では、どんな異方性ローブでも同じ値を返すので加工目が消える。ブラシ目が見えるのは、目が環境の明暗を目方向に引き伸ばすからである。</p>
-<p>加工目は<b>斜めから見ないと出ない</b>(真上から見た平面は反射方向が全画素で天頂に集中し、環境の勾配を掃かない)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 程度が目安。</p>
+<p><code style="color:#22d3bf">env_studio</code> 是为了“戏剧化地呈现”的暗室 + 2 盏小柔光箱，而这个则是让<b>加工面看起来就是加工面</b>的环境。它被设计为满足 2026-09-05 实测中发现的 2 个条件：</p>
+<p style="margin:2px 0 2px 12px">• 周围要亮 ―― 在暗环境中铝会变得漆黑(反射率 ~0.9 的金属拍成黑色，是因为映入的东西是黑的)。</p>
+<p style="margin:2px 0 2px 12px">• 即便如此也<b>要有梯度</b> ―― 在完全均匀的环境中，任何各向异性波瓣都返回相同的值，加工纹理就会消失。拉丝纹路能被看见，是因为纹路把环境的明暗沿纹路方向拉伸了。</p>
+<p>加工纹理<b>不斜着看就不会出现</b>(从正上方看的平面，所有像素的反射方向都集中在天顶，不会扫过环境的梯度)。<code style="color:#22d3bf">optical_camera(tilt_deg=50〜70)</code> 左右为参考。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

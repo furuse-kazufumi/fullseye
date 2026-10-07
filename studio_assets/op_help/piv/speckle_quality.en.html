@@ -4,61 +4,60 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns 4 numbers indicating whether a captured speckle pattern is suitable for DIC.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(<code style="color:#22d3bf">speckle_filter</code> は SAR の斑点雑音 <b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
-<p>引数</p>
-<p>img  スペックル画像(2 次元)。輝度の規格は問わないが、<code style="color:#22d3bf">coverage</code> は</p>
-<p>画像内の最小・最大を基準にした相対しきい値で数える。</p>
-<p>戻り値は <code style="color:#22d3bf">dict</code>:</p>
-<p><code style="color:#22d3bf">mig</code>                     平均輝度勾配 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>。</p>
-<p>Pan らの DIC 品質指標。変位の分散の下限が</p>
-<p><code style="color:#22d3bf">σ_noise / (mig √N)</code> で決まるので、これが</p>
-<p>小さいと何をしても測れない。</p>
-<p><code style="color:#22d3bf">grad_rms</code>                x 方向だけの <code style="color:#22d3bf">sqrt(mean(Ix²))</code>。</p>
-<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code> を超える画素の割合。</p>
-<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   斑点の平均直径 [px] の<b>推定値</b>(下記)。</p>
-<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> は推定であって測定ではない</p>
-<p>平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 <code style="color:#22d3bf">R½</code> を線形</p>
-<p>内挿で求め、<code style="color:#22d3bf">diameter = √2 · R½</code> を返す。<code style="color:#22d3bf">√2</code> の根拠: 1σ 半径 <code style="color:#22d3bf">r</code> の</p>
-<p>ガウス斑点をランダムに撒いた場の自己相関は 1σ が <code style="color:#22d3bf">r√2</code> のガウスなので</p>
-<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>、斑点の FWHM は <code style="color:#22d3bf">2r√(2ln2)</code>、比がちょうど <code style="color:#22d3bf">√2</code>。</p>
-<p>つまり<b>斑点がガウスで位置が無相関という仮定の上でだけ</b> FWHM に一致する。</p>
-<p>実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。</p>
-<p>右: <code style="color:#22d3bf">piv_synth_particles</code>、<code style="color:#22d3bf">diameter_px</code> は 2σ なので FWHM は</p>
+<p>Exists in neither <code style="color:#22d3bf">pivops</code> nor <code style="color:#22d3bf">fullseye</code> (<code style="color:#22d3bf">speckle_filter</code> is SAR speckle-noise <b>removal</b>, a different thing). An entry point for judging on the spot during capture &quot;can this pattern be measured&quot;.</p>
+<p>Arguments</p>
+<p>img  speckle image (2-D). The luminance scale does not matter, but <code style="color:#22d3bf">coverage</code></p>
+<p>is counted with a relative threshold based on the minimum and maximum within the image.</p>
+<p>The return value is a <code style="color:#22d3bf">dict</code>:</p>
+<p><code style="color:#22d3bf">mig</code>                     mean intensity gradient <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>.</p>
+<p>The DIC quality index of Pan et al. The lower bound of the displacement variance is</p>
+<p>set by <code style="color:#22d3bf">σ_noise / (mig √N)</code>, so if this</p>
+<p>is small, nothing you do can measure it.</p>
+<p><code style="color:#22d3bf">grad_rms</code>                <code style="color:#22d3bf">sqrt(mean(Ix²))</code> in the x direction only.</p>
+<p><code style="color:#22d3bf">coverage</code>                fraction of pixels exceeding <code style="color:#22d3bf">0.2*(max-min) + min</code>.</p>
+<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   an <b>estimate</b> of the mean speckle diameter [px] (see below).</p>
+<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> is an estimate, not a measurement</p>
+<p>The radius <code style="color:#22d3bf">R½</code> at which the radial average of the autocorrelation of the mean-subtracted image falls to 0.5 is found by linear</p>
+<p>interpolation, and <code style="color:#22d3bf">diameter = √2 · R½</code> is returned. The basis for <code style="color:#22d3bf">√2</code>: for a field of randomly scattered</p>
+<p>Gaussian speckles of 1σ radius <code style="color:#22d3bf">r</code>, the autocorrelation is a Gaussian with 1σ = <code style="color:#22d3bf">r√2</code>, so</p>
+<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>, while the FWHM of a speckle is <code style="color:#22d3bf">2r√(2ln2)</code>; the ratio is exactly <code style="color:#22d3bf">√2</code>.</p>
+<p>In other words, it matches the FWHM <b>only under the assumption that speckles are Gaussian and their positions uncorrelated</b>.</p>
+<p>Measured (left: analytic speckle, 1σ radius varied with the count adjusted to keep coverage equal.</p>
+<p>right: <code style="color:#22d3bf">piv_synth_particles</code>; <code style="color:#22d3bf">diameter_px</code> is 2σ, so the FWHM is</p>
 <p><code style="color:#22d3bf">1.1774 × diameter_px</code>):</p>
-<p>1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig</p>
+<p>1σ r   FWHM   est.   ratio|  d_px   FWHM   est.   ratio  cov     mig</p>
 <p>0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351</p>
 <p>1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676</p>
 <p>1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775</p>
 <p>2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764</p>
 <p>4.0    9.42   9.18  0.97  |</p>
-<p><b>ガウス斑点なら 3 % 以内</b>。実物のスペックル(印刷・スプレー)は</p>
-<p>ガウスではないので、この表は換算の算数が合っていることの確認であって、</p>
-<p>実写での精度ではない。<b>何に偏るか</b>:</p>
-<p style="margin:2px 0 2px 12px">• 斑点の形がガウスでないと <code style="color:#22d3bf">√2</code> の換算そのものがずれる。</p>
-<p style="margin:2px 0 2px 12px">• 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり<b>過大</b>に出る。先に高域通過を掛けること。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。</p>
-<p style="margin:2px 0 2px 12px">• 環の代表半径は<b>環内の半径の平均</b>を使う。ビン番号を使うと半径 1 の環に対角の √2 が混ざり、1σ=0.6 px で径が <b>0.80 倍</b>(2 割過小)に出た。</p>
-<p>★ MIG は下限を切る指標であって、最大化する目的関数ではない</p>
-<p>上の左表で <code style="color:#22d3bf">mig</code> は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し</p>
-<p>1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が</p>
-<p>足りず、<code style="color:#22d3bf">examples/poc_dic_strain.py</code> の 9 節の実測では偏りも散らばりも</p>
-<p>最悪になる。<b>MIG を最大化すると測れないスペックルを選ぶ。</b></p>
-<p>右表の粒子像では <code style="color:#22d3bf">d=4.0</code> で頭打ちになり <code style="color:#22d3bf">d=6.0</code> でわずかに下がる ——</p>
-<p>同じ指標が入力の作り方で単調にも非単調にもなるので、</p>
-<p><b>絶対値ではなく同じ撮り方どうしの比較に使うこと。</b></p>
-<p>★ <code style="color:#22d3bf">coverage</code> のしきい値は Otsu ではない</p>
-<p><code style="color:#22d3bf">0.2*(max-min) + min</code> の固定しきい値。Otsu は 2 峰の分布を仮定するが、</p>
-<p>スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと</p>
-<p><b>しきい値が画像ごとに動いて比較できなくなる</b>。固定なら少なくとも</p>
-<p>同じ規格の画像どうしは比べられる。</p>
-<p>★ MIG は単位を持つ</p>
-<p>「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで</p>
-<p>255 倍違う。<b>同じ規格の画像どうしでしか比べられない。</b></p>
+<p><b>Within 3 % for Gaussian speckles</b>. Real speckle (printed, sprayed) is</p>
+<p>not Gaussian, so this table confirms that the conversion arithmetic is right;</p>
+<p>it is not the accuracy on real images. <b>What it is biased by</b>:</p>
+<p style="margin:2px 0 2px 12px">• if the speckle shape is not Gaussian, the <code style="color:#22d3bf">√2</code> conversion itself is off.</p>
+<p style="margin:2px 0 2px 12px">• low-frequency unevenness (illumination gradient) lifts the tail of the autocorrelation and the result comes out <b>too large</b>. Apply a high-pass filter first.</p>
+<p style="margin:2px 0 2px 12px">• the autocorrelation is circular (FFT), so a periodic background disturbs it.</p>
+<p style="margin:2px 0 2px 12px">• the representative radius of a ring is <b>the mean radius within the ring</b>. Using the bin index mixes the diagonal √2 into the radius-1 ring, and at 1σ=0.6 px the diameter came out <b>0.80 times</b> (2 tenths too small).</p>
+<p>★ MIG is an index for a lower cut-off, not an objective function to maximise</p>
+<p>In the left table above, <code style="color:#22d3bf">mig</code> grows the finer the speckles (0.1127 at 1σ=0.6 versus</p>
+<p>0.0384 at 1σ=4.0, 2.9 times). Yet speckle of diameter 1.4 px is under-</p>
+<p>sampled, and in the measurement of section 9 of <code style="color:#22d3bf">examples/poc_dic_strain.py</code> both bias and scatter</p>
+<p>are worst. <b>Maximising MIG picks speckle that cannot be measured.</b></p>
+<p>For the particle images of the right table it plateaus at <code style="color:#22d3bf">d=4.0</code> and drops slightly at <code style="color:#22d3bf">d=6.0</code> ——</p>
+<p>the same index is monotonic or not depending on how the input is made, so</p>
+<p><b>use it to compare images taken the same way, not as an absolute value.</b></p>
+<p>★ The <code style="color:#22d3bf">coverage</code> threshold is not Otsu</p>
+<p>It is the fixed threshold <code style="color:#22d3bf">0.2*(max-min) + min</code>. Otsu assumes a bimodal distribution, but</p>
+<p>the intensity distribution of speckle is often unimodal because speckles overlap, and with Otsu</p>
+<p><b>the threshold moves from image to image, making comparison impossible</b>. A fixed one at least lets</p>
+<p>images of the same scale be compared.</p>
+<p>★ MIG has a unit</p>
+<p>&quot;luminance / px&quot;. Passing 8-bit integers as-is versus normalising to [0, 1] first makes</p>
+<p>a factor of 255 difference. <b>It can only be compared between images of the same scale.</b></p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• 画像が完全に一様(<code style="color:#22d3bf">max == min</code>)—— 斑点が 1 つも無い。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関が 0.5 を切らない(視野より斑点が大きい)—— このときだけ <code style="color:#22d3bf">mean_blob_diameter_px</code> が <code style="color:#22d3bf">nan</code>。他の 3 つは返す。</p>
+<p style="margin:2px 0 2px 12px">• not 2-D / smaller than 8x8 / contains NaN / Inf.</p>
+<p style="margin:2px 0 2px 12px">• the image is completely uniform (<code style="color:#22d3bf">max == min</code>) —— not a single speckle.</p>
+<p style="margin:2px 0 2px 12px">• the autocorrelation does not fall below 0.5 (speckles larger than the field of view) —— only in this case is <code style="color:#22d3bf">mean_blob_diameter_px</code> <code style="color:#22d3bf">nan</code>. The other 3 are returned.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

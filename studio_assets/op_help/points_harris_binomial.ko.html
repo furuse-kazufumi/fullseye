@@ -15,8 +15,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이항(가우스) 평활화를 앞단에 둔 Harris 코너 응답. 먼저 <code style="color:#22d3bf">b</code>로 결정되는 시그마로 이미지를 평활화한 뒤, 그 위에서 Harris 응답(skimage가 있으면 <code style="color:#22d3bf">corner_harris</code>, 없으면 구조 텐서를 직접 계산, k=0.04)을 구한다. HALCON의 <code style="color:#22d3bf">points_harris_binomial</code>(Detect points of interest using the binomial approximation of the Harris operator.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が Harris 応答自体のシグマ(0.5〜2.5)を、<code style="color:#22d3bf">b</code> が前段の平滑化シグマ(0.5〜2.0)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code>가 Harris 응답 자체의 시그마(0.5~2.5)를, <code style="color:#22d3bf">b</code>가 앞단 평활화의 시그마(0.5~2.0)를 바꾼다. 둘 다 사용된다.</p>
 <p><b>값의 비교 가능성(실측)</b>: 출력을 <b>그 이미지 자신의 최댓값으로 정규화</b>한다(출력 최댓값이 항상 1.0이고, 입력을 상수배해도 출력이 바뀌지 않는다). 따라서 <b>이미지 사이에서 값을 비교할 수 없다</b> —— 같은 세기의 특징이라도 그 이미지에서 가장 강한 특징이 무엇인지에 따라 값이 달라지며, 약한 특징만 있는 이미지에서는 잡음이 1.0까지 올라간다. 이미지 간 비교가 필요하면 공통 기준으로 다시 나눌 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

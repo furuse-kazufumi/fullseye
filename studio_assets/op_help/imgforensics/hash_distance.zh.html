@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>两个感知哈希的汉明距离(不同比特数)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>dtype と長さを検査して fail-closed</b> する。float の 1-D を受け取って <code style="color:#22d3bf">!=</code> で数えると、ほぼ確実に「全ビット違う」= 最大距離という *もっともらしい* 値が出る —— それは型の取り違えであって画像の違いではない。</p>
-<p>返りは Python の <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 語彙)。ビット長で割った正規化距離が欲しければ <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>。</p>
+<p><b>检查 dtype 和长度，fail-closed(失败即拒绝)</b>。若接受 float 的 1-D 并用 <code style="color:#22d3bf">!=</code> 计数，几乎必然得到“全部位都不同”= 最大距离这一 *看似合理*的值 —— 那是类型混淆，而不是图像的差异。</p>
+<p>返回 Python 的 <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 词汇)。若需要除以位长的归一化距离，用 <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

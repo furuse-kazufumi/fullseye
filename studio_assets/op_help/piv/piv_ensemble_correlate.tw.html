@@ -6,14 +6,13 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將相關圖<b>相加之後</b>再尋找峰值(系集相關)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
+<p>粒子少、雜訊多時，逐對量測再平均得到的是<b>偏離向量的平均</b>。在相關階段相加，弱峰會在同一位置疊加而凸顯出來。前提是穩態流(所有對的位移相同)。</p>
 <p>Args:</p>
-<p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>
+<p>images: 2 幅以上影像的序列。使用連續的對 <code style="color:#22d3bf">(k, k+1)</code>。</p>
 <p>window / overlap / peak / window_func / normalize / search_limit:</p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
+<p>與 <code style="color:#22d3bf">piv_cross_correlate</code> 相同。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info[&quot;pairs&quot;]</code> に使った対の数。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info[&quot;pairs&quot;]</code> 中為所用對的數量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

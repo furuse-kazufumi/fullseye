@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pixel/Frame → m/s. <b>Beide sind Pflichtargumente</b> (es gibt keine Standardwerte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>単位の取り違えは例外を出さずに桁を変えるので、既定値を置くと事故が既定になる —— <code style="color:#22d3bf">demops</code> の <code style="color:#22d3bf">cell_size</code> と同じ判断。</p>
+<p>Verwechselte Einheiten ändern die Größenordnung, ohne eine Ausnahme auszulösen; ein Default würde den Unfall zum Default machen —— dieselbe Entscheidung wie bei <code style="color:#22d3bf">cell_size</code> in <code style="color:#22d3bf">demops</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(2, h, w)</code> [m/s]。</p>
+<p><code style="color:#22d3bf">(2, h, w)</code> [m/s].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

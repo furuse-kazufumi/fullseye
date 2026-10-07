@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_wavelengths(light: &#x27;dict&#x27;, samples: &#x27;int&#x27; = 5)</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.light_wavelengths(light: &#x27;dict&#x27;, samples: &#x27;int&#x27; = 5)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;light_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把光源的光谱压缩为成像所用的少数波长与权重。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>レーザー = 1 本、LED = 狭帯域を数本、ハロゲン = 広帯域を数本。同じ面でも波長で鏡面/散乱の配分が変わるので、広帯域は<b>重ね合わせて</b>撮るのが正しい。</p>
-<p>手順: <code style="color:#22d3bf">light[&quot;wavelength_nm&quot;]</code>(無ければ 550)を中心 <code style="color:#22d3bf">λ</code>、<code style="color:#22d3bf">light[&quot;bandwidth_nm&quot;]</code>(無ければ 0)を全幅 <code style="color:#22d3bf">bw</code> とし、<code style="color:#22d3bf">k = max(samples, 1)</code> 本を <code style="color:#22d3bf">λ ± bw/2</code> に等間隔で置く。重みはガウス型 <code style="color:#22d3bf">exp(-0.5 (2x)^2)</code> (<code style="color:#22d3bf">x</code> は <code style="color:#22d3bf">[-1, 1]</code> に正規化した位置、端が 2σ)で、和が 1 になるよう正規化。<code style="color:#22d3bf">bw &lt;= 0</code>(レーザー)または <code style="color:#22d3bf">k == 1</code> なら <code style="color:#22d3bf">λ</code> 1 本・重み 1。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>: <code style="color:#22d3bf">light_spec</code> の結果(dict)。キーが無ければ既定値で進む(dict でなければ <code style="color:#22d3bf">ValueError</code>。sort <code style="color:#22d3bf">table</code> の行リストが流れ込むのを止める)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>: 本数。既定 5。1 未満は 1 に丸める。奇数にすると中心波長が入る。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code> の 2 本の float64 配列。スペクトルの実形状(LED の非対称、ハロゲンの黒体分布)は模さない近似。</p>
-<p><code style="color:#22d3bf">layout_capture</code> が <code style="color:#22d3bf">spectral_samples</code> 本でこれを呼び、波長ごとの結果をこの重みで足し合わせる。</p>
+<p>激光 = 1 条，LED = 几条窄频带，卤素灯 = 几条宽频带。即使是同一表面，镜面/散射的分配也随波长而变，所以宽频带应当<b>叠加</b>拍摄才正确。</p>
+<p>步骤：以 <code style="color:#22d3bf">light[&quot;wavelength_nm&quot;]</code>(缺省时为 550)为中心 <code style="color:#22d3bf">λ</code>，以 <code style="color:#22d3bf">light[&quot;bandwidth_nm&quot;]</code>(缺省时为 0)为全宽 <code style="color:#22d3bf">bw</code>，把 <code style="color:#22d3bf">k = max(samples, 1)</code> 条在 <code style="color:#22d3bf">λ ± bw/2</code> 上等间隔放置。权重为高斯型 <code style="color:#22d3bf">exp(-0.5 (2x)^2)</code> (<code style="color:#22d3bf">x</code> 为归一化到 <code style="color:#22d3bf">[-1, 1]</code> 的位置，两端为 2σ)，并归一化使其和为 1。若 <code style="color:#22d3bf">bw &lt;= 0</code>(激光)或 <code style="color:#22d3bf">k == 1</code>，则为 <code style="color:#22d3bf">λ</code> 1 条、权重 1。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>：<code style="color:#22d3bf">light_spec</code> 的结果(dict)。缺少的键按默认值处理(不是 dict 时 <code style="color:#22d3bf">ValueError</code>。用于阻止 sort <code style="color:#22d3bf">table</code> 的行列表流入)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">samples</code>：条数。默认 5。小于 1 时取 1。取奇数时包含中心波长。</p>
+<p style="margin:2px 0 2px 12px">• 返回值：<code style="color:#22d3bf">(wavelengths (k,), weights (k,))</code> 2 个 float64 数组。这是不模拟光谱真实形状(LED 的不对称、卤素灯的黑体分布)的近似。</p>
+<p><code style="color:#22d3bf">layout_capture</code> 以 <code style="color:#22d3bf">spectral_samples</code> 条调用它，把各波长的结果按此权重相加。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

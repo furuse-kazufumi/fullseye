@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已解碼影像<b>盲估量化表與 JPEG 品質</b>。<code style="color:#22d3bf">table</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ファイルの DQT を読むのではなく、<b>画素だけ</b>から推定する(そこが要点で、PNG に保存し直された / 貼り付けられた画像でも「元は JPEG 品質 N だった」が見える)。8x8 ブロック DCT を取り、係数ごとに櫛の間隔を推定して(Fan &amp; de Queiroz 2003)、IJG の公開スケーリング規則で作った標準表の族から最も合う品質を選ぶ。</p>
-<p>返り(dict):</p>
-<p><code style="color:#22d3bf">jpeg_compressed</code> 櫛が立った係数が <code style="color:#22d3bf">n_coeff</code> 個中いくつあったかで判断した</p>
-<p>bool。<b>「JPEG である」証明ではない</b>(下記 caveats)</p>
-<p><code style="color:#22d3bf">quality</code>         推定品質 1..100(櫛が無ければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">table</code>           推定した <code style="color:#22d3bf">(8, 8)</code> の量子化ステップ(0 = 推定できず)</p>
-<p><code style="color:#22d3bf">n_quantized</code>     櫛が立った係数の数 / <code style="color:#22d3bf">n_coeff</code></p>
-<p><code style="color:#22d3bf">fit_error</code>       選ばれた品質の標準表との平均絶対差</p>
-<p><code style="color:#22d3bf">caveats</code>         この数値が言えないこと</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>、256x256 の 1/f^1.6 画像を Pillow で符号化 → 復号して推定):</p>
+<p>不讀取檔案的 DQT，而是<b>只從像素</b>來估計(要點就在這裡，即使是重新存成 PNG / 被貼上的影像，也能看出「原本是 JPEG 品質 N」)。取 8x8 區塊 DCT，對每個係數估計梳狀間隔(Fan &amp; de Queiroz 2003)，再從依 IJG 公開的縮放規則產生的標準表族中選出最吻合的品質。</p>
+<p>回傳(dict)：</p>
+<p><code style="color:#22d3bf">jpeg_compressed</code> 依 <code style="color:#22d3bf">n_coeff</code> 個係數中出現梳狀的有幾個來判斷的</p>
+<p>bool。<b>並不是「是 JPEG」的證明</b>(見下方 caveats)</p>
+<p><code style="color:#22d3bf">quality</code>         估計品質 1..100(沒有梳狀時為 <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">table</code>           估計出的 <code style="color:#22d3bf">(8, 8)</code> 量化步長(0 = 無法估計)</p>
+<p><code style="color:#22d3bf">n_quantized</code>     出現梳狀的係數數 / <code style="color:#22d3bf">n_coeff</code></p>
+<p><code style="color:#22d3bf">fit_error</code>       與所選品質的標準表的平均絕對差</p>
+<p><code style="color:#22d3bf">caveats</code>         此數值無法斷言的事</p>
+<p>實測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>，將 256x256 的 1/f^1.6 影像以 Pillow 編碼 → 解碼後估計)：</p>
 <p>======= ========= =============== ============</p>
-<p>真の Q  推定 Q    櫛が立った係数  fit_error</p>
+<p>真 Q    估計 Q    出現梳狀的係數  fit_error</p>
 <p>======= ========= =============== ============</p>
 <p>95      95        11/20           0.091</p>
 <p>90      90        19/20           0.579</p>
@@ -27,8 +26,8 @@
 <p>40      40         6/20           3.333</p>
 <p>30      <b>None</b>   4/20           —</p>
 <p>======= ========= =============== ============</p>
-<p><b>低品質側で崩れるのは原理的な限界</b>である。品質が下がるほど高周波係数は 0 に量子化され、櫛を読む材料そのものが画像から消える(「櫛が立った係数」の列がその消え方)。品質 30 では材料が足りず、<b>推定を返さない</b>(<code style="color:#22d3bf">quality=None</code>)。ここで無理に答えを出さないのがこの op の設計方針である。</p>
-<p>そして <b>無圧縮 PNG では <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4 つの seed で確認、同テストで固定)。ここで黙って「品質 100」と答えないことが肝で、そうすると「無圧縮」と「ほぼ無劣化の JPEG」が同じ答えになる。</p>
+<p><b>在低品質一側崩潰是原理上的極限</b>。品質越低，高頻係數越多地被量化為 0，讀取梳狀的材料本身就從影像中消失了(「出現梳狀的係數」一欄就是它消失的過程)。品質 30 時材料不足，<b>不回傳估計</b>(<code style="color:#22d3bf">quality=None</code>)。不在這裡勉強給出答案，是本 op 的設計方針。</p>
+<p>而且<b>在無壓縮 PNG 上為 <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (以 4 個 seed 確認，並在同一測試中固定)。關鍵在於此處不默默回答「品質 100」，否則「無壓縮」與「幾乎無損的 JPEG」會得到相同的答案。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

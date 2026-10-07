@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用firm阈值处理（firm/semisoft thresholding、<code style="color:#22d3bf">pywt.threshold_firm</code>）的小波去噪。其特性介于软阈值与硬阈值之间，应用于<code style="color:#22d3bf">sym4</code>做2层分解后得到的各细节系数，再重建。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は下側閾値(0.03〜0.23)、<code style="color:#22d3bf">b</code> は上側閾値(下側+ε 以上、0.15〜0.55)を振る —— 下側未満は 0、上側以上はそのまま、中間は緩やかに減衰させる。xwt_visushrink よりディテールの急な打ち切りを避けたい場合に向く。</p>
+<p><code style="color:#22d3bf">a</code> 调节下阈值(0.03〜0.23)，<code style="color:#22d3bf">b</code> 调节上阈值(不小于下阈值+ε，0.15〜0.55) —— 低于下阈值的置 0，不低于上阈值的保持原样，中间的则平缓衰减。适用于想避免 xwt_visushrink 那样突然截断细节的场合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

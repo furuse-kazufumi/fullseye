@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>实现与 <code style="color:#22d3bf">regiongrowing</code> 完全相同（基于阈值的种子生成 + 膨胀）。HALCON 的 <code style="color:#22d3bf">regiongrowing_mean</code>（Perform a region growing using mean gray values.）本应是根据各区域平均亮度的接近程度来生长的运算子，但此替代实现不进行基于平均亮度的判定，返回与 <code style="color:#22d3bf">regiongrowing</code> 相同的处理（近似的局限）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がシードのしきい値、<code style="color:#22d3bf">b</code> が膨張の反復回数を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节种子点的阈值，<code style="color:#22d3bf">b</code> 调节膨胀的迭代次数。两者都使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

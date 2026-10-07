@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">solid</code> 에서 <code style="color:#22d3bf">cavity</code> 를 파냅니다(CSG 차집합). <b>속이 빈 부품을 만드는 유일한 수단</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>コップ = 外側の円筒 − 底より上にずらした内側の円筒。ほかにワッシャ、貫通穴、座ぐり ―― 実際の部品は穴が開いているほうが普通で、球だけでは足りない(2026-09-05 のユーザー指摘)。</p>
-<p>両方とも凸プリミティブ(sphere / box / cylinder)でなければならない。平面は体積を囲まないので拒否する(fail-closed)。入れ子にすれば穴を 2 つ空けられる。</p>
+<p>컵 = 바깥 원통 − 바닥보다 위로 옮긴 안쪽 원통. 그 밖에 와셔, 관통 구멍, 카운터보어 ―― 실제 부품은 구멍이 뚫려 있는 쪽이 보통이며, 구만으로는 부족하다(2026-09-05 사용자 지적).</p>
+<p>둘 다 볼록 프리미티브(sphere / box / cylinder)여야 한다. 평면은부피를 둘러싸지 않으므로 거부한다(fail-closed). 중첩하면 구멍을 2개 뚫을 수 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

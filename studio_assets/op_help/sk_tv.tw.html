@@ -12,8 +12,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全變分去噪（TV denoising，Chambolle 方法）。在保留邊緣的同時平滑平坦區域的雜訊——與中值/高斯模糊不同，其特點是不易破壞輪廓的銳利度。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a は denoising weight を 0.02〜0.32 に振り、<b>大きいほど強く平滑化される</b>(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。</p>
+<p>HALCON 中沒有直接對應的運算子。實作為 <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a 將 denoising weight 在 0.02〜0.32 間調整，<b>越大平滑越強</b>(這個方向與後述的 sk_tv_bregman 相反，注意不要混淆)。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

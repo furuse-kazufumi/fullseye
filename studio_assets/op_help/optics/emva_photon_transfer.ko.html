@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>photon transfer 곡선으로부터 시스템 게인 K와 암잡음 σ_d를 구한다(식 50·53·54).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*mu_y*, *var_y*: 露光段ごとの平均と時間分散(<code style="color:#22d3bf">emva_pair_statistics</code> の <code style="color:#22d3bf">mu</code> と <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_y_sat*: 飽和の平均(0.1〜0.2 % の画素が最大値になる露光で測る)。</p>
-<p>K = σ²_y − σ²_y.dark を μ_y − μ_y.dark に当てた直線(<b>切片あり</b>)の傾き。使う点は飽和の 0〜70 %(式 50 の直後)。σ_d = √(σ²_y.dark − 1/12)/K(式 53)。★σ²_y.dark &lt; 0.24 DN² では量子化雑音が支配的で推定できないので、<code style="color:#22d3bf">sigma_d</code> は None、<code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(式 54)を返す。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code> は当てはめに使った点の真偽)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 3 点未満 / 傾きが正でない / var_y_dark が負。</p>
+<p>*mu_y*, *var_y*: 노출 단계마다의 평균과 시간 분산(<code style="color:#22d3bf">emva_pair_statistics</code>의 <code style="color:#22d3bf">mu</code>와 <code style="color:#22d3bf">var_temporal</code>). *mu_y_dark*, *var_y_dark*: 암 이미지의 같은 양. *mu_y_sat*: 포화 시의 평균(0.1–0.2 %의 화소가 최댓값이 되는 노출에서 잰다).</p>
+<p>K = σ²_y − σ²_y.dark를 μ_y − μ_y.dark에 맞춘 직선(<b>절편 있음</b>)의 기울기. 사용하는 점은 포화의 0–70 %(식 50 직후). σ_d = √(σ²_y.dark − 1/12)/K(식 53). ★σ²_y.dark &lt; 0.24 DN²에서는 양자화 잡음이 지배적이라 추정할 수 없으므로, <code style="color:#22d3bf">sigma_d</code>는 None, <code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(식 54)를 반환한다.</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code>는 맞춤에 사용한 점의 참거짓).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 길이가 다름 / 0–70 %에 3점 미만 / 기울기가 양이 아님 / var_y_dark가 음수.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

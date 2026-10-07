@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>창 변형이 붙은 1단. 예측 변위로 <b>영상 자체를 왜곡한 뒤에</b> 상관을 구한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
+<p>정수 어긋내기(<code style="color:#22d3bf">piv_cross_correlate</code>의 <code style="color:#22d3bf">shift</code>)는 창 안에서 변위가일정하다는 가정을 둔다. 회전이나 전단처럼 <b>창 안에서 변위가 변하는</b> 장에서는상관 피크가 뭉개지므로, 2장을 예측의 절반씩 반대 방향으로 왜곡한 뒤 상관을 취한다(중앙 차분의 변형).</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>flow: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> などの出力)。</p>
-<p>info: その <code style="color:#22d3bf">info</code>(窓中心の座標が要る)。</p>
-<p>window / overlap / peak / window_func: 新しい段の設定。</p>
-<p>order: 変形に使う補間の次数(3 = 3 次スプライン)。</p>
+<p>a, b: 이미지 쌍.</p>
+<p>flow: 예측 변위 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> 등의 출력).</p>
+<p>info: 그 <code style="color:#22d3bf">info</code>(창 중심의 좌표가 필요하다).</p>
+<p>window / overlap / peak / window_func: 새로운 단의 설정.</p>
+<p>order: 변형에 쓰는 보간의 차수(3 = 3차 스플라인).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返る変位は<b>元の画像座標での総変位</b>。</p>
+<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>. 반환되는 변위는 <b>원래 이미지 좌표에서의 총변위</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

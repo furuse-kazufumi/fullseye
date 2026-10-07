@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kantenerkennung (binäre Region) nach dem Canny-Verfahren. Ruft <code style="color:#22d3bf">kornia.filters.canny</code> auf und verwendet von den Rückgabewerten die binäre Kantenkarte (<code style="color:#22d3bf">edges</code>) (die Seite der Gradientenstärke wird verworfen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a が低いしきい値（<code style="color:#22d3bf">0.1 + 0.3 * a</code>）、b が高いしきい値（<code style="color:#22d3bf">max(低いしきい値 + 1e-3, 0.3 + 0.4 * b)</code>、低い方を必ず上回るよう下駄を履かせている）を振る。出力の sort は <code style="color:#22d3bf">region</code>。</p>
+<p>a variiert den niedrigen Schwellwert (<code style="color:#22d3bf">0.1 + 0.3 * a</code>), b den hohen Schwellwert (<code style="color:#22d3bf">max(niedriger Schwellwert + 1e-3, 0.3 + 0.4 * b)</code>, mit einem Aufschlag versehen, damit er den niedrigen stets übersteigt). Die Ausgabe-sort ist <code style="color:#22d3bf">region</code>.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

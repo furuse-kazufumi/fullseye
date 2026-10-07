@@ -14,8 +14,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bilateraler Filter (OpenCV-Implementierung). Eine gaußartige Glättung, die sowohl räumliche Nähe als auch Helligkeitsnähe gewichtet und dabei nur flache Bereiche glättet, ohne Kanten (Grenzen mit großen Helligkeitsunterschieden) zu verwischen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)に相当。実装は <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— カーネル直径 d は 5 に固定、<b>a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る</b>(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">bilateral_filter</code> (bilateral filtering of an image.). Die Implementierung ist <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— der Kerneldurchmesser d ist auf 5 fest; <b>a variiert die räumliche Ausdehnung sigmaSpace über 1.0–4.0, b die Toleranz in Leuchtdichterichtung sigmaColor über 0.05–0.45</b> (Achtung: die Argumente stehen in der Reihenfolge sigmaColor, sigmaSpace, daher verrutscht die Zuordnung von a/b leicht).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

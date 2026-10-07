@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Grayscale morphological closing (OpenCV implementation). Dilation followed by erosion fills dark holes and gaps smaller than the structuring element (the opposite effect of cv_open).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">gray_closing</code>(Perform a gray value closing on an image.)に相当。実装は <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_CLOSE, se)</code>(楕円形構造要素、サイズは cv_open と同じ <code style="color:#22d3bf">3+2*int(a*3)</code>)—— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
+<p>Corresponds to HALCON&#x27;s <code style="color:#22d3bf">gray_closing</code> (Perform a gray value closing on an image.). The implementation is <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_CLOSE, se)</code> (elliptical structuring element, same size as cv_open, <code style="color:#22d3bf">3+2*int(a*3)</code>) —— a sweeps the structuring element size over 3–9. b is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

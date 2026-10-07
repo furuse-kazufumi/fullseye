@@ -14,8 +14,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glättung, die den mittleren Krümmungsfluss durch wiederholtes Anwenden einer Gauß-Weichzeichnung mit kleinem Sigma (0,6) <b>annähert</b>. Statt der echten PDE des mittleren Krümmungsflusses (der Diffusionsgleichung, die eine separate Implementierung auf der <code style="color:#22d3bf">ops</code>-Seite eigentlich ausführt) wird iteratives Weichzeichnen als rechnerisch günstiger Ersatz verwendet -- eine für dieses Backend spezifische Grenze der Näherung. Ein Ersatz für HALCONs <code style="color:#22d3bf">mean_curvature_flow</code> (Apply the mean curvature flow to an image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Anzahl der Iterationen im Bereich 1–7 (je mehr Iterationen, desto stärker die Glättung). <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.17、0.33、0.49、0.67、0.83、0.99 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

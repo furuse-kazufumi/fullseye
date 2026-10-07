@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Creates 1 image seeded with tracer particles. Returns <code style="color:#22d3bf">(image, positions)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
-<p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>Particles are Gaussian bright spots (by PIV convention, <code style="color:#22d3bf">diameter_px</code> denotes <b>2 times the standard deviation</b>, not the 1/e^2 width). Positions are continuous, so images with subpixel ground truth can be made.</p>
+<p><code style="color:#22d3bf">density</code> is the number of particles per pixel. The PIV rule of thumb is <b>5-10 per window</b> as a guideline, which for a 32x32 window corresponds to 0.005-0.01. Too few and no correlation peak stands out; too many and particle images overlap so that individual correspondences are lost.</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>density: 画素あたりの粒子数(&gt; 0)。</p>
-<p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
-<p>seed: 乱数種。</p>
-<p>intensity: 粒子の明るさの範囲 <code style="color:#22d3bf">(lo, hi)</code>。</p>
-<p>background: 一様な下駄。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>density: particles per pixel (&gt; 0).</p>
+<p>diameter_px: diameter of a particle image [px] (&gt; 0).</p>
+<p>seed: random seed.</p>
+<p>intensity: brightness range of the particles <code style="color:#22d3bf">(lo, hi)</code>.</p>
+<p>background: uniform offset.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>。</p>
+<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) as (row, col))</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

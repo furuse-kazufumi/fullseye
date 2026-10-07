@@ -13,13 +13,14 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以像素为单位测量<b>边缘过渡宽度</b>(= 该处有效 PSF 的展宽)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が測定窓の一辺を <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)に振る。<code style="color:#22d3bf">b</code> が振幅と勾配の推定量を</p>
-<p>選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は窓内の<b>最大 − 最小</b>(素直・鋭いが外れ値に弱い)、<code style="color:#22d3bf">b &gt; 0.5</code> は<b>分位点</b>で、<code style="color:#22d3bf">b</code> を上げるほど分位が 90/10 から 60/40 へ寄って雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。</p>
-<p>幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを<b>作る</b> <code style="color:#22d3bf">simulate_defocus</code> の対で、こちらは<b>測る</b>側。合焦判定・モーションブラー量・解像限界・文字が読める大きさかの判定に使える。</p>
-<p><b>窓が遷移より狭いと過小評価になる</b>(窓の中に振幅の全部が入らないため)。出力が 0.7 を超えたら <code style="color:#22d3bf">a</code> を上げて測り直すのが実用則。</p>
-<p><b>正規化は画像ごとではない</b>(窓の一辺という定数で割るだけ)ので、<b>値は画像間で比較できる</b>。出力 1.0 は「遷移幅が窓と同じ = 窓より広いかもしれず<b>測り切れていない</b>」の意味で、<code style="color:#22d3bf">a</code> を上げて測り直す合図。平坦部やエッジの無い場所は 0。</p>
-<p>★<b>空フレームでは全 0 を返す</b>(「端が無い」)。床を画像自身の振幅に対する相対量だけで置くと、一様な画像では基準まで丸め屑になり、屑どうしの比が構造に化ける —— 実測で 0.5 一色に 1e-12 の雑音を乗せただけの画像が幅 3.49(= 窓の半分)を返した。<b>振幅そのものが絶対床 1e-6 に届かない画像には端が無い</b>と言い切る。端の扱いは <code style="color:#22d3bf">scipy.ndimage</code> の既定 <code style="color:#22d3bf">reflect</code>。内部で 8 bit に落とす処理は無い。</p>
+<p><code style="color:#22d3bf">a</code> 将测量窗口的边长在 <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)中切换。<code style="color:#22d3bf">b</code> 选择振幅与梯度的</p>
+<p>估计量：<code style="color:#22d3bf">b &lt;= 0.5</code> 为窗口内的<b>最大 − 最小</b>(直接、锐利，但对离群值弱)，<code style="color:#22d3bf">b &gt; 0.5</code> 为<b>分位数</b>，<code style="color:#22d3bf">b</code> 越高，分位从 90/10 向 60/40 靠拢，对噪声越迟钝(相应地阶跃也被磨圆 = 这是一种权衡)。</p>
+<p>宽度 ≒ 局部振幅 ÷ 局部最大梯度。阶跃在 1 像素内上升则宽度约为 1，模糊后用 5 像素上升则约为 5。它与<b>制造</b>模糊的 <code style="color:#22d3bf">simulate_defocus</code> 成对，本 op 是<b>测量</b>的一方。可用于合焦判定、运动模糊量、解像极限、以及文字是否大到可读的判定。</p>
+<p><b>窗口比过渡窄时会低估</b>(因为窗口内装不下全部振幅)。</p>
+<p>实用规则：输出超过 0.7 时，提高 <code style="color:#22d3bf">a</code> 重新测量。</p>
+<p><b>归一化不是按图像进行的</b>(只是除以窗口边长这个常数)，因此<b>值可以在图像之间比较</b>。输出 1.0 的意思是“过渡宽度与窗口相同 = 可能比窗口更宽而<b>未能测尽</b>”，是提高 <code style="color:#22d3bf">a</code> 重新测量的信号。平坦部分和没有边缘的地方为 0。</p>
+<p>★<b>空帧返回全 0</b>(“没有边缘”)。若只把下限设为相对于图像自身振幅的相对量，在均匀图像上连基准都会变成舍入残渣，残渣之间的比值会化作结构 —— 实测中，只是在 0.5 纯色上叠加 1e-12 噪声的图像返回了宽度 3.49(= 窗口的一半)。</p>
+<p>因此断定：<b>振幅本身达不到绝对下限 1e-6 的图像没有边缘</b>。边界处理为 <code style="color:#22d3bf">scipy.ndimage</code> 的默认 <code style="color:#22d3bf">reflect</code>。内部没有降到 8 bit 的处理。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

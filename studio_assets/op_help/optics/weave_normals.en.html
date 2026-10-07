@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.weave_normals(shape, warp_px=8.0, weft_px=8.0, depth=0.25, angle_deg=0.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;weave_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The normal field of a weave (cloth, carbon fibre, wire mesh). Two orthogonal periodic ridges.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>shape: (H, W)。warp_px / weft_px: 経糸 / 緯糸の間隔 [px]。depth: 畝の深さ。</p>
-<p>angle_deg: 織りの向き [deg]。</p>
-<p>返り値: (H, W, 3) の単位法線場。<b>2 方向に周期がある</b>のが要点(FFT に 2 本のピークが立つ、テストで確認)。カーボンは warp/weft を変えて綾織りにする。</p>
+<p>shape: (H, W). warp_px / weft_px: spacing of warp / weft threads [px]. depth: ridge depth.</p>
+<p>angle_deg: weave direction [deg].</p>
+<p>Returns: (H, W, 3) unit normal field. The point is that <b>there is a period in 2 directions</b> (2 peaks appear in the FFT, verified in tests). Carbon is made a twill by changing warp/weft.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

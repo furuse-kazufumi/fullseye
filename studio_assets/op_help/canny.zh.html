@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>简化版 Canny 风格边缘检测（返回 region）。对应 HALCON 的 <code style="color:#22d3bf">edges_image</code>（Extract edges using Deriche, Lanser, Shen, or Canny filters.），但这是一个不进行非极大值抑制和滞后阈值处理的简化版本(近似)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が事前平滑化のガウシアン σ を <code style="color:#22d3bf">0.5〜2.0</code> に、<code style="color:#22d3bf">b</code> がしきい値を <code style="color:#22d3bf">0.1〜0.6</code> に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を <code style="color:#22d3bf">b</code> で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。</p>
+<p><code style="color:#22d3bf">a</code> 将预平滑的高斯 σ 在 <code style="color:#22d3bf">0.5〜2.0</code> 范围内调节，<code style="color:#22d3bf">b</code> 将阈值在 <code style="color:#22d3bf">0.1〜0.6</code> 范围内调节。只是对高斯模糊后的图像求 Sobel 梯度强度，并用 <code style="color:#22d3bf">b</code> 将归一化后的值二值化——没有原版 Canny 的细化(收敛到 1 像素宽)，因此边缘比真正的 Canny 更粗，跨越多个像素残留。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

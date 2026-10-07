@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Dunkelstrom (Abschnitt 7.1): Steigung einer Geradenanpassung des Mittelwerts (und der Varianz) der Dunkelbilder an die Belichtungszeit.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>μ_I.y [DN/s] = 平均の傾き、μ_I.e [e⁻/s] = μ_I.y / K。*var_y_dark* を渡すと分散の傾き [DN²/s] / K² も出す(暗電流の補正があるカメラは分散からしか測れない)。露光時間は <b>6 点以上</b>・等間隔を規格が求める。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;mu_I_y&quot;, &quot;mu_I_e&quot;, &quot;offset_y&quot;, &quot;var_slope&quot;, &quot;mu_I_e_from_var&quot;, &quot;n_points&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 6 点未満 / 長さが違う / 露光時間がすべて同じ / K が正でない。</p>
+<p>μ_I.y [DN/s] = Steigung des Mittelwerts, μ_I.e [e⁻/s] = μ_I.y / K. Wird *var_y_dark* übergeben, wird auch die Steigung der Varianz [DN²/s] / K² ausgegeben (Kameras mit Dunkelstromkorrektur lassen sich nur über die Varianz messen). Die Norm verlangt <b>6 oder mehr Punkte</b> der Belichtungszeit in gleichen Abständen.</p>
+<p>Rückgabewert <code style="color:#22d3bf">{&quot;mu_I_y&quot;, &quot;mu_I_e&quot;, &quot;offset_y&quot;, &quot;var_slope&quot;, &quot;mu_I_e_from_var&quot;, &quot;n_points&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: weniger als 6 Punkte / Längen unterschiedlich / alle Belichtungszeiten gleich / K nicht positiv.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

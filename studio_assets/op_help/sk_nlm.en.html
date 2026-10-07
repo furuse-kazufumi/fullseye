@@ -12,8 +12,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Non-local means denoising. Searches the entire image, not just nearby pixels, for similar patches and averages them -- the difference from simple smoothing is that it can remove noise only in flat areas while preserving repeating patterns and textures.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a はカットオフ距離 h(大きいほど「似ている」と判定される範囲が広がり、強くノイズ除去される代わりにディテールも失われやすい)を 0.02〜0.22 に振る。パッチサイズは 5x5 に固定。b は未使用。</p>
+<p>HALCON has no direct counterpart. The implementation is <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a sweeps the cut-off distance h over 0.02–0.22 (the larger it is, the wider the range judged &quot;similar&quot;, giving stronger denoising at the cost of more easily lost detail). The patch size is fixed at 5x5. b is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>与真值之差的分解。<b>将偏差与离散分开</b>返回。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>只给出其中之一，系统性偏移的实现就会以“误差 0.3 px”的身份蒙混过关。偏差(平均误差)和离散(标准差)指向不同的原因。</p>
 <p>Args:</p>
-<p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>truth: 同じ格子の真値 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> の返り)。</p>
-<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
-<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>flow: 估计 <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>truth: 同一网格的真值 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> 的返回)。</p>
+<p>trim: 从外周去掉的网格数。窗口碰到图像边缘时相关会下降，因此</p>
+<p>默认去掉 1 圈。0 为全部网格。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">bias_dy</code> / <code style="color:#22d3bf">bias_dx</code> / <code style="color:#22d3bf">std_dy</code> / <code style="color:#22d3bf">std_dx</code> / <code style="color:#22d3bf">rms</code></p>
-<p>(2 成分合わせた二乗平均平方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
+<p>(2 个分量合并的均方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
 <p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>

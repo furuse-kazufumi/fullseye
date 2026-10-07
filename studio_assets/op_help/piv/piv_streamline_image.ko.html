@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유선도(MATLAB의 <code style="color:#22d3bf">streamslice</code>). 반환은 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
+<p><code style="color:#22d3bf">piv_streamlines</code>의 등간격 배치로 선을 긋고, 각 선의 호 길이 중간쯤에방향의 화살촉을 1개 둔다(LIC와 달리 <b>앞뒤를 읽을 수 있다</b>). 선의 간격이 고르므로, <b>선의 밀도로는 속력을 나타내지 않는다</b> —— 속력을 보고 싶을 때는 <code style="color:#22d3bf">background</code>에 <code style="color:#22d3bf">piv_flow_magnitude</code>나 색상도를 깐다.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
-<p>arrows: 矢じりを置くか。</p>
-<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code> へ素通し(<code style="color:#22d3bf">separation</code> など)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code>와 같다.</p>
+<p>arrows: 화살촉을 둘지 여부.</p>
+<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code>로 그대로 전달(<code style="color:#22d3bf">separation</code> 등).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64, 값 범위 [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

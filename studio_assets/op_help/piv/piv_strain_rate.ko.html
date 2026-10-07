@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>변형률 속도의 크기 <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>. 강체 회전에서는 0이 된다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>実測: 剛体回転 0.0 / 一様膨張 s=0.01 で 0.02 (= 2s) / 単純せん断 g=0.02 で 0.02 (= g)。<b>回転だけを取り除いた変形の強さ</b>なので、Q 基準や λ_ci と合わせて見ると「渦かせん断か」が分かれる。</p>
+<p>실측: 강체 회전 0.0 / 균일 팽창 s=0.01에서 0.02 (= 2s) / 단순 전단 g=0.02에서 0.02 (= g). <b>회전만을 제거한 변형의 세기</b>이므로, Q 기준이나 λ_ci와함께 보면 &quot;소용돌이인가 전단인가&quot;가 갈린다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

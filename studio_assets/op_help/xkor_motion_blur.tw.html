@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>運動模糊。呼叫 <code style="color:#22d3bf">kornia.filters.motion_blur</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>a がカーネル長とブラー角度の<b>両方</b>を振る（カーネルサイズ <code style="color:#22d3bf">2*int(2+a*6)+1</code> = 5〜17、角度 <code style="color:#22d3bf">360*a</code> 度）ため、この 2 つは独立には制御できない。b はブラー方向のオフセット（<code style="color:#22d3bf">2*b-1</code>、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。<code style="color:#22d3bf">image</code> は [0,1] 契約なので出口で clip する（<code style="color:#22d3bf">ops._apply</code> が段間で掛けている clip と同じで、パイプライン全体の結果は変わらない）。</p>
+<p>a 同時調整核長度和模糊角度<b>兩者</b> （核大小 <code style="color:#22d3bf">2*int(2+a*6)+1</code> = 5〜17，角度 <code style="color:#22d3bf">360*a</code> 度），因此這 2 個量無法獨立控制。b 調整模糊方向的偏移（<code style="color:#22d3bf">2*b-1</code>，範圍 -1〜1）。kornia 是 float32 摺積，因此權重和的捨入可能使輸出略微超過 1(實測 max=1+2e-7)。<code style="color:#22d3bf">image</code> 有 [0,1] 約定，所以在出口處 clip（與 <code style="color:#22d3bf">ops._apply</code> 在各級之間套用的 clip 相同，管線整體的結果不變）。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

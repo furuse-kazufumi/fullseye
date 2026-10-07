@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smooths the image with a Savitzky-Golay filter (applied one-dimensionally, column direction first then row direction).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は窓幅を 5, 7, 9, 11, 13 の奇数に振る（<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>）。多項式次数は 2 に固定。<code style="color:#22d3bf">b</code> は未使用。窓内に 2 次多項式を最小二乗フィットして中心値を置き換える手法なので、単純な移動平均よりピークの高さや勾配を保ったまま平滑化できる。窓幅が画像サイズに対して大きすぎると境界の処理（<code style="color:#22d3bf">scipy</code> の既定の外挿）の影響が強く出る。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the window width over the odd values 5, 7, 9, 11, 13 (<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>). The polynomial degree is fixed at 2. <code style="color:#22d3bf">b</code> is unused. Because the method fits a degree-2 polynomial within the window by least squares and replaces the centre value, it smooths while preserving peak heights and gradients better than a simple moving average. If the window width is too large relative to the image size, the effect of the boundary handling (<code style="color:#22d3bf">scipy</code>&#x27;s default extrapolation) becomes strong.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

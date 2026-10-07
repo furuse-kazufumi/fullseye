@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;brewster_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Brewster-Winkel [Grad] = atan(n2/n1) — bei diesem Winkel ist die p-polarisierte Reflexion exakt null.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>偏光板でガラスの映り込みが消える角度そのもの。<code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> にこの角度の cos を渡すと 0 が返る(テストで 1e-15 未満を確認)。</p>
+<p>Genau der Winkel, bei dem ein Polarisationsfilter Spiegelungen auf Glas verschwinden lässt. Übergibt man den cos dieses Winkels an <code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code>, wird 0 zurückgegeben (in Tests unter 1e-15 geprüft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

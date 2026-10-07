@@ -6,23 +6,22 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Image sequence in which the same particles are moved repeatedly. Returns <code style="color:#22d3bf">(frames, truth)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
+<p>Whereas <code style="color:#22d3bf">piv_synth_pair</code> makes 2 images, this makes <b>a sequence that keeps following 1 flow</b>. Ensemble correlation and temporal statistics can only be verified with this —— calling a set of independent pairs a sequence leaves no correspondence between 2 adjacent images, and the statistics become meaningless (measured: against a mean of 0.73 px the fluctuation RMS was 4.05 px, a number that measured the construction rather than the flow).</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 1 コマあたりの変位(<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
-<p>n_frames: コマ数(2 以上)。</p>
-<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
-<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
-<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
-<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
-<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
-<p>それは PIV の性質であって間違いではないが、<b>時間統計の検証には使えない</b>ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>displacement: displacement per 1 frame (same format as <code style="color:#22d3bf">piv_synth_pair</code>).</p>
+<p>n_frames: number of frames (2 or more).</p>
+<p>jitter: standard deviation [px] of the disturbance added <b>to the whole field</b> per frame. 0 means steady flow.</p>
+<p>To test temporal statistics (fluctuations, Reynolds stresses) make this greater than 0.</p>
+<p>★ It is <b>one disturbance per frame</b>, not an independent disturbance per particle.</p>
+<p>Varying it per particle averages it within the window, shrinking it by the square root of N,</p>
+<p>and the injected and measured values disagree (measured: 0.15 against an injected 0.3).</p>
+<p>That is a property of PIV and not an error, but it is <b>useless for verifying temporal statistics</b>, so here it imitates an unsteady flow itself.</p>
 <p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p>same as <code style="color:#22d3bf">piv_synth_pair</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は</p>
-<p><b>1 コマあたり</b>の平均変位。</p>
+<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>. <code style="color:#22d3bf">truth</code> is the mean displacement</p>
+<p><b>per 1 frame</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

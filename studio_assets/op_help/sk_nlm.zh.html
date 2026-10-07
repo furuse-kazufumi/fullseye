@@ -12,8 +12,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>非局部平均法(Non-local means)去噪。不仅在邻近像素中,而是在整幅图像范围内搜索相似的图块并取平均 —— 与单纯平滑化的区别在于,它能在保留重复图案与纹理的同时,只消除平坦区域的噪声。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a はカットオフ距離 h(大きいほど「似ている」と判定される範囲が広がり、強くノイズ除去される代わりにディテールも失われやすい)を 0.02〜0.22 に振る。パッチサイズは 5x5 に固定。b は未使用。</p>
+<p>HALCON 中没有直接对应的算子。实现为 <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a 将截止距离 h(越大，被判定为“相似”的范围越广，去噪越强，但细节也越容易丢失)在 0.02〜0.22 间调节。块大小固定为 5x5。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

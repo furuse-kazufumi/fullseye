@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Findet Ausreißervektoren mit dem normalisierten Mediantest (Westerweel &amp; Scarano 2005).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
-<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
-<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
+<p>Für jeden Vektor wird das Residuum gegenüber dem Median seiner 8 Nachbarn durch <b>den Median der Nachbarresiduen</b> geteilt. <code style="color:#22d3bf">epsilon</code> (Default 0.1 px, ein Richtwert der PIV-Messunsicherheit) wird zum Nenner addiert, damit der Nenner in einem gleichförmigen Feld nicht 0 wird und alles zum Ausreißer wird —— ohne diesen Term <b>bricht der Test umso eher, je idealer die Eingabe ist</b>.</p>
+<p>★<b>In Feldern mit steilen Gradienten schadet er</b> (gemessen 2026-09-06). Mehrstufiges PIV an einem Wirbel vom Rankine-Typ (Kernradius 28 px): die 5 von Schwelle 2 erfassten Vektoren lagen alle <b>am Rand des Kerns</b> (32 px von der Mitte), ihre tatsächlichen Fehler betrugen 0.07-0.45 px —— keine Ausreißer, sondern <b>Stellen, an denen das Geschwindigkeitsprofil einen Knick hat</b>. Glätten mit dem Nachbarmedian <b>verschlechtert</b> die RMS von 0.134 auf 0.230 (Schwelle 5 erfasst keinen einzigen und bleibt bei 0.134).</p>
+<p>Der Test beruht auf der Annahme &quot;anders als die Nachbarn = falsch&quot; und <b>nennt daher eine echte Unstetigkeit einen Fehler</b>. Ob er angewandt wird, nach der Natur des Feldes entscheiden.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
-<p>epsilon: 分母の下駄 [px]。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>threshold: Ausreißer, wenn dieser Wert überschritten wird. Üblich ist 2.</p>
+<p>epsilon: Sockel des Nenners [px].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
+<p>bool der Form <code style="color:#22d3bf">(h, w)</code>. <code style="color:#22d3bf">True</code> ist ein Ausreißer (<code style="color:#22d3bf">nan</code> ist ebenfalls <code style="color:#22d3bf">True</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

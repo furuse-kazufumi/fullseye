@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_sensitivity_threshold&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>絕對靈敏度閾值(使 SNR = 1 的曝光，式 26、27)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2)、μ_e.min = η μ_p.min。★量子化雑音が入る限り μ_e.min は σ_d より大きい。返り値 <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: η が (0, 1] の外 / σ_d・σ_q² が負 / K が正でない。</p>
+<p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2)，μ_e.min = η μ_p.min。★只要有量化雜訊，μ_e.min 就大於 σ_d。回傳值 <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：η 在 (0, 1] 之外 / σ_d、σ_q² 為負 / K 不為正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

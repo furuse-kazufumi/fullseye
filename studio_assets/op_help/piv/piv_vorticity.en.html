@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Vorticity <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>. <b>Counter-clockwise is positive</b> (defined in image coordinates).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
+<p>In image coordinates where rows increase downwards, up and down are reversed relative to mathematical xy coordinates. Writing this without fixing the sign silently flips the sense of rotation of vortices, so the definition is fixed in the docstring.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>spacing: 隣り合うベクトルの間隔 [px] (<code style="color:#22d3bf">info[&quot;step&quot;]</code>)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>spacing: spacing between adjacent vectors [px] (<code style="color:#22d3bf">info[&quot;step&quot;]</code>).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w)</code>。単位は 1/フレーム(<code style="color:#22d3bf">spacing</code> が画素なら)。</p>
+<p><code style="color:#22d3bf">(h, w)</code>. Unit is 1/frame (if <code style="color:#22d3bf">spacing</code> is in pixels).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

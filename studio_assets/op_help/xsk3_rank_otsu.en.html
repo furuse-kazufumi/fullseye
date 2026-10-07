@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Local Otsu binarization (skimage <code style="color:#22d3bf">filters.rank.otsu</code>). Computes an Otsu&#x27;s-method (discriminant analysis) threshold within a local disk neighborhood only, and binarizes by whether the pixel value exceeds that local threshold - unlike global Otsu, this can select a locally appropriate threshold even on images with uneven illumination.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は円盤半径(<code style="color:#22d3bf">2+int(a*8)</code> で 2〜10)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the disc radius (2–10 via <code style="color:#22d3bf">2+int(a*8)</code>). <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -12,8 +12,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Non-local-Means-Rauschunterdrückung. Sucht nicht nur in benachbarten Pixeln, sondern im gesamten Bild nach ähnlichen Patches und mittelt diese -- der Unterschied zu einfacher Glättung besteht darin, dass Rauschen nur in flachen Bereichen entfernt wird, während sich wiederholende Muster und Texturen erhalten bleiben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a はカットオフ距離 h(大きいほど「似ている」と判定される範囲が広がり、強くノイズ除去される代わりにディテールも失われやすい)を 0.02〜0.22 に振る。パッチサイズは 5x5 に固定。b は未使用。</p>
+<p>HALCON hat keine direkte Entsprechung. Die Implementierung ist <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a variiert die Grenzdistanz h (je größer, desto weiter der als „ähnlich“ eingestufte Bereich: stärkeres Entrauschen, aber Details gehen leichter verloren) über 0.02–0.22. Die Patchgröße ist auf 5x5 fest. b wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

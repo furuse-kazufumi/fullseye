@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지문의 <b>블록별 실효 강도</b>(표준편차)를 늘어놓은 지도. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>PRNU は飽和した画素と真っ暗な画素では出ない(乗法的な欠陥なので信号が要る)。この地図は「<b>指紋がどこで何も言えないか</b>」を見るためのもので、値が低い領域の照合結果は弱い。<code style="color:#22d3bf">block</code> 角の非重複ブロックごとの標準偏差を、元の <code style="color:#22d3bf">(H, W)</code> へブロック定数で戻して返す(端は端のブロックの値で埋める)。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half</code>、128x128 の左半分だけを飽和させた 8 枚から指紋を作る):飽和側の平均強度 <b>0.075</b> に対し通常側 <b>1.409</b> = <b>18.8 倍</b>。左半分では PRNU が乗る余地が無い(乗法的な欠陥なので信号が要る)ことがそのまま出ている。</p>
-<p>これは <code style="color:#22d3bf">fingerprint</code> 語彙の <b>出口</b> でもある(袋小路を作らないため)。</p>
+<p>PRNU는 포화된 화소와 새까만 화소에서는 나오지 않는다(곱셈적 결함이므로 신호가 필요하다). 이 지도는 &quot;<b>지문이 어디서 아무것도 말할 수 없는가</b>&quot;를 보기 위한 것이며, 값이 낮은 영역의대조 결과는 약하다. <code style="color:#22d3bf">block</code> 정사각의 비중첩 블록마다의 표준 편차를 원래 <code style="color:#22d3bf">(H, W)</code>로블록 상수로 되돌려 반환한다(가장자리는 가장자리 블록의 값으로 채운다).</p>
+<p>실측(<code style="color:#22d3bf">tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half</code>, 128x128의 왼쪽 절반만을 포화시킨 8장으로 지문을 만든다): 포화 측의 평균 강도 <b>0.075</b>에 대해 통상 측 <b>1.409</b> = <b>18.8배</b>. 왼쪽 절반에서는 PRNU가 실릴 여지가없다(곱셈적 결함이므로 신호가 필요하다)는 것이 그대로 나타나 있다.</p>
+<p>이것은 <code style="color:#22d3bf">fingerprint</code> 어휘의 <b>출구</b>이기도 하다(막다른 길을 만들지 않기 위해).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

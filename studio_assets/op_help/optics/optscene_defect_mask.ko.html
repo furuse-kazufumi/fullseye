@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">optscene.optscene_defect_mask</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>결함 화소의 정답 마스크</b> (H, W). 학습·평가의 레이블은 이것을 씁니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">index</code> を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと同じ交差計算から出るので、検出結果との IoU をそのまま測れる。欠陥が <b>その照明で見えるかどうかとは無関係</b>に真値を返す ―― 見えないのに正解があるのが外観検査の難しさで、そこを隠すと「検出ゼロ = 頑健」と誤読される。</p>
+<p><code style="color:#22d3bf">index</code>를 생략하면 장면 안의 모든 결함을 합성한다. 화소 완전이며, 렌더링과같은 교차 계산에서 나오므로, 검출 결과와의 IoU를 그대로 잴 수 있다. 결함이 <b>그 조명에서 보이는지 여부와 무관하게</b> 참값을 반환한다 ―― 보이지 않는데 정답이있는 것이 외관 검사의 어려움이며, 그것을 숨기면 &quot;검출 0 = 강건&quot;으로 오독된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

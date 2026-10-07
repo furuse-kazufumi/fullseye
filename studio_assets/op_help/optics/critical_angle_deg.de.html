@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Grenzwinkel der Totalreflexion [Grad] = asin(n2/n1). Ohne n1 &gt; n2 ein ValueError (er existiert dann nicht).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
-<p>式: <code style="color:#22d3bf">degrees(asin(n2 / n1))</code>。入射角(法線からの角)がこれ以上なら屈折光が</p>
-<p>存在せず全反射する。例: N-BK7 相当 <code style="color:#22d3bf">n1 = 1.5</code> → 空気 <code style="color:#22d3bf">n2 = 1.0</code> で 41.8 度、水 <code style="color:#22d3bf">n1 = 1.333</code> → 空気で 48.6 度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>: 光が出ていく側(密な媒質)の屈折率、<code style="color:#22d3bf">n2</code>: 入る側(疎な媒質)の屈折率。どちらも正の有限スカラ(<code style="color:#22d3bf">float()</code> で変換するので配列は受けない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1 &lt;= n2</code> は臨界角が存在しないので <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">NaN</code> や 90 度でごまかさない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float [deg]、<code style="color:#22d3bf">(0, 90)</code>。</p>
-<p style="margin:2px 0 2px 12px">• 波長依存は入れない。分散込みで評価するなら硝材の Sellmeier から求めた <code style="color:#22d3bf">n1</code> を渡す(<code style="color:#22d3bf">prism_min_deviation_deg</code> は内部でそれをやる)。</p>
-<p><code style="color:#22d3bf">fresnel_dielectric</code> に臨界角以上の <code style="color:#22d3bf">cos_i</code> を渡した場合の挙動はそちらを参照。Brewster 角(p 偏光の反射が 0 になる角)は <code style="color:#22d3bf">brewster_angle_deg</code>。</p>
+<p>Tritt nur auf, wenn Licht aus Glas in Luft austritt. Der Auslegungswert für Totalreflexionsflächen in Lichtleitern und Prismen.</p>
+<p>Formel: <code style="color:#22d3bf">degrees(asin(n2 / n1))</code>. Ist der Einfallswinkel (Winkel zur Normale) mindestens so groß, gibt es kein gebrochenes Licht und es kommt zur Totalreflexion. Beispiele: N-BK7-Äquivalent <code style="color:#22d3bf">n1 = 1.5</code> → Luft <code style="color:#22d3bf">n2 = 1.0</code> ergibt 41.8 Grad, Wasser <code style="color:#22d3bf">n1 = 1.333</code> → Luft ergibt 48.6 Grad.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>: Brechungsindex der Seite, aus der das Licht austritt (dichteres Medium), <code style="color:#22d3bf">n2</code>: Brechungsindex der Seite, in die es eintritt (dünneres Medium). Beide positive endliche Skalare (Umwandlung mit <code style="color:#22d3bf">float()</code>, daher keine Arrays).</p>
+<p style="margin:2px 0 2px 12px">• Bei <code style="color:#22d3bf">n1 &lt;= n2</code> existiert kein Grenzwinkel, daher <code style="color:#22d3bf">ValueError</code> (kein Vertuschen mit <code style="color:#22d3bf">NaN</code> oder 90 Grad).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: float [deg], <code style="color:#22d3bf">(0, 90)</code>.</p>
+<p style="margin:2px 0 2px 12px">• Keine Wellenlängenabhängigkeit. Um mit Dispersion auszuwerten, ein aus der Sellmeier-Gleichung des Glases bestimmtes <code style="color:#22d3bf">n1</code> übergeben (<code style="color:#22d3bf">prism_min_deviation_deg</code> tut das intern).</p>
+<p>Zum Verhalten, wenn <code style="color:#22d3bf">fresnel_dielectric</code> ein <code style="color:#22d3bf">cos_i</code> ab dem Grenzwinkel erhält, siehe dort. Der Brewster-Winkel (der Winkel, bei dem die Reflexion der p-Polarisation 0 wird) ist <code style="color:#22d3bf">brewster_angle_deg</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

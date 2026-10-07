@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code>(要直接呼叫實作,<code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>雜散光(遮蔽眩光)指數：黑點中心亮度的平均 / 白底亮度的平均(ISO 9358 的思路)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*dark_mask*(必須): 黒い点の<b>中心部</b>の画素(点の縁の ぼけ を含めない —— 縁を含めるとコアの ぼけ まで迷光に数える)。*bright_mask*(必須): 白地の画素。★黒い点の大きさ(と光源の広さ)で答えが変わる: 裾が 1/(1+(r/r0)²) のレンズでは黒い点の一辺を 16 → 256 px にすると同じレンズの指数が 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3 節)。点の大きさは結果と一緒に報告すること。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;vgi&quot;: 比, &quot;dark&quot;: 黒点の平均, &quot;bright&quot;: 白地の平均, &quot;n_dark&quot;, &quot;n_bright&quot;}</code>。暗電流・黒レベルは引かない(引いた像を渡す)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像・マスクの形が違う / マスクが bool でない・空・重なる / 白地の平均が 0 以下。</p>
+<p>*dark_mask*(必要)：黑點<b>中心部分</b>的像素(不含點邊緣的模糊 —— 若含邊緣，連核心的模糊也會算作雜散光)。*bright_mask*(必要)：白底的像素。★答案隨黑點的大小(及光源的範圍)而變：對拖尾為 1/(1+(r/r0)²) 的透鏡，將黑點邊長從 16 → 256 px，同一透鏡的指數從 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 第 3 節)。點的大小須與結果一併報告。</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;vgi&quot;: 比值, &quot;dark&quot;: 黑點的平均, &quot;bright&quot;: 白底的平均, &quot;n_dark&quot;, &quot;n_bright&quot;}</code>。不減去暗電流、黑階(請傳入已減去的影像)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：影像與遮罩形狀不同 / 遮罩不是 bool、為空、互相重疊 / 白底的平均為 0 以下。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

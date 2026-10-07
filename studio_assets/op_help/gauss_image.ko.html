@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구현은 <code style="color:#22d3bf">gauss_filter</code>와 동일하다(같은 <code style="color:#22d3bf">kind: &quot;gauss&quot;</code> 분기, 시그마 <code style="color:#22d3bf">0.3+2.7*a</code>의 가우시안 블러). HALCON에서는 <code style="color:#22d3bf">gauss_filter</code>(이산 근사)와 <code style="color:#22d3bf">gauss_image</code>(주파수 영역/연속 가우시안)가 별개의 연산자이지만, 이 대역에서는 구분하지 않고 동일한 함수를 가리킨다. HALCON의 <code style="color:#22d3bf">gauss_image</code>(Smooth an image using discrete Gaussian functions.)의 대역이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がシグマを 0.3〜3.0 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>가 시그마를 0.3~3.0 범위에서 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

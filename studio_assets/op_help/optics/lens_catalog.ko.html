@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>산업용 렌즈의 제원표(품번으로 조회). <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code> 로 좁힐 수 있습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><b>スペックシートに載る項目だけ</b>を持つ ―― 焦点距離・F 値の範囲・対応形式・マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとのグラフでしか出ないため<b>持たない</b>(持つと実測だと誤解させる)。</p>
-<p>返り値の各項目に <code style="color:#22d3bf">image_circle_mm</code> が入るので、センサの対角と比べて「そのセンサを覆えるか」を機械で判定できる。</p>
+<p><b>스펙 시트에 실리는 항목만</b>을 갖는다 ―― 초점 거리·F값의 범위·대응 형식· 마운트·이미지 서클. 사용자 지적대로 &quot;렌즈 그 자체의 스펙에실리는 파라미터는 그렇게 많지 않다&quot;이므로, 이것으로 충분하다. 수차·MTF·왜곡은 기종마다의그래프로만 나오므로 <b>갖지 않는다</b>(가지면 실측이라고 오해시킨다).</p>
+<p>반환값의 각 항목에 <code style="color:#22d3bf">image_circle_mm</code>이 들어가므로, 센서의 대각과 비교하여 &quot;그 센서를 덮을 수 있는가&quot;를 기계로 판정할 수 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

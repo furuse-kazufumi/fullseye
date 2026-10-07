@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>ELA (Error-Level-Analyse). Eine Karte der <b>Differenz nach Neukomprimierung</b> bei gegebener Qualität. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Krawetz 2007。JPEG は 8x8 ブロックごとに量子化するので、<b>一度圧縮された領域</b>は同じ品質で再圧縮しても誤差が小さく、<b>後から貼られた / 描かれた領域</b>は誤差が大きく残る、という考え方に基づく。</p>
-<p><code style="color:#22d3bf">normalize=True</code>(既定)なら最大値で割って [0, 1] にする(見るため)。<code style="color:#22d3bf">False</code> なら 8 bit 階調そのままの絶対誤差(数えるため)。</p>
-<p><b>Pillow が無ければ <code style="color:#22d3bf">ImportError</code>。近似には落ちない。</b> DCT の量子化だけを numpy で真似ると、符号化器の丸め・色空間変換・チャネル間引きが消えた *別物* になる。それを ELA と名乗ると、この族が潰そうとしている「もっともらしく間違う」を自分でやることになる。</p>
-<p><b>この地図が言えないこと</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像の中央 64x64 に別画像を貼ったもの):</p>
+<p>Krawetz 2007. JPEG quantisiert pro 8x8-Block, daher zeigt <b>ein bereits einmal komprimierter Bereich</b> bei Rekompression mit derselben Qualität wenig Fehler, während <b>ein nachträglich eingefügter / gezeichneter Bereich</b> einen großen Fehler behält; auf dieser Idee beruht es.</p>
+<p>Mit <code style="color:#22d3bf">normalize=True</code> (Default) wird durch das Maximum auf [0, 1] geteilt (zum Ansehen). Mit <code style="color:#22d3bf">False</code> ist es der absolute Fehler in rohen 8-bit-Stufen (zum Zählen).</p>
+<p><b>Ohne Pillow <code style="color:#22d3bf">ImportError</code>. Es fällt nicht auf eine Näherung zurück.</b> Wer nur die DCT-Quantisierung in numpy nachahmt, erhält *etwas anderes*, bei dem Rundung des Encoders, Farbraumkonvertierung und Chroma-Unterabtastung fehlen. Das ELA zu nennen hieße, selbst das &quot;plausibel Falsche&quot; zu begehen, das diese Familie ausmerzen will.</p>
+<p><b>Was diese Karte nicht aussagen kann</b> (<code style="color:#22d3bf">tests/test_imgforensics.py</code> fixiert es in Zahlen; ein anderes Bild in die mittleren 64x64 eines 256x256-Bildes mit 1/f^1.6 eingefügt):</p>
 <p>==================================== =============== =============== =========</p>
-<p>元の画像                             貼付部の ELA    背景の ELA      比</p>
+<p>Originalbild                         ELA Eingefügtes ELA Hintergrund Verh.</p>
 <p>==================================== =============== =============== =========</p>
-<p><b>無圧縮</b>(一度も JPEG を通らない)  0.1966          0.1793          <b>1.096</b></p>
-<p>一度 JPEG 品質 75 を通した           0.1966          0.0401          <b>4.898</b></p>
+<p><b>Unkomprimiert</b> (nie als JPEG)     0.1966          0.1793          <b>1.096</b></p>
+<p>Einmal durch JPEG Qualität 75        0.1966          0.0401          <b>4.898</b></p>
 <p>==================================== =============== =============== =========</p>
-<p style="margin:2px 0 2px 12px">• <b>無圧縮 PNG では何も言えない</b>。上の 1.096 倍は「貼った所と貼っていない所が区別できない」という意味である。<b>ELA が意味を持つのは「元が JPEG」のときだけ</b>で、そのとき初めて 4.898 倍という差になる。</p>
-<p style="margin:2px 0 2px 12px">• よく言われる「ELA は高周波を追っているだけ」も、この画像では成り立たない —— ELA と Sobel 勾配強度の相関は <b>0.003</b>(無圧縮)/ <b>0.057</b>(JPEG 済み)。ELA は 8x8 ブロックの量子化残差を見ているので、勾配とは別のものを測っている。それでも上の表のとおり <b>無圧縮では改竄を分離しない</b>。「勾配の言い換えだから駄目」なのではなく、<b>比べる基準になる量子化履歴が無いから駄目</b>である。</p>
-<p style="margin:2px 0 2px 12px">• 平坦な領域は圧縮しても誤差が出ないので、<b>改竄されていても暗いまま</b>になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>Bei unkomprimiertem PNG kann sie nichts aussagen</b>. Das 1.096-Fache oben bedeutet &quot;eingefügte und nicht eingefügte Stellen sind nicht unterscheidbar&quot;. <b>ELA hat nur dann Aussagekraft, wenn &quot;das Original ein JPEG ist&quot;</b>, und erst dann ergibt sich ein Unterschied des 4.898-Fachen.</p>
+<p style="margin:2px 0 2px 12px">• Auch die verbreitete Behauptung &quot;ELA verfolgt nur hohe Frequenzen&quot; gilt für dieses Bild nicht —— die Korrelation zwischen ELA und Sobel-Gradientenstärke ist <b>0.003</b> (unkomprimiert) / <b>0.057</b> (bereits JPEG). ELA betrachtet das Quantisierungsresiduum der 8x8-Blöcke und misst daher etwas anderes als den Gradienten. Trotzdem <b>trennt es, wie die Tabelle zeigt, ohne Kompression keine Manipulation</b>. Es scheitert nicht, &quot;weil es nur eine Umschreibung des Gradienten ist&quot;, sondern <b>weil keine Quantisierungshistorie als Vergleichsbasis vorhanden ist</b>.</p>
+<p style="margin:2px 0 2px 12px">• Flache Bereiche zeigen auch bei Kompression keinen Fehler und <b>bleiben daher dunkel, selbst wenn sie manipuliert sind</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

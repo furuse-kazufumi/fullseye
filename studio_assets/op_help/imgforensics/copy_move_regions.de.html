@@ -4,56 +4,55 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;copy_move_regions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Paare von <b>Copy-Move</b>-(selbstduplizierten)Regionen innerhalb eines Bildes. <code style="color:#22d3bf">table</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code>(既定)</p>
-<p><code style="color:#22d3bf">features.harris_corners</code> でコーナーを取り、</p>
-<p><code style="color:#22d3bf">features.describe_patches</code> で正規化パッチ記述子を作り、</p>
-<p><b>自分から <code style="color:#22d3bf">min_offset</code> px 以上離れた</b>最近傍と Lowe の比率検定で対応を作る</p>
-<p>(<code style="color:#22d3bf">_self_match</code>)。対応をシフトベクトルで束ね、群ごとに</p>
-<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で幾何整合を確認する。</p>
-<p>相似変換は <code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(Umeyama)で当てて</p>
-<p><code style="color:#22d3bf">similarity</code> に入れる。</p>
+<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code> (Default)</p>
+<p>nimmt Ecken mit <code style="color:#22d3bf">features.harris_corners</code>,</p>
+<p>erzeugt normierte Patch-Deskriptoren mit <code style="color:#22d3bf">features.describe_patches</code></p>
+<p>und bildet Korrespondenzen über den nächsten Nachbarn <b>mindestens <code style="color:#22d3bf">min_offset</code> px von sich selbst entfernt</b> und Lowes Ratio-Test</p>
+<p>(<code style="color:#22d3bf">_self_match</code>). Die Korrespondenzen werden nach Verschiebungsvektor gebündelt, und für jede Gruppe</p>
+<p>wird die geometrische Konsistenz mit <code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> geprüft.</p>
+<p>Eine Ähnlichkeitstransformation wird mit <code style="color:#22d3bf">fit_transform.vector_to_similarity</code> (Umeyama) angepasst und</p>
+<p>in <code style="color:#22d3bf">similarity</code> abgelegt.</p>
 <p><code style="color:#22d3bf">method=&quot;block&quot;</code></p>
-<p>Fridrich, Soukal &amp; Lukáš 2003。<code style="color:#22d3bf">block</code> 角の重なりブロックを <code style="color:#22d3bf">step</code> px</p>
-<p>刻みで取り(既定 <code style="color:#22d3bf">step=1</code> —— <b>これは飾りではない</b>。下の「歩幅」参照)、</p>
-<p>各ブロックの DCT 低周波 <code style="color:#22d3bf">n_dct</code> 係数を特徴にして辞書順に並べ、</p>
-<p>辞書順で近い <code style="color:#22d3bf">neighbours</code> 件までを候補にし、特徴距離が</p>
-<p><code style="color:#22d3bf">max_feature_dist</code> 以下のものだけをシフトベクトルで数える。</p>
-<p>回転・拡大には効かないが、角の少ない画像で keypoint 法より拾える。</p>
-<p>分散が <code style="color:#22d3bf">min_variance</code> 未満のブロックは捨てる(<b>一様な空を空にコピーしても同じ特徴になる</b> = 検出器が必ず作る偽陽性の主因)。</p>
-<p><b>歩幅 (<code style="color:#22d3bf">step</code>) を 1 にしてある理由(実測で決めた)</b>: ブロック法が「同じ特徴」を見つけられるのは、複製元と複製先が <b>同じ格子に乗ったとき</b>だけである。<code style="color:#22d3bf">step=4</code> にすると、シフトが 4 の倍数でない複製(たとえば <code style="color:#22d3bf">(110, 128)</code>)は <b>原理的に一度も一致しない</b>。実測で <code style="color:#22d3bf">step=4</code> は真のシフトを 1 件も返さず、代わりに偽の群を 60 件返した。<code style="color:#22d3bf">step=1</code> なら真のシフトが第 1 群に来る。大きい画像で重いときは <code style="color:#22d3bf">step</code> を上げてよいが、<b>上げた歩幅の倍数のシフトしか見つからなくなる</b>ことを承知の上で上げること。</p>
-<p>返りは領域対の list(対応数の多い順)。各要素:</p>
-<p><code style="color:#22d3bf">offset</code>       シフト <code style="color:#22d3bf">(dy, dx)</code>(row, col)。向きは <b>位置で正規化</b>してある</p>
-<p>(辞書順で正になる向き)—— 添字で決めると同じ複製が</p>
-<p><code style="color:#22d3bf">(110, 128)</code> にも <code style="color:#22d3bf">(-110, -128)</code> にもなる(実測して直した)</p>
-<p><code style="color:#22d3bf">n_matches</code>    その群の対応数</p>
-<p><code style="color:#22d3bf">n_inliers</code>    RANSAC の内点数(<code style="color:#22d3bf">method=&quot;block&quot;</code> では <code style="color:#22d3bf">n_matches</code> と同じ)</p>
-<p><code style="color:#22d3bf">inlier_ratio</code> 内点率 <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  <code style="color:#22d3bf">(N, 2)</code> の (row, col)</p>
-<p><code style="color:#22d3bf">similarity</code>   Umeyama で当てた <code style="color:#22d3bf">3x3</code>(<code style="color:#22d3bf">method=&quot;keypoint&quot;</code> のみ、なければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">method</code>       使った方法</p>
-<p><code style="color:#22d3bf">caveats</code>      この結果が言えないこと</p>
-<p><b>正解が手元にあるので当てられることを数で固定してある</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>、256x256 のテクスチャ画像の <code style="color:#22d3bf">(40, 32)</code> にある 64x64 を <code style="color:#22d3bf">(150, 160)</code> へ複製 = 真のシフト <code style="color:#22d3bf">(110, 128)</code>):</p>
+<p>Fridrich, Soukal &amp; Lukáš 2003. Überlappende <code style="color:#22d3bf">block</code>-Quadrat-Blöcke werden im Abstand von <code style="color:#22d3bf">step</code> px</p>
+<p>genommen (Default <code style="color:#22d3bf">step=1</code> —— <b>das ist keine Dekoration</b>; siehe &quot;Schrittweite&quot; unten),</p>
+<p>die tieffrequenten <code style="color:#22d3bf">n_dct</code> DCT-Koeffizienten jedes Blocks dienen als Merkmal und werden lexikografisch sortiert,</p>
+<p>bis zu <code style="color:#22d3bf">neighbours</code> lexikografisch nahe Einträge werden Kandidaten, und nur jene mit Merkmalsabstand</p>
+<p>höchstens <code style="color:#22d3bf">max_feature_dist</code> werden nach Verschiebungsvektor gezählt.</p>
+<p>Es wirkt nicht gegen Drehung oder Skalierung, findet aber bei eckenarmen Bildern mehr als das keypoint-Verfahren.</p>
+<p>Blöcke mit Varianz unter <code style="color:#22d3bf">min_variance</code> werden verworfen (<b>gleichmäßiger Himmel auf Himmel kopiert ergibt dieselben Merkmale</b> = Hauptursache der falsch positiven Treffer, die der Detektor zwangsläufig erzeugt).</p>
+<p><b>Warum die Schrittweite (<code style="color:#22d3bf">step</code>) 1 ist (per Messung entschieden)</b>: Das Blockverfahren kann &quot;dieselben Merkmale&quot; nur finden, wenn Quelle und Ziel der Kopie <b>auf demselben Raster liegen</b>. Mit <code style="color:#22d3bf">step=4</code> stimmt eine Kopie, deren Verschiebung kein Vielfaches von 4 ist (z. B. <code style="color:#22d3bf">(110, 128)</code>), <b>prinzipiell nie überein</b>. In Messungen lieferte <code style="color:#22d3bf">step=4</code> nicht einmal 1 wahre Verschiebung, sondern stattdessen 60 falsche Gruppen. Mit <code style="color:#22d3bf">step=1</code> kommt die wahre Verschiebung als Gruppe 1. Bei großen, schweren Bildern darf man <code style="color:#22d3bf">step</code> erhöhen, aber nur in dem Wissen, dass <b>dann nur noch Verschiebungen gefunden werden, die Vielfache der erhöhten Schrittweite sind</b>.</p>
+<p>Die Rückgabe ist eine list von Bereichspaaren (absteigend nach Korrespondenzzahl). Jedes Element:</p>
+<p><code style="color:#22d3bf">offset</code>       Verschiebung <code style="color:#22d3bf">(dy, dx)</code> (row, col). Die Richtung ist <b>nach Position normiert</b></p>
+<p>(die lexikografisch positive Richtung) —— per Index entschieden wäre dieselbe Kopie</p>
+<p>sowohl <code style="color:#22d3bf">(110, 128)</code> als auch <code style="color:#22d3bf">(-110, -128)</code> (gemessen und behoben)</p>
+<p><code style="color:#22d3bf">n_matches</code>    Korrespondenzzahl dieser Gruppe</p>
+<p><code style="color:#22d3bf">n_inliers</code>    Anzahl der RANSAC-Inlier (bei <code style="color:#22d3bf">method=&quot;block&quot;</code> gleich <code style="color:#22d3bf">n_matches</code>)</p>
+<p><code style="color:#22d3bf">inlier_ratio</code> Inlier-Anteil <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  (row, col) der Form <code style="color:#22d3bf">(N, 2)</code></p>
+<p><code style="color:#22d3bf">similarity</code>   per Umeyama angepasste <code style="color:#22d3bf">3x3</code> (nur <code style="color:#22d3bf">method=&quot;keypoint&quot;</code>, sonst <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">method</code>       das verwendete Verfahren</p>
+<p><code style="color:#22d3bf">caveats</code>      was dieses Ergebnis nicht aussagen kann</p>
+<p><b>Da die Lösung bekannt ist, ist das Treffen in Zahlen fixiert</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>, ein 64x64-Stück bei <code style="color:#22d3bf">(40, 32)</code> eines 256x256-Texturbildes nach <code style="color:#22d3bf">(150, 160)</code> kopiert = wahre Verschiebung <code style="color:#22d3bf">(110, 128)</code>):</p>
 <p>============ ================= ============ ========= ==============</p>
-<p>method       第 1 群の offset  n_matches    群の数    誤差</p>
+<p>method       Offset Gruppe 1   n_matches    Gruppen   Fehler</p>
 <p>============ ================= ============ ========= ==============</p>
 <p>keypoint     (110.0, 128.0)    15           1         0 px</p>
 <p>block        (110.0, 128.0)    3249         1         0 px</p>
 <p>============ ================= ============ ========= ==============</p>
-<p><b>偽陽性も測ってある</b>: 改竄していない同じ種類の画像 3 枚では、keypoint 法・block 法とも群 <b>0 件</b>(seed 4/5/6)。</p>
-<p><b>言えないこと</b>(すべて同じテストで測ってある):</p>
-<p style="margin:2px 0 2px 12px">• 一様な領域(空・壁)は複製しなくても同じ特徴になる。上半分を一様な「空」にした(<b>改竄していない</b>)画像で、<code style="color:#22d3bf">min_variance=1e-4</code> と <code style="color:#22d3bf">1e-6</code> はどちらも 0 件だが、<code style="color:#22d3bf">min_variance=0</code> にすると <b>264 対の偽の群が 1 件</b>出る(シフト <code style="color:#22d3bf">(1, -247)</code> = 空の中の適当な対応)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> は正規化パッチ記述子なので <b>回転に効かない</b>。複製を回して貼ると群の数は 0 度 1 件 → <b>5 度 0 件</b> → 15 度 0 件 → 30 度 0 件。<code style="color:#22d3bf">similarity</code> に回転が入って返ることは実質ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code> も <b>回転にまったく効かない</b>(5 度で 0 件)。</p>
-<p style="margin:2px 0 2px 12px">• 検出ゼロ = 複製が無い、ではない。再圧縮を挟んだ複製は特徴距離が伸びて <code style="color:#22d3bf">max_feature_dist</code> を超える。実測(同じ複製画像を JPEG に通してから検出):</p>
+<p><b>Auch falsch positive Treffer sind gemessen</b>: Bei 3 nicht manipulierten Bildern derselben Art liefern keypoint- wie block-Verfahren <b>0 Gruppen</b> (seeds 4/5/6).</p>
+<p><b>Was es nicht aussagen kann</b> (alles im selben Test gemessen):</p>
+<p style="margin:2px 0 2px 12px">• Gleichmäßige Bereiche (Himmel, Wände) haben auch ohne Kopie dieselben Merkmale. Bei einem (<b>nicht manipulierten</b>) Bild, dessen obere Hälfte ein gleichmäßiger &quot;Himmel&quot; ist, ergeben <code style="color:#22d3bf">min_variance=1e-4</code> und <code style="color:#22d3bf">1e-6</code> beide 0 Gruppen, aber mit <code style="color:#22d3bf">min_variance=0</code> erscheint <b>1 falsche Gruppe mit 264 Paaren</b> (Verschiebung <code style="color:#22d3bf">(1, -247)</code> = beliebige Korrespondenzen im Himmel).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> nutzt normierte Patch-Deskriptoren und <b>wirkt daher nicht gegen Drehung</b>. Dreht man die Kopie vor dem Einfügen, ist die Gruppenzahl bei 0 Grad 1 → <b>5 Grad 0</b> → 15 Grad 0 → 30 Grad 0. Dass <code style="color:#22d3bf">similarity</code> mit einer Drehung zurückkommt, passiert praktisch nicht.</p>
+<p style="margin:2px 0 2px 12px">• Auch <code style="color:#22d3bf">method=&quot;block&quot;</code> <b>wirkt überhaupt nicht gegen Drehung</b> (0 bei 5 Grad).</p>
+<p style="margin:2px 0 2px 12px">• Null Detektionen heißt nicht, dass keine Kopie existiert. Bei einer Kopie mit zwischengeschalteter Rekompression wächst der Merkmalsabstand und überschreitet <code style="color:#22d3bf">max_feature_dist</code>. Gemessen (dasselbe kopierte Bild vor der Detektion durch JPEG geschickt):</p>
 <p>========== ============================ ==========================</p>
-<p>品質       keypoint 第 1 群の n_matches  block 第 1 群の n_matches</p>
+<p>Qualität   keypoint Gruppe 1 n_matches  block Gruppe 1 n_matches</p>
 <p>========== ============================ ==========================</p>
-<p>無圧縮     15                           3249</p>
+<p>Unkompr.   15                           3249</p>
 <p>95         10                           138</p>
 <p>85          7                           10</p>
-<p>75          7                           <b>0 件(群なし)</b></p>
+<p>75          7                           <b>0 (keine Gruppe)</b></p>
 <p>========== ============================ ==========================</p>
-<p>シフトはどの品質でも <code style="color:#22d3bf">(110.0, 128.0)</code> のまま正しい。<b>壊れるのは「見つかるかどうか」で、見つかったときの答えではない</b>。</p>
+<p>Die Verschiebung bleibt bei jeder Qualität korrekt bei <code style="color:#22d3bf">(110.0, 128.0)</code>. <b>Was kaputtgeht, ist &quot;ob es gefunden wird&quot;, nicht die Antwort, wenn es gefunden wird</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

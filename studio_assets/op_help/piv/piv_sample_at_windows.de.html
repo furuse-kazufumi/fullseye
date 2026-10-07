@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Überträgt ein pixelweises Feld <code style="color:#22d3bf">(2, H, W)</code> auf das Gitter der Fenstermittelpunkte (nächster Nachbar).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。<b>比べる前に同じ格子へ持ってくる</b>必要があり、その持ってき方(最近傍か窓内平均か)で誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の平滑化と区別がつかなくなる。</p>
+<p>Die Ground Truth wird in Pixelauflösung erzeugt, die PIV-Ausgabe liegt aber auf dem Fenstergitter. <b>Vor dem Vergleich muss sie auf dasselbe Gitter gebracht werden</b>, und die Art, wie das geschieht (nächster Nachbar oder Fenstermittel), verändert den Fehler. Hier: nächster Nachbar —— mit dem Fenstermittel wäre es in Feldern mit Gradienten nicht mehr von der eigenen Glättung von PIV zu unterscheiden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

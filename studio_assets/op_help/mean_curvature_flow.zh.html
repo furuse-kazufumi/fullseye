@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过反复施加小 sigma(0.6)的高斯模糊来<b>近似</b>平均曲率流的平滑处理。它并非真正的平均曲率 PDE(<code style="color:#22d3bf">ops</code> 侧的另一实现本应求解的扩散方程),而是用计算成本更低的反复模糊来替代 —— 这是此后端特有的近似局限。是 HALCON 的 <code style="color:#22d3bf">mean_curvature_flow</code>(Apply the mean curvature flow to an image.)的替代实现。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 将迭代次数在 1〜7 次范围内调节(次数越多，平滑越强)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.17、0.33、0.49、0.67、0.83、0.99（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

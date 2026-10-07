@@ -11,10 +11,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Pillow 的轮廓提取滤镜。使用 <code style="color:#22d3bf">PIL.ImageFilter.CONTOUR</code> 的固定卷积核，制造出仅在白色背景上留下黑色轮廓线的效果（钢笔画/线稿风格效果）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>a, b は未使用（固定カーネル）。</p>
-<p>カーネルは 3x3 の <code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code>（scale 1、offset 255）で、出力は <code style="color:#22d3bf">255 + (8*中心 - 8 近傍の和)</code> を 0〜255 に飽和させたもの。平坦部は255（白）、周囲より暗い画素は暗く、周囲より明るい画素は 255 で飽和する。つまり段差の「暗い側」に 1 画素幅の黒線が乗り、明るい側は白のまま（<code style="color:#22d3bf">xpil_find_edges</code> は同じカーネルで offset 0 なので両側が明るく出る）。</p>
-<p>入力は [0,1] に clip して <code style="color:#22d3bf">*255</code> の切り捨てで 8 ビットの L 画像にし、出力を <code style="color:#22d3bf">/255</code> で [0,1] に戻す（1/255 の量子化が入る）。画像の最外周1 画素は Pillow がフィルタせず入力値のまま返す。0 サイズの画像はValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ノイズにも反応するので、前段に <code style="color:#22d3bf">xpil_smooth_more</code> や <code style="color:#22d3bf">median</code> を置くと線が整理される。線を領域として使うなら <code style="color:#22d3bf">invert</code> で黒線側を明るくしてから <code style="color:#22d3bf">threshold</code> に繋ぐ。</p>
+<p>a、b 未使用（固定核）。</p>
+<p>核为 3x3 的 <code style="color:#22d3bf">[-1,-1,-1; -1,8,-1; -1,-1,-1]</code>（scale 1、offset 255），输出是将 <code style="color:#22d3bf">255 + (8*中心 - 8 邻域之和)</code> 饱和到 0~255 的结果。平坦部为 255（白），比周围暗的像素变暗，比周围亮的像素在 255 处饱和。也就是说，阶跃的“暗侧”会出现 1 像素宽的黑线，亮侧保持白色（<code style="color:#22d3bf">xpil_find_edges</code> 使用相同的核但 offset 为 0，因此两侧都显示为亮）。</p>
+<p>输入裁剪(clip)到 [0,1]，经 <code style="color:#22d3bf">*255</code> 截断成 8 位的 L 图像，输出再用 <code style="color:#22d3bf">/255</code> 回到 [0,1]（引入 1/255 的量化）。图像最外周 1 像素 Pillow 不做滤波，按输入值原样返回。0 尺寸的图像会以 ValueError 被拒绝，并 fail-soft 地退回到输入的裁剪版（记录在台账中）。它对噪声也有响应，因此在前级放置 <code style="color:#22d3bf">xpil_smooth_more</code> 或 <code style="color:#22d3bf">median</code> 可以让线条变整齐。若要把线条当作区域使用，请先用 <code style="color:#22d3bf">invert</code> 让黑线一侧变亮，再接到 <code style="color:#22d3bf">threshold</code>。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以正規化中位數檢定(Westerweel &amp; Scarano 2005)找出離群向量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
-<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
-<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
+<p>對每個向量，把它與 8 鄰域中位數的殘差除以<b>鄰域殘差的中位數</b>。在分母加上 <code style="color:#22d3bf">epsilon</code>(預設 0.1 px，PIV 量測不確定度的大致量級)，是為了防止在均勻場中分母變為 0、全部都成了離群值 —— 沒有這一項，<b>輸入越理想，檢定越會崩潰</b>。</p>
+<p>★<b>在梯度陡峭的場中有害</b>(2026-09-06 實測)。對 Rankine 型渦(渦核半徑 28 px)做多段 PIV，閾值 2 撿取的 5 根向量全部排在<b>渦核邊緣</b>(距中心 32 px)，實際誤差為 0.07-0.45 px —— 不是離群值，而是<b>速度分布出現折點的位置</b>。以鄰域中位數抹平後 RMS 從 0.134 <b>惡化</b>到 0.230(閾值 5 時 1 根也沒撿取，仍為 0.134)。</p>
+<p>檢定立足於「與鄰域不同 = 錯誤」的假定，因此會<b>把真實的不連續稱為錯誤</b>。是否施加，請看場的性質來決定。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
-<p>epsilon: 分母の下駄 [px]。</p>
+<p>threshold: 超過此值即為離群值。慣例為 2。</p>
+<p>epsilon: 分母的底值 [px]。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
+<p><code style="color:#22d3bf">(h, w)</code> 的 bool。<code style="color:#22d3bf">True</code> 為離群值(<code style="color:#22d3bf">nan</code> 也為 <code style="color:#22d3bf">True</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

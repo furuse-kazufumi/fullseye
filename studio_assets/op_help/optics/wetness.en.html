@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;wetness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The base colour of a wet surface. <b>The diffuse gets darker</b> (and the specular grows).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
+<p>base_rgb: colour in the dry state (H,W,3) or (3,). wet: wetness (0–1).</p>
+<p>ior: refractive index of the water film.</p>
+<p>Returns: diffuse colour in the wet state (same shape).</p>
+<p>Why it darkens: total internal reflection occurs inside the water film, diffuse light is sent back to the surface again and again and absorbed each time. As an approximation, for the dry reflectance ρ a re-absorption corresponding to the internal reflectance Ri = 1 − (1 − Ri0)/n² is applied ―― exactly the phenomenon of wet sand looking dark (the increase in specularity is expressed by layering <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

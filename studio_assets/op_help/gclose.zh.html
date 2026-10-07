@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度闭运算（先膨胀后腐蚀）。相当于 HALCON 的 <code style="color:#22d3bf">gray_closing</code>（Perform a gray value closing on an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の一辺を <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に振る。<code style="color:#22d3bf">b</code> が<b>構造要素の形</b>を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 <code style="color:#22d3bf">十字</code> / <code style="color:#22d3bf">円板</code> / <code style="color:#22d3bf">水平線</code>。円板は HALCON の <code style="color:#22d3bf">gen_disc_se</code> に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので<b>目に見えて遅い</b>。暗い小さな欠け（ノイズ状の暗点）を埋めつつ、大きな暗域の形はほぼ保つ。</p>
+<p><code style="color:#22d3bf">a</code> 将结构元素的边长在 <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）中切换。<code style="color:#22d3bf">b</code> 选择<b>结构元素的形状</b>：<code style="color:#22d3bf">b &lt;= 0.5</code> 为正方形(2026-09-17 之前的行为，可分离因而最快)，其后依次为 <code style="color:#22d3bf">十字</code> / <code style="color:#22d3bf">圆盘</code> / <code style="color:#22d3bf">水平线</code>。圆盘对应 HALCON 的 <code style="color:#22d3bf">gen_disc_se</code>，水平线用于在保留有方向性的缺陷(横向条纹)的同时只在纵向上做平滑。★正方形以外的形状要经由 footprint，因此<b>明显更慢</b>。在填补暗的小缺口（噪声状的暗点）的同时，基本保持大块暗区域的形状。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

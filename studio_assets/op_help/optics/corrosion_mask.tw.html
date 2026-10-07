@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;corrosion_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>鏽、銅綠與汙漬的<b>斑駁</b>(0–1 遮罩)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>shape: (H, W)。coverage: 覆われる面積の目安(0–1)。scale_px: 斑の大きさ [px]。</p>
-<p>返り値: (H, W) の 0–1 マスク。素材色の混合率として使う(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。実測の面積率は <code style="color:#22d3bf">coverage</code> にほぼ一致する(分位点で閾値を決めているため、テストで確認)。</p>
+<p>shape：(H, W)。coverage：被覆蓋面積的目標值(0–1)。scale_px：斑塊大小 [px]。</p>
+<p>回傳值：(H, W) 的 0–1 遮罩。作為材質顏色的混合比使用(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。實測的面積率與 <code style="color:#22d3bf">coverage</code> 幾乎一致(因為以分位數決定閾值，已由測試確認)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

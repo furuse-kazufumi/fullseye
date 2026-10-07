@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> or call <code style="color:#22d3bf">surfacelib.rough_transmission</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Split the transmission of ground glass into a &quot;straight-through&quot; and a &quot;diffuse&quot; component.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
-<p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<p>cos_i: cos of the angle of incidence. roughness: surface roughness (0 = clear, 1 = fully diffuse).</p>
+<p>Returns: 2 values (direct T_spec, diffuse T_diff). Their sum matches the transmittance of a clear plate (no energy is created ―― verified in tests). How things look through frosted glass is explained simply by this direct component falling and the diffuse component rising.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

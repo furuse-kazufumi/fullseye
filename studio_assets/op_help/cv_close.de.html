@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Graustufen-morphologisches Schließen (closing, OpenCV-Implementierung). Durch Dilatation gefolgt von Erosion werden dunkle Löcher und Lücken gefüllt, die kleiner als das Strukturelement sind (die entgegengesetzte Wirkung von cv_open).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">gray_closing</code>(Perform a gray value closing on an image.)に相当。実装は <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_CLOSE, se)</code>(楕円形構造要素、サイズは cv_open と同じ <code style="color:#22d3bf">3+2*int(a*3)</code>)—— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">gray_closing</code> (Perform a gray value closing on an image.). Die Implementierung ist <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_CLOSE, se)</code> (elliptisches Strukturelement, Größe wie bei cv_open <code style="color:#22d3bf">3+2*int(a*3)</code>) —— a variiert die Größe des Strukturelements über 3–9. b wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">Leitfaden zur Familie gallery2d_morphology</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

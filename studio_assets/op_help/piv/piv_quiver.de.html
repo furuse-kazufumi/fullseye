@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pfeildiagramm (MATLABs <code style="color:#22d3bf">quiver</code>). Rückgabe ist <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p>1 Pfeil pro <code style="color:#22d3bf">spacing</code> Gittereinheiten, Ursprung auf einem Gitterpunkt, Spitze gezogen bis <code style="color:#22d3bf">Ursprung + scale * v</code>. Ohne <code style="color:#22d3bf">scale</code> wird <b>der längste Pfeil das 0.9-fache des Abstands</b> (dieselbe Idee wie die automatische Skalierung in MATLAB, sodass er den Nachbarpfeil nicht überlappt). <b>Der Skalierungsfaktor ändert sich von Abbildung zu Abbildung</b>, daher bei nebeneinander verglichenen Abbildungen <code style="color:#22d3bf">scale</code> festlegen. Pfeile kürzer als 1 Pixel werden nicht gezeichnet (ein Punkt ohne Richtung würde als Markierung gelesen).</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
-<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
-<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
-<p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
-<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
-<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
-<p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
-<p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code> (<code style="color:#22d3bf">dy, dx</code>).</p>
+<p>spacing: Abstand der Pfeile [Gitter]. <code style="color:#22d3bf">None</code> ergibt etwa 20 entlang der langen Seite.</p>
+<p>scale: Pfeillänge = <code style="color:#22d3bf">scale * Geschwindigkeit</code> [Gitter].</p>
+<p>upsample: Ausgabefaktor (groß genug, um Pfeilspitzen zu zeichnen).</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> oder <code style="color:#22d3bf">(…, 3)</code>. <code style="color:#22d3bf">None</code> bedeutet weiß.</p>
+<p>Eine Farbtonkarte (vergrößertes <code style="color:#22d3bf">piv_flow_to_rgbimage</code>) oder LIC kann unterlegt werden.</p>
+<p>color / width: Pfeilfarbe (Rollenname der palette oder RGB) und Schaftdicke [px].</p>
+<p>Default ist eine fast schwarze Tintenfarbe (auch über einer Farbtonkarte lesbar).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64, Wertebereich [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用維納自適應濾波器（<code style="color:#22d3bf">scipy.signal.wiener</code>）抑制雜訊。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は近傍窓のサイズを 3, 5, 7, 9 の奇数に振る（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>、a=0 で 3、a に近い 1 で 9）。<code style="color:#22d3bf">b</code> は未使用。局所分散からノイズ分散を自動推定する適応フィルタで、一様な強さで均すガウシアン/ミーンボックスと違い平坦な領域ほど強く均し、分散の大きい（エッジ/テクスチャの多い）領域は保存されやすい。ガウス性ノイズを仮定するので塩胡椒ノイズには不向き。出力は [0,1] にクリップする。</p>
+<p><code style="color:#22d3bf">a</code> 將鄰域視窗大小在奇數 3, 5, 7, 9 中調整（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>，a=0 時為 3，a 接近 1 時為 9）。<code style="color:#22d3bf">b</code> 未使用。這是從局部變異數自動估計雜訊變異數的自適應濾波，與以均勻強度平滑的高斯/均值盒濾波不同，越平坦的區域平滑越強，變異數大的（邊緣/紋理多的）區域則容易被保留。由於假定高斯雜訊，不適合椒鹽雜訊。輸出截斷到 [0,1]。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

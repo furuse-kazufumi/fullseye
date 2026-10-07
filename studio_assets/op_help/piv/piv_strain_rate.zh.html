@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>应变率的大小 <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>。刚体旋转时为 0。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>実測: 剛体回転 0.0 / 一様膨張 s=0.01 で 0.02 (= 2s) / 単純せん断 g=0.02 で 0.02 (= g)。<b>回転だけを取り除いた変形の強さ</b>なので、Q 基準や λ_ci と合わせて見ると「渦かせん断か」が分かれる。</p>
+<p>实测：刚体转动 0.0 / 均匀膨胀 s=0.01 时 0.02 (= 2s) / 简单剪切 g=0.02 时 0.02 (= g)。它是<b>只去掉转动后的变形强度</b>，因此与 Q 判据或 λ_ci 一起看，就能分出“是涡还是剪切”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

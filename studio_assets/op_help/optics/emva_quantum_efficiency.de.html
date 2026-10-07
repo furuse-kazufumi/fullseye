@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bestimmt die Quanteneffizienz η aus der Steigung der Antwort (Kennlinie) (Gl. 49, 52).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>*mu_p*: 露光段ごとの画素あたりの平均光子数(照度計と露光時間から: μ_p = A E t_exp λ/(hc))。R = μ_y − μ_y.dark を μ_p に当てた直線(<b>切片 0 に固定</b>)の傾き、η = R/K。使う点は飽和の 0〜70 %。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 2 点未満 / K が正でない / 応答が正でない。</p>
+<p>*mu_p*: mittlere Photonenzahl pro Pixel je Belichtungsstufe (aus Beleuchtungsstärkemesser und Belichtungszeit: μ_p = A E t_exp λ/(hc)). R ist die Steigung der Geraden (<b>Achsenabschnitt fest auf 0</b>), angepasst an μ_y − μ_y.dark über μ_p, und η = R/K. Verwendete Punkte: 0–70 % der Sättigung.</p>
+<p>Rückgabewert <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Längen unterschiedlich / weniger als 2 Punkte in 0–70 % / K nicht positiv / Ansprechverhalten nicht positiv.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

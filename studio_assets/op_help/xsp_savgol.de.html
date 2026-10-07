@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glättet das Bild mit einem Savitzky-Golay-Filter (eindimensional angewendet, zuerst spaltenweise, dann zeilenweise).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は窓幅を 5, 7, 9, 11, 13 の奇数に振る（<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>）。多項式次数は 2 に固定。<code style="color:#22d3bf">b</code> は未使用。窓内に 2 次多項式を最小二乗フィットして中心値を置き換える手法なので、単純な移動平均よりピークの高さや勾配を保ったまま平滑化できる。窓幅が画像サイズに対して大きすぎると境界の処理（<code style="color:#22d3bf">scipy</code> の既定の外挿）の影響が強く出る。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Fensterbreite über die ungeraden Werte 5, 7, 9, 11, 13 (<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>). Der Polynomgrad ist auf 2 fest. <code style="color:#22d3bf">b</code> wird nicht verwendet. Da das Verfahren im Fenster ein Polynom 2. Grades nach kleinsten Quadraten anpasst und den Mittelwert ersetzt, glättet es unter besserem Erhalt von Peakhöhen und Gradienten als ein einfacher gleitender Mittelwert. Ist die Fensterbreite im Verhältnis zur Bildgröße zu groß, wirkt sich die Randbehandlung (die Standard-Extrapolation von <code style="color:#22d3bf">scipy</code>) stark aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

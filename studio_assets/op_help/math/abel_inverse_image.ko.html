@@ -4,7 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>축대칭 물체를 옆에서 찍은 <b>영상</b>(세로 = 대칭축 방향, 가로 = 축으로부터의 거리)을 행마다 역 Abel 변환하여 단면 영상으로 만든다.</p>
-<p>불꽃·플라스마·분류의 사진에는 깊이 방향으로 더해진 투영만 찍힌다. 각 행을 중심 열에서 좌우로 나누고, 2개의 절반을 평균한 뒤(좌우 비대칭을 고르게 한다) 역 Abel 변환한다. <code style="color:#22d3bf">center</code>는 대칭축의 열(기본값 = 밝기의 무게중심, 행마다가 아니라 화상 전체에서 1개). 반환값 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice는 (H, R)의 f(z, r), asymmetry는 좌우 절반의 차이의 크기(0에 가까울수록 축대칭 가정이 성립한다).</p>
+<p>불꽃·플라스마·분류의 사진에는 깊이 방향으로 더해진 투영만 찍힌다. 각 행을 중심 열에서 좌우로 나누고, 2개의 절반을 평균한 뒤(좌우 비대칭을 고르게 한다) 역 Abel 변환한다. <code style="color:#22d3bf">center</code>는 대칭축의 열(기본값 = 밝기의 무게중심, 행마다가 아니라 영상 전체에서 1개). 반환값 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice는 (H, R)의 f(z, r), asymmetry는 좌우 절반의 차이의 크기(0에 가까울수록 축대칭 가정이 성립한다).</p>
 <p>게이트: 3-D 가우스 덩어리의 투영으로부터 단면의 가우스가 복원된다(닫힌 식).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

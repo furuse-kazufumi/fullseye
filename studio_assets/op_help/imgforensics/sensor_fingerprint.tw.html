@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由多影格最大概似估計 <b>PRNU 感測器指紋</b> K(Chen et al. 2008)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。撮像モデル <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> の下で、これが K の最尤推定量になる —— 明るい画素ほど PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
-<p>返りは <code style="color:#22d3bf">(H, W)</code> の float64 で、<code style="color:#22d3bf">zero_mean=True</code>(既定)なら行・列平均を抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は <code style="color:#22d3bf">fingerprint_correlate</code> の PCE をスケール不変にするためで、指紋の絶対的な強さは <code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
-<p><code style="color:#22d3bf">images</code> は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> —— PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は <code style="color:#22d3bf">ValueError</code>)。</p>
-<p>枚数と分離度の実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>、128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>):</p>
+<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。在成像模型 <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> 下，這就是 K 的最大概似估計量 —— 越亮的像素 PRNU 越明顯(因為是乘性缺陷)，所以這是<b>以亮度加權的平均</b>。</p>
+<p>回傳 <code style="color:#22d3bf">(H, W)</code> 的 float64，<code style="color:#22d3bf">zero_mean=True</code>(預設)時先去除列、行平均，再<b>正規化為標準差 1</b>。正規化是為了讓 <code style="color:#22d3bf">fingerprint_correlate</code> 的 PCE 具有尺度不變性，指紋的絕對強度由 <code style="color:#22d3bf">fingerprint_strength_map</code> 另行回傳。</p>
+<p><code style="color:#22d3bf">images</code> 為相同 shape 的 2 張以上。<b>不可縮放來對齊</b> —— PRNU 就是像素的物理位置本身，一旦內插指紋就會消失(shape 不一致時為 <code style="color:#22d3bf">ValueError</code>)。</p>
+<p>張數與分離度的實測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>，128x128、PRNU 強度 3%、讀出雜訊 σ=0.01、預設 <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>)：</p>
 <p>====== ======================== ================= =================</p>
-<p>枚数   真の K との相関          同一センサの PCE  別センサの PCE</p>
+<p>張數   與真 K 的相關            同一感測器 PCE    不同感測器 PCE</p>
 <p>====== ======================== ================= =================</p>
 <p>2      +0.727                   5295             16.5</p>
 <p>4      +0.809                   6472             14.5</p>
 <p>8      +0.859                   7246             13.1</p>
 <p>16     +0.892                   7755             -12.3</p>
 <p>====== ======================== ================= =================</p>
-<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」—— 実際この実装は一度その状態にあった(<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は PCE 自体には無い。</p>
-<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、同一センサ PCE 6068 〜 8852 と一貫して強い。既定を <code style="color:#22d3bf">&quot;wiener&quot;</code> にしてあるのは <b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
-<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、実運用のしきい値ではない。</p>
+<p><b>測量「與真 K 的相關」才是關鍵</b>。只看 PCE 的話，即使指紋完全沒有捕捉到感測器的圖樣，也會「看起來已分離」—— 實際上本實作曾經處於那種狀態(見 <code style="color:#22d3bf">_wiener_denoise</code> 的 docstring)。PCE 測的是「在同一感測器上一貫出現的某種東西」，它是否為 PRNU，PCE 本身並不保證。</p>
+<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>(需要 PyWavelets)在相同條件下相關為 +0.745 〜 +0.901、同一感測器 PCE 為 6068 〜 8852，一貫更強。預設設為 <code style="color:#22d3bf">&quot;wiener&quot;</code> 是<b>為了不把 optional 依賴變成必要</b>，並不是依精度選的。</p>
+<p><b>這是合成雜訊上的值</b>，在真實相機上被攝內容會漏入殘差，所以會小幾個數量級。此表固定的是「實作在正確運作」，而不是實際運用的門檻值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

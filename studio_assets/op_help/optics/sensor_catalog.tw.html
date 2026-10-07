@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>真實感測器的規格表(附 Basler 的 EMVA1288 實測)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">status</code> に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは載せていない。新規設計は <code style="color:#22d3bf">status=&quot;current&quot;</code>(Pregius S、2.74 µm 裏面照射)から選ぶ。</p>
-<p><b>ここに載っているのは「カメラ側の値」</b>である。出典が Basler のカメラ実測表なので:</p>
-<p style="margin:2px 0 2px 12px">• 解像度は<b>そのカメラが出す画素数</b>で、センサの全有効画素とは限らない(メーカーは端を切って少し低くすることがある)。</p>
-<p style="margin:2px 0 2px 12px">• フレームレートは<b>接続インターフェース</b>(USB3 / GigE / 5GigE / CXP-12)で変わるので、センサの属性として持たない ―― だからこの表には入れていない。</p>
-<p style="margin:2px 0 2px 12px">• QE / ダークノイズ / 飽和容量 / ダイナミックレンジ / 最大 SNR は <b>カメラの EMVA1288 実測</b>(ace / ace 2 / boost)。センサ単体の理論値ではなく実装込みなので、別のカメラなら少し変わる。</p>
-<p style="margin:2px 0 2px 12px">• 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。</p>
-<p><b>自社でセンサを作っているカメラメーカーはここに載せられない</b>(Canon / Photron / Vision Research(Phantom) / Teledyne DALSA / Hamamatsu の一部)。型番から引けず、カメラのデータシートが唯一の出所だからである。画素ピッチが桁違いのものがあり(Phantom の高感度機は 28 µm、Pregius S は 2.74 µm)、回折律速に入る F 値も飽和容量も一桁変わるので、<b>実機の値を直接 sensor_spec に渡すこと</b>。</p>
-<p>世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の <b>3 倍</b>。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は 9.7 ke- で 2nd と同等を保っている(裏面照射)。</p>
-<p>Sony 以外(<code style="color:#22d3bf">maker</code> で引ける)も同じ表から取ってあるので、<b>同じ測定法で横並び比較できる</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>(3.2 µm)は APS-C / 35 mm の<b>大判</b>が本領。Sony にこの判は無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>(4.8 µm)は小型・高速だが、ダークノイズが 11-12 e- と Pregius の 5 倍。暗い場面では効いてくる。</p>
-<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>(2.5 µm)は<b>ダークノイズ 1 e- 級</b>が売り(GMAX2505/2509)。飽和容量は 4-5 ke- と小さいので、ダイナミックレンジは 70 dB でほぼ同等。GMAX3265 は 65 MP(9344x7000)で、超高解像度なら選択肢がここしかない。</p>
-<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>(5.5 µm)は飽和容量が大きい代わりにダークノイズも 14 e-。</p>
+<p>向 <code style="color:#22d3bf">status</code> 傳入 current / mature / legacy 即可篩選。已停產且過舊的不收錄。新設計請從 <code style="color:#22d3bf">status=&quot;current&quot;</code>(Pregius S，2.74 µm 背照式)中選擇。</p>
+<p><b>這裡收錄的是「相機側的值」</b>。由於出處是 Basler 的相機實測表：</p>
+<p style="margin:2px 0 2px 12px">• 解析度是<b>該相機輸出的像素數</b>，不一定等於感測器的全部有效像素(廠商有時會切掉邊緣使其稍低)。</p>
+<p style="margin:2px 0 2px 12px">• 影格率隨<b>連接介面</b>(USB3 / GigE / 5GigE / CXP-12) 而變，所以不作為感測器的屬性 ―― 因此本表中沒有收錄。</p>
+<p style="margin:2px 0 2px 12px">• QE / 暗雜訊 / 滿井容量 / 動態範圍 / 最大 SNR 是 <b>相機的 EMVA1288 實測</b>(ace / ace 2 / boost)。不是感測器單體的理論值，而是包含了實作，所以換一台相機會略有變化。</p>
+<p style="margin:2px 0 2px 12px">• 像素間距、快門方式、世代來自感測器，所以相機變了也不會變。</p>
+<p><b>自行製造感測器的相機廠商無法收錄在這裡</b>(Canon / Photron / Vision Research (Phantom) / Teledyne DALSA / Hamamatsu 的一部分)。無法由型號查到，因為相機的資料表是唯一的出處。有的像素間距相差一個數量級(Phantom 的高感光度機型為 28 µm，Pregius S 為 2.74 µm)，進入繞射受限的 F 值和滿井容量都會差一個數量級，所以<b>請將實機的值直接傳給 sensor_spec</b>。</p>
+<p>世代之間的變化體現在滿井容量上：Pregius 1st 為 31.8 ke-，是 2nd(10.4 ke-)的 <b>3 倍</b>。這是將像素從 5.86 µm 縮小到 3.45 µm 的代價。Pregius S(2.74 µm) 為 9.7 ke-，維持與 2nd 相當(背照式)。</p>
+<p>Sony 以外(可用 <code style="color:#22d3bf">maker</code> 查到)也取自同一張表，所以<b>可以用相同量測方法橫向比較</b>：</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>(3.2 µm)的強項是 APS-C / 35 mm 的<b>大片幅</b>。Sony 沒有這種片幅。</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>(4.8 µm)小型、高速，但暗雜訊為 11-12 e-，是 Pregius 的 5 倍。在暗場景中會產生影響。</p>
+<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>(2.5 µm)的賣點是<b>暗雜訊 1 e- 級</b>(GMAX2505/2509)。滿井容量較小，為 4-5 ke-，所以動態範圍為 70 dB，大致相當。GMAX3265 為 65 MP(9344x7000)，要超高解析度的話只有這一個選擇。</p>
+<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>(5.5 µm)滿井容量大，但相對地暗雜訊也有 14 e-。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

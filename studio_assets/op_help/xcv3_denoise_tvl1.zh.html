@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全变分 L1 去噪(OpenCV <code style="color:#22d3bf">cv2.denoise_TVL1</code>，Primal-Dual 算法)。一种基于全变分最小化、在去除噪声的同时保留边缘的方法，相比普通高斯平滑，边缘保留得更锐利。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は正則化項の重み <code style="color:#22d3bf">lambda</code>(<code style="color:#22d3bf">0.3+2.7*a</code> で 0.3〜3.0。小さいほど強く平滑化される)、<code style="color:#22d3bf">b</code> は反復回数(<code style="color:#22d3bf">int(10+40*b)</code> で 10〜50)を振る。8bit 量子化を経由するため入力の float64 精度は失われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节正则化项的权重 <code style="color:#22d3bf">lambda</code>(由 <code style="color:#22d3bf">0.3+2.7*a</code> 得 0.3〜3.0。越小平滑越强)，<code style="color:#22d3bf">b</code> 调节迭代次数(由 <code style="color:#22d3bf">int(10+40*b)</code> 得 10〜50)。由于经过 8bit 量化，输入的 float64 精度会丢失。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

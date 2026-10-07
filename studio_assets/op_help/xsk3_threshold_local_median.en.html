@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Local median adaptive binarization (skimage <code style="color:#22d3bf">filters.threshold_local</code> with <code style="color:#22d3bf">method=&#x27;median&#x27;</code>). Uses the median of each block as the local threshold and binarizes by whether the pixel value exceeds it. More robust to outliers (noise pixels) than the version using local mean.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> はブロックサイズ(<code style="color:#22d3bf">2*int(a*6)+3</code> で 3〜15 の奇数)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the block size (odd values 3–15 via <code style="color:#22d3bf">2*int(a*6)+3</code>). <code style="color:#22d3bf">b</code> is unused.</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

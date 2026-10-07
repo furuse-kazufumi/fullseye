@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Sobel 그래디언트의 방향(<code style="color:#22d3bf">arctan2(dy, dx)</code>를 [0,1]로 매핑. 0=-π, 1=+π). 진폭을 반환하는 <code style="color:#22d3bf">sobel_amp</code>와 짝을 이루는, 에지가 뻗는 방향을 구하는 연산이다. HALCON의 <code style="color:#22d3bf">sobel_dir</code>(Detect edges (amplitude and direction) using the Sobel operator.)에 해당한다(HALCON은 진폭과 방향을 동시에 반환하지만, 여기서는 방향만을 별도의 op로 분리한다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向はノイズに支配される点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 평탄한 영역에서는 기울기가 거의 영벡터가 되어 방향이잡음에 지배된다는 점에 주의.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

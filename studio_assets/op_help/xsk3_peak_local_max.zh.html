@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部极大值点图(skimage <code style="color:#22d3bf">feature.peak_local_max</code>)。检测彼此相距 <code style="color:#22d3bf">min_distance</code> 像素以上的局部亮度极大值坐标，并返回仅将这些坐标置为 1 的稀疏二值图像(逐像素的点，而非作为面的区域)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は最小距離(<code style="color:#22d3bf">2+int(a*8)</code> で 2〜10)を振る —— 大きくするほど検出される点が減り、より支配的なピークだけが残る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 调节最小距离(由 <code style="color:#22d3bf">2+int(a*8)</code> 得 2～10) —— 越大，检测到的点越少，只留下更占优势的峰。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

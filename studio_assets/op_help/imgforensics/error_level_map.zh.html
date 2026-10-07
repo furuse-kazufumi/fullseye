@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ELA(误差水平分析)。给出按指定质量<b>重压缩后差分</b>的地图。<code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Krawetz 2007。JPEG は 8x8 ブロックごとに量子化するので、<b>一度圧縮された領域</b>は同じ品質で再圧縮しても誤差が小さく、<b>後から貼られた / 描かれた領域</b>は誤差が大きく残る、という考え方に基づく。</p>
-<p><code style="color:#22d3bf">normalize=True</code>(既定)なら最大値で割って [0, 1] にする(見るため)。<code style="color:#22d3bf">False</code> なら 8 bit 階調そのままの絶対誤差(数えるため)。</p>
-<p><b>Pillow が無ければ <code style="color:#22d3bf">ImportError</code>。近似には落ちない。</b> DCT の量子化だけを numpy で真似ると、符号化器の丸め・色空間変換・チャネル間引きが消えた *別物* になる。それを ELA と名乗ると、この族が潰そうとしている「もっともらしく間違う」を自分でやることになる。</p>
-<p><b>この地図が言えないこと</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像の中央 64x64 に別画像を貼ったもの):</p>
+<p>Krawetz 2007。JPEG 按 8x8 块量化，所以基于这样的思路：<b>压缩过一次的区域</b> 以相同质量再压缩时误差小，而<b>事后粘贴 / 绘制的区域</b>误差会大量残留。</p>
+<p><code style="color:#22d3bf">normalize=True</code>(默认)时除以最大值变为 [0, 1] 区间(用于查看)。<code style="color:#22d3bf">False</code> 时为 8 bit 灰阶原样的绝对误差(用于计数)。</p>
+<p><b>没有 Pillow 时为 <code style="color:#22d3bf">ImportError</code>。不会退化为近似。</b> 若只用 numpy 模仿 DCT 的量化，就会成为编码器的舍入、色彩空间转换、色度抽样都消失了的*另一种东西*。把它称作 ELA，就等于自己去做这一族要消灭的“看似合理地出错”。</p>
+<p><b>这张图无法断言的事</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> 以数值固定。在 256x256 的 1/f^1.6 图像中央 64x64 处粘贴了另一张图像)：</p>
 <p>==================================== =============== =============== =========</p>
-<p>元の画像                             貼付部の ELA    背景の ELA      比</p>
+<p>原图像                               粘贴部的 ELA    背景的 ELA      比</p>
 <p>==================================== =============== =============== =========</p>
-<p><b>無圧縮</b>(一度も JPEG を通らない)  0.1966          0.1793          <b>1.096</b></p>
-<p>一度 JPEG 品質 75 を通した           0.1966          0.0401          <b>4.898</b></p>
+<p><b>无压缩</b>(从未经过 JPEG)            0.1966          0.1793          <b>1.096</b></p>
+<p>经过一次 JPEG 质量 75                0.1966          0.0401          <b>4.898</b></p>
 <p>==================================== =============== =============== =========</p>
-<p style="margin:2px 0 2px 12px">• <b>無圧縮 PNG では何も言えない</b>。上の 1.096 倍は「貼った所と貼っていない所が区別できない」という意味である。<b>ELA が意味を持つのは「元が JPEG」のときだけ</b>で、そのとき初めて 4.898 倍という差になる。</p>
-<p style="margin:2px 0 2px 12px">• よく言われる「ELA は高周波を追っているだけ」も、この画像では成り立たない —— ELA と Sobel 勾配強度の相関は <b>0.003</b>(無圧縮)/ <b>0.057</b>(JPEG 済み)。ELA は 8x8 ブロックの量子化残差を見ているので、勾配とは別のものを測っている。それでも上の表のとおり <b>無圧縮では改竄を分離しない</b>。「勾配の言い換えだから駄目」なのではなく、<b>比べる基準になる量子化履歴が無いから駄目</b>である。</p>
-<p style="margin:2px 0 2px 12px">• 平坦な領域は圧縮しても誤差が出ないので、<b>改竄されていても暗いまま</b>になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>在无压缩 PNG 上什么也说不了</b>。上面的 1.096 倍意味着“粘贴处与未粘贴处无法区分”。<b>ELA 只有在“原图是 JPEG”时才有意义</b>，那时才首次出现 4.898 倍的差异。</p>
+<p style="margin:2px 0 2px 12px">• 常说的“ELA 只是在追踪高频”，在这张图像上也不成立 —— ELA 与 Sobel 梯度强度的相关为 <b>0.003</b>(无压缩)/ <b>0.057</b>(已 JPEG)。ELA 看的是 8x8 块的量化残差，所以测的是与梯度不同的东西。即便如此，如上表所示，<b>无压缩时不能分离篡改</b>。不是“因为它只是梯度的换种说法所以不行”，而是<b>因为没有可作比较基准的量化历史所以不行</b>。</p>
+<p style="margin:2px 0 2px 12px">• 平坦区域即使压缩也不产生误差，所以<b>即使被篡改也仍然是暗的</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

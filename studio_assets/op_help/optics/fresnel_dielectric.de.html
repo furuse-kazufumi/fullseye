@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_dielectric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fresnel-Reflexionsgrad an einer dielektrischen Grenzfläche (arrayfähig, Totalreflexion eingeschlossen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>cos_i: 入射角の cos(スカラまたは配列、0–1)。</p>
-<p>n1/n2: 入射側 / 透過側の実屈折率。</p>
-<p>polarization: &quot;unpolarized&quot;(既定、s と p の平均)/ &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R(cos_i と同形、0–1)。臨界角を超えた入射は <b>厳密に 1.0</b>(全反射)。</p>
-<p>検算(テストで固定): 垂直入射で ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)、Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。</p>
+<p>cos_i: cos des Einfallswinkels (Skalar oder Array, 0–1).</p>
+<p>n1/n2: reeller Brechungsindex der Einfalls- / Transmissionsseite.</p>
+<p>polarization: &quot;unpolarized&quot; (Default, Mittel aus s und p) / &quot;s&quot; / &quot;p&quot;.</p>
+<p>Rückgabewert: Reflexionsgrad R (gleiche Form wie cos_i, 0–1). Einfall jenseits des Grenzwinkels ergibt <b>exakt 1.0</b> (Totalreflexion).</p>
+<p>Gegenprobe (in Tests fixiert): bei senkrechtem Einfall ((n1−n2)/(n1+n2))² (air→BK7 = 0.04), beim Brewster-Winkel ist die p-Polarisation 0 (unter 1e-15), jenseits des Grenzwinkels 1.0. Der Transmissionsgrad ist 1 − R (Grenzfläche ohne Absorption, die Energiebilanz geht auf).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

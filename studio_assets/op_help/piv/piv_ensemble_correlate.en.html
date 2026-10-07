@@ -6,14 +6,13 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Searches for the peak <b>after summing</b> the correlation maps (ensemble correlation).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
+<p>With few particles or much noise, measuring pair by pair and averaging yields <b>the average of wrong vectors</b>. Adding at the correlation stage lets weak peaks pile up at the same place and stand out. Steady flow (same displacement in all pairs) is a prerequisite.</p>
 <p>Args:</p>
-<p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>
+<p>images: sequence of 2 or more images. Consecutive pairs <code style="color:#22d3bf">(k, k+1)</code> are used.</p>
 <p>window / overlap / peak / window_func / normalize / search_limit:</p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
+<p>same as <code style="color:#22d3bf">piv_cross_correlate</code>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info[&quot;pairs&quot;]</code> に使った対の数。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>. <code style="color:#22d3bf">info[&quot;pairs&quot;]</code> holds the number of pairs used.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

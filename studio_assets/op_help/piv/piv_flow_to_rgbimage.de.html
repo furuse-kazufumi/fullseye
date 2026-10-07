@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_to_rgbimage(flow, scale=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Standard-Strömungsvisualisierung mit Farbton = Richtung und Helligkeit = Geschwindigkeit. Rückgabe ist <code style="color:#22d3bf">(h, w, 3)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> の 2 次元版(あちらは <code style="color:#22d3bf">(3, D, H, W)</code> の 3-D シーンフロー専用で、平面フローは形で弾かれる)。</p>
-<p><b>色相環の凡例を図の側で必ず一緒に焼くこと</b> —— 色の意味が書いていないフロー図は綺麗なだけで読めない。<code style="color:#22d3bf">scale</code> を省くと最大の速さで正規化するので、<b>図ごとに色の意味が変わる</b>。複数の図を並べるなら明示的に固定する。</p>
+<p>2-D-Version von <code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> (jene ist auf 3-D-Szenenfluss der Form <code style="color:#22d3bf">(3, D, H, W)</code> beschränkt, ebene Strömung wird anhand der Form abgewiesen).</p>
+<p><b>Die Farbkreis-Legende immer zusammen in die Abbildung einbrennen</b> —— eine Strömungsabbildung ohne Angabe der Farbbedeutung ist nur hübsch und nicht lesbar. Ohne <code style="color:#22d3bf">scale</code> wird auf die maximale Geschwindigkeit normiert, sodass sich <b>die Bedeutung der Farben von Abbildung zu Abbildung ändert</b>. Bei mehreren Abbildungen nebeneinander explizit festlegen.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>scale: 明度 1.0 に対応する速さ [px]。<code style="color:#22d3bf">None</code> で最大値。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>scale: Geschwindigkeit [px], die der Helligkeit 1.0 entspricht. <code style="color:#22d3bf">None</code> nimmt das Maximum.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h, w, 3)</code> float64, Wertebereich [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

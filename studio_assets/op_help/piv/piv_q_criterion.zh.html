@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Q 判据 <code style="color:#22d3bf">-tr(J^2)/2</code>。在<b>旋转超过应变</b>的位置为正。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出にはこちらを使う。閉形式(解析場を直接与えた実測):</p>
-<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
-<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
-<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>せん断は渦ではない</b>、が要点)</p>
-<p>★ 閾値を必要とする量である。<code style="color:#22d3bf">Q &gt; 0</code> だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
+<p>只看涡量的话剪切层也会发亮(层流的近壁区看起来像涡)，因此提取涡时请用这个。闭式(直接给定解析场的实测)：</p>
+<p style="margin:2px 0 2px 12px">• 刚体转动 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
+<p style="margin:2px 0 2px 12px">• 均匀膨胀 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
+<p style="margin:2px 0 2px 12px">• 简单剪切 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>剪切不是涡</b>，这是要点)</p>
+<p>★ 这是需要阈值的量。仅凭 <code style="color:#22d3bf">Q &gt; 0</code> 会连很淡的区域也拾取，因此不写明阈值如何确定的涡可视化，隐藏了图的美观是阈值产物的可能性。请一并给出改变阈值时的面积变化。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

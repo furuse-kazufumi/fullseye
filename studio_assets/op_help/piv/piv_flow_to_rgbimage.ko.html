@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_to_rgbimage(flow, scale=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>색상 = 방향, 명도 = 속력인 표준 흐름 시각화. 반환은 <code style="color:#22d3bf">(h, w, 3)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> の 2 次元版(あちらは <code style="color:#22d3bf">(3, D, H, W)</code> の 3-D シーンフロー専用で、平面フローは形で弾かれる)。</p>
-<p><b>色相環の凡例を図の側で必ず一緒に焼くこと</b> —— 色の意味が書いていないフロー図は綺麗なだけで読めない。<code style="color:#22d3bf">scale</code> を省くと最大の速さで正規化するので、<b>図ごとに色の意味が変わる</b>。複数の図を並べるなら明示的に固定する。</p>
+<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code>의 2차원판(저쪽은 <code style="color:#22d3bf">(3, D, H, W)</code>의 3-D 장면 흐름 전용이며, 평면 흐름은 형태로 튕겨진다).</p>
+<p><b>색상환 범례를 그림 쪽에 반드시 함께 구워 넣을 것</b> —— 색의 의미가 쓰여 있지 않은흐름 그림은 예쁠 뿐 읽을 수 없다. <code style="color:#22d3bf">scale</code>을 생략하면 최대 속력으로 정규화하므로 <b>그림마다 색의 의미가 바뀐다</b>. 여러 그림을 나란히 놓는다면 명시적으로 고정한다.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>scale: 明度 1.0 に対応する速さ [px]。<code style="color:#22d3bf">None</code> で最大値。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>scale: 명도 1.0에 대응하는 속력 [px]. <code style="color:#22d3bf">None</code>이면 최대값.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h, w, 3)</code> float64, 값 범위 [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>분수계 분할(watershed)에 의한 영역 분할 경계 추출. 경사 이미지(Sobel 진폭)를 지형으로 간주하고, 어두운 영역(<code style="color:#22d3bf">x &lt; 0.2+0.3a</code>)을 씨앗(마커)으로 분수계를 계산, <code style="color:#22d3bf">skimage.segmentation.find_boundaries</code>로 경계를 전경으로 반환한다. b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">pouring</code>（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。<code style="color:#22d3bf">watersheds</code>/<code style="color:#22d3bf">watersheds_threshold</code> と実装を共有する。</p>
+<p>HALCON의 <code style="color:#22d3bf">pouring</code>(물을 붓듯이 화소값이 낮은 곳부터 영역을 채워 나가는 고전적인 pouring 알고리즘으로 분할하는 연산)에 해당하는 근사 —— 알고리즘의 세부는 다르지만, 저휘도 영역을 기점으로 영역을 넓혀 간다는 발상은 공통이다. <code style="color:#22d3bf">watersheds</code>/<code style="color:#22d3bf">watersheds_threshold</code>와 구현을 공유한다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>거친 확산면의 음영(Oren–Nayar). 종이·석고·콘크리트·달의 모습.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>normals: (H, W, 3)。light / view: 面から光源 / 視点への方向。</p>
-<p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
-<p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
-<p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>normals: (H, W, 3). light / view: 면에서 광원 / 시점으로의 방향.</p>
+<p>roughness_deg: 미세면 기울기의 표준 편차 [deg]. <b>0에서 Lambert와 정확히 일치</b>.</p>
+<p>albedo: 확산 반사율(스칼라 또는 (H,W)).</p>
+<p>반환값: (H, W)의 방사 휘도 계수(0 이상).</p>
+<p>왜 Lambert로는 부족한가: Lambert는 끝(terminator)에서 cos에 비례하여 떨어지지만, 거친 면은 미세면의 상호 차폐와 상호 반사로 <b>끝이 평평하게 밝은 채로</b> 남는다. 보름달이원반처럼 균일하게 보이는 것이 이것이며, Lambert로는 가장자리가 어두워져 구로 보여 버린다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

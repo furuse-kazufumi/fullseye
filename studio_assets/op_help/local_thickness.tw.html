@@ -13,12 +13,12 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>為每個前景像素填入「能覆蓋該處的<b>最大圓的直徑</b>」並回傳(局部厚度)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>明るい側を前景とみなす閾値が <code style="color:#22d3bf">b</code>(0.1〜0.9)。<code style="color:#22d3bf">a</code> が測る上限の半径(1〜12 画素)で、出力はその上限で割って <code style="color:#22d3bf">[0,1]</code> に収めてある —— <b>絶対値が要るときは <code style="color:#22d3bf">a</code> から上限を逆算して掛け戻すこと</b>。</p>
-<p>粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの粒度測定(granulometry)と同じもの: ある画素の値が <code style="color:#22d3bf">r</code> なら、その画素は半径 <code style="color:#22d3bf">r</code> の円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が覆う範囲へ書き込む、という素直な実装。</p>
-<p><b>適用条件</b>: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって偏る —— 先に <code style="color:#22d3bf">local_threshold</code> などで平坦化すること。(2) 上限 <code style="color:#22d3bf">a</code> より太い構造は <b>上限で頭打ちになる</b>(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。</p>
-<p style="margin:2px 0 2px 12px">(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。</p>
-<p><b>用途</b>: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。3-D 版は <code style="color:#22d3bf">ops3d</code> の <code style="color:#22d3bf">vol_wall_thickness</code>。HALCON に対応する単体 op は無い。</p>
+<p><code style="color:#22d3bf">b</code> 是將亮側視為前景的閾值(0.1~0.9)。<code style="color:#22d3bf">a</code> 是量測的半徑上限(1~12 像素)，輸出除以該上限後收進 <code style="color:#22d3bf">[0,1]</code> —— <b>需要絕對值時，請由 <code style="color:#22d3bf">a</code> 反推上限再乘回去</b>。</p>
+<p>這是把粒徑、孔徑、壁厚作為「1 張地圖」給出的經典量，與形態學的粒度量測(granulometry)相同：若某像素的值為 <code style="color:#22d3bf">r</code>，則該像素能在半徑 <code style="color:#22d3bf">r</code> 的</p>
+<p>圓的開運算中存活。實作很直接：用距離轉換求出內切圓半徑，再依半徑由大到小把該圓覆蓋的範圍寫入。</p>
+<p><b>適用條件</b>：(1) 前景由單一閾值決定，因此存在照明不均時，厚度會因位置而偏差 —— 請先用 <code style="color:#22d3bf">local_threshold</code> 等進行平坦化。(2) 比上限 <code style="color:#22d3bf">a</code> 更粗的結構 <b>會在上限處飽和</b>(是否飽和可從輸出最大值是否貼在 1.0 判斷)。</p>
+<p style="margin:2px 0 2px 12px">(3) 這是以像素為單位的量，因此直徑低於 3 像素時量化步長會超過 30%。</p>
+<p><b>用途</b>：鑄件氣孔、發泡體的孔徑分布，粉體的粒徑，薄壁部位的偵測，纖維的粗細。3-D 版是 <code style="color:#22d3bf">ops3d</code> 中的 <code style="color:#22d3bf">vol_wall_thickness</code>。HALCON 中沒有對應的單一 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

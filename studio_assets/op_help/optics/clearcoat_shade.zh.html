@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;clearcoat_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>为表面覆一层透明面漆(汽车漆、陶瓷釉、亮面塑料)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。</p>
-<p>ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。</p>
-<p>coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB。</p>
-<p>★ 要点は<b>エネルギーの引き算</b>: 上塗りで反射した分だけ下地に届く光が減る。下地は (1 − F(入射)) × (1 − F(出射)) で減衰する ―― これを掛けないと、上塗りを足すほど全体が明るくなる(物理的にありえない)。</p>
+<p>base_rgb：底色 (H,W,3) 或 (3,)。normals / light / view：与上述相同。</p>
+<p>ior：面漆的折射率(透明涂料 ~1.5)。coat：面漆的强度(0–1)。</p>
+<p>coat_roughness：面漆的粗糙感(0 = 完全镜面，越大越模糊)。</p>
+<p>返回值：(H, W, 3) 线性 sRGB。</p>
+<p>★ 要点是<b>能量的减法</b>：被面漆反射的部分会减少到达底层的光。底层按 (1 − F(入射)) × (1 − F(出射)) 衰减 ―― 不乘这个的话，面漆加得越多整体就越亮(物理上不可能)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

@@ -4,62 +4,61 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import dic; dic.correlation_quality(ref: &#x27;Any&#x27;, cur: &#x27;Any&#x27;, flow: &#x27;Any&#x27;, info: &#x27;Optional[dict]&#x27; = None, subset: &#x27;int&#x27; = 31) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;correlation_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A ZNCC map that returns, point by point, <b>how well</b> a given displacement field matches.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>引数</p>
-<p>ref     基準画像。</p>
-<p>cur     変形後画像。<code style="color:#22d3bf">ref</code> と同じ形。</p>
-<p>flow    <code style="color:#22d3bf">pivops</code> の <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code>、成分は <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p><code style="color:#22d3bf">info</code> を渡さないなら <code style="color:#22d3bf">(2, H, W)</code> の<b>全画素</b>の場。</p>
-<p>info    <code style="color:#22d3bf">piv_cross_correlate</code> が返した dict。渡すと窓格子の <code style="color:#22d3bf">flow</code> を</p>
-<p>画素へ双一次で広げてから測る。</p>
-<p>subset  相関を取る正方サブセットの一辺 [px]。<b>奇数</b>。</p>
-<p>戻り値は入力画像と同じ形の float 配列。値は <code style="color:#22d3bf">[-1, 1]</code> の ZNCC で、<b>測れなかった点は NaN</b>(サブセットが画像からはみ出す縁、変形後の標本点が画像の外へ出る点、分散の無いサブセット)。</p>
-<p>★ これは相関器ではない —— <b>既にある変位場の採点係</b></p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> も <code style="color:#22d3bf">optical_flow_lk</code> も <code style="color:#22d3bf">demons_register</code> も、</p>
-<p>出した変位が正しいかは返さない。ここは <code style="color:#22d3bf">cur</code> を <code style="color:#22d3bf">flow</code> で基準側へ</p>
-<p>引き戻し(双一次)、<code style="color:#22d3bf">ref</code> との ZNCC を <code style="color:#22d3bf">subset</code> の箱で測るだけ。</p>
-<p><b>どの推定器の出力でも同じ口で採点できる</b>のが要点で、相関器を</p>
-<p>もう 1 つ増やさずに品質だけを足せる。</p>
-<p>平均と標準偏差の両方を割り引くので、<b>ゲインとオフセットには不変</b>。</p>
-<p>露出が変わった対でも「合っているか」だけを見る。</p>
-<p>★★ 既存の <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> では足りない場面がある(実測)</p>
-<p><code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク)は PIV の標準的な SN 比で、</p>
-<p><b>相関面に競合する峰が立つ</b>種類の失敗を捕まえる。捕まえないのは</p>
-<p>「その場所が別物になった」種類の失敗。u=0.37 px の対のうち 60x60 画素</p>
-<p>だけを無関係な模様に差し替えた実測:</p>
-<p>指標                    差し替え領域   健全領域   区別</p>
-<p>peak_ratio                 1.207        1.304    7.5 % 差(重なる)</p>
-<p>correlation_quality        0.1101       0.9993   9 倍差</p>
-<p>品質で切って変位誤差 RMS がどう変わるか:</p>
-<p>門                  残る割合   誤差 RMS [px]</p>
-<p>なし                 100.0 %      1.8110</p>
-<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 倍改善</p>
-<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 倍</p>
-<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← 6 割捨てて<b>悪化</b></p>
-<p><b>両方見るのが正しい。</b> peak_ratio は競合ピークを、ZNCC は</p>
-<p>デコリレーションを見る。片方だけでは穴が開く。</p>
-<p>★★ 落とし穴 —— <b>品質が高いことは精度が高いことではない</b></p>
-<p>ZNCC はサブピクセルの誤差にほとんど反応しない。真の変位 0.37 px の対に</p>
-<p>わざと誤差を入れた場を採点した実測(斑点の直径 3.8 px):</p>
-<p>変位の誤差 [px]   0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
-<p>zncc 中央値      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
-<p><b>0.05 px 間違えても 0.9992</b> —— 完全に合っている 0.99945 との差は</p>
-<p>2.5e-4 しかない。この指標が測れるのは「斑点の大きさに比べて大きな</p>
-<p>ずれ・欠測・別物への置き換え」であって、0.01 px の精度ではない。</p>
-<p>一様な雑音で全点が等しく劣化した場合(σ=0.15)も、門で切って残るのは</p>
-<p>21.8 % で誤差 RMS は 0.1736 → 0.1292 の 1.34 倍改善にとどまる ——</p>
-<p><b>効くのは失敗が局所的なときだけ。</b></p>
-<p>★ 引き戻しはサブセットごとの平行移動ではなく<b>場そのもの</b></p>
-<p>普通の DIC はサブセットを剛体的にずらして相関を取るが、ここは画素ごとの</p>
-<p><code style="color:#22d3bf">flow</code> で <code style="color:#22d3bf">cur</code> を歪めてから箱で相関を取る。<code style="color:#22d3bf">flow</code> が滑らかなら</p>
-<p>両者は一致し、そうでないなら<b>こちらのほうが正しい</b>(サブセット内の</p>
-<p>変形も込みで残差を見るため)。費用も O(N) で済む(256² で 0.003 秒)。</p>
+<p>Arguments</p>
+<p>ref     reference image.</p>
+<p>cur     image after deformation. Same shape as <code style="color:#22d3bf">ref</code>.</p>
+<p>flow    <code style="color:#22d3bf">flow2d</code> <code style="color:#22d3bf">(2, h, w)</code> of <code style="color:#22d3bf">pivops</code>, components <code style="color:#22d3bf">(dy, dx)</code> [px].</p>
+<p>Without <code style="color:#22d3bf">info</code>, an <b>all-pixel</b> field of <code style="color:#22d3bf">(2, H, W)</code>.</p>
+<p>info    the dict returned by <code style="color:#22d3bf">piv_cross_correlate</code>. If given, the window-grid <code style="color:#22d3bf">flow</code></p>
+<p>is spread bilinearly to pixels before measuring.</p>
+<p>subset  side of the square subset for correlation [px]. <b>Odd</b>.</p>
+<p>The return value is a float array of the same shape as the input image. Values are ZNCC in <code style="color:#22d3bf">[-1, 1]</code>; <b>points that could not be measured are NaN</b> (borders where the subset sticks out of the image, points whose deformed sample points leave the image, subsets without variance).</p>
+<p>★ This is not a correlator —— <b>it is a scorer for an existing displacement field</b></p>
+<p>Neither <code style="color:#22d3bf">piv_cross_correlate</code> nor <code style="color:#22d3bf">optical_flow_lk</code> nor <code style="color:#22d3bf">demons_register</code></p>
+<p>tells you whether the displacement it produced is correct. This only pulls <code style="color:#22d3bf">cur</code> back to the reference side with <code style="color:#22d3bf">flow</code></p>
+<p>(bilinear) and measures the ZNCC against <code style="color:#22d3bf">ref</code> in a <code style="color:#22d3bf">subset</code> box.</p>
+<p>The point is that <b>the output of any estimator can be scored through the same interface</b>: quality alone is added</p>
+<p>without adding 1 more correlator.</p>
+<p>Both mean and standard deviation are discounted, so it is <b>invariant to gain and offset</b>.</p>
+<p>Even for a pair with changed exposure, it only looks at &quot;whether they match&quot;.</p>
+<p>★★ There are cases where the existing <code style="color:#22d3bf">info[&quot;peak_ratio&quot;]</code> is not enough (measured)</p>
+<p><code style="color:#22d3bf">peak_ratio</code> (1st peak / 2nd peak) is the standard SN ratio of PIV and</p>
+<p>catches failures of the kind where <b>competing peaks rise on the correlation surface</b>. What it does not catch</p>
+<p>are failures of the kind &quot;that place became something else&quot;. Measured on a pair with u=0.37 px where only 60x60 pixels</p>
+<p>were replaced by an unrelated pattern:</p>
+<p>metric                  replaced area  healthy area  distinction</p>
+<p>peak_ratio                 1.207        1.304    7.5 % apart (overlapping)</p>
+<p>correlation_quality        0.1101       0.9993   9 times apart</p>
+<p>How the RMS displacement error changes when cutting by quality:</p>
+<p>gate                kept       error RMS [px]</p>
+<p>none                 100.0 %      1.8110</p>
+<p>zncc &gt;= 0.8           84.9 %      0.0031    ← 584 times better</p>
+<p>peak_ratio &gt;= 1.2     81.8 %      1.2183    ← 1.5 times</p>
+<p>peak_ratio &gt;= 1.3     41.6 %      1.4471    ← discards 6 tenths and gets <b>worse</b></p>
+<p><b>Looking at both is correct.</b> peak_ratio sees competing peaks, ZNCC sees</p>
+<p>decorrelation. Either one alone leaves a hole.</p>
+<p>★★ Pitfall —— <b>high quality does not mean high accuracy</b></p>
+<p>ZNCC barely reacts to subpixel error. Measured by scoring fields with deliberately injected error on a pair with true displacement 0.37 px</p>
+<p>(speckle diameter 3.8 px):</p>
+<p>displacement error [px] 0.00     0.05     0.10     0.25     0.50    1.00    2.00</p>
+<p>zncc median      0.99945  0.99920  0.99845  0.99330  0.97615 0.90617 0.67655</p>
+<p><b>Wrong by 0.05 px and still 0.9992</b> —— the difference from the perfect match 0.99945 is</p>
+<p>only 2.5e-4. What this metric can measure is &quot;offsets large compared with the speckle</p>
+<p>size, missing data, replacement by something else&quot;, not 0.01 px precision.</p>
+<p>When all points degrade equally under uniform noise (σ=0.15), the gate keeps only</p>
+<p>21.8 % and the error RMS improves merely 1.34 times, 0.1736 → 0.1292 ——</p>
+<p><b>it only helps when the failure is local.</b></p>
+<p>★ The pull-back uses <b>the field itself</b>, not a per-subset translation</p>
+<p>Ordinary DIC shifts the subset rigidly and correlates, but here <code style="color:#22d3bf">cur</code> is warped with the per-pixel</p>
+<p><code style="color:#22d3bf">flow</code> before correlating in a box. If <code style="color:#22d3bf">flow</code> is smooth</p>
+<p>the two agree; if not, <b>this one is more correct</b> (since it looks at the residual including</p>
+<p>deformation within the subset). The cost is only O(N) (0.003 seconds at 256²).</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> が 2 次元でない、形が違う、NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> が <code style="color:#22d3bf">(2, h, w)</code> でない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> 無しで <code style="color:#22d3bf">flow</code> が画像と違う形(直し方つきで拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> に <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> が無い、格子と <code style="color:#22d3bf">flow</code> の形が食い違う、格子がどちらかの軸で 2 未満。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> が偶数・3 未満・画像より大きい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref</code> / <code style="color:#22d3bf">cur</code> not 2-D, different shapes, containing NaN / Inf.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code> not <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p style="margin:2px 0 2px 12px">• without <code style="color:#22d3bf">info</code>, <code style="color:#22d3bf">flow</code> of a different shape from the image (rejected with instructions for the fix).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> lacking <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>, grid and <code style="color:#22d3bf">flow</code> shapes disagreeing, grid smaller than 2 along either axis.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">subset</code> even / less than 3 / larger than the image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

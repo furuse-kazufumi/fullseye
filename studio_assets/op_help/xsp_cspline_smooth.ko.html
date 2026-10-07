@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3차 스플라인 평활화 필터(<code style="color:#22d3bf">scipy.signal.cspline2d</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は平滑化強度 lambda を 1.0〜11.0 に振る（<code style="color:#22d3bf">lambda = 1.0 + 10.0*a</code>、大きいほど強く均す）。<code style="color:#22d3bf">b</code> は未使用。スプライン補間の平滑化項を直接使うフィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。負の値を返しうる中間結果を最後に [0,1] にクリップしている。</p>
+<p><code style="color:#22d3bf">a</code>는 평활화 강도 lambda를 1.0~11.0으로 바꾼다(<code style="color:#22d3bf">lambda = 1.0 + 10.0*a</code>, 클수록 강하게 고르게 한다). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 스플라인 보간의 평활화 항을 직접 쓰는 필터로, 가우시안 블러에 가까운 저역 통과이지만 경계는 미러 방식으로 처리된다. 음의 값을 반환할 수 있는 중간 결과를 마지막에 [0,1]로 클립하고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

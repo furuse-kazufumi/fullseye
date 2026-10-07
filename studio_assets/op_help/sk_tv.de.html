@@ -12,8 +12,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Total-Variation-Rauschunterdrückung (TV denoising, Chambolle-Verfahren). Glättet das Rauschen in flachen Bereichen bei gleichzeitiger Erhaltung der Kanten - im Unterschied zu Median-/Gauß-Weichzeichnung zeichnet es sich dadurch aus, dass die Schärfe der Konturen nur schwer beeinträchtigt wird.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a は denoising weight を 0.02〜0.32 に振り、<b>大きいほど強く平滑化される</b>(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。</p>
+<p>HALCON hat keine direkte Entsprechung. Die Implementierung ist <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a variiert das Denoising-Gewicht über 0.02–0.32, und <b>je größer es ist, desto stärker wird geglättet</b> (diese Richtung ist der des weiter unten beschriebenen sk_tv_bregman entgegengesetzt, also nicht verwechseln). b wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

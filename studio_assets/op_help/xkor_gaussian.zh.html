@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯模糊(kornia 的 GPU 原生实现)。在 torch 张量上以 5x5 核、可变 sigma 应用 <code style="color:#22d3bf">kornia.filters.gaussian_blur2d</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>a はシグマを 0.3〜3.0 の範囲で振る（<code style="color:#22d3bf">0.3 + 2.7 * a</code>）。b は未使用。CPU 実行では scipy 版と比べて速くはならない（GPU・バッチ実行時に効く実装。<code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code> で GPU に乗る）。</p>
+<p>a 将 sigma 在 0.3〜3.0 范围内调节（<code style="color:#22d3bf">0.3 + 2.7 * a</code>）。b 未使用。在 CPU 上运行并不比 scipy 版快（这是在 GPU/批量运行时才见效的实现。设置 <code style="color:#22d3bf">IMGEVOLVE_KORNIA_DEVICE=cuda</code> 即可在 GPU 上运行）。</p>
 <p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

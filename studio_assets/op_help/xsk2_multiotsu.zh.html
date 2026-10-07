@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用将大津判别分析法（Otsu&#x27;s method）扩展为多值的多值大津法对灰阶进行量化。使用 <code style="color:#22d3bf">skimage.filters.threshold_multiotsu</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>a はクラス数を 3 または 4 に切り替える（<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>）。<b>5 クラス以上は実装していない</b>——多値大津はしきい値の全探索コストが <code style="color:#22d3bf">bins ** (classes - 1)</code> で増えるため、実測（128x128）で 3 クラス 0.0008 秒に対し 5 クラスは 2.435 秒（3239 倍）かかり、進化ループ 1 世代だけで実行が止まって見えるほど遅い（画像サイズにはほぼ依らない）。4 クラスなら 0.025 秒に収まる。b は未使用。しきい値で量子化した後 <code style="color:#22d3bf">(cls-1)</code> で割って [0,1] に正規化する。</p>
+<p>a 将类别数切换为 3 或 4(<code style="color:#22d3bf">3 + int(a &gt; 0.5)</code>)。<b>未实现 5 类及以上</b>——多值大津法的阈值全搜索成本按 <code style="color:#22d3bf">bins ** (classes - 1)</code> 增长，实测(128x128)中 3 类 0.0008 秒，而 5 类需要 2.435 秒(3239 倍)，慢到仅进化循环 1 代就让执行看起来像停住了(几乎与图像尺寸无关)。4 类则在 0.025 秒以内。b 未使用。用阈值量化后除以 <code style="color:#22d3bf">(cls-1)</code>，归一化到 [0,1]。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

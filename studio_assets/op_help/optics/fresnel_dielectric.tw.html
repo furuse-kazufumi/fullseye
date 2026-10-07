@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_dielectric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>介質界面的 Fresnel 反射率(支援陣列,含全反射)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>cos_i: 入射角の cos(スカラまたは配列、0–1)。</p>
-<p>n1/n2: 入射側 / 透過側の実屈折率。</p>
-<p>polarization: &quot;unpolarized&quot;(既定、s と p の平均)/ &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R(cos_i と同形、0–1)。臨界角を超えた入射は <b>厳密に 1.0</b>(全反射)。</p>
-<p>検算(テストで固定): 垂直入射で ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)、Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。</p>
+<p>cos_i：入射角的 cos(純量或陣列，0–1)。</p>
+<p>n1/n2：入射側 / 穿透側的實折射率。</p>
+<p>polarization：&quot;unpolarized&quot;(預設，s 與 p 的平均)/ &quot;s&quot; / &quot;p&quot;。</p>
+<p>回傳值：反射率 R(與 cos_i 同形，0–1)。超過臨界角的入射為<b>嚴格的 1.0</b>(全反射)。</p>
+<p>驗算(由測試固定)：垂直入射時 ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)，Brewster 角時 p 偏振為 0(小於 1e-15)，超過臨界角時為 1.0。穿透率為 1 − R(無吸收的界面，能量守恆)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

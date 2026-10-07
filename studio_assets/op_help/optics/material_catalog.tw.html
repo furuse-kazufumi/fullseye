@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.material_catalog() -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import surfacelib; surfacelib.material_catalog() -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;material_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>材質名 → 預設參數(漫反射粗糙度 / 面漆強度與粗糙度 / 布料的邊緣光澤)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>実測の物性値ではなく見え方の設計値。意味があるのは順序(上塗り: 紙 &lt; プラ &lt; 陶器 &lt; 車の塗装 / 拡散の粗さ: コンクリート &gt; 紙 &gt; プラ)。</p>
+<p>不是實測的物性值，而是外觀的設計值。有意義的是順序(面漆：紙 &lt; 塑膠 &lt; 陶器 &lt; 汽車塗裝 / 漫射的粗糙度：混凝土 &gt; 紙 &gt; 塑膠)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

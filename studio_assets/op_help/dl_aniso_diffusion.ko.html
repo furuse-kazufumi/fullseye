@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Perona-Malik 유형의 이방성 확산 필터(torch 구현, GPU가 있으면 GPU에서 실행).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>上下左右 4 方向の差分にそれぞれ <code style="color:#22d3bf">exp(-(差分/K)^2)</code> の伝導度を掛けてから加算する反復拡散で、勾配が大きい（エッジらしい）場所ほど拡散が弱まり、エッジを保ったまま平滑化する。<code style="color:#22d3bf">a</code> はエッジ検出しきい値 <code style="color:#22d3bf">K</code> を 0.02〜0.22 に振る（<code style="color:#22d3bf">K = 0.02 + 0.2*a</code>、大きいほどエッジを跨いで拡散しやすくなる）。<code style="color:#22d3bf">b</code> は反復回数を 5〜20 回に振る（<code style="color:#22d3bf">iters = 5 + int(b*15)</code>）。ステップ幅 <code style="color:#22d3bf">lam=0.2</code> は固定。ガウシアンぼかしと異なりエッジをぼかさずにノイズだけ均せるのが利点。HALCON の <code style="color:#22d3bf">anisotropic_diffusion</code>（画像の異方性拡散を行う）に相当するが、同じ結果になるとは限らない近似実装。</p>
+<p>상하좌우 4방향의 차분에 각각 <code style="color:#22d3bf">exp(-(차분/K)^2)</code>의 전도도를 곱한 뒤 더하는반복 확산으로, 기울기가 큰(에지다운) 곳일수록 확산이 약해져 에지를 유지한 채평활화한다. <code style="color:#22d3bf">a</code>는 에지 검출 임계값 <code style="color:#22d3bf">K</code>를 0.02~0.22로 바꾼다(<code style="color:#22d3bf">K = 0.02 + 0.2*a</code>, 클수록 에지를 넘어 확산하기 쉬워진다). <code style="color:#22d3bf">b</code>는 반복 횟수를 5~20회로바꾼다(<code style="color:#22d3bf">iters = 5 + int(b*15)</code>). 스텝 폭 <code style="color:#22d3bf">lam=0.2</code>는 고정. 가우시안 블러와달리 에지를 흐리지 않고 잡음만 고르게 할 수 있는 것이 장점. HALCON의 <code style="color:#22d3bf">anisotropic_diffusion</code>(영상의 이방성 확산을 수행한다)에 해당하지만, 같은 결과가된다고는 할 수 없는 근사 구현.</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

@@ -4,12 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Spektraler Reflexionsgrad → <b>lineares sRGB</b> (vor Gamma). So normiert, dass eine weiße Fläche (Reflexionsgrad 1) zu (1,1,1) wird.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>nm:           波長格子 (K,) [nm]。単調増加。</p>
-<p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
-<p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>
-<p>返り値: (..., 3) の線形 sRGB。<b>負の値はクリップしない</b> — 色域外は負で返るのが正直で、クリップしたい呼び手が明示的にやる(黙って丸めると「表現できない色」が見えなくなる)。</p>
-<p>正規化: 反射率 1 の完全拡散面が sRGB の基準白 D65 に落ちるよう、同じ光源・同じ格子で計算した白の XYZ で<b>成分ごとに</b>割る(von Kries 型の白色順応の最小形)。実測で反射率 1 → (1.000000, 1.000000, 0.999999)、0.5 → 0.5。したがって<b>絶対輝度ではなく相対値</b>であり、レンダラの露出に掛ける使い方を想定している。</p>
+<p>nm:           Wellenlängengitter (K,) [nm]. Monoton steigend.</p>
+<p>reflectance:  spektraler Reflexionsgrad (..., K) (0–1 angenommen; auch außerhalb des Bereichs wird gerechnet).</p>
+<p>illuminant:   spektrale Verteilung der Lichtquelle (K,). Default ist eine geglättete Näherung von D65.</p>
+<p>Rückgabewert: lineares sRGB (..., 3). <b>Negative Werte werden nicht abgeschnitten</b> — Farben außerhalb des Gamuts negativ zurückzugeben ist ehrlich, und ein Aufrufer, der abschneiden will, tut das explizit (stilles Runden würde &quot;nicht darstellbare Farben&quot; unsichtbar machen).</p>
+<p>Normierung: Damit eine perfekt diffuse Fläche mit Reflexionsgrad 1 auf dem sRGB-Referenzweiß D65 landet, wird <b>komponentenweise</b> durch das XYZ von Weiß geteilt, das mit derselben Lichtquelle und demselben Gitter berechnet wurde (die Minimalform der Weißanpassung nach von Kries). Gemessen:</p>
+<p>Reflexionsgrad 1 → (1.000000, 1.000000, 0.999999), 0.5 → 0.5. Es sind also <b>relative Werte, keine absolute Leuchtdichte</b>, gedacht zur Multiplikation mit der Belichtung des Renderers.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

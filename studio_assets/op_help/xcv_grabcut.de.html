@@ -11,9 +11,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Automatische Trennung von Vorder- und Hintergrund mittels GrabCut (iterativer Graph-Cut).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、色分布の GMM とグラフカットで前景/背景を反復的に分離する(<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>)。「確実な前景」と「たぶん前景」の画素を合わせて前景 region として返す。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。<code style="color:#22d3bf">b</code> は未使用。矩形が画像中央固定のため、被写体が縁に寄っている画像では抽出に失敗しやすい。</p>
+<p>Ein festes Rechteck von 70%×70% in der Bildmitte wird als initiale Region &quot;wahrscheinlich Vordergrund&quot; vorgegeben, und Vordergrund/Hintergrund werden iterativ mit einem GMM der Farbverteilung und einem Graph-Cut getrennt (<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>). Die Pixel &quot;sicherer Vordergrund&quot; und &quot;wahrscheinlich Vordergrund&quot; werden zusammengefasst und als Vordergrund-region zurückgegeben.</p>
+<p><code style="color:#22d3bf">a</code> variiert die Anzahl der Iterationen im Bereich 2–5 (mehr Iterationen konvergieren weiter, sind aber langsamer). <code style="color:#22d3bf">b</code> wird nicht verwendet. Da das Rechteck in der Bildmitte fixiert ist, schlägt die Extraktion bei Bildern, deren Motiv nahe am Rand liegt, leicht fehl.</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> von 0 bis 1 zu variieren <b>ändert die Ausgabe nicht</b> (an fünf verschiedenen Eingaben gemessen).</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -4,15 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import glassmirror; glassmirror.critical_angle_deg(n1=1.5, n2=1.0) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;critical_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전반사 임계각 [deg] = asin(n2/n1). n1 &gt; n2 가 아니면 ValueError(존재하지 않음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ガラスから空気へ出るときだけ起きる。光ファイバ・プリズムの全反射面の設計値。</p>
-<p>式: <code style="color:#22d3bf">degrees(asin(n2 / n1))</code>。入射角(法線からの角)がこれ以上なら屈折光が</p>
-<p>存在せず全反射する。例: N-BK7 相当 <code style="color:#22d3bf">n1 = 1.5</code> → 空気 <code style="color:#22d3bf">n2 = 1.0</code> で 41.8 度、水 <code style="color:#22d3bf">n1 = 1.333</code> → 空気で 48.6 度。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>: 光が出ていく側(密な媒質)の屈折率、<code style="color:#22d3bf">n2</code>: 入る側(疎な媒質)の屈折率。どちらも正の有限スカラ(<code style="color:#22d3bf">float()</code> で変換するので配列は受けない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1 &lt;= n2</code> は臨界角が存在しないので <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">NaN</code> や 90 度でごまかさない)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float [deg]、<code style="color:#22d3bf">(0, 90)</code>。</p>
-<p style="margin:2px 0 2px 12px">• 波長依存は入れない。分散込みで評価するなら硝材の Sellmeier から求めた <code style="color:#22d3bf">n1</code> を渡す(<code style="color:#22d3bf">prism_min_deviation_deg</code> は内部でそれをやる)。</p>
-<p><code style="color:#22d3bf">fresnel_dielectric</code> に臨界角以上の <code style="color:#22d3bf">cos_i</code> を渡した場合の挙動はそちらを参照。Brewster 角(p 偏光の反射が 0 になる角)は <code style="color:#22d3bf">brewster_angle_deg</code>。</p>
+<p>유리에서 공기로 나갈 때만 일어난다. 광섬유·프리즘의 전반사면의 설계값.</p>
+<p>식: <code style="color:#22d3bf">degrees(asin(n2 / n1))</code>. 입사각(법선으로부터의 각)이 이 이상이면 굴절광이존재하지 않고 전반사한다. 예: N-BK7 상당 <code style="color:#22d3bf">n1 = 1.5</code> → 공기 <code style="color:#22d3bf">n2 = 1.0</code>에서 41.8도, 물 <code style="color:#22d3bf">n1 = 1.333</code> → 공기에서 48.6도.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1</code>: 빛이 나가는 쪽(밀한 매질)의 굴절률, <code style="color:#22d3bf">n2</code>: 들어가는 쪽(소한 매질)의 굴절률. 둘 다 양의 유한 스칼라(<code style="color:#22d3bf">float()</code>로 변환하므로 배열은 받지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n1 &lt;= n2</code>는 임계각이 존재하지 않으므로 <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">NaN</code>이나 90도로얼버무리지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: float [deg], <code style="color:#22d3bf">(0, 90)</code>.</p>
+<p style="margin:2px 0 2px 12px">• 파장 의존성은 넣지 않는다. 분산을 포함해 평가하려면 유리재의 Sellmeier로 구한 <code style="color:#22d3bf">n1</code>을 넘긴다(<code style="color:#22d3bf">prism_min_deviation_deg</code>는 내부에서 그렇게 한다).</p>
+<p><code style="color:#22d3bf">fresnel_dielectric</code>에 임계각 이상의 <code style="color:#22d3bf">cos_i</code>를 넘긴 경우의 동작은 그쪽을 참조. Brewster 각(p 편광의 반사가 0이 되는 각)은 <code style="color:#22d3bf">brewster_angle_deg</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

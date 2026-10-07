@@ -4,61 +4,60 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 4 個數字回傳所拍攝的散斑是否適合 DIC。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(<code style="color:#22d3bf">speckle_filter</code> は SAR の斑点雑音 <b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
-<p>引数</p>
-<p>img  スペックル画像(2 次元)。輝度の規格は問わないが、<code style="color:#22d3bf">coverage</code> は</p>
-<p>画像内の最小・最大を基準にした相対しきい値で数える。</p>
-<p>戻り値は <code style="color:#22d3bf">dict</code>:</p>
-<p><code style="color:#22d3bf">mig</code>                     平均輝度勾配 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>。</p>
-<p>Pan らの DIC 品質指標。変位の分散の下限が</p>
-<p><code style="color:#22d3bf">σ_noise / (mig √N)</code> で決まるので、これが</p>
-<p>小さいと何をしても測れない。</p>
-<p><code style="color:#22d3bf">grad_rms</code>                x 方向だけの <code style="color:#22d3bf">sqrt(mean(Ix²))</code>。</p>
-<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code> を超える画素の割合。</p>
-<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   斑点の平均直径 [px] の<b>推定値</b>(下記)。</p>
-<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> は推定であって測定ではない</p>
-<p>平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 <code style="color:#22d3bf">R½</code> を線形</p>
-<p>内挿で求め、<code style="color:#22d3bf">diameter = √2 · R½</code> を返す。<code style="color:#22d3bf">√2</code> の根拠: 1σ 半径 <code style="color:#22d3bf">r</code> の</p>
-<p>ガウス斑点をランダムに撒いた場の自己相関は 1σ が <code style="color:#22d3bf">r√2</code> のガウスなので</p>
-<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>、斑点の FWHM は <code style="color:#22d3bf">2r√(2ln2)</code>、比がちょうど <code style="color:#22d3bf">√2</code>。</p>
-<p>つまり<b>斑点がガウスで位置が無相関という仮定の上でだけ</b> FWHM に一致する。</p>
-<p>実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。</p>
-<p>右: <code style="color:#22d3bf">piv_synth_particles</code>、<code style="color:#22d3bf">diameter_px</code> は 2σ なので FWHM は</p>
-<p><code style="color:#22d3bf">1.1774 × diameter_px</code>):</p>
-<p>1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig</p>
+<p><code style="color:#22d3bf">pivops</code> 與 <code style="color:#22d3bf">fullseye</code> 中都沒有(<code style="color:#22d3bf">speckle_filter</code> 是 SAR 斑點雜訊的 <b>去除</b>，是另一回事)。用於在拍攝現場判定「這個圖案能否量測」的介面。</p>
+<p>參數</p>
+<p>img  散斑影像(2 維)。輝度的標度不限，但 <code style="color:#22d3bf">coverage</code></p>
+<p>以影像內最小、最大值為基準的相對閾值來計數。</p>
+<p>回傳值為 <code style="color:#22d3bf">dict</code>：</p>
+<p><code style="color:#22d3bf">mig</code>                     平均輝度梯度 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>。</p>
+<p>Pan 等人的 DIC 品質指標。位移變異數的下限</p>
+<p>由 <code style="color:#22d3bf">σ_noise / (mig √N)</code> 決定，因此它</p>
+<p>小的話怎麼做都量不出來。</p>
+<p><code style="color:#22d3bf">grad_rms</code>                僅 x 方向的 <code style="color:#22d3bf">sqrt(mean(Ix²))</code>。</p>
+<p><code style="color:#22d3bf">coverage</code>                超過 <code style="color:#22d3bf">0.2*(max-min) + min</code> 的像素比例。</p>
+<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   斑點平均直徑 [px] 的<b>估計值</b>(見下)。</p>
+<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> 是估計而不是量測</p>
+<p>以線性內插求出扣除平均後影像的自相關徑向平均降到 0.5 的半徑</p>
+<p><code style="color:#22d3bf">R½</code>，回傳 <code style="color:#22d3bf">diameter = √2 · R½</code>。<code style="color:#22d3bf">√2</code> 的依據：隨機撒布 1σ 半徑 <code style="color:#22d3bf">r</code> 的</p>
+<p>高斯斑點所得場的自相關是 1σ 為 <code style="color:#22d3bf">r√2</code> 的高斯，因此</p>
+<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>，斑點的 FWHM 為 <code style="color:#22d3bf">2r√(2ln2)</code>，比值恰好是 <code style="color:#22d3bf">√2</code>。</p>
+<p>也就是說，<b>只有在斑點為高斯且位置無相關這一假定之下</b>才與 FWHM 一致。</p>
+<p>實測(左：解析散斑，改變 1σ 半徑並調整個數使覆蓋率一致。</p>
+<p>右：<code style="color:#22d3bf">piv_synth_particles</code>，<code style="color:#22d3bf">diameter_px</code> 是 2σ，因此 FWHM 為</p>
+<p><code style="color:#22d3bf">1.1774 × diameter_px</code>)：</p>
+<p>1σ r   FWHM   估計   比   |  d_px   FWHM   估計   比    cov     mig</p>
 <p>0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351</p>
 <p>1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676</p>
 <p>1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775</p>
 <p>2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764</p>
 <p>4.0    9.42   9.18  0.97  |</p>
-<p><b>ガウス斑点なら 3 % 以内</b>。実物のスペックル(印刷・スプレー)は</p>
-<p>ガウスではないので、この表は換算の算数が合っていることの確認であって、</p>
-<p>実写での精度ではない。<b>何に偏るか</b>:</p>
-<p style="margin:2px 0 2px 12px">• 斑点の形がガウスでないと <code style="color:#22d3bf">√2</code> の換算そのものがずれる。</p>
-<p style="margin:2px 0 2px 12px">• 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり<b>過大</b>に出る。先に高域通過を掛けること。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。</p>
-<p style="margin:2px 0 2px 12px">• 環の代表半径は<b>環内の半径の平均</b>を使う。ビン番号を使うと半径 1 の環に対角の √2 が混ざり、1σ=0.6 px で径が <b>0.80 倍</b>(2 割過小)に出た。</p>
-<p>★ MIG は下限を切る指標であって、最大化する目的関数ではない</p>
-<p>上の左表で <code style="color:#22d3bf">mig</code> は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し</p>
-<p>1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が</p>
-<p>足りず、<code style="color:#22d3bf">examples/poc_dic_strain.py</code> の 9 節の実測では偏りも散らばりも</p>
-<p>最悪になる。<b>MIG を最大化すると測れないスペックルを選ぶ。</b></p>
-<p>右表の粒子像では <code style="color:#22d3bf">d=4.0</code> で頭打ちになり <code style="color:#22d3bf">d=6.0</code> でわずかに下がる ——</p>
-<p>同じ指標が入力の作り方で単調にも非単調にもなるので、</p>
-<p><b>絶対値ではなく同じ撮り方どうしの比較に使うこと。</b></p>
-<p>★ <code style="color:#22d3bf">coverage</code> のしきい値は Otsu ではない</p>
-<p><code style="color:#22d3bf">0.2*(max-min) + min</code> の固定しきい値。Otsu は 2 峰の分布を仮定するが、</p>
-<p>スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと</p>
-<p><b>しきい値が画像ごとに動いて比較できなくなる</b>。固定なら少なくとも</p>
-<p>同じ規格の画像どうしは比べられる。</p>
-<p>★ MIG は単位を持つ</p>
-<p>「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで</p>
-<p>255 倍違う。<b>同じ規格の画像どうしでしか比べられない。</b></p>
+<p><b>高斯斑點在 3 % 以內</b>。真實的散斑(印刷、噴塗)並非</p>
+<p>高斯，因此這張表是確認換算的算術正確，</p>
+<p>而不是實拍中的精度。<b>會偏向哪裡</b>：</p>
+<p style="margin:2px 0 2px 12px">• 斑點形狀不是高斯時，<code style="color:#22d3bf">√2</code> 的換算本身就會偏。</p>
+<p style="margin:2px 0 2px 12px">• 有低頻不均(照明梯度)時，自相關的尾部被抬高，結果<b>偏大</b>。請先做高通濾波。</p>
+<p style="margin:2px 0 2px 12px">• 自相關是循環相關(FFT)，因此有週期性背景時會被擾亂。</p>
+<p style="margin:2px 0 2px 12px">• 環的代表半徑使用<b>環內半徑的平均</b>。若使用 bin 編號，半徑 1 的環中會混入對角的 √2，在 1σ=0.6 px 時直徑為 <b>0.80 倍</b>(偏小 2 成)。</p>
+<p>★ MIG 是截斷下限的指標，而不是要最大化的目標函數</p>
+<p>在上面左表中，<code style="color:#22d3bf">mig</code> 斑點越細越大(1σ=4.0 時 0.0384，</p>
+<p>1σ=0.6 時 0.1127，2.9 倍)。但直徑 1.4 px 的散斑取樣</p>
+<p>不足，在 <code style="color:#22d3bf">examples/poc_dic_strain.py</code> 第 9 節的實測中偏差與離散都</p>
+<p>最差。<b>最大化 MIG 會選中量不了的散斑。</b></p>
+<p>右表的粒子像在 <code style="color:#22d3bf">d=4.0</code> 達到頂點，<code style="color:#22d3bf">d=6.0</code> 時略微下降 ——</p>
+<p>同一指標會因輸入的產生方式而單調或不單調，因此</p>
+<p><b>不要看絕對值，而要用於同樣拍法之間的比較。</b></p>
+<p>★ <code style="color:#22d3bf">coverage</code> 的閾值不是 Otsu</p>
+<p>是 <code style="color:#22d3bf">0.2*(max-min) + min</code> 的固定閾值。Otsu 假定雙峰分布，但</p>
+<p>散斑的輝度分布常因斑點重疊而呈單峰，用 Otsu 的話</p>
+<p><b>閾值會隨影像變動而無法比較</b>。固定的話至少</p>
+<p>同一標度的影像之間可以比較。</p>
+<p>★ MIG 有單位</p>
+<p>「輝度 / px」。以 8 bit 整數原樣傳入或正規化到 [0, 1] 後傳入，</p>
+<p>會相差 255 倍。<b>只能在同一標度的影像之間比較。</b></p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• 画像が完全に一様(<code style="color:#22d3bf">max == min</code>)—— 斑点が 1 つも無い。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関が 0.5 を切らない(視野より斑点が大きい)—— このときだけ <code style="color:#22d3bf">mean_blob_diameter_px</code> が <code style="color:#22d3bf">nan</code>。他の 3 つは返す。</p>
+<p style="margin:2px 0 2px 12px">• 不是 2 維 / 小於 8x8 / 含 NaN、Inf。</p>
+<p style="margin:2px 0 2px 12px">• 影像完全均勻(<code style="color:#22d3bf">max == min</code>)—— 1 個斑點也沒有。</p>
+<p style="margin:2px 0 2px 12px">• 自相關不降到 0.5 以下(斑點比視野大)—— 只有此時 <code style="color:#22d3bf">mean_blob_diameter_px</code> 為 <code style="color:#22d3bf">nan</code>。其餘 3 個照常回傳。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시그마 필터에 의한 비선형 평활화. 중심 화소값에 가까운(<code style="color:#22d3bf">|x-mean|&lt;σ</code>) 근방 화소만을 평균한다 -- 에지 부근에서는 반대쪽 계조가 평균에 섞이지 않으므로, 평균 필터보다 에지를 보존하기 쉬운 노이즈 제거가 된다. HALCON의 <code style="color:#22d3bf">sigma_image</code>(Non-linear smoothing with the sigma filter.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る(内部の平均計算にも使う)。<code style="color:#22d3bf">b</code> が許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の画素は元の値のまま残る。</p>
+<p><code style="color:#22d3bf">a</code>가 창의 한 변의 길이를 <code style="color:#22d3bf">{3,5,7,9}</code>로 바꾼다(내부의 평균 계산에도 쓴다). <code style="color:#22d3bf">b</code>가허용 대역(시그마, 0.05~0.4)을 바꾼다. 둘 다 사용된다. 근방이 모두 대역 밖인화소는 원래 값 그대로 남는다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

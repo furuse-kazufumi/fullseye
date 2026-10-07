@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalenkarte + Blickrichtung → die <b>Farbe der Dünnschichtinterferenz</b>, (H, W, 3) in linearem sRGB.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
-<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ。</p>
-<p>strength: 全体の強さ。</p>
+<p>Je flacher die Fläche zur Blickrichtung liegt, desto länger ist der Lichtweg in der Schicht, und die Farbe wandert zu kürzeren Wellenlängen ―― deshalb ändern sich die Farben von Seifenblasen und angelaufenem Titan am Rand. Die Winkelabhängigkeit ergibt sich aus cosθ = |n·v|.</p>
+<p>normals / view: (H,W,3) Normalenkarte / Richtung von der Fläche zum Blickpunkt. thickness_nm / n_film / n_sub: wie bei <code style="color:#22d3bf">thin_film_reflectance</code>.</p>
+<p>strength: Gesamtstärke.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

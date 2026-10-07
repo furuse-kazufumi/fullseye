@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;sheen_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>布料的<b>边缘光泽</b>(天鹅绒・缎)。相对视线越掠射越亮。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>normals / light / view: 上記と同じ。sheen: 強さ。exponent: 縁への集中度。</p>
-<p>返り値: (H, W)。<b>鏡面反射とは逆</b>に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。</p>
+<p>normals / light / view：与上述相同。sheen：强度。exponent：向边缘的集中程度。</p>
+<p>返回值：(H, W)。<b>与镜面反射相反</b>，正面(n·v = 1)接近 0，边缘(n·v → 0) 最大 ―― 天鹅绒边缘泛白光就是这个，Phong 绝对表现不出来。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

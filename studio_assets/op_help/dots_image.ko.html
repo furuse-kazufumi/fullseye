@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우시안 라플라시안(Laplacian of Gaussian, LoG) 필터. σ = 0.5+2.5a의 가우스 커널로 라플라시안을 취하고, signed01(부호 있는 값을 [0,1]로, 0.5=응답 없음)로 정규화한다. b는 사용되지 않는다. 원형 점 패턴(도트)은 가우시안의 등방성에서 오는 강한 LoG 응답을 보이므로, 원형 점을 강조하는 데 사용된다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">dots_image</code>（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
+<p>HALCON의 <code style="color:#22d3bf">dots_image</code>(영상 속 원형 도트를 강조하는 연산)에 해당하는 근사로, 전용 도트 검출 커널이 아니라 일반적인 LoG 필터로 대용하고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

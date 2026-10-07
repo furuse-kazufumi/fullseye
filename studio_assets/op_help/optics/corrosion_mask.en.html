@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;corrosion_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The <b>mottling</b> of rust, patina and grime (a 0–1 mask).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>shape: (H, W)。coverage: 覆われる面積の目安(0–1)。scale_px: 斑の大きさ [px]。</p>
-<p>返り値: (H, W) の 0–1 マスク。素材色の混合率として使う(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。実測の面積率は <code style="color:#22d3bf">coverage</code> にほぼ一致する(分位点で閾値を決めているため、テストで確認)。</p>
+<p>shape: (H, W). coverage: target fraction of the area covered (0–1). scale_px: size of the patches [px].</p>
+<p>Returns: (H, W) mask in 0–1. Use it as the mixing ratio of material colours (<code style="color:#22d3bf">(1-m)*metal + m*rust</code>). The measured area fraction almost matches <code style="color:#22d3bf">coverage</code> (because the threshold is set by a quantile; verified in tests).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

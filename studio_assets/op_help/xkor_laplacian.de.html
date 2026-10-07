@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kanten-/Blob-Antwort mittels Laplace-Operator (2. Ableitung). Ruft <code style="color:#22d3bf">kornia.filters.laplacian</code> auf, bildet den Absolutwert und normiert dann auf den maximalen Absolutwert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（<code style="color:#22d3bf">_k(a)</code>、<code style="color:#22d3bf">_median</code> と同じ量子化）。b は未使用。</p>
+<p>a wählt die Kernelgröße aus den 4 Stufen 3/5/7/9 (<code style="color:#22d3bf">_k(a)</code>; <code style="color:#22d3bf">_median</code> verwendet dieselbe Quantisierung). b wird nicht verwendet.</p>
 <p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

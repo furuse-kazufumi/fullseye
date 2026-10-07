@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形均值滤波(box filter)。这是相当于 HALCON 的 <code style="color:#22d3bf">mean_image</code>(Smooth by averaging.)的一种近似,用边长为 k 的窗口的均值来替换目标像素。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺 k を <code style="color:#22d3bf">{3,5,7,9}</code> の 4 段階(<code style="color:#22d3bf">_k(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。ガウシアンより速いが、エッジがぼやけずに角ばったブロック状のアーティファクトを残しやすい。</p>
+<p><code style="color:#22d3bf">a</code> 将窗口边长 k 在 <code style="color:#22d3bf">{3,5,7,9}</code> 这 4 档(<code style="color:#22d3bf">_k(a)</code>)间调节。<code style="color:#22d3bf">b</code> 未使用。比高斯快，但边缘不会变模糊，而是容易留下棱角分明的块状伪影。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

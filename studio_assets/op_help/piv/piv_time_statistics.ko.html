@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상 열 → 시간 평균, 변동의 RMS, 레이놀즈 응력.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが出発点で、<code style="color:#22d3bf">u&#x27;v&#x27;</code> の符号と大きさが運動量輸送そのものになる。</p>
-<p><b>1 対だけでは意味が無い</b>(変動が定義できない)ので 3 枚以上を要求する。</p>
+<p>연속하는 쌍마다 변위를 재고, 시간 방향의 통계를 취한다. 난류의 기술은 이 3가지가출발점이며, <code style="color:#22d3bf">u&#x27;v&#x27;</code>의 부호와 크기가 운동량 수송 그 자체가 된다.</p>
+<p><b>1쌍만으로는 의미가 없으므로</b>(변동을 정의할 수 없다) 3장 이상을 요구한다.</p>
 <p>Args:</p>
-<p>images: 3 枚以上の画像列。</p>
-<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code> へ渡す。</p>
+<p>images: 3장 이상의 이미지 열.</p>
+<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code>로 넘긴다.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">mean</code>(<code style="color:#22d3bf">(2, h, w)</code>)、<code style="color:#22d3bf">rms</code>(同)、<code style="color:#22d3bf">reynolds</code></p>
-<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>、<code style="color:#22d3bf">(h, w)</code>)、<code style="color:#22d3bf">turbulence_intensity</code>、<code style="color:#22d3bf">n_pairs</code>、</p>
-<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>。</p>
+<p>dict: <code style="color:#22d3bf">mean</code>(<code style="color:#22d3bf">(2, h, w)</code>), <code style="color:#22d3bf">rms</code>(같음), <code style="color:#22d3bf">reynolds</code></p>
+<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>, <code style="color:#22d3bf">(h, w)</code>), <code style="color:#22d3bf">turbulence_intensity</code>, <code style="color:#22d3bf">n_pairs</code>,</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

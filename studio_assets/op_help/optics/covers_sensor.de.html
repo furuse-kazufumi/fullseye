@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ob das Objektiv den Sensor abdeckt (Bildkreis gegen Diagonale).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>覆えないと<b>四隅が黒く落ちる</b>(ケラレ)。カタログの「1 インチまで」等はこの判定を形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。</p>
+<p>Kann es nicht abdecken, <b>fallen die vier Ecken ins Schwarze</b> (Vignettierung). Ein Katalog-&quot;bis 1 Zoll&quot; usw. drückt dieses Urteil nur über den Formatnamen aus, daher ist der Vergleich realer Maße zuverlässiger ―― besonders bei Zeilensensoren, bei denen die Länge direkt zählt (16k x 7 µm = 115 mm), sodass ein Objektiv für Flächensensoren bei Weitem nicht reicht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

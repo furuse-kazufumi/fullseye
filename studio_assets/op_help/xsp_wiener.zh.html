@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用维纳自适应滤波器（<code style="color:#22d3bf">scipy.signal.wiener</code>）抑制噪声。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は近傍窓のサイズを 3, 5, 7, 9 の奇数に振る（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>、a=0 で 3、a に近い 1 で 9）。<code style="color:#22d3bf">b</code> は未使用。局所分散からノイズ分散を自動推定する適応フィルタで、一様な強さで均すガウシアン/ミーンボックスと違い平坦な領域ほど強く均し、分散の大きい（エッジ/テクスチャの多い）領域は保存されやすい。ガウス性ノイズを仮定するので塩胡椒ノイズには不向き。出力は [0,1] にクリップする。</p>
+<p><code style="color:#22d3bf">a</code> 将邻域窗口大小在奇数 3, 5, 7, 9 中调节（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>，a=0 时为 3，a 接近 1 时为 9）。<code style="color:#22d3bf">b</code> 未使用。这是从局部方差自动估计噪声方差的自适应滤波，与以均匀强度平滑的高斯/均值盒滤波不同，越平坦的区域平滑越强，方差大的（边缘/纹理多的）区域则容易被保留。由于假定高斯噪声，不适合椒盐噪声。输出裁剪到 [0,1]。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

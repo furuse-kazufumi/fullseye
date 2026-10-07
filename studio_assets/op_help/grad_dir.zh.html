@@ -11,8 +11,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以图像形式返回梯度方向（边缘朝向）。未指定对应的 HALCON 算子（fullseye 独有）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。Sobel 応答から <code style="color:#22d3bf">atan2(Gy, Gx)</code> で角度（<code style="color:#22d3bf">-π〜π</code>）を求め、<code style="color:#22d3bf">[0,1]</code> へ線形に写す。<code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> はどちらも同じ角度（<code style="color:#22d3bf">-π</code>≡<code style="color:#22d3bf">π</code>）に対応する周期量である点に注意——連続的に変化する向きでも出力が 0 と 1 の間で不連続にジャンプし得る。平坦な領域では勾配がほぼ 0 で方向が不定になり、ノイズの影響を受けやすい。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。由 Sobel 响应通过 <code style="color:#22d3bf">atan2(Gy, Gx)</code> 求出角度（<code style="color:#22d3bf">-π〜π</code>），并线性映射到 <code style="color:#22d3bf">[0,1]</code>。注意 <code style="color:#22d3bf">0</code> 与 <code style="color:#22d3bf">1</code> 都对应同一角度（<code style="color:#22d3bf">-π</code>≡<code style="color:#22d3bf">π</code>），是周期量——即使方向连续变化，输出也可能在 0 与 1 之间不连续地跳变。在平坦区域梯度几乎为 0，方向不定，容易受噪声影响。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

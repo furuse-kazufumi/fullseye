@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>단일 프레임의 우주선 제거(라플라시안 첨예도).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) の考え方 —— 宇宙線は<b>星より鋭い</b>。星は PSF でぼけているので必ず数画素にまたがるが、宇宙線は光学系を通っていないので 1〜数画素で立ち上がる。そこで</p>
-<p style="margin:2px 0 2px 12px">1. ラプラシアン <code style="color:#22d3bf">L</code> の正の成分を雑音で規格化した有意度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> を作り、</p>
-<p style="margin:2px 0 2px 12px">2. 微細構造像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> と比べて <code style="color:#22d3bf">L / F</code> が <code style="color:#22d3bf">f_lim</code> を超えるものだけを宇宙線とする。</p>
-<p>2 番目の条件が無いと<b>星の中心が必ず宇宙線に見える</b>(星も局所的には尖っている)。<code style="color:#22d3bf">f_lim</code> はその境目で、原論文の推奨は 2.0。</p>
-<p><code style="color:#22d3bf">iters</code> を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。置換は <code style="color:#22d3bf">replace_box</code> の窓での<b>非汚染画素の中央値</b>。</p>
+<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001)의 발상 —— 우주선은 <b>별보다 날카롭다</b>. 별은 PSF로흐려지므로 반드시 여러 화소에 걸치지만, 우주선은 광학계를 거치지 않으므로 1~수 화소 안에서 솟아오른다. 그래서</p>
+<p style="margin:2px 0 2px 12px">1. 라플라시안 <code style="color:#22d3bf">L</code>의 양의 성분을 잡음으로 정규화한 유의도 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>를 만들고,</p>
+<p style="margin:2px 0 2px 12px">2. 미세 구조상 <code style="color:#22d3bf">F = median3 - median7(median3)</code>과 비교하여 <code style="color:#22d3bf">L / F</code>가 <code style="color:#22d3bf">f_lim</code>을 넘는 것만을 우주선으로 한다.</p>
+<p>2번째 조건이 없으면 <b>별의 중심이 반드시 우주선으로 보인다</b>(별도 국소적으로는뾰족하다). <code style="color:#22d3bf">f_lim</code>은 그 경계이며, 원논문의 권장값은 2.0.</p>
+<p><code style="color:#22d3bf">iters</code>를 늘리면 제거 → 재측정을 반복한다(큰 히트의 자락이 남을 때). 치환은 <code style="color:#22d3bf">replace_box</code> 창에서의 <b>오염되지 않은 화소의 중앙값</b>.</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64、宇宙線画素を置換した像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *sigma* が非正 / *f_lim* が非正 / *replace_box* が 3 未満または偶数の場合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64, 우주선 화소를 치환한 상.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool, <code style="color:#22d3bf">True</code> = 우주선으로 판정한 화소.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D가 아님 / 비유한 값을 포함 / *sigma*가 양수가 아님 / *f_lim*이 양수가 아님 / *replace_box*가 3 미만이거나 짝수인 경우.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

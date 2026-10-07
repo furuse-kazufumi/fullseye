@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import glassmirror; glassmirror.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;metal_mirror_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>금속 거울의 <b>색</b>(선형 sRGB). n,k → 분광 반사율 → CIE 등색함수 → sRGB.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>metal: <code style="color:#22d3bf">METALS</code> のいずれか。cos_i: 入射角の cos(スカラまたは配列)。</p>
-<p>samples: 380–780 nm を刻む点数。</p>
-<p>返り値: cos_i の形 + 末尾 3 の線形 sRGB。<b>色を塗っていない</b>ので、金が黄色いのも銀が中性なのも表の n,k から出る(テストで R&gt;G&gt;B の順序と銀の中性を固定)。</p>
+<p>metal: <code style="color:#22d3bf">METALS</code> 중 하나. cos_i: 입사각의 cos(스칼라 또는 배열).</p>
+<p>samples: 380–780 nm를 나누는 점 수.</p>
+<p>반환값: cos_i의 형태 + 끝에 3인 선형 sRGB. <b>색을 칠하지 않았으므로</b>, 금이 노란 것도은이 중성인 것도 표의 n,k에서 나온다(테스트로 R&gt;G&gt;B의 순서와 은의 중성을 고정).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

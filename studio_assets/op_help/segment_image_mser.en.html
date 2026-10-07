@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>MSER (Maximally Stable Extremal Regions) detection (<code style="color:#22d3bf">cv2.MSER_create</code>). Detects regions whose shape remains stable even as the threshold is continuously varied, and returns their boundaries (used for detecting regions such as text and logos robustly against illumination changes). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">segment_image_mser</code> (Segment image using Maximally Stable Extremal Regions (MSER).).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が MSER の安定性パラメータ(delta、3〜11)を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">cv2</code> が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the MSER stability parameter (delta, 3–11). <code style="color:#22d3bf">b</code> is unused. In environments without <code style="color:#22d3bf">cv2</code>, this branch cannot be called.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

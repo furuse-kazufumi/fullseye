@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;dataset_throughput&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">inspection_dataset</code> 의 결과 → 생성 처리량의 실측 요약.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>大量生成が通常運用なので、「この設定で 1 万枚に何時間かかるか」を見積もれる形で返す。返り値 dict: <code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(光線を飛ばす時間の割合。真値 3 枚のぶんが残り)。</p>
-<p>実測を持たない dict を渡したら fail-closed で落とす ―― 推定値を混ぜると「速い」の根拠が消える。</p>
+<p>대량 생성이 통상 운용이므로, &quot;이 설정으로 1만 장에 몇 시간 걸리는가&quot;를 추정할 수 있는 형태로반환한다. 반환값 dict: <code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(광선을 쏘는시간의 비율. 나머지는 참값 3장 몫).</p>
+<p>실측을 갖지 않은 dict를 넘기면 fail-closed(실패 시 거부)로 떨어뜨린다 ―― 추정값을 섞으면 &quot;빠르다&quot;의 근거가 사라진다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

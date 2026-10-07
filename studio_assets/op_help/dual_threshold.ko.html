@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>부호 있는 이미지를 위한 임계값 처리. 중앙값 0.5를 &quot;영&quot;으로 간주하고, <code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>를 만족하는 화소(0.5에서 충분히 먼 화소)를 전경으로 삼는다 — 양쪽(양/음) 어느 방향에도 대칭으로 반응한다. HALCON의 <code style="color:#22d3bf">dual_threshold</code>(Threshold operator for signed images.)에 해당(HALCON은 양/음에 각각 다른 임계값을 둘 수 있지만, 여기서는 0.5를 중심으로 한 대칭 대역으로 단순화했다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が除外帯域の半幅を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">highpass_image</code> や <code style="color:#22d3bf">bandpass_image</code> のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
+<p><code style="color:#22d3bf">a</code>가 제외 대역의 반폭을 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. <code style="color:#22d3bf">highpass_image</code>나 <code style="color:#22d3bf">bandpass_image</code> 같은 부호 있는 응답(0.5=영)의 후단에서 자주 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

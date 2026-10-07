@@ -11,9 +11,8 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Automatic foreground/background separation via GrabCut (iterative graph cut).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、色分布の GMM とグラフカットで前景/背景を反復的に分離する(<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>)。「確実な前景」と「たぶん前景」の画素を合わせて前景 region として返す。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。<code style="color:#22d3bf">b</code> は未使用。矩形が画像中央固定のため、被写体が縁に寄っている画像では抽出に失敗しやすい。</p>
+<p>A fixed 70%×70% rectangle at the image centre is given as the initial &quot;probably foreground&quot; region, and foreground/background are separated iteratively using a GMM of the colour distribution and a graph cut (<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>). The &quot;definite foreground&quot; and &quot;probable foreground&quot; pixels are combined and returned as the foreground region.</p>
+<p><code style="color:#22d3bf">a</code> sweeps the number of iterations in the range 2–5 (more iterations converge further but are slower). <code style="color:#22d3bf">b</code> is unused. Because the rectangle is fixed at the image centre, extraction tends to fail on images whose subject lies near the border.</p>
 <p><b>Knobs (measured)</b>: sweeping <code style="color:#22d3bf">a</code> from 0 to 1 <b>does not change the output</b> (measured on five different inputs).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

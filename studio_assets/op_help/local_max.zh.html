@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部极大点检测。仅将<code style="color:#22d3bf">x</code>与窗口内最大值(<code style="color:#22d3bf">_k(a)</code>)一致、且满足<code style="color:#22d3bf">x &gt; 0.3+0.4*b</code>的像素视为前景——需注意在平坦的高原状区域中,可能有多个相邻像素同时被保留为“极大值”(无法保证只留下真正的孤立峰值点)。相当于HALCON的<code style="color:#22d3bf">local_max</code>(Detect all local maxima in an image.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓サイズを、<code style="color:#22d3bf">b</code> が輝度の下限しきい値を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节窗口大小，<code style="color:#22d3bf">b</code> 调节亮度的下限阈值。两者都使用。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

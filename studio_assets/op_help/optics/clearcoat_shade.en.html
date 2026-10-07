@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.clearcoat_shade(base_rgb, normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), ior=1.5, coat=1.0, coat_roughness=0.05) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;clearcoat_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Put a transparent top coat over the surface (car paint, ceramic glaze, glossy plastic).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>base_rgb: 下地の色 (H,W,3) または (3,)。normals / light / view: 上記と同じ。</p>
-<p>ior: 上塗りの屈折率(クリア塗料 ~1.5)。coat: 上塗りの強さ(0–1)。</p>
-<p>coat_roughness: 上塗りのざらつき(0 = 完全な鏡面、大きいほどぼける)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB。</p>
-<p>★ 要点は<b>エネルギーの引き算</b>: 上塗りで反射した分だけ下地に届く光が減る。下地は (1 − F(入射)) × (1 − F(出射)) で減衰する ―― これを掛けないと、上塗りを足すほど全体が明るくなる(物理的にありえない)。</p>
+<p>base_rgb: base colour (H,W,3) or (3,). normals / light / view: same as above.</p>
+<p>ior: refractive index of the clear coat (clear lacquer ~1.5). coat: clear-coat strength (0–1).</p>
+<p>coat_roughness: roughness of the clear coat (0 = perfect mirror, larger = blurrier).</p>
+<p>Returns: (H, W, 3) linear sRGB.</p>
+<p>★ The key is <b>subtracting energy</b>: the light reflected by the clear coat no longer reaches the base. The base is attenuated by (1 − F(incident)) × (1 − F(outgoing)) ―― without this factor, adding clear coat would make everything brighter (physically impossible).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

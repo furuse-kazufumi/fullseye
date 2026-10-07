@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.random_defects(primitive: &#x27;dict&#x27;, count: &#x27;int&#x27; = 2, kinds=(&#x27;scratch&#x27;, &#x27;crack&#x27;, &#x27;pits&#x27;, &#x27;blob&#x27;, &#x27;stain&#x27;, &#x27;foreign&#x27;), seed: &#x27;int&#x27; = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: &#x27;bool&#x27; = True, shape=(192, 192), defect_roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.random_defects(primitive: &#x27;dict&#x27;, count: &#x27;int&#x27; = 2, kinds=(&#x27;scratch&#x27;, &#x27;crack&#x27;, &#x27;pits&#x27;, &#x27;blob&#x27;, &#x27;stain&#x27;, &#x27;foreign&#x27;), seed: &#x27;int&#x27; = 0, uv_size_mm=(20.0, 20.0), height_um=(5.0, 40.0), albedo_defects: &#x27;bool&#x27; = True, shape=(192, 192), defect_roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;random_defects&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在零件上制造<b>随机缺陷</b>(划痕・裂纹・凹坑・污渍・压痕・异物)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>外観検査 AI の学習データはこれが本体。1 回の呼び出しで <code style="color:#22d3bf">count</code> 件を引き、種類・位置・向き・大きさ・コントラスト・深さをすべて振る。<code style="color:#22d3bf">seed</code> を固定すれば決定的なので、同じデータセットを再現できる。</p>
-<p><code style="color:#22d3bf">kinds</code> から選ぶ。表面の欠陥(scratch/crack/pits/blob/stain)は面の変調として貼られ、<b>foreign(異物)は部品の上に置かれた別の物体</b>になる ―― 異物は影を落として部品を隠すが傷は隠さない、という違いを型で分けている。</p>
-<p><code style="color:#22d3bf">height_um</code> は (最小, 最大) の深さ [µm]。<code style="color:#22d3bf">albedo_defects=False</code> にすると <b>色は一切変えず凹凸だけ</b>の欠陥になり、ドーム照明では消えて暗視野で立つ(=照明を選ぶ意味が出る、いちばん難しい学習データ)。</p>
-<p>返り値 dict: <code style="color:#22d3bf">part</code>(欠陥を貼った部品)/ <code style="color:#22d3bf">objects</code>(異物のプリミティブ、シーンにそのまま足す)/ <code style="color:#22d3bf">labels</code>(1 件ごとの種類・位置 [mm]・大きさ)。</p>
+<p>外观检测 AI 的训练数据的主体就是它。1 次调用抽取 <code style="color:#22d3bf">count</code> 件，种类、位置、方向、大小、对比度、深度全部随机。固定 <code style="color:#22d3bf">seed</code> 即为确定性的，可以再现同一数据集。</p>
+<p>从 <code style="color:#22d3bf">kinds</code> 中选择。表面缺陷(scratch/crack/pits/blob/stain)作为面的调制贴上，<b>foreign(异物)则成为放在零件上的另一个物体</b> ―― 异物会投下阴影遮住零件，而划痕不会遮挡，这一差异用类型区分开。</p>
+<p><code style="color:#22d3bf">height_um</code> 是 (最小, 最大) 的深度 [µm]。设 <code style="color:#22d3bf">albedo_defects=False</code> 则成为 <b>完全不改变颜色、只有凹凸</b>的缺陷，在穹顶照明下消失、在暗场中凸显(= 体现出选择照明的意义，最难的训练数据)。</p>
+<p>返回值 dict：<code style="color:#22d3bf">part</code>(贴了缺陷的零件)/ <code style="color:#22d3bf">objects</code>(异物的图元，直接加入场景)/ <code style="color:#22d3bf">labels</code>(每 1 件的种类、位置 [mm]、大小)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>面向帶符號影像的閾值處理。將中間值 0.5 視為「零」，把滿足 <code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code>（離 0.5 足夠遠）的像素判定為前景——對正負兩側都對稱地反應。相當於 HALCON 的 <code style="color:#22d3bf">dual_threshold</code>（Threshold operator for signed images.）（HALCON 可以為正負分別設定閾值，此處簡化為以 0.5 為中心的對稱帶）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が除外帯域の半幅を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">highpass_image</code> や <code style="color:#22d3bf">bandpass_image</code> のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
+<p><code style="color:#22d3bf">a</code> 調整排除帶的半寬。<code style="color:#22d3bf">b</code> 未使用。常用於 <code style="color:#22d3bf">highpass_image</code> 或 <code style="color:#22d3bf">bandpass_image</code> 這類帶正負號響應(0.5=零)的後級。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

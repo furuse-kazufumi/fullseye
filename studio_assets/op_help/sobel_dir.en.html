@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The direction of the Sobel gradient (<code style="color:#22d3bf">arctan2(dy, dx)</code> mapped to [0,1], where 0=-pi and 1=+pi). The counterpart to <code style="color:#22d3bf">sobel_amp</code>, which returns magnitude; this operation computes the direction an edge runs in. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">sobel_dir</code> (Detect edges (amplitude and direction) using the Sobel operator.) (HALCON returns amplitude and direction together, but here direction is separated out as its own op).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向はノイズに支配される点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Note that in flat regions the gradient is almost a zero vector, so the direction is dominated by noise.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

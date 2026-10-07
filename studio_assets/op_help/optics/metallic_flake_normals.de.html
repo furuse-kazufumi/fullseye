@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;metallic_flake_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt das Normalenfeld der Flakes (Aluminiumplättchen) in Metallic-Lack.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>shape: (H, W)。density: 面積あたりのフレーク率(0–1)。size_px: フレークの大きさ。</p>
-<p>tilt: 傾きの強さ(0–1)。seed: 乱数種。</p>
-<p>返り値: (H, W, 3) の単位法線場(フレークの無い所は (0,0,1))。上塗りの下に置くと <b>粒がキラつく</b>。density を上げると粒の数がそのまま増える(テストで確認)。</p>
+<p>shape: (H, W). density: Flakeanteil pro Fläche (0–1). size_px: Flakegröße.</p>
+<p>tilt: Stärke der Neigung (0–1). seed: Zufallsstartwert.</p>
+<p>Rückgabewert: (H, W, 3) Einheitsnormalenfeld ((0,0,1) dort, wo keine Flakes sind). Unter einen Klarlack gelegt, <b>glitzern die Partikel</b>. Eine höhere density erhöht die Zahl der Partikel direkt (in Tests geprüft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

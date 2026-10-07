@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Folge von Geisterkarten → eine Karte <b>der Qualität, bei der das Residuum jedes Pixels minimal ist</b>. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">qualities</code> を省くと <code style="color:#22d3bf">jpeg_ghost_map</code> の既定(40..95 step 5)を仮定する —— <b>枚数が合わなければ <code style="color:#22d3bf">ValueError</code></b>(添字と品質がずれた地図を返さない)。</p>
-<p>返りは品質そのものを画素値に持つ <code style="color:#22d3bf">(H, W)</code> なので、値域は [0, 1] ではない。表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
-<p>★ <b>合成後に一度でも保存すると、この argmin は使えない。</b> 2026-09-06 に測った。背景 q92・素材 q60 で 32x32 を貼った 128x128 で:</p>
+<p>Wird <code style="color:#22d3bf">qualities</code> weggelassen, wird der Default von <code style="color:#22d3bf">jpeg_ghost_map</code> (40..95 step 5) angenommen —— <b>stimmt die Anzahl der Karten nicht, <code style="color:#22d3bf">ValueError</code></b> (es wird keine Karte mit gegeneinander verschobenen Indizes und Qualitäten zurückgegeben).</p>
+<p>Die Rückgabe ist ein <code style="color:#22d3bf">(H, W)</code>-Array mit der Qualität selbst als Pixelwert, der Wertebereich ist also nicht [0, 1]. Zur Anzeige normieren (dieses op liefert Zahlen, kein Bild).</p>
+<p>★ <b>Wird das Komposit auch nur einmal gespeichert, ist dieses argmin unbrauchbar.</b> Gemessen am 2026-09-06 an einem 128x128-Bild mit eingefügtem 32x32-Stück, Hintergrund q92, Material q60:</p>
 <p>====================  ==================  ================</p>
-<p>条件                  貼付部の最頻品質    背景の最頻品質</p>
+<p>Bedingung             Häuf. Q eingefügt   Häuf. Q Hintergr.</p>
 <p>====================  ==================  ================</p>
-<p>合成後に保存しない            <b>60</b>(正解)              95</p>
-<p>合成後に q95 で保存           <b>95</b>(背景と同じ)         95</p>
+<p>Ohne Speichern        <b>60</b> (korrekt)    95</p>
+<p>Mit q95 gespeichert   <b>95</b>(=Hintergr.)  95</p>
 <p>====================  ==================  ================</p>
-<p>理由は掃引の残差が品質に対して<b>単調減少</b>すること —— 最後の保存品質が掃引の上端にあると、<code style="color:#22d3bf">argmin</code> は全画素でそこに張り付く(実測: 保存後の残差平均は 230.7 → 5.9e-02 と一直線に下がる)。実運用の改竄は必ず保存を経るので、<b>この読み出しは実画像では定数地図になる</b>。既存テスト <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> が通るのは、合成後に一度も保存していないからである(それ自体は正しい単体テストで、<code style="color:#22d3bf">argmin</code> の実装は間違っていない —— 読み出し方が現場に合わない)。</p>
-<p><b>代わりに使うもの</b>: 掃引方向の残差曲線の<b>谷の深さ</b>(局所的な凹み)。同じ実験で画素ごとの ROC を取ると、argmin 読み出しは AUC 0.500(乱数と同じ)、谷の深さ読み出しは <b>AUC 0.997 / 偽陽性 1 % で検出率 0.944</b> だった(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)。それでも全体を q60 で保存し直すと 0.475 まで落ちる —— JPEG ゴーストは後処理に弱い、というのが正しい要約。</p>
+<p>Der Grund ist, dass das Residuum des Sweeps mit der Qualität <b>monoton abnimmt</b> —— liegt die zuletzt gespeicherte Qualität am oberen Ende des Sweeps, bleibt <code style="color:#22d3bf">argmin</code> bei jedem Pixel dort hängen (gemessen: das mittlere Residuum nach dem Speichern fällt geradlinig, 230.7 → 5.9e-02). Reale Manipulationen durchlaufen immer ein Speichern, daher <b>wird diese Auslesung bei realen Bildern zu einer konstanten Karte</b>. Der vorhandene Test <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> besteht nur, weil das Komposit nie gespeichert wird (an sich ist er ein korrekter Unit-Test, und die Implementierung von <code style="color:#22d3bf">argmin</code> ist nicht falsch —— die Art der Auslesung passt nicht zur Praxis).</p>
+<p><b>Was stattdessen zu verwenden ist</b>: die <b>Taltiefe</b> der Residuenkurve entlang des Sweeps (die lokale Mulde). Bei pixelweiser ROC im selben Experiment hatte die argmin-Auslesung AUC 0.500 (wie Zufall), die Taltiefen-Auslesung dagegen <b>AUC 0.997 / Detektionsrate 0.944 bei 1 % falsch positiv</b> (<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>). Trotzdem fällt sie, wenn das ganze Bild mit q60 neu gespeichert wird, auf 0.475 —— &quot;JPEG-Ghosts sind anfällig für Nachbearbeitung&quot; ist die korrekte Zusammenfassung.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

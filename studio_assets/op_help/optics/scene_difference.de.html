@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schneidet <code style="color:#22d3bf">cavity</code> aus <code style="color:#22d3bf">solid</code> heraus (die CSG-Differenz). <b>Der einzige Weg zu einem hohlen Teil.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>コップ = 外側の円筒 − 底より上にずらした内側の円筒。ほかにワッシャ、貫通穴、座ぐり ―― 実際の部品は穴が開いているほうが普通で、球だけでは足りない(2026-09-05 のユーザー指摘)。</p>
-<p>両方とも凸プリミティブ(sphere / box / cylinder)でなければならない。平面は体積を囲まないので拒否する(fail-closed)。入れ子にすれば穴を 2 つ空けられる。</p>
+<p>Ein Becher = äußerer Zylinder − über den Boden verschobener innerer Zylinder. Außerdem Unterlegscheiben, Durchgangslöcher, Senkungen ―― reale Teile haben meist Löcher, Kugeln allein reichen nicht (Hinweis eines Nutzers vom 2026-09-05).</p>
+<p>Beide müssen konvexe Primitive sein (sphere / box / cylinder). Eine Ebene umschließt kein Volumen und wird daher abgelehnt (fail-closed). Durch Verschachteln lassen sich 2 Löcher bohren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>實作與 <code style="color:#22d3bf">regiongrowing</code> 完全相同（基於閾值的種子產生 + 膨脹）。HALCON 的 <code style="color:#22d3bf">regiongrowing_mean</code>（Perform a region growing using mean gray values.）原本應是依各區域平均亮度的接近程度來成長的運算子，但此替代實作不進行基於平均亮度的判定，回傳與 <code style="color:#22d3bf">regiongrowing</code> 相同的處理（近似的侷限）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> がシードのしきい値、<code style="color:#22d3bf">b</code> が膨張の反復回数を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 調整種子點的閾值，<code style="color:#22d3bf">b</code> 調整膨脹的迭代次數。兩者都使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

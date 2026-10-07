@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inspection_dataset(scene, camera, lights, n: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, exposure_ms: &#x27;float&#x27; = 10.0, bit_depth: &#x27;int&#x27; = 8, jitter_mm: &#x27;float&#x27; = 0.0, tilt_jitter_deg: &#x27;float&#x27; = 0.0, intensity_jitter: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, defects: &#x27;dict&#x27; = None, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, environment=None, environment_gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;list&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.inspection_dataset(scene, camera, lights, n: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, exposure_ms: &#x27;float&#x27; = 10.0, bit_depth: &#x27;int&#x27; = 8, jitter_mm: &#x27;float&#x27; = 0.0, tilt_jitter_deg: &#x27;float&#x27; = 0.0, intensity_jitter: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, defects: &#x27;dict&#x27; = None, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, environment=None, environment_gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;list&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;inspection_dataset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>為外觀檢測 AI 生成 <b>n 張訓練圖</b>,帶像素級完美標籤。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>同じ部品を、照明(<code style="color:#22d3bf">lights</code> に複数渡すと 1 枚ごとに巡回)・置き方(<code style="color:#22d3bf">jitter_mm</code> の並進、<code style="color:#22d3bf">tilt_jitter_deg</code> のカメラ傾き)・明るさ(<code style="color:#22d3bf">intensity_jitter</code> の相対ゆらぎ)を振って撮る = ドメインランダム化。</p>
-<p>返り値は 1 枚あたり dict:</p>
-<p><code style="color:#22d3bf">image</code> 量子化済み (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 欠陥の真値 /</p>
-<p><code style="color:#22d3bf">part_mask</code> 部品の真値 / <code style="color:#22d3bf">depth_mm</code> 深度の真値 /</p>
-<p><code style="color:#22d3bf">meta</code> 使った照明種別・露光・ゆらぎ量・欠陥ラベル(再現に必要な値をすべて)。</p>
-<p><code style="color:#22d3bf">defects</code> に <code style="color:#22d3bf">random_defects</code> の引数 dict を渡すと、<b>1 枚ごとに欠陥を引き直す</b>(<code style="color:#22d3bf">scene</code> の先頭を対象にする)。これが外観検査 AI の学習データ生成そのもので、欠陥の種類・位置・大きさ・深さと照明が同時に振れる。</p>
-<p><code style="color:#22d3bf">seed</code> を固定すれば決定的。<b>同じ欠陥でも照明を変えると見え方が変わる</b> ことがこの生成器の要点で、だから照明を振った枚数が効く。</p>
+<p>對同一零件，改變照明(向 <code style="color:#22d3bf">lights</code> 傳入多個時逐張輪替)、擺放(<code style="color:#22d3bf">jitter_mm</code> 的平移、<code style="color:#22d3bf">tilt_jitter_deg</code> 的相機傾斜)、亮度(<code style="color:#22d3bf">intensity_jitter</code> 的相對擾動)來拍攝 = 領域隨機化。</p>
+<p>回傳值為每張一個 dict：</p>
+<p><code style="color:#22d3bf">image</code> 已量化 (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 缺陷的真值 /</p>
+<p><code style="color:#22d3bf">part_mask</code> 零件的真值 / <code style="color:#22d3bf">depth_mm</code> 深度的真值 /</p>
+<p><code style="color:#22d3bf">meta</code> 使用的照明種類、曝光、擾動量、缺陷標籤(重現所需的全部值)。</p>
+<p>向 <code style="color:#22d3bf">defects</code> 傳入 <code style="color:#22d3bf">random_defects</code> 的參數 dict，就會<b>每張重新抽取缺陷</b>(以 <code style="color:#22d3bf">scene</code> 的第一個為對象)。這正是外觀檢測 AI 的訓練資料產生本身，缺陷的種類、位置、大小、深度與照明同時變動。</p>
+<p>固定 <code style="color:#22d3bf">seed</code> 即為確定性。<b>同一缺陷換了照明看起來就不同</b> 是這個產生器的要點，所以改變照明拍攝的張數很有效。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

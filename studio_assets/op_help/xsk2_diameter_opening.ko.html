@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지름 오프닝(면적 오프닝의 지름 버전, 미세한 밝은 구조 제거). <code style="color:#22d3bf">skimage.morphology.diameter_opening</code>을 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a が直径しきい値（<code style="color:#22d3bf">4 + int(a*30)</code>、範囲 4〜34）を振る。この直径未満の明るい連結成分を潰す。b は未使用。</p>
+<p>a가 직경 임계값(<code style="color:#22d3bf">4 + int(a*30)</code>, 범위 4~34)을 바꾼다. 이 직경 미만의 밝은 연결 성분을 뭉갠다. b는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>

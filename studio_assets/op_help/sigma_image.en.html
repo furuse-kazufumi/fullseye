@@ -14,8 +14,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Non-linear smoothing via a sigma filter. It averages only the neighboring pixels close to the center pixel value (<code style="color:#22d3bf">|x-mean|&lt;σ</code>) -- near edges, tones from the opposite side are not mixed into the average, so this results in noise removal that preserves edges better than a mean filter. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">sigma_image</code> (Non-linear smoothing with the sigma filter.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る(内部の平均計算にも使う)。<code style="color:#22d3bf">b</code> が許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の画素は元の値のまま残る。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the window side length over <code style="color:#22d3bf">{3,5,7,9}</code> (also used for the internal mean computation). <code style="color:#22d3bf">b</code> sweeps the tolerance band (sigma, 0.05–0.4). Both are used. Pixels whose neighbourhood lies entirely outside the band keep their original value.</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Knobs (measured)</b>: <code style="color:#22d3bf">a</code> acts in <b>discrete steps</b>; it switches at a ≈ 0.25、0.49、0.75 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

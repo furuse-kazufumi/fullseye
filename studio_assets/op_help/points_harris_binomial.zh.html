@@ -15,8 +15,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在前段插入二项式（高斯）平滑的 Harris 角点响应。先用由 <code style="color:#22d3bf">b</code> 决定的 sigma 对图像平滑，再在此基础上求 Harris 响应（若有 skimage 则用 <code style="color:#22d3bf">corner_harris</code>，否则手动计算结构张量，k=0.04）。相当于 HALCON 的 <code style="color:#22d3bf">points_harris_binomial</code>（Detect points of interest using the binomial approximation of the Harris operator.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が Harris 応答自体のシグマ(0.5〜2.5)を、<code style="color:#22d3bf">b</code> が前段の平滑化シグマ(0.5〜2.0)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节 Harris 响应本身的 sigma(0.5~2.5)，<code style="color:#22d3bf">b</code> 调节前级平滑的 sigma (0.5~2.0)。两者都会被使用。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

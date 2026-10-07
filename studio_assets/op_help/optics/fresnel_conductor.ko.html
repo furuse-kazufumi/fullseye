@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_conductor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>금속(복소 굴절률 n + ik) 계면의 반사율. 입사 쪽은 진공/공기로 가정합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>cos_i: 入射角の cos。n / k: 実部 / 消衰係数(配列可、cos_i とブロードキャスト)。</p>
-<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R。<b>金属に「臨界角」は無い</b> — k&gt;0 なので透過波は減衰波であり、どの角度でも一部が吸収される(R&lt;1)。</p>
-<p>式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2 の複素形)。</p>
+<p>cos_i: 입사각의 cos. n / k: 실부 / 소광 계수(배열 가능, cos_i와 브로드캐스트).</p>
+<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;.</p>
+<p>반환값: 반사율 R. <b>금속에 &quot;임계각&quot;은 없다</b> — k&gt;0이므로 투과파는 감쇠파이며, 어느 각도에서도 일부가 흡수된다(R&lt;1).</p>
+<p>식: η² = (n+ik)² − sin²θ로 두고 rs = (cosθ − η)/(cosθ + η), rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2의 복소 형태).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

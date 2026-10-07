@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>建立一種材質。<code style="color:#22d3bf">kind</code> 為 lambert / conductor / dielectric 三選一。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
-<p>lambert: <code style="color:#22d3bf">albedo</code>(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>
-<p>conductor: <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)の複素屈折率で色が決まり、</p>
-<p><code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)で異方性ローブの幅が決まる。<b>色は指定しない</b>。</p>
-<p><code style="color:#22d3bf">roughness_um</code> は面粗さ Rq [µm]。鏡面として返る割合が</p>
-<p>exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、</p>
-<p>鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。</p>
-<p><b>波長が式に入る</b>ので、同じ面でも光源の波長で見え方が変わる。</p>
-<p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)の Sellmeier 分散で屈折し、</p>
-<p><code style="color:#22d3bf">sigma_per_mm</code> の Beer–Lambert で吸収する。</p>
-<p>返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。</p>
+<p>只有 3 種是因為<b>混在一起會默默出錯</b>，要增加就分成不同型別(漫射、金屬還是透明，光線的去向會根本不同)。</p>
+<p>lambert：只使用 <code style="color:#22d3bf">albedo</code>(純量或 RGB 3 元素)的完全漫射。</p>
+<p>conductor：顏色由 <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)的複折射率決定，</p>
+<p>異向性波瓣寬度由 <code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)決定。<b>不指定顏色</b>。</p>
+<p><code style="color:#22d3bf">roughness_um</code> 是表面粗糙度 Rq [µm]。作為鏡面回傳的比例由</p>
+<p>exp(-(4πσcosθ/λ)²) 決定(Davies 1954 / Bennett-Porteus 1961)，所以</p>
+<p>是鏡面(0.01 = 拋光)還是偏漫射(1.0 = 霧面)由這 1 個值決定。</p>
+<p><b>波長進入公式</b>，所以同一表面也會因光源波長而看起來不同。</p>
+<p>dielectric：依 <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)的 Sellmeier 色散折射，</p>
+<p>以 <code style="color:#22d3bf">sigma_per_mm</code> 的 Beer–Lambert 吸收。</p>
+<p>回傳值：經驗證後存放上述內容的 dict(直接傳給其他 scene_* op)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

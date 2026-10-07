@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>유선을 RK4로 추적한다(MATLAB의 <code style="color:#22d3bf">stream2</code> / <code style="color:#22d3bf">streamslice</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">seeds</code> を省くと <b>Jobard–Lefer(1997)の等間隔配置</b>で種を自動で置く。流線どうしが <code style="color:#22d3bf">separation</code> 程度の間隔で並び、<code style="color:#22d3bf">test_ratio * separation</code> より近づいた所で打ち切る。矢印図は密にすると潰れ、種を手で置くと空白が残るが、この配置は<b>空白も重なりも作らない</b>(下の 2 つの性質を門にしている)。</p>
-<p style="margin:2px 0 2px 12px">• 別々の流線の標本点どうしは <code style="color:#22d3bf">test_ratio * separation</code> より近づかない。</p>
-<p style="margin:2px 0 2px 12px">• 速さが <code style="color:#22d3bf">min_speed</code> 以上の格子点はどれも、どこかの流線から <code style="color:#22d3bf">separation</code> 以内にある(取りこぼしの無さ)。</p>
-<p>座標は flow の格子(行 0 が上、<code style="color:#22d3bf">(row, col)</code>)。向きの場は速さで割って <b>弧長で進む</b>ので、1 歩は <code style="color:#22d3bf">step</code> 格子。速さは流線上の各点で別に返す。</p>
+<p><code style="color:#22d3bf">seeds</code>를 생략하면 <b>Jobard–Lefer(1997)의 등간격 배치</b>로 시드를 자동으로 둔다. 유선끼리 <code style="color:#22d3bf">separation</code> 정도의 간격으로 늘어서고, <code style="color:#22d3bf">test_ratio * separation</code> 보다 가까워진 곳에서 잘라낸다. 화살표 그림은 촘촘하게 하면 뭉개지고, 시드를 손으로 두면 공백이남지만, 이 배치는 <b>공백도 겹침도 만들지 않는다</b>(아래 2가지 성질을 게이트로 삼고 있다).</p>
+<p style="margin:2px 0 2px 12px">• 서로 다른 유선의 표본점끼리는 <code style="color:#22d3bf">test_ratio * separation</code>보다 가까워지지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 속력이 <code style="color:#22d3bf">min_speed</code> 이상인 격자점은 어느 것이든 어딘가의 유선으로부터 <code style="color:#22d3bf">separation</code> 이내에 있다(빠뜨림이 없음).</p>
+<p>좌표는 flow의 격자(행 0이 위, <code style="color:#22d3bf">(row, col)</code>). 방향의 장은 속력으로 나누어 <b>호 길이로 나아가므로</b>, 1걸음은 <code style="color:#22d3bf">step</code> 격자. 속력은 유선 위의 각 점에서 따로 반환한다.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
-<p>seeds: <code style="color:#22d3bf">(n, 2)</code> の <code style="color:#22d3bf">(row, col)</code>。<code style="color:#22d3bf">None</code> で自動配置。</p>
-<p>separation: 流線の間隔 [格子]。<code style="color:#22d3bf">None</code> で <code style="color:#22d3bf">max(h, w) / 25</code>(2 以上)。</p>
-<p>step: RK4 の 1 歩 [格子]。</p>
-<p>max_length: 片方向の最大の長さ [格子]。<code style="color:#22d3bf">None</code> で <code style="color:#22d3bf">4 * (h + w)</code>。</p>
-<p>min_speed: これより遅い所で止める(<b>最大の速さに対する比</b>)。</p>
-<p>test_ratio: 打ち切りの距離を <code style="color:#22d3bf">separation</code> の何倍にするか(0 &lt; x ≤ 1)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>).</p>
+<p>seeds: <code style="color:#22d3bf">(n, 2)</code>의 <code style="color:#22d3bf">(row, col)</code>. <code style="color:#22d3bf">None</code>이면 자동 배치.</p>
+<p>separation: 유선의 간격 [격자]. <code style="color:#22d3bf">None</code>이면 <code style="color:#22d3bf">max(h, w) / 25</code>(2 이상).</p>
+<p>step: RK4의 1걸음 [격자].</p>
+<p>max_length: 한 방향의 최대 길이 [격자]. <code style="color:#22d3bf">None</code>이면 <code style="color:#22d3bf">4 * (h + w)</code>.</p>
+<p>min_speed: 이보다 느린 곳에서 멈춘다(<b>최대 속력에 대한 비</b>).</p>
+<p>test_ratio: 잘라내기 거리를 <code style="color:#22d3bf">separation</code>의 몇 배로 할지(0 &lt; x ≤ 1).</p>
 <p>Returns:</p>
-<p>dict(table): <code style="color:#22d3bf">paths</code>(<code style="color:#22d3bf">(m_i, 2)</code> の list、上流 → 下流の順)、</p>
-<p><code style="color:#22d3bf">speed</code>(各点の速さの list)、<code style="color:#22d3bf">seeds</code>、<code style="color:#22d3bf">stop</code>(<code style="color:#22d3bf">(後ろ, 前)</code> の</p>
-<p>理由の組の list)、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">separation</code>、<code style="color:#22d3bf">d_test</code>、<code style="color:#22d3bf">step</code>、</p>
-<p><code style="color:#22d3bf">stop_counts</code>(理由ごとの数)。</p>
+<p>dict(table): <code style="color:#22d3bf">paths</code>(<code style="color:#22d3bf">(m_i, 2)</code>의 list, 상류 → 하류 순), <code style="color:#22d3bf">speed</code></p>
+<p>(각 점의 속력의 list), <code style="color:#22d3bf">seeds</code>, <code style="color:#22d3bf">stop</code>(<code style="color:#22d3bf">(뒤, 앞)</code>의</p>
+<p>이유 쌍의 list), <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">separation</code>, <code style="color:#22d3bf">d_test</code>, <code style="color:#22d3bf">step</code>,</p>
+<p><code style="color:#22d3bf">stop_counts</code>(이유별 수).</p>
 <p>Raises:</p>
-<p>ValueError: flow の形・非有限、パラメータ範囲外、種が格子の外。</p>
+<p>ValueError: flow의 형태·비유한, 파라미터 범위 밖, 시드가 격자 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

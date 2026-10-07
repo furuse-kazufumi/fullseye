@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>缺陷像素的表征(8.8 节)：对数直方图(式 73〜75)与累积直方图(式 77)，以及超过阈值的像素数。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>
+<p>*avg_image*：L 帧的平均图像(通过平均消除了时间噪声)。*L*：平均的帧数(使箱宽为 1/L 的整数倍)。*threshold*(必需)[DN]：统计相对平均的绝对偏差<b>超过</b>该值的像素(用途上的“阻带”)。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 相对平均的偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 绝对偏差, &quot;accum_percent&quot;: 偏差不小于该值的像素的 %, &quot;n_above&quot;: 数量, &quot;mu&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：不是 2-D / L 不是正整数 / threshold 为负 / 图像为常数(直方图宽度 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

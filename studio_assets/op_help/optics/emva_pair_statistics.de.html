@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet aus 2 Aufnahmen mit gleicher Belichtung Mittelwert, zeitliche Varianz und räumliche Varianz (Gl. 16, 18, 32).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2(式 16)、<code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2(式 18: 2 枚の平均の差の補正は Release 4 の新規)、<code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (式 32、負にならないことが示されている)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の実数でない / 形が違う / NaN・inf / 画素が 2 未満。</p>
+<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2 (Gl. 16), <code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2 (Gl. 18: die Korrektur für die Differenz der 2 Bildmittelwerte ist neu in Release 4), <code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (Gl. 32, nachweislich nie negativ).</p>
+<p>Rückgabewert <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: nicht 2-D reell / unterschiedliche Form / NaN, inf / weniger als 2 Pixel.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

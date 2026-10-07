@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>水印的<b>盲提取</b>。返回一维 bool(<code style="color:#22d3bf">phash</code> 词汇)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>同じ DWT / ブロック分割で中帯域係数の対の大小を読むだけ。原画像も鍵も要らない —— これは <b>秘匿ではなく完全性の印</b>であり、鍵が無いので <b>誰でも消せるし誰でも書ける</b>。所有権の主張には使えない。</p>
-<p>返りが <code style="color:#22d3bf">phash</code> 語彙なので、埋めたビット列との一致は <code style="color:#22d3bf">hash_distance</code> でそのまま数えられる(BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>)。語彙を合わせてあるのはそのため。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p>只是用相同的 DWT / 块划分读取中频带系数对的大小。既不需要原图像也不需要密钥 —— 这是<b>完整性的标记而非保密</b>，因为没有密钥，<b>谁都能抹掉，谁都能写入</b>。不能用于主张所有权。</p>
+<p>由于返回的是 <code style="color:#22d3bf">phash</code> 词汇，与嵌入的位串的一致程度可以直接用 <code style="color:#22d3bf">hash_distance</code> 计数(BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>)。词汇对齐正是为此。</p>
+<p><b>必须有 PyWavelets</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

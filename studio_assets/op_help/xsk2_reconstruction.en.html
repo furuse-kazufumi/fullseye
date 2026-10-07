@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Morphological reconstruction (reconstruction by dilation). Calls <code style="color:#22d3bf">skimage.morphology.reconstruction</code> with method=&quot;dilation&quot;.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」（<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>）として自動生成し、そのシードをマスク画像（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きいほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
+<p>The seed image is generated automatically as &quot;the original image darkened by a depth that depends on a&quot; (<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>), and that seed is geodesically dilated up to the mask image (the original image itself). a sweeps the seed depth (the larger it is, the more peaks disappear). b is unused. It removes small bright specks and noise while keeping the contours of large structures (less shape distortion than an opening).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

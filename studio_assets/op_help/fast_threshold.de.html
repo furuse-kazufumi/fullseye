@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Binarisierung mit einem festen Schwellenwert. Pixel, bei denen <code style="color:#22d3bf">x</code> in das Band <code style="color:#22d3bf">(a, a+0.5+0.5b)</code> fällt, werden zum Vordergrund (1) (teilt sich den <code style="color:#22d3bf">fixed</code>-Zweig von <code style="color:#22d3bf">_sh_threshold</code> mit dem <code style="color:#22d3bf">threshold</code>-Seed-Op). a stellt die untere Grenze ein, b die Bandbreite (obere Grenze).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">fast_threshold</code>（大域しきい値による高速な二値化、通常は単純な閾値以上/以下の判定）に相当するが、この実装は下限・上限の両方を持つ帯域しきい値である点、および高速化のための整数近似などは行っていない点で近似。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">fast_threshold</code> (schnelle Binarisierung über einen globalen Schwellwert, üblicherweise ein einfacher Test oberhalb/unterhalb des Schwellwerts), ist aber insofern eine Näherung, als diese Implementierung ein Band-Schwellwert mit Unter- und Obergrenze ist und keine Ganzzahl-Näherung o. Ä. zur Beschleunigung vornimmt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

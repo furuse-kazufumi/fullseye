@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der spektrale Reflexionsgrad eines dünnen Films (Dicke d, Index n_film). Die geschlossene Airy-(Mehrfachreflexions-)Form.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>nm:           波長 [nm] (配列可)。</p>
-<p>thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。</p>
-<p>cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。</p>
-<p>返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。</p>
-<p>物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。λ/4 の奇数倍で反射が極大(n_film &gt; n_sub のとき)になり、<b>厚みを変えると色が動く</b>のがシャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。</p>
+<p>nm:           Wellenlänge [nm] (Array zulässig).</p>
+<p>thickness_nm: Schichtdicke [nm]. 200–800 bei einer Seifenblase, 50–300 bei einer Eloxalschicht. n_film/n_sub/n_out: Brechungsindex von Schicht / Substrat / Einfallsseite (reell, ohne Absorption).</p>
+<p>cos_theta:    cos des Einfallswinkels auf der Einfallsseite (Array zulässig, in einer mit nm broadcastfähigen Form).</p>
+<p>Rückgabewert: Reflexionsgrad R (0–1), in der Broadcast-Form von nm und cos_theta.</p>
+<p>Physik: Phasendifferenz durch die Ausbreitung in der Schicht δ = 2π·(2 n_film d cosθ_film)/λ. Mit den Fresnel-Koeffizienten der Grenzflächen (Mittel aus s- und p-Polarisation = unpolarisiert) als r1, r2 gilt R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|². Bei ungeraden Vielfachen von λ/4 ist die Reflexion maximal (wenn n_film &gt; n_sub), und <b>die Farbe wandert mit der Dicke</b> —— das ist die Farbe einer Seifenblase. Bei Schichtdicke 0 stimmt R mit der Fresnel-Reflexion des Substrats allein überein (in Tests geprüft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

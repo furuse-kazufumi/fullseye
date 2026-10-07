@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.error_level_map(image, quality: &#x27;int&#x27; = 90, normalize: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;error_level_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ELA(오차 수준 분석). 지정 품질로 <b>재압축한 차분</b>의 지도. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Krawetz 2007。JPEG は 8x8 ブロックごとに量子化するので、<b>一度圧縮された領域</b>は同じ品質で再圧縮しても誤差が小さく、<b>後から貼られた / 描かれた領域</b>は誤差が大きく残る、という考え方に基づく。</p>
-<p><code style="color:#22d3bf">normalize=True</code>(既定)なら最大値で割って [0, 1] にする(見るため)。<code style="color:#22d3bf">False</code> なら 8 bit 階調そのままの絶対誤差(数えるため)。</p>
-<p><b>Pillow が無ければ <code style="color:#22d3bf">ImportError</code>。近似には落ちない。</b> DCT の量子化だけを numpy で真似ると、符号化器の丸め・色空間変換・チャネル間引きが消えた *別物* になる。それを ELA と名乗ると、この族が潰そうとしている「もっともらしく間違う」を自分でやることになる。</p>
-<p><b>この地図が言えないこと</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像の中央 64x64 に別画像を貼ったもの):</p>
+<p>Krawetz 2007. JPEG는 8x8 블록마다 양자화하므로, <b>한 번 압축된 영역</b>은같은 품질로 재압축해도 오차가 작고, <b>나중에 붙인 / 그린 영역</b>은 오차가크게 남는다는 생각에 기초한다.</p>
+<p><code style="color:#22d3bf">normalize=True</code>(기본값)이면 최댓값으로 나누어 [0, 1]로 한다(보기 위해). <code style="color:#22d3bf">False</code>이면 8 bit 계조 그대로의 절대 오차(세기 위해).</p>
+<p><b>Pillow가 없으면 <code style="color:#22d3bf">ImportError</code>. 근사로 떨어지지 않는다.</b> DCT의 양자화만을 numpy로 흉내 내면, 부호화기의 반올림·색 공간 변환·채널 솎아내기가 사라진 *별개의 것*이된다. 그것을 ELA라고 부르면, 이 족이 없애려 하는 &quot;그럴듯하게 틀린다&quot;를스스로 하게 된다.</p>
+<p><b>이 지도가 말할 수 없는 것</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code>가 수치로 고정. 256x256의 1/f^1.6 화상의 중앙 64x64에 다른 화상을 붙인 것):</p>
 <p>==================================== =============== =============== =========</p>
-<p>元の画像                             貼付部の ELA    背景の ELA      比</p>
+<p>원래 화상                            붙인 부분 ELA   배경의 ELA      비</p>
 <p>==================================== =============== =============== =========</p>
-<p><b>無圧縮</b>(一度も JPEG を通らない)  0.1966          0.1793          <b>1.096</b></p>
-<p>一度 JPEG 品質 75 を通した           0.1966          0.0401          <b>4.898</b></p>
+<p><b>무압축</b>(한 번도 JPEG 안 거침)     0.1966          0.1793          <b>1.096</b></p>
+<p>한 번 JPEG 품질 75를 거침            0.1966          0.0401          <b>4.898</b></p>
 <p>==================================== =============== =============== =========</p>
-<p style="margin:2px 0 2px 12px">• <b>無圧縮 PNG では何も言えない</b>。上の 1.096 倍は「貼った所と貼っていない所が区別できない」という意味である。<b>ELA が意味を持つのは「元が JPEG」のときだけ</b>で、そのとき初めて 4.898 倍という差になる。</p>
-<p style="margin:2px 0 2px 12px">• よく言われる「ELA は高周波を追っているだけ」も、この画像では成り立たない —— ELA と Sobel 勾配強度の相関は <b>0.003</b>(無圧縮)/ <b>0.057</b>(JPEG 済み)。ELA は 8x8 ブロックの量子化残差を見ているので、勾配とは別のものを測っている。それでも上の表のとおり <b>無圧縮では改竄を分離しない</b>。「勾配の言い換えだから駄目」なのではなく、<b>比べる基準になる量子化履歴が無いから駄目</b>である。</p>
-<p style="margin:2px 0 2px 12px">• 平坦な領域は圧縮しても誤差が出ないので、<b>改竄されていても暗いまま</b>になる。</p>
+<p style="margin:2px 0 2px 12px">• <b>무압축 PNG에서는 아무것도 말할 수 없다</b>. 위의 1.096배는 &quot;붙인 곳과 붙이지 않은 곳을구별할 수 없다&quot;는 의미이다. <b>ELA가 의미를 갖는 것은 &quot;원본이 JPEG&quot;일 때뿐</b>이며, 그때 비로소 4.898배라는 차이가 된다.</p>
+<p style="margin:2px 0 2px 12px">• 흔히 말하는 &quot;ELA는 고주파를 쫓고 있을 뿐&quot;도 이 화상에서는 성립하지 않는다 —— ELA와 Sobel 기울기 강도의 상관은 <b>0.003</b>(무압축) / <b>0.057</b>(JPEG 완료). ELA는 8x8 블록의 양자화 잔차를 보고 있으므로, 기울기와는 다른 것을 재고 있다. 그래도 위 표대로 <b>무압축에서는 변조를 분리하지 않는다</b>. &quot;기울기의 바꿔 말하기이기 때문에안 된다&quot;가 아니라, <b>비교 기준이 될 양자화 이력이 없기 때문에 안 된다</b>.</p>
+<p style="margin:2px 0 2px 12px">• 평탄한 영역은 압축해도 오차가 나오지 않으므로, <b>변조되어 있어도 어두운 채로</b> 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

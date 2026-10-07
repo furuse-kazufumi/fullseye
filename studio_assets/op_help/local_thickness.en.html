@@ -13,12 +13,12 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns each foreground pixel filled with &quot;the <b>diameter of the largest circle</b> that can cover it&quot; (local thickness).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>明るい側を前景とみなす閾値が <code style="color:#22d3bf">b</code>(0.1〜0.9)。<code style="color:#22d3bf">a</code> が測る上限の半径(1〜12 画素)で、出力はその上限で割って <code style="color:#22d3bf">[0,1]</code> に収めてある —— <b>絶対値が要るときは <code style="color:#22d3bf">a</code> から上限を逆算して掛け戻すこと</b>。</p>
-<p>粒径・気孔径・肉厚を「1 枚の地図」として出す古典的な量で、モルフォロジーの粒度測定(granulometry)と同じもの: ある画素の値が <code style="color:#22d3bf">r</code> なら、その画素は半径 <code style="color:#22d3bf">r</code> の円による開処理を生き残る。距離変換で内接円の半径を求め、半径の大きい順にその円が覆う範囲へ書き込む、という素直な実装。</p>
-<p><b>適用条件</b>: (1) 前景を 1 つの閾値で決めるので、照明むらがあると太さが場所によって偏る —— 先に <code style="color:#22d3bf">local_threshold</code> などで平坦化すること。(2) 上限 <code style="color:#22d3bf">a</code> より太い構造は <b>上限で頭打ちになる</b>(飽和しているかは出力の最大値が 1.0 に貼りついているかで分かる)。</p>
-<p style="margin:2px 0 2px 12px">(3) 画素単位の量なので、直径が 3 画素を切ると量子化の刻みが 30% を超える。</p>
-<p><b>用途</b>: 鋳巣・発泡体の気孔径分布、粉体の粒径、薄肉部の検出、繊維の太さ。3-D 版は <code style="color:#22d3bf">ops3d</code> の <code style="color:#22d3bf">vol_wall_thickness</code>。HALCON に対応する単体 op は無い。</p>
+<p><code style="color:#22d3bf">b</code> is the threshold above which the bright side counts as foreground (0.1–0.9). <code style="color:#22d3bf">a</code> is the upper radius limit measured (1–12 pixels), and the output is divided by that limit to fit in <code style="color:#22d3bf">[0,1]</code> —— <b>when you need absolute values, recover the limit from <code style="color:#22d3bf">a</code> and multiply back</b>.</p>
+<p>A classic quantity that gives particle size, pore size and wall thickness as &quot;a single map&quot;; it is the same as morphological</p>
+<p>granulometry: if a pixel has the value <code style="color:#22d3bf">r</code>, that pixel survives an opening with a disc of radius <code style="color:#22d3bf">r</code>. The implementation is straightforward: the distance transform gives the inscribed-circle radius, and in descending order of radius each circle is written into the area it covers.</p>
+<p><b>Applicability</b>: (1) The foreground is decided by a single threshold, so with uneven illumination the thickness becomes biased by location —— flatten first with <code style="color:#22d3bf">local_threshold</code> or similar. (2) Structures thicker than the limit <code style="color:#22d3bf">a</code> <b>level off at the limit</b> (whether it saturates shows in the output maximum sticking at 1.0).</p>
+<p style="margin:2px 0 2px 12px">(3) It is a pixel-unit quantity, so once the diameter drops below 3 pixels the quantization step exceeds 30%.</p>
+<p><b>Uses</b>: pore-size distribution in casting voids and foams, powder particle size, detection of thin-walled sections, fibre thickness. The 3-D version is <code style="color:#22d3bf">vol_wall_thickness</code> in <code style="color:#22d3bf">ops3d</code>. HALCON has no corresponding single op.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

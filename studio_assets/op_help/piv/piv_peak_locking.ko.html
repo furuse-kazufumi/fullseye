@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>피크 로킹의 강도. 소수부의 분포가 균일 분포에서 얼마나 벗어나 있는가.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、そこからのずれを測る。</p>
-<p>指標 <code style="color:#22d3bf">c0</code> は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。一様分布から標本を取ると期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>
-<p>★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が少ない場や、変位がゆっくり変わる場では<b>真値そのものの c0 も大きくなる</b> (実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的にしか現れないため)。したがって c0 は<b>同じ入力の真値と比べて</b>読むこと。</p>
-<p><b>決定的な診断は別にある</b> —— 一様並進の小数部を 0 から 0.9 まで振り、推定値が対角線に乗るかを見る。実測(win=32、density 0.02):</p>
+<p>서브픽셀 추정은 참 변위의 소수부가 0이나 0.5일 때 그쪽으로 끌려가는치우침을 가진다(상관 피크의 모양과 피팅하는 함수의 모양이 다른 데서 오는, PIV의교과서적인 계통 오차). <b>흐름이 균일하지 않다면 소수부는 균일 분포에 가까울 것</b>이므로, 거기서의 어긋남을 잰다.</p>
+<p>지표 <code style="color:#22d3bf">c0</code>는 <b>표본 수에 의존하지 않는</b> 카이제곱형 어긋남:</p>
+<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>. 균일 분포에서 표본을 취하면기댓값 1이 되므로, <b>1 전후라면 균일과 구별할 수 없고</b>, 클수록 치우쳐 있다.</p>
+<p>★ 다만 이 지표는 &quot;참 변위의 소수부가 균일하다&quot;는 것을 가정한다. 창의 수가적은 장이나, 변위가 천천히 변하는 장에서는 <b>참값 자체의 c0도 커진다</b> (실측: 선형 램프의 참값에서 82 —— 창 격자가 19열밖에 없어 소수부가 이산적으로밖에나타나지 않기 때문). 따라서 c0는 <b>같은 입력의 참값과 비교하여</b> 읽을 것.</p>
+<p><b>결정적인 진단은 따로 있다</b> —— 균일 병진의 소수부를 0에서 0.9까지 흔들어, 추정값이 대각선에 올라타는지를 본다. 실측(win=32, density 0.02):</p>
 <p>==========  =================  ==================</p>
-<p>推定法      小数部誤差の RMS   最大絶対誤差</p>
+<p>추정법      소수부 오차 RMS    최대 절대 오차</p>
 <p>==========  =================  ==================</p>
 <p>gauss3      0.0037 px          0.0088 px</p>
 <p>parabolic   0.0104 px          0.0151 px</p>
 <p>centroid    0.2259 px          0.3701 px</p>
 <p>==========  =================  ==================</p>
-<p><code style="color:#22d3bf">centroid</code> は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる教科書どおりの S 字。<b>出るはずのものが出た</b>ことの確認であって、実装の不具合ではない(だから 3 つとも残してある)。</p>
+<p><code style="color:#22d3bf">centroid</code>는 참값 0.1을 0.02, 0.9를 0.98로 답한다 —— 정수로 끌어당기는교과서대로의 S자. <b>나와야 할 것이 나왔다</b>는 것의 확인이지, 구현의 결함이 아니다(그래서 3개 모두 남겨 두었다).</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>bins: 小数部のヒストグラムの階級数。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>bins: 소수부 히스토그램의 계급 수.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code>(両成分合わせた指標)、<code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>)、</p>
-<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>、<code style="color:#22d3bf">bins</code>。</p>
+<p>dict: <code style="color:#22d3bf">c0</code>(양 성분을 합친 지표), <code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>),</p>
+<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>, <code style="color:#22d3bf">bins</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

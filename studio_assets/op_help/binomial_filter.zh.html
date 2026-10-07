@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以二项式系数(帕斯卡三角)为权重的可分离平滑滤波器。通过依次沿纵、横方向应用 <code style="color:#22d3bf">ndimage.correlate1d</code>,用离散二项核来近似高斯核 —— 这与 HALCON 的 <code style="color:#22d3bf">binomial_filter</code>(Smooth an image using the binomial filter.)所用核的思路相同。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が核サイズを <code style="color:#22d3bf">{3,5,7,9}</code> の 4 段階(<code style="color:#22d3bf">_k(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
+<p><code style="color:#22d3bf">a</code> 将核大小在 <code style="color:#22d3bf">{3,5,7,9}</code> 这 4 档(<code style="color:#22d3bf">_k(a)</code>)间调节。<code style="color:#22d3bf">b</code> 未使用。计算比高斯模糊轻，也不易出现振铃。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

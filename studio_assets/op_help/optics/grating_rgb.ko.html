@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 맵 + 광원 + 시선 → <b>회절에 의한 무지개색</b> (H, W, 3) 선형 sRGB.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>CD/DVD の記録トラックは等間隔の溝 = 反射型回折格子である。溝に直交する方向の「入射と出射の sin の差」が波長を選ぶので、面の向きが変わると色が変わる。</p>
-<p>normals: (H, W, 3) 法線マップ(長さ 0 = 背景 → 0 を返す)。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 溝の方向(3,)。法線に射影して面内成分を使う。</p>
-<p>pitch_um: 溝間隔 [µm] (CD 1.6 / DVD 0.74 / BD 0.32)。</p>
-<p>orders:   使う回折次数(内部で ±両方を使う — 対称な溝は両側へ回折する)。</p>
-<p>strength: 全体の強さ。</p>
-<p>width_nm: 1 本の回折線に与える波長方向の幅 [nm] (有限のスポットサイズ・帯域の効果)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB(負値は残す = 色域外がそのまま見える)。</p>
+<p>CD/DVD의 기록 트랙은 등간격의 홈 = 반사형 회절 격자이다. 홈에 직교하는 방향의 &quot;입사와 출사의 sin의 차&quot;가 파장을 고르므로, 면의 방향이 바뀌면 색이 바뀐다.</p>
+<p>normals: (H, W, 3) 법선 맵(길이 0 = 배경 → 0을 반환). light / view: 면에서 광원 / 시점으로의 방향(3,).</p>
+<p>tangent: 홈의 방향(3,). 법선에 대해 사영하여 면내 성분을 쓴다.</p>
+<p>pitch_um: 홈 간격 [µm] (CD 1.6 / DVD 0.74 / BD 0.32).</p>
+<p>orders:   사용할 회절 차수(내부에서 ± 양쪽을 쓴다 — 대칭인 홈은 양쪽으로 회절한다).</p>
+<p>strength: 전체 강도.</p>
+<p>width_nm: 1개의 회절선에 주는 파장 방향의 폭 [nm] (유한한 스폿 크기·대역의 효과).</p>
+<p>반환값: (H, W, 3) 선형 sRGB(음의 값은 남긴다 = 색역 밖이 그대로 보인다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

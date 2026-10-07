@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测拉普拉斯算子（内含高斯平滑，sigma 为 <code style="color:#22d3bf">0.5+2*a</code>）符号翻转的像素（过零点）。LoG 过零点是以能高精度定位边缘而著称的经典检测方法。相当于 HALCON 的 <code style="color:#22d3bf">zero_crossing</code>（Extract zero crossings from an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用。上下・左右いずれかの方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。</p>
+<p><code style="color:#22d3bf">a</code> 调节高斯平滑的 sigma。<code style="color:#22d3bf">b</code> 未使用。只要在上下、左右任一方向上符号改变即视为过零点(斜方向不直接检查)。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

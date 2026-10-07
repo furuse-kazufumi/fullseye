@@ -4,61 +4,60 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>촬영한 스페클이 DIC에 적합한지를 4개의 숫자로 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(<code style="color:#22d3bf">speckle_filter</code> は SAR の斑点雑音 <b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
-<p>引数</p>
-<p>img  スペックル画像(2 次元)。輝度の規格は問わないが、<code style="color:#22d3bf">coverage</code> は</p>
-<p>画像内の最小・最大を基準にした相対しきい値で数える。</p>
-<p>戻り値は <code style="color:#22d3bf">dict</code>:</p>
-<p><code style="color:#22d3bf">mig</code>                     平均輝度勾配 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>。</p>
-<p>Pan らの DIC 品質指標。変位の分散の下限が</p>
-<p><code style="color:#22d3bf">σ_noise / (mig √N)</code> で決まるので、これが</p>
-<p>小さいと何をしても測れない。</p>
-<p><code style="color:#22d3bf">grad_rms</code>                x 方向だけの <code style="color:#22d3bf">sqrt(mean(Ix²))</code>。</p>
-<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code> を超える画素の割合。</p>
-<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   斑点の平均直径 [px] の<b>推定値</b>(下記)。</p>
-<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> は推定であって測定ではない</p>
-<p>平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 <code style="color:#22d3bf">R½</code> を線形</p>
-<p>内挿で求め、<code style="color:#22d3bf">diameter = √2 · R½</code> を返す。<code style="color:#22d3bf">√2</code> の根拠: 1σ 半径 <code style="color:#22d3bf">r</code> の</p>
-<p>ガウス斑点をランダムに撒いた場の自己相関は 1σ が <code style="color:#22d3bf">r√2</code> のガウスなので</p>
-<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>、斑点の FWHM は <code style="color:#22d3bf">2r√(2ln2)</code>、比がちょうど <code style="color:#22d3bf">√2</code>。</p>
-<p>つまり<b>斑点がガウスで位置が無相関という仮定の上でだけ</b> FWHM に一致する。</p>
-<p>実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。</p>
-<p>右: <code style="color:#22d3bf">piv_synth_particles</code>、<code style="color:#22d3bf">diameter_px</code> は 2σ なので FWHM は</p>
+<p><code style="color:#22d3bf">pivops</code>에도 <code style="color:#22d3bf">fullseye</code>에도 없다(<code style="color:#22d3bf">speckle_filter</code>는 SAR의 반점 잡음 <b>제거</b>로 별개의 것). 촬영 현장에서 &quot;이 무늬로 잴 수 있는가&quot;를 판정하기 위한 창구.</p>
+<p>인수</p>
+<p>img  스페클 이미지(2차원). 휘도의 규격은 묻지 않지만, <code style="color:#22d3bf">coverage</code>는</p>
+<p>이미지 내의 최소·최대를 기준으로 한 상대 임계값으로 센다.</p>
+<p>반환값은 <code style="color:#22d3bf">dict</code>:</p>
+<p><code style="color:#22d3bf">mig</code>                     평균 휘도 기울기 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>.</p>
+<p>Pan 등의 DIC 품질 지표. 변위 분산의 하한이</p>
+<p><code style="color:#22d3bf">σ_noise / (mig √N)</code>로 정해지므로, 이것이</p>
+<p>작으면 무엇을 해도 잴 수 없다.</p>
+<p><code style="color:#22d3bf">grad_rms</code>                x 방향만의 <code style="color:#22d3bf">sqrt(mean(Ix²))</code>.</p>
+<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code>을 넘는 화소의 비율.</p>
+<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   반점의 평균 직경 [px]의 <b>추정값</b>(아래).</p>
+<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code>는 추정이지 측정이 아니다</p>
+<p>평균을 뺀 이미지의 자기상관의 동경 평균이 0.5로 떨어지는 반경 <code style="color:#22d3bf">R½</code>를 선형</p>
+<p>보간으로 구하고, <code style="color:#22d3bf">diameter = √2 · R½</code>를 반환한다. <code style="color:#22d3bf">√2</code>의 근거: 1σ 반경 <code style="color:#22d3bf">r</code>의</p>
+<p>가우스 반점을 무작위로 뿌린 장의 자기상관은 1σ가 <code style="color:#22d3bf">r√2</code>인 가우스이므로</p>
+<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>, 반점의 FWHM은 <code style="color:#22d3bf">2r√(2ln2)</code>, 비가 정확히 <code style="color:#22d3bf">√2</code>.</p>
+<p>즉 <b>반점이 가우스이고 위치가 무상관이라는 가정 위에서만</b> FWHM과 일치한다.</p>
+<p>실측(왼쪽: 해석 스페클, 1σ 반경을 흔들고 피복률이 맞도록 개수를 조정.</p>
+<p>오른쪽: <code style="color:#22d3bf">piv_synth_particles</code>, <code style="color:#22d3bf">diameter_px</code>는 2σ이므로 FWHM은</p>
 <p><code style="color:#22d3bf">1.1774 × diameter_px</code>):</p>
-<p>1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig</p>
+<p>1σ r   FWHM   추정   비   |  d_px   FWHM   추정   비    cov     mig</p>
 <p>0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351</p>
 <p>1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676</p>
 <p>1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775</p>
 <p>2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764</p>
 <p>4.0    9.42   9.18  0.97  |</p>
-<p><b>ガウス斑点なら 3 % 以内</b>。実物のスペックル(印刷・スプレー)は</p>
-<p>ガウスではないので、この表は換算の算数が合っていることの確認であって、</p>
-<p>実写での精度ではない。<b>何に偏るか</b>:</p>
-<p style="margin:2px 0 2px 12px">• 斑点の形がガウスでないと <code style="color:#22d3bf">√2</code> の換算そのものがずれる。</p>
-<p style="margin:2px 0 2px 12px">• 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり<b>過大</b>に出る。先に高域通過を掛けること。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。</p>
-<p style="margin:2px 0 2px 12px">• 環の代表半径は<b>環内の半径の平均</b>を使う。ビン番号を使うと半径 1 の環に対角の √2 が混ざり、1σ=0.6 px で径が <b>0.80 倍</b>(2 割過小)に出た。</p>
-<p>★ MIG は下限を切る指標であって、最大化する目的関数ではない</p>
-<p>上の左表で <code style="color:#22d3bf">mig</code> は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し</p>
-<p>1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が</p>
-<p>足りず、<code style="color:#22d3bf">examples/poc_dic_strain.py</code> の 9 節の実測では偏りも散らばりも</p>
-<p>最悪になる。<b>MIG を最大化すると測れないスペックルを選ぶ。</b></p>
-<p>右表の粒子像では <code style="color:#22d3bf">d=4.0</code> で頭打ちになり <code style="color:#22d3bf">d=6.0</code> でわずかに下がる ——</p>
-<p>同じ指標が入力の作り方で単調にも非単調にもなるので、</p>
-<p><b>絶対値ではなく同じ撮り方どうしの比較に使うこと。</b></p>
-<p>★ <code style="color:#22d3bf">coverage</code> のしきい値は Otsu ではない</p>
-<p><code style="color:#22d3bf">0.2*(max-min) + min</code> の固定しきい値。Otsu は 2 峰の分布を仮定するが、</p>
-<p>スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと</p>
-<p><b>しきい値が画像ごとに動いて比較できなくなる</b>。固定なら少なくとも</p>
-<p>同じ規格の画像どうしは比べられる。</p>
-<p>★ MIG は単位を持つ</p>
-<p>「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで</p>
-<p>255 倍違う。<b>同じ規格の画像どうしでしか比べられない。</b></p>
+<p><b>가우스 반점이라면 3 % 이내</b>. 실물 스페클(인쇄·스프레이)은</p>
+<p>가우스가 아니므로, 이 표는 환산의 산수가 맞는다는 것의 확인이지,</p>
+<p>실사에서의 정밀도가 아니다. <b>무엇에 치우치는가</b>:</p>
+<p style="margin:2px 0 2px 12px">• 반점의 모양이 가우스가 아니면 <code style="color:#22d3bf">√2</code>의 환산 자체가 어긋난다.</p>
+<p style="margin:2px 0 2px 12px">• 저주파의 얼룩(조명 기울기)이 있으면 자기상관의 자락이 들려 <b>과대</b>하게 나온다. 먼저 고역 통과를 걸 것.</p>
+<p style="margin:2px 0 2px 12px">• 자기상관은 순환 상관(FFT)이므로, 주기성이 있는 배경이 있으면 흐트러진다.</p>
+<p style="margin:2px 0 2px 12px">• 고리의 대표 반경은 <b>고리 안의 반경의 평균</b>을 쓴다. 빈 번호를 쓰면 반경 1의 고리에대각의 √2가 섞여, 1σ=0.6 px에서 직경이 <b>0.80배</b>(2할 과소)로 나왔다.</p>
+<p>★ MIG는 하한을 자르는 지표이지, 최대화하는 목적 함수가 아니다</p>
+<p>위의 왼쪽 표에서 <code style="color:#22d3bf">mig</code>는 반점이 미세할수록 크다(1σ=4.0의 0.0384에 대해</p>
+<p>1σ=0.6에서 0.1127, 2.9배). 하지만 직경 1.4 px의 스페클은 샘플링이</p>
+<p>부족하여, <code style="color:#22d3bf">examples/poc_dic_strain.py</code>의 9절의 실측에서는 치우침도 흩어짐도</p>
+<p>최악이 된다. <b>MIG를 최대화하면 잴 수 없는 스페클을 고른다.</b></p>
+<p>오른쪽 표의 입자상에서는 <code style="color:#22d3bf">d=4.0</code>에서 정점에 이르고 <code style="color:#22d3bf">d=6.0</code>에서 약간 내려간다 ——</p>
+<p>같은 지표가 입력을 만드는 방식에 따라 단조도 비단조도 되므로,</p>
+<p><b>절대값이 아니라 같은 촬영 방식끼리의 비교에 쓸 것.</b></p>
+<p>★ <code style="color:#22d3bf">coverage</code>의 임계값은 Otsu가 아니다</p>
+<p><code style="color:#22d3bf">0.2*(max-min) + min</code>의 고정 임계값. Otsu는 2봉 분포를 가정하지만,</p>
+<p>스페클의 휘도 분포는 반점의 겹침으로 단봉이 되는 일이 많아, Otsu라면</p>
+<p><b>임계값이 이미지마다 움직여 비교할 수 없게 된다</b>. 고정이라면 적어도</p>
+<p>같은 규격의 이미지끼리는 비교할 수 있다.</p>
+<p>★ MIG는 단위를 가진다</p>
+<p>&quot;휘도 / px&quot;. 8 bit 정수 그대로 넘기는지 [0, 1]로 규격화한 뒤 넘기는지로</p>
+<p>255배 다르다. <b>같은 규격의 이미지끼리만 비교할 수 있다.</b></p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• 画像が完全に一様(<code style="color:#22d3bf">max == min</code>)—— 斑点が 1 つも無い。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関が 0.5 を切らない(視野より斑点が大きい)—— このときだけ <code style="color:#22d3bf">mean_blob_diameter_px</code> が <code style="color:#22d3bf">nan</code>。他の 3 つは返す。</p>
+<p style="margin:2px 0 2px 12px">• 2차원이 아님 / 8x8 미만 / NaN·Inf를 포함.</p>
+<p style="margin:2px 0 2px 12px">• 이미지가 완전히 균일(<code style="color:#22d3bf">max == min</code>) —— 반점이 1개도 없다.</p>
+<p style="margin:2px 0 2px 12px">• 자기상관이 0.5를 밑돌지 않음(시야보다 반점이 큼) —— 이때만 <code style="color:#22d3bf">mean_blob_diameter_px</code>가 <code style="color:#22d3bf">nan</code>. 나머지 3개는 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

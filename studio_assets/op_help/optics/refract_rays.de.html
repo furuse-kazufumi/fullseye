@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> oder rufe <code style="color:#22d3bf">glassmirror.refract_rays</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Vektorform der Snellius-Brechung. <b>Totalreflexion wird pro Strahl entschieden</b>; liefert (Richtung, TIR-Maske).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。n1 / n2: 入射側 / 透過側の屈折率。</p>
-<p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、マスクを True にする(NaN を返さない: 下流のレンダが黙って穴を開けるより、物理的に正しい「全反射した」方向を返す方が使える)。</p>
-<p>★ <code style="color:#22d3bf">match3d.refract</code> との違い: あちらは「1 本でも TIR ならバッチ全体が None」。画像サイズのバッチでは 1 画素の全反射で<b>全部が消える</b>ので、per-ray に直した。</p>
+<p>directions: (..., 3) Einfallsrichtungen (zur Fläche hin). normals: (..., 3) nach außen zeigende Normalen auf der Einfallsseite. n1 / n2: Brechungsindex der Einfalls- / Transmissionsseite.</p>
+<p>Rückgabewert: (refracted (...,3), tir (...,)) —— bei TIR-Strahlen wird die Richtung mit der <b>spiegelnden Reflexion</b> gefüllt und die Maske auf True gesetzt (kein NaN: statt einen nachgelagerten Renderer stillschweigend Löcher stanzen zu lassen, ist es nützlicher, die physikalisch korrekte &quot;totalreflektierte&quot; Richtung zurückzugeben).</p>
+<p>★ Unterschied zu <code style="color:#22d3bf">match3d.refract</code>: dort gilt &quot;ist auch nur 1 Strahl TIR, ist der ganze Batch None&quot;. Bei Batches in Bildgröße würde Totalreflexion an 1 Pixel <b>alles verschwinden lassen</b>, daher wurde auf per-ray umgestellt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

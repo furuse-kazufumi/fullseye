@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_color.inputs.jpg">edges_color: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測彩色邊緣的強度。號稱相當於 HALCON 的 <code style="color:#22d3bf">edges_color</code>（以 Canny/Deriche/Shen 濾波器擷取彩色邊緣），但<b>實作固定為 Di Zenzo 的多通道梯度法，而非可選濾波器方式</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル <code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。</p>
+<p>對各通道施加 Sobel 梯度 (gx, gy)，逐像素求梯度張量 <code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）的最大特徵值，將其平方根作為邊緣強度並以最大值正規化。a、b 未使用（無法選擇 HALCON 側提供的濾波器類型與閾值）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

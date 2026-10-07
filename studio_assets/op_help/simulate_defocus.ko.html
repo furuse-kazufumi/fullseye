@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>균일한 초점 흐림(디포커스)을 시뮬레이션하는 평활화. 구현은 사각형 창의 평균 필터(box filter, <code style="color:#22d3bf">ndimage.uniform_filter</code>)로, 원형 조리개에 의한 본래의 흐림 형태(착란원, circle-of-confusion)가 아니라 정사각형 창으로 근사한다. a가 창 폭을 3/5/7/9의 4단계로 나누며(<code style="color:#22d3bf">_k(a)</code>), b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">simulate_defocus</code>（一様なピンボケをシミュレートする演算）に相当するが、光学的に正しい円形ボケではなく矩形平均という粗い近似である点に注意。</p>
+<p>HALCON의 <code style="color:#22d3bf">simulate_defocus</code>(균일한 초점 흐림을 시뮬레이션하는 연산)에 해당하지만, 광학적으로 올바른 원형 보케가 아니라 사각형 평균이라는 거친 근사라는 점에 주의.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

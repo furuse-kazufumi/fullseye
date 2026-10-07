@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;perceptual_hash&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>感知雜湊。回傳 <b>bool 的一維位元串</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">mode</code>:</p>
-<p><code style="color:#22d3bf">&quot;dct&quot;</code>   縮小 <code style="color:#22d3bf">(hash_size * 4)</code> 角 → 2-D DCT-II(直交)→ 左上</p>
-<p><code style="color:#22d3bf">hash_size x hash_size</code> を取り、<b>DC を除いた中央値</b>と比較。</p>
-<p>Zauner 2010 の pHash と同じ手順。長さ <code style="color:#22d3bf">hash_size**2</code> ビット。</p>
-<p><code style="color:#22d3bf">&quot;average&quot;</code> 縮小 <code style="color:#22d3bf">hash_size</code> 角 → 平均と比較(aHash)。同じ長さ。<code style="color:#22d3bf">&quot;difference&quot;</code> 縮小 <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> → <b>横に隣り合う画素の大小</b>を比較(dHash)。同じ長さで、平均輝度の変化に強い。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像、<code style="color:#22d3bf">hash_size=8</code> = 64 ビット。<b>無関係な 2 枚の距離</b>は dct 31.3 / average 34.2 / difference 32.6(20 対の平均。理論値は 32 = ビット長の半分)):</p>
+<p><code style="color:#22d3bf">mode</code>：</p>
+<p><code style="color:#22d3bf">&quot;dct&quot;</code>   縮小為 <code style="color:#22d3bf">(hash_size * 4)</code> 見方 → 2-D DCT-II(正交)→ 取左上</p>
+<p><code style="color:#22d3bf">hash_size x hash_size</code>，與<b>除去 DC 的中位數</b>比較。</p>
+<p>與 Zauner 2010 的 pHash 相同的步驟。長度 <code style="color:#22d3bf">hash_size**2</code> 位元。</p>
+<p><code style="color:#22d3bf">&quot;average&quot;</code> 縮小為 <code style="color:#22d3bf">hash_size</code> 見方 → 與平均值比較(aHash)。長度相同。<code style="color:#22d3bf">&quot;difference&quot;</code> 縮小為 <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> → 比較<b>橫向相鄰像素的大小</b>(dHash)。長度相同，對平均輝度的變化穩健。</p>
+<p>實測(<code style="color:#22d3bf">tests/test_imgforensics.py</code> 以數值固定。256x256 的 1/f^1.6 影像，<code style="color:#22d3bf">hash_size=8</code> = 64 位元。<b>無關的 2 張影像的距離</b>為 dct 31.3 / average 34.2 / difference 32.6(20 對的平均。理論值為 32 = 位元長的一半))：</p>
 <p>===================== ======== ========== ============</p>
-<p>変換                  dct      average    difference</p>
+<p>轉換                  dct      average    difference</p>
 <p>===================== ======== ========== ============</p>
-<p>JPEG 品質 60 再圧縮   0        0          0</p>
-<p>JPEG 品質 30 再圧縮   2        0          0</p>
+<p>JPEG 品質 60 再壓縮   0        0          0</p>
+<p>JPEG 品質 30 再壓縮   2        0          0</p>
 <p>1/2 縮小              0        0          0</p>
 <p>1/4 縮小              0        0          0</p>
-<p>明るさ +0.1           0        0          0</p>
-<p><b>左右反転</b>          <b>28</b>   <b>42</b>     <b>34</b></p>
-<p><b>90 度回転</b>         <b>32</b>   <b>30</b>     <b>32</b></p>
-<p>別の画像              28       40         34</p>
+<p>亮度 +0.1             0        0          0</p>
+<p><b>左右翻轉</b>          <b>28</b>   <b>42</b>     <b>34</b></p>
+<p><b>旋轉 90 度</b>        <b>32</b>   <b>30</b>     <b>32</b></p>
+<p>另一張影像            28       40         34</p>
 <p>===================== ======== ========== ============</p>
-<p><b>この op が言えないこと</b>:</p>
-<p style="margin:2px 0 2px 12px">• 距離が小さい = 同じ画像、ではない。8x8 の粗い縮小に落としているので、<b>細部の改竄は距離 0 のまま通る</b>。実測:512x512 の画像に 24x24 のコピー&amp;ムーブを入れたときの距離は dct 0 / average 0 / difference 1。</p>
-<p style="margin:2px 0 2px 12px">• 距離が大きい = 別画像、でもない。上の表のとおり <b>反転と回転は「別の画像」と区別が付かない</b>(どちらも無関係な 2 枚と同じ距離域に入る)。幾何変換に対する不変性は一切無い。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は <b><code style="color:#22d3bf">phash</code> 語彙</b>であって <code style="color:#22d3bf">signal</code> ではない。bool の 1-D は既存の <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code> の述語をすべて満たすので、取り違えると <code style="color:#22d3bf">signal1d.lowpass</code> などが <b>有限でもっともらしい値</b>を返す(実測 5 op)。だから <code style="color:#22d3bf">hash_distance</code> は dtype を検査する。</p>
+<p><b>這個 op 無法斷言的事</b>：</p>
+<p style="margin:2px 0 2px 12px">• 距離小 ≠ 同一影像。因為縮小到了 8x8 的粗糙尺寸，<b>細節的竄改會以距離 0 通過</b>。實測：在 512x512 的影像中加入 24x24 的複製-移動時，距離為 dct 0 / average 0 / difference 1。</p>
+<p style="margin:2px 0 2px 12px">• 距離大也 ≠ 不同影像。如上表所示，<b>翻轉和旋轉與「另一張影像」無法區分</b>(兩者都落在與無關的 2 張影像相同的距離範圍內)。對幾何轉換完全沒有不變性。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值是 <b><code style="color:#22d3bf">phash</code> 詞彙</b>，而不是 <code style="color:#22d3bf">signal</code>。bool 的 1-D 滿足既有 <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code> 的全部述詞，所以一旦混淆，<code style="color:#22d3bf">signal1d.lowpass</code> 等就會回傳<b>有限且看似合理的值</b> (實測 5 個 op)。因此 <code style="color:#22d3bf">hash_distance</code> 會檢查 dtype。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

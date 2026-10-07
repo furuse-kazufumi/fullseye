@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;defocus_blur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>깊이 정답으로부터 <b>피사계 심도 흐림</b>을 입힙니다(이상적 핀홀 상 → 실제 렌즈의 상).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>名前が optics.depth_of_field と紛らわしいので分けてある: あちらは被写界深度の <b>数値</b>を返し、こちらは<b>画像にぼけを掛ける</b>(2026-09-05 に台帳で同名衝突を起こして発覚。同名 op は後勝ちで静かに上書きされるので、名前で区別する)。</p>
-<p>錯乱円の直径は幾何光学の閉じた式 <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code>(f = 焦点距離, N = F 値, z_f = 合焦距離)。画素数に直して、深度でまとめた層ごとにガウスぼかしを掛け、手前の層から合成する。</p>
-<p>これが無いと「視野には入っているのに実機では合焦しない」構成を見逃す ―― 仮想化の目的は絵を作ることではなく、<b>その光学構成で検査が成立するか</b>を先に知ることなので、被写界深度は省けない。</p>
-<p><code style="color:#22d3bf">focus_mm</code> を省くと <code style="color:#22d3bf">camera</code> の作動距離に合わせる。返り値は入力と同じ形。</p>
+<p>이름이 optics.depth_of_field와 헷갈리기 쉬워 나누어 두었다: 그쪽은 피사계 심도의 <b>수치</b>를 반환하고, 이쪽은 <b>이미지에 흐림을 건다</b>(2026-09-05에 대장에서 동명 충돌을일으켜 발각. 동명 op는 나중에 등록된 쪽이 조용히 덮어쓰므로, 이름으로 구별한다).</p>
+<p>착란원의 지름은 기하 광학의 닫힌 식 <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code>(f = 초점 거리, N = F값, z_f = 합초 거리). 화소 수로 고쳐, 깊이로 묶은 층마다 가우스 흐림을 걸고, 앞쪽 층부터 합성한다.</p>
+<p>이것이 없으면 &quot;시야에는 들어오는데 실기에서는 초점이 맞지 않는&quot; 구성을 놓친다 ―― 가상화의 목적은 그림을 만드는 것이 아니라 <b>그 광학 구성으로 검사가 성립하는가</b>를먼저 아는 것이므로, 피사계 심도는 생략할 수 없다.</p>
+<p><code style="color:#22d3bf">focus_mm</code>을 생략하면 <code style="color:#22d3bf">camera</code>의 작동 거리에 맞춘다. 반환값은 입력과 같은 형태.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_spatial_nonuniformity(dark_stack, bright_stack, K)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_spatial_nonuniformity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>DSNU 與 PRNU(式 33〜42、66、67)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*dark_stack*, *bright_stack*: 同じ露光で撮った L 枚(<code style="color:#22d3bf">(L, M, N)</code>、L ≥ 2)。bright は飽和の約 50 % で撮る。平均画像の空間分散から時間雑音の残り σ²_y/L を引き(式 36)、列・行・画素に分け(式 42)、DSNU1288 = s_y.dark / K [e⁻] (式 66)、PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67、比)。★規格は 8.1 節の高域フィルタ(照明のむら除去)をかけた画像で求める —— この op は渡された画像をそのまま使う(照明のむらを除いた画像を渡すこと)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 3-D でない / L &lt; 2 / 形が違う / K が正でない / bright の平均が dark 以下 / s²_y.50 &lt; s²_y.dark。</p>
+<p>*dark_stack*, *bright_stack*：以相同曝光拍攝的 L 幀(<code style="color:#22d3bf">(L, M, N)</code>，L ≥ 2)。bright 在飽和的約 50 % 處拍攝。從平均影像的空間變異數中減去時間雜訊的殘餘 σ²_y/L(式 36)，分解為行、列、像素(式 42)，DSNU1288 = s_y.dark / K [e⁻] (式 66)，PRNU1288 = √(s²_y.50 − s²_y.dark)/(μ_y.50 − μ_y.dark)(式 67，比值)。★標準是在經過 8.1 節高通濾波(去除照明不均)的影像上求取 —— 本 op 直接使用傳入的影像(請傳入已去除照明不均的影像)。</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;dark&quot;: {...}, &quot;bright&quot;: {...}, &quot;DSNU1288_e&quot;, &quot;PRNU1288&quot;, &quot;var_temporal_dark&quot;, &quot;var_temporal_bright&quot;, &quot;L&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：不是 3-D / L &lt; 2 / 形狀不同 / K 不為正 / bright 的平均不大於 dark / s²_y.50 &lt; s²_y.dark。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

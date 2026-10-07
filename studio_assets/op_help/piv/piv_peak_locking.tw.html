@@ -4,25 +4,23 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>峰值鎖定的強度：小數部分的分布偏離均勻分布的程度。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、そこからのずれを測る。</p>
-<p>指標 <code style="color:#22d3bf">c0</code> は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。一様分布から標本を取ると期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>
-<p>★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が少ない場や、変位がゆっくり変わる場では<b>真値そのものの c0 も大きくなる</b> (実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的にしか現れないため)。したがって c0 は<b>同じ入力の真値と比べて</b>読むこと。</p>
-<p><b>決定的な診断は別にある</b> —— 一様並進の小数部を 0 から 0.9 まで振り、推定値が対角線に乗るかを見る。実測(win=32、density 0.02):</p>
+<p>次像素估計帶有這樣的偏差：真實位移的小數部接近 0 或 0.5 時會被拉向那裡(來自相關峰形狀與擬合函數形狀不同，是 PIV 教科書級的系統誤差)。<b>只要流動不是均勻的，小數部應接近均勻分布</b>，量測的就是與之的偏離。</p>
+<p>指標 <code style="color:#22d3bf">c0</code> 是<b>不依樣本數而定</b>的卡方型偏離： <code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。從均勻分布抽樣時期望值為 1，因此<b>在 1 附近就與均勻無法區分</b>，越大越偏。</p>
+<p>★ 但這個指標假定「真實位移的小數部是均勻的」。在窗口數少的場、位移緩慢變化的場中，<b>真值本身的 c0 也會變大</b> (實測：線性斜坡的真值為 82 —— 窗口網格只有 19 行，小數部只能離散地出現)。因此請<b>與同一輸入的真值對比</b>來解讀 c0。</p>
+<p><b>決定性的診斷另有其法</b> —— 把均勻平移的小數部從 0 變到 0.9，看估計值是否落在對角線上。實測(win=32、density 0.02)：</p>
 <p>==========  =================  ==================</p>
-<p>推定法      小数部誤差の RMS   最大絶対誤差</p>
+<p>估計法      小數部誤差的 RMS   最大絕對誤差</p>
 <p>==========  =================  ==================</p>
 <p>gauss3      0.0037 px          0.0088 px</p>
 <p>parabolic   0.0104 px          0.0151 px</p>
 <p>centroid    0.2259 px          0.3701 px</p>
 <p>==========  =================  ==================</p>
-<p><code style="color:#22d3bf">centroid</code> は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる教科書どおりの S 字。<b>出るはずのものが出た</b>ことの確認であって、実装の不具合ではない(だから 3 つとも残してある)。</p>
+<p><code style="color:#22d3bf">centroid</code> 把真值 0.1 答成 0.02，0.9 答成 0.98 —— 拉向整數的教科書式 S 形。這是確認<b>該出現的東西出現了</b>，而不是實作的缺陷(所以 3 種都保留著)。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>bins: 小数部のヒストグラムの階級数。</p>
+<p>bins: 小數部直方圖的組數。</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code>(両成分合わせた指標)、<code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>)、</p>
+<p>dict: <code style="color:#22d3bf">c0</code>(兩分量合併的指標)、<code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>)、</p>
 <p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>、<code style="color:#22d3bf">bins</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>

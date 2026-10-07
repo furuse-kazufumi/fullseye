@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>形态学重建（reconstruction by dilation，膨胀重建）。以 method=&quot;dilation&quot; 调用 <code style="color:#22d3bf">skimage.morphology.reconstruction</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>シード画像を「元画像から a に応じた深さだけ暗くしたもの」（<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>）として自動生成し、そのシードをマスク画像（元画像そのもの）まで測地学的に膨張させる。a はシードの深さ（大きいほど多くの山が消える）を振る。b は未使用。小さな明るい斑点やノイズを消しつつ、大きな構造の輪郭は保つ（オープニングより形状の崩れが少ない）。</p>
+<p>种子图像自动生成为“从原图像按 a 对应的深度调暗后的图像” （<code style="color:#22d3bf">x - (0.05 + 0.25*a)</code>），再将该种子在掩模图像（即原图像本身）之下进行测地膨胀。a 调节种子的深度（越大消失的山峰越多）。b 未使用。在去除小的亮斑和噪声的同时保留大结构的轮廓（形状的走样比开运算少）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

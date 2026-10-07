@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>변조가 없다고</b> 알려진 표본으로부터 증거량의 귀무분포를 정리합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は <code style="color:#22d3bf">PCE 1832</code> のような数値を渡されて<b>解釈する手段が無い</b>。かといってしきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値ではない。</p>
-<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<p>이 족은 일관되게 판정을 반환하지 않는다. 그것은 옳지만, 그대로라면 이용자는 <code style="color:#22d3bf">PCE 1832</code> 같은 수치를 받고도 <b>해석할 수단이 없다</b>. 그렇다고임계값을 동봉하면 거짓말이 된다 ―― 분리점은 장수·해상도·압축률·피사체에 따라움직이므로, 출하 시에 정할 수 있는 값이 아니다.</p>
+<p>그래서 <b>이용자 자신의 깨끗한 데이터에서 분포를 잰다</b>. 동봉하는 것은 &quot;임계값&quot;이아니라 &quot;임계값을 재는 법&quot;이며, 그렇다면 조건이 바뀌어도 옳은 채로 있다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>values : array_like</p>
-<p>改竄が無いと分かっている組で測った証拠量(<code style="color:#22d3bf">hash_distance</code> や</p>
-<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> など)。<b>同じ条件</b>で集めること。</p>
+<p>변조가 없다고 알려진 쌍에서 잰 증거량(<code style="color:#22d3bf">hash_distance</code>나</p>
+<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> 등). <b>같은 조건</b>에서 모을 것.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">quantiles</code></p>
-<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
-<p>ので <code style="color:#22d3bf">n &lt; 20</code> は <code style="color:#22d3bf">caveats</code> に出す(黙って外挿しない)。</p>
+<p>(5, 25, 50, 75, 95, 99 퍼센타일). 표본이 적으면 꼬리는 잴 수 없으므로</p>
+<p><code style="color:#22d3bf">n &lt; 20</code>은 <code style="color:#22d3bf">caveats</code>에 낸다(조용히 외삽하지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

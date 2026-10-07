@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원형(disk, 반지름 <code style="color:#22d3bf">_rad(a)</code>=1~4) 구조 요소에 의한 그레이스케일 팽창(gray dilation) -- 창 내 최댓값으로 치환한다. b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">gray_dilation_shape</code>（円・矩形など任意形状のマスクで窓内最大のグレー値を求める演算）に相当。矩形版は <code style="color:#22d3bf">gray_dilation_rect</code> が担当する。</p>
+<p>HALCON의 <code style="color:#22d3bf">gray_dilation_shape</code>(원·직사각형 등 임의 형상의 마스크로 창 안의 최대 그레이 값을 구하는 연산)에 해당한다. 직사각형판은 <code style="color:#22d3bf">gray_dilation_rect</code>가 담당한다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.33、0.67、0.99(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>

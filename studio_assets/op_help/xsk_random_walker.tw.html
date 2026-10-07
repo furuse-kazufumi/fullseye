@@ -13,9 +13,8 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於隨機漫步（random walker）法的圖基區域分割。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>skimage.segmentation.random_walker で、明暗の閾値から自動生成した 2 クラスのシード(marker)を出発点に、各画素がどちらのシードへ拡散伝播しやすいかを解いて 2 値ラベルに分割し、そのラベル境界を返す(返り値は領域そのものではなく、領域の境界線 region)。</p>
-<p><code style="color:#22d3bf">a</code> がシードの閾値幅を振る(暗側シード <code style="color:#22d3bf">&lt; 0.3+0.2a</code>、明側シード <code style="color:#22d3bf">&gt; 0.7-0.2a</code>。<code style="color:#22d3bf">a</code> が大きいほどシードが広がり不定領域が減る)。<code style="color:#22d3bf">b</code> は拡散のしやすさを決める <code style="color:#22d3bf">beta</code>(10〜210)を振り、大きいほどエッジをまたいだ伝播が抑えられ境界がシャープになる。</p>
+<p>以 skimage.segmentation.random_walker，用根據明暗閾值自動產生的 2 類種子點(marker)為出發點，求解各像素較容易向哪個種子點擴散傳播，分割成 2 值標籤，並回傳該標籤邊界(回傳值不是區域本身，而是區域的邊界線 region)。</p>
+<p><code style="color:#22d3bf">a</code> 調整種子點的閾值寬度(暗側種子點 <code style="color:#22d3bf">&lt; 0.3+0.2a</code>，亮側種子點 <code style="color:#22d3bf">&gt; 0.7-0.2a</code>。<code style="color:#22d3bf">a</code> 越大，種子點越廣，未定區域越少)。<code style="color:#22d3bf">b</code> 調整決定擴散難易度的 <code style="color:#22d3bf">beta</code>(10～210)，越大跨越邊緣的傳播越受抑制，邊界越銳利。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

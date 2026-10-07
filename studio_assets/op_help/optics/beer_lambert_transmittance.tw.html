@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;beer_lambert_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Beer–Lambert 內部穿透率 T = exp(−σ·L)。有色玻璃與厚玻璃的偏綠。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>path_mm: 媒質中の光路長 [mm] (配列可、非負)。</p>
-<p>sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば<b>色</b>になる)。</p>
-<p>返り値: 内部透過率(0–1)。界面の反射は含まない(それは <code style="color:#22d3bf">slab_transmittance</code>)。</p>
+<p>path_mm：介質中的光程長 [mm] (可為陣列，非負)。</p>
+<p>sigma_per_mm：吸收係數 [1/mm] (可為陣列 — 隨波長改變就成了<b>顏色</b>)。</p>
+<p>回傳值：內部穿透率(0–1)。不含界面反射(那是 <code style="color:#22d3bf">slab_transmittance</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

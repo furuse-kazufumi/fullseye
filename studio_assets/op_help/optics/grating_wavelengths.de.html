@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Löst die Gittergleichung d(sinθ_out − sinθ_in) = mλ nach λ auf.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
-<p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>
-<p>返り値: (..., len(orders)) の波長 [nm]。可視域外の解もそのまま返す(呼び手が等色関数に通せば自動的に 0 になる — ここで黙って切ると「なぜ色が出ないか」が消える)。</p>
+<p>pitch_um: Furchenabstand d [µm]. 1.6 bei der CD, 0.74 bei der DVD (veröffentlichte Normwerte). sin_in / sin_out: sin der in der Gitterebene liegenden Komponente der Einfalls- / Ausfallsrichtung (Array zulässig, Broadcast).</p>
+<p>orders:   Folge der Ordnungen m (0 wird ausgeschlossen, da es unendlich ergibt).</p>
+<p>Rückgabewert: Wellenlängen [nm] der Form (..., len(orders)). Lösungen außerhalb des sichtbaren Bereichs werden unverändert zurückgegeben (schickt der Aufrufer sie durch die Farbabgleichsfunktionen, werden sie automatisch 0 — sie hier still abzuschneiden würde verbergen, &quot;warum keine Farbe erscheint&quot;).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

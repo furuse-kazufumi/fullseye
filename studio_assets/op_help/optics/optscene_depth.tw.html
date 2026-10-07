@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>深度的<b>真值</b> (H, W) [mm]。是<b>沿光軸的 z</b>,不是從視點算的斜距。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、しかも中心では一致するので気づけない)。生の光線距離が要るなら trace_rays(...)[&quot;t&quot;] を使う。</p>
-<p>当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。</p>
+<p>深度相機、立體視覺、光切法回傳的都是光軸方向的 z，所以與之對齊(若與斜距混用，就會用越靠視野邊緣偏差越系統化的真值來評分，而且中心處一致，所以察覺不到)。需要原始的光線距離時請用 trace_rays(...)[&quot;t&quot;]。</p>
+<p>未命中的像素為 NaN。不填 0 ―― 否則就無法與「距離為 0 的面」區分。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

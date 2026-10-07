@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由倾斜边缘(ISO 12233)的 ROI 构建比像素更细的 ESF。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>手順: ROI を「エッジが行を横切る」向きにそろえる(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> は列方向と行方向の勾配の大きさで決める、<code style="color:#22d3bf">&quot;vertical&quot;</code> = エッジが縦に走る / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 横に走る)→ 行ごとに 1 階差分の重心でエッジの位置を出す → 位置を行番号に直線で当てる(最小二乗)→ 各画素の中心のエッジからの<b>垂直距離</b> d を出し、幅 1/oversample px の升に振り分けて平均する。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;x&quot;: 升の中心の距離 [px] (エッジに垂直), &quot;esf&quot;: 升の平均, &quot;count&quot;: 升の画素数, &quot;angle_deg&quot;: エッジの傾き(行に対する、符号つき), &quot;oversample&quot;, &quot;orientation&quot;: 使った向き, &quot;edge_x0&quot;: ROI の 0 行目でのエッジの位置 [px]}</code>。</p>
-<p>★傾きが小さすぎる(画素の位相が升を埋めない)と空の升が出る —— <b>黙って補間しない</b>で <code style="color:#22d3bf">ValueError</code>。ISO 12233 が 2〜10° 程度の傾きを求めるのはこのため。傾きが 45° を越えるなら <code style="color:#22d3bf">orientation</code> が逆。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像が 2-D の実数でない / NaN・inf / roi が画像の外・空・4 行 × 8 列未満 / oversample が 1〜16 の整数でない / 行の中にエッジ(差分の変化)が無い / 傾きが 45° 以上 / 空の升が出た。</p>
+<p>步骤：把 ROI 调整为“边缘横穿各行”的方向(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> 按列方向与行方向梯度的大小决定，<code style="color:#22d3bf">&quot;vertical&quot;</code> = 边缘纵向延伸 / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 横向延伸)→ 每行用 1 阶差分的重心求出边缘位置 → 用直线把位置拟合到行号(最小二乘)→ 求各像素中心到边缘的<b>垂直距离</b> d，分配到宽 1/oversample px 的箱中并取平均。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;x&quot;: 箱中心的距离 [px] (垂直于边缘), &quot;esf&quot;: 箱的平均, &quot;count&quot;: 箱内像素数, &quot;angle_deg&quot;: 边缘的倾斜(相对于行，带符号), &quot;oversample&quot;, &quot;orientation&quot;: 所用方向, &quot;edge_x0&quot;: ROI 第 0 行的边缘位置 [px]}</code>。</p>
+<p>★倾斜过小(像素的相位填不满各箱)时会出现空箱 —— <b>不默默插值</b>，而是 <code style="color:#22d3bf">ValueError</code>。ISO 12233 要求 2〜10° 左右的倾斜正是为此。倾斜超过 45° 则 <code style="color:#22d3bf">orientation</code> 反了。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：图像不是 2-D 实数 / NaN、inf / roi 超出图像、为空、小于 4 行 × 8 列 / oversample 不是 1〜16 的整数 / 行内没有边缘(差分的变化)/ 倾斜在 45° 以上 / 出现空箱。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

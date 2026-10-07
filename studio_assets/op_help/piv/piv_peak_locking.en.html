@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Strength of peak locking: how far the distribution of the fractional parts deviates from uniform.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、そこからのずれを測る。</p>
-<p>指標 <code style="color:#22d3bf">c0</code> は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。一様分布から標本を取ると期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>
-<p>★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が少ない場や、変位がゆっくり変わる場では<b>真値そのものの c0 も大きくなる</b> (実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的にしか現れないため)。したがって c0 は<b>同じ入力の真値と比べて</b>読むこと。</p>
-<p><b>決定的な診断は別にある</b> —— 一様並進の小数部を 0 から 0.9 まで振り、推定値が対角線に乗るかを見る。実測(win=32、density 0.02):</p>
+<p>Subpixel estimation has a bias that pulls the fractional part of the true displacement towards 0 or 0.5 when it is near there (a textbook systematic error of PIV, arising because the shape of the correlation peak differs from the shape of the fitted function). <b>Unless the flow is uniform, the fractional part should be close to uniformly distributed</b>, and the deviation from that is measured.</p>
+<p>The index <code style="color:#22d3bf">c0</code> is a chi-square-type deviation <b>independent of the sample size</b>:</p>
+<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>. Sampling from a uniform distribution gives an expected value of 1, so <b>around 1 it is indistinguishable from uniform</b>; the larger, the more biased.</p>
+<p>★ However, this index assumes that &quot;the fractional part of the true displacement is uniform&quot;. In fields with few windows or slowly varying displacement, <b>c0 of the ground truth itself also becomes large</b> (measured: 82 for the ground truth of a linear ramp —— the window grid has only 19 columns, so the fractional part only appears discretely). Therefore read c0 <b>compared with the ground truth of the same input</b>.</p>
+<p><b>The decisive diagnosis is something else</b> —— vary the fractional part of a uniform translation from 0 to 0.9 and see whether the estimates lie on the diagonal. Measured (win=32, density 0.02):</p>
 <p>==========  =================  ==================</p>
-<p>推定法      小数部誤差の RMS   最大絶対誤差</p>
+<p>method      RMS of frac. err.  max abs. error</p>
 <p>==========  =================  ==================</p>
 <p>gauss3      0.0037 px          0.0088 px</p>
 <p>parabolic   0.0104 px          0.0151 px</p>
 <p>centroid    0.2259 px          0.3701 px</p>
 <p>==========  =================  ==================</p>
-<p><code style="color:#22d3bf">centroid</code> は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる教科書どおりの S 字。<b>出るはずのものが出た</b>ことの確認であって、実装の不具合ではない(だから 3 つとも残してある)。</p>
+<p><code style="color:#22d3bf">centroid</code> answers 0.02 for a true 0.1 and 0.98 for 0.9 —— the textbook S-curve pulling towards integers. It confirms that <b>what should appear did appear</b>, and is not a defect of the implementation (that is why all 3 are kept).</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>bins: 小数部のヒストグラムの階級数。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>bins: number of classes of the histogram of the fractional part.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code>(両成分合わせた指標)、<code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>)、</p>
-<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>、<code style="color:#22d3bf">bins</code>。</p>
+<p>dict: <code style="color:#22d3bf">c0</code> (index for both components combined), <code style="color:#22d3bf">hist</code> (<code style="color:#22d3bf">(2, bins)</code>),</p>
+<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>, <code style="color:#22d3bf">bins</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

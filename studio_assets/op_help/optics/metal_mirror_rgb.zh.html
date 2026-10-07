@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import glassmirror; glassmirror.metal_mirror_rgb(metal=&#x27;ag&#x27;, cos_i=1.0, samples=61) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;metal_mirror_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>金属镜的<b>颜色</b>(线性 sRGB)。n,k → 分光反射率 → CIE 配色函数 → sRGB。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>metal: <code style="color:#22d3bf">METALS</code> のいずれか。cos_i: 入射角の cos(スカラまたは配列)。</p>
-<p>samples: 380–780 nm を刻む点数。</p>
-<p>返り値: cos_i の形 + 末尾 3 の線形 sRGB。<b>色を塗っていない</b>ので、金が黄色いのも銀が中性なのも表の n,k から出る(テストで R&gt;G&gt;B の順序と銀の中性を固定)。</p>
+<p>metal：<code style="color:#22d3bf">METALS</code> 之一。cos_i：入射角的 cos(标量或数组)。</p>
+<p>samples：对 380–780 nm 取样的点数。</p>
+<p>返回值：cos_i 的形状 + 末尾 3 的线性 sRGB。<b>没有涂色</b>，所以金是黄色、银是中性色都来自表中的 n,k(测试固定了 R&gt;G&gt;B 的顺序与银的中性)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

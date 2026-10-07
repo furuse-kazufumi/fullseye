@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由已知<b>未被竄改</b>的樣本彙總證據量的虛無分布。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は <code style="color:#22d3bf">PCE 1832</code> のような数値を渡されて<b>解釈する手段が無い</b>。かといってしきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値ではない。</p>
-<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<p>這一族一貫不回傳判定。這是正確的，但照此下去，使用者拿到 <code style="color:#22d3bf">PCE 1832</code> 這樣的數值卻<b>沒有解讀它的手段</b>。然而附帶門檻值又會成為謊言 ―― 分離點隨張數、解析度、壓縮率、拍攝對象而變，不是出貨時能決定的值。</p>
+<p>因此<b>從使用者自己的乾淨資料測出分布</b>。附帶的不是「門檻值」，而是「門檻值的測法」，這樣即使條件改變也依然正確。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>values : array_like</p>
-<p>改竄が無いと分かっている組で測った証拠量(<code style="color:#22d3bf">hash_distance</code> や</p>
-<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> など)。<b>同じ条件</b>で集めること。</p>
+<p>在已知未被竄改的組上測得的證據量(<code style="color:#22d3bf">hash_distance</code> 或</p>
+<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> 等)。要在<b>相同條件</b>下收集。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">quantiles</code></p>
-<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
-<p>ので <code style="color:#22d3bf">n &lt; 20</code> は <code style="color:#22d3bf">caveats</code> に出す(黙って外挿しない)。</p>
+<p>(5, 25, 50, 75, 95, 99 百分位)。樣本少時無法測出尾部，</p>
+<p>所以 <code style="color:#22d3bf">n &lt; 20</code> 會在 <code style="color:#22d3bf">caveats</code> 中列出(不會默默外插)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

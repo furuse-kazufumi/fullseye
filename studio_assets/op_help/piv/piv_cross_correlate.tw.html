@@ -6,36 +6,35 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以逐視窗的互相關求出位移場。回傳 <code style="color:#22d3bf">(flow, info)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各窓で <code style="color:#22d3bf">FFT</code> を 2 回とって共役積の逆変換を取り(循環相関)、最大値の位置を整数変位、その周りの 3 点でサブピクセル変位を決める。</p>
-<p><b>零方向への偏りとその補正(実測)</b>: 素の相互相関は変位を<b>零へ引き寄せる</b>。窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、実測でも偏りは変位に比例した(win=32・Hann、<code style="color:#22d3bf">dx</code> を 0.5 から 6 px まで振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>傾き一定</b>)。</p>
-<p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> はこれを、<b>窓関数の自己相関で割る</b>ことで補正する(重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、<code style="color:#22d3bf">search_limit</code> で探索範囲を窓の 1/4 に絞るのと<b>必ず対にする</b>。実測:</p>
+<p>在每個窗口中做 2 次 <code style="color:#22d3bf">FFT</code>，取共軛積的逆變換(循環相關)，以最大值的位置為整數位移，以其周圍 3 點決定次像素位移。</p>
+<p><b>向零方向的偏差及其校正(實測)</b>：單純的互相關會把位移<b>拉向零</b>。因為窗口錯開後重疊區域減少，相關值本身隨位移下降；實測中偏差也與位移成正比(win=32、Hann，<code style="color:#22d3bf">dx</code> 從 0.5 到 6 px 變化，偏差 / (d/N) 為 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>斜率固定</b>)。</p>
+<p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> 藉由<b>除以窗函數的自相關</b>來校正這一點(等同於以重疊面積正規化)。但在邊緣處除數趨近 0，因此與 <code style="color:#22d3bf">search_limit</code> 把搜尋範圍限制在窗口 1/4 <b>必須配對使用</b>。實測：</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>dx [px]          補正なし    補正 + 1/4  補正のみ</p>
+<p>dx [px]          無校正      校正 + 1/4  僅校正</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>1.0 の偏り       -0.0402     -0.0020     -0.2659</p>
-<p>5.0 の偏り       -0.2001     -0.0128     -0.9210</p>
-<p>5.0 の RMS       0.2081      0.0301      4.8881</p>
+<p>1.0 的偏差       -0.0402     -0.0020     -0.2659</p>
+<p>5.0 的偏差       -0.2001     -0.0128     -0.9210</p>
+<p>5.0 的 RMS       0.2081      0.0301      4.8881</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>右端が「探索を絞らずに正規化だけした」場合で、<b>補正が誤差を 23 倍に悪化させる</b>。片方だけ入れてはいけない、という測定結果をそのまま既定にしてある。</p>
+<p>最右欄是「不限制搜尋、只做正規化」的情況，<b>校正使誤差惡化 23 倍</b>。「不能只啟用其中之一」這項量測結果被直接設為預設。</p>
 <p>Args:</p>
-<p>a, b: 画像対 <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>window: 窓の一辺 [px]。偶数・8 以上。</p>
-<p>overlap: 窓の重なり率 <code style="color:#22d3bf">[0, 1)</code>。0.5 が慣行。</p>
+<p>a, b: 影像對 <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>window: 窗口邊長 [px]。偶數、8 以上。</p>
+<p>overlap: 窗口重疊率 <code style="color:#22d3bf">[0, 1)</code>。慣例為 0.5。</p>
 <p>peak: <code style="color:#22d3bf">PEAK_MODES</code>。</p>
 <p>window_func: <code style="color:#22d3bf">WINDOW_FUNCS</code>。</p>
-<p>subtract_mean: 窓ごとに平均を引く(背景の直流成分が中央に巨大な</p>
-<p>ピークを作るのを防ぐ)。<b>切ると零変位に張り付く</b>。</p>
-<p>shift: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(多段用)。2 枚目の窓をこの整数量だけ</p>
-<p>ずらして切り出し、残差を測る。</p>
-<p>normalize: <code style="color:#22d3bf">&quot;overlap&quot;</code>(既定)か <code style="color:#22d3bf">&quot;none&quot;</code>。</p>
-<p>search_limit: 探索する変位の上限を窓の比で与える(既定 0.25 = PIV の</p>
-<p>「1/4 則」)。<code style="color:#22d3bf">None</code> で無制限 —— <code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> との</p>
-<p>併用は上の表のとおり<b>悪化する</b>。</p>
+<p>subtract_mean: 逐窗口減去平均(防止背景直流成分在中央形成巨大</p>
+<p>峰)。<b>關掉則會黏在零位移上</b>。</p>
+<p>shift: 預測位移 <code style="color:#22d3bf">(2, h, w)</code>(多段用)。把第 2 幅的窗口依這個整數量</p>
+<p>錯開後切出，量測殘差。</p>
+<p>normalize: <code style="color:#22d3bf">&quot;overlap&quot;</code>(預設)或 <code style="color:#22d3bf">&quot;none&quot;</code>。</p>
+<p>search_limit: 以相對窗口的比例給出搜尋位移的上限(預設 0.25 = PIV 的</p>
+<p>「1/4 法則」)。<code style="color:#22d3bf">None</code> 為不限制 —— 與 <code style="color:#22d3bf">normalize=&quot;overlap&quot;</code></p>
+<p>併用會如上表所示<b>惡化</b>。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>(窓中心の</p>
-<p>画像座標)、<code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク。1 に近いほど</p>
-<p>当てにならない)、<code style="color:#22d3bf">window</code> / <code style="color:#22d3bf">overlap</code> / <code style="color:#22d3bf">peak</code> を持つ dict。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info</code> 是含有 <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>(窗口中心的</p>
+<p>影像座標)、<code style="color:#22d3bf">peak_ratio</code>(第 1 峰 / 第 2 峰。越接近 1 越</p>
+<p>不可靠)、<code style="color:#22d3bf">window</code> / <code style="color:#22d3bf">overlap</code> / <code style="color:#22d3bf">peak</code> 的 dict。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

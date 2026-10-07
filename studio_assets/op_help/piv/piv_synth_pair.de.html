@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt ein Bildpaar mit bekanntem Verschiebungsfeld. Rückgabe: <code style="color:#22d3bf">(image_a, image_b, truth)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
+<p><b>Die Partikel werden bewegt und dann das 2. Bild gezeichnet</b> (das 1. Bild wird nicht per Interpolation verzerrt). Per Interpolation erzeugt, würde die Glättung der Interpolation &quot;ein Bild, das PIV leicht trifft&quot; erzeugen, und man würde die eigene Implementierung an für sie günstigen Eingaben messen.</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 変位の与え方。次のいずれか。</p>
-<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 位置に依存する場。引数は粒子の連続座標の配列。</p>
-<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
-<p>noise_sigma: 2 枚それぞれに独立に足す加法ガウス雑音の標準偏差。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>displacement: Art der Verschiebungsvorgabe. Eine der folgenden.</p>
+<p style="margin:2px 0 2px 12px">• Folge der Länge 2 —— gleichförmige Translation <code style="color:#22d3bf">(dy, dx)</code> [px].</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— ein positionsabhängiges Feld. Die Argumente sind Arrays der kontinuierlichen Partikelkoordinaten.</p>
+<p>density / diameter_px / seed / intensity / background: wie <code style="color:#22d3bf">piv_synth_particles</code>.</p>
+<p>noise_sigma: Standardabweichung des additiven Gaußrauschens, unabhängig zu jedem der 2 Bilder addiert.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は<b>画素ごと</b>の</p>
-<p>真の変位で、窓の格子に落とすには <code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
+<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>. <code style="color:#22d3bf">truth</code> ist die <b>pro Pixel</b></p>
+<p>wahre Verschiebung; um sie auf das Fenstergitter zu bringen, <code style="color:#22d3bf">piv_sample_at_windows</code> verwenden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

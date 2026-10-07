@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;render_studio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>画<b>用来展示的图</b>:含环境光・多次反射・折射与色散(没有测光真值)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>検査データが要るなら <code style="color:#22d3bf">render_optscene</code> ―― <b>作り方が違う別の op</b>。返り値は (H, W, 3) の線形 RGB。</p>
-<p>検査用の <code style="color:#22d3bf">render_optscene</code> と目的が違う。あちらは実在の照明器具を物理単位で置いて直接光を数え、真値を返す(測光の根拠が要る)。こちらは環境全体から光が来る前提で、金属は環境を映し、ガラスは環境を屈折させ、互いも映り込む(見た目が要る)。</p>
-<p><code style="color:#22d3bf">depth</code> は反射・屈折の再帰段数、<code style="color:#22d3bf">samples</code> は粗さローブの標本数(増やすほど滑らか・遅い)。<code style="color:#22d3bf">environment</code> に自前の関数((...,3) 方向 -&gt; (...,) 明るさ)を渡せば別の環境にできる。表示するにはガンマを自分で掛ける。</p>
+<p>如果需要检测数据，请用 <code style="color:#22d3bf">render_optscene</code> ―― <b>构建方式不同的另一个 op</b>。返回值为 (H, W, 3) 的线性 RGB。</p>
+<p>与用于检测的 <code style="color:#22d3bf">render_optscene</code> 目的不同。那一个以物理单位放置真实的照明器具，计数直接光并返回真值(需要测光依据)。这一个以光从整个环境射来为前提，金属映出环境，玻璃折射环境，彼此也相互映入(需要的是外观)。</p>
+<p><code style="color:#22d3bf">depth</code> 为反射、折射的递归层数，<code style="color:#22d3bf">samples</code> 为粗糙度波瓣的采样数(越多越平滑、越慢)。向 <code style="color:#22d3bf">environment</code> 传入自己的函数((...,3) 方向 -&gt; (...,) 亮度) 即可换成别的环境。显示时请自行施加伽马。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

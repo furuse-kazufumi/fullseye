@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部极小点（区域极小）检测。把满足 <code style="color:#22d3bf">x</code> 等于窗口内最小值（<code style="color:#22d3bf">_k(a)</code>）且同时满足 <code style="color:#22d3bf">x &lt; 0.7-0.4*b</code> 的像素判定为前景——是 <code style="color:#22d3bf">local_max</code> 的暗部版本。相当于 HALCON 的 <code style="color:#22d3bf">local_min</code>（Detect all local minima in an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓サイズを、<code style="color:#22d3bf">b</code> が輝度の上限しきい値を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节窗口大小，<code style="color:#22d3bf">b</code> 调节亮度的上限阈值。两者都使用。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

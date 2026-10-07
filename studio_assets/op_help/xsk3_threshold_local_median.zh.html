@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部中位数自适应二值化(skimage <code style="color:#22d3bf">filters.threshold_local</code> 的 <code style="color:#22d3bf">method=&#x27;median&#x27;</code>)。以每个区块的中位数作为局部阈值，按像素值是否超过该阈值进行二值化。相比使用局部均值的版本，对离群值(噪声像素)更具鲁棒性。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> はブロックサイズ(<code style="color:#22d3bf">2*int(a*6)+3</code> で 3〜15 の奇数)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 调节块大小(由 <code style="color:#22d3bf">2*int(a*6)+3</code> 得 3～15 的奇数)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

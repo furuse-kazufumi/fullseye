@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.airy_radius_um(f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.airy_radius_um(f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;airy_radius_um&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>到艾里斑第一暗环的半径 [µm] = 1.22 · λ · N(闭式)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>微細な欠陥が「写るか」を決めるのは画素数ではなく、この回折の広がりと画素ピッチのどちらが大きいか。F5.6・550 nm なら 3.76 µm で、3.45 µm 画素とほぼ同じ ―― つまりそこから先は絞っても分解能は上がらない。</p>
+<p>决定微小缺陷“能否拍出”的不是像素数，而是这个衍射扩展与像素间距哪个更大。F5.6、550 nm 时为 3.76 µm，与 3.45 µm 像素几乎相同 ―― 也就是说，再往后缩小光圈分辨率也不会提高。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

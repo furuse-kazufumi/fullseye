@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.wetness(base_rgb, wet=1.0, ior=1.33) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;wetness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die Grundfarbe einer nassen Oberfläche. <b>Das Diffuse wird dunkler</b> (und das Spekulare nimmt zu).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
+<p>base_rgb: Farbe im trockenen Zustand (H,W,3) oder (3,). wet: Nässegrad (0–1).</p>
+<p>ior: Brechungsindex des Wasserfilms.</p>
+<p>Rückgabewert: diffuse Farbe im nassen Zustand (gleiche Form).</p>
+<p>Warum es dunkler wird: Im Wasserfilm tritt Totalreflexion auf, diffuses Licht wird immer wieder zur Oberfläche zurückgeworfen und dabei jedes Mal absorbiert. Näherungsweise wird auf den trockenen Reflexionsgrad ρ eine Reabsorption entsprechend dem inneren Reflexionsgrad Ri = 1 − (1 − Ri0)/n² angewandt ―― genau das Phänomen, dass nasser Sand dunkel aussieht (die Zunahme des Spiegelanteils wird durch Überlagern von <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> dargestellt).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

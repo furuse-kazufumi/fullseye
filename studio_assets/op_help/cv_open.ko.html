@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이스케일 모폴로지 열림 연산(opening, OpenCV 구현). 침식 후 팽창을 수행하여 구조 요소보다 작은 밝은 돌기·고립점을 제거한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)に相当。実装は <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code>、楕円形の構造要素 se は<code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>、<code style="color:#22d3bf">k=3+2*int(a*3)</code> —— a は構造要素のサイズを 3〜9 に振る。b は未使用。</p>
+<p>HALCON의 <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)에 해당한다. 구현은 <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code>, 타원형 구조 요소 se는 <code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>, <code style="color:#22d3bf">k=3+2*int(a*3)</code> —— a는 구조 요소의 크기를 3~9로 바꾼다. b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

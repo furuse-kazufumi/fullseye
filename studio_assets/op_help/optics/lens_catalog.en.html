@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Data sheet of industrial lenses, looked up by part number. Narrow it with <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>スペックシートに載る項目だけ</b>を持つ ―― 焦点距離・F 値の範囲・対応形式・マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとのグラフでしか出ないため<b>持たない</b>(持つと実測だと誤解させる)。</p>
-<p>返り値の各項目に <code style="color:#22d3bf">image_circle_mm</code> が入るので、センサの対角と比べて「そのセンサを覆えるか」を機械で判定できる。</p>
+<p>Holds <b>only the items that appear on a spec sheet</b> ―― focal length, F-number range, supported format, mount, image circle. As the user pointed out, &quot;the parameters listed in a lens&#x27;s own specs are not that many&quot;, so this is enough. Aberrations, MTF and distortion only come as per-model graphs, so they are <b>not held</b> (holding them would suggest they are measured).</p>
+<p>Each entry of the return value contains <code style="color:#22d3bf">image_circle_mm</code>, so comparing it with the sensor diagonal lets a machine decide &quot;whether it can cover that sensor&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Swirling strength λ_ci — the magnitude of the imaginary part of the complex eigenvalues of the velocity-gradient tensor.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
-<p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
+<p>Like the Q-criterion it is a quantity that &quot;distinguishes shear from vortices&quot;, but this one has <b>units equal to the angular velocity of rotation</b> (1/frame). Measured: <code style="color:#22d3bf">0.01</code> for rigid-body rotation ω=0.01, <code style="color:#22d3bf">0.0</code> for uniform expansion and shear.</p>
+<p>Where the eigenvalues are real (= no rotation), 0 is returned. Since it is the eigenvalues of an independent 2x2 matrix at each point, the whole grid is vectorised and solved at once.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_color.inputs.jpg">edges_color: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erkennt die Stärke von Farbkanten. Soll HALCONs <code style="color:#22d3bf">edges_color</code> (extrahiert Farbkanten mit einem Canny-/Deriche-/Shen-Filter) entsprechen, <b>die Implementierung ist jedoch fest auf Di Zenzos Multikanal-Gradientenverfahren festgelegt, statt filterwählbar zu sein</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各チャンネルに Sobel 勾配 (gx, gy) をかけ、勾配テンソル <code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code>（gxx=Σgx², gyy=Σgy², gxy=Σgx·gy）の最大固有値を画素ごとに求め、その平方根をエッジ強度として最大値で正規化する。a, b は未使用（HALCON 側にあるフィルタ種別・しきい値の選択はできない）。</p>
+<p>Auf jeden Kanal wird der Sobel-Gradient (gx, gy) angewendet, der größte Eigenwert des Gradiententensors <code style="color:#22d3bf">[[gxx, gxy], [gxy, gyy]]</code> (gxx=Σgx², gyy=Σgy², gxy=Σgx·gy) wird pro Pixel bestimmt, und seine Quadratwurzel, mit dem Maximum normiert, ist die Kantenstärke. a, b werden nicht verwendet (die auf HALCON-Seite vorhandene Wahl von Filtertyp und Schwellwert ist nicht möglich).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

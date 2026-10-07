@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;perceptual_hash&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A perceptual hash. Returns a <b>1-D bool bit string</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
-<p><code style="color:#22d3bf">&quot;dct&quot;</code>   縮小 <code style="color:#22d3bf">(hash_size * 4)</code> 角 → 2-D DCT-II(直交)→ 左上</p>
-<p><code style="color:#22d3bf">hash_size x hash_size</code> を取り、<b>DC を除いた中央値</b>と比較。</p>
-<p>Zauner 2010 の pHash と同じ手順。長さ <code style="color:#22d3bf">hash_size**2</code> ビット。</p>
-<p><code style="color:#22d3bf">&quot;average&quot;</code> 縮小 <code style="color:#22d3bf">hash_size</code> 角 → 平均と比較(aHash)。同じ長さ。<code style="color:#22d3bf">&quot;difference&quot;</code> 縮小 <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> → <b>横に隣り合う画素の大小</b>を比較(dHash)。同じ長さで、平均輝度の変化に強い。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像、<code style="color:#22d3bf">hash_size=8</code> = 64 ビット。<b>無関係な 2 枚の距離</b>は dct 31.3 / average 34.2 / difference 32.6(20 対の平均。理論値は 32 = ビット長の半分)):</p>
+<p><code style="color:#22d3bf">&quot;dct&quot;</code>   downscale to a <code style="color:#22d3bf">(hash_size * 4)</code> square → 2-D DCT-II (orthogonal) → take the top-left</p>
+<p><code style="color:#22d3bf">hash_size x hash_size</code> block and compare against the <b>median excluding DC</b>.</p>
+<p>Same procedure as the pHash of Zauner 2010. Length <code style="color:#22d3bf">hash_size**2</code> bits.</p>
+<p><code style="color:#22d3bf">&quot;average&quot;</code> downscale to a <code style="color:#22d3bf">hash_size</code> square → compare against the mean (aHash). Same length. <code style="color:#22d3bf">&quot;difference&quot;</code> downscale to <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> → compare <b>which of horizontally adjacent pixels is larger</b> (dHash). Same length, robust to changes in mean luminance.</p>
+<p>Measured (<code style="color:#22d3bf">tests/test_imgforensics.py</code> pins it in numbers; 256x256 1/f^1.6 images, <code style="color:#22d3bf">hash_size=8</code> = 64 bits. <b>The distance between 2 unrelated images</b> is dct 31.3 / average 34.2 / difference 32.6 (mean over 20 pairs; the theoretical value is 32 = half the bit length)):</p>
 <p>===================== ======== ========== ============</p>
-<p>変換                  dct      average    difference</p>
+<p>Transform             dct      average    difference</p>
 <p>===================== ======== ========== ============</p>
-<p>JPEG 品質 60 再圧縮   0        0          0</p>
-<p>JPEG 品質 30 再圧縮   2        0          0</p>
-<p>1/2 縮小              0        0          0</p>
-<p>1/4 縮小              0        0          0</p>
-<p>明るさ +0.1           0        0          0</p>
-<p><b>左右反転</b>          <b>28</b>   <b>42</b>     <b>34</b></p>
-<p><b>90 度回転</b>         <b>32</b>   <b>30</b>     <b>32</b></p>
-<p>別の画像              28       40         34</p>
+<p>JPEG q60 recompress   0        0          0</p>
+<p>JPEG q30 recompress   2        0          0</p>
+<p>1/2 downscale         0        0          0</p>
+<p>1/4 downscale         0        0          0</p>
+<p>Brightness +0.1       0        0          0</p>
+<p><b>Horizontal flip</b>   <b>28</b>   <b>42</b>     <b>34</b></p>
+<p><b>90 deg rotation</b>   <b>32</b>   <b>30</b>     <b>32</b></p>
+<p>Different image       28       40         34</p>
 <p>===================== ======== ========== ============</p>
-<p><b>この op が言えないこと</b>:</p>
-<p style="margin:2px 0 2px 12px">• 距離が小さい = 同じ画像、ではない。8x8 の粗い縮小に落としているので、<b>細部の改竄は距離 0 のまま通る</b>。実測:512x512 の画像に 24x24 のコピー&amp;ムーブを入れたときの距離は dct 0 / average 0 / difference 1。</p>
-<p style="margin:2px 0 2px 12px">• 距離が大きい = 別画像、でもない。上の表のとおり <b>反転と回転は「別の画像」と区別が付かない</b>(どちらも無関係な 2 枚と同じ距離域に入る)。幾何変換に対する不変性は一切無い。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は <b><code style="color:#22d3bf">phash</code> 語彙</b>であって <code style="color:#22d3bf">signal</code> ではない。bool の 1-D は既存の <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code> の述語をすべて満たすので、取り違えると <code style="color:#22d3bf">signal1d.lowpass</code> などが <b>有限でもっともらしい値</b>を返す(実測 5 op)。だから <code style="color:#22d3bf">hash_distance</code> は dtype を検査する。</p>
+<p><b>What this op cannot tell you</b>:</p>
+<p style="margin:2px 0 2px 12px">• A small distance does not mean the same image. Since it drops to a coarse 8x8 downscale, <b>fine-detail tampering passes at distance 0</b>. Measured: with a 24x24 copy-move inserted into a 512x512 image, the distance is dct 0 / average 0 / difference 1.</p>
+<p style="margin:2px 0 2px 12px">• Nor does a large distance mean a different image. As the table above shows, <b>flips and rotations cannot be told apart from &quot;a different image&quot;</b> (both fall in the same distance range as 2 unrelated images). There is no invariance to geometric transforms at all.</p>
+<p style="margin:2px 0 2px 12px">• The return value is in the <b><code style="color:#22d3bf">phash</code> vocabulary</b>, not <code style="color:#22d3bf">signal</code>. A bool 1-D array satisfies all the existing predicates of <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code>, so a mix-up makes <code style="color:#22d3bf">signal1d.lowpass</code> and others return <b>finite, plausible values</b> (measured on 5 ops). That is why <code style="color:#22d3bf">hash_distance</code> checks the dtype.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

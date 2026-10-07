@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Edge enhancement via the morphological Laplacian (<code style="color:#22d3bf">scipy.ndimage.morphological_laplace</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は構造要素のサイズを 3, 5, 7, 9 に振る（<code style="color:#22d3bf">size = 3 + 2*int(a*3)</code>）。<code style="color:#22d3bf">b</code> は未使用。グレースケール膨張と収縮の差の差というべき演算で、通常の（線形）ラプラシアンよりノイズに敏感な代わりに輪郭を鋭く拾う。符号付きの結果を <code style="color:#22d3bf">signed01</code> で [0,1] に写像するので 0.5 が無変化（ゼロ交差）にあたる。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the structuring element size over 3, 5, 7, 9 (<code style="color:#22d3bf">size = 3 + 2*int(a*3)</code>). <code style="color:#22d3bf">b</code> is unused. An operation best described as the difference of the differences between greyscale dilation and erosion; it is more sensitive to noise than the ordinary (linear) Laplacian but picks up contours sharply in exchange. The signed result is mapped to [0,1] with <code style="color:#22d3bf">signed01</code>, so 0.5 corresponds to no change (zero crossing).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

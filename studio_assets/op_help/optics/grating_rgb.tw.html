@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法線圖 + 光源 + 視線 → <b>繞射產生的虹彩</b> (H, W, 3) 線性 sRGB。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>CD/DVD の記録トラックは等間隔の溝 = 反射型回折格子である。溝に直交する方向の「入射と出射の sin の差」が波長を選ぶので、面の向きが変わると色が変わる。</p>
-<p>normals: (H, W, 3) 法線マップ(長さ 0 = 背景 → 0 を返す)。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 溝の方向(3,)。法線に射影して面内成分を使う。</p>
-<p>pitch_um: 溝間隔 [µm] (CD 1.6 / DVD 0.74 / BD 0.32)。</p>
-<p>orders:   使う回折次数(内部で ±両方を使う — 対称な溝は両側へ回折する)。</p>
-<p>strength: 全体の強さ。</p>
-<p>width_nm: 1 本の回折線に与える波長方向の幅 [nm] (有限のスポットサイズ・帯域の効果)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB(負値は残す = 色域外がそのまま見える)。</p>
+<p>CD/DVD 的記錄軌道是等間隔的溝槽 = 反射型繞射光柵。與溝槽正交方向上「入射與出射的 sin 之差」選擇波長，所以面的朝向一變顏色就變。</p>
+<p>normals：(H, W, 3) 法線貼圖(長度 0 = 背景 → 回傳 0)。light / view：從面到光源 / 視點的方向(3,)。</p>
+<p>tangent：溝槽的方向(3,)。投影到法線所定義的平面上，使用面內分量。</p>
+<p>pitch_um：溝槽間距 [µm] (CD 1.6 / DVD 0.74 / BD 0.32)。</p>
+<p>orders:   使用的繞射階次(內部同時使用 ± 兩側 — 對稱的溝槽向兩側繞射)。</p>
+<p>strength：整體強度。</p>
+<p>width_nm：賦予 1 條繞射線的波長方向寬度 [nm] (有限光斑尺寸、頻帶的效果)。</p>
+<p>回傳值：(H, W, 3) 線性 sRGB(保留負值 = 色域外原樣可見)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

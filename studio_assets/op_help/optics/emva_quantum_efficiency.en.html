@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Derives the quantum efficiency η from the slope of the response (characteristic curve) (Eqs. 49, 52).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>*mu_p*: 露光段ごとの画素あたりの平均光子数(照度計と露光時間から: μ_p = A E t_exp λ/(hc))。R = μ_y − μ_y.dark を μ_p に当てた直線(<b>切片 0 に固定</b>)の傾き、η = R/K。使う点は飽和の 0〜70 %。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 2 点未満 / K が正でない / 応答が正でない。</p>
+<p>*mu_p*: mean number of photons per pixel per exposure step (from the illuminance meter and exposure time: μ_p = A E t_exp λ/(hc)). R is the slope of the straight line (<b>intercept fixed at 0</b>) fitted to μ_y − μ_y.dark against μ_p, and η = R/K. Points used: 0–70 % of saturation.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: lengths differ / fewer than 2 points in 0–70 % / K not positive / response not positive.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

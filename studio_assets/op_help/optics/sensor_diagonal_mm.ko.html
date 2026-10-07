@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.sensor_diagonal_mm(sensor: &#x27;dict&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_diagonal_mm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>센서의 대각선 [mm]. 렌즈의 이미지 서클과 비교해 <b>덮이는지</b> 봅니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: <code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>。有効画素数 × 画素ピッチから出す実寸で、「2/3 型」のような形式名は使わない(形式名は対角の呼称に過ぎず、同じ呼称でも実寸が違う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sensor</code>: <code style="color:#22d3bf">sensor_spec</code> の結果(<code style="color:#22d3bf">kind == &quot;sensor&quot;</code>)。それ以外の dict やカタログの生エントリは <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: float [mm]。例: 2048 × 1536 画素・3.45 µm なら 8.83 mm。ラインセンサ(高さ 1)なら幅そのものに近い値になる。</p>
-<p>レンズ側の <code style="color:#22d3bf">image_circle_mm</code> と直接比べるのが <code style="color:#22d3bf">covers_sensor</code> (1 % の許容差つき)。<code style="color:#22d3bf">lens_spec</code> / <code style="color:#22d3bf">vision_layout</code> で視野を決める前の検算に。</p>
+<p>식: <code style="color:#22d3bf">hypot(width * pixel_um, height * pixel_um) / 1000</code>. 유효 화소 수 × 화소 피치로 내는 실치수이며, &quot;2/3형&quot; 같은 형식명은 쓰지 않는다(형식명은 대각의 호칭에불과하며, 같은 호칭이라도 실치수가 다르다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sensor</code>: <code style="color:#22d3bf">sensor_spec</code>의 결과(<code style="color:#22d3bf">kind == &quot;sensor&quot;</code>). 그 밖의 dict나카탈로그의 날 엔트리는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: float [mm]. 예: 2048 × 1536 화소·3.45 µm라면 8.83 mm. 라인 센서(높이 1)라면 폭 그 자체에 가까운 값이 된다.</p>
+<p>렌즈 측의 <code style="color:#22d3bf">image_circle_mm</code>과 직접 비교하는 것이 <code style="color:#22d3bf">covers_sensor</code> (1 %의 허용차 포함). <code style="color:#22d3bf">lens_spec</code> / <code style="color:#22d3bf">vision_layout</code>으로 시야를 정하기 전의 검산에.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

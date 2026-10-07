@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_map(image, qualities=None, block: &#x27;int&#x27; = 16) -&gt; &#x27;list&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>JPEG 幽靈(Farid 2009)。掃描品質得到的<b>重壓縮殘差圖序列</b>。<code style="color:#22d3bf">images</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ある領域が品質 <code style="color:#22d3bf">q0</code> で一度圧縮されていると、<code style="color:#22d3bf">q = q0</code> で再圧縮したときにその領域の差分が <b>谷</b> になる。画像全体が同じ <code style="color:#22d3bf">q0</code> なら谷は全面に出るが、別の品質で圧縮された部分が貼られていると、<b>その領域だけ別の <code style="color:#22d3bf">q</code> で谷になる</b>。</p>
-<p>返りは <code style="color:#22d3bf">len(qualities)</code> 本の <code style="color:#22d3bf">(H, W)</code> 地図(<code style="color:#22d3bf">block</code> 角の箱平均で平滑化した二乗差)。谷の位置を画素ごとに読むのは <code style="color:#22d3bf">jpeg_ghost_quality</code>。</p>
-<p><b>Pillow 必須</b>(<code style="color:#22d3bf">ImportError</code>)。理由は <code style="color:#22d3bf">error_level_map</code> と同じ。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_ghost_finds_the_pasted_quality</code>、品質 92 の背景に品質 60 で圧縮した 64x64 を貼った 192x192、掃引 40..95 step 5):</p>
-<p>貼った領域の谷は <b>品質 60</b>(真値 60、誤差 0)、背景の谷は <b>品質 95</b>。背景が 92 ではなく 95 になるのは掃引が 5 刻みで 92 を含まないからで、<b>谷は掃引した品質の中からしか出ない</b> —— 刻みより細かい品質は読めない。</p>
+<p>若某區域曾以品質 <code style="color:#22d3bf">q0</code> 壓縮過一次，則以 <code style="color:#22d3bf">q = q0</code> 再壓縮時，該區域的差分會成為<b>谷</b>。整張影像都是同一 <code style="color:#22d3bf">q0</code> 時谷會出現在全圖，但若貼入了以別的品質壓縮的部分，<b>只有該區域會在別的 <code style="color:#22d3bf">q</code> 處成為谷</b>。</p>
+<p>回傳 <code style="color:#22d3bf">len(qualities)</code> 張 <code style="color:#22d3bf">(H, W)</code> 的圖(以 <code style="color:#22d3bf">block</code> 見方的盒式平均平滑後的</p>
+<p>平方差)。逐像素讀取谷的位置的是 <code style="color:#22d3bf">jpeg_ghost_quality</code>。</p>
+<p><b>必須有 Pillow</b>(<code style="color:#22d3bf">ImportError</code>)。理由與 <code style="color:#22d3bf">error_level_map</code> 相同。</p>
+<p>實測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_ghost_finds_the_pasted_quality</code>，在品質 92 的背景上貼入以品質 60 壓縮的 64x64，共 192x192，掃掠 40..95 step 5)：貼入區域的谷在<b>品質 60</b>(真值 60，誤差 0)，背景的谷在<b>品質 95</b>。背景是 95 而不是 92，是因為掃掠以 5 為步長，不包含 92，<b>谷只會出現在掃掠過的品質之中</b> —— 比步長更細的品質無法讀出。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

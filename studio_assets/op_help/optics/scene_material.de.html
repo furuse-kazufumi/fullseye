@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erzeugt ein Material. <code style="color:#22d3bf">kind</code> ist eines von dreien: lambert / conductor / dielectric.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
-<p>lambert: <code style="color:#22d3bf">albedo</code>(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>
-<p>conductor: <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)の複素屈折率で色が決まり、</p>
-<p><code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)で異方性ローブの幅が決まる。<b>色は指定しない</b>。</p>
-<p><code style="color:#22d3bf">roughness_um</code> は面粗さ Rq [µm]。鏡面として返る割合が</p>
-<p>exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、</p>
-<p>鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。</p>
-<p><b>波長が式に入る</b>ので、同じ面でも光源の波長で見え方が変わる。</p>
-<p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)の Sellmeier 分散で屈折し、</p>
-<p><code style="color:#22d3bf">sigma_per_mm</code> の Beer–Lambert で吸収する。</p>
-<p>返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。</p>
+<p>Es gibt nur 3 Arten, weil <b>Vermischen stillschweigend falsch wird</b>; um mehr hinzuzufügen, die Typen trennen (ob diffus, Metall oder transparent, ändert grundlegend, wohin Strahlen gehen).</p>
+<p>lambert: vollständig diffus, verwendet nur <code style="color:#22d3bf">albedo</code> (Skalar oder 3 RGB-Elemente).</p>
+<p>conductor: die Farbe wird durch den komplexen Brechungsindex von <code style="color:#22d3bf">metal</code> (<code style="color:#22d3bf">glassmirror.METALS</code>) bestimmt,</p>
+<p>die anisotrope Keulenbreite durch <code style="color:#22d3bf">finish</code> (<code style="color:#22d3bf">metalfinish.FINISHES</code>). <b>Es wird keine Farbe angegeben</b>.</p>
+<p><code style="color:#22d3bf">roughness_um</code> ist die Oberflächenrauheit Rq [µm]. Der spiegelnd zurückgegebene Anteil wird durch</p>
+<p>exp(-(4πσcosθ/λ)²) bestimmt (Davies 1954 / Bennett-Porteus 1961), daher</p>
+<p>entscheidet dieser 1 Wert zwischen spiegelnd (0.01 = poliert) und eher diffus (1.0 = satinierte Oberfläche).</p>
+<p><b>Die Wellenlänge geht in die Formel ein</b>, daher sieht dieselbe Fläche je nach Wellenlänge der Lichtquelle anders aus.</p>
+<p>dielectric: bricht mit der Sellmeier-Dispersion von <code style="color:#22d3bf">glass</code> (<code style="color:#22d3bf">raytrace.glass_catalog()</code>)</p>
+<p>und absorbiert nach Beer–Lambert mit <code style="color:#22d3bf">sigma_per_mm</code>.</p>
+<p>Rückgabewert: ein dict, das das Obige validiert speichert (unverändert an die anderen scene_*-Ops übergeben).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

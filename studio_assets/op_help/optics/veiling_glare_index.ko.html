@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>미광(베일링 글레어) 지수: 검은 점 중심의 밝기 평균 / 흰 바탕의 밝기 평균(ISO 9358의 사고방식).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>*dark_mask*(必須): 黒い点の<b>中心部</b>の画素(点の縁の ぼけ を含めない —— 縁を含めるとコアの ぼけ まで迷光に数える)。*bright_mask*(必須): 白地の画素。★黒い点の大きさ(と光源の広さ)で答えが変わる: 裾が 1/(1+(r/r0)²) のレンズでは黒い点の一辺を 16 → 256 px にすると同じレンズの指数が 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3 節)。点の大きさは結果と一緒に報告すること。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;vgi&quot;: 比, &quot;dark&quot;: 黒点の平均, &quot;bright&quot;: 白地の平均, &quot;n_dark&quot;, &quot;n_bright&quot;}</code>。暗電流・黒レベルは引かない(引いた像を渡す)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像・マスクの形が違う / マスクが bool でない・空・重なる / 白地の平均が 0 以下。</p>
+<p>*dark_mask*(필수): 검은 점의 <b>중심부</b> 화소(점 가장자리의 흐림은 포함하지 않는다 —— 가장자리를 포함하면 코어의 흐림까지 미광으로 센다). *bright_mask*(필수): 흰 바탕의 화소. ★검은 점의 크기(와 광원의 넓이)에 따라 답이 바뀐다: 꼬리가 1/(1+(r/r0)²)인 렌즈에서는검은 점의 한 변을 16 → 256 px로 하면 같은 렌즈의 지수가 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3절). 점의 크기는 결과와 함께 보고할 것.</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;vgi&quot;: 비, &quot;dark&quot;: 검은 점의 평균, &quot;bright&quot;: 흰 바탕의 평균, &quot;n_dark&quot;, &quot;n_bright&quot;}</code>. 암전류·블랙 레벨은 빼지 않는다(뺀 상을 넘긴다).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 이미지·마스크의 형태가 다름 / 마스크가 bool이 아님·비어 있음·겹침 / 흰 바탕의 평균이 0 이하.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

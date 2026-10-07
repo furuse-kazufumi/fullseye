@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从粗窗口逐级降到细窗口的多级 PIV。返回 <code style="color:#22d3bf">(flow, info)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各段の結果を<b>次の段の予測変位</b>として使う(整数量だけ 2 枚目の窓をずらす)。段の間で外れ値を除いて埋めるのは意図的 —— 外れたベクトルをそのまま予測に使うと、その窓は次の段でも外れたまま固定される。</p>
+<p>把每一级的结果用作<b>下一级的预测位移</b>(把第 2 幅的窗口错开整数量)。在级与级之间剔除并填补离群值是有意为之 —— 若把偏离的向量直接用作预测，该窗口在下一级也会一直偏离、被固定住。</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>windows: 大きい順の窓列。各段は前段の<b>倍数関係でなくてよい</b>が、</p>
-<p>格子が変わるので予測は最近傍で載せ替える。</p>
-<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
-<p>outlier_threshold: 段間の正規化中央値検定の閾値。<code style="color:#22d3bf">None</code> で無効。</p>
+<p>a, b: 图像对。</p>
+<p>windows: 由大到小的窗口序列。各级与前一级<b>不必是倍数关系</b>，</p>
+<p>但网格会改变，因此预测用最近邻重新映射。</p>
+<p>overlap / peak / window_func: 与 <code style="color:#22d3bf">piv_cross_correlate</code> 相同。</p>
+<p>outlier_threshold: 级间归一化中位数检验的阈值。<code style="color:#22d3bf">None</code> 为禁用。</p>
 <p>Returns:</p>
-<p>最終段の <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> に各段の窓の大きさ。</p>
+<p>最后一级的 <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> 中为各级的窗口大小。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

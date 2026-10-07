@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.env_studio(directions, key: &#x27;float&#x27; = 12.0, fill: &#x27;float&#x27; = 3.2, horizon: &#x27;float&#x27; = 0.45, sky: &#x27;float&#x27; = 0.14, ground: &#x27;float&#x27; = 0.05)</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.env_studio(directions, key: &#x27;float&#x27; = 12.0, fill: &#x27;float&#x27; = 3.2, horizon: &#x27;float&#x27; = 0.45, sky: &#x27;float&#x27; = 0.14, ground: &#x27;float&#x27; = 0.05)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;env_studio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影棚环境的辐亮度(方向 → 亮度)。<b>无彩色</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ソフトボックス 2 枚 + 天空の勾配 + 細い水平の帯。色を付けないのは、金属の色が環境ではなく <b>Fresnel(n, k) から出ている</b>ことを絵の中で保証するため。<code style="color:#22d3bf">directions</code> は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。</p>
+<p>2 块柔光箱 + 天空渐变 + 细的水平带。不加颜色是为了在画面中保证金属的颜色不是来自环境，而是<b>来自 Fresnel(n, k)</b>。<code style="color:#22d3bf">directions</code> 为 (..., 3) 的单位向量(z 向上)。返回值为相应形状的 (...,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

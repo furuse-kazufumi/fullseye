@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Binarization with a fixed threshold. Pixels where <code style="color:#22d3bf">x</code> falls within the band <code style="color:#22d3bf">(a, a+0.5+0.5b)</code> become the foreground (1) (sharing the <code style="color:#22d3bf">fixed</code> branch of <code style="color:#22d3bf">_sh_threshold</code> with the <code style="color:#22d3bf">threshold</code> seed op). a sets the lower bound, and b sets the band width (upper bound).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">fast_threshold</code>（大域しきい値による高速な二値化、通常は単純な閾値以上/以下の判定）に相当するが、この実装は下限・上限の両方を持つ帯域しきい値である点、および高速化のための整数近似などは行っていない点で近似。</p>
+<p>Corresponds to HALCON&#x27;s <code style="color:#22d3bf">fast_threshold</code> (fast binarisation by a global threshold, usually a simple above/below-threshold test), but is an approximation in that this implementation is a band threshold with both a lower and an upper bound, and in that it does not perform integer approximation or similar measures for speed.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -12,8 +12,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>전변동 노이즈 제거(TV denoising, Chambolle 기법). 에지를 보존하면서 평탄한 영역의 노이즈를 매끄럽게 한다 —— 미디언/가우시안 블러와 달리 윤곽의 선명함을 잘 무너뜨리지 않는 것이 특징이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a は denoising weight を 0.02〜0.32 に振り、<b>大きいほど強く平滑化される</b>(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。</p>
+<p>HALCON에는 직접 대응하는 것이 없다. 구현은 <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a는 denoising weight를 0.02~0.32로 바꾸며, <b>클수록 강하게 평활화된다</b>(이 부호의 방향은 뒤에 나오는 sk_tv_bregman과 반대이므로 혼동에 주의). b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

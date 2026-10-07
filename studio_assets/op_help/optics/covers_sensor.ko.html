@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>렌즈가 그 센서를 덮을 수 있는지(이미지 서클 대 대각선).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>覆えないと<b>四隅が黒く落ちる</b>(ケラレ)。カタログの「1 インチまで」等はこの判定を形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。</p>
+<p>덮지 못하면 <b>네 귀퉁이가 검게 떨어진다</b>(비네팅). 카탈로그의 &quot;1인치까지&quot; 등은 이 판정을형식명으로 말하고 있을 뿐이므로, 실치수로 비교하는 편이 확실하다 ―― 특히 라인 센서는길이가 그대로 효과를 내므로(16k x 7 µm = 115 mm), 에어리어용 렌즈로는 전혀 부족하다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

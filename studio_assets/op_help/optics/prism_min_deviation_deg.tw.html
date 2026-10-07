@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass=&#x27;N-BK7&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import glassmirror; glassmirror.prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass=&#x27;N-BK7&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;prism_min_deviation_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>稜鏡的最小偏向角 [deg]。因<b>實際玻璃的色散</b>隨波長變化 = 出現彩虹的原因。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>wavelength_nm: スカラまたは配列 [nm]。<b>データ入力なので第 1 引数</b></p>
-<p>(2026-09-04 の敵対的検証で判明: 台帳は「先頭 N 個が宣言 in 型のデータ」という</p>
-<p>規約なのに、この op だけ <code style="color:#22d3bf">apex_deg</code> を先頭に置いていた。波長の配列が</p>
-<p><code style="color:#22d3bf">apex_deg</code> に入り <code style="color:#22d3bf">float(配列)</code> が<b>素の TypeError</b> を投げていた ―― 規約に</p>
-<p>揃えるのが正しい直し方で、番人を足すのは対症療法)。</p>
-<p>apex_deg: 頂角 A [deg]。glass: <code style="color:#22d3bf">raytrace.glass_catalog</code> の硝材名、または屈折率の数値。</p>
-<p>返り値: 最小偏角 δ_min = 2·asin(n·sin(A/2)) − A(Hecht §5.5)。n·sin(A/2) &gt; 1 の波長は光が出られない(全反射)ので NaN。</p>
-<p>検算: N-BK7・A=60° で d 線(587.6 nm)の δ_min ≈ 38.9°、F 線(486.1)と C 線(656.3)の差(角分散)が <b>Abbe 数から予想される向き</b>(短波長ほど大きく曲がる)になる。</p>
+<p>wavelength_nm：純量或陣列 [nm]。<b>因為是資料輸入，所以是第 1 個參數</b></p>
+<p>(在 2026-09-04 的對抗性驗證中發現：台帳的慣例是「前 N 個是宣告的 in 型別的資料」，</p>
+<p>只有這個 op 把 <code style="color:#22d3bf">apex_deg</code> 放在開頭。波長陣列被傳入</p>
+<p><code style="color:#22d3bf">apex_deg</code>，<code style="color:#22d3bf">float(陣列)</code> 拋出了<b>裸的 TypeError</b> ―― 與慣例</p>
+<p>對齊才是正確的修法，加守衛只是治標)。</p>
+<p>apex_deg：頂角 A [deg]。glass：<code style="color:#22d3bf">raytrace.glass_catalog</code> 中的玻璃材料名，或折射率數值。</p>
+<p>回傳值：最小偏向角 δ_min = 2·asin(n·sin(A/2)) − A(Hecht §5.5)。n·sin(A/2) &gt; 1 的波長光無法射出(全反射)，因此為 NaN。</p>
+<p>驗算：N-BK7、A=60° 時 d 線(587.6 nm)的 δ_min ≈ 38.9°，F 線(486.1)與 C 線(656.3)的差(角色散)符合<b>由 Abbe 數預期的方向</b>(波長越短彎折越大)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Automatische Schwellenwert-Binarisierung mit Otsus Methode (Otsu&#x27;s method). Teilt sich den <code style="color:#22d3bf">otsu</code>-Zweig von <code style="color:#22d3bf">_sh_threshold</code> mit <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code>; a und b werden nicht verwendet. Pixel, die heller als der Schwellenwert sind, werden zum Vordergrund (1). In Umgebungen ohne skimage wird als Fallback der Bildmittelwert als Schwellenwert verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">bin_threshold</code>（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。</p>
+<p>Eine Näherung an HALCONs <code style="color:#22d3bf">bin_threshold</code> (eine Operation, die durch Auswahl unter mehreren automatischen Schwellwert-Bestimmungsalgorithmen binarisiert; Standard ist maximale Trennbarkeit = entspricht dem Otsu-Verfahren); nur das Otsu-Verfahren wird unterstützt, andere Algorithmen stehen nicht zur Wahl.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

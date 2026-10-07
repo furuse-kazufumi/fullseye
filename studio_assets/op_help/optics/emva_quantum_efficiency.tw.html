@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由響應(特性曲線)的斜率求出量子效率 η(式 49、52)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*mu_p*: 露光段ごとの画素あたりの平均光子数(照度計と露光時間から: μ_p = A E t_exp λ/(hc))。R = μ_y − μ_y.dark を μ_p に当てた直線(<b>切片 0 に固定</b>)の傾き、η = R/K。使う点は飽和の 0〜70 %。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 2 点未満 / K が正でない / 応答が正でない。</p>
+<p>*mu_p*：各曝光段每像素的平均光子數(由照度計與曝光時間求得：μ_p = A E t_exp λ/(hc))。R 是將 μ_y − μ_y.dark 對 μ_p 擬合的直線(<b>截距固定為 0</b>)的斜率，η = R/K。使用的點為飽和的 0〜70 %。</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：長度不同 / 0〜70 % 內少於 2 點 / K 不為正 / 響應不為正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

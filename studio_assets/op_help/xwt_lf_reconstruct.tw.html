@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>低頻重建影像。用<code style="color:#22d3bf">db2</code>分解，將所有細節係數歸零，僅由近似成分逆變換重建 —— 結果是接近高斯模糊的多層小波平滑影像。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は分解段数(<code style="color:#22d3bf">1+int(a*3)</code> で 1〜4 段)を振る —— 段数を増やすほど強くぼける。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 調整分解層數(由 <code style="color:#22d3bf">1+int(a*3)</code> 得 1〜4 層) —— 層數越多越模糊。<code style="color:#22d3bf">b</code> 未使用。輸出截斷到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

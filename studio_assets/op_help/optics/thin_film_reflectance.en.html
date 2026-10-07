@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The spectral reflectance of a thin film (thickness d, index n_film). The closed Airy (multiple-reflection) form.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>nm:           波長 [nm] (配列可)。</p>
-<p>thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。</p>
-<p>cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。</p>
-<p>返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。</p>
-<p>物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。λ/4 の奇数倍で反射が極大(n_film &gt; n_sub のとき)になり、<b>厚みを変えると色が動く</b>のがシャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。</p>
+<p>nm:           wavelength [nm] (array allowed).</p>
+<p>thickness_nm: film thickness [nm]. 200–800 for a soap bubble, 50–300 for an anodized coating. n_film/n_sub/n_out: refractive index of film / substrate / incident side (real, no absorption).</p>
+<p>cos_theta:    cos of the angle of incidence on the incident side (array allowed, in a shape broadcastable with nm).</p>
+<p>Returns: reflectance R (0–1), in the broadcast shape of nm and cos_theta.</p>
+<p>Physics: phase difference from propagation in the film δ = 2π·(2 n_film d cosθ_film)/λ. With the Fresnel coefficients of the interfaces (mean of s and p polarization = unpolarized) as r1, r2, R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|². Reflection peaks at odd multiples of λ/4 (when n_film &gt; n_sub), and <b>the colour shifts as the thickness changes</b> —— that is the colour of a soap bubble. At film thickness 0, R matches the Fresnel reflection of the bare substrate (verified in tests).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

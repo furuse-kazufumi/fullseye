@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于大津判别分析法的全局阈值二值化（OpenCV 实现）。算法与 sk_otsu 相同，但内部会先量化为 8 位再计算，因此结果可能略有偏差。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当。実装は <code style="color:#22d3bf">cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)</code> の結果を真偽値化したもの。a, b は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">binary_threshold</code>。实现为将 <code style="color:#22d3bf">cv2.threshold(_u8(v), 0, 255, THRESH_BINARY+THRESH_OTSU)</code> 的结果转为布尔值。a、b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

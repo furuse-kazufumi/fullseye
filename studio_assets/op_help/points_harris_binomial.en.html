@@ -15,8 +15,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Harris corner response preceded by binomial (Gaussian) smoothing. First smooths the image with a sigma determined by <code style="color:#22d3bf">b</code>, then computes the Harris response on top of it (using <code style="color:#22d3bf">corner_harris</code> if skimage is available, otherwise manually computing the structure tensor, with k=0.04). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">points_harris_binomial</code> (Detect points of interest using the binomial approximation of the Harris operator.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が Harris 応答自体のシグマ(0.5〜2.5)を、<code style="color:#22d3bf">b</code> が前段の平滑化シグマ(0.5〜2.0)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the sigma of the Harris response itself (0.5–2.5), <code style="color:#22d3bf">b</code> the sigma of the preceding smoothing (0.5–2.0). Both are used.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

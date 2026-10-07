@@ -12,8 +12,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過對 DCT 係數做硬閾值處理來去雜訊（小波收縮的 DCT 版本）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>しきい値は最大係数に対する相対値で決める（<code style="color:#22d3bf">thr = (0.01 + 0.2*a) * max(|C|)</code>）。<code style="color:#22d3bf">a</code> が大きいほど強く間引かれ、<code style="color:#22d3bf">b</code> は未使用。しきい値未満の DCT 係数を 0 にしてから逆変換するので、弱いテクスチャごと消えやすい代わりに広い平坦領域のノイズはよく落ちる。</p>
+<p>閾值由相對於最大係數的相對值決定（<code style="color:#22d3bf">thr = (0.01 + 0.2*a) * max(|C|)</code>）。<code style="color:#22d3bf">a</code> 越大，係數被剔除得越多，<code style="color:#22d3bf">b</code> 未使用。將低於閾值的 DCT 係數設為 0 後再做逆轉換，因此弱紋理容易被一併消除，但相對地，大片平坦區域的雜訊能被很好地去除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

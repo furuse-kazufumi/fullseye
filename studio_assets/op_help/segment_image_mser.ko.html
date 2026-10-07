@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>MSER(Maximally Stable Extremal Regions, 최대 안정 극값 영역) 검출(<code style="color:#22d3bf">cv2.MSER_create</code>). 임계값을 연속적으로 바꿔도 형태가 안정적으로 유지되는 영역을 검출하여 그 경계선을 반환한다(문자·로고 등 조명 변화에 강인한 영역 검출에 쓰인다). HALCON의 <code style="color:#22d3bf">segment_image_mser</code>(Segment image using Maximally Stable Extremal Regions (MSER).)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が MSER の安定性パラメータ(delta、3〜11)を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">cv2</code> が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>가 MSER의 안정성 파라미터(delta, 3~11)를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. <code style="color:#22d3bf">cv2</code>가 없는 환경에서는 이 분기를 호출할 수 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

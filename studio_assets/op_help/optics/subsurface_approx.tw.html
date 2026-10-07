@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import surfacelib; surfacelib.subsurface_approx(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), thickness=0.5, wrap=0.5) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;subsurface_approx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>半透明繞射光的近似(樹葉・皮膚・大理石・乳白塑膠)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>thickness: 透け具合(0–1、大きいほど裏から回り込む)。wrap: 影側への回り込みの広さ。</p>
-<p>返り値: (H, W)。<b>光源が裏にあるほど明るい</b>成分(back-scatter)と、影側へ回り込む成分(wrap lighting)の和。Lambert では 0 になる領域に光が残るのが要点。</p>
+<p>thickness：透光程度(0–1，越大越多光從背面繞過來)。wrap：向陰影側繞入的範圍。</p>
+<p>回傳值：(H, W)。<b>光源越在背面越亮</b>的成分(back-scatter)與向陰影側繞入的成分(wrap lighting)之和。重點是在 Lambert 為 0 的區域仍留有光。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

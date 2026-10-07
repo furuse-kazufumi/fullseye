@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度形态学腐蚀（erosion，OpenCV 实现）。将像素替换为其邻域的最小值，从而缩小明亮区域、扩大暗色区域。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">gray_erosion</code>(Perform a gray value erosion on an image.)に相当。実装は <code style="color:#22d3bf">cv2.erode(v, se)</code>、se は楕円形でサイズ <code style="color:#22d3bf">3+2*int(a*3)</code> —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">gray_erosion</code>(Perform a gray value erosion on an image.)。实现为 <code style="color:#22d3bf">cv2.erode(v, se)</code>，se 为椭圆形，尺寸 <code style="color:#22d3bf">3+2*int(a*3)</code> —— a 将结构元素尺寸在 3~9 之间调节。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -6,14 +6,13 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상관 맵을 <b>더한 뒤에</b> 피크를 찾는다(앙상블 상관).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
+<p>입자가 적거나 잡음이 많은 경우, 1쌍씩 재서 평균하면 <b>벗어난 벡터의평균</b>이 된다. 상관 단계에서 더하면 약한 피크가 같은 곳에 쌓여솟아오른다. 정상류(모든 쌍에서 변위가 같음)가 전제.</p>
 <p>Args:</p>
-<p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>
+<p>images: 2장 이상의 이미지 열. 연속하는 쌍 <code style="color:#22d3bf">(k, k+1)</code>을 사용한다.</p>
 <p>window / overlap / peak / window_func / normalize / search_limit:</p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
+<p><code style="color:#22d3bf">piv_cross_correlate</code>와 같다.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info[&quot;pairs&quot;]</code> に使った対の数。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>. <code style="color:#22d3bf">info[&quot;pairs&quot;]</code>에 사용한 쌍의 수.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;surface_finish&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在零件表面刻出<b>加工纹路</b>(车纹・拉丝・滚花・喷砂・磨削纹)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>欠陥ではない ―― 良品にも必ずあるので <code style="color:#22d3bf">optscene_defect_mask</code> には出ない。それでも要るのは、加工目が<b>検査をいちばん難しくしている当人</b>だから。旋盤目と細い傷は暗視野で同じように光るので、加工目の無いつるつるの面で学習させたモデルは実機で加工目を全部欠陥と呼ぶ。</p>
-<p><code style="color:#22d3bf">kind</code>: turned(同心円)/ hairline(一方向)/ crosshatch(交差)/ blasted(梨地)/ ground(研削)/ none。<code style="color:#22d3bf">pitch_um</code> は目のピッチ、<code style="color:#22d3bf">depth_um</code> は谷の深さ。どちらも実際の加工の値をそのまま入れる(旋盤の送りは 50-300 µm、Ra は 0.2-3 µm)。</p>
-<p>返り値は加工目を付けた<b>新しい</b>プリミティブ(元は書き換えない)。</p>
+<p>这不是缺陷 ―― 良品上也一定有，所以不会出现在 <code style="color:#22d3bf">optscene_defect_mask</code> 中。仍然需要它，是因为加工纹理<b>正是让检测最困难的元凶</b>。车床纹与细划痕在暗场中同样发亮，所以在没有加工纹理的光滑面上训练的模型，在实机上会把加工纹理全都判为缺陷。</p>
+<p><code style="color:#22d3bf">kind</code>：turned(同心圆)/ hairline(单向)/ crosshatch(交叉)/ blasted(磨砂面)/ ground(磨削)/ none。<code style="color:#22d3bf">pitch_um</code> 是纹路节距，<code style="color:#22d3bf">depth_um</code> 是谷深。两者都直接填入实际加工的值(车床的进给为 50-300 µm，Ra 为 0.2-3 µm)。</p>
+<p>返回值是附加了加工纹理的<b>新</b>图元(不修改原对象)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

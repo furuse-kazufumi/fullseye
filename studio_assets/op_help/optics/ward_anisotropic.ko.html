@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;ward_anisotropic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Ward 의 이방성 반사(타원 가우스 미세면). 헤어라인 마감의 <b>늘어난 하이라이트</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>normals: (H, W, 3) 法線マップ。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 研磨の筋の方向(3,)。面内へ射影して使う。alpha_x / alpha_y: 筋方向 / 直交方向の粗さ。<b>この比がハイライトの伸び</b>になる</p>
-<p>(等方なら円、alpha_x &gt;&gt; alpha_y なら筋に沿って伸びた線)。</p>
-<p>返り値: (H, W) の鏡面反射強度(非負)。背景は 0。</p>
-<p>式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。</p>
+<p>normals: (H, W, 3) 법선 맵. light / view: 면에서 광원 / 시점으로의 방향(3,).</p>
+<p>tangent: 연마 결의 방향(3,). 면내로 사영하여 쓴다. alpha_x / alpha_y: 결 방향 / 직교 방향의 거칠기. <b>이 비가 하이라이트의 늘어남</b>이 된다</p>
+<p>(등방이면 원, alpha_x &gt;&gt; alpha_y이면 결을 따라 늘어난 선).</p>
+<p>반환값: (H, W)의 경면 반사 강도(음이 아님). 배경은 0.</p>
+<p>식: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo))이며, δ는 하프 벡터와 법선의 각, φ는 접선으로부터의 방위각(Ward 1992).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

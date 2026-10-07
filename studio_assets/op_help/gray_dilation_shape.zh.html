@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用圆形（disk，半径 <code style="color:#22d3bf">_rad(a)</code>=1〜4）结构元素的灰度膨胀（gray dilation）——将像素替换为窗口内的最大值。b 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">gray_dilation_shape</code>（円・矩形など任意形状のマスクで窓内最大のグレー値を求める演算）に相当。矩形版は <code style="color:#22d3bf">gray_dilation_rect</code> が担当する。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">gray_dilation_shape</code>（用圆、矩形等任意形状的掩模求窗口内最大灰度值的运算）。矩形版本由 <code style="color:#22d3bf">gray_dilation_rect</code> 负责。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.33、0.67、0.99（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

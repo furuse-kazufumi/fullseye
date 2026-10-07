@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inspection_dataset(scene, camera, lights, n: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, exposure_ms: &#x27;float&#x27; = 10.0, bit_depth: &#x27;int&#x27; = 8, jitter_mm: &#x27;float&#x27; = 0.0, tilt_jitter_deg: &#x27;float&#x27; = 0.0, intensity_jitter: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, defects: &#x27;dict&#x27; = None, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, environment=None, environment_gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.inspection_dataset(scene, camera, lights, n: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0, exposure_ms: &#x27;float&#x27; = 10.0, bit_depth: &#x27;int&#x27; = 8, jitter_mm: &#x27;float&#x27; = 0.0, tilt_jitter_deg: &#x27;float&#x27; = 0.0, intensity_jitter: &#x27;float&#x27; = 0.0, depth: &#x27;int&#x27; = 1, defects: &#x27;dict&#x27; = None, supersample: &#x27;int&#x27; = 1, adaptive: &#x27;bool&#x27; = False, light_samples: &#x27;int&#x27; = None, environment=None, environment_gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;inspection_dataset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>외관 검사 AI 의 <b>학습 이미지 n 장</b>을 화소 단위로 완전한 레이블과 함께 생성합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>同じ部品を、照明(<code style="color:#22d3bf">lights</code> に複数渡すと 1 枚ごとに巡回)・置き方(<code style="color:#22d3bf">jitter_mm</code> の並進、<code style="color:#22d3bf">tilt_jitter_deg</code> のカメラ傾き)・明るさ(<code style="color:#22d3bf">intensity_jitter</code> の相対ゆらぎ)を振って撮る = ドメインランダム化。</p>
-<p>返り値は 1 枚あたり dict:</p>
-<p><code style="color:#22d3bf">image</code> 量子化済み (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 欠陥の真値 /</p>
-<p><code style="color:#22d3bf">part_mask</code> 部品の真値 / <code style="color:#22d3bf">depth_mm</code> 深度の真値 /</p>
-<p><code style="color:#22d3bf">meta</code> 使った照明種別・露光・ゆらぎ量・欠陥ラベル(再現に必要な値をすべて)。</p>
-<p><code style="color:#22d3bf">defects</code> に <code style="color:#22d3bf">random_defects</code> の引数 dict を渡すと、<b>1 枚ごとに欠陥を引き直す</b>(<code style="color:#22d3bf">scene</code> の先頭を対象にする)。これが外観検査 AI の学習データ生成そのもので、欠陥の種類・位置・大きさ・深さと照明が同時に振れる。</p>
-<p><code style="color:#22d3bf">seed</code> を固定すれば決定的。<b>同じ欠陥でも照明を変えると見え方が変わる</b> ことがこの生成器の要点で、だから照明を振った枚数が効く。</p>
+<p>같은 부품을 조명(<code style="color:#22d3bf">lights</code>에 여러 개를 넘기면 1장마다 순환)·놓는 방식(<code style="color:#22d3bf">jitter_mm</code>의 병진, <code style="color:#22d3bf">tilt_jitter_deg</code>의 카메라 기울기)·밝기(<code style="color:#22d3bf">intensity_jitter</code>의 상대 요동)를 바꿔 가며 촬영한다 = 도메인 무작위화.</p>
+<p>반환값은 1장당 dict:</p>
+<p><code style="color:#22d3bf">image</code> 양자화됨 (H, W, 3) / <code style="color:#22d3bf">defect_mask</code> 결함의 참값 /</p>
+<p><code style="color:#22d3bf">part_mask</code> 부품의 참값 / <code style="color:#22d3bf">depth_mm</code> 깊이의 참값 /</p>
+<p><code style="color:#22d3bf">meta</code> 사용한 조명 종류·노출·요동량·결함 라벨(재현에 필요한 값 전부).</p>
+<p><code style="color:#22d3bf">defects</code>에 <code style="color:#22d3bf">random_defects</code>의 인수 dict를 넘기면, <b>1장마다결함을 다시 뽑는다</b>(<code style="color:#22d3bf">scene</code>의 첫 번째를 대상으로 한다). 이것이 외관 검사 AI의 학습데이터 생성 그 자체이며, 결함의 종류·위치·크기·깊이와 조명이 동시에 변한다.</p>
+<p><code style="color:#22d3bf">seed</code>를 고정하면 결정적이다. <b>같은 결함이라도 조명을 바꾸면 보이는 방식이 달라진다</b> 는 것이 이 생성기의 요점이며, 그래서 조명을 바꾼 장수가 효과가 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

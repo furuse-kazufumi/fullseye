@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>VisuShrink風格的小波去雜訊。用<code style="color:#22d3bf">db4</code>做2層分解，對各層細節係數做軟閾值處理後再逆變換重建（VisuShrink原本是依噪聲量自動決定此閾值的方法，此處為直接以<code style="color:#22d3bf">a</code>給定閾值的簡化版）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は閾値(<code style="color:#22d3bf">0.05+0.5*a</code> で 0.05〜0.55)を振る —— 大きいほど強く平滑化されディテールが失われる。<code style="color:#22d3bf">b</code> は未使用。出力は元画像サイズに切り詰めて [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 調整閾值(由 <code style="color:#22d3bf">0.05+0.5*a</code> 得 0.05〜0.55) —— 越大平滑越強，細節損失越多。<code style="color:#22d3bf">b</code> 未使用。輸出裁切為原影像尺寸並截斷到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

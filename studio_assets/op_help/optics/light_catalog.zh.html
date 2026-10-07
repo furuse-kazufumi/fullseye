@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;light_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>照明的规格表(键为「厂商 型号」)。可用 <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">kind</code> 筛选。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>照明は <b>OEM 供給が多く、同じ実体が別ブランドで売られる</b>ので、型番だけでは一意にならない。<code style="color:#22d3bf">oem_of</code> にたどれる元があれば入る。</p>
-<p>既定は一般形状だけで、ベンダ型番は入っていない ―― 配光・波長・実体寸法はデータシートにしかなく、推測で埋めると実測と誤解させるため。手元の機種は <code style="color:#22d3bf">register_light</code> で足す。</p>
+<p>照明<b>多为 OEM 供货，同一实物以不同品牌销售</b>，所以仅凭型号无法唯一确定。若能追溯到原品则填入 <code style="color:#22d3bf">oem_of</code>。</p>
+<p>默认只有通用形状，不含厂商型号 ―― 配光、波长、实物尺寸只在数据表中才有，靠推测填入会让人误以为是实测。手头的机型请</p>
+<p>用 <code style="color:#22d3bf">register_light</code> 添加。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

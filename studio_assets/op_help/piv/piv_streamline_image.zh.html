@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>流线图(MATLAB 的 <code style="color:#22d3bf">streamslice</code>)。返回 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
+<p>用 <code style="color:#22d3bf">piv_streamlines</code> 的等间距配置画线，在每条线弧长的中段放 1 个表示方向的箭头尖(与 LIC 不同，<b>能读出前后</b>)。线的间距一致，因此 <b>线的密度不表示速度</b> —— 想看速度时，在 <code style="color:#22d3bf">background</code> 中铺 <code style="color:#22d3bf">piv_flow_magnitude</code> 或色相图。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
-<p>arrows: 矢じりを置くか。</p>
-<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code> へ素通し(<code style="color:#22d3bf">separation</code> など)。</p>
+<p>upsample / background / color / width: 与 <code style="color:#22d3bf">piv_quiver</code> 相同。</p>
+<p>arrows: 是否放置箭头尖。</p>
+<p>**stream_kw: 原样传给 <code style="color:#22d3bf">piv_streamlines</code>(<code style="color:#22d3bf">separation</code> 等)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64，值域 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

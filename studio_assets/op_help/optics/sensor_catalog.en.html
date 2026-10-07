@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;sensor_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Data sheet of real sensors (with Basler&#x27;s EMVA1288 measurements).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">status</code> に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは載せていない。新規設計は <code style="color:#22d3bf">status=&quot;current&quot;</code>(Pregius S、2.74 µm 裏面照射)から選ぶ。</p>
-<p><b>ここに載っているのは「カメラ側の値」</b>である。出典が Basler のカメラ実測表なので:</p>
-<p style="margin:2px 0 2px 12px">• 解像度は<b>そのカメラが出す画素数</b>で、センサの全有効画素とは限らない(メーカーは端を切って少し低くすることがある)。</p>
-<p style="margin:2px 0 2px 12px">• フレームレートは<b>接続インターフェース</b>(USB3 / GigE / 5GigE / CXP-12)で変わるので、センサの属性として持たない ―― だからこの表には入れていない。</p>
-<p style="margin:2px 0 2px 12px">• QE / ダークノイズ / 飽和容量 / ダイナミックレンジ / 最大 SNR は <b>カメラの EMVA1288 実測</b>(ace / ace 2 / boost)。センサ単体の理論値ではなく実装込みなので、別のカメラなら少し変わる。</p>
-<p style="margin:2px 0 2px 12px">• 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。</p>
-<p><b>自社でセンサを作っているカメラメーカーはここに載せられない</b>(Canon / Photron / Vision Research(Phantom) / Teledyne DALSA / Hamamatsu の一部)。型番から引けず、カメラのデータシートが唯一の出所だからである。画素ピッチが桁違いのものがあり(Phantom の高感度機は 28 µm、Pregius S は 2.74 µm)、回折律速に入る F 値も飽和容量も一桁変わるので、<b>実機の値を直接 sensor_spec に渡すこと</b>。</p>
-<p>世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の <b>3 倍</b>。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は 9.7 ke- で 2nd と同等を保っている(裏面照射)。</p>
-<p>Sony 以外(<code style="color:#22d3bf">maker</code> で引ける)も同じ表から取ってあるので、<b>同じ測定法で横並び比較できる</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>(3.2 µm)は APS-C / 35 mm の<b>大判</b>が本領。Sony にこの判は無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>(4.8 µm)は小型・高速だが、ダークノイズが 11-12 e- と Pregius の 5 倍。暗い場面では効いてくる。</p>
-<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>(2.5 µm)は<b>ダークノイズ 1 e- 級</b>が売り(GMAX2505/2509)。飽和容量は 4-5 ke- と小さいので、ダイナミックレンジは 70 dB でほぼ同等。GMAX3265 は 65 MP(9344x7000)で、超高解像度なら選択肢がここしかない。</p>
-<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>(5.5 µm)は飽和容量が大きい代わりにダークノイズも 14 e-。</p>
+<p>Passing current / mature / legacy to <code style="color:#22d3bf">status</code> narrows the list. Discontinued parts that are too old are not listed. For new designs choose from <code style="color:#22d3bf">status=&quot;current&quot;</code> (Pregius S, 2.74 µm back-illuminated).</p>
+<p><b>What is listed here are &quot;camera-side values&quot;</b>. Since the source is Basler&#x27;s table of camera measurements:</p>
+<p style="margin:2px 0 2px 12px">• The resolution is <b>the pixel count that camera outputs</b>, not necessarily all effective pixels of the sensor (makers sometimes crop the edges and make it a little lower).</p>
+<p style="margin:2px 0 2px 12px">• The frame rate <b>changes with the connection interface</b> (USB3 / GigE / 5GigE / CXP-12), so it is not held as a sensor attribute ―― which is why it is not in this table.</p>
+<p style="margin:2px 0 2px 12px">• QE / dark noise / full-well capacity / dynamic range / max SNR are <b>the camera&#x27;s EMVA1288 measurements</b> (ace / ace 2 / boost). They are not theoretical values of the sensor alone but include the implementation, so with a different camera they change a little.</p>
+<p style="margin:2px 0 2px 12px">• Pixel pitch, shutter type and generation come from the sensor, so they do not move when the camera changes.</p>
+<p><b>Camera makers that build their own sensors cannot be listed here</b> (Canon / Photron / Vision Research (Phantom) / Teledyne DALSA / some of Hamamatsu). They cannot be looked up by model number, because the camera&#x27;s datasheet is the only source. Some have pixel pitches an order of magnitude apart (Phantom&#x27;s high-sensitivity models 28 µm, Pregius S 2.74 µm), and both the F-number at which diffraction limits and the full-well capacity change by an order of magnitude, so <b>pass the real device&#x27;s values directly to sensor_spec</b>.</p>
+<p>What changes between generations shows up in the full-well capacity: Pregius 1st has 31.8 ke-, which is <b>3 times</b> the 2nd (10.4 ke-). This is the price of shrinking the pixel from 5.86 µm to 3.45 µm. Pregius S (2.74 µm) keeps 9.7 ke-, on par with the 2nd (back-illuminated).</p>
+<p>Makers other than Sony (selectable with <code style="color:#22d3bf">maker</code>) are taken from the same table, so <b>they can be compared side by side with the same measurement method</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b> (3.2 µm) is at its best in <b>large formats</b>, APS-C / 35 mm. Sony has no such format.</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b> (4.8 µm) is small and fast, but its dark noise is 11-12 e-, 5 times that of Pregius. This matters in dark scenes.</p>
+<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b> (2.5 µm) sells on <b>dark noise of the 1 e- class</b> (GMAX2505/2509). Its full-well capacity is small at 4-5 ke-, so the dynamic range is about the same at 70 dB. GMAX3265 is 65 MP (9344x7000); for ultra-high resolution it is the only option.</p>
+<p style="margin:2px 0 2px 12px">• <b>ams CMV</b> (5.5 µm) has a large full-well capacity, but in exchange its dark noise is also 14 e-.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

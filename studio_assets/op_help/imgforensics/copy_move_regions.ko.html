@@ -4,56 +4,55 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;copy_move_regions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>한 이미지 안의 <b>복사-이동</b>(자기 복제) 영역 쌍. <code style="color:#22d3bf">table</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code>(既定)</p>
-<p><code style="color:#22d3bf">features.harris_corners</code> でコーナーを取り、</p>
-<p><code style="color:#22d3bf">features.describe_patches</code> で正規化パッチ記述子を作り、</p>
-<p><b>自分から <code style="color:#22d3bf">min_offset</code> px 以上離れた</b>最近傍と Lowe の比率検定で対応を作る</p>
-<p>(<code style="color:#22d3bf">_self_match</code>)。対応をシフトベクトルで束ね、群ごとに</p>
-<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で幾何整合を確認する。</p>
-<p>相似変換は <code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(Umeyama)で当てて</p>
-<p><code style="color:#22d3bf">similarity</code> に入れる。</p>
+<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code>(기본값)</p>
+<p><code style="color:#22d3bf">features.harris_corners</code>로 코너를 구하고,</p>
+<p><code style="color:#22d3bf">features.describe_patches</code>로 정규화 패치 기술자를 만들어,</p>
+<p><b>자기 자신에서 <code style="color:#22d3bf">min_offset</code> px 이상 떨어진</b> 최근접과 Lowe의 비율 검정으로 대응을 만든다</p>
+<p>(<code style="color:#22d3bf">_self_match</code>). 대응을 시프트 벡터로 묶고, 군마다</p>
+<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code>로 기하 정합을 확인한다.</p>
+<p>상사 변환은 <code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(Umeyama)로 맞추어</p>
+<p><code style="color:#22d3bf">similarity</code>에 넣는다.</p>
 <p><code style="color:#22d3bf">method=&quot;block&quot;</code></p>
-<p>Fridrich, Soukal &amp; Lukáš 2003。<code style="color:#22d3bf">block</code> 角の重なりブロックを <code style="color:#22d3bf">step</code> px</p>
-<p>刻みで取り(既定 <code style="color:#22d3bf">step=1</code> —— <b>これは飾りではない</b>。下の「歩幅」参照)、</p>
-<p>各ブロックの DCT 低周波 <code style="color:#22d3bf">n_dct</code> 係数を特徴にして辞書順に並べ、</p>
-<p>辞書順で近い <code style="color:#22d3bf">neighbours</code> 件までを候補にし、特徴距離が</p>
-<p><code style="color:#22d3bf">max_feature_dist</code> 以下のものだけをシフトベクトルで数える。</p>
-<p>回転・拡大には効かないが、角の少ない画像で keypoint 法より拾える。</p>
-<p>分散が <code style="color:#22d3bf">min_variance</code> 未満のブロックは捨てる(<b>一様な空を空にコピーしても同じ特徴になる</b> = 検出器が必ず作る偽陽性の主因)。</p>
-<p><b>歩幅 (<code style="color:#22d3bf">step</code>) を 1 にしてある理由(実測で決めた)</b>: ブロック法が「同じ特徴」を見つけられるのは、複製元と複製先が <b>同じ格子に乗ったとき</b>だけである。<code style="color:#22d3bf">step=4</code> にすると、シフトが 4 の倍数でない複製(たとえば <code style="color:#22d3bf">(110, 128)</code>)は <b>原理的に一度も一致しない</b>。実測で <code style="color:#22d3bf">step=4</code> は真のシフトを 1 件も返さず、代わりに偽の群を 60 件返した。<code style="color:#22d3bf">step=1</code> なら真のシフトが第 1 群に来る。大きい画像で重いときは <code style="color:#22d3bf">step</code> を上げてよいが、<b>上げた歩幅の倍数のシフトしか見つからなくなる</b>ことを承知の上で上げること。</p>
-<p>返りは領域対の list(対応数の多い順)。各要素:</p>
-<p><code style="color:#22d3bf">offset</code>       シフト <code style="color:#22d3bf">(dy, dx)</code>(row, col)。向きは <b>位置で正規化</b>してある</p>
-<p>(辞書順で正になる向き)—— 添字で決めると同じ複製が</p>
-<p><code style="color:#22d3bf">(110, 128)</code> にも <code style="color:#22d3bf">(-110, -128)</code> にもなる(実測して直した)</p>
-<p><code style="color:#22d3bf">n_matches</code>    その群の対応数</p>
-<p><code style="color:#22d3bf">n_inliers</code>    RANSAC の内点数(<code style="color:#22d3bf">method=&quot;block&quot;</code> では <code style="color:#22d3bf">n_matches</code> と同じ)</p>
-<p><code style="color:#22d3bf">inlier_ratio</code> 内点率 <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  <code style="color:#22d3bf">(N, 2)</code> の (row, col)</p>
-<p><code style="color:#22d3bf">similarity</code>   Umeyama で当てた <code style="color:#22d3bf">3x3</code>(<code style="color:#22d3bf">method=&quot;keypoint&quot;</code> のみ、なければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">method</code>       使った方法</p>
-<p><code style="color:#22d3bf">caveats</code>      この結果が言えないこと</p>
-<p><b>正解が手元にあるので当てられることを数で固定してある</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>、256x256 のテクスチャ画像の <code style="color:#22d3bf">(40, 32)</code> にある 64x64 を <code style="color:#22d3bf">(150, 160)</code> へ複製 = 真のシフト <code style="color:#22d3bf">(110, 128)</code>):</p>
+<p>Fridrich, Soukal &amp; Lukáš 2003. <code style="color:#22d3bf">block</code> 정사각의 겹치는 블록을 <code style="color:#22d3bf">step</code> px</p>
+<p>스텝으로 취하고(기본값 <code style="color:#22d3bf">step=1</code> —— <b>이것은 장식이 아니다</b>. 아래 &quot;보폭&quot; 참조),</p>
+<p>각 블록의 DCT 저주파 <code style="color:#22d3bf">n_dct</code> 계수를 특징으로 하여 사전순으로 늘어놓고,</p>
+<p>사전순으로 가까운 <code style="color:#22d3bf">neighbours</code>건까지를 후보로 하며, 특징 거리가</p>
+<p><code style="color:#22d3bf">max_feature_dist</code> 이하인 것만을 시프트 벡터로 센다.</p>
+<p>회전·확대에는 효과가 없지만, 코너가 적은 화상에서 keypoint 법보다 많이 잡는다.</p>
+<p>분산이 <code style="color:#22d3bf">min_variance</code> 미만인 블록은 버린다(<b>균일한 하늘을 하늘에 복사해도같은 특징이 된다</b> = 검출기가 반드시 만드는 위양성의 주된 원인).</p>
+<p><b>보폭(<code style="color:#22d3bf">step</code>)을 1로 해 둔 이유(실측으로 정했다)</b>: 블록 법이 &quot;같은 특징&quot;을찾을 수 있는 것은 복제원과 복제처가 <b>같은 격자에 올라탔을 때</b>뿐이다. <code style="color:#22d3bf">step=4</code>로 하면 시프트가 4의 배수가 아닌 복제(예를 들어 <code style="color:#22d3bf">(110, 128)</code>)는 <b>원리적으로 한 번도 일치하지 않는다</b>. 실측에서 <code style="color:#22d3bf">step=4</code>는 참 시프트를 1건도 반환하지 않고, 대신 가짜 군을 60건 반환했다. <code style="color:#22d3bf">step=1</code>이면 참 시프트가 제1군으로 온다. 큰 화상에서 무거울 때는 <code style="color:#22d3bf">step</code>을 올려도 되지만, <b>올린 보폭의 배수의 시프트밖에 찾을 수 없게 된다</b>는 것을 알고서 올릴 것.</p>
+<p>반환은 영역 쌍의 list(대응 수가 많은 순). 각 요소:</p>
+<p><code style="color:#22d3bf">offset</code>       시프트 <code style="color:#22d3bf">(dy, dx)</code>(row, col). 방향은 <b>위치로 정규화</b>되어 있다</p>
+<p>(사전순으로 양이 되는 방향) —— 첨자로 정하면 같은 복제가</p>
+<p><code style="color:#22d3bf">(110, 128)</code>도 <code style="color:#22d3bf">(-110, -128)</code>도 된다(실측해서 고쳤다)</p>
+<p><code style="color:#22d3bf">n_matches</code>    그 군의 대응 수</p>
+<p><code style="color:#22d3bf">n_inliers</code>    RANSAC의 내점 수(<code style="color:#22d3bf">method=&quot;block&quot;</code>에서는 <code style="color:#22d3bf">n_matches</code>와 같음)</p>
+<p><code style="color:#22d3bf">inlier_ratio</code> 내점률 <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  <code style="color:#22d3bf">(N, 2)</code>의 (row, col)</p>
+<p><code style="color:#22d3bf">similarity</code>   Umeyama로 맞춘 <code style="color:#22d3bf">3x3</code>(<code style="color:#22d3bf">method=&quot;keypoint&quot;</code>만, 없으면 <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">method</code>       사용한 방법</p>
+<p><code style="color:#22d3bf">caveats</code>      이 결과가 말할 수 없는 것</p>
+<p><b>정답이 손에 있으므로 맞힐 수 있다는 것을 수치로 고정해 두었다</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>, 256x256 텍스처 화상의 <code style="color:#22d3bf">(40, 32)</code>에 있는 64x64를 <code style="color:#22d3bf">(150, 160)</code>으로 복제 = 참 시프트 <code style="color:#22d3bf">(110, 128)</code>):</p>
 <p>============ ================= ============ ========= ==============</p>
-<p>method       第 1 群の offset  n_matches    群の数    誤差</p>
+<p>method       제1군 offset      n_matches    군의 수   오차</p>
 <p>============ ================= ============ ========= ==============</p>
 <p>keypoint     (110.0, 128.0)    15           1         0 px</p>
 <p>block        (110.0, 128.0)    3249         1         0 px</p>
 <p>============ ================= ============ ========= ==============</p>
-<p><b>偽陽性も測ってある</b>: 改竄していない同じ種類の画像 3 枚では、keypoint 法・block 法とも群 <b>0 件</b>(seed 4/5/6)。</p>
-<p><b>言えないこと</b>(すべて同じテストで測ってある):</p>
-<p style="margin:2px 0 2px 12px">• 一様な領域(空・壁)は複製しなくても同じ特徴になる。上半分を一様な「空」にした(<b>改竄していない</b>)画像で、<code style="color:#22d3bf">min_variance=1e-4</code> と <code style="color:#22d3bf">1e-6</code> はどちらも 0 件だが、<code style="color:#22d3bf">min_variance=0</code> にすると <b>264 対の偽の群が 1 件</b>出る(シフト <code style="color:#22d3bf">(1, -247)</code> = 空の中の適当な対応)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> は正規化パッチ記述子なので <b>回転に効かない</b>。複製を回して貼ると群の数は 0 度 1 件 → <b>5 度 0 件</b> → 15 度 0 件 → 30 度 0 件。<code style="color:#22d3bf">similarity</code> に回転が入って返ることは実質ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code> も <b>回転にまったく効かない</b>(5 度で 0 件)。</p>
-<p style="margin:2px 0 2px 12px">• 検出ゼロ = 複製が無い、ではない。再圧縮を挟んだ複製は特徴距離が伸びて <code style="color:#22d3bf">max_feature_dist</code> を超える。実測(同じ複製画像を JPEG に通してから検出):</p>
+<p><b>위양성도 재어 두었다</b>: 변조하지 않은 같은 종류의 화상 3장에서는 keypoint 법·block 법 모두 군 <b>0건</b>(seed 4/5/6).</p>
+<p><b>말할 수 없는 것</b>(모두 같은 테스트로 재어 두었다):</p>
+<p style="margin:2px 0 2px 12px">• 균일한 영역(하늘·벽)은 복제하지 않아도 같은 특징이 된다. 위쪽 절반을 균일한 &quot;하늘&quot;로한(<b>변조하지 않은</b>) 화상에서 <code style="color:#22d3bf">min_variance=1e-4</code>와 <code style="color:#22d3bf">1e-6</code>은 둘 다 0건이지만, <code style="color:#22d3bf">min_variance=0</code>으로 하면 <b>264쌍의 가짜 군이 1건</b> 나온다(시프트 <code style="color:#22d3bf">(1, -247)</code> = 하늘 안의 적당한 대응).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code>는 정규화 패치 기술자이므로 <b>회전에 효과가 없다</b>. 복제를 돌려서 붙이면 군의 수는 0도 1건 → <b>5도 0건</b> → 15도 0건 → 30도 0건. <code style="color:#22d3bf">similarity</code>에 회전이 들어가서 반환되는 일은 실질적으로 없다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code>도 <b>회전에 전혀 효과가 없다</b>(5도에서 0건).</p>
+<p style="margin:2px 0 2px 12px">• 검출 제로 = 복제가 없다, 는 아니다. 재압축을 낀 복제는 특징 거리가 늘어나 <code style="color:#22d3bf">max_feature_dist</code>를 넘는다. 실측(같은 복제 화상을 JPEG에 통과시킨 뒤 검출):</p>
 <p>========== ============================ ==========================</p>
-<p>品質       keypoint 第 1 群の n_matches  block 第 1 群の n_matches</p>
+<p>품질       keypoint 제1군의 n_matches   block 제1군의 n_matches</p>
 <p>========== ============================ ==========================</p>
-<p>無圧縮     15                           3249</p>
+<p>무압축     15                           3249</p>
 <p>95         10                           138</p>
 <p>85          7                           10</p>
-<p>75          7                           <b>0 件(群なし)</b></p>
+<p>75          7                           <b>0건(군 없음)</b></p>
 <p>========== ============================ ==========================</p>
-<p>シフトはどの品質でも <code style="color:#22d3bf">(110.0, 128.0)</code> のまま正しい。<b>壊れるのは「見つかるかどうか」で、見つかったときの答えではない</b>。</p>
+<p>시프트는 어느 품질에서도 <code style="color:#22d3bf">(110.0, 128.0)</code> 그대로 올바르다. <b>망가지는 것은 &quot;찾을 수 있는가&quot;이지, 찾았을 때의 답이 아니다</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

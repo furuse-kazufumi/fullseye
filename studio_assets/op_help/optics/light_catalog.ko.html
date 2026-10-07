@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;light_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>조명의 제원표(키는 「제조사 모델명」). <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">kind</code> 로 좁힐 수 있습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>照明は <b>OEM 供給が多く、同じ実体が別ブランドで売られる</b>ので、型番だけでは一意にならない。<code style="color:#22d3bf">oem_of</code> にたどれる元があれば入る。</p>
-<p>既定は一般形状だけで、ベンダ型番は入っていない ―― 配光・波長・実体寸法はデータシートにしかなく、推測で埋めると実測と誤解させるため。手元の機種は <code style="color:#22d3bf">register_light</code> で足す。</p>
+<p>조명은 <b>OEM 공급이 많아, 같은 실체가 다른 브랜드로 팔리므로</b>, 모델 번호만으로는유일하게 정해지지 않는다. <code style="color:#22d3bf">oem_of</code>에 거슬러 올라갈 수 있는 원품이 있으면 들어간다.</p>
+<p>기본값은 일반 형상뿐이며, 벤더 모델 번호는 들어 있지 않다 ―― 배광·파장·실체 치수는데이터시트에만 있으며, 추측으로 채우면 실측이라고 오해시키기 때문. 수중의 기종은 <code style="color:#22d3bf">register_light</code>로 더한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

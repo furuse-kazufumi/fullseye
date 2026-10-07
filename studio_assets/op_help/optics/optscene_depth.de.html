@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Ground-Truth-Tiefe</b> (H, W) [mm]. Es ist <b>z entlang der optischen Achse</b>, nicht die Schrägentfernung vom Blickpunkt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、しかも中心では一致するので気づけない)。生の光線距離が要るなら trace_rays(...)[&quot;t&quot;] を使う。</p>
-<p>当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。</p>
+<p>Tiefenkameras, Stereo und Lichtschnitt liefern alle z entlang der optischen Achse, daher wird das hier übernommen (mischt man Schrägentfernung hinein, bewertet man gegen eine Ground Truth, die zu den Rändern des Sichtfelds hin systematisch abweicht, und weil sie in der Mitte übereinstimmt, merkt man es nicht). Wer den rohen Strahlabstand braucht, nimmt trace_rays(...)[&quot;t&quot;].</p>
+<p>Pixel ohne Treffer sind NaN. Sie werden nicht mit 0 gefüllt ―― sonst wären sie von &quot;einer Fläche im Abstand 0&quot; nicht zu unterscheiden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

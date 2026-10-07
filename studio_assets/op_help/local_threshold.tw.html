@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部高斯平滑加偏移量的閾值處理(閾值為<code style="color:#22d3bf">gaussian_filter(x, 1+3*a)</code>加上偏移量<code style="color:#22d3bf">(b-0.5)*0.3</code>)。構想與<code style="color:#22d3bf">dyn_threshold</code>類似,不同之處在於局部平均值是以高斯而非矩形視窗求得。相當於HALCON的<code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が平滑化のシグマを、<code style="color:#22d3bf">b</code> がオフセットを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 調整平滑的 sigma，<code style="color:#22d3bf">b</code> 調整偏移量。兩者都使用。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

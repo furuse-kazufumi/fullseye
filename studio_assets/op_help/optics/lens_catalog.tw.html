@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>工業鏡頭的規格表(可按型號查)。可用 <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code> 篩選。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>スペックシートに載る項目だけ</b>を持つ ―― 焦点距離・F 値の範囲・対応形式・マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとのグラフでしか出ないため<b>持たない</b>(持つと実測だと誤解させる)。</p>
-<p>返り値の各項目に <code style="color:#22d3bf">image_circle_mm</code> が入るので、センサの対角と比べて「そのセンサを覆えるか」を機械で判定できる。</p>
+<p><b>只持有規格表上列出的項目</b> ―― 焦距、F 值範圍、對應片幅、接環、像圈。正如使用者指出的，「鏡頭本身規格上列出的參數並沒有那麼多」，所以這樣就夠了。像差、MTF、畸變只以各機型的曲線圖給出，所以<b>不持有</b>(持有會讓人誤以為是實測)。</p>
+<p>回傳值的各項中含有 <code style="color:#22d3bf">image_circle_mm</code>，與感測器對角線比較即可由機器判定「能否覆蓋該感測器」。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

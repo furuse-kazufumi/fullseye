@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>反锐化蒙版(锐化)。以 5x5 核调用 <code style="color:#22d3bf">kornia.filters.unsharp_mask</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>a は未使用</b>、b がぼかしのシグマ（<code style="color:#22d3bf">0.5 + 2.0 * b</code>、範囲 0.5〜2.5）を振る。元画像から低周波成分（ぼかし版）を引いた差分を強調して足し戻す古典的な鮮鋭化。</p>
+<p><b>a 未使用</b>，b 调节模糊的 sigma（<code style="color:#22d3bf">0.5 + 2.0 * b</code>，范围 0.5〜2.5）。这是从原图像减去低频成分(模糊版)得到差分、将其增强后再加回的经典锐化。</p>
 <p><b>边界处理</b>：不重复端点的镜像折返 (d c b | a b c d，OpenCV 的 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用固定阈值的二值化。<code style="color:#22d3bf">x</code> 落在 <code style="color:#22d3bf">(a, a+0.5+0.5b)</code> 区间内的像素作为前景(1)（与 <code style="color:#22d3bf">threshold</code> seed op 共享 <code style="color:#22d3bf">_sh_threshold</code> 中的 <code style="color:#22d3bf">fixed</code> 分支）。a 调节下限，b 调节带宽（上限）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">fast_threshold</code>（大域しきい値による高速な二値化、通常は単純な閾値以上/以下の判定）に相当するが、この実装は下限・上限の両方を持つ帯域しきい値である点、および高速化のための整数近似などは行っていない点で近似。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">fast_threshold</code>(基于全局阈值的快速二值化，通常是简单的阈值以上/以下判定)，但本实现是同时具有下限和上限的带域阈值，并且没有进行为提速而做的整数近似等处理，在这两点上属于近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

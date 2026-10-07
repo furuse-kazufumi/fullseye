@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>분광 반사율 → <b>선형 sRGB</b>(감마 전). 흰 면(반사율 1)이 (1,1,1) 이 되는 정규화.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>nm:           波長格子 (K,) [nm]。単調増加。</p>
-<p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
-<p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>
-<p>返り値: (..., 3) の線形 sRGB。<b>負の値はクリップしない</b> — 色域外は負で返るのが正直で、クリップしたい呼び手が明示的にやる(黙って丸めると「表現できない色」が見えなくなる)。</p>
-<p>正規化: 反射率 1 の完全拡散面が sRGB の基準白 D65 に落ちるよう、同じ光源・同じ格子で計算した白の XYZ で<b>成分ごとに</b>割る(von Kries 型の白色順応の最小形)。実測で反射率 1 → (1.000000, 1.000000, 0.999999)、0.5 → 0.5。したがって<b>絶対輝度ではなく相対値</b>であり、レンダラの露出に掛ける使い方を想定している。</p>
+<p>nm:           파장 격자 (K,) [nm]. 단조 증가.</p>
+<p>reflectance:  (..., K)의 분광 반사율(0–1 상정, 범위 밖이어도 계산은 된다).</p>
+<p>illuminant:   (K,)의 광원 분광 분포. 기본값은 D65의 평활 근사.</p>
+<p>반환값: (..., 3)의 선형 sRGB. <b>음의 값은 클리핑하지 않는다</b> — 색역 밖은 음수로 반환하는 것이 정직하며, 클리핑하고 싶은 호출자가 명시적으로 한다(조용히 반올림하면 &quot;표현할 수 없는 색&quot;이 보이지 않게 된다).</p>
+<p>정규화: 반사율 1의 완전 확산면이 sRGB의 기준 백색 D65에 떨어지도록, 같은 광원·같은 격자로계산한 백색의 XYZ로 <b>성분마다</b> 나눈다(von Kries형 백색 순응의 최소형). 실측으로반사율 1 → (1.000000, 1.000000, 0.999999), 0.5 → 0.5. 따라서 <b>절대 휘도가 아니라상대값</b>이며, 렌더러의 노출에 곱하는 사용법을 상정하고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

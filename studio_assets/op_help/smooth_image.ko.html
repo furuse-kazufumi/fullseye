@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우시안 블러(시그마 <code style="color:#22d3bf">0.5+2.0*a</code>) 한 가지로 근사한 범용 스무딩. HALCON의 <code style="color:#22d3bf">smooth_image</code>(Smooth an image using various filters.)는 Deriche/Gauss/Mean 등 여러 필터 종류를 선택할 수 있는 만능 연산자이지만, 여기서는 가우시안 한 종류로 단순화했다(근사의 한계).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がシグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>가 시그마를 0.5~2.5 범위에서 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

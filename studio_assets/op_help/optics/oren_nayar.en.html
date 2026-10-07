@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Shading of a rough diffuse surface (Oren–Nayar). How paper, plaster, concrete and the Moon look.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>normals: (H, W, 3)。light / view: 面から光源 / 視点への方向。</p>
-<p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
-<p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
-<p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>normals: (H, W, 3). light / view: direction from the surface to the light source / viewpoint.</p>
+<p>roughness_deg: standard deviation of the microfacet slopes [deg]. <b>At 0 it matches Lambert exactly</b>.</p>
+<p>albedo: diffuse reflectance (scalar or (H,W)).</p>
+<p>Returns: (H, W) radiance coefficient (0 or more).</p>
+<p>Why Lambert is not enough: Lambert falls off proportionally to cos at the edge (terminator), but a rough surface, through mutual shadowing and interreflection of microfacets, <b>stays flat and bright to the edge</b>. This is why the full moon looks uniform like a disc; with Lambert the rim darkens and it looks like a sphere.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;ward_anisotropic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Ward 各向异性反射(椭圆高斯微面元)。拉丝表面的<b>拉长高光</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>normals: (H, W, 3) 法線マップ。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 研磨の筋の方向(3,)。面内へ射影して使う。alpha_x / alpha_y: 筋方向 / 直交方向の粗さ。<b>この比がハイライトの伸び</b>になる</p>
-<p>(等方なら円、alpha_x &gt;&gt; alpha_y なら筋に沿って伸びた線)。</p>
-<p>返り値: (H, W) の鏡面反射強度(非負)。背景は 0。</p>
-<p>式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。</p>
+<p>normals：(H, W, 3) 法线贴图。light / view：从面到光源 / 视点的方向(3,)。</p>
+<p>tangent：研磨纹路的方向(3,)。投影到面内后使用。alpha_x / alpha_y：纹路方向 / 正交方向的粗糙度。<b>这个比值就是高光的拉伸</b></p>
+<p>(各向同性时为圆，alpha_x &gt;&gt; alpha_y 时为沿纹路拉长的线)。</p>
+<p>返回值：(H, W) 的镜面反射强度(非负)。背景为 0。</p>
+<p>公式：ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo))，δ 为半程向量与法线的夹角，φ 为从切线量起的方位角(Ward 1992)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

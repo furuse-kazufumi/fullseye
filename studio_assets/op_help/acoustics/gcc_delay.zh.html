@@ -5,48 +5,47 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">measurement</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>,或直接调用 <code style="color:#22d3bf">acoustics.gcc_delay</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用广义互相关(GCC)测量 2 个通道的<b>到达时间差</b>。→ <code style="color:#22d3bf">(delay, table)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
-<p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
-<p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>
+<p>漏水定位、声源方向、超声壁厚、振动传播 —— 都取决于“同一个源何时到达 2 处” 之差。本 op 以<b>秒</b>(<code style="color:#22d3bf">rate</code> 为默认 1.0 时为采样点)返回该差。要换算成位置，乘以路径长与传播速度(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> 的形式)。</p>
+<p>★<b>速度的假定会直接变成位置误差</b>。无论相关多么干净，所乘的速度差 10 %，位置就会按离路径中心的距离成比例偏移(<code style="color:#22d3bf">poc_leak_localization</code> 的</p>
+<p>实测：离中心 18 m 的漏水偏 +1.798 m，几何预测 1.800 m)。相关的质量与位置的正确性是<b>不同的量</b>，报告时要分开。</p>
 <p>Args:</p>
-<p>a, b: 同じ長さの 1-D 記録。<b><code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> より遅れていれば <code style="color:#22d3bf">delay</code> は正</b></p>
+<p>a, b: 长度相同的 1-D 记录。<b>若 <code style="color:#22d3bf">b</code> 比 <code style="color:#22d3bf">a</code> 滞后，则 <code style="color:#22d3bf">delay</code> 为正</b></p>
 <p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>)。</p>
-<p>rate: 標本化周波数 [Hz]。既定 1.0 のときは返りの単位が「標本」。</p>
-<p>weight: 相互スペクトルの重み。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> = 素の相互相関(SNR が高く反射が無ければ最良)、</p>
-<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 位相変換(振幅を白色化。残響に強いとされる)、</p>
-<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>、<code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>。</p>
-<p>★<b>PHAT が常に勝つわけではない</b>: 反射が非対称な経路では遅延そのものが</p>
-<p>偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /</p>
-<p>PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。</p>
-<p>band: <code style="color:#22d3bf">(lo_hz, hi_hz)</code> で帯域を絞る(<code style="color:#22d3bf">rate</code> と同じ単位。<code style="color:#22d3bf">rate=1.0</code> なら</p>
-<p>cycles / 標本で 0〜0.5)。<code style="color:#22d3bf">None</code> で全帯域。</p>
-<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(既定)では必須</b>(2026-10-06、0.5.0 の破壊的変更)。</p>
-<p>PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い</p>
-<p>ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる</p>
-<p>(低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——</p>
-<p><code style="color:#22d3bf">tests/test_acoustics.py</code> の回帰テスト)。信号が全帯域を占めると分かって</p>
-<p>いるなら <code style="color:#22d3bf">band=(0.0, rate / 2)</code> と<b>明示</b>する。<code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
-<p><code style="color:#22d3bf">&quot;scot&quot;</code> では任意のまま。</p>
-<p>interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。</p>
-<p>切ると量子化の刻みが<b>散らばりでなく偏り</b>として残る(位置を固定すると</p>
-<p>毎回同じ方向に外す。PIV のピークロッキングと同じ)。</p>
-<p>★<b>補間しても偏りは消えない</b>: 相関のピークは sinc 状で、放物線では</p>
-<p>近似しきれない。白色雑音・全帯域で 0〜1 標本を振った実測では、</p>
-<p>誤差が <b>最大 0.117 標本</b>の S 字(整数の近くで 0、0.3 / 0.7 付近で最大、</p>
-<p>向きは<b>整数へ引く</b>)。サブ標本の精度を語るときはこの偏りを含めること。</p>
+<p>rate: 采样频率 [Hz]。默认 1.0 时返回的单位是“采样点”。</p>
+<p>weight: 互谱的权重。</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> = 原始互相关(SNR 高且无反射时最佳)，</p>
+<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 相位变换(对振幅白化。据称对混响稳健)，</p>
+<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>，<code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>。</p>
+<p>★<b>PHAT 并非总是胜出</b>：在反射不对称的路径上，延迟本身就会</p>
+<p>偏，任何权重都无法去除(实测：反射 0.8 时 raw 0.134 m /</p>
+<p>PHAT 0.114 m，只差 1 成，RMS 几乎全是偏差)。</p>
+<p>band: 用 <code style="color:#22d3bf">(lo_hz, hi_hz)</code> 限定频带(与 <code style="color:#22d3bf">rate</code> 同单位。<code style="color:#22d3bf">rate=1.0</code> 时</p>
+<p>以 cycles / 采样点计为 0〜0.5)。<code style="color:#22d3bf">None</code> 为全频带。</p>
+<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(默认)时必需</b>(2026-10-06，0.5.0 的破坏性变更)。</p>
+<p>PHAT 把所有频点白化为相同权重，所以对频带受限的信号，没有信号的</p>
+<p>频点(噪声、泄漏、舍入)会以与信号相同的权重进入相关，峰值就会偏离</p>
+<p>(低频信号不传 band 时命中率大幅下降，传入频带则恢复 ——</p>
+<p><code style="color:#22d3bf">tests/test_acoustics.py</code> 的回归测试)。若已知信号占满全频带，</p>
+<p>请<b>明确</b>写成 <code style="color:#22d3bf">band=(0.0, rate / 2)</code>。<code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
+<p><code style="color:#22d3bf">&quot;scot&quot;</code> 下仍为可选。</p>
+<p>interpolate: 用峰值周围的抛物线插值读到亚采样点精度(默认 True)。</p>
+<p>关闭后，量化的步长会作为<b>偏差而非离散</b>残留(固定位置时</p>
+<p>每次都朝同一方向偏离。与 PIV 的峰值锁定相同)。</p>
+<p>★<b>插值也消除不了偏差</b>：相关峰呈 sinc 状，抛物线无法</p>
+<p>完全近似。在白噪声、全频带下以 0〜1 采样点平移的实测中，</p>
+<p>误差是<b>最大 0.117 采样点</b>的 S 形(整数附近为 0，0.3 / 0.7 附近最大，</p>
+<p>方向是<b>被拉向整数</b>)。谈论亚采样精度时要把这一偏差计入。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> は秒(<code style="color:#22d3bf">rate=1.0</code> なら標本)の float。</p>
-<p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,) の遅れ, &quot;r&quot;: 相関値, &quot;peak&quot;: ピーク値, &quot;snr_peak&quot;: ピーク / 副次ピークの比}</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)は宣言 out 型の <code style="color:#22d3bf">delay</code> だけを</p>
-<p>返す。相関曲線も要るときは <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(delay, table)</code>：<code style="color:#22d3bf">delay</code> 是以秒(<code style="color:#22d3bf">rate=1.0</code> 时为采样点)计的 float。</p>
+<p><code style="color:#22d3bf">table</code> 为 <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,) 的延迟, &quot;r&quot;: 相关值, &quot;peak&quot;: 峰值, &quot;snr_peak&quot;: 峰值 / 次峰的比}</code>。</p>
+<p>★经由台账(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)时只返回声明的 out 类型</p>
+<p><code style="color:#22d3bf">delay</code>。也需要相关曲线时用 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>。</p>
 <p>Raises:</p>
-<p>ValueError: 長さが違う / 2 未満 / 非有限、<code style="color:#22d3bf">weight</code> が未知、<code style="color:#22d3bf">band</code> が</p>
-<p><code style="color:#22d3bf">(lo, hi)</code> でない・<code style="color:#22d3bf">lo &gt;= hi</code>・<code style="color:#22d3bf">rate</code> に対して無効なとき、</p>
-<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code> で <code style="color:#22d3bf">band</code> が <code style="color:#22d3bf">None</code> のとき(fail-closed)。</p>
-<p><b>限界(honest)</b>: (1) 反射・分散・経路差が作る<b>偏り</b>は取れない —— 取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、多重路で副次ピークが勝つと<b>不連続に</b>外す(<code style="color:#22d3bf">snr_peak</code> を見ること)。</p>
-<p style="margin:2px 0 2px 12px">(3) 遅延が記録長の半分を超えると折り返す。</p>
+<p>ValueError: 长度不同 / 小于 2 / 非有限、<code style="color:#22d3bf">weight</code> 未知、<code style="color:#22d3bf">band</code></p>
+<p>不是 <code style="color:#22d3bf">(lo, hi)</code>、<code style="color:#22d3bf">lo &gt;= hi</code>、对 <code style="color:#22d3bf">rate</code> 无效时，</p>
+<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code> 且 <code style="color:#22d3bf">band</code> 为 <code style="color:#22d3bf">None</code> 时(fail-closed(失败即拒绝))。</p>
+<p><b>局限(honest)</b>：(1) 反射、色散、路径差造成的<b>偏差</b>无法去除 —— 能去除的只有噪声导致的离散。(2) 因为只选 1 个相关峰，多径下次峰胜出时会<b>不连续地</b>偏离(请查看 <code style="color:#22d3bf">snr_peak</code>)。</p>
+<p style="margin:2px 0 2px 12px">(3) 延迟超过记录长度的一半时会折返。</p>
 <p>Reference (public): C. H. Knapp, G. C. Carter, &quot;The Generalized Correlation Method for Estimation of Time Delay&quot;, IEEE Trans. ASSP 24(4), 1976, 320-327.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 族使用指南</a></p>

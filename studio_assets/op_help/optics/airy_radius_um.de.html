@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.airy_radius_um(f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.airy_radius_um(f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;airy_radius_um&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Radius bis zum ersten dunklen Ring der Airy-Scheibe [µm] = 1,22 · λ · N (geschlossene Form).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>微細な欠陥が「写るか」を決めるのは画素数ではなく、この回折の広がりと画素ピッチのどちらが大きいか。F5.6・550 nm なら 3.76 µm で、3.45 µm 画素とほぼ同じ ―― つまりそこから先は絞っても分解能は上がらない。</p>
+<p>Ob ein feiner Defekt &quot;abgebildet wird&quot;, entscheidet nicht die Pixelzahl, sondern was größer ist: diese Beugungsaufweitung oder der Pixel- abstand. Bei F5.6 und 550 nm sind es 3.76 µm, fast gleich einem 3.45-µm-Pixel ―― ab dort erhöht weiteres Abblenden die Auflösung also nicht mehr.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

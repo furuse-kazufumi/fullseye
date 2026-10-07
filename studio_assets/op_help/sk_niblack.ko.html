@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Niblack의 국소 적응 임계값법. Sauvola와 마찬가지로 국소 평균·표준편차로부터 임계값을 정하지만, 계수를 부여하는 방식이 더 단순(고전적)하며, Sauvola보다 전경을 넓게(=노이즈를 더 쉽게 포함) 판정하는 경향이 있다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">var_threshold</code> に相当(近似)。実装は <code style="color:#22d3bf">v &gt; filters.threshold_niblack(v, window_size=2*int(a*6)+3)</code> —— a は局所窓サイズを 3〜15(奇数)に振る。b は未使用。sk_sauvola と同じ入力・同じ a の振り方で並べ、結果を見比べる用途を想定。</p>
+<p>HALCON의 <code style="color:#22d3bf">var_threshold</code>에 해당한다(근사). 구현은 <code style="color:#22d3bf">v &gt; filters.threshold_niblack(v, window_size=2*int(a*6)+3)</code> —— a는 국소 창 크기를 3~15(홀수)로 바꾼다. b는 사용하지 않는다. sk_sauvola와 같은 입력·같은 a 변화 방식으로 나란히 놓고 결과를 비교하는 용도를 상정한다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복하지 않고 접는다 (d c b | a b c d, OpenCV의 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

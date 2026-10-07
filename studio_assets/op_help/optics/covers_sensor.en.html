@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.covers_sensor(lens: &#x27;dict&#x27;, sensor: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;covers_sensor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Whether the lens covers that sensor (image circle versus diagonal).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>覆えないと<b>四隅が黒く落ちる</b>(ケラレ)。カタログの「1 インチまで」等はこの判定を形式名で言っているだけなので、実寸で比べたほうが確実 ―― とくにラインセンサは長さがそのまま効く(16k x 7 µm = 115 mm)ので、エリア用レンズでは全く足りない。</p>
+<p>If it cannot cover, <b>the four corners fall to black</b> (vignetting). A catalogue&#x27;s &quot;up to 1 inch&quot; etc. merely states this judgement by format name, so comparing real sizes is more reliable ―― line-scan sensors especially, whose length counts directly (16k x 7 µm = 115 mm), so a lens for area sensors falls far short.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

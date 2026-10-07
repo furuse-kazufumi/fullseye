@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildfolge → zeitlicher Mittelwert, RMS der Schwankungen und Reynolds-Spannungen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが出発点で、<code style="color:#22d3bf">u&#x27;v&#x27;</code> の符号と大きさが運動量輸送そのものになる。</p>
-<p><b>1 対だけでは意味が無い</b>(変動が定義できない)ので 3 枚以上を要求する。</p>
+<p>Für jedes aufeinanderfolgende Paar wird die Verschiebung gemessen und eine Statistik über die Zeit gebildet. Diese 3 sind der Ausgangspunkt zur Beschreibung von Turbulenz; Vorzeichen und Größe von <code style="color:#22d3bf">u&#x27;v&#x27;</code> sind der Impulstransport selbst.</p>
+<p><b>Nur 1 Paar ist bedeutungslos</b> (Schwankungen sind nicht definierbar), daher sind 3 oder mehr Bilder erforderlich.</p>
 <p>Args:</p>
-<p>images: 3 枚以上の画像列。</p>
-<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code> へ渡す。</p>
+<p>images: Folge von 3 oder mehr Bildern.</p>
+<p>window / overlap / kw: werden an <code style="color:#22d3bf">piv_cross_correlate</code> übergeben.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">mean</code>(<code style="color:#22d3bf">(2, h, w)</code>)、<code style="color:#22d3bf">rms</code>(同)、<code style="color:#22d3bf">reynolds</code></p>
-<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>、<code style="color:#22d3bf">(h, w)</code>)、<code style="color:#22d3bf">turbulence_intensity</code>、<code style="color:#22d3bf">n_pairs</code>、</p>
-<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>。</p>
+<p>dict: <code style="color:#22d3bf">mean</code> (<code style="color:#22d3bf">(2, h, w)</code>), <code style="color:#22d3bf">rms</code> (ebenso), <code style="color:#22d3bf">reynolds</code></p>
+<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>, <code style="color:#22d3bf">(h, w)</code>), <code style="color:#22d3bf">turbulence_intensity</code>, <code style="color:#22d3bf">n_pairs</code>,</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -5,48 +5,47 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">measurement</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> or call <code style="color:#22d3bf">acoustics.gcc_delay</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measures the <b>time difference of arrival</b> between 2 channels by generalized cross-correlation (GCC). → <code style="color:#22d3bf">(delay, table)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
-<p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
-<p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>
+<p>Leak localization, sound-source direction, ultrasonic wall thickness, vibration propagation —— all are decided by the difference in &quot;when the same source reached 2 places&quot;. This op returns that difference in <b>seconds</b> (in samples if <code style="color:#22d3bf">rate</code> is the default 1.0). To turn it into a position, multiply by path length and propagation speed (of the form <code style="color:#22d3bf">x = (L - c·delay) / 2</code>).</p>
+<p>★<b>The speed assumption becomes the position error as is</b>. However clean the correlation, if the speed multiplied in is 10 % off, the position shifts in proportion to the distance from the path centre (measured in <code style="color:#22d3bf">poc_leak_localization</code>:</p>
+<p>a leak 18 m from the centre gave +1.798 m, the geometric prediction is 1.800 m). Correlation quality and position correctness are <b>separate quantities</b>, so keep them apart in reports.</p>
 <p>Args:</p>
-<p>a, b: 同じ長さの 1-D 記録。<b><code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> より遅れていれば <code style="color:#22d3bf">delay</code> は正</b></p>
-<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>)。</p>
-<p>rate: 標本化周波数 [Hz]。既定 1.0 のときは返りの単位が「標本」。</p>
-<p>weight: 相互スペクトルの重み。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> = 素の相互相関(SNR が高く反射が無ければ最良)、</p>
-<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 位相変換(振幅を白色化。残響に強いとされる)、</p>
-<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>、<code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>。</p>
-<p>★<b>PHAT が常に勝つわけではない</b>: 反射が非対称な経路では遅延そのものが</p>
-<p>偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /</p>
-<p>PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。</p>
-<p>band: <code style="color:#22d3bf">(lo_hz, hi_hz)</code> で帯域を絞る(<code style="color:#22d3bf">rate</code> と同じ単位。<code style="color:#22d3bf">rate=1.0</code> なら</p>
-<p>cycles / 標本で 0〜0.5)。<code style="color:#22d3bf">None</code> で全帯域。</p>
-<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(既定)では必須</b>(2026-10-06、0.5.0 の破壊的変更)。</p>
-<p>PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い</p>
-<p>ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる</p>
-<p>(低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——</p>
-<p><code style="color:#22d3bf">tests/test_acoustics.py</code> の回帰テスト)。信号が全帯域を占めると分かって</p>
-<p>いるなら <code style="color:#22d3bf">band=(0.0, rate / 2)</code> と<b>明示</b>する。<code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
-<p><code style="color:#22d3bf">&quot;scot&quot;</code> では任意のまま。</p>
-<p>interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。</p>
-<p>切ると量子化の刻みが<b>散らばりでなく偏り</b>として残る(位置を固定すると</p>
-<p>毎回同じ方向に外す。PIV のピークロッキングと同じ)。</p>
-<p>★<b>補間しても偏りは消えない</b>: 相関のピークは sinc 状で、放物線では</p>
-<p>近似しきれない。白色雑音・全帯域で 0〜1 標本を振った実測では、</p>
-<p>誤差が <b>最大 0.117 標本</b>の S 字(整数の近くで 0、0.3 / 0.7 付近で最大、</p>
-<p>向きは<b>整数へ引く</b>)。サブ標本の精度を語るときはこの偏りを含めること。</p>
+<p>a, b: 1-D records of the same length. <b>If <code style="color:#22d3bf">b</code> lags behind <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">delay</code> is positive</b></p>
+<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>).</p>
+<p>rate: sampling frequency [Hz]. With the default 1.0 the unit of the return is &quot;samples&quot;.</p>
+<p>weight: weighting of the cross-spectrum.</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> = plain cross-correlation (best when SNR is high and there are no reflections),</p>
+<p><code style="color:#22d3bf">&quot;phat&quot;</code> = phase transform (whitens the amplitude; said to be robust to reverberation),</p>
+<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>, <code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>.</p>
+<p>★<b>PHAT does not always win</b>: on paths with asymmetric reflections the delay itself</p>
+<p>is biased, so no weighting can remove it (measured: with reflection 0.8, raw 0.134 m /</p>
+<p>PHAT 0.114 m, only 1 tenth apart, and the RMS is almost entirely bias).</p>
+<p>band: narrows the band with <code style="color:#22d3bf">(lo_hz, hi_hz)</code> (same unit as <code style="color:#22d3bf">rate</code>; with <code style="color:#22d3bf">rate=1.0</code>,</p>
+<p>0–0.5 in cycles / sample). <code style="color:#22d3bf">None</code> for the full band.</p>
+<p>★<b>Required with <code style="color:#22d3bf">weight=&quot;phat&quot;</code> (the default)</b> (2026-10-06, breaking change in 0.5.0).</p>
+<p>PHAT whitens all bins to the same weight, so for a band-limited signal the bins without signal</p>
+<p>(noise, leakage, rounding) enter the correlation with the same weight as the signal, and the peak misses</p>
+<p>(for a low-frequency signal the hit rate drops sharply without band and recovers with it ——</p>
+<p>the regression test in <code style="color:#22d3bf">tests/test_acoustics.py</code>). If you know the signal occupies the full band,</p>
+<p><b>state it explicitly</b> as <code style="color:#22d3bf">band=(0.0, rate / 2)</code>. With <code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
+<p><code style="color:#22d3bf">&quot;scot&quot;</code> it stays optional.</p>
+<p>interpolate: reads to sub-sample precision by parabolic interpolation around the peak (default True).</p>
+<p>If turned off, the quantization step remains as <b>bias, not scatter</b> (with the position fixed,</p>
+<p>it misses in the same direction every time; the same as peak locking in PIV).</p>
+<p>★<b>Interpolation does not remove the bias</b>: the correlation peak is sinc-like and a parabola</p>
+<p>cannot approximate it fully. In measurements with white noise, full band and shifts of 0–1 samples,</p>
+<p>the error is an S-curve of <b>at most 0.117 samples</b> (0 near integers, maximal around 0.3 / 0.7,</p>
+<p>direction <b>pulled toward the integer</b>). Include this bias when talking about sub-sample accuracy.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> は秒(<code style="color:#22d3bf">rate=1.0</code> なら標本)の float。</p>
-<p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,) の遅れ, &quot;r&quot;: 相関値, &quot;peak&quot;: ピーク値, &quot;snr_peak&quot;: ピーク / 副次ピークの比}</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)は宣言 out 型の <code style="color:#22d3bf">delay</code> だけを</p>
-<p>返す。相関曲線も要るときは <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> is a float in seconds (in samples if <code style="color:#22d3bf">rate=1.0</code>).</p>
+<p><code style="color:#22d3bf">table</code> is <code style="color:#22d3bf">{&quot;lags&quot;: lags of shape (2N-1,), &quot;r&quot;: correlation values, &quot;peak&quot;: peak value, &quot;snr_peak&quot;: ratio of peak / secondary peak}</code>.</p>
+<p>★Via the ledger (<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>) only <code style="color:#22d3bf">delay</code>, the declared out type, is</p>
+<p>returned. If you also need the correlation curve, use <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが違う / 2 未満 / 非有限、<code style="color:#22d3bf">weight</code> が未知、<code style="color:#22d3bf">band</code> が</p>
-<p><code style="color:#22d3bf">(lo, hi)</code> でない・<code style="color:#22d3bf">lo &gt;= hi</code>・<code style="color:#22d3bf">rate</code> に対して無効なとき、</p>
-<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code> で <code style="color:#22d3bf">band</code> が <code style="color:#22d3bf">None</code> のとき(fail-closed)。</p>
-<p><b>限界(honest)</b>: (1) 反射・分散・経路差が作る<b>偏り</b>は取れない —— 取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、多重路で副次ピークが勝つと<b>不連続に</b>外す(<code style="color:#22d3bf">snr_peak</code> を見ること)。</p>
-<p style="margin:2px 0 2px 12px">(3) 遅延が記録長の半分を超えると折り返す。</p>
+<p>ValueError: lengths differ / fewer than 2 / non-finite, <code style="color:#22d3bf">weight</code> unknown, <code style="color:#22d3bf">band</code></p>
+<p>not <code style="color:#22d3bf">(lo, hi)</code>, <code style="color:#22d3bf">lo &gt;= hi</code> or invalid for <code style="color:#22d3bf">rate</code>,</p>
+<p>or <code style="color:#22d3bf">band</code> is <code style="color:#22d3bf">None</code> with <code style="color:#22d3bf">weight=&quot;phat&quot;</code> (fail-closed).</p>
+<p><b>Limits (honest)</b>: (1) the <b>bias</b> created by reflections, dispersion and path differences cannot be removed —— only the scatter due to noise can. (2) Since just 1 correlation peak is chosen, if a secondary peak wins under multipath it misses <b>discontinuously</b> (check <code style="color:#22d3bf">snr_peak</code>).</p>
+<p style="margin:2px 0 2px 12px">(3) Delays beyond half the record length wrap around.</p>
 <p>Reference (public): C. H. Knapp, G. C. Carter, &quot;The Generalized Correlation Method for Estimation of Time Delay&quot;, IEEE Trans. ASSP 24(4), 1976, 320-327.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring family guide</a></p>

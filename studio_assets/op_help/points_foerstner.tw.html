@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於 Förstner 運算子的角點強度圖（<code style="color:#22d3bf">skimage.feature.corner_foerstner</code> 的權重 <code style="color:#22d3bf">w</code> 與穩健形狀指標 <code style="color:#22d3bf">q</code> 之積，NaN 替換為 0）。透過結合誤差橢圓的大小（w）與其圓度（q）來評估某位置的點特徵程度。相當於 HALCON 的 <code style="color:#22d3bf">points_foerstner</code>（Detect points of interest using the Förstner operator.）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐自体が呼べない(<code style="color:#22d3bf">_HAS_SK</code> ガード)。</p>
+<p><code style="color:#22d3bf">a</code> 將梯度計算所用高斯視窗的 sigma 在 0.5~2.5 範圍內調節。<code style="color:#22d3bf">b</code> 未使用。在沒有 skimage 的環境中無法呼叫該分支本身(<code style="color:#22d3bf">_HAS_SK</code> 防護)。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

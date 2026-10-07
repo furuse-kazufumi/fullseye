@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schattierung einer rauen diffusen Oberfläche (Oren–Nayar). So sehen Papier, Gips, Beton und der Mond aus.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>normals: (H, W, 3)。light / view: 面から光源 / 視点への方向。</p>
-<p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
-<p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
-<p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>normals: (H, W, 3). light / view: Richtung von der Fläche zur Lichtquelle / zum Blickpunkt.</p>
+<p>roughness_deg: Standardabweichung der Mikrofacettenneigung [deg]. <b>Bei 0 stimmt es exakt mit Lambert überein</b>.</p>
+<p>albedo: diffuser Reflexionsgrad (Skalar oder (H,W)).</p>
+<p>Rückgabewert: (H, W) Strahldichtekoeffizient (0 oder größer).</p>
+<p>Warum Lambert nicht genügt: Lambert fällt am Rand (Terminator) proportional zu cos ab, aber eine raue Fläche <b>bleibt durch gegenseitige Abschattung und Interreflexion der Mikrofacetten bis zum Rand flach hell</b>. Deshalb wirkt der Vollmond gleichmäßig wie eine Scheibe; mit Lambert würde der Rand dunkler und er sähe wie eine Kugel aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

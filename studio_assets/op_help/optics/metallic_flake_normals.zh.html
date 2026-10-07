@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;metallic_flake_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成金属漆中铝片(闪光片)的法线场。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>shape: (H, W)。density: 面積あたりのフレーク率(0–1)。size_px: フレークの大きさ。</p>
-<p>tilt: 傾きの強さ(0–1)。seed: 乱数種。</p>
-<p>返り値: (H, W, 3) の単位法線場(フレークの無い所は (0,0,1))。上塗りの下に置くと <b>粒がキラつく</b>。density を上げると粒の数がそのまま増える(テストで確認)。</p>
+<p>shape：(H, W)。density：单位面积的片状颗粒比例(0–1)。size_px：片状颗粒的大小。</p>
+<p>tilt：倾斜强度(0–1)。seed：随机种子。</p>
+<p>返回值：(H, W, 3) 的单位法线场(无片状颗粒处为 (0,0,1))。放在面漆下面 <b>颗粒会闪烁</b>。提高 density 颗粒数就会相应增加(已由测试确认)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

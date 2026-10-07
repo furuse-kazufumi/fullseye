@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.dataset_throughput(dataset) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;dataset_throughput&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">inspection_dataset</code> 的結果 → 生成吞吐量的實測彙總。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>大量生成が通常運用なので、「この設定で 1 万枚に何時間かかるか」を見積もれる形で返す。返り値 dict: <code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(光線を飛ばす時間の割合。真値 3 枚のぶんが残り)。</p>
-<p>実測を持たない dict を渡したら fail-closed で落とす ―― 推定値を混ぜると「速い」の根拠が消える。</p>
+<p>由於大量產生是常態運作，因此以能估算「這個設定下 1 萬張需要幾小時」的形式回傳。回傳值 dict：<code style="color:#22d3bf">images</code> / <code style="color:#22d3bf">seconds_total</code> / <code style="color:#22d3bf">seconds_per_image</code> / <code style="color:#22d3bf">images_per_hour</code> / <code style="color:#22d3bf">pixels_per_second</code> / <code style="color:#22d3bf">render_fraction</code>(追蹤光線的時間佔比。其餘是 3 張真值的部分)。</p>
+<p>傳入沒有實測的 dict 時以 fail-closed(失敗即拒絕)報錯 ―― 混入估計值會讓「快」的依據消失。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

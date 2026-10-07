@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>OpenCV的双边滤波器(<code style="color:#22d3bf">cv2.bilateralFilter</code>)。根据空间距离与亮度差两者对邻近像素加权平均,是一种在保留边缘的同时进行平滑的常用方法。相当于HALCON的<code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が空間方向のシグマ(1〜4)を、<code style="color:#22d3bf">b</code> が輝度(色)方向のシグマ(0.05〜0.45) を振る。両方が使われる。<code style="color:#22d3bf">cv2</code> が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> 调节空间方向的 sigma(1〜4)，<code style="color:#22d3bf">b</code> 调节亮度(颜色)方向的 sigma(0.05〜0.45)。两者都会使用。在没有 <code style="color:#22d3bf">cv2</code> 的环境中无法调用此分支。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用 Savitzky-Golay 濾波器平滑影像（依欄方向→列方向的順序進行一維處理）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は窓幅を 5, 7, 9, 11, 13 の奇数に振る（<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>）。多項式次数は 2 に固定。<code style="color:#22d3bf">b</code> は未使用。窓内に 2 次多項式を最小二乗フィットして中心値を置き換える手法なので、単純な移動平均よりピークの高さや勾配を保ったまま平滑化できる。窓幅が画像サイズに対して大きすぎると境界の処理（<code style="color:#22d3bf">scipy</code> の既定の外挿）の影響が強く出る。</p>
+<p><code style="color:#22d3bf">a</code> 將視窗寬度在奇數 5, 7, 9, 11, 13 中調整（<code style="color:#22d3bf">w = 5 + 2*int(a*4)</code>）。多項式次數固定為 2。<code style="color:#22d3bf">b</code> 未使用。這是在視窗內以最小平方擬合 2 次多項式並替換中心值的方法，因此比簡單的移動平均更能在保持峰的高度和梯度的同時進行平滑。視窗寬度相對影像尺寸過大時，邊界處理（<code style="color:#22d3bf">scipy</code> 預設的外插）的影響會變得明顯。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

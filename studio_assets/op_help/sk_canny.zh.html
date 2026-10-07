@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Canny 边缘检测(区域版)。通过高斯平滑 -&gt; 梯度计算 -&gt; 非极大值抑制 -&gt; 滞后阈值这一经典多阶段流程求出边缘像素,并以布尔值区域的形式返回。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は <code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code> —— a は前段のガウス平滑化の σ を 0.5〜2.5 に振る(大きいほど細かいノイズ由来のエッジが消え、太い輪郭だけ残る)。b は未使用 —— ヒステリシスの低/高しきい値は skimage が画像から自動推定した値のまま(明示指定していない)。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">edges_image</code>。实现为 <code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code> —— a 将前级高斯平滑的 σ 在 0.5～2.5 范围内调节(越大，源于细小噪声的边缘越会消失，只留下粗的轮廓)。b 未使用 —— 滞后(双阈值)的低/高阈值保持 skimage 从图像自动估计的值(未显式指定)。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

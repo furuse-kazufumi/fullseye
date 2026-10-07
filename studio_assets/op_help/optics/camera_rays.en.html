@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.camera_rays(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">points</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.camera_rays.raw(...)</code> or call <code style="color:#22d3bf">optscene.camera_rays</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Camera dict → rays for every pixel: origins (H·W, 3), directions (H·W, 3).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>方向は単位ベクトル、原点はすべて視点。画素 (u, v) は行優先で並ぶので <code style="color:#22d3bf">reshape(height, width, 3)</code> で像に戻せる。K の逆写像で作っているため、交点を K で再投影すると元の画素に<b>厳密に</b>戻る(往復誤差 &lt; 1e-9)。</p>
+<p>Directions are unit vectors; all origins are the viewpoint. Pixels (u, v) are in row-major order, so <code style="color:#22d3bf">reshape(height, width, 3)</code> turns them back into an image. They are built with the inverse mapping of K, so reprojecting the intersections with K returns <b>exactly</b> to the original pixels (round-trip error &lt; 1e-9).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

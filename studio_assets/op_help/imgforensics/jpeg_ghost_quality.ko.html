@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>고스트 지도의 열 → 화소마다 <b>잔차가 최소가 되는 품질</b>의 지도. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">qualities</code> を省くと <code style="color:#22d3bf">jpeg_ghost_map</code> の既定(40..95 step 5)を仮定する —— <b>枚数が合わなければ <code style="color:#22d3bf">ValueError</code></b>(添字と品質がずれた地図を返さない)。</p>
-<p>返りは品質そのものを画素値に持つ <code style="color:#22d3bf">(H, W)</code> なので、値域は [0, 1] ではない。表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
-<p>★ <b>合成後に一度でも保存すると、この argmin は使えない。</b> 2026-09-06 に測った。背景 q92・素材 q60 で 32x32 を貼った 128x128 で:</p>
+<p><code style="color:#22d3bf">qualities</code>를 생략하면 <code style="color:#22d3bf">jpeg_ghost_map</code>의 기본값(40..95 step 5)을 가정한다 —— <b>장수가 맞지 않으면 <code style="color:#22d3bf">ValueError</code></b>(첨자와 품질이 어긋난 지도를 반환하지 않는다).</p>
+<p>반환은 품질 그 자체를 화소값으로 갖는 <code style="color:#22d3bf">(H, W)</code>이므로, 값 범위는 [0, 1]이 아니다. 표시할 때는 정규화할 것(이 op는 수치를 반환하는 것이지 그림을 반환하지 않는다).</p>
+<p>★ <b>합성 후에 한 번이라도 저장하면 이 argmin은 쓸 수 없다.</b> 2026-09-06에쟀다. 배경 q92·소재 q60으로 32x32를 붙인 128x128에서:</p>
 <p>====================  ==================  ================</p>
-<p>条件                  貼付部の最頻品質    背景の最頻品質</p>
+<p>조건                  붙인 곳 최빈 품질   배경 최빈 품질</p>
 <p>====================  ==================  ================</p>
-<p>合成後に保存しない            <b>60</b>(正解)              95</p>
-<p>合成後に q95 で保存           <b>95</b>(背景と同じ)         95</p>
+<p>합성 후 저장 안 함    <b>60</b>(정답)        95</p>
+<p>합성 후 q95로 저장    <b>95</b>(배경 동일)   95</p>
 <p>====================  ==================  ================</p>
-<p>理由は掃引の残差が品質に対して<b>単調減少</b>すること —— 最後の保存品質が掃引の上端にあると、<code style="color:#22d3bf">argmin</code> は全画素でそこに張り付く(実測: 保存後の残差平均は 230.7 → 5.9e-02 と一直線に下がる)。実運用の改竄は必ず保存を経るので、<b>この読み出しは実画像では定数地図になる</b>。既存テスト <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> が通るのは、合成後に一度も保存していないからである(それ自体は正しい単体テストで、<code style="color:#22d3bf">argmin</code> の実装は間違っていない —— 読み出し方が現場に合わない)。</p>
-<p><b>代わりに使うもの</b>: 掃引方向の残差曲線の<b>谷の深さ</b>(局所的な凹み)。同じ実験で画素ごとの ROC を取ると、argmin 読み出しは AUC 0.500(乱数と同じ)、谷の深さ読み出しは <b>AUC 0.997 / 偽陽性 1 % で検出率 0.944</b> だった(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)。それでも全体を q60 で保存し直すと 0.475 まで落ちる —— JPEG ゴーストは後処理に弱い、というのが正しい要約。</p>
+<p>이유는 스윕의 잔차가 품질에 대해 <b>단조 감소</b>한다는 것 —— 마지막 저장 품질이스윕의 상단에 있으면 <code style="color:#22d3bf">argmin</code>은 모든 화소에서 거기에 들러붙는다(실측: 저장 후의잔차 평균은 230.7 → 5.9e-02로 일직선으로 내려간다). 실운용의 변조는 반드시 저장을거치므로, <b>이 읽기는 실제 화상에서는 상수 지도가 된다</b>. 기존 테스트 <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code>가 통과하는 것은 합성 후에 한 번도저장하지 않았기 때문이다(그 자체는 올바른 단위 테스트이며, <code style="color:#22d3bf">argmin</code>의 구현은틀리지 않았다 —— 읽는 방식이 현장에 맞지 않는다).</p>
+<p><b>대신 쓰는 것</b>: 스윕 방향 잔차 곡선의 <b>골의 깊이</b>(국소적인 오목함). 같은 실험에서 화소별 ROC를 구하면 argmin 읽기는 AUC 0.500(난수와 같음), 골 깊이 읽기는 <b>AUC 0.997 / 위양성 1 %에서 검출률 0.944</b>였다(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>). 그래도 전체를 q60으로 다시 저장하면 0.475까지 떨어진다 —— JPEG 고스트는 후처리에 약하다, 는 것이 올바른 요약이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

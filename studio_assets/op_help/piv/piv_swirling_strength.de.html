@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wirbelstärke (Swirling Strength) λ_ci — der Betrag des Imaginärteils der komplexen Eigenwerte des Geschwindigkeitsgradiententensors.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
-<p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
+<p>Wie das Q-Kriterium eine Größe, die &quot;Scherung von Wirbeln unterscheidet&quot;, aber diese hat <b>Einheiten gleich der Winkelgeschwindigkeit der Rotation</b> (1/Frame). Gemessen: <code style="color:#22d3bf">0.01</code> bei Starrkörperrotation ω=0.01, <code style="color:#22d3bf">0.0</code> bei gleichförmiger Expansion und Scherung.</p>
+<p>Wo die Eigenwerte reell sind (= keine Rotation), wird 0 zurückgegeben. Da es sich an jedem Punkt um die Eigenwerte einer unabhängigen 2x2- Matrix handelt, wird das ganze Gitter vektorisiert und auf einmal gelöst.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

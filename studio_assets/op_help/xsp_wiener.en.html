@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Suppresses noise using the Wiener adaptive filter (<code style="color:#22d3bf">scipy.signal.wiener</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は近傍窓のサイズを 3, 5, 7, 9 の奇数に振る（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>、a=0 で 3、a に近い 1 で 9）。<code style="color:#22d3bf">b</code> は未使用。局所分散からノイズ分散を自動推定する適応フィルタで、一様な強さで均すガウシアン/ミーンボックスと違い平坦な領域ほど強く均し、分散の大きい（エッジ/テクスチャの多い）領域は保存されやすい。ガウス性ノイズを仮定するので塩胡椒ノイズには不向き。出力は [0,1] にクリップする。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the neighbourhood window size over the odd values 3, 5, 7, 9 (<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>; a=0 gives 3, a close to 1 gives 9). <code style="color:#22d3bf">b</code> is unused. An adaptive filter that automatically estimates the noise variance from the local variance; unlike the Gaussian/mean box, which even out with uniform strength, it evens out flat regions more strongly, while regions of large variance (with many edges/textures) tend to be preserved. Since it assumes Gaussian noise, it is unsuitable for salt-and-pepper noise. The output is clipped to [0,1].</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

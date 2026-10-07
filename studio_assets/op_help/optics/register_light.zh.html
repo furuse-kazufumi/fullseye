@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_light(maker: &#x27;str&#x27;, model: &#x27;str&#x27;, kind: &#x27;str&#x27; = &#x27;ring&#x27;, radius_mm: &#x27;float&#x27; = 60.0, height_mm: &#x27;float&#x27; = 100.0, size_mm: &#x27;float&#x27; = 25.0, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 630.0, bandwidth_nm: &#x27;float&#x27; = 25.0, oem_of: &#x27;str&#x27; = None) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.register_light(maker: &#x27;str&#x27;, model: &#x27;str&#x27;, kind: &#x27;str&#x27; = &#x27;ring&#x27;, radius_mm: &#x27;float&#x27; = 60.0, height_mm: &#x27;float&#x27; = 100.0, size_mm: &#x27;float&#x27; = 25.0, source: &#x27;str&#x27; = &#x27;led&#x27;, wavelength_nm: &#x27;float&#x27; = 630.0, bandwidth_nm: &#x27;float&#x27; = 25.0, oem_of: &#x27;str&#x27; = None) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;register_light&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把手头的照明登记进目录(照数据手册的值原样填入)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">oem_of</code> に元の「メーカー 型番」を書いておくと、OEM で名前が違うだけの同一品を後から突き合わせられる。返り値は登録した鍵(「メーカー 型番」)。</p>
-<p>登録先はプロセス内のカタログ(<code style="color:#22d3bf">light_catalog</code> が返す表)で、<b>ファイルには保存されない</b> ―― 次の起動では消える。同じ鍵を二度登録すると黙って上書きする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">maker</code>, <code style="color:#22d3bf">model</code>: どちらも空でない文字列。空なら <code style="color:#22d3bf">ValueError</code>(型番だけでは OEM 品を特定できないため両方必須)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code>: ring / dome / bar / coaxial / backlight(器具の形)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius_mm</code>, <code style="color:#22d3bf">height_mm</code>, <code style="color:#22d3bf">size_mm</code>: 正の有限値 [mm]。<code style="color:#22d3bf">radius_mm</code> は発光面の半径、<code style="color:#22d3bf">height_mm</code> はワークからの高さ、<code style="color:#22d3bf">size_mm</code> は器具の実体の差し渡し(鏡面に映る大きさ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: led / halogen / laser。<code style="color:#22d3bf">wavelength_nm</code> は正、<code style="color:#22d3bf">bandwidth_nm</code> はここでは float 化するだけ(負を入れると <code style="color:#22d3bf">light_spec</code> で拒否される)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oem_of</code>: 元品の鍵、または <code style="color:#22d3bf">None</code>。存在確認はしない。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">&quot;&lt;maker&gt; &lt;model&gt;&quot;</code> の鍵。<code style="color:#22d3bf">light_spec(model=鍵)</code> で諸元を引ける。</p>
+<p>在 <code style="color:#22d3bf">oem_of</code> 中写上原品的“厂商 型号”，就能事后把只是 OEM 名称不同的同一产品对应起来。返回值是登记的键(“厂商 型号”)。</p>
+<p>登记到进程内的目录(<code style="color:#22d3bf">light_catalog</code> 返回的表)，<b>不会保存到文件</b> ―― 下次启动时就会消失。同一个键登记两次会静默覆盖。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">maker</code>, <code style="color:#22d3bf">model</code>：都是非空字符串。为空则 <code style="color:#22d3bf">ValueError</code>(仅凭型号无法确定 OEM 品，所以两者必需)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code>：ring / dome / bar / coaxial / backlight(器具的形状)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius_mm</code>, <code style="color:#22d3bf">height_mm</code>, <code style="color:#22d3bf">size_mm</code>：正的有限值 [mm]。<code style="color:#22d3bf">radius_mm</code> 是发光面的半径，<code style="color:#22d3bf">height_mm</code> 是距工件的高度，<code style="color:#22d3bf">size_mm</code> 是器具实物的跨度(映在镜面上的大小)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>：led / halogen / laser。<code style="color:#22d3bf">wavelength_nm</code> 为正，<code style="color:#22d3bf">bandwidth_nm</code> 在这里只转为 float(若填负值会被 <code style="color:#22d3bf">light_spec</code> 拒绝)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">oem_of</code>：原品的键，或 <code style="color:#22d3bf">None</code>。不检查其是否存在。</p>
+<p style="margin:2px 0 2px 12px">• 返回值：<code style="color:#22d3bf">&quot;&lt;maker&gt; &lt;model&gt;&quot;</code> 的键。可用 <code style="color:#22d3bf">light_spec(model=键)</code> 查出参数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

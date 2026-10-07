@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">points</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">glassmirror.refract_rays</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Snell 折射的向量形式。<b>逐條光線判定全反射</b>,回傳(方向, TIR 遮罩)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。n1 / n2: 入射側 / 透過側の屈折率。</p>
-<p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、マスクを True にする(NaN を返さない: 下流のレンダが黙って穴を開けるより、物理的に正しい「全反射した」方向を返す方が使える)。</p>
-<p>★ <code style="color:#22d3bf">match3d.refract</code> との違い: あちらは「1 本でも TIR ならバッチ全体が None」。画像サイズのバッチでは 1 画素の全反射で<b>全部が消える</b>ので、per-ray に直した。</p>
+<p>directions：(..., 3) 入射方向(朝向面)。normals：(..., 3) 入射側的外向法線。n1 / n2：入射側 / 穿透側的折射率。</p>
+<p>回傳值：(refracted (...,3), tir (...,)) —— TIR 光線的方向以<b>鏡面反射</b>填入，並將遮罩設為 True(不回傳 NaN：與其讓下游算繪默默開洞，不如回傳物理上正確的「全反射後」方向更有用)。</p>
+<p>★ 與 <code style="color:#22d3bf">match3d.refract</code> 的差異：那邊是「只要有 1 條 TIR 整個批次就為 None」。在影像尺寸的批次中，1 個像素的全反射就會讓<b>全部消失</b>，所以改成了 per-ray。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

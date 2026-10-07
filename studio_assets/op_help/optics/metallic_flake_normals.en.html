@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;metallic_flake_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build the normal field of the flakes (aluminium platelets) in metallic paint.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>shape: (H, W)。density: 面積あたりのフレーク率(0–1)。size_px: フレークの大きさ。</p>
-<p>tilt: 傾きの強さ(0–1)。seed: 乱数種。</p>
-<p>返り値: (H, W, 3) の単位法線場(フレークの無い所は (0,0,1))。上塗りの下に置くと <b>粒がキラつく</b>。density を上げると粒の数がそのまま増える(テストで確認)。</p>
+<p>shape: (H, W). density: flake ratio per area (0–1). size_px: flake size.</p>
+<p>tilt: tilt strength (0–1). seed: random seed.</p>
+<p>Returns: (H, W, 3) unit normal field ((0,0,1) where there are no flakes). Placed under a clear coat, <b>the grains sparkle</b>. Raising density increases the number of grains directly (verified in tests).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

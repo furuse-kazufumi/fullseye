@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Characterization of defect pixels (Section 8.8): logarithmic histogram (Eqs. 73–75) and accumulated histogram (Eq. 77), and the number of pixels exceeding a threshold.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>
+<p>*avg_image*: mean image of L frames (temporal noise removed by averaging). *L*: number of averaged frames (makes the bin width an integer multiple of 1/L). *threshold* (required) [DN]: counts the pixels whose absolute deviation from the mean <b>exceeds</b> this (the application&#x27;s &quot;stop band&quot;).</p>
+<p>Returns <code style="color:#22d3bf">{&quot;hist_centers&quot;: deviation from the mean, &quot;hist_counts&quot;, &quot;accum_x&quot;: absolute deviation, &quot;accum_percent&quot;: % of pixels at or above that deviation, &quot;n_above&quot;: count, &quot;mu&quot;}</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not 2-D / L not a positive integer / threshold negative / image constant (histogram width 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

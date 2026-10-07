@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以闭式给出观察光学系统的<b>分辨率预算</b>(拍之前先看能不能成立)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
+<p>NA 和 F 值用哪一个给出都可以(N = 1/(2·NA))。倍率用薄透镜近似 m = f / (WD − f)，有效(工作)F 值为 N_w = (1 + |m|)·N。返回的量：</p>
 <p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> エアリー半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> それを物体側に換算 /</p>
-<p><code style="color:#22d3bf">pixel_object_um</code> 画素の物体側の実寸 / <code style="color:#22d3bf">limit_um</code> 実際の分解限界</p>
-<p>(回折と標本化の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
-<p><code style="color:#22d3bf">dof_um</code> 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
-<p>「見えるか」ではなく「<b>必要なコントラストで写るか</b>」を決める前段の数字で、ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。</p>
+<p><code style="color:#22d3bf">airy_um</code> 艾里半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> 将其换算到物方 /</p>
+<p><code style="color:#22d3bf">pixel_object_um</code> 像素在物方的实际尺寸 / <code style="color:#22d3bf">limit_um</code> 实际的分辨极限</p>
+<p>(衍射与采样中<b>较大的一方</b>)/ <code style="color:#22d3bf">limited_by</code> 哪一方是瓶颈 /</p>
+<p><code style="color:#22d3bf">dof_um</code> 景深(物方，几何 2·N_w·c/m² 与波动 2·λ·N_w²/m² 之和)/</p>
+<p><code style="color:#22d3bf">coc_um</code> 容许弥散圆(默认为像素间距)。</p>
+<p>这是决定的不是“能否看见”而是“<b>能否以所需对比度成像</b>”的前段数字，在这里不足的配置下无论生成多少图像，在实机上检测都无法成立。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

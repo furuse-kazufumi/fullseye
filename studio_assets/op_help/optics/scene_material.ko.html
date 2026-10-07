@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>재질을 하나 만듭니다. <code style="color:#22d3bf">kind</code> 는 lambert / conductor / dielectric 세 가지.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
-<p>lambert: <code style="color:#22d3bf">albedo</code>(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>
-<p>conductor: <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)の複素屈折率で色が決まり、</p>
-<p><code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)で異方性ローブの幅が決まる。<b>色は指定しない</b>。</p>
-<p><code style="color:#22d3bf">roughness_um</code> は面粗さ Rq [µm]。鏡面として返る割合が</p>
-<p>exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、</p>
-<p>鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。</p>
-<p><b>波長が式に入る</b>ので、同じ面でも光源の波長で見え方が変わる。</p>
-<p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)の Sellmeier 分散で屈折し、</p>
-<p><code style="color:#22d3bf">sigma_per_mm</code> の Beer–Lambert で吸収する。</p>
-<p>返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。</p>
+<p>3종밖에 없는 것은 <b>섞으면 조용히 틀리기</b> 때문이며, 늘린다면 형을 나눈다(확산인가·금속인가·투명인가로 광선의 행선지가 근본적으로 바뀐다).</p>
+<p>lambert: <code style="color:#22d3bf">albedo</code>(스칼라 또는 RGB 3요소)만 쓰는 완전 확산.</p>
+<p>conductor: <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)의 복소 굴절률로 색이 정해지고,</p>
+<p><code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)로 이방성 로브의 폭이 정해진다. <b>색은 지정하지 않는다</b>.</p>
+<p><code style="color:#22d3bf">roughness_um</code>은 면 거칠기 Rq [µm]. 경면으로 돌아오는 비율이</p>
+<p>exp(-(4πσcosθ/λ)²)로 정해지므로(Davies 1954 / Bennett-Porteus 1961),</p>
+<p>경면(0.01 = 연마)인가 확산 쪽(1.0 = 새틴 마감)인가는 이 1개로 정해진다.</p>
+<p><b>파장이 식에 들어가므로</b>, 같은 면이라도 광원의 파장에 따라 보이는 모습이 바뀐다.</p>
+<p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)의 Sellmeier 분산으로 굴절하고,</p>
+<p><code style="color:#22d3bf">sigma_per_mm</code>의 Beer–Lambert로 흡수한다.</p>
+<p>반환값: 위의 내용을 검증한 뒤 저장한 dict(다른 scene_* op에 그대로 넘긴다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

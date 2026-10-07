@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_dynamic_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>動態範圍 DR = μ_p.sat / μ_p.min(式 28)，以倍數、dB(20 log10)與 bit(log2)表示。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: どちらかが正でない / μ_p.sat ≤ μ_p.min。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：任一方不為正 / μ_p.sat ≤ μ_p.min。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

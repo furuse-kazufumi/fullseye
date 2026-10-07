@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>DWT-DCT-<b>Wasserzeichen</b>-Einbettung. Liefert das markierte Bild <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の <b>中帯域係数の対</b> <code style="color:#22d3bf">(3,1)</code> と <code style="color:#22d3bf">(1,3)</code> の大小関係で 1 ビットを表す(Hsu &amp; Wu 1999 の中帯域係数対法)。差が <code style="color:#22d3bf">strength</code> 未満なら差が <code style="color:#22d3bf">strength</code> になるまで <b>対称に</b>動かす(片方だけ動かすとブロックのエネルギーが偏る)。抽出に原画像は要らない(ブラインド)。</p>
-<p>容量は <code style="color:#22d3bf">(LL の高さ // 8) * (LL の幅 // 8)</code> ビット。<code style="color:#22d3bf">bits</code> がそれより短ければ先頭から埋め、残りのブロックは触らない。長ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p><code style="color:#22d3bf">bits</code> は bool の 1-D(<code style="color:#22d3bf">phash</code> 語彙)。0/1 の int 配列も受けるが、<b>float は受けない</b>(丸めの向きを黙って決めない)。</p>
-<p>強度と画質のトレードオフは <code style="color:#22d3bf">watermark_capacity</code> が掃引して表で返す。実測(256x256 のテクスチャ画像・128 ビット、LL は 128x128 = 容量 256 ビット。<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
+<p>Zerlegt das LL-Teilband einer 1-stufigen DWT (Default haar) in 8x8-Blöcke und stellt 1 Bit durch die Größenrelation <b>eines Paares von Mittelband-Koeffizienten</b> <code style="color:#22d3bf">(3,1)</code> und <code style="color:#22d3bf">(1,3)</code> der orthogonalen DCT-II jedes Blocks dar (das Mittelband-Koeffizientenpaar-Verfahren von Hsu &amp; Wu 1999). Ist die Differenz kleiner als <code style="color:#22d3bf">strength</code>, werden beide <b>symmetrisch</b> verschoben, bis die Differenz <code style="color:#22d3bf">strength</code> erreicht (nur einen zu verschieben würde die Energie des Blocks einseitig verändern). Die Extraktion braucht das Originalbild nicht (blind).</p>
+<p>Die Kapazität ist <code style="color:#22d3bf">(LL-Höhe // 8) * (LL-Breite // 8)</code> Bit. Ist <code style="color:#22d3bf">bits</code> kürzer, wird von vorne aufgefüllt und die übrigen Blöcke bleiben unberührt. Ist es länger, <code style="color:#22d3bf">ValueError</code>.</p>
+<p><code style="color:#22d3bf">bits</code> ist ein bool-1-D-Array (<code style="color:#22d3bf">phash</code>-Vokabular). Auch ein int-Array aus 0/1 wird akzeptiert, <b>float aber nicht</b> (die Rundungsrichtung wird nicht stillschweigend festgelegt).</p>
+<p>Den Zielkonflikt zwischen Stärke und Bildqualität sweept <code style="color:#22d3bf">watermark_capacity</code> und gibt ihn als Tabelle zurück. Gemessen (256x256-Texturbild, 128 Bit, LL ist 128x128 = Kapazität 256 Bit; <code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
 <p>========= ========== ====== ================= =================</p>
-<p>strength  PSNR (dB)  BER    BER(JPEG 品質 90) BER(JPEG 品質 75)</p>
+<p>strength  PSNR (dB)  BER    BER (JPEG Q 90)   BER (JPEG Q 75)</p>
 <p>========= ========== ====== ================= =================</p>
 <p>0.02      45.48      0.000  0.008             0.195</p>
 <p>0.05      44.48      0.000  0.000             0.008</p>
@@ -18,8 +17,8 @@
 <p>0.20      40.32      0.000  0.000             0.000</p>
 <p>0.40      36.37      0.000  0.000             0.000</p>
 <p>========= ========== ====== ================= =================</p>
-<p><b>これがトレードオフの実体</b>である。無加工なら最弱の 0.02 でも誤り 0 だが、JPEG 品質 75 を通すと 19.5% が化ける。既定の 0.1 は「品質 75 まで誤り 0、PSNR 42.95 dB」の点として選んである(<code style="color:#22d3bf">clipped</code> はどの強度でも 0)。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p><b>Das ist der Zielkonflikt in Wirklichkeit</b>. Unbearbeitet ergibt selbst die schwächste Stärke 0.02 0 Fehler, aber nach JPEG-Qualität 75 kippen 19.5%. Der Default 0.1 ist als der Punkt &quot;0 Fehler bis Qualität 75, PSNR 42.95 dB&quot; gewählt (<code style="color:#22d3bf">clipped</code> ist bei jeder Stärke 0).</p>
+<p><b>PyWavelets erforderlich</b> (<code style="color:#22d3bf">ImportError</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

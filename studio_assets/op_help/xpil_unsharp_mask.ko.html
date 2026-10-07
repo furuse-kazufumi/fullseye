@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Pillow의 언샤프 마스크. <code style="color:#22d3bf">PIL.ImageFilter.UnsharpMask</code>를 호출한다(kornia판 <code style="color:#22d3bf">xkor_unsharp</code>에 대응하는 CPU 구현).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a がぼかし半径（<code style="color:#22d3bf">radius = 1 + 4*a</code>、範囲 1〜5）、b が強調量（<code style="color:#22d3bf">percent = int(50 + 200*b)</code>、範囲 50〜250%）を振る。しきい値は 0固定（すべての差分を強調対象にする）。</p>
+<p>a가 블러 반경(<code style="color:#22d3bf">radius = 1 + 4*a</code>, 범위 1~5)을, b가 강조량(<code style="color:#22d3bf">percent = int(50 + 200*b)</code>, 범위 50~250%)을 바꾼다. 임계값은 0으로 고정(모든 차분을 강조 대상으로 한다).</p>
 <p><b>정밀도(실측)</b>: 내부에서 <b>8 bit(256단계)로 양자화</b>한다(출력이 k/255 격자에 정확히 올라온다). float64로 넘겨도 <b>그 정밀도는 유지되지 않는다</b> —— 16-bit 카메라의 계조(약 1.5e-5)는 1/255 ≈ 3.9e-3로 반올림되고, 1/255보다 작은 차이만 있는 두 장은 같은 답을 돌려준다. 미세한 농담 차를 재는 용도나 출력을 다시 미분·회귀에 넘기는 용도에서는 양자화 계단이 드러나므로, 8 bit를 거치지 않는 op를 고를 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

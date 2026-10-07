@@ -6,36 +6,35 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>창별 상호상관으로 변위장을 구한다. 반환값은 <code style="color:#22d3bf">(flow, info)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各窓で <code style="color:#22d3bf">FFT</code> を 2 回とって共役積の逆変換を取り(循環相関)、最大値の位置を整数変位、その周りの 3 点でサブピクセル変位を決める。</p>
-<p><b>零方向への偏りとその補正(実測)</b>: 素の相互相関は変位を<b>零へ引き寄せる</b>。窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、実測でも偏りは変位に比例した(win=32・Hann、<code style="color:#22d3bf">dx</code> を 0.5 から 6 px まで振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>傾き一定</b>)。</p>
-<p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> はこれを、<b>窓関数の自己相関で割る</b>ことで補正する(重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、<code style="color:#22d3bf">search_limit</code> で探索範囲を窓の 1/4 に絞るのと<b>必ず対にする</b>。実測:</p>
+<p>각 창에서 <code style="color:#22d3bf">FFT</code>를 2회 취하고 공액곱의 역변환을 취해(순환 상관), 최대값의위치를 정수 변위, 그 주위의 3점으로 서브픽셀 변위를 정한다.</p>
+<p><b>영 방향으로의 치우침과 그 보정(실측)</b>: 맨 상호상관은 변위를 <b>영으로 끌어당긴다</b>. 창을 어긋나게 하면 겹치는 영역이 줄어 상관의 값 자체가 변위와 함께 떨어지기 때문이며, 실측에서도 치우침은 변위에 비례했다(win=32·Hann, <code style="color:#22d3bf">dx</code>를 0.5에서 6 px까지흔들어 치우침 / (d/N)이 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>기울기 일정</b>).</p>
+<p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code>은 이것을 <b>창 함수의 자기상관으로 나눔</b>으로써 보정한다(겹침 면적으로 정규화하는 것과 같다). 다만 가장자리에서는 나누는 양이 0에 가까워지므로, <code style="color:#22d3bf">search_limit</code>로 탐색 범위를 창의 1/4로 좁히는 것과 <b>반드시 짝을 짓는다</b>. 실측:</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>dx [px]          補正なし    補正 + 1/4  補正のみ</p>
+<p>dx [px]          보정 없음   보정+1/4    보정만</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>1.0 の偏り       -0.0402     -0.0020     -0.2659</p>
-<p>5.0 の偏り       -0.2001     -0.0128     -0.9210</p>
-<p>5.0 の RMS       0.2081      0.0301      4.8881</p>
+<p>1.0의 편향       -0.0402     -0.0020     -0.2659</p>
+<p>5.0의 편향       -0.2001     -0.0128     -0.9210</p>
+<p>5.0의 RMS        0.2081      0.0301      4.8881</p>
 <p>===============  ==========  ==========  ==========</p>
-<p>右端が「探索を絞らずに正規化だけした」場合で、<b>補正が誤差を 23 倍に悪化させる</b>。片方だけ入れてはいけない、という測定結果をそのまま既定にしてある。</p>
+<p>오른쪽 끝이 &quot;탐색을 좁히지 않고 정규화만 한&quot; 경우로, <b>보정이 오차를 23배로 악화시킨다</b>. 한쪽만 넣어서는 안 된다는 측정 결과를 그대로 기본값으로 해 두었다.</p>
 <p>Args:</p>
-<p>a, b: 画像対 <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>window: 窓の一辺 [px]。偶数・8 以上。</p>
-<p>overlap: 窓の重なり率 <code style="color:#22d3bf">[0, 1)</code>。0.5 が慣行。</p>
-<p>peak: <code style="color:#22d3bf">PEAK_MODES</code>。</p>
-<p>window_func: <code style="color:#22d3bf">WINDOW_FUNCS</code>。</p>
-<p>subtract_mean: 窓ごとに平均を引く(背景の直流成分が中央に巨大な</p>
-<p>ピークを作るのを防ぐ)。<b>切ると零変位に張り付く</b>。</p>
-<p>shift: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(多段用)。2 枚目の窓をこの整数量だけ</p>
-<p>ずらして切り出し、残差を測る。</p>
-<p>normalize: <code style="color:#22d3bf">&quot;overlap&quot;</code>(既定)か <code style="color:#22d3bf">&quot;none&quot;</code>。</p>
-<p>search_limit: 探索する変位の上限を窓の比で与える(既定 0.25 = PIV の</p>
-<p>「1/4 則」)。<code style="color:#22d3bf">None</code> で無制限 —— <code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> との</p>
-<p>併用は上の表のとおり<b>悪化する</b>。</p>
+<p>a, b: 이미지 쌍 <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>window: 창의 한 변 [px]. 짝수·8 이상.</p>
+<p>overlap: 창의 겹침률 <code style="color:#22d3bf">[0, 1)</code>. 0.5가 관행.</p>
+<p>peak: <code style="color:#22d3bf">PEAK_MODES</code>.</p>
+<p>window_func: <code style="color:#22d3bf">WINDOW_FUNCS</code>.</p>
+<p>subtract_mean: 창마다 평균을 뺀다(배경의 직류 성분이 중앙에 거대한</p>
+<p>피크를 만드는 것을 막는다). <b>끄면 영 변위에 들러붙는다</b>.</p>
+<p>shift: 예측 변위 <code style="color:#22d3bf">(2, h, w)</code>(다단용). 2번째 장의 창을 이 정수량만큼</p>
+<p>어긋나게 잘라 내어 잔차를 잰다.</p>
+<p>normalize: <code style="color:#22d3bf">&quot;overlap&quot;</code>(기본값) 또는 <code style="color:#22d3bf">&quot;none&quot;</code>.</p>
+<p>search_limit: 탐색할 변위의 상한을 창에 대한 비로 준다(기본값 0.25 = PIV의</p>
+<p>&quot;1/4 법칙&quot;). <code style="color:#22d3bf">None</code>이면 무제한 —— <code style="color:#22d3bf">normalize=&quot;overlap&quot;</code>과의</p>
+<p>병용은 위 표와 같이 <b>악화된다</b>.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>(窓中心の</p>
-<p>画像座標)、<code style="color:#22d3bf">peak_ratio</code>(第 1 ピーク / 第 2 ピーク。1 に近いほど</p>
-<p>当てにならない)、<code style="color:#22d3bf">window</code> / <code style="color:#22d3bf">overlap</code> / <code style="color:#22d3bf">peak</code> を持つ dict。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>. <code style="color:#22d3bf">info</code>는 <code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code>(창 중심의</p>
+<p>이미지 좌표), <code style="color:#22d3bf">peak_ratio</code>(제1 피크 / 제2 피크. 1에 가까울수록</p>
+<p>믿을 수 없다), <code style="color:#22d3bf">window</code> / <code style="color:#22d3bf">overlap</code> / <code style="color:#22d3bf">peak</code>를 가진 dict.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

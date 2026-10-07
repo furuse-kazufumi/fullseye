@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過 DoG(Difference of Gaussians,即以兩種不同 sigma 模糊後的影像之差)所做的帶通邊緣/斑點偵測。這是作為 LoG 快速近似而廣為人知的經典手法。相當於 HALCON 的 <code style="color:#22d3bf">diff_of_gauss</code>(Approximate the LoG operator (Laplace of Gaussian).)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が狭い側のシグマ(0.5〜2.5)、<code style="color:#22d3bf">b</code> が広い側のシグマ(1〜5)を振る ―― 両方が使われ、<code style="color:#22d3bf">b</code> の方を大きくとることで帯域幅が決まる。応答は絶対値を取ってから正規化しているため符号情報は失われる。</p>
+<p><code style="color:#22d3bf">a</code> 調節窄側的 sigma(0.5~2.5)，<code style="color:#22d3bf">b</code> 調節寬側的 sigma(1~5) ―― 兩者都會被使用，讓 <code style="color:#22d3bf">b</code> 取較大值即可決定頻寬。響應先取絕對值再正規化，因此符號資訊會遺失。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>

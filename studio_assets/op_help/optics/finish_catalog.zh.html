@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.finish_catalog() -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metalfinish; metalfinish.finish_catalog() -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;finish_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>表面处理名 → 默认参数表(αx, αy, grain)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>値は設計値であって実測の Ra ではない ―― そこは正直に。粗さの<b>順序</b> (鏡面研磨 &lt; ヘアライン &lt; 交差目 &lt; 梨地)が意味を持つ量。</p>
-<p>引数は無い。返り値は <code style="color:#22d3bf">{仕上げ名: {&quot;alpha_x&quot;, &quot;alpha_y&quot;, &quot;grain&quot;}}</code> の dict で、キーは <code style="color:#22d3bf">FINISHES</code> = <code style="color:#22d3bf">linear</code>(ヘアライン)/ <code style="color:#22d3bf">circular</code>(旋盤の同心目)/ <code style="color:#22d3bf">radial</code>(放射目)/ <code style="color:#22d3bf">crosshatch</code>(交差目)/ <code style="color:#22d3bf">random</code>(梨地・ブラスト)の 5 つ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha_x</code>: 筋方向の異方性ローブ幅(無次元、Ward 型 BRDF の α)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha_y</code>: 筋と直交する方向のローブ幅。<code style="color:#22d3bf">alpha_x &gt; alpha_y</code> が「筋に沿ってハイライトが伸びる」異方性で、<code style="color:#22d3bf">random</code> だけ等方(両方 0.16)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grain</code>: 微小凹凸(法線の乱れ)の強さ、無次元。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は内部表の<b>複製</b>なので、書き換えても以後の <code style="color:#22d3bf">scene_material</code> / <code style="color:#22d3bf">finish_shade</code> には影響しない。</p>
-<p><code style="color:#22d3bf">scene_material(kind=&quot;conductor&quot;, finish=...)</code> はここから <code style="color:#22d3bf">alpha_x</code> / <code style="color:#22d3bf">alpha_y</code> を引いて材質に埋め、<code style="color:#22d3bf">micro_normals</code> / <code style="color:#22d3bf">tangent_field</code> / <code style="color:#22d3bf">finish_shade</code> が同じ名前で筋の向きとローブを作る。手元の Ra を反映したいときは、この表を参考に <code style="color:#22d3bf">scene_material</code> の <code style="color:#22d3bf">roughness_um</code> を別途与える(そちらは Rq [µm] で鏡面割合が決まる)。</p>
+<p>这些值是设计值，并非实测的 Ra ―― 这一点如实说明。有意义的是粗糙度的<b>顺序</b> (镜面抛光 &lt; 拉丝 &lt; 交叉纹 &lt; 磨砂面)。</p>
+<p>没有参数。返回值是 <code style="color:#22d3bf">{表面处理名: {&quot;alpha_x&quot;, &quot;alpha_y&quot;, &quot;grain&quot;}}</code> 的 dict，键为 <code style="color:#22d3bf">FINISHES</code> = <code style="color:#22d3bf">linear</code>(拉丝)/ <code style="color:#22d3bf">circular</code>(车床的同心纹)/ <code style="color:#22d3bf">radial</code>(放射纹)/ <code style="color:#22d3bf">crosshatch</code>(交叉纹)/ <code style="color:#22d3bf">random</code>(磨砂面、喷砂)这 5 个。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha_x</code>：纹路方向的各向异性波瓣宽度(无量纲，Ward 型 BRDF 的 α)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha_y</code>：与纹路正交方向的波瓣宽度。<code style="color:#22d3bf">alpha_x &gt; alpha_y</code> 是“高光沿纹路拉长”的各向异性，只有 <code style="color:#22d3bf">random</code> 是各向同性(两者均为 0.16)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grain</code>：微小凹凸(法线扰动)的强度，无量纲。</p>
+<p style="margin:2px 0 2px 12px">• 返回值是内部表的<b>副本</b>，所以修改它也不会影响之后的 <code style="color:#22d3bf">scene_material</code> / <code style="color:#22d3bf">finish_shade</code>。</p>
+<p><code style="color:#22d3bf">scene_material(kind=&quot;conductor&quot;, finish=...)</code> 从这里取出 <code style="color:#22d3bf">alpha_x</code> / <code style="color:#22d3bf">alpha_y</code> 嵌入材质，<code style="color:#22d3bf">micro_normals</code> / <code style="color:#22d3bf">tangent_field</code> / <code style="color:#22d3bf">finish_shade</code> 以同一名称生成纹路方向与波瓣。想反映手头的 Ra 时，请参考此表另行给出 <code style="color:#22d3bf">scene_material</code> 的 <code style="color:#22d3bf">roughness_um</code> (那边由 Rq [µm] 决定镜面比例)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

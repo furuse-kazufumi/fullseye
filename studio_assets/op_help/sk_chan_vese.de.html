@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Chan-Vese-Segmentierung. Ein aktives Konturmodell, das eine Levelset (Niveaumenge) iterativ so bewegt, dass die Helligkeitsvarianz innerhalb der Region minimiert wird, wodurch sich Regionen auch bei Objekten ohne scharfe Kanten erkennen lassen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)</code> —— a は&#x27;edge length&#x27; 重み mu を 0.1〜0.5 に振る(大きいほど輪郭が丸く滑らかになり細部を無視しやすくなる)。反復回数は 60 に固定。b は未使用。初期レベルセットは既定の &#x27;checkerboard&#x27;(チェッカーボード状)。</p>
+<p>HALCON hat keine direkte Entsprechung. Die Implementierung ist <code style="color:#22d3bf">segmentation.chan_vese(v, mu=0.1+0.4*a, max_num_iter=60)</code> —— a variiert das &#x27;edge length&#x27;-Gewicht mu über 0.1–0.5 (je größer, desto runder und glatter wird die Kontur und desto eher werden Details ignoriert). Die Anzahl der Iterationen ist auf 60 fixiert. b wird nicht verwendet. Die initiale Level-Set-Funktion ist die Standardvorgabe &#x27;checkerboard&#x27; (schachbrettartig).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

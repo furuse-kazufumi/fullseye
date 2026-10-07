@@ -4,38 +4,37 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Match one image against a fingerprint. <b>It returns no verdict</b> — an evidence statistic and its caveats.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>残差 <code style="color:#22d3bf">W = I - denoise(I)</code> と参照信号 <code style="color:#22d3bf">I·K</code> の巡回相互相関を FFT で取り、正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
-<p>返り(<code style="color:#22d3bf">table</code> 語彙の dict):</p>
-<p><code style="color:#22d3bf">pce</code>          PCE。<b>しきい値は同梱しない</b>(下の caveats 参照)</p>
-<p><code style="color:#22d3bf">ncc_peak</code>     正規化相互相関のピーク値([-1, 1])</p>
-<p><code style="color:#22d3bf">peak_shift</code>   ピークの位置 <code style="color:#22d3bf">(dy, dx)</code>。<b>(0, 0) でなければ位置がずれている</b></p>
-<p>= 切り出し / 手ぶれ補正 / リサイズを疑う手がかり</p>
-<p><code style="color:#22d3bf">n_pixels</code>     使った画素数</p>
-<p><code style="color:#22d3bf">caveats</code>      この数値が言えないことの列(文字列)</p>
-<p><code style="color:#22d3bf">peak_shift</code> を返すのは重要で、<code style="color:#22d3bf">(0, 0)</code> 以外のピークは「同じセンサだが切り出されている」か「<b>たまたまの相関</b>」のどちらかである。どちらかはこの op には決められない。実測では別センサの照合はいつも <code style="color:#22d3bf">(0, 0)</code> 以外にピークが立ち(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> など毎回ばらばら)、同一センサは必ず <code style="color:#22d3bf">(0, 0)</code> に立つ。</p>
-<p><b>再圧縮で PRNU は消える</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>、8 枚から作った指紋・128x128):</p>
+<p>Takes the circular cross-correlation of the residual <code style="color:#22d3bf">W = I - denoise(I)</code> and the reference signal <code style="color:#22d3bf">I·K</code> via FFT, and returns the peak of the normalized cross-correlation and the <b>PCE</b> (peak-to-correlation energy).</p>
+<p>Returns (a dict of the <code style="color:#22d3bf">table</code> vocabulary):</p>
+<p><code style="color:#22d3bf">pce</code>          PCE. <b>No threshold is bundled</b> (see caveats below)</p>
+<p><code style="color:#22d3bf">ncc_peak</code>     peak value of the normalized cross-correlation ([-1, 1])</p>
+<p><code style="color:#22d3bf">peak_shift</code>   position of the peak <code style="color:#22d3bf">(dy, dx)</code>. <b>If it is not (0, 0), the position is shifted</b></p>
+<p>= a clue to suspect cropping / image stabilization / resizing</p>
+<p><code style="color:#22d3bf">n_pixels</code>     number of pixels used</p>
+<p><code style="color:#22d3bf">caveats</code>      list (strings) of what this number cannot tell</p>
+<p>Returning <code style="color:#22d3bf">peak_shift</code> matters: a peak other than <code style="color:#22d3bf">(0, 0)</code> is either &quot;the same sensor but cropped&quot; or &quot;<b>a chance correlation</b>&quot;. Which of the two it is, this op cannot decide. In measurements, matching against a different sensor always peaks somewhere other than <code style="color:#22d3bf">(0, 0)</code> (<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> etc., scattered every time), while the same sensor always peaks at <code style="color:#22d3bf">(0, 0)</code>.</p>
+<p><b>Recompression kills PRNU</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>, fingerprint built from 8 images, 128x128):</p>
 <p>========== ========== ==========</p>
-<p>再圧縮      PCE        無圧縮比</p>
+<p>Recompr.   PCE        Ratio to none</p>
 <p>========== ========== ==========</p>
-<p>無圧縮     7246       1.00</p>
-<p>品質 95    6174       0.85</p>
-<p>品質 90    4214       0.58</p>
-<p>品質 75    1412       0.19</p>
-<p>品質 50     530       0.07</p>
-<p>品質 30     207       0.03</p>
+<p>None       7246       1.00</p>
+<p>Quality 95 6174       0.85</p>
+<p>Quality 90 4214       0.58</p>
+<p>Quality 75 1412       0.19</p>
+<p>Quality 50  530       0.07</p>
+<p>Quality 30  207       0.03</p>
 <p>========== ========== ==========</p>
-<p>つまり <b>低い PCE は「別のカメラ」ではなく「情報が残っていない」かもしれない</b>。ここでしきい値を同梱すると、圧縮された画像を機械的に「別カメラ」と判定する道具になってしまう。</p>
-<p><b>黙って間違う経路(実測)</b>: <code style="color:#22d3bf">fingerprint</code> に指紋ではなく普通の画像を渡すと、shape は合っているので例外は出ず、PCE も有限値が返る。指紋は <code style="color:#22d3bf">(H, W)</code> の float64 なので既存の <code style="color:#22d3bf">image2d</code> 述語を完全に満たし、<b>実行時には区別できない</b>。そこで入口で「ゼロ平均でない」ものを <code style="color:#22d3bf">ValueError</code> で弾く(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)。実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
+<p>So <b>a low PCE may mean not &quot;a different camera&quot; but &quot;no information left&quot;</b>. Bundling a threshold here would turn it into a tool that mechanically judges compressed images to be &quot;a different camera&quot;.</p>
+<p><b>A path that is silently wrong (measured)</b>: if an ordinary image instead of a fingerprint is passed to <code style="color:#22d3bf">fingerprint</code>, the shape matches, so no exception is raised and a finite PCE is returned. A fingerprint is <code style="color:#22d3bf">(H, W)</code> float64, so it fully satisfies the existing <code style="color:#22d3bf">image2d</code> predicate and <b>cannot be distinguished at run time</b>. Therefore anything &quot;not zero-mean&quot; is rejected at the entry with <code style="color:#22d3bf">ValueError</code> (<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>). Measured (<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
 <p>============================== ==============</p>
-<p>渡したもの                     <code style="color:#22d3bf">|mean|/std</code></p>
-<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> の返り 4.8e-18</p>
-<p>普通の自然画像                 4.626</p>
-<p>暗い画像(平均 0.015)         4.626</p>
-<p>高コントラスト画像             1.801</p>
+<p>What was passed                <code style="color:#22d3bf">|mean|/std</code></p>
+<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> output 4.8e-18</p>
+<p>Ordinary natural image         4.626</p>
+<p>Dark image (mean 0.015)        4.626</p>
+<p>High-contrast image            1.801</p>
 <p>============================== ==============</p>
-<p>比は<b>スケール不変</b>なので、暗い画像でも明るい画像でも同じように弾ける(0.05 のしきい値から 1.5 桁以上離れている)。</p>
-<p><b>それでも完全ではない</b>: 自分でゼロ平均化した画像を渡すとゲートは通り、PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは <b>片側しか守れない</b>。これが「指紋を <code style="color:#22d3bf">image2d</code> に相乗りさせず語彙を分ける」判断の根拠で、詳細は <code style="color:#22d3bf">opsimgforensics</code> の docstring にある。</p>
+<p>The ratio is <b>scale-invariant</b>, so dark and bright images are rejected alike (more than 1.5 orders of magnitude away from the threshold 0.05).</p>
+<p><b>Still not complete</b>: an image you zero-meaned yourself passes the gate, and a finite value PCE = -5.97 is returned (measured). That is, the run-time check <b>can guard only one side</b>. This is the basis of the decision &quot;do not let the fingerprint piggyback on <code style="color:#22d3bf">image2d</code>; give it its own vocabulary&quot;, detailed in the docstring of <code style="color:#22d3bf">opsimgforensics</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;blast_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비드 블라스트 / 무광 마감의 <b>방향성 없는 미세 요철</b>을 법선에 실습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>grain: 傾きの強さ(0–1 程度)。cell_px: 粒の大きさ [px] (大きいほど粗い梨地)。</p>
-<p>返り値: 摂動後の単位法線マップ。方向統計を持たないので、ハイライトは伸びずに<b>広がる</b> ―― これがヘアラインとの見分けどころ。</p>
+<p>grain: 기울기의 강도(0–1 정도). cell_px: 알갱이의 크기 [px] (클수록 거친 새틴 마감).</p>
+<p>반환값: 섭동 후의 단위 법선 맵. 방향 통계를 갖지 않으므로, 하이라이트는늘어나지 않고 <b>퍼진다</b> ―― 이것이 헤어라인과 구별하는 포인트.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

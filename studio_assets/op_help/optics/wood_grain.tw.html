@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">surfacelib.wood_grain</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成木紋(年輪)的<b>顏色調變</b>與<b>纖維方向</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>shape: (H, W)。ring_px: 年輪の間隔 [px]。angle_deg: 木取りの向き [deg]。</p>
-<p>wobble: 年輪のうねり(0 で同心の直線)。seed: 乱数種。</p>
-<p>返り値: (modulation (H,W) 0–1, tangent (H,W,3)) —— 変調は木の色(明るい早材と暗い晩材)に掛け、接線は繊維方向なので <code style="color:#22d3bf">matappear.ward_anisotropic</code> に渡すと <b>木目に沿った光沢</b>になる(木は繊維方向に異方性を持つ)。</p>
+<p>shape：(H, W)。ring_px：年輪的間隔 [px]。angle_deg：取材方向 [deg]。</p>
+<p>wobble：年輪的起伏(0 為同心直線)。seed：亂數種子。</p>
+<p>回傳值：(modulation (H,W) 0–1, tangent (H,W,3)) —— 調變乘在木色(明亮的早材與暗色的晚材)上，切線是纖維方向，所以傳給 <code style="color:#22d3bf">matappear.ward_anisotropic</code> 即成為 <b>沿木紋的光澤</b>(木材在纖維方向上具有異向性)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

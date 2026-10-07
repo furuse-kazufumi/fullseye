@@ -4,16 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>축대칭 영상(둥근 개구·가우스 덩어리·회절 고리)의 2차원 푸리에 변환을 동경 방향 1개의 Hankel 변환으로 구한다.</p>
-<p>화상을 중심으로부터의 거리로 1화소 폭의 고리로 나누어 평균하고(동경 분포), <code style="color:#22d3bf">hankel_transform</code>(0차)에 넣는다. 축대칭이면 2차원 변환이 <b>1개의 적분</b>으로 끝나며(고리로 평균하므로 잡음도 1/√(고리의 화소 수)로 줄어든다), 축대칭에서얼마나 벗어나 있는지(<code style="color:#22d3bf">asymmetry</code>)를 수치로 반환한다. 주파수 스텝은 2-D FFT와 마찬가지로 1/(2·반경) 정도이며, 더 세밀해지지 않는다.</p>
+<p>영상을 중심으로부터의 거리로 1화소 폭의 고리로 나누어 평균하고(동경 분포), <code style="color:#22d3bf">hankel_transform</code>(0차)에 넣는다. 축대칭이면 2차원 변환이 <b>1개의 적분</b>으로 끝나며(고리로 평균하므로 잡음도 1/√(고리의 화소 수)로 줄어든다), 축대칭에서얼마나 벗어나 있는지(<code style="color:#22d3bf">asymmetry</code>)를 수치로 반환한다. 주파수 스텝은 2-D FFT와 마찬가지로 1/(2·반경) 정도이며, 더 세밀해지지 않는다.</p>
 <p>Args:</p>
-<p>image: 2-D 실수 화상.</p>
+<p>image: 2-D 실수 영상.</p>
 <p>center: 중심 (행, 열). 생략하면 밝기의 무게중심.</p>
 <p>spacing: 1화소의 길이(주파수의 단위를 정한다).</p>
 <p>n: Hankel 변환의 표본 수.</p>
-<p>r_max: 사용할 반경의 상한(기본값 = 중심에서 화상 가장자리까지의 최단 거리. 모서리가 잘린 고리는 사용하지 않는다).</p>
+<p>r_max: 사용할 반경의 상한(기본값 = 중심에서 영상 가장자리까지의 최단 거리. 모서리가 잘린 고리는 사용하지 않는다).</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">nu</code>(주파수), <code style="color:#22d3bf">F</code>(2-D 푸리에 변환의 동경 단면, ∬ f e^{−2πi k·x} dx의 값), <code style="color:#22d3bf">r</code>, <code style="color:#22d3bf">profile</code>(동경 분포),</p>
-<p><code style="color:#22d3bf">center</code>, <code style="color:#22d3bf">asymmetry</code> = ‖화상 − 분포로부터 다시 만든 축대칭 화상‖ / ‖화상‖(0이면 축대칭. 어두운 배경으로 희석되지 않는다).</p>
+<p><code style="color:#22d3bf">center</code>, <code style="color:#22d3bf">asymmetry</code> = ‖영상 − 분포로부터 다시 만든 축대칭 영상‖ / ‖영상‖(0이면 축대칭. 어두운 배경으로 희석되지 않는다).</p>
 <p>게이트: 반경 R의 원판은 F(ν) = R J₁(2πνR)/ν(Airy), exp(−π r²/σ²)는 σ² exp(−π σ² ν²)(자기 쌍대의 확대), 2-D FFT의 동경 단면과 일치.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

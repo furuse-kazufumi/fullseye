@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;light_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Datenblatt der Beleuchtungen (Schlüssel: „Hersteller Modell“). Mit <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">kind</code> eingrenzbar.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>照明は <b>OEM 供給が多く、同じ実体が別ブランドで売られる</b>ので、型番だけでは一意にならない。<code style="color:#22d3bf">oem_of</code> にたどれる元があれば入る。</p>
-<p>既定は一般形状だけで、ベンダ型番は入っていない ―― 配光・波長・実体寸法はデータシートにしかなく、推測で埋めると実測と誤解させるため。手元の機種は <code style="color:#22d3bf">register_light</code> で足す。</p>
+<p>Beleuchtung wird <b>oft per OEM geliefert, wobei dasselbe Produkt unter verschiedenen Marken verkauft wird</b>, daher ist eine Typenbezeichnung allein nicht eindeutig. Lässt sich das Original zurückverfolgen, steht es in <code style="color:#22d3bf">oem_of</code>.</p>
+<p>Per Default sind nur generische Formen enthalten, keine Hersteller-Typenbezeichnungen ―― Lichtverteilung, Wellenlänge und reale Abmessungen stehen nur in Datenblättern, und sie durch Raten zu füllen würde suggerieren, es seien Messwerte. Eigene Geräte</p>
+<p>mit <code style="color:#22d3bf">register_light</code> hinzufügen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

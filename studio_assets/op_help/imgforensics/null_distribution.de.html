@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fasst die Nullverteilung der Beweisstatistik aus Proben zusammen, die nachweislich <b>unmanipuliert</b> sind.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は <code style="color:#22d3bf">PCE 1832</code> のような数値を渡されて<b>解釈する手段が無い</b>。かといってしきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値ではない。</p>
-<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<p>Diese Familie gibt durchweg keine Urteile zurück. Das ist richtig, aber so bekommt der Nutzer eine Zahl wie <code style="color:#22d3bf">PCE 1832</code> und hat <b>kein Mittel, sie zu deuten</b>. Andererseits wäre ein mitgelieferter Schwellwert eine Lüge ―― der Trennpunkt verschiebt sich mit Bildanzahl, Auflösung, Kompressionsrate und Motiv, er ist also kein Wert, der sich bei Auslieferung festlegen lässt.</p>
+<p>Daher <b>wird die Verteilung aus den eigenen sauberen Daten des Nutzers gemessen</b>. Mitgeliefert wird nicht &quot;ein Schwellwert&quot;, sondern &quot;wie man einen Schwellwert misst&quot;, und das bleibt richtig, auch wenn sich die Bedingungen ändern.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>values : array_like</p>
-<p>改竄が無いと分かっている組で測った証拠量(<code style="color:#22d3bf">hash_distance</code> や</p>
-<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> など)。<b>同じ条件</b>で集めること。</p>
+<p>Evidenzgrößen, gemessen an Paaren, die bekanntermaßen nicht manipuliert sind (<code style="color:#22d3bf">hash_distance</code> oder</p>
+<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> usw.). <b>Unter denselben Bedingungen</b> sammeln.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
 <p><code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">quantiles</code></p>
-<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
-<p>ので <code style="color:#22d3bf">n &lt; 20</code> は <code style="color:#22d3bf">caveats</code> に出す(黙って外挿しない)。</p>
+<p>(5., 25., 50., 75., 95., 99. Perzentil). Bei wenigen Stichproben lassen sich die Ränder nicht messen,</p>
+<p>daher wird <code style="color:#22d3bf">n &lt; 20</code> in <code style="color:#22d3bf">caveats</code> ausgegeben (keine stille Extrapolation).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

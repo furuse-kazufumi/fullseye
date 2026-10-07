@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>DWT-DCT <b>数字水印</b>嵌入。返回含水印图像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の <b>中帯域係数の対</b> <code style="color:#22d3bf">(3,1)</code> と <code style="color:#22d3bf">(1,3)</code> の大小関係で 1 ビットを表す(Hsu &amp; Wu 1999 の中帯域係数対法)。差が <code style="color:#22d3bf">strength</code> 未満なら差が <code style="color:#22d3bf">strength</code> になるまで <b>対称に</b>動かす(片方だけ動かすとブロックのエネルギーが偏る)。抽出に原画像は要らない(ブラインド)。</p>
-<p>容量は <code style="color:#22d3bf">(LL の高さ // 8) * (LL の幅 // 8)</code> ビット。<code style="color:#22d3bf">bits</code> がそれより短ければ先頭から埋め、残りのブロックは触らない。長ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p><code style="color:#22d3bf">bits</code> は bool の 1-D(<code style="color:#22d3bf">phash</code> 語彙)。0/1 の int 配列も受けるが、<b>float は受けない</b>(丸めの向きを黙って決めない)。</p>
-<p>強度と画質のトレードオフは <code style="color:#22d3bf">watermark_capacity</code> が掃引して表で返す。実測(256x256 のテクスチャ画像・128 ビット、LL は 128x128 = 容量 256 ビット。<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
+<p>把 1 级 DWT(默认 haar)的 LL 子频带切成 8x8，以各块正交 DCT-II 的 <b>中频带系数对</b> <code style="color:#22d3bf">(3,1)</code> 与 <code style="color:#22d3bf">(1,3)</code> 的大小关系表示 1 位(Hsu &amp; Wu 1999 的中频带系数对法)。差小于 <code style="color:#22d3bf">strength</code> 时，<b>对称地</b>移动两者直到差达到 <code style="color:#22d3bf">strength</code>(只移动一方会使块的能量偏斜)。提取时不需要原图像(盲)。</p>
+<p>容量为 <code style="color:#22d3bf">(LL 的高 // 8) * (LL 的宽 // 8)</code> 位。<code style="color:#22d3bf">bits</code> 比它短时从开头填入，其余块不动。比它长时为 <code style="color:#22d3bf">ValueError</code>。</p>
+<p><code style="color:#22d3bf">bits</code> 为 bool 的 1-D(<code style="color:#22d3bf">phash</code> 词汇)。也接受 0/1 的 int 数组，但<b>不接受 float</b>(不默默决定舍入方向)。</p>
+<p>强度与画质的权衡由 <code style="color:#22d3bf">watermark_capacity</code> 扫掠后以表返回。实测(256x256 的纹理图像、128 位，LL 为 128x128 = 容量 256 位。<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>)：</p>
 <p>========= ========== ====== ================= =================</p>
-<p>strength  PSNR (dB)  BER    BER(JPEG 品質 90) BER(JPEG 品質 75)</p>
+<p>strength  PSNR (dB)  BER    BER(JPEG 质量 90) BER(JPEG 质量 75)</p>
 <p>========= ========== ====== ================= =================</p>
 <p>0.02      45.48      0.000  0.008             0.195</p>
 <p>0.05      44.48      0.000  0.000             0.008</p>
@@ -18,8 +17,8 @@
 <p>0.20      40.32      0.000  0.000             0.000</p>
 <p>0.40      36.37      0.000  0.000             0.000</p>
 <p>========= ========== ====== ================= =================</p>
-<p><b>これがトレードオフの実体</b>である。無加工なら最弱の 0.02 でも誤り 0 だが、JPEG 品質 75 を通すと 19.5% が化ける。既定の 0.1 は「品質 75 まで誤り 0、PSNR 42.95 dB」の点として選んである(<code style="color:#22d3bf">clipped</code> はどの強度でも 0)。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p><b>这就是权衡的实际情况</b>。不加处理时即使最弱的 0.02 误差也为 0，但经过 JPEG 质量 75 后有 19.5% 出错。默认的 0.1 是作为“到质量 75 为止误差 0、PSNR 42.95 dB”的点而选定的(<code style="color:#22d3bf">clipped</code> 在任何强度下都是 0)。</p>
+<p><b>必须有 PyWavelets</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

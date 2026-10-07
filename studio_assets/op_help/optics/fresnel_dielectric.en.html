@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_dielectric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fresnel reflectance at a dielectric interface (array-capable, total internal reflection included).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>cos_i: 入射角の cos(スカラまたは配列、0–1)。</p>
-<p>n1/n2: 入射側 / 透過側の実屈折率。</p>
-<p>polarization: &quot;unpolarized&quot;(既定、s と p の平均)/ &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R(cos_i と同形、0–1)。臨界角を超えた入射は <b>厳密に 1.0</b>(全反射)。</p>
-<p>検算(テストで固定): 垂直入射で ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)、Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。</p>
+<p>cos_i: cos of the angle of incidence (scalar or array, 0–1).</p>
+<p>n1/n2: real refractive index of the incident / transmitted side.</p>
+<p>polarization: &quot;unpolarized&quot; (default, mean of s and p) / &quot;s&quot; / &quot;p&quot;.</p>
+<p>Returns: reflectance R (same shape as cos_i, 0–1). Incidence beyond the critical angle gives <b>exactly 1.0</b> (total internal reflection).</p>
+<p>Cross-check (fixed in tests): at normal incidence ((n1−n2)/(n1+n2))² (air→BK7 = 0.04), at the Brewster angle p polarization is 0 (below 1e-15), beyond the critical angle 1.0. Transmittance is 1 − R (an interface without absorption, so energy is conserved).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

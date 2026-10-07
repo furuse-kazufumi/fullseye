@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.defocus_blur(image, depth_mm, camera, f_number: &#x27;float&#x27; = 5.6, focus_mm: &#x27;float&#x27; = None, layers: &#x27;int&#x27; = 7) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;defocus_blur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依据深度真值施加<b>景深模糊</b>(理想针孔像 → 实际镜头的像)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>名前が optics.depth_of_field と紛らわしいので分けてある: あちらは被写界深度の <b>数値</b>を返し、こちらは<b>画像にぼけを掛ける</b>(2026-09-05 に台帳で同名衝突を起こして発覚。同名 op は後勝ちで静かに上書きされるので、名前で区別する)。</p>
-<p>錯乱円の直径は幾何光学の閉じた式 <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code>(f = 焦点距離, N = F 値, z_f = 合焦距離)。画素数に直して、深度でまとめた層ごとにガウスぼかしを掛け、手前の層から合成する。</p>
-<p>これが無いと「視野には入っているのに実機では合焦しない」構成を見逃す ―― 仮想化の目的は絵を作ることではなく、<b>その光学構成で検査が成立するか</b>を先に知ることなので、被写界深度は省けない。</p>
-<p><code style="color:#22d3bf">focus_mm</code> を省くと <code style="color:#22d3bf">camera</code> の作動距離に合わせる。返り値は入力と同じ形。</p>
+<p>名称与 optics.depth_of_field 容易混淆，所以分开了：那边返回景深的 <b>数值</b>，这边是<b>给图像加上模糊</b>(2026-09-05 在台账中发生同名冲突才发现。同名 op 会被后注册的静默覆盖，所以用名称区分)。</p>
+<p>弥散圆直径为几何光学的闭式 <code style="color:#22d3bf">c = (f² / (N (z_f − f))) · |z − z_f| / z</code>(f = 焦距，N = F 值，z_f = 对焦距离)。换算为像素后，对按深度归并的各层施加高斯模糊，再从前方的层开始合成。</p>
+<p>没有它，就会漏掉“在视场内但实机上无法对焦”的配置 ―― 虚拟化的目的不是做图，而是事先知道<b>在该光学配置下检测是否成立</b>，所以景深不能省略。</p>
+<p>省略 <code style="color:#22d3bf">focus_mm</code> 则对准 <code style="color:#22d3bf">camera</code> 的工作距离。返回值与输入同形。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

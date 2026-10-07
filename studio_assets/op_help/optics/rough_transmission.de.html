@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> oder rufe <code style="color:#22d3bf">surfacelib.rough_transmission</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt die Transmission von Mattglas in eine „geradlinige“ und eine „diffuse“ Komponente.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
-<p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<p>cos_i: cos des Einfallswinkels. roughness: Rauheit der Oberfläche (0 = klar, 1 = vollständig diffus).</p>
+<p>Rückgabewert: 2 Werte (gerichtet T_spec, diffus T_diff). Ihre Summe stimmt mit dem Transmissionsgrad einer klaren Platte überein (es wird keine Energie erzeugt ―― in Tests geprüft). Wie die Welt durch Milchglas aussieht, erklärt sich allein dadurch, dass dieser gerichtete Anteil sinkt und der diffuse Anteil steigt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

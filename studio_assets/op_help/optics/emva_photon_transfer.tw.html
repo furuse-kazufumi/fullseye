@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 photon transfer 曲線求出系統增益 K 與暗雜訊 σ_d(式 50、53、54)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>*mu_y*, *var_y*: 露光段ごとの平均と時間分散(<code style="color:#22d3bf">emva_pair_statistics</code> の <code style="color:#22d3bf">mu</code> と <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_y_sat*: 飽和の平均(0.1〜0.2 % の画素が最大値になる露光で測る)。</p>
-<p>K = σ²_y − σ²_y.dark を μ_y − μ_y.dark に当てた直線(<b>切片あり</b>)の傾き。使う点は飽和の 0〜70 %(式 50 の直後)。σ_d = √(σ²_y.dark − 1/12)/K(式 53)。★σ²_y.dark &lt; 0.24 DN² では量子化雑音が支配的で推定できないので、<code style="color:#22d3bf">sigma_d</code> は None、<code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(式 54)を返す。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code> は当てはめに使った点の真偽)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 3 点未満 / 傾きが正でない / var_y_dark が負。</p>
+<p>*mu_y*, *var_y*：各曝光段的平均與時間變異數(<code style="color:#22d3bf">emva_pair_statistics</code> 的 <code style="color:#22d3bf">mu</code> 與 <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*：暗影像的同一量。*mu_y_sat*：飽和時的平均(在 0.1〜0.2 % 的像素達到最大值的曝光下量測)。</p>
+<p>K 是將 σ²_y − σ²_y.dark 對 μ_y − μ_y.dark 擬合的直線(<b>含截距</b>)的斜率。使用的點為飽和的 0〜70 %(緊接式 50 之後)。σ_d = √(σ²_y.dark − 1/12)/K(式 53)。★σ²_y.dark &lt; 0.24 DN² 時量化雜訊佔主導，無法估計，因此 <code style="color:#22d3bf">sigma_d</code> 為 None，並回傳 <code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(式 54)。</p>
+<p>回傳值 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code> 表示各點是否用於擬合的真假值)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：長度不同 / 0〜70 % 內少於 3 點 / 斜率不為正 / var_y_dark 為負。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

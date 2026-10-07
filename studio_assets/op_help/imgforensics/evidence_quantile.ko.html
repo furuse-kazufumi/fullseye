@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>증거량이 깨끗한 분포의 <b>어디쯤에 앉는지</b>. 판정은 돌려주지 않습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">null_distribution</code> の出力を消費する側。返すのは「清浄な組の何 % より外側か」であって、「改竄されている」ではない ―― 外側に座ることは、その条件で<b>珍しい</b>ことしか意味しない(珍しい清浄画像は存在する)。</p>
+<p><code style="color:#22d3bf">null_distribution</code>의 출력을 소비하는 쪽. 반환하는 것은 &quot;깨끗한 쌍의 몇 %보다바깥쪽인가&quot;이지, &quot;변조되어 있다&quot;가 아니다 ―― 바깥쪽에 앉는 것은그 조건에서 <b>드물다</b>는 것밖에 의미하지 않는다(드문 깨끗한 화상은 존재한다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>measurement : float</p>
-<p>測った証拠量(<code style="color:#22d3bf">hash_distance</code> の返り値など)。</p>
+<p>잰 증거량(<code style="color:#22d3bf">hash_distance</code>의 반환값 등).</p>
 <p>null : dict</p>
-<p><code style="color:#22d3bf">null_distribution</code> の返り値。</p>
+<p><code style="color:#22d3bf">null_distribution</code>의 반환값.</p>
 <p>higher_is_stronger : bool</p>
-<p>PCE や相関のように<b>大きいほど強い証拠</b>なら <code style="color:#22d3bf">True</code>。</p>
-<p>ハミング距離のように<b>小さいほど強い証拠</b>なら <code style="color:#22d3bf">False</code>。</p>
-<p><b>既定に頼らず必ず考えること</b> —— ここを間違えると、いちばん証拠の</p>
-<p>強い組が「まったく珍しくない」と出る(例外は出ない)。</p>
+<p>PCE나 상관처럼 <b>클수록 강한 증거</b>라면 <code style="color:#22d3bf">True</code>.</p>
+<p>해밍 거리처럼 <b>작을수록 강한 증거</b>라면 <code style="color:#22d3bf">False</code>.</p>
+<p><b>기본값에 기대지 말고 반드시 생각할 것</b> —— 여기를 틀리면 가장 증거가</p>
+<p>강한 쌍이 &quot;전혀 드물지 않다&quot;로 나온다(예외는 나지 않는다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">beyond_fraction</code>(清浄分布のうち、この値より内側にある割合 =</p>
-<p>清浄な組の何 % より外側に座るか。<code style="color:#22d3bf">[0, 1]</code> の連続値)/</p>
-<p><code style="color:#22d3bf">z</code>(標準偏差の何倍か。ばらつき 0 なら <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">caveats</code>。</p>
+<p><code style="color:#22d3bf">beyond_fraction</code>(깨끗한 분포 중 이 값보다 안쪽에 있는 비율 =</p>
+<p>깨끗한 쌍의 몇 %보다 바깥에 앉는가. <code style="color:#22d3bf">[0, 1]</code>의 연속값) /</p>
+<p><code style="color:#22d3bf">z</code>(표준 편차의 몇 배인가. 흩어짐 0이면 <code style="color:#22d3bf">None</code>) / <code style="color:#22d3bf">caveats</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">beyond_fraction</code> は <code style="color:#22d3bf">null</code> が持つ分位点(<code style="color:#22d3bf">min</code> / 5 / 25 / 50 / 75 / 95 / 99 パーセンタイル / <code style="color:#22d3bf">max</code>)を節として <b>区分線形に内挿した経験分布関数</b>。節の上では厳密、節の間は線形近似で、<code style="color:#22d3bf">min</code> より内側なら 0、<code style="color:#22d3bf">max</code> より外側なら 1 に飽和する(標本の外へは外挿しない)。<code style="color:#22d3bf">higher_is_stronger=False</code> なら 1 から引いた側を返す。清浄な値がすべて同じで節が重なる場合、その値ちょうどは 0.5(中央順位)に置く。</p>
+<p><code style="color:#22d3bf">beyond_fraction</code>은 <code style="color:#22d3bf">null</code>이 가진 분위점(<code style="color:#22d3bf">min</code> / 5 / 25 / 50 / 75 / 95 / 99 퍼센타일 / <code style="color:#22d3bf">max</code>)을 마디로 하여 <b>구간 선형으로 내삽한 경험 분포함수</b>. 마디 위에서는 엄밀하고, 마디 사이는 선형 근사이며, <code style="color:#22d3bf">min</code>보다 안쪽이면 0, <code style="color:#22d3bf">max</code>보다 바깥쪽이면 1로 포화한다(표본 바깥으로는 외삽하지 않는다). <code style="color:#22d3bf">higher_is_stronger=False</code>이면 1에서 뺀 쪽을 반환한다. 깨끗한 값이 모두같아 마디가 겹치는 경우, 그 값 바로 위는 0.5(중앙 순위)에 둔다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

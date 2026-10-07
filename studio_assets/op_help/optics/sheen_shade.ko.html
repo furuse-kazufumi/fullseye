@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import surfacelib; surfacelib.sheen_shade(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), sheen=1.0, exponent=4.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;sheen_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>천의 <b>가장자리 광택</b>(벨벳·새틴). 시선에 대해 누울수록 밝습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>normals / light / view: 上記と同じ。sheen: 強さ。exponent: 縁への集中度。</p>
-<p>返り値: (H, W)。<b>鏡面反射とは逆</b>に、正面(n·v = 1)で 0 に近く、縁(n·v → 0)で最大になる ―― ベルベットの縁が白く光るのはこれで、Phong では絶対に出せない。</p>
+<p>normals / light / view: 위와 같다. sheen: 강도. exponent: 가장자리로의 집중도.</p>
+<p>반환값: (H, W). <b>경면 반사와는 반대로</b>, 정면(n·v = 1)에서 0에 가깝고, 가장자리(n·v → 0)에서최대가 된다 ―― 벨벳의 가장자리가 하얗게 빛나는 것이 이것이며, Phong으로는 절대 낼 수 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

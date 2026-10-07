@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Normal map + view → the <b>colour of thin-film interference</b>, (H, W, 3) in linear sRGB.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
-<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ。</p>
-<p>strength: 全体の強さ。</p>
+<p>The more the surface is tilted away from the line of sight, the longer the optical path inside the film, and the colour shifts toward shorter wavelengths ―― this is why the colours of soap bubbles and heat-tinted titanium change at the rims. The angle dependence comes from cosθ = |n·v|.</p>
+<p>normals / view: (H,W,3) normal map / direction from the surface to the viewpoint. thickness_nm / n_film / n_sub: same as <code style="color:#22d3bf">thin_film_reflectance</code>.</p>
+<p>strength: overall strength.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

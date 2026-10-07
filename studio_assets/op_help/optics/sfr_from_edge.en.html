@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Derives the SFR (MTF measured from an edge) from the ESF.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>
-<p>*window*(必須、px): 切り出す半幅。★迷光(裾)は窓の外に居るので、窓を狭くするほど SFR から見えなくなる。*correction*(必須): 標本化が作る sinc の割り戻し。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> — 割り戻さない(離散の段差を離散の PSF で畳んだ像なら前進差分が離散 LSF そのもので、これが正しい)。</p>
-<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 連続のエッジを点で標本した ESF の前進差分は幅 Δ の箱で LSF を均すので sinc(fΔ) で割る。</p>
-<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> の升(幅 Δ)の平均がもう 1 つの箱なので sinc(fΔ)² で割る。</p>
-<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> か <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017 の LSF の窓)。</p>
-<p>返り値 <code style="color:#22d3bf">(n, 2)</code> の pairs: 列 0 = 周波数 [cyc/px] (エッジに垂直)、列 1 = SFR。0 〜 min(1.0, 0.5/Δ) cyc/px (升の刻み Δ の Nyquist まで、ただし画素の Nyquist の 2 倍 = 1 cyc/px で打ち切る。その先は sinc の割り戻しが暴れる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf が空・NaN / window が正の有限でない・ESF の長さを越える / ends が window 以上 / correction・apodize が一覧に無い / 黒と白の基準が等しい(エッジが無い)。</p>
+<p>*esf* is the return value of <code style="color:#22d3bf">edge_spread</code> (a dict) or a 1-D array with 1 px step (treated as <code style="color:#22d3bf">oversample</code> = 1). Cut ±*window* px around the edge centre (maximum of the absolute difference), normalize with the means of *ends* px at both ends as the black/white references, take the forward difference to get the LSF, and divide the absolute value of its Fourier transform by DC.</p>
+<p>*window* (required, px): half-width to cut out. ★Stray light (the tails) lies outside the window, so the narrower the window, the less of it the SFR shows. *correction* (required): undoing the sinc created by sampling.</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> — no correction (for an image of a discrete step blurred with a discrete PSF, the forward difference is the discrete LSF itself, and this is correct).</p>
+<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — the forward difference of an ESF sampled at points from a continuous edge averages the LSF with a box of width Δ, so divide by sinc(fΔ).</p>
+<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — the bin mean of <code style="color:#22d3bf">edge_spread</code> (width Δ) is 1 more box, so divide by sinc(fΔ)².</p>
+<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> or <code style="color:#22d3bf">&quot;hamming&quot;</code> (the LSF window of ISO 12233:2017).</p>
+<p>Returns <code style="color:#22d3bf">(n, 2)</code> pairs: column 0 = frequency [cyc/px] (perpendicular to the edge), column 1 = SFR. 0 to min(1.0, 0.5/Δ) cyc/px (up to the Nyquist of the bin step Δ, but cut off at 2 times the pixel Nyquist = 1 cyc/px; beyond that the sinc correction blows up).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf empty or NaN / window not positive finite or longer than the ESF / ends ≥ window / correction or apodize not in the list / black and white references equal (no edge).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">pairs</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code> oder rufe <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schlägt den komplexen Brechungsindex (n, k) eines Metalls über die Wellenlänge nach (sichtbarer Bereich, lineare Interpolation).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot;(<code style="color:#22d3bf">METALS</code>)。</p>
-<p>wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。</p>
-<p>返り値: (n, k) の 2 要素タプル(入力と同形の配列)。出典は表の定義(<code style="color:#22d3bf">_METAL_NK</code>)を参照 — 5 点の粗い表であることを隠さない。</p>
+<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; (<code style="color:#22d3bf">METALS</code>).</p>
+<p>wavelength_nm: Skalar oder Array [nm]. Außerhalb der Tabelle auf die Randwerte begrenzt (keine Extrapolation).</p>
+<p>Rückgabewert: 2-elementiges Tupel (n, k) (Arrays derselben Form wie die Eingabe). Quellen siehe Tabellendefinition (<code style="color:#22d3bf">_METAL_NK</code>) — es wird nicht verschwiegen, dass es eine grobe Tabelle mit 5 Punkten ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

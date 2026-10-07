@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>관찰 광학계의 <b>분해능 버짓</b>을 닫힌 식으로 냅니다(찍기 전에 성립하는지 봅니다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
-<p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> エアリー半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> それを物体側に換算 /</p>
-<p><code style="color:#22d3bf">pixel_object_um</code> 画素の物体側の実寸 / <code style="color:#22d3bf">limit_um</code> 実際の分解限界</p>
-<p>(回折と標本化の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
-<p><code style="color:#22d3bf">dof_um</code> 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
-<p>「見えるか」ではなく「<b>必要なコントラストで写るか</b>」を決める前段の数字で、ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。</p>
+<p>NA와 F값은 어느 쪽으로 주어도 된다(N = 1/(2·NA)). 배율은 얇은 렌즈 근사 m = f / (WD − f), 실효(작동) F값은 N_w = (1 + |m|)·N. 반환하는 양:</p>
+<p><code style="color:#22d3bf">magnification</code> 배율 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
+<p><code style="color:#22d3bf">airy_um</code> 에어리 반경 1.22·λ·N_w(상면) / <code style="color:#22d3bf">airy_object_um</code> 그것을 물체 측으로 환산 /</p>
+<p><code style="color:#22d3bf">pixel_object_um</code> 화소의 물체 측 실제 치수 / <code style="color:#22d3bf">limit_um</code> 실제 분해 한계</p>
+<p>(회절과 표본화 중 <b>큰 쪽</b>) / <code style="color:#22d3bf">limited_by</code> 어느 쪽이 병목인지 /</p>
+<p><code style="color:#22d3bf">dof_um</code> 피사계 심도(물체 측, 기하 2·N_w·c/m²와 파동 2·λ·N_w²/m²의 합) /</p>
+<p><code style="color:#22d3bf">coc_um</code> 허용 착란원(기본값은 화소 피치).</p>
+<p>&quot;보이는가&quot;가 아니라 &quot;<b>필요한 콘트라스트로 찍히는가</b>&quot;를 정하는 전단의 숫자이며, 여기가 부족한 구성으로는 아무리 화상을 만들어도 실기에서 검사가 성립하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask.raw(...)</code>,或直接调用 <code style="color:#22d3bf">optscene.optscene_defect_mask</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>缺陷像素的真值掩码</b> (H, W)。训练与评测的标签用这个。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">index</code> を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと同じ交差計算から出るので、検出結果との IoU をそのまま測れる。欠陥が <b>その照明で見えるかどうかとは無関係</b>に真値を返す ―― 見えないのに正解があるのが外観検査の難しさで、そこを隠すと「検出ゼロ = 頑健」と誤読される。</p>
+<p>省略 <code style="color:#22d3bf">index</code> 则合成场景中的所有缺陷。像素精确，且出自与渲染相同的求交计算，所以可以直接测量与检测结果的 IoU。缺陷 <b>无论在该照明下是否可见</b>都返回真值 ―― 看不见却有正确答案，正是外观检测的难点，掩盖这一点就会被误读为“检出为零 = 稳健”。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

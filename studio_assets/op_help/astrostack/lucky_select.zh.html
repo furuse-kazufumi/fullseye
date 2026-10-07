@@ -5,13 +5,13 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.lucky_select(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">indices</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.lucky_select.raw(...)</code>,或直接调用 <code style="color:#22d3bf">astrostack.lucky_select</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留质量分前 <code style="color:#22d3bf">keep_fraction</code> 的帧 —— lucky imaging 的筛选。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>採用枚数は <code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>。<b>必ず 1 枚は残す</b> ので、<code style="color:#22d3bf">keep_fraction</code> をいくら小さくしても空にはならない(空の合成を後段へ渡す方が事故が大きい)。並べ替えは点の降順で、同点は元の順序を保つ安定ソート —— 同じ入力なら同じ並びが返る。</p>
-<p>Returns <code style="color:#22d3bf">(indices, scores)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">indices</code> —— <code style="color:#22d3bf">(K,)</code> int64、<b>採用フレームの添字を良い順に</b> (<code style="color:#22d3bf">indices</code> 語彙)。<code style="color:#22d3bf">[frames[i] for i in indices]</code> がそのまま <code style="color:#22d3bf">sigma_clip_stack</code> へ渡せる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scores</code> —— <code style="color:#22d3bf">(N,)</code> float64、<b>全フレームの点</b>(捨てた側も含む)。捨てた理由を図にできるように、選別の結果ではなく素材を返す。</p>
-<p>Ground truth it reproduces(<code style="color:#22d3bf">tests/test_astrostack.py</code>): 同じ星野を FWHM だけ変えて撮ったフレーム列では、点は FWHM とともに<b>下がる</b>。96x96 に 20 星、FWHM を 3.462〜6.080 px で振った 12 枚の実測で <code style="color:#22d3bf">corr(fwhm, score) = -0.925</code>。上位 25 %(3 枚)を採って平均合成すると、12 枚全部を平均した場合に比べて合成後の FWHM が 4.403 → 3.672 px、<b>16.6 % 改善</b>する —— 枚数を 1/4 に減らしたのに像は鋭くなる、というのが lucky imaging の主張そのもの(その代わり雑音は sqrt(4) = 2 倍になる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない(3-D 配列は明示的に拒否)/ 枚数が 1 未満 / <code style="color:#22d3bf">keep_fraction</code> が (0, 1] の外 / *min_keep* が枚数を超える場合。</p>
+<p>采用张数为 <code style="color:#22d3bf">max(min_keep, ceil(keep_fraction * N))</code>。<b>必定保留 1 张</b>，所以无论 <code style="color:#22d3bf">keep_fraction</code> 多小都不会为空(把空的叠加传给后段事故更大)。排序按分数降序，是同分时保持原顺序的稳定排序 —— 相同的输入返回相同的顺序。</p>
+<p>Returns <code style="color:#22d3bf">(indices, scores)</code>：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">indices</code> —— <code style="color:#22d3bf">(K,)</code> int64，<b>采用帧的下标，按好坏排序</b> (<code style="color:#22d3bf">indices</code> 词汇)。<code style="color:#22d3bf">[frames[i] for i in indices]</code> 可以直接</p>
+<p>传给 <code style="color:#22d3bf">sigma_clip_stack</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scores</code> —— <code style="color:#22d3bf">(N,)</code> float64，<b>所有帧的分数</b>(包括被舍弃的一方)。为了能把舍弃的理由画成图，返回的是素材而不是筛选结果。</p>
+<p>Ground truth it reproduces(<code style="color:#22d3bf">tests/test_astrostack.py</code>)：对同一星场只改变 FWHM 拍摄的帧序列，分数随 FWHM <b>下降</b>。在 96x96、20 颗星、FWHM 在 3.462〜6.080 px 间变化的 12 张上实测，<code style="color:#22d3bf">corr(fwhm, score) = -0.925</code>。取前 25 %(3 张)做平均叠加，与 12 张全部平均相比，叠加后的 FWHM 为 4.403 → 3.672 px，<b>改善 16.6 %</b> —— 张数减到 1/4 像反而更锐利，这正是 lucky imaging 的主张本身(代价是噪声变为 sqrt(4) = 2 倍)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：*frames* 不是 list / tuple(3-D 数组明确拒绝)/ 张数小于 1 / <code style="color:#22d3bf">keep_fraction</code> 在 (0, 1] 之外 / *min_keep* 超过张数时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illumination_visibility(scene, points, light) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.illumination_visibility(scene, points, light) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;illumination_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從各點看到的<b>發光點可見比例</b> <a style="color:#22d3bf" href="即落影">0, 1</a>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>点ごとに全発光点への遮蔽を判定して平均する。バックライトのように部品の裏に光源がある配置では 0 になり、シルエットが立つ。返り値 (M,)。</p>
-<p>手順: 各点 <code style="color:#22d3bf">p</code> から各発光点 <code style="color:#22d3bf">e</code> へ向かう単位方向 <code style="color:#22d3bf">d</code> を取り、<code style="color:#22d3bf">p + 1e-4 d</code>(自分の面に再衝突しないための 0.1 µm のオフセット)から光線を撃つ。どれかのプリミティブに <code style="color:#22d3bf">e</code> より手前で当たれば「遮られた」。可視率 = 遮られなかった発光点の数 / 発光点の総数。<b>幾何的な遮蔽だけ</b>で、発光点の向き(<code style="color:#22d3bf">directions</code>)・強度・cos 則・距離減衰は入れない(それらは <code style="color:#22d3bf">render_optscene</code> の陰影側が持つ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scene</code>: <code style="color:#22d3bf">scene_*</code> の dict、またはその list。空なら <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: <code style="color:#22d3bf">(M, 3)</code> [mm]、有限。面上の点を渡すなら <code style="color:#22d3bf">trace_rays(...)[&quot;point&quot;]</code>。面の裏側に発光点がある点は自分の部品に遮られて 0 になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>: <code style="color:#22d3bf">light_spec</code> または <code style="color:#22d3bf">light_source</code> の結果(<code style="color:#22d3bf">emitters</code> と <code style="color:#22d3bf">directions</code> を持つ dict)。無ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(M,)</code> の float64、<code style="color:#22d3bf">[0, 1]</code>。発光点 <code style="color:#22d3bf">n</code> 個なら <code style="color:#22d3bf">1/n</code> 刻み。</p>
-<p style="margin:2px 0 2px 12px">• 計算量は 点数 × 発光点数 × プリミティブ数。</p>
+<p>逐點判定對所有發光點的遮擋並取平均。像背光那樣光源在零件背後的配置中為 0，輪廓得以凸顯。回傳值 (M,)。</p>
+<p>步驟：從各點 <code style="color:#22d3bf">p</code> 取指向各發光點 <code style="color:#22d3bf">e</code> 的單位方向 <code style="color:#22d3bf">d</code>，從 <code style="color:#22d3bf">p + 1e-4 d</code>(為了不再次碰到自身表面的 0.1 µm 偏移)發射光線。若在 <code style="color:#22d3bf">e</code> 之前碰到任一圖元即為「被遮擋」。可見率 = 未被遮擋的發光點數 / 發光點總數。<b>僅為幾何遮擋</b>，不計入發光點的朝向(<code style="color:#22d3bf">directions</code>)、強度、餘弦律、距離衰減(那些由 <code style="color:#22d3bf">render_optscene</code> 的著色側負責)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scene</code>：<code style="color:#22d3bf">scene_*</code> 的 dict 或其 list。為空則 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>：<code style="color:#22d3bf">(M, 3)</code> [mm]，有限值。若傳入面上的點，用 <code style="color:#22d3bf">trace_rays(...)[&quot;point&quot;]</code>。發光點位於面背側的點會被自身零件遮擋而為 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">light</code>：<code style="color:#22d3bf">light_spec</code> 或 <code style="color:#22d3bf">light_source</code> 的結果(含 <code style="color:#22d3bf">emitters</code> 與 <code style="color:#22d3bf">directions</code> 的 dict)。沒有則 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值：<code style="color:#22d3bf">(M,)</code> 的 float64，<code style="color:#22d3bf">[0, 1]</code>。發光點為 <code style="color:#22d3bf">n</code> 個時以 <code style="color:#22d3bf">1/n</code> 為步長。</p>
+<p style="margin:2px 0 2px 12px">• 計算量為 點數 × 發光點數 × 圖元數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

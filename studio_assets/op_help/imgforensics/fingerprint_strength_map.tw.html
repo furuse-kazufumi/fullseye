@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>指紋<b>逐塊有效強度</b>(標準差)的地圖。<code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>PRNU は飽和した画素と真っ暗な画素では出ない(乗法的な欠陥なので信号が要る)。この地図は「<b>指紋がどこで何も言えないか</b>」を見るためのもので、値が低い領域の照合結果は弱い。<code style="color:#22d3bf">block</code> 角の非重複ブロックごとの標準偏差を、元の <code style="color:#22d3bf">(H, W)</code> へブロック定数で戻して返す(端は端のブロックの値で埋める)。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half</code>、128x128 の左半分だけを飽和させた 8 枚から指紋を作る):飽和側の平均強度 <b>0.075</b> に対し通常側 <b>1.409</b> = <b>18.8 倍</b>。左半分では PRNU が乗る余地が無い(乗法的な欠陥なので信号が要る)ことがそのまま出ている。</p>
-<p>これは <code style="color:#22d3bf">fingerprint</code> 語彙の <b>出口</b> でもある(袋小路を作らないため)。</p>
+<p>PRNU 在飽和像素和全黑像素中不會出現(因為是乘性缺陷，需要訊號)。這張圖是用來查看「<b>指紋在哪裡什麼也說不了</b>」的，值低的區域的比對結果較弱。對 <code style="color:#22d3bf">block</code> 見方的非重疊區塊分別求標準差，以區塊常數還原到原來的 <code style="color:#22d3bf">(H, W)</code> 後回傳(邊緣以邊緣區塊的值填充)。</p>
+<p>實測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half</code>，由只讓 128x128 左半部飽和的 8 張產生指紋)：飽和側的平均強度 <b>0.075</b>，正常側為 <b>1.409</b> = <b>18.8 倍</b>。左半部沒有 PRNU 疊加的餘地(因為是乘性缺陷，需要訊號)，這一點直接顯現了出來。</p>
+<p>這也是 <code style="color:#22d3bf">fingerprint</code> 詞彙的<b>出口</b>(為了不製造死胡同)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>渦旋強度 λ_ci —— 速度梯度張量複數特徵值虛部的大小。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
-<p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
+<p>與 Q 準則一樣是「區分剪切與渦」的量，但這個具有<b>與轉動角速度相同的單位</b>(1/影格)。實測：剛體轉動 ω=0.01 時為 <code style="color:#22d3bf">0.01</code>，均勻膨脹與剪切時為 <code style="color:#22d3bf">0.0</code>。</p>
+<p>特徵值為實數(= 沒有轉動)之處回傳 0。各點是獨立的 2x2 的特徵值，因此把整個網格向量化後一次求解。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

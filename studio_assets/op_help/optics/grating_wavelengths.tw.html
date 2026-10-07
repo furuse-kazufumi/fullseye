@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 λ 求解光柵方程 d(sinθ_out − sinθ_in) = mλ。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
-<p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>
-<p>返り値: (..., len(orders)) の波長 [nm]。可視域外の解もそのまま返す(呼び手が等色関数に通せば自動的に 0 になる — ここで黙って切ると「なぜ色が出ないか」が消える)。</p>
+<p>pitch_um：溝槽間距 d [µm]。CD 為 1.6，DVD 為 0.74(公開標準值)。sin_in / sin_out：入射 / 出射方向在光柵面內分量的 sin(可為陣列，可廣播)。</p>
+<p>orders:   階次 m 的序列(0 會變為無窮大，故排除)。</p>
+<p>回傳值：(..., len(orders)) 的波長 [nm]。可見區之外的解也原樣回傳(呼叫端通過配色函數後會自動變為 0 — 若在此默默截掉，「為何不出顏色」就會消失)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

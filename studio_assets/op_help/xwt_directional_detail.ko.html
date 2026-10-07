@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>방향별 엣지 검출. 1단계 <code style="color:#22d3bf">db2</code> 분해에서 수평(cH)・수직(cV)・대각(cD) 상세 서브밴드 중 하나를 선택하여 절댓값을 정규화한 뒤, 원본 해상도까지 블록 확대(<code style="color:#22d3bf">kron</code>으로 2x2 복제)하여 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">b</code> でどの方向を見るか選ぶ(<code style="color:#22d3bf">min(2,int(b*3))</code> で cH→cV→cD の 3 択)。<code style="color:#22d3bf">a</code> は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。</p>
+<p><code style="color:#22d3bf">b</code>로 어느 방향을 볼지 고른다(<code style="color:#22d3bf">min(2,int(b*3))</code>로 cH→cV→cD의 3택). <code style="color:#22d3bf">a</code>는 사용하지 않는다. 서브밴드는 원 영상의 절반 해상도이므로 블록 모양으로 확대된다는 점에 주의(매끄러운 확대가 아니다).</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>

@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带窗口变形的 1 级。先用预测位移<b>使图像本身变形之后</b>再求相关。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
+<p>整数错开(<code style="color:#22d3bf">piv_cross_correlate</code> 的 <code style="color:#22d3bf">shift</code>)假定窗口内位移恒定。在旋转或剪切这类<b>窗口内位移变化</b>的场中，相关峰会被压扁，因此先把 2 幅按预测的一半分别反向扭曲再做相关(中心差分变形)。</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>flow: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> などの出力)。</p>
-<p>info: その <code style="color:#22d3bf">info</code>(窓中心の座標が要る)。</p>
-<p>window / overlap / peak / window_func: 新しい段の設定。</p>
-<p>order: 変形に使う補間の次数(3 = 3 次スプライン)。</p>
+<p>a, b: 图像对。</p>
+<p>flow: 预测位移 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> 等的输出)。</p>
+<p>info: 它的 <code style="color:#22d3bf">info</code>(需要窗口中心的坐标)。</p>
+<p>window / overlap / peak / window_func: 新一级的设置。</p>
+<p>order: 变形所用插值的阶数(3 = 3 次样条)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返る変位は<b>元の画像座標での総変位</b>。</p>
+<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返回的位移是<b>原图像坐标下的总位移</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

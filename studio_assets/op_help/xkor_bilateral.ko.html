@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>양방향 필터(에지 보존 평활화). 5x5 커널로 <code style="color:#22d3bf">kornia.filters.bilateral_blur</code>를 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a は空間方向のシグマ（<code style="color:#22d3bf">1.0 + 3.0 * a</code>、範囲 1.0〜4.0）、b は明度方向のシグマ（<code style="color:#22d3bf">0.05 + 0.4 * b</code>、範囲 0.05〜0.45）を振る。値が近い画素だけを混ぜるため、平滑化しつつエッジは保たれる。</p>
+<p>a는 공간 방향의 시그마(<code style="color:#22d3bf">1.0 + 3.0 * a</code>, 범위 1.0~4.0)를, b는 명도 방향의시그마(<code style="color:#22d3bf">0.05 + 0.4 * b</code>, 범위 0.05~0.45)를 바꾼다. 값이 가까운 화소만을섞기 때문에 평활화하면서도 에지는 유지된다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복하지 않고 접는다 (d c b | a b c d, OpenCV의 <code style="color:#22d3bf">BORDER_REFLECT_101</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

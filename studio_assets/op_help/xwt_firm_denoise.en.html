@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wavelet denoising using firm thresholding (firm/semisoft thresholding, <code style="color:#22d3bf">pywt.threshold_firm</code>). Has characteristics between soft and hard thresholding; applied to each detail coefficient from a 2-level <code style="color:#22d3bf">sym4</code> decomposition before reconstruction.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は下側閾値(0.03〜0.23)、<code style="color:#22d3bf">b</code> は上側閾値(下側+ε 以上、0.15〜0.55)を振る —— 下側未満は 0、上側以上はそのまま、中間は緩やかに減衰させる。xwt_visushrink よりディテールの急な打ち切りを避けたい場合に向く。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the lower threshold (0.03–0.23), <code style="color:#22d3bf">b</code> the upper threshold (at least lower+ε, 0.15–0.55) —— below the lower threshold becomes 0, at or above the upper threshold is kept as is, and in between is attenuated gradually. Suited when you want to avoid the abrupt cut-off of detail of xwt_visushrink.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

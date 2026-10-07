@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import surfacelib; surfacelib.corrosion_mask(shape, coverage=0.3, scale_px=24.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;corrosion_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die <b>Fleckigkeit</b> von Rost, Patina und Schmutz (eine 0–1-Maske).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>shape: (H, W)。coverage: 覆われる面積の目安(0–1)。scale_px: 斑の大きさ [px]。</p>
-<p>返り値: (H, W) の 0–1 マスク。素材色の混合率として使う(<code style="color:#22d3bf">(1-m)*metal + m*rust</code>)。実測の面積率は <code style="color:#22d3bf">coverage</code> にほぼ一致する(分位点で閾値を決めているため、テストで確認)。</p>
+<p>shape: (H, W). coverage: angestrebter bedeckter Flächenanteil (0–1). scale_px: Größe der Flecken [px].</p>
+<p>Rückgabewert: (H, W) Maske in 0–1. Als Mischungsverhältnis der Materialfarben verwenden (<code style="color:#22d3bf">(1-m)*metal + m*rust</code>). Der gemessene Flächenanteil stimmt nahezu mit <code style="color:#22d3bf">coverage</code> überein (weil der Schwellwert über ein Quantil bestimmt wird; in Tests geprüft).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

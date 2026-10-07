@@ -4,25 +4,24 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.evidence_quantile(measurement, null, higher_is_stronger=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.evidence_quantile(measurement, null, higher_is_stronger=True)</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;evidence_quantile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Where the evidence statistic <b>sits within</b> the clean distribution. It does not return a verdict.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">null_distribution</code> の出力を消費する側。返すのは「清浄な組の何 % より外側か」であって、「改竄されている」ではない ―― 外側に座ることは、その条件で<b>珍しい</b>ことしか意味しない(珍しい清浄画像は存在する)。</p>
+<p>The consumer of the <code style="color:#22d3bf">null_distribution</code> output. What it returns is &quot;outside what % of clean pairs&quot;, not &quot;tampered&quot; ―― sitting outside only means that it is <b>rare</b> under those conditions (rare clean images do exist).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>measurement : float</p>
-<p>測った証拠量(<code style="color:#22d3bf">hash_distance</code> の返り値など)。</p>
+<p>The measured evidence quantity (e.g. the return value of <code style="color:#22d3bf">hash_distance</code>).</p>
 <p>null : dict</p>
-<p><code style="color:#22d3bf">null_distribution</code> の返り値。</p>
+<p>The return value of <code style="color:#22d3bf">null_distribution</code>.</p>
 <p>higher_is_stronger : bool</p>
-<p>PCE や相関のように<b>大きいほど強い証拠</b>なら <code style="color:#22d3bf">True</code>。</p>
-<p>ハミング距離のように<b>小さいほど強い証拠</b>なら <code style="color:#22d3bf">False</code>。</p>
-<p><b>既定に頼らず必ず考えること</b> —— ここを間違えると、いちばん証拠の</p>
-<p>強い組が「まったく珍しくない」と出る(例外は出ない)。</p>
+<p><code style="color:#22d3bf">True</code> if, like PCE or correlation, <b>larger means stronger evidence</b>.</p>
+<p><code style="color:#22d3bf">False</code> if, like Hamming distance, <b>smaller means stronger evidence</b>.</p>
+<p><b>Always think it through instead of relying on the default</b> —— get this wrong and the pair with</p>
+<p>the strongest evidence comes out as &quot;not rare at all&quot; (no exception is raised).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict</p>
-<p><code style="color:#22d3bf">beyond_fraction</code>(清浄分布のうち、この値より内側にある割合 =</p>
-<p>清浄な組の何 % より外側に座るか。<code style="color:#22d3bf">[0, 1]</code> の連続値)/</p>
-<p><code style="color:#22d3bf">z</code>(標準偏差の何倍か。ばらつき 0 なら <code style="color:#22d3bf">None</code>)/ <code style="color:#22d3bf">caveats</code>。</p>
+<p><code style="color:#22d3bf">beyond_fraction</code> (fraction of the clean distribution lying inside this value =</p>
+<p>outside what % of clean pairs it sits; a continuous value in <code style="color:#22d3bf">[0, 1]</code>) /</p>
+<p><code style="color:#22d3bf">z</code> (how many standard deviations; <code style="color:#22d3bf">None</code> if the spread is 0) / <code style="color:#22d3bf">caveats</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">beyond_fraction</code> は <code style="color:#22d3bf">null</code> が持つ分位点(<code style="color:#22d3bf">min</code> / 5 / 25 / 50 / 75 / 95 / 99 パーセンタイル / <code style="color:#22d3bf">max</code>)を節として <b>区分線形に内挿した経験分布関数</b>。節の上では厳密、節の間は線形近似で、<code style="color:#22d3bf">min</code> より内側なら 0、<code style="color:#22d3bf">max</code> より外側なら 1 に飽和する(標本の外へは外挿しない)。<code style="color:#22d3bf">higher_is_stronger=False</code> なら 1 から引いた側を返す。清浄な値がすべて同じで節が重なる場合、その値ちょうどは 0.5(中央順位)に置く。</p>
+<p><code style="color:#22d3bf">beyond_fraction</code> takes the quantiles held by <code style="color:#22d3bf">null</code> (<code style="color:#22d3bf">min</code> / 5 / 25 / 50 / 75 / 95 / 99th percentiles / <code style="color:#22d3bf">max</code>) as knots and is the <b>empirical distribution function interpolated piecewise linearly</b>. Exact on the knots, a linear approximation between them; inside <code style="color:#22d3bf">min</code> it saturates to 0, outside <code style="color:#22d3bf">max</code> to 1 (no extrapolation beyond the samples). With <code style="color:#22d3bf">higher_is_stronger=False</code> the side subtracted from 1 is returned. When all clean values are identical and the knots coincide, exactly that value is placed at 0.5 (the median rank).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

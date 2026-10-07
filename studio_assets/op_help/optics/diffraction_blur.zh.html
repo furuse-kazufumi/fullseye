@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.diffraction_blur(image, camera, f_number: &#x27;float&#x27; = 5.6, wavelength_nm: &#x27;float&#x27; = 550.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;diffraction_blur&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>施加由光阑决定的<b>衍射模糊</b>(用高斯近似艾里斑)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>幾何光学だけで作った像は、実機より細部が出すぎる。絞るほど被写界深度は深くなるが回折で細部は潰れる ―― この綱引きを見ずに絞りを決めると、シミュレーション上は見えていた欠陥が実機で消える。</p>
-<p>エアリーパターンを、第 1 暗環の半径 1.22λN に合わせた等価ガウス(σ ≈ 0.42 · 1.22λN)で近似する。厳密な PSF が要るなら <code style="color:#22d3bf">lensimage.psf_from_opd</code>(実収差瞳の回折 PSF)を使う。</p>
+<p>只用几何光学生成的像，细节比实机显现得更多。光圈收得越小景深越深，但衍射会把细节抹掉 ―― 不看这场拉锯就决定光圈，模拟中看得见的缺陷在实机上就会消失。</p>
+<p>艾里斑用与第 1 暗环半径 1.22λN 相匹配的等效高斯(σ ≈ 0.42 · 1.22λN)近似。需要严格的 PSF 时请用 <code style="color:#22d3bf">lensimage.psf_from_opd</code>(实际像差光瞳的衍射 PSF)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

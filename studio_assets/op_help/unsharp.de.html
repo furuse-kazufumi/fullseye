@@ -14,9 +14,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Unscharfmaskierung. ★Sie klippt am Ausgang auf [0,1] (2026-09-02).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v + k*(v - blur)</code> は定義上オーバーシュートする(実測 min=-0.1499 / max=+1.1499)。<code style="color:#22d3bf">_apply</code> は段間で同じ clip を掛けるので <b>パイプライン結果はビット不変</b>だが、<code style="color:#22d3bf">fullseye.apply</code> を単発で呼ぶ経路だけは生値が出ていて、<code style="color:#22d3bf">image</code> の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側(<code style="color:#22d3bf">accel._unsharp</code>)も同じ clip を持つ。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">v + k*(v - blur)</code> überschwingt per Definition (gemessen min=-0.1499 / max=+1.1499). <code style="color:#22d3bf">_apply</code> wendet zwischen den Stufen dasselbe Clipping an, daher ist <b>das Pipeline-Ergebnis bitidentisch</b>, aber der Pfad, der <code style="color:#22d3bf">fullseye.apply</code> einzeln aufruft, lieferte Rohwerte, und wurden diese unter Verletzung des [0,1]-Vertrags von <code style="color:#22d3bf">image</code> gespeichert, wurden sie zu Schwarz/Weiß gequetscht. Die GPU-Seite (<code style="color:#22d3bf">accel._unsharp</code>) hat dasselbe Clipping.</p>
+<p><b>Randbehandlung</b>: Spiegelung mit wiederholtem Randpixel (d c b a | a b c d, scipys Standard <code style="color:#22d3bf">reflect</code>) (am 2026-09-16 gemessen und festgehalten).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

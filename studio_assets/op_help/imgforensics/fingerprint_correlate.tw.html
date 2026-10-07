@@ -4,38 +4,38 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把一張影像與指紋比對。<b>不給出判定</b> —— 回傳證據量與注意事項。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>残差 <code style="color:#22d3bf">W = I - denoise(I)</code> と参照信号 <code style="color:#22d3bf">I·K</code> の巡回相互相関を FFT で取り、正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
-<p>返り(<code style="color:#22d3bf">table</code> 語彙の dict):</p>
-<p><code style="color:#22d3bf">pce</code>          PCE。<b>しきい値は同梱しない</b>(下の caveats 参照)</p>
-<p><code style="color:#22d3bf">ncc_peak</code>     正規化相互相関のピーク値([-1, 1])</p>
-<p><code style="color:#22d3bf">peak_shift</code>   ピークの位置 <code style="color:#22d3bf">(dy, dx)</code>。<b>(0, 0) でなければ位置がずれている</b></p>
-<p>= 切り出し / 手ぶれ補正 / リサイズを疑う手がかり</p>
-<p><code style="color:#22d3bf">n_pixels</code>     使った画素数</p>
-<p><code style="color:#22d3bf">caveats</code>      この数値が言えないことの列(文字列)</p>
-<p><code style="color:#22d3bf">peak_shift</code> を返すのは重要で、<code style="color:#22d3bf">(0, 0)</code> 以外のピークは「同じセンサだが切り出されている」か「<b>たまたまの相関</b>」のどちらかである。どちらかはこの op には決められない。実測では別センサの照合はいつも <code style="color:#22d3bf">(0, 0)</code> 以外にピークが立ち(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> など毎回ばらばら)、同一センサは必ず <code style="color:#22d3bf">(0, 0)</code> に立つ。</p>
-<p><b>再圧縮で PRNU は消える</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>、8 枚から作った指紋・128x128):</p>
+<p>以 FFT 求殘差 <code style="color:#22d3bf">W = I - denoise(I)</code> 與參考訊號 <code style="color:#22d3bf">I·K</code> 的循環互相關，回傳正規化互相關的峰值與 <b>PCE</b>(peak-to-correlation energy)。</p>
+<p>回傳(<code style="color:#22d3bf">table</code> 詞彙的 dict)：</p>
+<p><code style="color:#22d3bf">pce</code>          PCE。<b>不附帶門檻值</b>(參見下方 caveats)</p>
+<p><code style="color:#22d3bf">ncc_peak</code>     正規化互相關的峰值([-1, 1])</p>
+<p><code style="color:#22d3bf">peak_shift</code>   峰的位置 <code style="color:#22d3bf">(dy, dx)</code>。<b>若不是 (0, 0)，則位置有偏移</b></p>
+<p>= 懷疑裁切 / 防手震 / 縮放的線索</p>
+<p><code style="color:#22d3bf">n_pixels</code>     使用的像素數</p>
+<p><code style="color:#22d3bf">caveats</code>      此數值無法斷言之事的列表(字串)</p>
+<p>回傳 <code style="color:#22d3bf">peak_shift</code> 很重要，<code style="color:#22d3bf">(0, 0)</code> 以外的峰要麼是「同一感測器但被裁切過」，要麼是「<b>偶然的相關</b>」。究竟是哪一個，本 op 無法決定。實測中，與不同感測器比對時峰總是出現在 <code style="color:#22d3bf">(0, 0)</code> 以外(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> 等，每次都不同)，同一感測器則必定出現在 <code style="color:#22d3bf">(0, 0)</code>。</p>
+<p><b>再壓縮會讓 PRNU 消失</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>，由 8 張產生的指紋、128x128)：</p>
 <p>========== ========== ==========</p>
-<p>再圧縮      PCE        無圧縮比</p>
+<p>再壓縮     PCE        與無壓縮之比</p>
 <p>========== ========== ==========</p>
-<p>無圧縮     7246       1.00</p>
+<p>無壓縮     7246       1.00</p>
 <p>品質 95    6174       0.85</p>
 <p>品質 90    4214       0.58</p>
 <p>品質 75    1412       0.19</p>
 <p>品質 50     530       0.07</p>
 <p>品質 30     207       0.03</p>
 <p>========== ========== ==========</p>
-<p>つまり <b>低い PCE は「別のカメラ」ではなく「情報が残っていない」かもしれない</b>。ここでしきい値を同梱すると、圧縮された画像を機械的に「別カメラ」と判定する道具になってしまう。</p>
-<p><b>黙って間違う経路(実測)</b>: <code style="color:#22d3bf">fingerprint</code> に指紋ではなく普通の画像を渡すと、shape は合っているので例外は出ず、PCE も有限値が返る。指紋は <code style="color:#22d3bf">(H, W)</code> の float64 なので既存の <code style="color:#22d3bf">image2d</code> 述語を完全に満たし、<b>実行時には区別できない</b>。そこで入口で「ゼロ平均でない」ものを <code style="color:#22d3bf">ValueError</code> で弾く(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)。実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
+<p>也就是說，<b>低 PCE 可能不是「別的相機」，而是「資訊已不復存在」</b>。在這裡附帶門檻值，就會變成把壓縮過的影像機械地判定為「別的相機」的工具。</p>
+<p><b>默默出錯的路徑(實測)</b>：向 <code style="color:#22d3bf">fingerprint</code> 傳入普通影像而非指紋時，shape 是吻合的，所以不會拋出例外，PCE 也回傳有限值。指紋是 <code style="color:#22d3bf">(H, W)</code> 的 float64，所以完全滿足既有的 <code style="color:#22d3bf">image2d</code> 述詞，<b>執行時無法區分</b>。</p>
+<p>因此在入口處以 <code style="color:#22d3bf">ValueError</code> 拒絕「非零平均」的輸入(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)。實測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>)：</p>
 <p>============================== ==============</p>
-<p>渡したもの                     <code style="color:#22d3bf">|mean|/std</code></p>
-<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> の返り 4.8e-18</p>
-<p>普通の自然画像                 4.626</p>
-<p>暗い画像(平均 0.015)         4.626</p>
-<p>高コントラスト画像             1.801</p>
+<p>傳入的東西                     <code style="color:#22d3bf">|mean|/std</code></p>
+<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> 的回傳 4.8e-18</p>
+<p>普通的自然影像                 4.626</p>
+<p>暗影像(平均 0.015)             4.626</p>
+<p>高對比影像                     1.801</p>
 <p>============================== ==============</p>
-<p>比は<b>スケール不変</b>なので、暗い画像でも明るい画像でも同じように弾ける(0.05 のしきい値から 1.5 桁以上離れている)。</p>
-<p><b>それでも完全ではない</b>: 自分でゼロ平均化した画像を渡すとゲートは通り、PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは <b>片側しか守れない</b>。これが「指紋を <code style="color:#22d3bf">image2d</code> に相乗りさせず語彙を分ける」判断の根拠で、詳細は <code style="color:#22d3bf">opsimgforensics</code> の docstring にある。</p>
+<p>該比值<b>尺度不變</b>，所以無論暗影像還是亮影像都能同樣拒絕(距 0.05 的門檻值 1.5 個數量級以上)。</p>
+<p><b>即便如此也不完美</b>：傳入自己做過零平均化的影像就能通過門檻，回傳 PCE = -5.97 這樣的有限值(實測)。也就是說執行時檢查 <b>只能守住一側</b>。這正是「不讓指紋搭 <code style="color:#22d3bf">image2d</code> 的便車，而分出獨立詞彙」這個判斷的依據，詳情見 <code style="color:#22d3bf">opsimgforensics</code> 的 docstring。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

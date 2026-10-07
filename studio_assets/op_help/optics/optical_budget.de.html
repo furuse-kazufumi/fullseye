@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ermittelt das <b>Auflösungsbudget</b> einer Beobachtungsoptik in geschlossener Form (vor der Aufnahme prüfen, ob es trägt).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
-<p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> エアリー半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> それを物体側に換算 /</p>
-<p><code style="color:#22d3bf">pixel_object_um</code> 画素の物体側の実寸 / <code style="color:#22d3bf">limit_um</code> 実際の分解限界</p>
-<p>(回折と標本化の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
-<p><code style="color:#22d3bf">dof_um</code> 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
-<p>「見えるか」ではなく「<b>必要なコントラストで写るか</b>」を決める前段の数字で、ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。</p>
+<p>NA und Blendenzahl können wahlweise angegeben werden (N = 1/(2·NA)). Die Vergrößerung ist die Dünnlinsennäherung m = f / (WD − f), die effektive (Arbeits-)Blendenzahl N_w = (1 + |m|)·N. Zurückgegebene Größen:</p>
+<p><code style="color:#22d3bf">magnification</code> Vergrößerung m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
+<p><code style="color:#22d3bf">airy_um</code> Airy-Radius 1.22·λ·N_w (Bildebene) / <code style="color:#22d3bf">airy_object_um</code> dieser auf die Objektseite umgerechnet /</p>
+<p><code style="color:#22d3bf">pixel_object_um</code> reale Pixelgröße auf der Objektseite / <code style="color:#22d3bf">limit_um</code> tatsächliche Auflösungsgrenze</p>
+<p>(der <b>größere Wert</b> von Beugung und Abtastung) / <code style="color:#22d3bf">limited_by</code> welcher der Engpass ist /</p>
+<p><code style="color:#22d3bf">dof_um</code> Schärfentiefe (Objektseite, Summe aus geometrisch 2·N_w·c/m² und wellenoptisch 2·λ·N_w²/m²) /</p>
+<p><code style="color:#22d3bf">coc_um</code> zulässiger Zerstreuungskreis (Default ist der Pixelabstand).</p>
+<p>Das sind die vorgelagerten Zahlen, die nicht &quot;ist es sichtbar&quot;, sondern &quot;<b>wird es mit dem nötigen Kontrast abgebildet</b>&quot; entscheiden; mit einer Konfiguration, die hier nicht ausreicht, kommt die Prüfung an der realen Maschine nicht zustande, so viele Bilder man auch erzeugt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

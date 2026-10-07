@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;brewster_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Brewster angle [deg] = atan(n2/n1) — at this angle the p-polarised reflection is exactly zero.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>偏光板でガラスの映り込みが消える角度そのもの。<code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> にこの角度の cos を渡すと 0 が返る(テストで 1e-15 未満を確認)。</p>
+<p>Exactly the angle at which a polarizer makes reflections on glass disappear. Passing the cos of this angle to <code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> returns 0 (verified below 1e-15 in tests).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

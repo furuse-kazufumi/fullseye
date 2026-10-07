@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_to_rgbimage(flow, scale=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Standard flow visualisation with hue = direction and brightness = speed. Returns <code style="color:#22d3bf">(h, w, 3)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> の 2 次元版(あちらは <code style="color:#22d3bf">(3, D, H, W)</code> の 3-D シーンフロー専用で、平面フローは形で弾かれる)。</p>
-<p><b>色相環の凡例を図の側で必ず一緒に焼くこと</b> —— 色の意味が書いていないフロー図は綺麗なだけで読めない。<code style="color:#22d3bf">scale</code> を省くと最大の速さで正規化するので、<b>図ごとに色の意味が変わる</b>。複数の図を並べるなら明示的に固定する。</p>
+<p>2-D version of <code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> (that one is dedicated to 3-D scene flow of <code style="color:#22d3bf">(3, D, H, W)</code>, and planar flow is rejected by shape).</p>
+<p><b>Always burn the hue-wheel legend into the figure along with it</b> —— a flow figure that does not say what the colours mean is merely pretty and cannot be read. Omitting <code style="color:#22d3bf">scale</code> normalises by the maximum speed, so <b>the meaning of the colours changes from figure to figure</b>. When placing several figures side by side, fix it explicitly.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>scale: 明度 1.0 に対応する速さ [px]。<code style="color:#22d3bf">None</code> で最大値。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>scale: speed [px] corresponding to brightness 1.0. <code style="color:#22d3bf">None</code> uses the maximum.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h, w, 3)</code> float64, range [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

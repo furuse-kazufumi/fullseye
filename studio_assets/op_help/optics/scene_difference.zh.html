@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从 <code style="color:#22d3bf">solid</code> 中挖去 <code style="color:#22d3bf">cavity</code>(CSG 差集)。<b>制作中空零件的唯一手段</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>コップ = 外側の円筒 − 底より上にずらした内側の円筒。ほかにワッシャ、貫通穴、座ぐり ―― 実際の部品は穴が開いているほうが普通で、球だけでは足りない(2026-09-05 のユーザー指摘)。</p>
-<p>両方とも凸プリミティブ(sphere / box / cylinder)でなければならない。平面は体積を囲まないので拒否する(fail-closed)。入れ子にすれば穴を 2 つ空けられる。</p>
+<p>杯子 = 外侧圆柱 − 移到底面以上的内侧圆柱。此外还有垫圈、通孔、沉孔 ―― 实际零件有孔才是常态，只有球是不够的(2026-09-05 用户指出)。</p>
+<p>两者都必须是凸图元(sphere / box / cylinder)。平面不包围体积，所以拒绝(fail-closed)。嵌套使用可以开 2 个孔。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

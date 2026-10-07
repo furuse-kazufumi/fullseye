@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">points</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code>,或直接调用 <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>波长 [nm] → CIE 1931 2° 配色函数 (x̄, ȳ, z̄)。返回输入形状加末尾 3 的数组。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Wyman, Sloan &amp; Shirley (JCGT 2013) の多ローブ Gauss 近似。表引きより粗いが、可視域全体で表の値に対し最大誤差 ~1% で、<b>補間も外挿も要らない</b>(閉じた式なので任意の波長格子でそのまま評価できる)。可視域の外は自然に 0 へ落ちる。</p>
-<p>nm: スカラまたは配列(正、単位 nm)。</p>
-<p>返り値: (..., 3) の float64。</p>
+<p>Wyman, Sloan &amp; Shirley (JCGT 2013) 的多瓣 Gauss 近似。比查表粗糙，但在整个可见区内相对表值的最大误差约 ~1%，<b>既不需要插值也不需要外推</b>(由于是闭合公式，可在任意波长网格上直接求值)。可见区之外自然降为 0。</p>
+<p>nm：标量或数组(正值，单位 nm)。</p>
+<p>返回值：(..., 3) 的 float64。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>LoG(Laplacian of Gaussian, 가우시안 평활화 후 라플라시안을 적용한 2차 미분 에지 검출). <code style="color:#22d3bf">signed01</code>로 부호 있는 응답을 [0,1]로 매핑하며(0.5가 제로 교차에 해당), 제로 교차 검출이나 블롭 검출의 토대로 쓸 수 있다. HALCON의 <code style="color:#22d3bf">laplace_of_gauss</code>(LoG-Operator (Laplace of Gaussian).)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がガウス核のシグマを 0.5〜3.0 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。値が 0.5 から離れるほど強いエッジ/ブロブ応答であることを示す。</p>
+<p><code style="color:#22d3bf">a</code>가 가우스 커널의 시그마를 0.5~3.0 범위에서 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 값이 0.5에서멀어질수록 강한 에지/블롭 응답임을 나타낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;scene_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A finite cylinder parallel to the z-axis (with end caps). <b>The shape a machining finish actually sits on.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>旋盤の同心目は端面(円盤)に、ヘアラインとローレットは側面に出る ―― 球にヘアラインを掛けるのは現実には珍しい(2026-09-05 のユーザー指摘)。薄くすれば円盤、厚くすれば軸物、<code style="color:#22d3bf">radius_mm</code> を大きく取れば円板ステージにもなる。</p>
+<p>Concentric lathe marks appear on the end faces (discs), hairlines and knurling on the side ―― putting a hairline on a sphere is rare in reality (user remark of 2026-09-05). Made thin it is a disc, made thick a shaft part, and with a large <code style="color:#22d3bf">radius_mm</code> it also serves as a disc-shaped stage.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

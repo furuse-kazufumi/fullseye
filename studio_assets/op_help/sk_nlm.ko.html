@@ -12,8 +12,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비국소 평균법(Non-local means) 노이즈 제거. 인접 픽셀뿐 아니라 이미지 전체에서 유사한 패치를 찾아 평균을 낸다 —— 반복 무늬나 텍스처는 유지한 채 평탄부의 노이즈만 제거할 수 있다는 점이 단순한 평활화와의 차이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a はカットオフ距離 h(大きいほど「似ている」と判定される範囲が広がり、強くノイズ除去される代わりにディテールも失われやすい)を 0.02〜0.22 に振る。パッチサイズは 5x5 に固定。b は未使用。</p>
+<p>HALCON에는 직접 대응하는 것이 없다. 구현은 <code style="color:#22d3bf">restoration.denoise_nl_means(v, patch_size=5, h=0.02+0.2*a)</code> —— a는 컷오프 거리 h(클수록 &#x27;비슷하다&#x27;고 판정되는 범위가 넓어져 잡음 제거가 강해지는 대신 디테일도 잃기 쉽다)를 0.02~0.22로 바꾼다. 패치 크기는 5x5로 고정. b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.render_studio(scene, camera, depth: &#x27;int&#x27; = 3, samples: &#x27;int&#x27; = 16, environment=None, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;render_studio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>보여 줄 그림</b>을 그립니다: 환경광·다중 반사·굴절과 분산 포함(측광 정답은 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>検査データが要るなら <code style="color:#22d3bf">render_optscene</code> ―― <b>作り方が違う別の op</b>。返り値は (H, W, 3) の線形 RGB。</p>
-<p>検査用の <code style="color:#22d3bf">render_optscene</code> と目的が違う。あちらは実在の照明器具を物理単位で置いて直接光を数え、真値を返す(測光の根拠が要る)。こちらは環境全体から光が来る前提で、金属は環境を映し、ガラスは環境を屈折させ、互いも映り込む(見た目が要る)。</p>
-<p><code style="color:#22d3bf">depth</code> は反射・屈折の再帰段数、<code style="color:#22d3bf">samples</code> は粗さローブの標本数(増やすほど滑らか・遅い)。<code style="color:#22d3bf">environment</code> に自前の関数((...,3) 方向 -&gt; (...,) 明るさ)を渡せば別の環境にできる。表示するにはガンマを自分で掛ける。</p>
+<p>검사 데이터가 필요하면 <code style="color:#22d3bf">render_optscene</code> ―― <b>만드는 방식이 다른 별개의 op</b>. 반환값은 (H, W, 3)의 선형 RGB.</p>
+<p>검사용인 <code style="color:#22d3bf">render_optscene</code>과 목적이 다르다. 저쪽은 실재하는 조명 기구를 물리 단위로두고 직접광을 세어 참값을 반환한다(측광의 근거가 필요하다). 이쪽은 환경 전체에서 빛이 오는전제로, 금속은 환경을 비추고, 유리는 환경을 굴절시키며, 서로도 비쳐 든다(외관이 필요하다).</p>
+<p><code style="color:#22d3bf">depth</code>는 반사·굴절의 재귀 단수, <code style="color:#22d3bf">samples</code>는 거칠기 로브의 표본 수(늘릴수록매끄럽고 느리다). <code style="color:#22d3bf">environment</code>에 자체 함수((...,3) 방향 -&gt; (...,) 밝기)를넘기면 다른 환경으로 할 수 있다. 표시하려면 감마를 직접 곱한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_conductor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Reflexionsgrad an einer Metallgrenzfläche (komplexer Brechungsindex n + ik). Die Einfallsseite wird als Vakuum/Luft angenommen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>cos_i: 入射角の cos。n / k: 実部 / 消衰係数(配列可、cos_i とブロードキャスト)。</p>
-<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R。<b>金属に「臨界角」は無い</b> — k&gt;0 なので透過波は減衰波であり、どの角度でも一部が吸収される(R&lt;1)。</p>
-<p>式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2 の複素形)。</p>
+<p>cos_i: cos des Einfallswinkels. n / k: Realteil / Extinktionskoeffizient (Array zulässig, Broadcast mit cos_i).</p>
+<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;.</p>
+<p>Rückgabewert: Reflexionsgrad R. <b>Metalle haben keinen &quot;Grenzwinkel&quot;</b> — wegen k&gt;0 ist die transmittierte Welle evaneszent, und bei jedem Winkel wird ein Teil absorbiert (R&lt;1).</p>
+<p>Formel: mit η² = (n+ik)² − sin²θ ist rs = (cosθ − η)/(cosθ + η), rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η) (die komplexe Form aus Born &amp; Wolf §13.2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

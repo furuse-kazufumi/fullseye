@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">points</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code> or call <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wavelength [nm] → the CIE 1931 2° colour-matching functions (x̄, ȳ, z̄). Returns the input shape plus a trailing 3.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Wyman, Sloan &amp; Shirley (JCGT 2013) の多ローブ Gauss 近似。表引きより粗いが、可視域全体で表の値に対し最大誤差 ~1% で、<b>補間も外挿も要らない</b>(閉じた式なので任意の波長格子でそのまま評価できる)。可視域の外は自然に 0 へ落ちる。</p>
-<p>nm: スカラまたは配列(正、単位 nm)。</p>
-<p>返り値: (..., 3) の float64。</p>
+<p>Multi-lobe Gauss approximation of Wyman, Sloan &amp; Shirley (JCGT 2013). Coarser than a table lookup, but the maximum error against the table values over the whole visible range is ~1%, and <b>neither interpolation nor extrapolation is needed</b> (being a closed formula, it can be evaluated directly on any wavelength grid). Outside the visible range it falls naturally to 0.</p>
+<p>nm: scalar or array (positive, unit nm).</p>
+<p>Returns: float64 of shape (..., 3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

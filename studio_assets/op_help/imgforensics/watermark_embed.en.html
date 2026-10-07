@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>DWT-DCT <b>watermark</b> embedding. Returns the watermarked image <code style="color:#22d3bf">(H, W)</code>. <code style="color:#22d3bf">image2d</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の <b>中帯域係数の対</b> <code style="color:#22d3bf">(3,1)</code> と <code style="color:#22d3bf">(1,3)</code> の大小関係で 1 ビットを表す(Hsu &amp; Wu 1999 の中帯域係数対法)。差が <code style="color:#22d3bf">strength</code> 未満なら差が <code style="color:#22d3bf">strength</code> になるまで <b>対称に</b>動かす(片方だけ動かすとブロックのエネルギーが偏る)。抽出に原画像は要らない(ブラインド)。</p>
-<p>容量は <code style="color:#22d3bf">(LL の高さ // 8) * (LL の幅 // 8)</code> ビット。<code style="color:#22d3bf">bits</code> がそれより短ければ先頭から埋め、残りのブロックは触らない。長ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p><code style="color:#22d3bf">bits</code> は bool の 1-D(<code style="color:#22d3bf">phash</code> 語彙)。0/1 の int 配列も受けるが、<b>float は受けない</b>(丸めの向きを黙って決めない)。</p>
-<p>強度と画質のトレードオフは <code style="color:#22d3bf">watermark_capacity</code> が掃引して表で返す。実測(256x256 のテクスチャ画像・128 ビット、LL は 128x128 = 容量 256 ビット。<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
+<p>Cuts the LL subband of a 1-level DWT (default haar) into 8x8 blocks and represents 1 bit by which is larger in <b>a pair of mid-band coefficients</b> <code style="color:#22d3bf">(3,1)</code> and <code style="color:#22d3bf">(1,3)</code> of each block&#x27;s orthogonal DCT-II (the mid-band coefficient-pair method of Hsu &amp; Wu 1999). If the difference is below <code style="color:#22d3bf">strength</code>, both are moved <b>symmetrically</b> until the difference reaches <code style="color:#22d3bf">strength</code> (moving only one would bias the block&#x27;s energy). Extraction does not need the original image (blind).</p>
+<p>The capacity is <code style="color:#22d3bf">(LL height // 8) * (LL width // 8)</code> bits. If <code style="color:#22d3bf">bits</code> is shorter than that, it fills from the start and leaves the remaining blocks untouched. If longer, <code style="color:#22d3bf">ValueError</code>.</p>
+<p><code style="color:#22d3bf">bits</code> is a bool 1-D array (<code style="color:#22d3bf">phash</code> vocabulary). An int array of 0/1 is also accepted, but <b>float is not</b> (it does not silently decide the rounding direction).</p>
+<p>The trade-off between strength and image quality is swept and returned as a table by <code style="color:#22d3bf">watermark_capacity</code>. Measured (256x256 texture image, 128 bits, LL is 128x128 = capacity 256 bits; <code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
 <p>========= ========== ====== ================= =================</p>
-<p>strength  PSNR (dB)  BER    BER(JPEG 品質 90) BER(JPEG 品質 75)</p>
+<p>strength  PSNR (dB)  BER    BER (JPEG q 90)   BER (JPEG q 75)</p>
 <p>========= ========== ====== ================= =================</p>
 <p>0.02      45.48      0.000  0.008             0.195</p>
 <p>0.05      44.48      0.000  0.000             0.008</p>
@@ -18,8 +17,8 @@
 <p>0.20      40.32      0.000  0.000             0.000</p>
 <p>0.40      36.37      0.000  0.000             0.000</p>
 <p>========= ========== ====== ================= =================</p>
-<p><b>これがトレードオフの実体</b>である。無加工なら最弱の 0.02 でも誤り 0 だが、JPEG 品質 75 を通すと 19.5% が化ける。既定の 0.1 は「品質 75 まで誤り 0、PSNR 42.95 dB」の点として選んである(<code style="color:#22d3bf">clipped</code> はどの強度でも 0)。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p><b>This is what the trade-off actually is</b>. Unprocessed, even the weakest 0.02 gives 0 errors, but through JPEG quality 75, 19.5% are corrupted. The default 0.1 was chosen as the point &quot;0 errors down to quality 75, PSNR 42.95 dB&quot; (<code style="color:#22d3bf">clipped</code> is 0 at every strength).</p>
+<p><b>PyWavelets required</b> (<code style="color:#22d3bf">ImportError</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一并返回速度梯度张量的各分量及由其导出的量。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>渦度・発散・Q 基準・渦回転強度・ひずみ速度は<b>すべて同じ 4 つの微分</b>から出るので、勾配を 4 回計算し直さずに済むようにここへまとめる。個々の op (<code style="color:#22d3bf">piv_vorticity</code> など)は単独でも使えるが、複数要るならこちら。</p>
+<p>涡量、散度、Q 判据、旋涡强度、应变率<b>全都由同样的 4 个导数</b> 得出，因此汇总在这里，免得把梯度重算 4 次。各个 op (<code style="color:#22d3bf">piv_vorticity</code> 等)也可单独使用，但需要多个时请用这个。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">dudx</code> / <code style="color:#22d3bf">dudy</code> / <code style="color:#22d3bf">dvdx</code> / <code style="color:#22d3bf">dvdy</code>(各 <code style="color:#22d3bf">(h, w)</code>)、</p>
 <p><code style="color:#22d3bf">vorticity</code> / <code style="color:#22d3bf">divergence</code> / <code style="color:#22d3bf">q</code> / <code style="color:#22d3bf">swirl</code> / <code style="color:#22d3bf">strain_rate</code>、</p>

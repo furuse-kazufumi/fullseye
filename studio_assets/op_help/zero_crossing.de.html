@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erkennt Pixel, an denen sich das Vorzeichen des Laplace-Operators (mit eingebauter Gauß-Glättung, Sigma <code style="color:#22d3bf">0,5+2*a</code>) umkehrt (Nulldurchgänge). LoG-Nulldurchgänge sind eine klassische Erkennungsmethode, die für die hochpräzise Lokalisierung von Kanten bekannt ist. Entspricht HALCONs <code style="color:#22d3bf">zero_crossing</code> (Extract zero crossings from an image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用。上下・左右いずれかの方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。</p>
+<p><code style="color:#22d3bf">a</code> variiert das Sigma der Gauß-Glättung. <code style="color:#22d3bf">b</code> wird nicht verwendet. Ein Vorzeichenwechsel in vertikaler oder horizontaler Richtung gilt als Nulldurchgang (diagonale Richtungen werden nicht direkt geprüft).</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

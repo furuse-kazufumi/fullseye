@@ -14,8 +14,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nichtlineare Glättung durch einen Sigma-Filter. Es wird nur über benachbarte Pixel gemittelt, die dem Wert des Zentralpixels nahe sind (<code style="color:#22d3bf">|x-mean|&lt;σ</code>) -- in der Nähe von Kanten mischen sich Tonwerte der gegenüberliegenden Seite nicht in den Mittelwert, wodurch eine Rauschunterdrückung entsteht, die Kanten besser erhält als ein Mittelwertfilter. Entspricht HALCONs <code style="color:#22d3bf">sigma_image</code> (Non-linear smoothing with the sigma filter.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る(内部の平均計算にも使う)。<code style="color:#22d3bf">b</code> が許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の画素は元の値のまま残る。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Fensterseitenlänge über <code style="color:#22d3bf">{3,5,7,9}</code> (wird auch für die interne Mittelwertberechnung verwendet). <code style="color:#22d3bf">b</code> variiert das Toleranzband (sigma, 0.05–0.4). Beide werden verwendet. Pixel, deren Nachbarschaft vollständig außerhalb des Bandes liegt, behalten ihren ursprünglichen Wert.</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.49、0.75 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

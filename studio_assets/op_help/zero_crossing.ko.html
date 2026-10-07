@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>라플라시안(가우스 평활화 포함, 시그마 <code style="color:#22d3bf">0.5+2*a</code>)의 부호가 반전되는 화소(제로 크로싱)를 검출한다. LoG의 제로 크로싱은 에지 위치를 고정밀도로 나타내는 것으로 알려진 고전적인 검출법이다. HALCON의 <code style="color:#22d3bf">zero_crossing</code>(Extract zero crossings from an image.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がガウス平滑化のシグマを振る。<code style="color:#22d3bf">b</code> は未使用。上下・左右いずれかの方向で符号が変わればゼロ交差とみなす(斜め方向は直接見ていない)。</p>
+<p><code style="color:#22d3bf">a</code>가 가우스 평활화의 시그마를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 상하·좌우 어느 한방향에서 부호가 바뀌면 영교차로 간주한다(대각선 방향은 직접 보지 않는다).</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

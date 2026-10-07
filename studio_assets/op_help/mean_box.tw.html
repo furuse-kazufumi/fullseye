@@ -14,9 +14,8 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形視窗的簡單平均（box）濾波器。相當於 HALCON 的 <code style="color:#22d3bf">mean_image</code>（Smooth by averaging.）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">3,5,7,9</code> の4段階（<code style="color:#22d3bf">_k(a)</code>、<code style="color:#22d3bf">a</code> を4分割して丸める）に切り替える。<code style="color:#22d3bf">b</code> が<b>端の扱い</b>を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> で <code style="color:#22d3bf">reflect</code>(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>(0 で埋める)/ <code style="color:#22d3bf">wrap</code>(反対側から巻き取る)。★<b>窓が 3 のときは <code style="color:#22d3bf">reflect</code> と <code style="color:#22d3bf">nearest</code> が原理的に一致する</b>(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。ガウシアンより計算は軽いがリンギングが出やすく、エッジがぼやける。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">a</code> 將視窗邊長在 <code style="color:#22d3bf">3,5,7,9</code> 這 4 段（<code style="color:#22d3bf">_k(a)</code>，把 <code style="color:#22d3bf">a</code> 分成 4 段後取整）間切換。<code style="color:#22d3bf">b</code> 選擇<b>邊界處理</b>：<code style="color:#22d3bf">b &lt;= 0.5</code> 為 <code style="color:#22d3bf">reflect</code>(複製邊界像素並鏡像折返。是 scipy 的預設，也是 2026-09-17 之前的行為)，其後依序為 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>(以 0 填充)/ <code style="color:#22d3bf">wrap</code>(從對側捲繞)。★<b>視窗為 3 時 <code style="color:#22d3bf">reflect</code> 與 <code style="color:#22d3bf">nearest</code> 在原理上一致</b>(超出範圍只有 1 像素，所以複製來源相同)—— 改了邊界處理結果卻不變時，先懷疑視窗大小(視窗為 9 時 3 種結果都不同)。計算比高斯輕，但容易出現振鈴，邊緣會變模糊。</p>
+<p><b>邊界處理</b>：重複邊界像素並鏡像折返 (d c b a | a b c d，scipy 的預設 <code style="color:#22d3bf">reflect</code>)(2026-09-16 實測並記錄)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

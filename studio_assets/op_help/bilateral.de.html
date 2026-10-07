@@ -14,9 +14,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kantenerhaltende Glattung (Bilateralfilter). Entspricht HALCONs <code style="color:#22d3bf">bilateral_filter</code> (bilateral filtering of an image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が空間方向の広がり <code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code> を、<code style="color:#22d3bf">b</code> が明るさ方向の許容差 <code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code> を振る。近傍窓は半径 <code style="color:#22d3bf">r=2</code>（5×5）固定で <code style="color:#22d3bf">a</code> では変わらない。近傍の重みは <code style="color:#22d3bf">exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)</code> の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。</p>
-<p><b>端の扱い</b>: 端の画素を複製する(最近傍)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">a</code> variiert die räumliche Ausdehnung <code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code>, <code style="color:#22d3bf">b</code> die Toleranz in Helligkeitsrichtung <code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code>. Das Nachbarschaftsfenster ist auf Radius <code style="color:#22d3bf">r=2</code> (5×5) fest und ändert sich mit <code style="color:#22d3bf">a</code> nicht. Das Nachbarschaftsgewicht ist das Produkt <code style="color:#22d3bf">exp(-Abstand²/2σ_s²) × exp(-Helligkeitsdiff²/2σ_r²)</code>; Pixel mit großer Helligkeitsdifferenz (= über eine Kante hinweg) erhalten kleine Gewichte, sodass Konturen beim Glätten erhalten bleiben. Da das Fenster in einer Python-Doppelschleife durchlaufen wird, ist es langsamer als die anderen Glättungs-Ops.</p>
+<p><b>Randbehandlung</b>: das Randpixel wird repliziert (nächster Nachbar) (am 2026-09-16 gemessen und festgehalten).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

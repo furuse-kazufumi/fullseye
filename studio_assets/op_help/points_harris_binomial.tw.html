@@ -15,8 +15,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在前段加入二項式（高斯）平滑的 Harris 角點響應。先以由 <code style="color:#22d3bf">b</code> 決定的 sigma 對影像平滑，再在此基礎上求 Harris 響應（若有 skimage 則用 <code style="color:#22d3bf">corner_harris</code>，否則手動計算結構張量，k=0.04）。相當於 HALCON 的 <code style="color:#22d3bf">points_harris_binomial</code>（Detect points of interest using the binomial approximation of the Harris operator.）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が Harris 応答自体のシグマ(0.5〜2.5)を、<code style="color:#22d3bf">b</code> が前段の平滑化シグマ(0.5〜2.0)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 調節 Harris 響應本身的 sigma(0.5~2.5)，<code style="color:#22d3bf">b</code> 調節前級平滑的 sigma (0.5~2.0)。兩者都會被使用。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>

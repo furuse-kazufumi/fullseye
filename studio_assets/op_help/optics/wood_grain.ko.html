@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">surfacelib.wood_grain</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>나뭇결(나이테)의 <b>색 변조</b>와 <b>섬유의 방향</b>을 만듭니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>shape: (H, W)。ring_px: 年輪の間隔 [px]。angle_deg: 木取りの向き [deg]。</p>
-<p>wobble: 年輪のうねり(0 で同心の直線)。seed: 乱数種。</p>
-<p>返り値: (modulation (H,W) 0–1, tangent (H,W,3)) —— 変調は木の色(明るい早材と暗い晩材)に掛け、接線は繊維方向なので <code style="color:#22d3bf">matappear.ward_anisotropic</code> に渡すと <b>木目に沿った光沢</b>になる(木は繊維方向に異方性を持つ)。</p>
+<p>shape: (H, W). ring_px: 나이테의 간격 [px]. angle_deg: 목재 재단의 방향 [deg].</p>
+<p>wobble: 나이테의 파상도(0이면 동심 직선). seed: 난수 시드.</p>
+<p>반환값: (modulation (H,W) 0–1, tangent (H,W,3)) —— 변조는 나무의 색(밝은 춘재와어두운 추재)에 곱하고, 접선은 섬유 방향이므로 <code style="color:#22d3bf">matappear.ward_anisotropic</code>에 넘기면 <b>나뭇결을 따른 광택</b>이 된다(나무는 섬유 방향으로 이방성을 갖는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

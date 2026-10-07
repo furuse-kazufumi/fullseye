@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Felzenszwalbs graphbasierte Segmentierung. Ein schnelles Verfahren, das mit einem minimalen Spannbaum über Pixel als Knoten clustert und das Bild auch ohne klare Grenzen übersegmentiert. Hier werden die Grenzlinien des Segmentierungsergebnisses als Region zurückgegeben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code> —— a は scale(観測レベル。大きいほどセグメントが少なく大きくなる)を 20〜220 に振る。sigma(前処理の平滑化)・min_size は既定値(0.8, 20)のまま固定。b は未使用。</p>
+<p>HALCON hat keine direkte Entsprechung. Die Implementierung ist <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code> —— a variiert scale (die Beobachtungsebene; je größer, desto weniger und größere Segmente) über 20–220. sigma (die Vorglättung) und min_size bleiben auf ihren Standardwerten (0.8, 20) fixiert. b wird nicht verwendet.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

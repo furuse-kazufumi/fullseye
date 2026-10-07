@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">points</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code> oder rufe <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wellenlänge [nm] → die CIE-1931-2°-Farbabgleichfunktionen (x̄, ȳ, z̄). Liefert die Eingabeform plus eine angehängte 3.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Wyman, Sloan &amp; Shirley (JCGT 2013) の多ローブ Gauss 近似。表引きより粗いが、可視域全体で表の値に対し最大誤差 ~1% で、<b>補間も外挿も要らない</b>(閉じた式なので任意の波長格子でそのまま評価できる)。可視域の外は自然に 0 へ落ちる。</p>
-<p>nm: スカラまたは配列(正、単位 nm)。</p>
-<p>返り値: (..., 3) の float64。</p>
+<p>Mehrkeulige Gauß-Näherung nach Wyman, Sloan &amp; Shirley (JCGT 2013). Gröber als ein Tabellen-Lookup, aber der maximale Fehler gegenüber den Tabellenwerten liegt im gesamten sichtbaren Bereich bei ~1%, und <b>weder Interpolation noch Extrapolation ist nötig</b> (als geschlossene Formel lässt sie sich direkt auf jedem Wellenlängengitter auswerten). Außerhalb des sichtbaren Bereichs fällt sie von selbst auf 0.</p>
+<p>nm: Skalar oder Array (positiv, Einheit nm).</p>
+<p>Rückgabewert: float64 der Form (..., 3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

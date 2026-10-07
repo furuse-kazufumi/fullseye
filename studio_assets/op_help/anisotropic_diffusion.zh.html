@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Perona-Malik型各向异性扩散。对上下左右4个方向的像素差乘以高斯型传导函数<code style="color:#22d3bf">exp(-(Δ/K)^2)</code>并反复累加——在差值大于阈值K(=边缘)的方向不进行扩散,只在差值小(=平坦)的方向上平滑,是一种保边平滑处理。相当于HALCON的<code style="color:#22d3bf">anisotropic_diffusion</code>(Perform an anisotropic diffusion of an image.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜10 回の範囲で、<code style="color:#22d3bf">b</code> が伝導度の閾値 K を 0.05〜0.3 の範囲で振る。両方が使われる。K が小さいほどエッジを厳しく保護する。</p>
+<p><code style="color:#22d3bf">a</code> 将迭代次数在 2〜10 次范围内调节，<code style="color:#22d3bf">b</code> 将传导系数的阈值 K 在 0.05〜0.3 范围内调节。两者都会使用。K 越小，对边缘的保护越严格。</p>
 <p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

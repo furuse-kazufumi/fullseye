@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.vision_layout(sensor: &#x27;dict&#x27;, lens: &#x27;dict&#x27;, lights, scene=None, tilt_deg: &#x27;float&#x27; = 0.0, azimuth_deg: &#x27;float&#x27; = 0.0, look_at_mm=(0.0, 0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;vision_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把传感器・镜头・照明・场景绑成一体,并以<b>闭式返回导出量</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値 dict: <code style="color:#22d3bf">camera</code>(<code style="color:#22d3bf">optical_camera</code> と同じ規約)/ <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>)。</p>
-<p>撮る前にここを見れば、視野に部品が収まるか・欠陥が分解できるか・被写界深度が足りるかが分かる ―― 「見えるか」ではなく「必要なコントラストで写るか」を先に判断するのが、光学デジタルツインを持つ理由。</p>
+<p>返回值 dict：<code style="color:#22d3bf">camera</code>(与 <code style="color:#22d3bf">optical_camera</code> 相同的约定)/ <code style="color:#22d3bf">sensor</code> / <code style="color:#22d3bf">lens</code> / <code style="color:#22d3bf">lights</code> / <code style="color:#22d3bf">scene</code> / <code style="color:#22d3bf">budget</code>(<code style="color:#22d3bf">optical_budget</code>)。</p>
+<p>拍摄前看这里，就能知道部件是否落在视场内、缺陷能否分辨、景深是否足够 ―― 不是“能否看见”，而是“能否以所需的对比度成像”，先判断这一点，正是拥有光学数字孪生的理由。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

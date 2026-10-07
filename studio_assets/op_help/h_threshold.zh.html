@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>带状阈值处理(满足<code style="color:#22d3bf">a &lt; x &lt; a+0.5+0.5*b</code>的像素视为前景)。HALCON的<code style="color:#22d3bf">threshold</code>(Segment an image using global threshold.)是直接指定Min/Max两个数值的运算符,但此替代实现是从<code style="color:#22d3bf">a</code>推导下限、从<code style="color:#22d3bf">b</code>推导带宽的简化版,相当于1个参数。由于<code style="color:#22d3bf">threshold</code>在Python端被当作类似保留字处理,注册名称改为<code style="color:#22d3bf">h_threshold</code>(spec的<code style="color:#22d3bf">halcon</code>字段仍保持<code style="color:#22d3bf">threshold</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が下限しきい値(0〜1)を、<code style="color:#22d3bf">b</code> が帯域幅(0〜0.5 の追加分)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节下限阈值(0～1)，<code style="color:#22d3bf">b</code> 调节带宽(0～0.5 的附加量)。两者都使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

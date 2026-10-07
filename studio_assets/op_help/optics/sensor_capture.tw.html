@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_capture(radiance, exposure_ms: &#x27;float&#x27; = 10.0, gain_e_per_unit: &#x27;float&#x27; = 50000.0, read_noise_e: &#x27;float&#x27; = 2.5, full_well_e: &#x27;float&#x27; = 10000.0, bit_depth: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.sensor_capture(radiance, exposure_ms: &#x27;float&#x27; = 10.0, gain_e_per_unit: &#x27;float&#x27; = 50000.0, read_noise_e: &#x27;float&#x27; = 2.5, full_well_e: &#x27;float&#x27; = 10000.0, bit_depth: &#x27;int&#x27; = 8, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;sensor_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>輻亮度 → 真實感測器的輸出(散粒雜訊・讀出雜訊・飽和・量化)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。そこへ読み出し雑音(正規)を足し、<code style="color:#22d3bf">full_well_e</code> で<b>飽和</b>させ、<code style="color:#22d3bf">bit_depth</code> で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
-<p>返り値は 0..2^bit_depth−1 の整数配列。<code style="color:#22d3bf">seed</code> を固定すれば決定的。</p>
+<p>光子數 = 以 radiance · exposure_ms · gain_e_per_unit / 1000 為平均的 Poisson。在此之上加上讀出雜訊(常態)，以 <code style="color:#22d3bf">full_well_e</code> <b>飽和</b>，再以 <code style="color:#22d3bf">bit_depth</code> 量化。飽和是 clip 而非折返(過曝處保持白色)。</p>
+<p>回傳值為 0..2^bit_depth−1 的整數陣列。固定 <code style="color:#22d3bf">seed</code> 即為確定性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

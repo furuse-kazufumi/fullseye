@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>h-Maxima-Transformation (entfernt lokale Maxima mit einer Höhe kleiner als h). Ruft <code style="color:#22d3bf">skimage.morphology.h_maxima</code> auf.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a が高さのしきい値 h（<code style="color:#22d3bf">0.05 + 0.3 * a</code>、範囲 0.05〜0.35）を振る。b は未使用。出力は極大が残った画素を 1 とする二値画像（<code style="color:#22d3bf">region</code>）。h が小さいほど微小なノイズ状の極大まで拾い、大きいほど際立った山だけ残る。</p>
+<p>a variiert den Höhen-Schwellwert h (<code style="color:#22d3bf">0.05 + 0.3 * a</code>, Bereich 0.05–0.35). b wird nicht verwendet. Die Ausgabe ist ein Binärbild (<code style="color:#22d3bf">region</code>), in dem die Pixel, an denen Maxima verbleiben, 1 sind. Je kleiner h, desto mehr werden auch winzige, rauschartige Maxima erfasst; je größer, desto mehr bleiben nur markante Gipfel übrig.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

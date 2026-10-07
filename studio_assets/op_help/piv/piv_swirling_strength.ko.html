@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>와류 회전 강도 λ_ci —— 속도 구배 텐서의 복소 고유값 허수부의 크기.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
-<p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
+<p>Q 기준과 마찬가지로 &quot;전단과 소용돌이를 구별하는&quot; 양이지만, 이쪽은 <b>회전의 각속도와같은 단위</b>를 가진다(1/프레임). 실측: 강체 회전 ω=0.01에서 <code style="color:#22d3bf">0.01</code>, 균일 팽창과 전단에서 <code style="color:#22d3bf">0.0</code>.</p>
+<p>고유값이 실수(= 회전하지 않음)인 곳은 0을 반환한다. 각 점에서 독립인 2x2의고유값이므로, 격자 전체를 벡터화하여 한 번에 풀고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

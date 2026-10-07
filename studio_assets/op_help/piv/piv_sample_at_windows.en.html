@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Drops a per-pixel field <code style="color:#22d3bf">(2, H, W)</code> onto the grid of window centers (nearest neighbor).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。<b>比べる前に同じ格子へ持ってくる</b>必要があり、その持ってき方(最近傍か窓内平均か)で誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の平滑化と区別がつかなくなる。</p>
+<p>The ground truth is made at pixel resolution, but PIV output sits on the window grid. <b>Before comparing, it must be brought onto the same grid</b>, and the way it is brought there (nearest neighbour or window mean) changes the error. Here it is nearest neighbour —— with the window mean, in fields with gradients it becomes impossible to tell it apart from PIV&#x27;s own smoothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.scene_difference(solid: &#x27;dict&#x27;, cavity: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;scene_difference&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cut <code style="color:#22d3bf">cavity</code> out of <code style="color:#22d3bf">solid</code> (the CSG difference). <b>The only way to make a hollow part.</b></p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>コップ = 外側の円筒 − 底より上にずらした内側の円筒。ほかにワッシャ、貫通穴、座ぐり ―― 実際の部品は穴が開いているほうが普通で、球だけでは足りない(2026-09-05 のユーザー指摘)。</p>
-<p>両方とも凸プリミティブ(sphere / box / cylinder)でなければならない。平面は体積を囲まないので拒否する(fail-closed)。入れ子にすれば穴を 2 つ空けられる。</p>
+<p>A cup = outer cylinder − inner cylinder shifted above the bottom. Also washers, through-holes, counterbores ―― real parts usually have holes, and spheres alone are not enough (user remark of 2026-09-05).</p>
+<p>Both must be convex primitives (sphere / box / cylinder). A plane does not enclose a volume, so it is refused (fail-closed). Nesting allows drilling 2 holes.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -13,10 +13,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过标记控制分水岭算法提取边界线。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">watersheds</code>(ウォーターシェッドと分水嶺盆地を抽出する)に相当するが、ここでは盆地のラベルではなく <b>分水嶺の境界線</b> だけを region として返す(近似)。</p>
-<p>手順は古典的な OpenCV レシピ: Otsu 二値化 -&gt; 膨張で「確実な背景」推定 -&gt; 距離変換のしきい値で「確実な前景」推定 -&gt; 両者の差分を「不明」領域とし、確実な前景の連結成分をマーカーに <code style="color:#22d3bf">cv2.watershed</code> を実行。</p>
-<p><code style="color:#22d3bf">a</code> が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合の傾向が変わる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">watersheds</code>(提取分水岭与分水岭盆地)，但这里返回的不是盆地的标签，而是仅将 <b>分水岭的边界线</b> 作为 region 返回(近似)。</p>
+<p>步骤是经典的 OpenCV 方法：大津法(Otsu)二值化 -&gt; 用膨胀估计“确定背景” -&gt; 用距离变换的阈值估计“确定前景” -&gt; 将两者之差作为“未知”区域，以确定前景的连通分量为标记执行 <code style="color:#22d3bf">cv2.watershed</code>。</p>
+<p><code style="color:#22d3bf">a</code> 将决定确定前景的阈值在距离变换最大值的 30%～70% 范围内调节(越大前景标记越小、越保守，过分割/过合并的倾向会改变)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

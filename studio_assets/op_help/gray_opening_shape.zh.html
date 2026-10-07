@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用圆盘形(disk)结构元素的灰度开运算。与 <code style="color:#22d3bf">gray_opening</code> 的差异仅在于结构元素的形状,运算本身(先腐蚀后膨胀)相同。相当于 HALCON 的 <code style="color:#22d3bf">gray_opening_shape</code>(Perform a gray value opening with a selected mask.)(HALCON 可从矩形/圆形/八边形等中选择,这里固定为圆形)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 将结构元素半径在 1~4 范围内(<code style="color:#22d3bf">_rad(a)</code>)调节。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.33、0.67、0.99（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>

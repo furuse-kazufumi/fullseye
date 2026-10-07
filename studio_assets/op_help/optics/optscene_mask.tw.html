@@ -5,13 +5,12 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_mask(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.optscene_mask.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">optscene.optscene_mask</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>第 <code style="color:#22d3bf">index</code> 個基元可見像素的 <b>真值遮罩</b> (H, W),bool。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画素完全(アンチエイリアスしない)。検出結果との IoU をそのまま測れる。</p>
-<p>手順: <code style="color:#22d3bf">camera_rays(camera)</code> で全画素の光線を作り、<code style="color:#22d3bf">trace_rays</code> で最初の交点を取り、<code style="color:#22d3bf">hit[&quot;index&quot;] == index</code> の画素を True にする。手前の別部品に隠れた部分は False(<b>見えている</b>画素だけ)。光線は画素中心 1 本なので、境界の画素は「中心がその部品に落ちるか」で決まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scene</code>: <code style="color:#22d3bf">scene_*</code> の dict、または list。<code style="color:#22d3bf">index</code> は list 内の位置(0 始まり)。範囲 <code style="color:#22d3bf">[0, len(scene))</code> の外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">scene_difference</code> は 1 個として数える。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">camera</code>: <code style="color:#22d3bf">optical_camera</code> の結果(<code style="color:#22d3bf">K</code>, <code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">eye</code>, <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">height</code>)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> の bool。どの光線も当たらなければ全 False(例外にはしない)。</p>
-<p><code style="color:#22d3bf">render_optscene</code> の画像と同じカメラで作れば画素が一対一に対応する。深度の真値は <code style="color:#22d3bf">optscene_depth</code>、欠陥の真値は <code style="color:#22d3bf">optscene_defect_mask</code>、部品ごとのインスタンス列は <code style="color:#22d3bf">optscene_instances</code>。</p>
+<p>像素精確(不做反鋸齒)。可以直接量測與檢測結果的 IoU。</p>
+<p>步驟：以 <code style="color:#22d3bf">camera_rays(camera)</code> 產生所有像素的光線，以 <code style="color:#22d3bf">trace_rays</code> 取第一個交點，將 <code style="color:#22d3bf">hit[&quot;index&quot;] == index</code> 的像素設為 True。被前方其他零件遮住的部分為 False(僅<b>可見</b>像素)。每個像素中心只有 1 條光線，所以邊界像素由「中心是否落在該零件上」決定。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scene</code>：<code style="color:#22d3bf">scene_*</code> 的 dict 或 list。<code style="color:#22d3bf">index</code> 是 list 中的位置(從 0 開始)。超出範圍 <code style="color:#22d3bf">[0, len(scene))</code> 即 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">scene_difference</code> 計為 1 個。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">camera</code>：<code style="color:#22d3bf">optical_camera</code> 的結果(<code style="color:#22d3bf">K</code>, <code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">eye</code>, <code style="color:#22d3bf">width</code>, <code style="color:#22d3bf">height</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值：<code style="color:#22d3bf">(H, W)</code> 的 bool。任何光線都未命中則全為 False(不拋例外)。</p>
+<p>以與 <code style="color:#22d3bf">render_optscene</code> 影像相同的相機產生，像素一一對應。深度的真值為 <code style="color:#22d3bf">optscene_depth</code>，缺陷的真值為 <code style="color:#22d3bf">optscene_defect_mask</code>，各零件的實例列表為 <code style="color:#22d3bf">optscene_instances</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

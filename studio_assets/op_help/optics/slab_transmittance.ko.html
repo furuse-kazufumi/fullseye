@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import glassmirror; glassmirror.slab_transmittance(cos_i, n1=1.0, n2=1.5, thickness_mm=3.0, sigma_per_mm=0.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;slab_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평행 평판(창유리)의 투과율. <b>양면에서의 다중 반사</b>와 내부 흡수를 포함합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm は上記と同じ。</p>
-<p>返り値: 全透過率 T。式は T = (1−R)²·a / (1 − R²·a²)、a = 内部透過率(板内の斜め光路 L = d/cosθ_t を使う)。無限級数の和 = 多重反射を数え落とさない形。</p>
-<p>検算: 吸収 0・垂直入射の air→BK7(n=1.5)板は T = 0.9231(= 2n/(n²+1) のよく知られた値)。σ を上げると単調に下がり、臨界角超(板の内側から)では 0。</p>
+<p>cos_i / n1 / n2 / thickness_mm / sigma_per_mm은 위와 같다.</p>
+<p>반환값: 전투과율 T. 식은 T = (1−R)²·a / (1 − R²·a²), a = 내부 투과율(판 안의 비스듬한 광로 L = d/cosθ_t를 쓴다). 무한 급수의 합 = 다중 반사를 빠뜨리지 않는 형태.</p>
+<p>검산: 흡수 0·수직 입사의 air→BK7(n=1.5) 판은 T = 0.9231(= 2n/(n²+1)의잘 알려진 값). σ를 올리면 단조롭게 내려가고, 임계각 초과(판의 안쪽에서)에서는 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

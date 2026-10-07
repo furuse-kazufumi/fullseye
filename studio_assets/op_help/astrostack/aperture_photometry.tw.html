@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)</code>(要直接呼叫實作,<code style="color:#22d3bf">import astrostack; astrostack.aperture_photometry(image, centers, r_aperture=5.0, r_inner=8.0, r_outer=12.0, read_sigma=0.0, gain=1.0, supersample=8)</code>;從台帳取用則 <code style="color:#22d3bf">opsastrostack.get(&quot;aperture_photometry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圓形孔徑 + 環形背景的測光(經典 CCD 測光)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>開口内の画素は<b>副画素で重み付け</b>する(<code style="color:#22d3bf">supersample^2</code> 点の標本化)ので、半径が整数でなくても面積が階段状に飛ばない。背景は <code style="color:#22d3bf">r_inner</code>〜<code style="color:#22d3bf">r_outer</code> の環の<b>中央値</b>(隣の星が環に入っても引きずられない)。</p>
-<p>フラックスは <code style="color:#22d3bf">sum(w * (I - background))</code>、S/N は古典的な CCD 方程式(Merline &amp; Howell, *Exp. Astron.* 6, 163 (1995); Howell, *Handbook of CCD Astronomy*)::</p>
+<p>孔徑內的像素<b>以次像素加權</b>(<code style="color:#22d3bf">supersample^2</code> 點取樣)，因此即使半徑不是整數，面積也不會階梯式跳變。背景是 <code style="color:#22d3bf">r_inner</code>〜<code style="color:#22d3bf">r_outer</code> 圓環的<b>中位數</b>(即使鄰近的星進入圓環也不會被帶偏)。</p>
+<p>通量為 <code style="color:#22d3bf">sum(w * (I - background))</code>，S/N 採用經典的 CCD 方程式(Merline &amp; Howell, *Exp. Astron.* 6, 163 (1995); Howell, *Handbook of CCD Astronomy*)::</p>
 <p>SNR = F / sqrt(F/gain + A*(B/gain + read_sigma^2))</p>
-<p>ここで <code style="color:#22d3bf">A</code> は開口の実効画素数、<code style="color:#22d3bf">B</code> は背景レベル。<code style="color:#22d3bf">read_sigma=0</code> かつ <code style="color:#22d3bf">gain=1</code> なら純 Poisson の <code style="color:#22d3bf">F/sqrt(F + A*B)</code> に落ちる。</p>
-<p>Returns 各星 1 つの dict の <code style="color:#22d3bf">list</code>(<code style="color:#22d3bf">table</code> 語彙)。キーは <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">flux</code> / <code style="color:#22d3bf">background</code>(1 画素あたり)/ <code style="color:#22d3bf">area_px</code>(開口の実効画素数)/ <code style="color:#22d3bf">n_annulus</code> / <code style="color:#22d3bf">snr</code> / <code style="color:#22d3bf">flux_error</code> / <code style="color:#22d3bf">mag_instrumental</code> (<code style="color:#22d3bf">-2.5 log10(flux)</code>、フラックスが非正なら <code style="color:#22d3bf">nan</code>)。</p>
-<p>Ground truth it reproduces(<code style="color:#22d3bf">tests/test_astrostack.py</code>): ノイズ無しのガウシアン星(フラックス 10000 e-)に対して、半径 <code style="color:#22d3bf">r</code> の開口が拾う割合は <code style="color:#22d3bf">1 - exp(-r^2/(2 sigma^2))</code>。<b>開口を広げれば厳密に一致する</b> —— <code style="color:#22d3bf">r = 8 sigma</code> では sigma = 1.0 / 1.5 / 2.0 / 3.0 のどれでも測定 10000.00000、誤差 -0.0000 %。</p>
-<p><b>小さい開口には系統的な負のずれが残る、という正直な話。</b> <code style="color:#22d3bf">r = 3 sigma</code></p>
-<p>では実測が理論を下回る::</p>
+<p>其中 <code style="color:#22d3bf">A</code> 是孔徑的有效像素數，<code style="color:#22d3bf">B</code> 是背景水準。<code style="color:#22d3bf">read_sigma=0</code> 且 <code style="color:#22d3bf">gain=1</code> 時退化為純 Poisson 的 <code style="color:#22d3bf">F/sqrt(F + A*B)</code>。</p>
+<p>Returns 每顆星一個 dict 的 <code style="color:#22d3bf">list</code>(<code style="color:#22d3bf">table</code> 詞彙)。鍵為 <code style="color:#22d3bf">row</code> / <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">flux</code> / <code style="color:#22d3bf">background</code>(每像素)/ <code style="color:#22d3bf">area_px</code>(孔徑的有效像素數)/ <code style="color:#22d3bf">n_annulus</code> / <code style="color:#22d3bf">snr</code> / <code style="color:#22d3bf">flux_error</code> / <code style="color:#22d3bf">mag_instrumental</code> (<code style="color:#22d3bf">-2.5 log10(flux)</code>，通量非正時為 <code style="color:#22d3bf">nan</code>)。</p>
+<p>Ground truth it reproduces(<code style="color:#22d3bf">tests/test_astrostack.py</code>)：對無雜訊的高斯星(通量 10000 e-)，半徑 <code style="color:#22d3bf">r</code> 的孔徑所撿取的比例為 <code style="color:#22d3bf">1 - exp(-r^2/(2 sigma^2))</code>。<b>擴大孔徑即嚴格一致</b> —— <code style="color:#22d3bf">r = 8 sigma</code> 時，sigma = 1.0 / 1.5 / 2.0 / 3.0 中任何一個量測值都是 10000.00000，誤差 -0.0000 %。</p>
+<p><b>坦白說，小孔徑會殘留系統性的負偏差。</b> <code style="color:#22d3bf">r = 3 sigma</code></p>
+<p>時實測低於理論::</p>
 <p>sigma = 1.0  -&gt;  9798.57 / 9888.91  = -0.914 %</p>
 <p>sigma = 1.5  -&gt;  9850.70 / 9888.91  = -0.386 %</p>
 <p>sigma = 2.0  -&gt;  9868.61 / 9888.91  = -0.205 %</p>
 <p>sigma = 3.0  -&gt;  9879.86 / 9888.91  = -0.092 %</p>
-<p>これはバグではなく<b>画素化そのもの</b>。閉形式は連続なガウシアンを円で積分した値だが、こちらは「画素の総フラックス × 円に入る面積の割合」を足している。開口の縁にある画素では、円の内側(中心寄り)の方が実際には明るいので、画素平均で代表すると必ず<b>少なく</b>出る。誤差が <code style="color:#22d3bf">sigma</code> の 2 乗に反比例して減る(1.0→3.0 で 10 倍)のがその証拠で、標本化が良くなるほど画素平均と真の分布の差が縮む。開口を広げれば縁の画素の寄与自体が消えるので誤差も消える。</p>
-<p><code style="color:#22d3bf">supersample</code> は<b>円の面積</b>の離散化だけを直す(実測: <code style="color:#22d3bf">r=4.5</code> で <code style="color:#22d3bf">pi r^2</code> に対し相対 1.6e-3、<code style="color:#22d3bf">r=3</code> で 2.5e-4)。上のずれとは別の話で、上げても縁の画素平均の偏りは消えない。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 半径の順序が <code style="color:#22d3bf">0 &lt; r_aperture &lt;= r_inner &lt; r_outer</code> でない / *supersample* が 1 未満 / *gain* が非正 / *centers* が <code style="color:#22d3bf">(N, 2)</code> でない場合。</p>
+<p>這不是 bug，而是<b>像素化本身</b>。閉合式是把連續高斯在圓上積分的值，而這裡累加的是「像素總通量 × 落在圓內的面積比例」。在孔徑邊緣的像素中，圓的內側(靠近中心)實際上較亮，以像素平均來代表必然偏<b>少</b>。誤差與 <code style="color:#22d3bf">sigma</code> 的平方成反比地減小(1.0→3.0 減為 10 分之一)就是證據：取樣越好，像素平均與真實分布的差越小。擴大孔徑後邊緣像素的貢獻本身消失，誤差也隨之消失。</p>
+<p><code style="color:#22d3bf">supersample</code> 只修正<b>圓面積</b>的離散化(實測：<code style="color:#22d3bf">r=4.5</code> 時相對 <code style="color:#22d3bf">pi r^2</code> 為 1.6e-3，<code style="color:#22d3bf">r=3</code> 時為 2.5e-4)。這與上面的偏差是兩回事，提高它也無法消除邊緣像素平均的偏差。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：半徑的順序不滿足 <code style="color:#22d3bf">0 &lt; r_aperture &lt;= r_inner &lt; r_outer</code> / *supersample* 小於 1 / *gain* 非正 / *centers* 不是 <code style="color:#22d3bf">(N, 2)</code> 時。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

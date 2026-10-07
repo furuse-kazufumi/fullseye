@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>单帧的宇宙线剔除(拉普拉斯锐度)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) の考え方 —— 宇宙線は<b>星より鋭い</b>。星は PSF でぼけているので必ず数画素にまたがるが、宇宙線は光学系を通っていないので 1〜数画素で立ち上がる。そこで</p>
-<p style="margin:2px 0 2px 12px">1. ラプラシアン <code style="color:#22d3bf">L</code> の正の成分を雑音で規格化した有意度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> を作り、</p>
-<p style="margin:2px 0 2px 12px">2. 微細構造像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> と比べて <code style="color:#22d3bf">L / F</code> が <code style="color:#22d3bf">f_lim</code> を超えるものだけを宇宙線とする。</p>
-<p>2 番目の条件が無いと<b>星の中心が必ず宇宙線に見える</b>(星も局所的には尖っている)。<code style="color:#22d3bf">f_lim</code> はその境目で、原論文の推奨は 2.0。</p>
-<p><code style="color:#22d3bf">iters</code> を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。置換は <code style="color:#22d3bf">replace_box</code> の窓での<b>非汚染画素の中央値</b>。</p>
+<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) 的思路 —— 宇宙线<b>比星更锐利</b>。星被 PSF 模糊，必定跨越数个像素，而宇宙线不经过光学系统，在 1〜数个像素内陡然升起。因此</p>
+<p style="margin:2px 0 2px 12px">1. 构造用噪声归一化拉普拉斯 <code style="color:#22d3bf">L</code> 正分量的显著度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>，</p>
+<p style="margin:2px 0 2px 12px">2. 与精细结构像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> 比较，只有 <code style="color:#22d3bf">L / F</code> 超过 <code style="color:#22d3bf">f_lim</code> 的才判为宇宙线。</p>
+<p>没有第 2 个条件，<b>星的中心必定看起来像宇宙线</b>(星在局部也是尖的)。<code style="color:#22d3bf">f_lim</code> 就是这条分界，原论文推荐 2.0。</p>
+<p>增大 <code style="color:#22d3bf">iters</code> 会重复 去除 → 重新测量(大的击中留下裙边时)。替换值为 <code style="color:#22d3bf">replace_box</code> 窗口内<b>未污染像素的中位数</b>。</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64、宇宙線画素を置換した像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *sigma* が非正 / *f_lim* が非正 / *replace_box* が 3 未満または偶数の場合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64，替换了宇宙线像素的像。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool，<code style="color:#22d3bf">True</code> = 判定为宇宙线的像素。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：非 2-D / 含非有限值 / *sigma* 非正 / *f_lim* 非正 / *replace_box* 小于 3 或为偶数时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

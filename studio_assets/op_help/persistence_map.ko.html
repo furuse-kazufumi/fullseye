@@ -13,11 +13,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>임계값을 고르지 않고</b> &#x27;봉우리의 두드러짐&#x27;을 측정한다(0차원 지속성).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>閾値を 1 つ選ぶと適用範囲が狭まる —— という矛盾は「<b>全部の閾値を試して、結果が変わらない所だけ残す</b>」ことで解ける。高い方から水位を下げていき、新しい山が現れた高さ(誕生)と、その山がより高い山に飲まれた高さ(消滅)の差を、その山の <b>persistence(目立ち具合)</b> とする。地形でいう「突出度(prominence)」そのもの。</p>
-<p>出力は各画素に「その画素が属する山の persistence」を入れた地図。<code style="color:#22d3bf">a</code> は残す下限(これ未満の山は 0 にする)、<code style="color:#22d3bf">b</code> は連結の仕方(0.5 未満で 4 近傍、以上で 8 近傍)。</p>
-<p><b><code style="color:#22d3bf">h_maxima</code> / MSER との違い</b>: <code style="color:#22d3bf">xsk2_h_maxima</code> は <code style="color:#22d3bf">h</code> をひとつ選んで「それ以上の山」を返す —— つまり閾値を 1 つ選んでいる。こちらは<b>全部の h についての答えを 1 枚に畳んだもの</b>なので、後から好きな水準で切れる。MSER は「面積が安定な領域」を探すので似た発想だが、あちらは領域の形、こちらは高さ。</p>
-<p><b>適用条件</b>: (1) 画像全体で一番高い山は消滅しないので、<code style="color:#22d3bf">最大値 - 最小値</code> を persistence とする(慣例)。<b>そのため背景は全体最大の値(1.0)を持つ</b> —— 背景は一番最後に処理され、そのときには成分がすべて併合されているので、位相的には確かに全体成分に属する。<b>山の高さを読む地図であって、背景を 0 にする地図ではない</b>。背景を落としたいなら閾値 op と掛けるか、<code style="color:#22d3bf">a</code> で下限を上げること(<code style="color:#22d3bf">a=0.45</code> で高さ 0.3 の山だけが消え、1.0 と 0.6 は残ることを実測した)。(2) 平坦な台地(同じ値が続く)は 1 つの山として扱われる。(3) 計算は画素を降順に走査する union-find なので、大きな画像では <code style="color:#22d3bf">h_maxima</code> より遅い。</p>
+<p>임계값을 1개 고르면 적용 범위가 좁아진다 —— 이 모순은 &quot;<b>모든 임계값을 시도해 결과가변하지 않는 부분만 남기는</b>&quot; 것으로 풀린다. 높은 쪽에서부터 수위를 낮춰 가며, 새 봉우리가 나타난높이(탄생)와 그 봉우리가 더 높은 봉우리에 흡수된 높이(소멸)의 차를 그 봉우리의 <b>persistence(두드러진 정도)</b>로 삼는다. 지형에서 말하는 &quot;돌출도(prominence)&quot; 그 자체다.</p>
+<p>출력은 각 화소에 &quot;그 화소가 속한 봉우리의 persistence&quot;를 넣은 지도다. <code style="color:#22d3bf">a</code>는 남길 하한(이보다 낮은 봉우리는 0으로 한다), <code style="color:#22d3bf">b</code>는 연결 방식(0.5 미만이면 4 근방, 이상이면 8 근방).</p>
+<p><b><code style="color:#22d3bf">h_maxima</code> / MSER와의 차이</b>: <code style="color:#22d3bf">xsk2_h_maxima</code>는 <code style="color:#22d3bf">h</code>를 하나 골라 &quot;그 이상의 봉우리&quot;를 반환한다 —— 즉 임계값을 1개 고르는 것이다. 이쪽은 <b>모든 h에대한 답을 1장으로 접은 것</b>이므로 나중에 원하는 수준에서 자를 수 있다. MSER은 &quot;면적이 안정된 영역&quot;을 찾으므로 비슷한 발상이지만, 저쪽은 영역의 형태, 이쪽은 높이다.</p>
+<p><b>적용 조건</b>: (1) 영상 전체에서 가장 높은 봉우리는 소멸하지 않으므로 <code style="color:#22d3bf">최댓값 - 최솟값</code>을 persistence로 한다(관례). <b>그래서 배경은 전체 최댓값(1.0)을 가진다</b> —— 배경은 맨 마지막에 처리되며 그때는 성분이 모두 병합되어 있으므로, 위상적으로는확실히 전체 성분에 속한다. <b>봉우리 높이를 읽는 지도이지, 배경을 0으로 만드는 지도가 아니다</b>. 배경을 없애고 싶다면 임계값 op와 곱하거나 <code style="color:#22d3bf">a</code>로 하한을 올릴 것(<code style="color:#22d3bf">a=0.45</code>에서높이 0.3의 봉우리만 사라지고 1.0과 0.6은 남는 것을 실측했다). (2) 평탄한 대지(같은 값이 이어지는 곳)는 1개의 봉우리로취급된다. (3) 계산은 화소를 내림차순으로 주사하는 union-find이므로, 큰 영상에서는 <code style="color:#22d3bf">h_maxima</code>보다 느리다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

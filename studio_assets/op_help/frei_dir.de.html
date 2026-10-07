@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Kantenrichtungs-(Winkel-)Karte mit Kernen vom Frei-Chen-Typ. Berechnet <code style="color:#22d3bf">arctan2(gy, gx)</code> aus den Faltungsantworten des horizontalen Kerns <code style="color:#22d3bf">_FREI[0]</code> (Zeilen-/Vertikalgradient) und des vertikalen Kerns <code style="color:#22d3bf">_FREI[1]</code> (Spalten-/Horizontalgradient) und bildet es nach derselben Konvention wie <code style="color:#22d3bf">sobel_dir</code>/<code style="color:#22d3bf">prewitt_dir</code> auf [0,1] ab (0/1 = -180 Grad, 0,5 = 0 Grad). a und b werden nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">frei_dir</code>（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は <code style="color:#22d3bf">frei_amp</code> 側が担当する。</p>
+<p>Eine Näherung der Richtungskomponente von HALCONs <code style="color:#22d3bf">frei_dir</code> (eine Operation, die mit dem Frei-Chen-Operator Amplitude und Richtung von Kanten erkennt). Die Amplitude übernimmt <code style="color:#22d3bf">frei_amp</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">Leitfaden zur Familie gallery2d_edges</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import matappear; matappear.thin_film_reflectance(nm, thickness_nm=350.0, n_film=1.33, n_sub=1.0, cos_theta=1.0, n_out=1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_reflectance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>薄膜(厚度 d,折射率 n_film)的分光反射率。Airy(多次反射)的闭式。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>nm:           波長 [nm] (配列可)。</p>
-<p>thickness_nm: 膜厚 [nm]。シャボン玉なら 200–800、陽極酸化被膜なら 50–300。n_film/n_sub/n_out: 膜 / 基板 / 入射側の屈折率(実数、吸収なし)。</p>
-<p>cos_theta:    入射側での入射角の cos(配列可、nm とブロードキャストできる形)。</p>
-<p>返り値: 反射率 R(0–1)。nm と cos_theta のブロードキャスト形。</p>
-<p>物理: 膜内の伝搬による位相差 δ = 2π·(2 n_film d cosθ_film)/λ。境界のフレネル係数(s 偏光と p 偏光の平均 = 無偏光)を r1, r2 として R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。λ/4 の奇数倍で反射が極大(n_film &gt; n_sub のとき)になり、<b>厚みを変えると色が動く</b>のがシャボン玉の色。膜厚 0 では R が基板単体のフレネル反射に一致する(テストで確認)。</p>
+<p>nm:           波长 [nm] (可为数组)。</p>
+<p>thickness_nm: 膜厚 [nm]。肥皂泡为 200–800，阳极氧化膜为 50–300。n_film/n_sub/n_out: 膜 / 基底 / 入射侧的折射率(实数，无吸收)。</p>
+<p>cos_theta:    入射侧入射角的 cos(可为数组，须能与 nm 广播)。</p>
+<p>返回值：反射率 R(0–1)。为 nm 与 cos_theta 的广播形状。</p>
+<p>物理：膜内传播造成的相位差 δ = 2π·(2 n_film d cosθ_film)/λ。以界面的菲涅耳系数(s 偏振与 p 偏振的平均 = 无偏振)为 r1, r2，则 R = |r1 + r2 e^{-iδ}|² / |1 + r1 r2 e^{-iδ}|²。在 λ/4 的奇数倍处反射达到极大(n_film &gt; n_sub 时)，<b>改变厚度颜色就会移动</b>，这就是肥皂泡的颜色。膜厚为 0 时 R 与基底单独的菲涅耳反射一致(已由测试确认)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

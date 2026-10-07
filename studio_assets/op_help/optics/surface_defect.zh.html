@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import optscene; optscene.surface_defect(primitive: &#x27;dict&#x27;, field, mask=None, uv_size_mm=(20.0, 20.0), centre_mm=(0.0, 0.0), height_um: &#x27;float&#x27; = 0.0, height_field=None, roughness_um: &#x27;float&#x27; = 0.6) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;surface_defect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 2-D 缺陷图<b>贴到零件表面</b>(直接吃 <code style="color:#22d3bf">defectgen</code> 的输出)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">field</code> は明るさの変調 (H, W)(0 = 変化なし、−0.3 = 30% 暗い傷)。<code style="color:#22d3bf">height_um</code> を与えると同じ図を<b>高さ</b>とも解釈し、勾配から法線を傾ける ―― これがあると、同じ傷がドーム照明では消え暗視野照明で光る、という <b>照明を変える意味</b>が再現される(外観検査 AI の学習データはここが本体)。</p>
-<p><code style="color:#22d3bf">height_field</code> を別に渡すと、<b>色は変わらないが凹凸だけがある欠陥</b>(打痕・ひけ・浅い擦り傷)を作れる。<code style="color:#22d3bf">field</code> を全ゼロにすれば純粋な地形欠陥になり、ドーム照明では消えて低角の暗視野照明で光る ―― この差こそ照明を選ぶ理由。</p>
-<p><code style="color:#22d3bf">roughness_um</code> は<b>欠陥のところだけ面が粗くなる量</b>(既定 0.6 µm)。</p>
-<p>見方を変えると、<code style="color:#22d3bf">surface_finish</code> の加工目も同じものを別の粒度で持っている ―― 加工目は<b>表面凹凸のテクスチャを数オクターブの雑音に圧縮した</b>表現で、ここでいう粗さは「画素より細かくて解像できない凹凸」を 1 つの数(σ)に潰した表現。解像できる凹凸は法線として、解像できない凹凸は粗さとして扱う、という分担である。傷は材料を削り取った跡なので、健全面より必ず粗い。これがあると鏡面割合 exp(-(4πσcosθ/λ)²) が下がって<b>明視野で暗く</b>なり、同時に散乱が増えて <b>暗視野で明るく</b>なる ―― 教科書どおりのコントラスト反転は、法線の傾きではなくこの粗さから出る(低角の光を真上へ返すには面が 39 度傾く必要があり、傷の傾斜では届かないため。2026-09-05 に実測で確認)。0 にすれば粗さを変えない欠陥になる。</p>
-<p><code style="color:#22d3bf">uv_size_mm</code> は貼り付ける実寸 [mm]、<code style="color:#22d3bf">centre_mm</code> は面座標上の中心。<code style="color:#22d3bf">mask</code> を渡すとその画素が欠陥ラベル(<code style="color:#22d3bf">optscene_defect_mask</code> が返す真値)。</p>
-<p>返り値は defect を付けた<b>新しい</b>プリミティブ(元は書き換えない)。</p>
+<p><code style="color:#22d3bf">field</code> 是亮度调制 (H, W)(0 = 无变化，−0.3 = 暗 30% 的划痕)。给出 <code style="color:#22d3bf">height_um</code> 时，同一张图也解释为<b>高度</b>，并由梯度倾斜法线 ―― 有了它，同一划痕在穹顶照明下消失、在暗场照明下发亮，这一 <b>改变照明的意义</b>得以再现(外观检测 AI 的训练数据的主体就在这里)。</p>
+<p>另行传入 <code style="color:#22d3bf">height_field</code>，就能做出<b>颜色不变、只有凹凸的缺陷</b>(压痕、缩痕、浅擦痕)。把 <code style="color:#22d3bf">field</code> 全设为零即成为纯粹的地形(凹凸)缺陷，在穹顶照明下消失、在低角度暗场照明下发亮 ―― 这个差异正是选择照明的理由。</p>
+<p><code style="color:#22d3bf">roughness_um</code> 是<b>只在缺陷处表面变粗的量</b>(默认 0.6 µm)。</p>
+<p>换个角度看，<code style="color:#22d3bf">surface_finish</code> 的加工纹理也以不同粒度持有同样的东西 ―― 加工纹理是<b>把表面凹凸的纹理压缩成几个倍频程的噪声</b>的表示，这里所说的粗糙度则是把“比像素更细、无法分辨的凹凸”压成 1 个数(σ)的表示。能分辨的凹凸作为法线处理，不能分辨的凹凸作为粗糙度处理，这就是分工。划痕是材料被削去的痕迹，所以一定比健全面粗糙。有了它，镜面比例 exp(-(4πσcosθ/λ)²) 下降而<b>在明场中变暗</b>，同时散射增加而 <b>在暗场中变亮</b> ―― 教科书式的对比度反转并非来自法线的倾斜，而是来自这个粗糙度(要把低角度的光反射到正上方，面需要倾斜 39 度，划痕的坡度达不到。2026-09-05 已实测确认)。设为 0 则成为不改变粗糙度的缺陷。</p>
+<p><code style="color:#22d3bf">uv_size_mm</code> 是贴附的实际尺寸 [mm]，<code style="color:#22d3bf">centre_mm</code> 是面坐标上的中心。传入 <code style="color:#22d3bf">mask</code> 时这些像素即为缺陷标签(<code style="color:#22d3bf">optscene_defect_mask</code> 返回的真值)。</p>
+<p>返回值是附加了 defect 的<b>新</b>图元(不修改原对象)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

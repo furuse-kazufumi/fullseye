@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.beer_lambert_transmittance(path_mm, sigma_per_mm=0.01) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;beer_lambert_transmittance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Beer–Lambert internal transmittance T = exp(−σ·L). The green cast of coloured and thick glass.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>path_mm: 媒質中の光路長 [mm] (配列可、非負)。</p>
-<p>sigma_per_mm: 吸収係数 [1/mm] (配列可 — 波長ごとに変えれば<b>色</b>になる)。</p>
-<p>返り値: 内部透過率(0–1)。界面の反射は含まない(それは <code style="color:#22d3bf">slab_transmittance</code>)。</p>
+<p>path_mm: optical path length in the medium [mm] (array allowed, non-negative).</p>
+<p>sigma_per_mm: absorption coefficient [1/mm] (array allowed — varying it per wavelength gives <b>colour</b>).</p>
+<p>Returns: internal transmittance (0–1). Interface reflections are not included (that is <code style="color:#22d3bf">slab_transmittance</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

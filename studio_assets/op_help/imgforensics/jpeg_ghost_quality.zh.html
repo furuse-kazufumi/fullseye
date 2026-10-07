@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>幽灵图序列 → 逐像素<b>残差最小的质量</b>的地图。<code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">qualities</code> を省くと <code style="color:#22d3bf">jpeg_ghost_map</code> の既定(40..95 step 5)を仮定する —— <b>枚数が合わなければ <code style="color:#22d3bf">ValueError</code></b>(添字と品質がずれた地図を返さない)。</p>
-<p>返りは品質そのものを画素値に持つ <code style="color:#22d3bf">(H, W)</code> なので、値域は [0, 1] ではない。表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
-<p>★ <b>合成後に一度でも保存すると、この argmin は使えない。</b> 2026-09-06 に測った。背景 q92・素材 q60 で 32x32 を貼った 128x128 で:</p>
+<p>省略 <code style="color:#22d3bf">qualities</code> 时假定为 <code style="color:#22d3bf">jpeg_ghost_map</code> 的默认值(40..95 step 5) —— <b>张数不一致时为 <code style="color:#22d3bf">ValueError</code></b>(不返回下标与质量错位的图)。</p>
+<p>返回的是以质量本身为像素值的 <code style="color:#22d3bf">(H, W)</code>，所以值域不是 [0, 1]。显示时请自行归一化(本 op 返回的是数值，而不是图片)。</p>
+<p>★ <b>合成后哪怕保存一次，这个 argmin 就不能用了。</b> 2026-09-06 测得。背景 q92、素材 q60，在 128x128 中贴入 32x32：</p>
 <p>====================  ==================  ================</p>
-<p>条件                  貼付部の最頻品質    背景の最頻品質</p>
+<p>条件                  粘贴部的众数质量    背景的众数质量</p>
 <p>====================  ==================  ================</p>
-<p>合成後に保存しない            <b>60</b>(正解)              95</p>
-<p>合成後に q95 で保存           <b>95</b>(背景と同じ)         95</p>
+<p>合成后不保存          <b>60</b>(正确)        95</p>
+<p>合成后以 q95 保存     <b>95</b>(与背景相同)  95</p>
 <p>====================  ==================  ================</p>
-<p>理由は掃引の残差が品質に対して<b>単調減少</b>すること —— 最後の保存品質が掃引の上端にあると、<code style="color:#22d3bf">argmin</code> は全画素でそこに張り付く(実測: 保存後の残差平均は 230.7 → 5.9e-02 と一直線に下がる)。実運用の改竄は必ず保存を経るので、<b>この読み出しは実画像では定数地図になる</b>。既存テスト <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> が通るのは、合成後に一度も保存していないからである(それ自体は正しい単体テストで、<code style="color:#22d3bf">argmin</code> の実装は間違っていない —— 読み出し方が現場に合わない)。</p>
-<p><b>代わりに使うもの</b>: 掃引方向の残差曲線の<b>谷の深さ</b>(局所的な凹み)。同じ実験で画素ごとの ROC を取ると、argmin 読み出しは AUC 0.500(乱数と同じ)、谷の深さ読み出しは <b>AUC 0.997 / 偽陽性 1 % で検出率 0.944</b> だった(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)。それでも全体を q60 で保存し直すと 0.475 まで落ちる —— JPEG ゴーストは後処理に弱い、というのが正しい要約。</p>
+<p>原因在于扫掠的残差随质量<b>单调递减</b> —— 若最后的保存质量位于扫掠的上端，<code style="color:#22d3bf">argmin</code> 就会在所有像素上粘在那里(实测：保存后的残差平均从 230.7 → 5.9e-02 一路直线下降)。实际的篡改必然要经过保存，所以<b>这种读出在真实图像上会变成常数图</b>。现有测试 <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> 能通过，是因为合成后一次也没有保存(它本身是正确的单元测试，<code style="color:#22d3bf">argmin</code> 的实现也没有错 —— 只是读出方式不适合实际场景)。</p>
+<p><b>替代方案</b>：扫掠方向上残差曲线的<b>谷的深度</b>(局部凹陷)。在同一实验中逐像素取 ROC，argmin 读出为 AUC 0.500(与随机相同)，谷深读出则为 <b>AUC 0.997 / 假阳性 1 % 时检出率 0.944</b> (<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)。即便如此，把整体以 q60 重新保存后就会降到 0.475 —— “JPEG 幽灵对后处理很脆弱”才是正确的概括。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

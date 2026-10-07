@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the components of the velocity-gradient tensor together with the quantities derived from it.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>渦度・発散・Q 基準・渦回転強度・ひずみ速度は<b>すべて同じ 4 つの微分</b>から出るので、勾配を 4 回計算し直さずに済むようにここへまとめる。個々の op (<code style="color:#22d3bf">piv_vorticity</code> など)は単独でも使えるが、複数要るならこちら。</p>
+<p>Vorticity, divergence, Q-criterion, swirling strength and strain rate all derive from <b>the same 4 derivatives</b>, so they are gathered here to avoid recomputing the gradient 4 times. The individual ops (<code style="color:#22d3bf">piv_vorticity</code> etc.) can be used on their own, but if you need several, use this.</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">dudx</code> / <code style="color:#22d3bf">dudy</code> / <code style="color:#22d3bf">dvdx</code> / <code style="color:#22d3bf">dvdy</code>(各 <code style="color:#22d3bf">(h, w)</code>)、</p>
-<p><code style="color:#22d3bf">vorticity</code> / <code style="color:#22d3bf">divergence</code> / <code style="color:#22d3bf">q</code> / <code style="color:#22d3bf">swirl</code> / <code style="color:#22d3bf">strain_rate</code>、</p>
-<p><code style="color:#22d3bf">spacing</code>。</p>
+<p>dict: <code style="color:#22d3bf">dudx</code> / <code style="color:#22d3bf">dudy</code> / <code style="color:#22d3bf">dvdx</code> / <code style="color:#22d3bf">dvdy</code> (each <code style="color:#22d3bf">(h, w)</code>),</p>
+<p><code style="color:#22d3bf">vorticity</code> / <code style="color:#22d3bf">divergence</code> / <code style="color:#22d3bf">q</code> / <code style="color:#22d3bf">swirl</code> / <code style="color:#22d3bf">strain_rate</code>,</p>
+<p><code style="color:#22d3bf">spacing</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

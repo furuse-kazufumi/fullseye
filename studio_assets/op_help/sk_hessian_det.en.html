@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Blob detection response via the Hessian determinant. The determinant of the second-derivative matrix (Hessian) is a signed response that is positive for blob-like structures and negative for saddle-like structures.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a)</code> を <code style="color:#22d3bf">signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写した値(符号を保つため 0.5 が「応答ゼロ」に対応)—— a はスケール σ を 0.5〜3.0 に振る。b は未使用。</p>
+<p>HALCON has no direct counterpart. The implementation is <code style="color:#22d3bf">feature.hessian_matrix_det(v, sigma=0.5+2.5*a)</code> mapped to <code style="color:#22d3bf">[0,1]</code> with <code style="color:#22d3bf">signed01</code> (to keep the sign, 0.5 corresponds to &quot;zero response&quot;) —— a sweeps the scale σ over 0.5–3.0. b is unused.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

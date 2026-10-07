@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import glassmirror; glassmirror.brewster_angle_deg(n1=1.0, n2=1.5) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;brewster_angle_deg&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>布儒斯特角 [deg] = atan(n2/n1)。在该角度 p 偏振的反射严格为 0。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>偏光板でガラスの映り込みが消える角度そのもの。<code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> にこの角度の cos を渡すと 0 が返る(テストで 1e-15 未満を確認)。</p>
+<p>正是用偏振片消除玻璃反光的那个角度。把该角度的 cos 传给 <code style="color:#22d3bf">fresnel_dielectric(..., &quot;p&quot;)</code> 会返回 0(测试中确认小于 1e-15)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

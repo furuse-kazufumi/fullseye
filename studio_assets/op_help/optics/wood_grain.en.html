@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">image2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code> or call <code style="color:#22d3bf">surfacelib.wood_grain</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Build the <b>colour modulation</b> of wood grain (annual rings) and the <b>direction of its fibres</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>shape: (H, W)。ring_px: 年輪の間隔 [px]。angle_deg: 木取りの向き [deg]。</p>
-<p>wobble: 年輪のうねり(0 で同心の直線)。seed: 乱数種。</p>
-<p>返り値: (modulation (H,W) 0–1, tangent (H,W,3)) —— 変調は木の色(明るい早材と暗い晩材)に掛け、接線は繊維方向なので <code style="color:#22d3bf">matappear.ward_anisotropic</code> に渡すと <b>木目に沿った光沢</b>になる(木は繊維方向に異方性を持つ)。</p>
+<p>shape: (H, W). ring_px: spacing of the annual rings [px]. angle_deg: direction of the cut [deg].</p>
+<p>wobble: waviness of the annual rings (0 = concentric straight lines). seed: random seed.</p>
+<p>Returns: (modulation (H,W) 0–1, tangent (H,W,3)) —— the modulation is applied to the wood colour (bright earlywood and dark latewood); the tangent is the fibre direction, so passing it to <code style="color:#22d3bf">matappear.ward_anisotropic</code> gives <b>gloss along the grain</b> (wood is anisotropic along the fibre direction).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

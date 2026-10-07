@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Schwellwertoperation für vorzeichenbehaftete Bilder. Der Medianwert 0,5 wird als &quot;Null&quot; behandelt, und Pixel, die <code style="color:#22d3bf">|x - 0,5| &gt; 0,1+0,35*a</code> erfüllen (Pixel, die ausreichend weit von 0,5 entfernt sind), werden als Vordergrund betrachtet — symmetrisch reagierend auf beide Seiten, positiv wie negativ. Entspricht HALCONs <code style="color:#22d3bf">dual_threshold</code> (Threshold operator for signed images.) (HALCON kann getrennte Schwellwerte für positiv und negativ verwenden, hier ist dies jedoch auf ein symmetrisches Band um 0,5 vereinfacht).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が除外帯域の半幅を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">highpass_image</code> や <code style="color:#22d3bf">bandpass_image</code> のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
+<p><code style="color:#22d3bf">a</code> variiert die halbe Breite des Ausschlussbands. <code style="color:#22d3bf">b</code> wird nicht verwendet. Wird häufig nach vorzeichenbehafteten Antworten (0.5 = Null) wie <code style="color:#22d3bf">highpass_image</code> oder <code style="color:#22d3bf">bandpass_image</code> eingesetzt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

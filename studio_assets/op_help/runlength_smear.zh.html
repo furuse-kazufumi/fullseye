@@ -13,13 +13,12 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>游程平滑(RLSA)</b>。填补行内字符之间的空隙，把字符合并成“行”的块。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>版面解析(どこが行で、どこが段か)の基本部品。<code style="color:#22d3bf">a</code> が<b>埋める隙間の長さ</b>を <code style="color:#22d3bf">3,5,9,15,25,41,65</code> 画素(<code style="color:#22d3bf">b</code> の向きに沿った線)に振り、<code style="color:#22d3bf">b</code> が向きと</p>
-<p>合成を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は<b>水平のみ</b>、<code style="color:#22d3bf">0.5 &lt; b &lt;= 0.75</code> は<b>垂直のみ</b>、<code style="color:#22d3bf">b &gt; 0.75</code> は<b>水平と垂直の小さい方</b>(= 古典 RLSA の 2 パス AND 合成。両方向で埋まった所だけが残るので、行だけでなく<b>段組みの塊</b>が出る)。</p>
-<p>★<b>既存の <code style="color:#22d3bf">gclose</code> と一部重なる</b>。<code style="color:#22d3bf">gclose</code> は <code style="color:#22d3bf">b</code> で水平線の構造要素を選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——</p>
-<p style="margin:2px 0 2px 12px">(1) 隙間が <b>3〜9 画素でなく 65 画素まで</b>振れる(<code style="color:#22d3bf">_k</code> の上限では行がつながらない。</p>
-<p>文字の間隔は 96 px の字なら 10〜30 画素ある)、(2) <b>2 方向の AND 合成</b>は単一の構造要素による閉じでは書けない。片方だけなら <code style="color:#22d3bf">gclose</code> を使うほうが速い。</p>
-<p>濃淡画像にそのまま掛かる(内部で二値化しない)。灰色の閉じ演算なので、<b>暗い隙間を埋める</b>方向に働く —— 字が明るく背景が暗い画像で使うこと。逆なら先に <code style="color:#22d3bf">invert</code> を通す。端の扱いは <code style="color:#22d3bf">scipy.ndimage</code> の既定の <code style="color:#22d3bf">reflect</code>。空フレーム(定数画像)は<b>そのまま返る</b>(埋めるべき隙間が無い)。値域は入力のまま [0,1] に収まり、画像ごとの正規化はしない(<b>値は画像間で比較できる</b>)。</p>
+<p>版面分析(哪里是行、哪里是栏)的基本部件。<code style="color:#22d3bf">a</code> 将<b>要填补的间隙长度</b>在 <code style="color:#22d3bf">3,5,9,15,25,41,65</code> 像素(沿 <code style="color:#22d3bf">b</code> 所定方向的线)中调节，<code style="color:#22d3bf">b</code> 选择方向与</p>
+<p>合成方式：<code style="color:#22d3bf">b &lt;= 0.5</code> 为<b>仅水平</b>，<code style="color:#22d3bf">0.5 &lt; b &lt;= 0.75</code> 为<b>仅垂直</b>，<code style="color:#22d3bf">b &gt; 0.75</code> 为<b>水平与垂直中较小者</b>(= 经典 RLSA 的 2 遍 AND 合成。只有两个方向都被填满的地方才会保留，因此不仅是行，<b>分栏的块</b>也会出现)。</p>
+<p>★<b>与已有的 <code style="color:#22d3bf">gclose</code> 部分重叠</b>。<code style="color:#22d3bf">gclose</code> 可以用 <code style="color:#22d3bf">b</code> 选择水平线结构元素，所以水平 RLSA 在原理上可以写出来。本 op 补充的有 2 点 ——</p>
+<p style="margin:2px 0 2px 12px">(1) 间隙可以调到 <b>不是 3〜9 像素而是最多 65 像素</b>(在 <code style="color:#22d3bf">_k</code> 的上限下行连不起来。</p>
+<p>对 96 px 的字来说，字符间隔有 10〜30 像素)，(2) <b>2 个方向的 AND 合成</b> 无法用单个结构元素的闭运算写出。若只需一个方向，用 <code style="color:#22d3bf">gclose</code> 更快。</p>
+<p>直接作用于灰度图像(内部不做二值化)。由于是灰度闭运算，它朝 <b>填补暗间隙</b>的方向起作用 —— 请用于字亮、背景暗的图像。反之则先通过 <code style="color:#22d3bf">invert</code>。边界处理为 <code style="color:#22d3bf">scipy.ndimage</code> 默认的 <code style="color:#22d3bf">reflect</code>。空帧(常数图像)<b>原样返回</b>(没有需要填补的间隙)。值域保持输入不变，落在 [0,1] 内，不做逐图像的归一化(<b>值可以在图像之间比较</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;scene_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>z 축에 평행한 유한 원기둥(끝면 포함). <b>가공 마감이 실제로 얹히는 형상</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>旋盤の同心目は端面(円盤)に、ヘアラインとローレットは側面に出る ―― 球にヘアラインを掛けるのは現実には珍しい(2026-09-05 のユーザー指摘)。薄くすれば円盤、厚くすれば軸物、<code style="color:#22d3bf">radius_mm</code> を大きく取れば円板ステージにもなる。</p>
+<p>선반의 동심 결은 끝면(원반)에, 헤어라인과 널링은 측면에 나온다 ―― 구에헤어라인을 거는 것은 현실에서는 드물다(2026-09-05 사용자 지적). 얇게 하면원반, 두껍게 하면 축 부품, <code style="color:#22d3bf">radius_mm</code>을 크게 잡으면 원판 스테이지도 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

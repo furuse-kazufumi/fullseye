@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_conductor(cos_i, n, k, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_conductor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reflectance at a metal interface (complex refractive index n + ik). The incident side is assumed to be vacuum/air.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>cos_i: 入射角の cos。n / k: 実部 / 消衰係数(配列可、cos_i とブロードキャスト)。</p>
-<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R。<b>金属に「臨界角」は無い</b> — k&gt;0 なので透過波は減衰波であり、どの角度でも一部が吸収される(R&lt;1)。</p>
-<p>式: η² = (n+ik)² − sin²θ として rs = (cosθ − η)/(cosθ + η)、rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η)(Born &amp; Wolf §13.2 の複素形)。</p>
+<p>cos_i: cos of the angle of incidence. n / k: real part / extinction coefficient (array allowed, broadcast with cos_i).</p>
+<p>polarization: &quot;unpolarized&quot; / &quot;s&quot; / &quot;p&quot;.</p>
+<p>Returns: reflectance R. <b>Metals have no &quot;critical angle&quot;</b> — since k&gt;0 the transmitted wave is evanescent, and part of the light is absorbed at every angle (R&lt;1).</p>
+<p>Formula: with η² = (n+ik)² − sin²θ, rs = (cosθ − η)/(cosθ + η), rp = ((n+ik)² cosθ − η)/((n+ik)² cosθ + η) (the complex form of Born &amp; Wolf §13.2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

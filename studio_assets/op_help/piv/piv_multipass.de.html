@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mehrstufiges PIV, das von groben zu feinen Fenstern herabstuft. Rückgabe: <code style="color:#22d3bf">(flow, info)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各段の結果を<b>次の段の予測変位</b>として使う(整数量だけ 2 枚目の窓をずらす)。段の間で外れ値を除いて埋めるのは意図的 —— 外れたベクトルをそのまま予測に使うと、その窓は次の段でも外れたまま固定される。</p>
+<p>Das Ergebnis jeder Stufe wird als <b>vorhergesagte Verschiebung der nächsten Stufe</b> verwendet (das Fenster des 2. Bildes wird um den ganzzahligen Betrag versetzt). Ausreißer zwischen den Stufen zu entfernen und aufzufüllen ist Absicht —— wird ein falscher Vektor unverändert für die Vorhersage verwendet, bleibt dieses Fenster auch in der nächsten Stufe falsch und festgefahren.</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>windows: 大きい順の窓列。各段は前段の<b>倍数関係でなくてよい</b>が、</p>
-<p>格子が変わるので予測は最近傍で載せ替える。</p>
-<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
-<p>outlier_threshold: 段間の正規化中央値検定の閾値。<code style="color:#22d3bf">None</code> で無効。</p>
+<p>a, b: Bildpaar.</p>
+<p>windows: Fensterfolge in absteigender Größe. Jede Stufe <b>muss kein Vielfaches</b> der vorigen sein,</p>
+<p>da sich aber das Gitter ändert, wird die Vorhersage per nächstem Nachbarn übertragen.</p>
+<p>overlap / peak / window_func: wie <code style="color:#22d3bf">piv_cross_correlate</code>.</p>
+<p>outlier_threshold: Schwelle des normierten Median-Tests zwischen den Stufen. <code style="color:#22d3bf">None</code> deaktiviert ihn.</p>
 <p>Returns:</p>
-<p>最終段の <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> に各段の窓の大きさ。</p>
+<p><code style="color:#22d3bf">(flow, info)</code> der letzten Stufe. <code style="color:#22d3bf">info[&quot;passes&quot;]</code> enthält die Fenstergröße jeder Stufe.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">Leitfaden zur Familie piv_displacement</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

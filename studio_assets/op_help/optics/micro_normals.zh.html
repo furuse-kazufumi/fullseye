@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把加工痕迹本身<b>刻进法线</b>(车削进给纹、滚花的凸脊)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>normals: (H, W, 3) の法線マップ。kind / angle_deg / center: <code style="color:#22d3bf">tangent_field</code> と同じ。</p>
-<p>pitch_px: 痕の間隔 [px]。depth: 傾ける強さ(0 で無加工)。</p>
-<p>返り値: 摂動後の単位法線マップ。背景(長さ 0)はそのまま 0。</p>
-<p><code style="color:#22d3bf">random</code> は方向を持たないので何もしない(そちらは <code style="color:#22d3bf">blast_normals</code>)。痕は<b>筋に直交する向き</b>へ傾ける ―― 筋に沿って傾けても筋にならない。</p>
+<p>normals：(H, W, 3) 的法线贴图。kind / angle_deg / center：与 <code style="color:#22d3bf">tangent_field</code> 相同。</p>
+<p>pitch_px：痕迹间隔 [px]。depth：倾斜强度(0 为未加工)。</p>
+<p>返回值：扰动后的单位法线贴图。背景(长度 0)保持为 0。</p>
+<p><code style="color:#22d3bf">random</code> 没有方向，所以什么也不做(那种情况用 <code style="color:#22d3bf">blast_normals</code>)。痕迹朝<b>与纹路正交的方向</b>倾斜 ―― 沿纹路倾斜不会形成纹路。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

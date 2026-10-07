@@ -11,10 +11,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Pillow 的平滑滤镜（增强版）。使用 <code style="color:#22d3bf">PIL.ImageFilter.SMOOTH_MORE</code> 的固定卷积核，比 <code style="color:#22d3bf">SMOOTH</code> 模糊得更强。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>a, b は未使用（固定カーネル）。</p>
-<p>カーネルは 5x5 の重み付き平均（中心 44、その 8 近傍が 5、最外周 16 画素が1、合計 100 で割る）。中心の重みが大きいので同じ 5x5 の一様平均よりぼけは弱く、インパルスは中心 44% + 隣接 8 画素 5% ずつに広がる程度（実測: 255 のインパルス → 中心 112、隣接 13、外周 0）。3x3 の <code style="color:#22d3bf">SMOOTH</code>（中心 5、近傍 1、合計 13）よりは広く効く。</p>
-<p>入力は [0,1] に clip して <code style="color:#22d3bf">*255</code> の切り捨てで 8 ビット L 画像にし、出力を <code style="color:#22d3bf">/255</code> で戻す（1/255 の量子化が入る）。画像の最外周 2 画素はPillow がフィルタせず入力値のまま。0 サイズの画像は ValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ぼかし量を可変にしたいなら <code style="color:#22d3bf">gaussian</code> や <code style="color:#22d3bf">median</code> を使う。エッジ検出（<code style="color:#22d3bf">xpil_contour</code> /<code style="color:#22d3bf">xpil_find_edges</code>）や <code style="color:#22d3bf">threshold</code> の前のノイズ落としに。</p>
+<p>a、b 未使用（固定核）。</p>
+<p>核为 5x5 的加权平均（中心 44，其 8 邻域为 5，最外周 16 个像素为 1，除以总和 100）。由于中心权重大，模糊比同为 5x5 的均匀平均弱，脉冲只扩散为中心 44% + 相邻 8 像素各 5% 左右（实测：255 的脉冲 → 中心 112，相邻 13，外周 0）。作用范围比 3x3 的 <code style="color:#22d3bf">SMOOTH</code>（中心 5，邻域 1，总和 13）更广。</p>
+<p>输入先 clip 到 [0,1]，再按 <code style="color:#22d3bf">*255</code> 截断转为 8 位 L 图像，输出用 <code style="color:#22d3bf">/255</code> 还原（会引入 1/255 的量化）。图像最外周 2 个像素 Pillow 不做滤波，保持输入值。0 尺寸的图像以 ValueError 拒绝，并 fail-soft 地退回为输入的裁剪版（记入台账）。若想让模糊量可变，请使用 <code style="color:#22d3bf">gaussian</code> 或 <code style="color:#22d3bf">median</code>。用于边缘检测（<code style="color:#22d3bf">xpil_contour</code> /<code style="color:#22d3bf">xpil_find_edges</code>）或 <code style="color:#22d3bf">threshold</code> 之前的去噪。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

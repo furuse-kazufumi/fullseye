@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entfernung kosmischer Strahlen aus einem Einzelbild (Laplace-Schärfe).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) の考え方 —— 宇宙線は<b>星より鋭い</b>。星は PSF でぼけているので必ず数画素にまたがるが、宇宙線は光学系を通っていないので 1〜数画素で立ち上がる。そこで</p>
-<p style="margin:2px 0 2px 12px">1. ラプラシアン <code style="color:#22d3bf">L</code> の正の成分を雑音で規格化した有意度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> を作り、</p>
-<p style="margin:2px 0 2px 12px">2. 微細構造像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> と比べて <code style="color:#22d3bf">L / F</code> が <code style="color:#22d3bf">f_lim</code> を超えるものだけを宇宙線とする。</p>
-<p>2 番目の条件が無いと<b>星の中心が必ず宇宙線に見える</b>(星も局所的には尖っている)。<code style="color:#22d3bf">f_lim</code> はその境目で、原論文の推奨は 2.0。</p>
-<p><code style="color:#22d3bf">iters</code> を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。置換は <code style="color:#22d3bf">replace_box</code> の窓での<b>非汚染画素の中央値</b>。</p>
+<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001), die Idee —— kosmische Strahlung ist <b>schärfer als Sterne</b>. Sterne sind durch die PSF verschmiert und erstrecken sich daher stets über mehrere Pixel, Treffer kosmischer Strahlung dagegen durchlaufen die Optik nicht und steigen innerhalb von 1 bis wenigen Pixeln an. Deshalb</p>
+<p style="margin:2px 0 2px 12px">1. wird die Signifikanz <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> gebildet, der positive Anteil des Laplace-Operators <code style="color:#22d3bf">L</code> normiert auf das Rauschen, und</p>
+<p style="margin:2px 0 2px 12px">2. mit dem Feinstrukturbild <code style="color:#22d3bf">F = median3 - median7(median3)</code> verglichen; nur wo <code style="color:#22d3bf">L / F</code> <code style="color:#22d3bf">f_lim</code> übersteigt, gilt es als kosmische Strahlung.</p>
+<p>Ohne die 2. Bedingung <b>sieht das Zentrum eines Sterns stets wie kosmische Strahlung aus</b> (auch Sterne sind lokal spitz). <code style="color:#22d3bf">f_lim</code> ist diese Grenze; das Originalpaper empfiehlt 2.0.</p>
+<p>Ein größeres <code style="color:#22d3bf">iters</code> wiederholt Entfernen → Neumessen (wenn die Flügel großer Treffer übrig bleiben). Ersetzt wird durch den <b>Median der nicht kontaminierten Pixel</b> im Fenster <code style="color:#22d3bf">replace_box</code>.</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64、宇宙線画素を置換した像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *sigma* が非正 / *f_lim* が非正 / *replace_box* が 3 未満または偶数の場合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64, Bild mit ersetzten Pixeln kosmischer Strahlung.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool, <code style="color:#22d3bf">True</code> = als kosmische Strahlung beurteiltes Pixel.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: wenn nicht 2-D / nicht-endliche Werte enthalten / *sigma* nicht positiv / *f_lim* nicht positiv / *replace_box* kleiner als 3 oder gerade ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

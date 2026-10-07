@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Förstner 연산자에 의한 코너 강도 맵(<code style="color:#22d3bf">skimage.feature.corner_foerstner</code>의 가중치 <code style="color:#22d3bf">w</code>와 로버스트 형상 지표 <code style="color:#22d3bf">q</code>의 곱, NaN은 0으로 치환). 오차 타원의 크기(w)와 원형도(q)를 조합해 점 특징다움을 평가한다. HALCON의 <code style="color:#22d3bf">points_foerstner</code>(Detect points of interest using the Förstner operator.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が勾配計算のガウス窓シグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐自体が呼べない(<code style="color:#22d3bf">_HAS_SK</code> ガード)。</p>
+<p><code style="color:#22d3bf">a</code>가 기울기 계산의 가우스 창 시그마를 0.5~2.5 범위에서 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. skimage가 없는 환경에서는 이 분기 자체를 호출할 수 없다(<code style="color:#22d3bf">_HAS_SK</code> 가드).</p>
 <p><b>값의 비교 가능성(실측)</b>: 출력을 <b>그 이미지 자신의 최댓값으로 정규화</b>한다(출력 최댓값이 항상 1.0이고, 입력을 상수배해도 출력이 바뀌지 않는다). 따라서 <b>이미지 사이에서 값을 비교할 수 없다</b> —— 같은 세기의 특징이라도 그 이미지에서 가장 강한 특징이 무엇인지에 따라 값이 달라지며, 약한 특징만 있는 이미지에서는 잡음이 1.0까지 올라간다. 이미지 간 비교가 필요하면 공통 기준으로 다시 나눌 것.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

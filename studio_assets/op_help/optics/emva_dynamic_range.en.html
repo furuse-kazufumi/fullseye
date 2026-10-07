@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_dynamic_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dynamic range DR = μ_p.sat / μ_p.min (Eq. 28) as a ratio, in dB (20 log10) and in bits (log2).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: どちらかが正でない / μ_p.sat ≤ μ_p.min。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: either one not positive / μ_p.sat ≤ μ_p.min.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

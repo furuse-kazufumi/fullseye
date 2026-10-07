@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import surfacelib; surfacelib.metallic_flake_normals(shape, density=0.06, size_px=2.0, tilt=0.35, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;metallic_flake_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>메탈릭 도장의 플레이크(알루미늄 조각) 법선장을 만듭니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>shape: (H, W)。density: 面積あたりのフレーク率(0–1)。size_px: フレークの大きさ。</p>
-<p>tilt: 傾きの強さ(0–1)。seed: 乱数種。</p>
-<p>返り値: (H, W, 3) の単位法線場(フレークの無い所は (0,0,1))。上塗りの下に置くと <b>粒がキラつく</b>。density を上げると粒の数がそのまま増える(テストで確認)。</p>
+<p>shape: (H, W). density: 면적당 플레이크 비율(0–1). size_px: 플레이크의 크기.</p>
+<p>tilt: 기울기의 강도(0–1). seed: 난수 시드.</p>
+<p>반환값: (H, W, 3)의 단위 법선장(플레이크가 없는 곳은 (0,0,1)). 상도 아래에 두면 <b>알갱이가 반짝인다</b>. density를 올리면 알갱이의 수가 그대로 늘어난다(테스트로 확인).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

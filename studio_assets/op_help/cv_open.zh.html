@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度形态学开运算（opening，OpenCV 实现）。先腐蚀后膨胀，消除比结构元素更小的明亮突起和孤立点。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)に相当。実装は <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code>、楕円形の構造要素 se は<code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>、<code style="color:#22d3bf">k=3+2*int(a*3)</code> —— a は構造要素のサイズを 3〜9 に振る。b は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)。实现为 <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code>，椭圆形结构元素 se 为 <code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>，<code style="color:#22d3bf">k=3+2*int(a*3)</code> —— a 将结构元素尺寸在 3~9 之间调节。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

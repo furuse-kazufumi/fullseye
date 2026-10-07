@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;blast_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Legt die <b>richtungslose Mikrorauheit</b> von Kugelstrahlen / Mattierung auf die Normalen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>grain: 傾きの強さ(0–1 程度)。cell_px: 粒の大きさ [px] (大きいほど粗い梨地)。</p>
-<p>返り値: 摂動後の単位法線マップ。方向統計を持たないので、ハイライトは伸びずに<b>広がる</b> ―― これがヘアラインとの見分けどころ。</p>
+<p>grain: Stärke der Neigung (etwa 0–1). cell_px: Korngröße [px] (größer = gröbere satinierte Oberfläche).</p>
+<p>Rückgabewert: gestörte Einheitsnormalenkarte. Ohne Richtungsstatistik wird das Glanzlicht nicht gestreckt, sondern <b>aufgeweitet</b> ―― daran unterscheidet man es vom Haarlinienschliff.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

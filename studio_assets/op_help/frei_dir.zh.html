@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用 Frei-Chen 型核的边缘方向（角度）图。由水平核 <code style="color:#22d3bf">_FREI[0]</code>（行/纵向梯度）与垂直核 <code style="color:#22d3bf">_FREI[1]</code>（列/横向梯度）的卷积响应计算 <code style="color:#22d3bf">arctan2(gy, gx)</code>，并按照与 <code style="color:#22d3bf">sobel_dir</code>/<code style="color:#22d3bf">prewitt_dir</code> 相同的约定映射到 [0,1]（0/1 对应 -180°，0.5 对应 0°）。a、b 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">frei_dir</code>（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は <code style="color:#22d3bf">frei_amp</code> 側が担当する。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">frei_dir</code>（用 Frei-Chen 算子检测边缘振幅与方向的运算）中方向分量的近似。振幅由 <code style="color:#22d3bf">frei_amp</code> 负责。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

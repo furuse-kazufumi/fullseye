@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code> or call <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Look up a metal&#x27;s complex refractive index (n, k) by wavelength (visible range, linear interpolation).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot;(<code style="color:#22d3bf">METALS</code>)。</p>
-<p>wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。</p>
-<p>返り値: (n, k) の 2 要素タプル(入力と同形の配列)。出典は表の定義(<code style="color:#22d3bf">_METAL_NK</code>)を参照 — 5 点の粗い表であることを隠さない。</p>
+<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; (<code style="color:#22d3bf">METALS</code>).</p>
+<p>wavelength_nm: scalar or array [nm]. Outside the table, clamped to the end values (no extrapolation).</p>
+<p>Returns: 2-element tuple (n, k) (arrays of the same shape as the input). For sources see the table definition (<code style="color:#22d3bf">_METAL_NK</code>) — it does not hide that this is a coarse 5-point table.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

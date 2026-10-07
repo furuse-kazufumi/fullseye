@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高斯拉普拉斯（Laplacian of Gaussian, LoG）滤波器。以 σ = 0.5+2.5a 的高斯核取拉普拉斯，并以 signed01（将带符号的值映射到 [0,1]，0.5 表示零响应）归一化。b 未使用。由于圆形点状图案（点）会因高斯核的各向同性而产生强烈的 LoG 响应，因此可用于增强圆形点。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">dots_image</code>（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">dots_image</code>（强调图像中圆形点的运算）的近似，不使用专用的点检测核，而以通用的 LoG 滤波器代替。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

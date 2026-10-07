@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Creates an image pair with a known displacement field. Returns <code style="color:#22d3bf">(image_a, image_b, truth)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
+<p><b>The particles are moved and then the 2nd image is drawn</b> (the 1st image is not warped by interpolation). Built by interpolation, the smoothing of the interpolation would produce &quot;a picture that PIV hits easily&quot;, and you would be measuring your own implementation on input that favours it.</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 変位の与え方。次のいずれか。</p>
-<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 位置に依存する場。引数は粒子の連続座標の配列。</p>
-<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
-<p>noise_sigma: 2 枚それぞれに独立に足す加法ガウス雑音の標準偏差。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>.</p>
+<p>displacement: how the displacement is given. One of the following.</p>
+<p style="margin:2px 0 2px 12px">• a sequence of length 2 —— uniform translation <code style="color:#22d3bf">(dy, dx)</code> [px].</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— a position-dependent field. The arguments are arrays of the particles&#x27; continuous coordinates.</p>
+<p>density / diameter_px / seed / intensity / background: same as <code style="color:#22d3bf">piv_synth_particles</code>.</p>
+<p>noise_sigma: standard deviation of additive Gaussian noise added independently to each of the 2 images.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は<b>画素ごと</b>の</p>
-<p>真の変位で、窓の格子に落とすには <code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
+<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>. <code style="color:#22d3bf">truth</code> is the <b>per-pixel</b></p>
+<p>true displacement; to bring it onto the window grid use <code style="color:#22d3bf">piv_sample_at_windows</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

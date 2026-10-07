@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.grating_wavelengths(pitch_um, sin_in, sin_out, orders=(1, 2, 3)) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;grating_wavelengths&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>회절격자 식 d(sinθ_out − sinθ_in) = mλ 를 λ 에 대해 풉니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>pitch_um: 溝間隔 d [µm]。CD は 1.6、DVD は 0.74(公開規格値)。sin_in / sin_out: 入射 / 出射方向の格子面内成分の sin(配列可、ブロードキャスト)。</p>
-<p>orders:   次数 m のシーケンス(0 は無限大になるので除外する)。</p>
-<p>返り値: (..., len(orders)) の波長 [nm]。可視域外の解もそのまま返す(呼び手が等色関数に通せば自動的に 0 になる — ここで黙って切ると「なぜ色が出ないか」が消える)。</p>
+<p>pitch_um: 홈 간격 d [µm]. CD는 1.6, DVD는 0.74(공개 규격값). sin_in / sin_out: 입사 / 출사 방향의 격자면 내 성분의 sin(배열 가능, 브로드캐스트).</p>
+<p>orders:   차수 m의 시퀀스(0은 무한대가 되므로 제외한다).</p>
+<p>반환값: (..., len(orders))의 파장 [nm]. 가시역 밖의 해도 그대로 반환한다(호출자가등색 함수에 통과시키면 자동으로 0이 된다 — 여기서 조용히 자르면 &quot;왜 색이 나오지 않는가&quot;가 사라진다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>참값과의 차이의 내역. <b>편향과 산포를 나누어</b> 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>어느 한쪽만 내면, 계통적으로 어긋나 있는 구현이 &quot;오차 0.3 px&quot;로서통과해 버린다. 치우침(평균 오차)과 흩어짐(표준편차)은 서로 다른 원인을 가리킨다.</p>
 <p>Args:</p>
-<p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>truth: 同じ格子の真値 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> の返り)。</p>
-<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
-<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>flow: 추정 <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>truth: 같은 격자의 참값 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code>의 반환).</p>
+<p>trim: 바깥 둘레에서 제외하는 격자 수. 창이 이미지의 가장자리에 걸리면 상관이 떨어지므로,</p>
+<p>기본값으로 1열만큼 떨어뜨린다. 0이면 전 격자.</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">bias_dy</code> / <code style="color:#22d3bf">bias_dx</code> / <code style="color:#22d3bf">std_dy</code> / <code style="color:#22d3bf">std_dx</code> / <code style="color:#22d3bf">rms</code></p>
-<p>(2 成分合わせた二乗平均平方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
-<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>。</p>
+<p>(2성분을 합친 제곱평균제곱근) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
+<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

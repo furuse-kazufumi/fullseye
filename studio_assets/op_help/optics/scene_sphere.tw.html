@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.scene_sphere(center_mm, radius_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;scene_sphere&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>球體零件。<code style="color:#22d3bf">center_mm</code> 為 (x, y, z) [mm],<code style="color:#22d3bf">radius_mm</code> &gt; 0。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center_mm</code>: 長さ 3 の有限値 [mm]。右手系、z が上(<code style="color:#22d3bf">scene_plane</code> と同じ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius_mm</code>: 正の有限値 [mm]。0 や負、NaN は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">material</code>: <code style="color:#22d3bf">scene_material</code> の結果。省略時は lambert、albedo 0.6。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;kind&quot;: &quot;sphere&quot;, &quot;c&quot;: (3,) 配列, &quot;r&quot;: float, &quot;material&quot;}</code> の dict。</p>
-<p>光線との交差は 2 次方程式の閉形式で、外から当たれば手前の交点、内側から(屈折の射出側)なら奥の交点を取る。単体で置くほか、<code style="color:#22d3bf">scene_difference</code> の <code style="color:#22d3bf">solid</code> / <code style="color:#22d3bf">cavity</code> としても使える(球の空洞、球面座ぐり)。<code style="color:#22d3bf">optscene_mask</code> の <code style="color:#22d3bf">index</code> はこの dict をシーン list に入れた位置。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center_mm</code>：長度 3 的有限值 [mm]。右手系，z 朝上(與 <code style="color:#22d3bf">scene_plane</code> 相同)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius_mm</code>：正的有限值 [mm]。0、負值、NaN 為 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">material</code>：<code style="color:#22d3bf">scene_material</code> 的結果。省略時為 lambert、albedo 0.6。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值：<code style="color:#22d3bf">{&quot;kind&quot;: &quot;sphere&quot;, &quot;c&quot;: (3,) 陣列, &quot;r&quot;: float, &quot;material&quot;}</code> 的 dict。</p>
+<p>與光線的交點以 2 次方程式的閉合式求得，從外側射中取近處的交點，從內側(折射的射出側)則取遠處的交點。除單獨放置外，也可作為 <code style="color:#22d3bf">scene_difference</code> 的 <code style="color:#22d3bf">solid</code> / <code style="color:#22d3bf">cavity</code> 使用(球形空腔、球面沉頭孔)。<code style="color:#22d3bf">optscene_mask</code> 的 <code style="color:#22d3bf">index</code> 是此 dict 放入場景 list 的位置。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

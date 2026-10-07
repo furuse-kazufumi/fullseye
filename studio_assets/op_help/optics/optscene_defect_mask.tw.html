@@ -5,8 +5,7 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.optscene_defect_mask.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">optscene.optscene_defect_mask</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>缺陷像素的真值遮罩</b> (H, W)。訓練與評測的標籤用這個。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">index</code> を省くとシーン中のすべての欠陥を合成する。画素完全で、レンダリングと同じ交差計算から出るので、検出結果との IoU をそのまま測れる。欠陥が <b>その照明で見えるかどうかとは無関係</b>に真値を返す ―― 見えないのに正解があるのが外観検査の難しさで、そこを隠すと「検出ゼロ = 頑健」と誤読される。</p>
+<p>省略 <code style="color:#22d3bf">index</code> 則合成場景中的所有缺陷。像素精確，且出自與算繪相同的求交計算，所以可以直接量測與檢測結果的 IoU。缺陷 <b>無論在該照明下是否可見</b>都回傳真值 ―― 看不見卻有正確答案，正是外觀檢測的難點，掩蓋這一點就會被誤讀為「檢出為零 = 穩健」。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

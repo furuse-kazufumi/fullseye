@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過 sigma 濾波器實現的非線性平滑。僅對與中心像素值接近(<code style="color:#22d3bf">|x-mean|&lt;σ</code>)的鄰域像素取平均 —— 在邊緣附近,對側的階調不會混入平均值,因此比均值濾波更能在去雜訊的同時保留邊緣。相當於 HALCON 的 <code style="color:#22d3bf">sigma_image</code>(Non-linear smoothing with the sigma filter.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る(内部の平均計算にも使う)。<code style="color:#22d3bf">b</code> が許容帯域(シグマ、0.05〜0.4)を振る。両方が使われる。近傍がすべて帯域外の画素は元の値のまま残る。</p>
+<p><code style="color:#22d3bf">a</code> 將視窗邊長在 <code style="color:#22d3bf">{3,5,7,9}</code> 中調整(也用於內部的平均值計算)。<code style="color:#22d3bf">b</code> 調整容許帶寬(sigma，0.05〜0.4)。兩者都會使用。鄰域全部落在帶寬之外的像素保持原值不變。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

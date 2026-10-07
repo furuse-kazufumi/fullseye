@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import optscene; optscene.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;scene_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平行於 z 軸的有限圓柱(帶端面)。<b>加工紋理真正會附著的形狀</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>旋盤の同心目は端面(円盤)に、ヘアラインとローレットは側面に出る ―― 球にヘアラインを掛けるのは現実には珍しい(2026-09-05 のユーザー指摘)。薄くすれば円盤、厚くすれば軸物、<code style="color:#22d3bf">radius_mm</code> を大きく取れば円板ステージにもなる。</p>
+<p>車床的同心紋出現在端面(圓盤)上，髮絲紋和滾花出現在側面 ―― 給球施加髮絲紋在現實中很少見(2026-09-05 使用者指出)。做薄就是圓盤，做厚就是軸類零件，將 <code style="color:#22d3bf">radius_mm</code> 取大也能當作圓盤載台。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

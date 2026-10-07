@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import metalfinish; metalfinish.blast_normals(normals, grain=0.03, cell_px=3.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;blast_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lay the <b>non-directional micro-roughness</b> of bead blasting / a matte finish onto the normals.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>grain: 傾きの強さ(0–1 程度)。cell_px: 粒の大きさ [px] (大きいほど粗い梨地)。</p>
-<p>返り値: 摂動後の単位法線マップ。方向統計を持たないので、ハイライトは伸びずに<b>広がる</b> ―― これがヘアラインとの見分けどころ。</p>
+<p>grain: tilt strength (about 0–1). cell_px: grain size [px] (larger = coarser satin finish).</p>
+<p>Returns: perturbed unit normal map. It has no directional statistics, so the highlight does not stretch but <b>spreads</b> ―― this is how to tell it from a hairline.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

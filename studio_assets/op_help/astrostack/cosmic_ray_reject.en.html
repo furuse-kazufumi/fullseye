@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Cosmic-ray removal from a single frame (Laplacian sharpness).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) の考え方 —— 宇宙線は<b>星より鋭い</b>。星は PSF でぼけているので必ず数画素にまたがるが、宇宙線は光学系を通っていないので 1〜数画素で立ち上がる。そこで</p>
-<p style="margin:2px 0 2px 12px">1. ラプラシアン <code style="color:#22d3bf">L</code> の正の成分を雑音で規格化した有意度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> を作り、</p>
-<p style="margin:2px 0 2px 12px">2. 微細構造像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> と比べて <code style="color:#22d3bf">L / F</code> が <code style="color:#22d3bf">f_lim</code> を超えるものだけを宇宙線とする。</p>
-<p>2 番目の条件が無いと<b>星の中心が必ず宇宙線に見える</b>(星も局所的には尖っている)。<code style="color:#22d3bf">f_lim</code> はその境目で、原論文の推奨は 2.0。</p>
-<p><code style="color:#22d3bf">iters</code> を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。置換は <code style="color:#22d3bf">replace_box</code> の窓での<b>非汚染画素の中央値</b>。</p>
+<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001), the idea being —— cosmic rays are <b>sharper than stars</b>. Stars are blurred by the PSF and therefore always span several pixels, whereas cosmic rays do not pass through the optics and rise within 1 to a few pixels. Hence</p>
+<p style="margin:2px 0 2px 12px">1. build the significance <code style="color:#22d3bf">S = L / (2 sigma_noise)</code>, the positive part of the Laplacian <code style="color:#22d3bf">L</code> normalised by the noise, and</p>
+<p style="margin:2px 0 2px 12px">2. compare it with the fine-structure image <code style="color:#22d3bf">F = median3 - median7(median3)</code>; only where <code style="color:#22d3bf">L / F</code> exceeds <code style="color:#22d3bf">f_lim</code> is it taken as a cosmic ray.</p>
+<p>Without the 2nd condition, <b>the centre of a star always looks like a cosmic ray</b> (stars are locally peaked too). <code style="color:#22d3bf">f_lim</code> is that boundary; the original paper recommends 2.0.</p>
+<p>Increasing <code style="color:#22d3bf">iters</code> repeats removal → re-measurement (when the wings of large hits remain). Replacement uses the <b>median of uncontaminated pixels</b> in a <code style="color:#22d3bf">replace_box</code> window.</p>
 <p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64、宇宙線画素を置換した像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *sigma* が非正 / *f_lim* が非正 / *replace_box* が 3 未満または偶数の場合。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64, the image with cosmic-ray pixels replaced.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool, <code style="color:#22d3bf">True</code> = pixel judged to be a cosmic ray.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: if not 2-D / contains non-finite values / *sigma* is non-positive / *f_lim* is non-positive / *replace_box* is less than 3 or even.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

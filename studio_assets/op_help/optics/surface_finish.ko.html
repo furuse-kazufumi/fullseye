@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import optscene; optscene.surface_finish(primitive: &#x27;dict&#x27;, kind: &#x27;str&#x27; = &#x27;turned&#x27;, pitch_um: &#x27;float&#x27; = 120.0, depth_um: &#x27;float&#x27; = 1.5, uv_size_mm=(20.0, 20.0), seed: &#x27;int&#x27; = 0, shape=(384, 384)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;surface_finish&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>부품 면에 <b>가공 결</b>을 새깁니다(선반 자국·헤어라인·널링·무광 블라스트·연삭 자국).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>欠陥ではない ―― 良品にも必ずあるので <code style="color:#22d3bf">optscene_defect_mask</code> には出ない。それでも要るのは、加工目が<b>検査をいちばん難しくしている当人</b>だから。旋盤目と細い傷は暗視野で同じように光るので、加工目の無いつるつるの面で学習させたモデルは実機で加工目を全部欠陥と呼ぶ。</p>
-<p><code style="color:#22d3bf">kind</code>: turned(同心円)/ hairline(一方向)/ crosshatch(交差)/ blasted(梨地)/ ground(研削)/ none。<code style="color:#22d3bf">pitch_um</code> は目のピッチ、<code style="color:#22d3bf">depth_um</code> は谷の深さ。どちらも実際の加工の値をそのまま入れる(旋盤の送りは 50-300 µm、Ra は 0.2-3 µm)。</p>
-<p>返り値は加工目を付けた<b>新しい</b>プリミティブ(元は書き換えない)。</p>
+<p>결함이 아니다 ―― 양품에도 반드시 있으므로 <code style="color:#22d3bf">optscene_defect_mask</code>에는 나오지 않는다. 그래도 필요한 것은, 가공 자국이 <b>검사를 가장 어렵게 만드는 장본인</b>이기 때문. 선반 자국과가는 흠집은 암시야에서 똑같이 빛나므로, 가공 자국이 없는 매끈한 면으로 학습시킨모델은 실기에서 가공 자국을 전부 결함이라고 부른다.</p>
+<p><code style="color:#22d3bf">kind</code>: turned(동심원) / hairline(한 방향) / crosshatch(교차) / blasted(새틴 마감) / ground(연삭) / none. <code style="color:#22d3bf">pitch_um</code>은 자국의 피치, <code style="color:#22d3bf">depth_um</code>은 골의 깊이. 둘 다 실제 가공의 값을 그대로 넣는다(선반의 이송은 50-300 µm, Ra는 0.2-3 µm).</p>
+<p>반환값은 가공 자국을 붙인 <b>새</b> 프리미티브(원본은 고쳐 쓰지 않는다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

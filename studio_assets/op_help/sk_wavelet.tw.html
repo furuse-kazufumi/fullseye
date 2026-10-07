@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過小波轉換進行去噪。將影像分解至小波域，以 BayesShrink 準則的閾值處理去除較小(=可視為雜訊)的係數，然後進行逆轉換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> をそのまま <code style="color:#22d3bf">[0,1]</code> に clip したもので、しきい値やウェーブレット基底はすべて skimage の既定値まかせ —— a, b は未使用(調整点が無い、最も枯れた設定でとりあえずノイズを落としたい時用)。</p>
+<p>HALCON 中沒有直接對應的運算子。實作為將 <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> 直接 clip 到 <code style="color:#22d3bf">[0,1]</code>，閾值和小波基底全部交給 skimage 的預設值 —— a、b 未使用(沒有調整點，適用於只想先用最成熟的設定去除雜訊的場合)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

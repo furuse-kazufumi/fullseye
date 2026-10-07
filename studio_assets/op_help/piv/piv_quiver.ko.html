@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화살표 그림(MATLAB의 <code style="color:#22d3bf">quiver</code>). 반환은 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p><code style="color:#22d3bf">spacing</code> 격자마다 1개, 시점을 격자점에 두고 끝을 <code style="color:#22d3bf">시점 + scale * v</code> 로 긋는다. <code style="color:#22d3bf">scale</code>을 생략하면 <b>가장 긴 화살표가 간격의 0.9배</b>가 된다(MATLAB의자동 배율과 같은 사고방식으로, 이웃 화살표와 겹치지 않는다). <b>배율은 그림마다 바뀌므로</b>, 나란히 비교하는 그림에서는 <code style="color:#22d3bf">scale</code>을 고정한다. 길이가 1 화소에 못 미치는화살표는 그리지 않는다(방향이 없는 점은 표시로 읽힌다).</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
-<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
-<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
-<p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
-<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
-<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
-<p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
-<p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>).</p>
+<p>spacing: 화살표의 간격 [격자]. <code style="color:#22d3bf">None</code>이면 긴 변에 약 20개.</p>
+<p>scale: 화살표의 길이 = <code style="color:#22d3bf">scale * 속력</code> [격자].</p>
+<p>upsample: 출력의 배율(화살촉을 그릴 수 있는 크기로 한다).</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> 또는 <code style="color:#22d3bf">(…, 3)</code>. <code style="color:#22d3bf">None</code>이면 흰색.</p>
+<p>색상도(<code style="color:#22d3bf">piv_flow_to_rgbimage</code>를 확대한 것)나 LIC를 깔 수 있다.</p>
+<p>color / width: 화살표의 색(palette의 역할 이름 또는 RGB)과 축의 굵기 [px].</p>
+<p>기본값은 검정에 가까운 먹색(색상도를 깔아도 읽을 수 있다).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64, 값 범위 [0, 1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

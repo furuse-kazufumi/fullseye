@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import matappear; matappear.thin_film_rgb(normals, view=(0.0, 0.0, 1.0), thickness_nm=350.0, n_film=1.33, n_sub=1.0, strength=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;thin_film_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>법선 맵 + 시선 → <b>박막 간섭의 색</b> (H, W, 3) 선형 sRGB.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>面が視線に対して寝ているほど膜内の光路が伸び、色が短波長側へ動く ―― シャボン玉や焼けたチタンの色が縁で変わるのはこれ。角度依存は cosθ = |n·v| から出す。</p>
-<p>normals / view: (H,W,3) 法線マップ / 面から視点への方向。thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code> と同じ。</p>
-<p>strength: 全体の強さ。</p>
+<p>면이 시선에 대해 누울수록 막 안의 광로가 늘어나고, 색이 단파장 쪽으로 움직인다 ―― 비눗방울이나달군 티타늄의 색이 가장자리에서 바뀌는 것은 이 때문이다. 각도 의존성은 cosθ = |n·v|로부터 낸다.</p>
+<p>normals / view: (H,W,3) 법선 맵 / 면에서 시점으로의 방향. thickness_nm / n_film / n_sub: <code style="color:#22d3bf">thin_film_reflectance</code>와 같다.</p>
+<p>strength: 전체 강도.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

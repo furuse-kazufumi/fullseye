@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code>(要直接调用实现,<code style="color:#22d3bf">import astrostack; astrostack.noise_sigma(image, method=&#x27;mad&#x27;, kappa=3.0, iters=5)</code>;从台账取用则 <code style="color:#22d3bf">opsastrostack.get(&quot;noise_sigma&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>稳健估计背景噪声 sigma(一个不被恒星污染的实数)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*method* <code style="color:#22d3bf">&quot;mad&quot;</code> は中央絶対偏差の <code style="color:#22d3bf">1.4826</code> 倍(正規分布のときに標準偏差と一致する定数)。<code style="color:#22d3bf">&quot;clip&quot;</code> は対称な κ-σ クリップを <code style="color:#22d3bf">iters</code> 回。星は上側だけの外れ値なので、素の <code style="color:#22d3bf">std</code> を使うと<b>星が明るいほど「雑音」が大きく</b>なる —— 128x128 に 40 星(フラックス 3e3〜4e4 e-)、真の背景 σ が <code style="color:#22d3bf">sqrt(100 + 36) = 11.662</code> のフレームでの実測: 素の <code style="color:#22d3bf">np.std</code> は <b>175.43(真値の 15.0 倍)</b>、<code style="color:#22d3bf">method=&quot;mad&quot;</code> は 13.804(+18.4 %)、<code style="color:#22d3bf">method=&quot;clip&quot;</code> は 12.349(+5.9 %)。MAD が 1 % で当たるのは星がまばらなときだけで、<b>混み合った視野では星の裾が背景に効く</b> —— そこまで要求するなら <code style="color:#22d3bf">&quot;clip&quot;</code> を選ぶこと。桁が違うのは <code style="color:#22d3bf">std</code> だけで、そこが要点。</p>
-<p><code style="color:#22d3bf">sqrt(N)</code> 則を絵にするとき図に載せる数値は、すべてこの op の返り。</p>
-<p>Returns <code style="color:#22d3bf">float</code>(*image* と同じ単位)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *method* が <code style="color:#22d3bf">NOISE_METHODS</code> にない場合。</p>
+<p>*method* <code style="color:#22d3bf">&quot;mad&quot;</code> 为中位数绝对偏差的 <code style="color:#22d3bf">1.4826</code> 倍(在正态分布时与标准差一致的常数)。<code style="color:#22d3bf">&quot;clip&quot;</code> 是对称的 κ-σ 裁剪重复 <code style="color:#22d3bf">iters</code> 次。星只是上侧的离群值，所以用原始的 <code style="color:#22d3bf">std</code> 时<b>星越亮“噪声”就越大</b> —— 在 128x128 中有 40 颗星(通量 3e3〜4e4 e-)、真实背景 σ 为 <code style="color:#22d3bf">sqrt(100 + 36) = 11.662</code> 的帧上实测：原始 <code style="color:#22d3bf">np.std</code> 为 <b>175.43(真值的 15.0 倍)</b>，<code style="color:#22d3bf">method=&quot;mad&quot;</code> 为 13.804(+18.4 %)，<code style="color:#22d3bf">method=&quot;clip&quot;</code> 为 12.349(+5.9 %)。MAD 只有在星稀疏时才能准到 1 %，<b>在拥挤的视场中星的翼部会影响背景</b> —— 若要求到那种程度，请选 <code style="color:#22d3bf">&quot;clip&quot;</code>。差一个数量级的只有 <code style="color:#22d3bf">std</code>，这正是要点。</p>
+<p>把 <code style="color:#22d3bf">sqrt(N)</code> 律画成图时，图上标注的数值全都是本 op 的返回值。</p>
+<p>Returns <code style="color:#22d3bf">float</code>(与 *image* 相同单位)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：不是 2-D / 含非有限值 / *method* 不在 <code style="color:#22d3bf">NOISE_METHODS</code> 中时。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

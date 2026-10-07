@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">points</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">glassmirror.refract_rays</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스넬 굴절의 벡터판. <b>광선마다 전반사를 판정</b>해 (방향, TIR 마스크) 를 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。n1 / n2: 入射側 / 透過側の屈折率。</p>
-<p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、マスクを True にする(NaN を返さない: 下流のレンダが黙って穴を開けるより、物理的に正しい「全反射した」方向を返す方が使える)。</p>
-<p>★ <code style="color:#22d3bf">match3d.refract</code> との違い: あちらは「1 本でも TIR ならバッチ全体が None」。画像サイズのバッチでは 1 画素の全反射で<b>全部が消える</b>ので、per-ray に直した。</p>
+<p>directions: (..., 3) 입사 방향(면을 향함). normals: (..., 3) 입사 측의 바깥 방향 법선. n1 / n2: 입사 측 / 투과 측의 굴절률.</p>
+<p>반환값: (refracted (...,3), tir (...,)) —— TIR 광선은 방향을 <b>경면 반사</b>로 채우고, 마스크를 True로 한다(NaN을 반환하지 않는다: 하류의 렌더러가 조용히 구멍을 뚫는 것보다, 물리적으로 올바른 &quot;전반사한&quot; 방향을 반환하는 편이 쓸모 있다).</p>
+<p>★ <code style="color:#22d3bf">match3d.refract</code>와의 차이: 그쪽은 &quot;1개라도 TIR이면 배치 전체가 None&quot;. 이미지 크기의 배치에서는 1화소의 전반사로 <b>전부가 사라지므로</b>, per-ray로 고쳤다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

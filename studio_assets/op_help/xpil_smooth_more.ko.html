@@ -11,10 +11,9 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Pillow의 평활화 필터(강한 버전). <code style="color:#22d3bf">PIL.ImageFilter.SMOOTH_MORE</code>의 고정 커널로 <code style="color:#22d3bf">SMOOTH</code>보다 강하게 흐리게 한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a, b は未使用（固定カーネル）。</p>
-<p>カーネルは 5x5 の重み付き平均（中心 44、その 8 近傍が 5、最外周 16 画素が1、合計 100 で割る）。中心の重みが大きいので同じ 5x5 の一様平均よりぼけは弱く、インパルスは中心 44% + 隣接 8 画素 5% ずつに広がる程度（実測: 255 のインパルス → 中心 112、隣接 13、外周 0）。3x3 の <code style="color:#22d3bf">SMOOTH</code>（中心 5、近傍 1、合計 13）よりは広く効く。</p>
-<p>入力は [0,1] に clip して <code style="color:#22d3bf">*255</code> の切り捨てで 8 ビット L 画像にし、出力を <code style="color:#22d3bf">/255</code> で戻す（1/255 の量子化が入る）。画像の最外周 2 画素はPillow がフィルタせず入力値のまま。0 サイズの画像は ValueError で拒否され、fail-soft で入力のクリップ版に落ちる（台帳に記録）。ぼかし量を可変にしたいなら <code style="color:#22d3bf">gaussian</code> や <code style="color:#22d3bf">median</code> を使う。エッジ検出（<code style="color:#22d3bf">xpil_contour</code> /<code style="color:#22d3bf">xpil_find_edges</code>）や <code style="color:#22d3bf">threshold</code> の前のノイズ落としに。</p>
+<p>a, b는 사용하지 않는다(고정 커널).</p>
+<p>커널은 5x5 가중 평균(중심 44, 그 8근방이 5, 최외곽 16화소가 1, 합계 100으로 나눔). 중심의 가중치가 크므로 같은 5x5의 균일 평균보다 블러가 약하며, 임펄스는 중심 44% + 인접 8화소에 5%씩 퍼지는 정도(실측: 255의 임펄스 → 중심 112, 인접 13, 외곽 0). 3x3의 <code style="color:#22d3bf">SMOOTH</code>(중심 5, 근방 1, 합계 13)보다는 넓게 작용한다.</p>
+<p>입력은 [0,1]로 clip하고 <code style="color:#22d3bf">*255</code>의 버림으로 8비트 L 영상으로 만들며, 출력을 <code style="color:#22d3bf">/255</code>로 되돌린다(1/255의 양자화가 들어간다). 영상의 최외곽 2화소는 Pillow가 필터링하지 않아 입력값 그대로. 0 크기의 영상은 ValueError로 거부되며, fail-soft로 입력의 클립판으로 떨어진다(대장에 기록). 블러 양을 가변으로 하고 싶다면 <code style="color:#22d3bf">gaussian</code>이나 <code style="color:#22d3bf">median</code>을 쓴다. 에지 검출(<code style="color:#22d3bf">xpil_contour</code> /<code style="color:#22d3bf">xpil_find_edges</code>)이나 <code style="color:#22d3bf">threshold</code> 전의 잡음 제거에.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成 1 张撒布了示踪粒子的图像。返回 <code style="color:#22d3bf">(image, positions)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
-<p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>粒子为高斯亮点(按 PIV 的惯例，把<b>标准差的 2 倍</b>而非 1/e^2 宽度称为直径 <code style="color:#22d3bf">diameter_px</code>)。位置是连续值，因此能生成带亚像素真值的图像。</p>
+<p><code style="color:#22d3bf">density</code> 是每像素的粒子数。PIV 的经验法则是<b>每个窗口 5-10 个</b> 为宜，32x32 窗口相当于 0.005-0.01。太少则相关峰立不起来，太多则粒子像重叠，个体对应丢失。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>density: 画素あたりの粒子数(&gt; 0)。</p>
-<p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
-<p>seed: 乱数種。</p>
-<p>intensity: 粒子の明るさの範囲 <code style="color:#22d3bf">(lo, hi)</code>。</p>
-<p>background: 一様な下駄。</p>
+<p>density: 每像素的粒子数(&gt; 0)。</p>
+<p>diameter_px: 粒子像的直径 [px] (&gt; 0)。</p>
+<p>seed: 随机种子。</p>
+<p>intensity: 粒子亮度的范围 <code style="color:#22d3bf">(lo, hi)</code>。</p>
+<p>background: 均匀的底值。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>。</p>
+<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) 的 (row, col))</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

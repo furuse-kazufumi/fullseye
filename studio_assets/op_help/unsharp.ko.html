@@ -14,9 +14,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>언샤프 마스크. ★출구에서 [0,1] 로 clip 합니다(2026-09-02).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v + k*(v - blur)</code> は定義上オーバーシュートする(実測 min=-0.1499 / max=+1.1499)。<code style="color:#22d3bf">_apply</code> は段間で同じ clip を掛けるので <b>パイプライン結果はビット不変</b>だが、<code style="color:#22d3bf">fullseye.apply</code> を単発で呼ぶ経路だけは生値が出ていて、<code style="color:#22d3bf">image</code> の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側(<code style="color:#22d3bf">accel._unsharp</code>)も同じ clip を持つ。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">v + k*(v - blur)</code>는 정의상 오버슈트한다(실측 min=-0.1499 / max=+1.1499). <code style="color:#22d3bf">_apply</code>는 단 사이에 같은 clip을 걸므로 <b>파이프라인 결과는비트 불변</b>이지만, <code style="color:#22d3bf">fullseye.apply</code>를 단독으로 호출하는 경로만은 원래 값이 나와서, <code style="color:#22d3bf">image</code>의 [0,1] 계약을 깬 채로 저장하면 검정/흰색으로 뭉개졌다. GPU 측(<code style="color:#22d3bf">accel._unsharp</code>)도 같은 clip을 가진다.</p>
+<p><b>가장자리 처리</b>: 가장자리 화소를 중복시켜 되접는다 (d c b a | a b c d, scipy의 기본값 <code style="color:#22d3bf">reflect</code>)(2026-09-16에 실측하여 기록).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

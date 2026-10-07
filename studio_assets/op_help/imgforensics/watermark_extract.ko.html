@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>워터마크의 <b>블라인드 추출</b>. bool 의 1-D(<code style="color:#22d3bf">phash</code> 어휘)를 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>同じ DWT / ブロック分割で中帯域係数の対の大小を読むだけ。原画像も鍵も要らない —— これは <b>秘匿ではなく完全性の印</b>であり、鍵が無いので <b>誰でも消せるし誰でも書ける</b>。所有権の主張には使えない。</p>
-<p>返りが <code style="color:#22d3bf">phash</code> 語彙なので、埋めたビット列との一致は <code style="color:#22d3bf">hash_distance</code> でそのまま数えられる(BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>)。語彙を合わせてあるのはそのため。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p>같은 DWT / 블록 분할로 중대역 계수 쌍의 대소를 읽을 뿐이다. 원 화상도 키도 필요 없다 —— 이것은 <b>비밀 유지가 아니라 완전성의 표시</b>이며, 키가 없으므로 <b>누구나 지울 수 있고누구나 쓸 수 있다</b>. 소유권 주장에는 쓸 수 없다.</p>
+<p>반환이 <code style="color:#22d3bf">phash</code> 어휘이므로, 삽입한 비트열과의 일치는 <code style="color:#22d3bf">hash_distance</code>로그대로 셀 수 있다(BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>). 어휘를 맞춰 둔 것은 그 때문이다.</p>
+<p><b>PyWavelets 필수</b>(<code style="color:#22d3bf">ImportError</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

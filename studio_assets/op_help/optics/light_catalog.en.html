@@ -4,9 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import optscene; optscene.light_catalog(maker: &#x27;str&#x27; = None, kind: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;light_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Data sheet of lights (keyed by &quot;maker model&quot;). Narrow it with <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">kind</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>照明は <b>OEM 供給が多く、同じ実体が別ブランドで売られる</b>ので、型番だけでは一意にならない。<code style="color:#22d3bf">oem_of</code> にたどれる元があれば入る。</p>
-<p>既定は一般形状だけで、ベンダ型番は入っていない ―― 配光・波長・実体寸法はデータシートにしかなく、推測で埋めると実測と誤解させるため。手元の機種は <code style="color:#22d3bf">register_light</code> で足す。</p>
+<p>Lighting is <b>often OEM-supplied, with the same product sold under different brands</b>, so a model number alone is not unique. If the original can be traced, it goes into <code style="color:#22d3bf">oem_of</code>.</p>
+<p>By default only generic shapes are included, no vendor model numbers ―― light distribution, wavelength and physical dimensions are only in datasheets, and filling them in by guesswork would suggest they are measured. Add the devices you have</p>
+<p>with <code style="color:#22d3bf">register_light</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

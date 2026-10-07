@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>극댓값(로컬 맥시멈)을 추출하는 비최대값 억제(non-maximum suppression). 창 내 최댓값과 일치하고, 임계값 <code style="color:#22d3bf">0.3+0.4b</code>를 초과하는 화소만 전경으로 남긴다. a가 창 크기를 3/5/7/9로 나눈다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">nonmax_suppression_amp</code>（エッジ振幅画像上で法線方向に非極大点を抑制し、稜線を 1 画素幅に絞る演算）とは異なり、この実装は方向を考慮しない単純な局所最大値判定で、エッジ法線方向のサブピクセル抑制は行わない近似。</p>
+<p>HALCON의 <code style="color:#22d3bf">nonmax_suppression_amp</code>(에지 진폭 영상 위에서 법선 방향으로 비극대점을 억제하여 능선을 1화소 폭으로 좁히는 연산)와 달리, 이 구현은 방향을 고려하지 않는 단순한 국소 최댓값 판정이며, 에지 법선 방향의 서브픽셀 억제는 하지 않는 근사다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

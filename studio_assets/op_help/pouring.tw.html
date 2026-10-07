@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過分水嶺法（watershed）進行區域分割的邊界擷取。將梯度影像（Sobel 振幅）視為地形，以暗區（<code style="color:#22d3bf">x &lt; 0.2+0.3a</code>）作為種子（標記）計算分水嶺，並用 <code style="color:#22d3bf">skimage.segmentation.find_boundaries</code> 將邊界作為前景回傳。b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">pouring</code>（水を注ぐように画素値の低い場所から領域を満たしていく古典的な pouring アルゴリズムで分割する演算）に相当する近似 —— アルゴリズムの詳細は異なるが、低輝度領域を起点に領域を広げるという発想は共通。<code style="color:#22d3bf">watersheds</code>/<code style="color:#22d3bf">watersheds_threshold</code> と実装を共有する。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">pouring</code>(以經典的 pouring 演算法進行分割的運算，像注水一樣從像素值低的地方開始填滿區域)的近似 —— 演算法細節不同，但以低輝度區域為起點擴展區域的思路相同。與 <code style="color:#22d3bf">watersheds</code>/<code style="color:#22d3bf">watersheds_threshold</code> 共用實作。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

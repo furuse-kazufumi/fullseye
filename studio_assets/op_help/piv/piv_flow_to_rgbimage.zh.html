@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_to_rgbimage(flow, scale=None)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_flow_to_rgbimage(flow, scale=None)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_to_rgbimage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>色相 = 方向、明度 = 速度的标准流场可视化。返回 <code style="color:#22d3bf">(h, w, 3)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> の 2 次元版(あちらは <code style="color:#22d3bf">(3, D, H, W)</code> の 3-D シーンフロー専用で、平面フローは形で弾かれる)。</p>
-<p><b>色相環の凡例を図の側で必ず一緒に焼くこと</b> —— 色の意味が書いていないフロー図は綺麗なだけで読めない。<code style="color:#22d3bf">scale</code> を省くと最大の速さで正規化するので、<b>図ごとに色の意味が変わる</b>。複数の図を並べるなら明示的に固定する。</p>
+<p><code style="color:#22d3bf">reprconv.flow_to_rgbimage</code> 的 2 维版(那边专用于 <code style="color:#22d3bf">(3, D, H, W)</code> 的 3-D 场景流，平面流会因形状被拒)。</p>
+<p><b>务必在图上一并烧入色相环图例</b> —— 没写颜色含义的流动图只是好看，读不懂。省略 <code style="color:#22d3bf">scale</code> 会按最大速度归一化，所以<b>每张图的颜色含义都会变</b>。并排多张图时请显式固定。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>scale: 明度 1.0 に対応する速さ [px]。<code style="color:#22d3bf">None</code> で最大値。</p>
+<p>scale: 对应明度 1.0 的速度 [px]。<code style="color:#22d3bf">None</code> 为最大值。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h, w, 3)</code> float64，值域 [0, 1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

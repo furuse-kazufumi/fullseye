@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smoothing via Gaussian blur (<code style="color:#22d3bf">scipy.ndimage.gaussian_filter</code>, sigma <code style="color:#22d3bf">0.3+2.7*a</code>). A stand-in for HALCON&#x27;s <code style="color:#22d3bf">gauss_filter</code> (Smooth using discrete Gauss functions.) -- HALCON uses a discrete Gaussian kernel (integer arithmetic), while this uses a continuous-Gaussian scipy implementation; it is an approximation, but the results are very close.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> がシグマを 0.3〜3.0 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。実装は <code style="color:#22d3bf">gauss_image</code> と同一。</p>
+<p><code style="color:#22d3bf">a</code> sweeps sigma over the range 0.3–3.0. <code style="color:#22d3bf">b</code> is unused. The implementation is identical to <code style="color:#22d3bf">gauss_image</code>.</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

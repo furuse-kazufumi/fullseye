@@ -12,9 +12,8 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過泛洪填充（flood fill）擷取區域。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画像中心の画素を種点とし、skimage.segmentation.flood でその画素値から <code style="color:#22d3bf">tolerance</code> 以内の連結画素を region として広げる。</p>
-<p><code style="color:#22d3bf">a</code> が許容差 <code style="color:#22d3bf">tolerance</code> を 0.05〜0.35 の範囲で振る(大きいほど広く塗りつぶす)。<code style="color:#22d3bf">b</code> は未使用。中心が背景か前景かで結果が大きく変わる(種点固定の単純な実装)。</p>
+<p>以影像中心的像素為種子點，用 skimage.segmentation.flood 將與該像素值相差 <code style="color:#22d3bf">tolerance</code> 以內的連通像素作為 region 擴展。</p>
+<p><code style="color:#22d3bf">a</code> 將容差 <code style="color:#22d3bf">tolerance</code> 在 0.05～0.35 範圍內調整(越大填滿範圍越廣)。<code style="color:#22d3bf">b</code> 未使用。中心是背景還是前景會使結果大幅變化(種子點固定的簡單實作)。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

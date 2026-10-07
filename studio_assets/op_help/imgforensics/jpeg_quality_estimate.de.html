@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p><b>Blinde Schätzung der Quantisierungstabelle und der JPEG-Qualität</b> aus einem decodierten Bild. <code style="color:#22d3bf">table</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>ファイルの DQT を読むのではなく、<b>画素だけ</b>から推定する(そこが要点で、PNG に保存し直された / 貼り付けられた画像でも「元は JPEG 品質 N だった」が見える)。8x8 ブロック DCT を取り、係数ごとに櫛の間隔を推定して(Fan &amp; de Queiroz 2003)、IJG の公開スケーリング規則で作った標準表の族から最も合う品質を選ぶ。</p>
-<p>返り(dict):</p>
-<p><code style="color:#22d3bf">jpeg_compressed</code> 櫛が立った係数が <code style="color:#22d3bf">n_coeff</code> 個中いくつあったかで判断した</p>
-<p>bool。<b>「JPEG である」証明ではない</b>(下記 caveats)</p>
-<p><code style="color:#22d3bf">quality</code>         推定品質 1..100(櫛が無ければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">table</code>           推定した <code style="color:#22d3bf">(8, 8)</code> の量子化ステップ(0 = 推定できず)</p>
-<p><code style="color:#22d3bf">n_quantized</code>     櫛が立った係数の数 / <code style="color:#22d3bf">n_coeff</code></p>
-<p><code style="color:#22d3bf">fit_error</code>       選ばれた品質の標準表との平均絶対差</p>
-<p><code style="color:#22d3bf">caveats</code>         この数値が言えないこと</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>、256x256 の 1/f^1.6 画像を Pillow で符号化 → 復号して推定):</p>
+<p>Es liest nicht die DQT der Datei, sondern schätzt <b>allein aus den Pixeln</b> (das ist der Kern:</p>
+<p>selbst bei einem als PNG neu gespeicherten / eingefügten Bild wird &quot;es war ursprünglich JPEG-Qualität N&quot; sichtbar). Es nimmt 8x8-Block-DCTs, schätzt je Koeffizient den Kammabstand (Fan &amp; de Queiroz 2003) und wählt aus der Familie von Standardtabellen, die mit der öffentlichen Skalierungsregel der IJG erzeugt sind, die am besten passende Qualität.</p>
+<p>Rückgabe (dict):</p>
+<p><code style="color:#22d3bf">jpeg_compressed</code> bool, entschieden danach, wie viele der <code style="color:#22d3bf">n_coeff</code> Koeffizienten einen Kamm zeigten.</p>
+<p><b>Kein Beweis, dass &quot;es ein JPEG ist&quot;</b> (siehe caveats unten)</p>
+<p><code style="color:#22d3bf">quality</code>         geschätzte Qualität 1..100 (<code style="color:#22d3bf">None</code>, wenn kein Kamm)</p>
+<p><code style="color:#22d3bf">table</code>           geschätzte <code style="color:#22d3bf">(8, 8)</code>-Quantisierungsschritte (0 = nicht schätzbar)</p>
+<p><code style="color:#22d3bf">n_quantized</code>     Anzahl der Koeffizienten mit Kamm / <code style="color:#22d3bf">n_coeff</code></p>
+<p><code style="color:#22d3bf">fit_error</code>       mittlere absolute Differenz zur Standardtabelle der gewählten Qualität</p>
+<p><code style="color:#22d3bf">caveats</code>         was diese Zahl nicht aussagen kann</p>
+<p>Gemessen (<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>, 256x256-Bilder mit 1/f^1.6 per Pillow kodiert → dekodiert, dann geschätzt):</p>
 <p>======= ========= =============== ============</p>
-<p>真の Q  推定 Q    櫛が立った係数  fit_error</p>
+<p>Wahr Q  Schätz Q  Kamm-Koeff.     fit_error</p>
 <p>======= ========= =============== ============</p>
 <p>95      95        11/20           0.091</p>
 <p>90      90        19/20           0.579</p>
@@ -27,8 +27,8 @@
 <p>40      40         6/20           3.333</p>
 <p>30      <b>None</b>   4/20           —</p>
 <p>======= ========= =============== ============</p>
-<p><b>低品質側で崩れるのは原理的な限界</b>である。品質が下がるほど高周波係数は 0 に量子化され、櫛を読む材料そのものが画像から消える(「櫛が立った係数」の列がその消え方)。品質 30 では材料が足りず、<b>推定を返さない</b>(<code style="color:#22d3bf">quality=None</code>)。ここで無理に答えを出さないのがこの op の設計方針である。</p>
-<p>そして <b>無圧縮 PNG では <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4 つの seed で確認、同テストで固定)。ここで黙って「品質 100」と答えないことが肝で、そうすると「無圧縮」と「ほぼ無劣化の JPEG」が同じ答えになる。</p>
+<p><b>Das Versagen auf der Seite niedriger Qualität ist eine prinzipielle Grenze</b>. Je niedriger die Qualität, desto mehr hochfrequente Koeffizienten werden auf 0 quantisiert, und das Material zum Lesen des Kamms verschwindet selbst aus dem Bild (die Spalte &quot;Kamm-Koeff.&quot; zeigt, wie es verschwindet). Bei Qualität 30 reicht das Material nicht, und <b>es wird keine Schätzung zurückgegeben</b> (<code style="color:#22d3bf">quality=None</code>). Hier keine Antwort zu erzwingen, ist die Designlinie dieses op.</p>
+<p>Und <b>bei unkomprimiertem PNG <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (mit 4 seeds bestätigt, im selben Test fixiert). Entscheidend ist, hier nicht stillschweigend &quot;Qualität 100&quot; zu antworten; sonst ergäben &quot;unkomprimiert&quot; und &quot;nahezu verlustfreies JPEG&quot; dieselbe Antwort.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

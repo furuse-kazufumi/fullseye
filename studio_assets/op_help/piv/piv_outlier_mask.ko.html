@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 중앙값 검정(Westerweel &amp; Scarano 2005)으로 이상 벡터를 찾는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
-<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
-<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
+<p>각 벡터에 대해, 8 근방의 중앙값으로부터의 잔차를 <b>근방 잔차의 중앙값</b>으로 나눈다. 분모에 <code style="color:#22d3bf">epsilon</code>(기본값 0.1 px, PIV 측정 불확도의 기준)을 더하는 것은, 균일한 장에서 분모가 0이 되어 전부가 이상값이 되는 것을 막기 위해서이다 —— 이 항이없으면 <b>이상적인 입력일수록 검정이 무너진다</b>.</p>
+<p>★<b>경사가 급한 장에서는 해가 된다</b>(2026-09-06 실측). Rankine형 소용돌이(심의 반경 28 px)에 다단 PIV를 걸었더니, 임계값 2가 주운 5개는모두 <b>심의 가장자리</b>(중심에서 32 px)에 늘어서 있었고, 실제 오차는 0.07-0.45 px —— 이상값이 아니라 <b>속도 분포가 꺾이는 곳</b>이었다. 근방 중앙값으로 고르게 하면 RMS가 0.134에서 0.230으로 <b>악화</b>된다(임계값 5에서는 1개도 줍지 않고 0.134 그대로).</p>
+<p>검정은 &quot;근방과 다름 = 잘못&quot;이라는 가정에 서 있으므로, <b>진짜 불연속을잘못이라고 부른다</b>. 걸지 말지는 장의 성질을 보고 정할 것.</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
-<p>epsilon: 分母の下駄 [px]。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>.</p>
+<p>threshold: 이 값을 넘으면 이상값. 관행은 2.</p>
+<p>epsilon: 분모의 바닥값 [px].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
+<p><code style="color:#22d3bf">(h, w)</code>의 bool. <code style="color:#22d3bf">True</code>가 이상값(<code style="color:#22d3bf">nan</code>도 <code style="color:#22d3bf">True</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

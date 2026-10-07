@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>滞后阈值处理(<code style="color:#22d3bf">skimage.filters.apply_hysteresis_threshold</code>)。在超过低阈值(<code style="color:#22d3bf">0.2+0.3*a</code>)的像素中,只保留与超过高阈值(<code style="color:#22d3bf">0.5+0.3*b</code>)的像素相连的部分作为前景——是也常作为Canny边缘检测后处理使用的、不易断裂的边缘提取方法。相当于HALCON的<code style="color:#22d3bf">hysteresis_threshold</code>(Perform a hysteresis threshold operation on an image.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が低いしきい値を、<code style="color:#22d3bf">b</code> が高いしきい値を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节低阈值，<code style="color:#22d3bf">b</code> 调节高阈值。两者都使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

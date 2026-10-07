@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由 ESF 求出 SFR(由边缘测得的 MTF)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>
-<p>*window*(必須、px): 切り出す半幅。★迷光(裾)は窓の外に居るので、窓を狭くするほど SFR から見えなくなる。*correction*(必須): 標本化が作る sinc の割り戻し。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> — 割り戻さない(離散の段差を離散の PSF で畳んだ像なら前進差分が離散 LSF そのもので、これが正しい)。</p>
-<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 連続のエッジを点で標本した ESF の前進差分は幅 Δ の箱で LSF を均すので sinc(fΔ) で割る。</p>
-<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> の升(幅 Δ)の平均がもう 1 つの箱なので sinc(fΔ)² で割る。</p>
-<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> か <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017 の LSF の窓)。</p>
-<p>返り値 <code style="color:#22d3bf">(n, 2)</code> の pairs: 列 0 = 周波数 [cyc/px] (エッジに垂直)、列 1 = SFR。0 〜 min(1.0, 0.5/Δ) cyc/px (升の刻み Δ の Nyquist まで、ただし画素の Nyquist の 2 倍 = 1 cyc/px で打ち切る。その先は sinc の割り戻しが暴れる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf が空・NaN / window が正の有限でない・ESF の長さを越える / ends が window 以上 / correction・apodize が一覧に無い / 黒と白の基準が等しい(エッジが無い)。</p>
+<p>*esf* 为 <code style="color:#22d3bf">edge_spread</code> 的返回值(字典)，或 1 px 步长的 1-D 数组(视为 <code style="color:#22d3bf">oversample</code> = 1)。从边缘中心(差分绝对值的最大处)截取 ±*window* px，以两端 *ends* px 的平均作为黑/白基准进行归一化，用前向差分得到 LSF，再把傅里叶变换的绝对值除以 DC。</p>
+<p>*window*(必需，px)：截取的半宽。★杂散光(拖尾)位于窗口之外，所以窗口越窄，SFR 中越看不到它。*correction*(必需)：消除采样产生的 sinc。</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> — 不消除(若是离散台阶与离散 PSF 卷积得到的图像，前向差分就是离散 LSF 本身，这样是正确的)。</p>
+<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 对连续边缘逐点采样得到的 ESF，其前向差分以宽 Δ 的箱平滑 LSF，所以除以 sinc(fΔ)。</p>
+<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> 的箱(宽 Δ)平均又是 1 个箱，所以除以 sinc(fΔ)²。</p>
+<p>*apodize*：<code style="color:#22d3bf">&quot;none&quot;</code> 或 <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017 的 LSF 窗口)。</p>
+<p>返回值为 <code style="color:#22d3bf">(n, 2)</code> 的 pairs：第 0 列 = 频率 [cyc/px] (垂直于边缘)，第 1 列 = SFR。0 〜 min(1.0, 0.5/Δ) cyc/px (到箱步长 Δ 的 Nyquist 为止，但在像素 Nyquist 的 2 倍 = 1 cyc/px 处截断。再往后 sinc 的消除会失控)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>：esf 为空、NaN / window 不是正的有限值、超过 ESF 长度 / ends 不小于 window / correction、apodize 不在列表中 / 黑与白的基准相等(没有边缘)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

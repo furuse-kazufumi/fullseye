@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모션 블러. <code style="color:#22d3bf">kornia.filters.motion_blur</code>를 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a がカーネル長とブラー角度の<b>両方</b>を振る（カーネルサイズ <code style="color:#22d3bf">2*int(2+a*6)+1</code> = 5〜17、角度 <code style="color:#22d3bf">360*a</code> 度）ため、この 2 つは独立には制御できない。b はブラー方向のオフセット（<code style="color:#22d3bf">2*b-1</code>、範囲 -1〜1）を振る。kornia は float32 の畳み込みなので重み和の丸めで出力が 1 をわずかに超えることがある(実測 max=1+2e-7)。<code style="color:#22d3bf">image</code> は [0,1] 契約なので出口で clip する（<code style="color:#22d3bf">ops._apply</code> が段間で掛けている clip と同じで、パイプライン全体の結果は変わらない）。</p>
+<p>a가 커널 길이와 블러 각도의 <b>양쪽</b>을 바꾸기(커널 크기 <code style="color:#22d3bf">2*int(2+a*6)+1</code> = 5~17, 각도 <code style="color:#22d3bf">360*a</code>도) 때문에, 이 2가지는 독립적으로 제어할 수 없다. b는 블러 방향의 오프셋(<code style="color:#22d3bf">2*b-1</code>, 범위 -1~1)을 바꾼다. kornia는 float32 합성곱이므로가중치 합의 반올림으로 출력이 1을 약간 넘을 수 있다(실측 max=1+2e-7). <code style="color:#22d3bf">image</code>는 [0,1] 계약이므로 출구에서 clip한다(<code style="color:#22d3bf">ops._apply</code>가 단 사이에걸고 있는 clip과 같으며, 파이프라인 전체의 결과는 바뀌지 않는다).</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

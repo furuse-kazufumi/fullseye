@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>디코딩된 이미지로부터 <b>양자화 표와 JPEG 품질을 블라인드 추정</b>합니다. <code style="color:#22d3bf">table</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ファイルの DQT を読むのではなく、<b>画素だけ</b>から推定する(そこが要点で、PNG に保存し直された / 貼り付けられた画像でも「元は JPEG 品質 N だった」が見える)。8x8 ブロック DCT を取り、係数ごとに櫛の間隔を推定して(Fan &amp; de Queiroz 2003)、IJG の公開スケーリング規則で作った標準表の族から最も合う品質を選ぶ。</p>
-<p>返り(dict):</p>
-<p><code style="color:#22d3bf">jpeg_compressed</code> 櫛が立った係数が <code style="color:#22d3bf">n_coeff</code> 個中いくつあったかで判断した</p>
-<p>bool。<b>「JPEG である」証明ではない</b>(下記 caveats)</p>
-<p><code style="color:#22d3bf">quality</code>         推定品質 1..100(櫛が無ければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">table</code>           推定した <code style="color:#22d3bf">(8, 8)</code> の量子化ステップ(0 = 推定できず)</p>
-<p><code style="color:#22d3bf">n_quantized</code>     櫛が立った係数の数 / <code style="color:#22d3bf">n_coeff</code></p>
-<p><code style="color:#22d3bf">fit_error</code>       選ばれた品質の標準表との平均絶対差</p>
-<p><code style="color:#22d3bf">caveats</code>         この数値が言えないこと</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>、256x256 の 1/f^1.6 画像を Pillow で符号化 → 復号して推定):</p>
+<p>파일의 DQT를 읽는 것이 아니라 <b>화소만으로</b> 추정한다(거기가 요점이며, PNG로 다시 저장된 / 붙여 넣어진 화상이라도 &quot;원래는 JPEG 품질 N이었다&quot;가보인다). 8x8 블록 DCT를 취해 계수마다 빗의 간격을 추정하고(Fan &amp; de Queiroz 2003), IJG의 공개 스케일링 규칙으로 만든 표준 표의 족에서가장 맞는 품질을 고른다.</p>
+<p>반환(dict):</p>
+<p><code style="color:#22d3bf">jpeg_compressed</code> 빗이 선 계수가 <code style="color:#22d3bf">n_coeff</code>개 중 몇 개였는지로 판단한</p>
+<p>bool. <b>&quot;JPEG이다&quot;의 증명이 아니다</b>(아래 caveats)</p>
+<p><code style="color:#22d3bf">quality</code>         추정 품질 1..100(빗이 없으면 <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">table</code>           추정한 <code style="color:#22d3bf">(8, 8)</code>의 양자화 스텝(0 = 추정하지 못함)</p>
+<p><code style="color:#22d3bf">n_quantized</code>     빗이 선 계수의 수 / <code style="color:#22d3bf">n_coeff</code></p>
+<p><code style="color:#22d3bf">fit_error</code>       선택된 품질의 표준 표와의 평균 절대 차</p>
+<p><code style="color:#22d3bf">caveats</code>         이 수치가 말할 수 없는 것</p>
+<p>실측(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>, 256x256의 1/f^1.6 화상을 Pillow로 부호화 → 복호하여 추정):</p>
 <p>======= ========= =============== ============</p>
-<p>真の Q  推定 Q    櫛が立った係数  fit_error</p>
+<p>참 Q    추정 Q    빗이 선 계수    fit_error</p>
 <p>======= ========= =============== ============</p>
 <p>95      95        11/20           0.091</p>
 <p>90      90        19/20           0.579</p>
@@ -27,8 +26,8 @@
 <p>40      40         6/20           3.333</p>
 <p>30      <b>None</b>   4/20           —</p>
 <p>======= ========= =============== ============</p>
-<p><b>低品質側で崩れるのは原理的な限界</b>である。品質が下がるほど高周波係数は 0 に量子化され、櫛を読む材料そのものが画像から消える(「櫛が立った係数」の列がその消え方)。品質 30 では材料が足りず、<b>推定を返さない</b>(<code style="color:#22d3bf">quality=None</code>)。ここで無理に答えを出さないのがこの op の設計方針である。</p>
-<p>そして <b>無圧縮 PNG では <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4 つの seed で確認、同テストで固定)。ここで黙って「品質 100」と答えないことが肝で、そうすると「無圧縮」と「ほぼ無劣化の JPEG」が同じ答えになる。</p>
+<p><b>저품질 쪽에서 무너지는 것은 원리적인 한계</b>이다. 품질이 내려갈수록 고주파 계수는 0으로양자화되어, 빗을 읽을 재료 자체가 화상에서 사라진다(&quot;빗이 선 계수&quot;의 열이그 사라지는 방식). 품질 30에서는 재료가 부족하여 <b>추정을 반환하지 않는다</b>(<code style="color:#22d3bf">quality=None</code>). 여기서 무리하게 답을 내지 않는 것이 이 op의 설계 방침이다.</p>
+<p>그리고 <b>무압축 PNG에서는 <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4개의 seed로 확인, 같은 테스트로 고정). 여기서 조용히 &quot;품질 100&quot;이라고 답하지 않는 것이핵심이며, 그렇게 하면 &quot;무압축&quot;과 &quot;거의 무열화의 JPEG&quot;이 같은 답이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -5,48 +5,47 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">acoustics.gcc_delay</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2채널의 <b>도달 시간차</b>를 일반화 상호상관(GCC)으로 측정한다. → <code style="color:#22d3bf">(delay, table)</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
-<p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
-<p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>
+<p>누수 위치 결정, 음원 방향, 초음파 두께, 진동 전파 —— 모두 &quot;같은 원천이 2곳에언제 도착했는가&quot;의 차이로 정해진다. 이 op는 그 차이를 <b>초</b>(<code style="color:#22d3bf">rate</code>가 기본값 1.0이면 표본)로반환한다. 위치로 바꾸려면 경로 길이와 전파 속도를 곱한다(<code style="color:#22d3bf">x = (L - c·delay) / 2</code>의 형태).</p>
+<p>★<b>속도의 가정이 그대로 위치의 오차가 된다</b>. 상관이 아무리 깨끗해도 곱하는 속도가 10 % 다르면 위치는 경로 중심으로부터의 거리에 비례하여 어긋난다(<code style="color:#22d3bf">poc_leak_localization</code>의</p>
+<p>실측: 중심에서 18 m의 누수로 +1.798 m, 기하의 예측 1.800 m). 상관의 질과 위치의정확성은 <b>별개의 양</b>이므로 보고에서는 나눌 것.</p>
 <p>Args:</p>
-<p>a, b: 同じ長さの 1-D 記録。<b><code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> より遅れていれば <code style="color:#22d3bf">delay</code> は正</b></p>
-<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>)。</p>
-<p>rate: 標本化周波数 [Hz]。既定 1.0 のときは返りの単位が「標本」。</p>
-<p>weight: 相互スペクトルの重み。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> = 素の相互相関(SNR が高く反射が無ければ最良)、</p>
-<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 位相変換(振幅を白色化。残響に強いとされる)、</p>
-<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>、<code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>。</p>
-<p>★<b>PHAT が常に勝つわけではない</b>: 反射が非対称な経路では遅延そのものが</p>
-<p>偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /</p>
-<p>PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。</p>
-<p>band: <code style="color:#22d3bf">(lo_hz, hi_hz)</code> で帯域を絞る(<code style="color:#22d3bf">rate</code> と同じ単位。<code style="color:#22d3bf">rate=1.0</code> なら</p>
-<p>cycles / 標本で 0〜0.5)。<code style="color:#22d3bf">None</code> で全帯域。</p>
-<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(既定)では必須</b>(2026-10-06、0.5.0 の破壊的変更)。</p>
-<p>PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い</p>
-<p>ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる</p>
-<p>(低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——</p>
-<p><code style="color:#22d3bf">tests/test_acoustics.py</code> の回帰テスト)。信号が全帯域を占めると分かって</p>
-<p>いるなら <code style="color:#22d3bf">band=(0.0, rate / 2)</code> と<b>明示</b>する。<code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
-<p><code style="color:#22d3bf">&quot;scot&quot;</code> では任意のまま。</p>
-<p>interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。</p>
-<p>切ると量子化の刻みが<b>散らばりでなく偏り</b>として残る(位置を固定すると</p>
-<p>毎回同じ方向に外す。PIV のピークロッキングと同じ)。</p>
-<p>★<b>補間しても偏りは消えない</b>: 相関のピークは sinc 状で、放物線では</p>
-<p>近似しきれない。白色雑音・全帯域で 0〜1 標本を振った実測では、</p>
-<p>誤差が <b>最大 0.117 標本</b>の S 字(整数の近くで 0、0.3 / 0.7 付近で最大、</p>
-<p>向きは<b>整数へ引く</b>)。サブ標本の精度を語るときはこの偏りを含めること。</p>
+<p>a, b: 같은 길이의 1-D 기록. <b><code style="color:#22d3bf">b</code>가 <code style="color:#22d3bf">a</code>보다 늦으면 <code style="color:#22d3bf">delay</code>는 양수</b></p>
+<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>).</p>
+<p>rate: 표본화 주파수 [Hz]. 기본값 1.0일 때는 반환 단위가 &quot;표본&quot;.</p>
+<p>weight: 상호 스펙트럼의 가중치.</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> = 그대로의 상호상관(SNR이 높고 반사가 없으면 최선),</p>
+<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 위상 변환(진폭을 백색화. 잔향에 강하다고 한다),</p>
+<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>, <code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>.</p>
+<p>★<b>PHAT가 항상 이기는 것은 아니다</b>: 반사가 비대칭인 경로에서는 지연 자체가</p>
+<p>치우치므로 어떤 가중치로도 제거할 수 없다(실측: 반사 0.8에서 raw 0.134 m /</p>
+<p>PHAT 0.114 m로 1할밖에 다르지 않고, RMS는 거의 전부가 치우침).</p>
+<p>band: <code style="color:#22d3bf">(lo_hz, hi_hz)</code>로 대역을 좁힌다(<code style="color:#22d3bf">rate</code>와 같은 단위. <code style="color:#22d3bf">rate=1.0</code>이면</p>
+<p>cycles / 표본으로 0〜0.5). <code style="color:#22d3bf">None</code>이면 전 대역.</p>
+<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(기본값)에서는 필수</b>(2026-10-06, 0.5.0의 파괴적 변경).</p>
+<p>PHAT는 모든 빈을 같은 가중치로 백색화하므로, 대역이 제한된 신호에서는 신호가 없는</p>
+<p>빈(잡음·누설·반올림)이 신호와 같은 가중치로 상관에 들어가 피크가 빗나간다</p>
+<p>(저역 신호에서 band를 넘기지 않으면 적중이 크게 떨어지고, 대역을 넘기면 돌아온다 ——</p>
+<p><code style="color:#22d3bf">tests/test_acoustics.py</code>의 회귀 테스트). 신호가 전 대역을 차지한다고 알고</p>
+<p>있다면 <code style="color:#22d3bf">band=(0.0, rate / 2)</code>로 <b>명시</b>한다. <code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
+<p><code style="color:#22d3bf">&quot;scot&quot;</code>에서는 선택 사항 그대로.</p>
+<p>interpolate: 피크 주변의 포물선 보간으로 서브 표본까지 읽는다(기본값 True).</p>
+<p>끄면 양자화의 스텝이 <b>흩어짐이 아니라 치우침</b>으로 남는다(위치를 고정하면</p>
+<p>매번 같은 방향으로 빗나간다. PIV의 피크 로킹과 같다).</p>
+<p>★<b>보간해도 치우침은 사라지지 않는다</b>: 상관의 피크는 sinc 형태여서 포물선으로는</p>
+<p>다 근사할 수 없다. 백색 잡음·전 대역에서 0〜1 표본을 움직인 실측에서는</p>
+<p>오차가 <b>최대 0.117 표본</b>의 S자(정수 근처에서 0, 0.3 / 0.7 부근에서 최대,</p>
+<p>방향은 <b>정수 쪽으로 당긴다</b>). 서브 표본의 정밀도를 말할 때는 이 치우침을 포함할 것.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> は秒(<code style="color:#22d3bf">rate=1.0</code> なら標本)の float。</p>
-<p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,) の遅れ, &quot;r&quot;: 相関値, &quot;peak&quot;: ピーク値, &quot;snr_peak&quot;: ピーク / 副次ピークの比}</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)は宣言 out 型の <code style="color:#22d3bf">delay</code> だけを</p>
-<p>返す。相関曲線も要るときは <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code>는 초(<code style="color:#22d3bf">rate=1.0</code>이면 표본) 단위의 float.</p>
+<p><code style="color:#22d3bf">table</code>은 <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,)의 지연, &quot;r&quot;: 상관값, &quot;peak&quot;: 피크값, &quot;snr_peak&quot;: 피크 / 부차 피크의 비}</code>.</p>
+<p>★대장 경유(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)는 선언된 out 형인 <code style="color:#22d3bf">delay</code>만을</p>
+<p>반환한다. 상관 곡선도 필요할 때는 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが違う / 2 未満 / 非有限、<code style="color:#22d3bf">weight</code> が未知、<code style="color:#22d3bf">band</code> が</p>
-<p><code style="color:#22d3bf">(lo, hi)</code> でない・<code style="color:#22d3bf">lo &gt;= hi</code>・<code style="color:#22d3bf">rate</code> に対して無効なとき、</p>
-<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code> で <code style="color:#22d3bf">band</code> が <code style="color:#22d3bf">None</code> のとき(fail-closed)。</p>
-<p><b>限界(honest)</b>: (1) 反射・分散・経路差が作る<b>偏り</b>は取れない —— 取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、多重路で副次ピークが勝つと<b>不連続に</b>外す(<code style="color:#22d3bf">snr_peak</code> を見ること)。</p>
-<p style="margin:2px 0 2px 12px">(3) 遅延が記録長の半分を超えると折り返す。</p>
+<p>ValueError: 길이가 다름 / 2 미만 / 비유한, <code style="color:#22d3bf">weight</code>가 미지, <code style="color:#22d3bf">band</code>가</p>
+<p><code style="color:#22d3bf">(lo, hi)</code>가 아님·<code style="color:#22d3bf">lo &gt;= hi</code>·<code style="color:#22d3bf">rate</code>에 대해 무효일 때,</p>
+<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code>에서 <code style="color:#22d3bf">band</code>가 <code style="color:#22d3bf">None</code>일 때(fail-closed(실패 시 거부)).</p>
+<p><b>한계(honest)</b>: (1) 반사·분산·경로 차가 만드는 <b>치우침</b>은 제거할 수 없다 —— 제거할 수 있는 것은 잡음에 의한 흩어짐뿐이다. (2) 상관의 피크를 1개 고르므로, 다중 경로에서 부차 피크가 이기면 <b>불연속적으로</b> 빗나간다(<code style="color:#22d3bf">snr_peak</code>를 볼 것).</p>
+<p style="margin:2px 0 2px 12px">(3) 지연이 기록 길이의 절반을 넘으면 되접힌다.</p>
 <p>Reference (public): C. H. Knapp, G. C. Carter, &quot;The Generalized Correlation Method for Estimation of Time Delay&quot;, IEEE Trans. ASSP 24(4), 1976, 320-327.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring 패밀리 가이드</a></p>

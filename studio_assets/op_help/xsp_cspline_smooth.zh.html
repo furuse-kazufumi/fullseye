@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三次样条平滑滤波器（<code style="color:#22d3bf">scipy.signal.cspline2d</code>）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は平滑化強度 lambda を 1.0〜11.0 に振る（<code style="color:#22d3bf">lambda = 1.0 + 10.0*a</code>、大きいほど強く均す）。<code style="color:#22d3bf">b</code> は未使用。スプライン補間の平滑化項を直接使うフィルタで、ガウシアンぼかしに近い低域通過だが境界はミラー的に処理される。負の値を返しうる中間結果を最後に [0,1] にクリップしている。</p>
+<p><code style="color:#22d3bf">a</code> 将平滑强度 lambda 在 1.0〜11.0 间调节（<code style="color:#22d3bf">lambda = 1.0 + 10.0*a</code>，越大平滑越强）。<code style="color:#22d3bf">b</code> 未使用。这是直接使用样条插值平滑项的滤波，是接近高斯模糊的低通，但边界以镜像方式处理。可能出现负值的中间结果最后被裁剪到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>1 pass with window deformation. Correlates only after <b>first warping the images themselves</b> with the predicted displacement.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
+<p>Integer shifting (<code style="color:#22d3bf">shift</code> of <code style="color:#22d3bf">piv_cross_correlate</code>) assumes that the displacement is constant within the window. In fields such as rotation or shear, where <b>the displacement varies within the window</b>, the correlation peak collapses, so the 2 images are warped in opposite directions by half the prediction each before correlating (central-difference deformation).</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>flow: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> などの出力)。</p>
-<p>info: その <code style="color:#22d3bf">info</code>(窓中心の座標が要る)。</p>
-<p>window / overlap / peak / window_func: 新しい段の設定。</p>
-<p>order: 変形に使う補間の次数(3 = 3 次スプライン)。</p>
+<p>a, b: image pair.</p>
+<p>flow: predicted displacement <code style="color:#22d3bf">(2, h, w)</code> (output of <code style="color:#22d3bf">piv_multipass</code> etc.).</p>
+<p>info: its <code style="color:#22d3bf">info</code> (the window-centre coordinates are needed).</p>
+<p>window / overlap / peak / window_func: settings of the new pass.</p>
+<p>order: order of the interpolation used for deformation (3 = 3rd-order spline).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返る変位は<b>元の画像座標での総変位</b>。</p>
+<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>. The returned displacement is <b>the total displacement in original image coordinates</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

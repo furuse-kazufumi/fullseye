@@ -5,48 +5,47 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> oder rufe <code style="color:#22d3bf">acoustics.gcc_delay</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst die <b>Laufzeitdifferenz</b> zwischen 2 Kanälen mit der verallgemeinerten Kreuzkorrelation (GCC). → <code style="color:#22d3bf">(delay, table)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
-<p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
-<p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>
+<p>Leckortung, Schallquellenrichtung, Ultraschall-Wanddicke, Schwingungsausbreitung —— alles wird durch die Differenz bestimmt, &quot;wann dieselbe Quelle an 2 Orten ankam&quot;. Dieses op gibt diese Differenz in <b>Sekunden</b> zurück (in Abtastwerten, wenn <code style="color:#22d3bf">rate</code> den Default 1.0 hat). Für eine Position multipliziert man mit Pfadlänge und Ausbreitungsgeschwindigkeit (in der Form <code style="color:#22d3bf">x = (L - c·delay) / 2</code>).</p>
+<p>★<b>Die Annahme über die Geschwindigkeit wird unmittelbar zum Positionsfehler</b>. Wie sauber die Korrelation auch ist, weicht die eingesetzte Geschwindigkeit um 10 % ab, verschiebt sich die Position proportional zum Abstand von der Pfadmitte (gemessen in <code style="color:#22d3bf">poc_leak_localization</code>:</p>
+<p>ein Leck 18 m von der Mitte ergab +1.798 m, die geometrische Vorhersage ist 1.800 m). Korrelationsqualität und Korrektheit der Position sind <b>getrennte Größen</b>, daher im Bericht auseinanderhalten.</p>
 <p>Args:</p>
-<p>a, b: 同じ長さの 1-D 記録。<b><code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> より遅れていれば <code style="color:#22d3bf">delay</code> は正</b></p>
-<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>)。</p>
-<p>rate: 標本化周波数 [Hz]。既定 1.0 のときは返りの単位が「標本」。</p>
-<p>weight: 相互スペクトルの重み。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> = 素の相互相関(SNR が高く反射が無ければ最良)、</p>
-<p><code style="color:#22d3bf">&quot;phat&quot;</code> = 位相変換(振幅を白色化。残響に強いとされる)、</p>
-<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>、<code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>。</p>
-<p>★<b>PHAT が常に勝つわけではない</b>: 反射が非対称な経路では遅延そのものが</p>
-<p>偏るので、どの重みでも取り除けない(実測: 反射 0.8 で raw 0.134 m /</p>
-<p>PHAT 0.114 m と 1 割しか違わず、RMS はほぼ全部が偏り)。</p>
-<p>band: <code style="color:#22d3bf">(lo_hz, hi_hz)</code> で帯域を絞る(<code style="color:#22d3bf">rate</code> と同じ単位。<code style="color:#22d3bf">rate=1.0</code> なら</p>
-<p>cycles / 標本で 0〜0.5)。<code style="color:#22d3bf">None</code> で全帯域。</p>
-<p>★<b><code style="color:#22d3bf">weight=&quot;phat&quot;</code>(既定)では必須</b>(2026-10-06、0.5.0 の破壊的変更)。</p>
-<p>PHAT は全ビンを同じ重みに白色化するので、帯域の限られた信号では信号の無い</p>
-<p>ビン(雑音・漏れ・丸め)が信号と同じ重みで相関に入り、ピークが外れる</p>
-<p>(低域の信号で band を渡さないと当たりが大きく落ち、帯域を渡すと戻る ——</p>
-<p><code style="color:#22d3bf">tests/test_acoustics.py</code> の回帰テスト)。信号が全帯域を占めると分かって</p>
-<p>いるなら <code style="color:#22d3bf">band=(0.0, rate / 2)</code> と<b>明示</b>する。<code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
-<p><code style="color:#22d3bf">&quot;scot&quot;</code> では任意のまま。</p>
-<p>interpolate: ピーク周りの放物線補間でサブ標本まで読む(既定 True)。</p>
-<p>切ると量子化の刻みが<b>散らばりでなく偏り</b>として残る(位置を固定すると</p>
-<p>毎回同じ方向に外す。PIV のピークロッキングと同じ)。</p>
-<p>★<b>補間しても偏りは消えない</b>: 相関のピークは sinc 状で、放物線では</p>
-<p>近似しきれない。白色雑音・全帯域で 0〜1 標本を振った実測では、</p>
-<p>誤差が <b>最大 0.117 標本</b>の S 字(整数の近くで 0、0.3 / 0.7 付近で最大、</p>
-<p>向きは<b>整数へ引く</b>)。サブ標本の精度を語るときはこの偏りを含めること。</p>
+<p>a, b: 1-D-Aufzeichnungen gleicher Länge. <b>Liegt <code style="color:#22d3bf">b</code> hinter <code style="color:#22d3bf">a</code> zurück, ist <code style="color:#22d3bf">delay</code> positiv</b></p>
+<p>(<code style="color:#22d3bf">b(t) ≈ a(t - delay)</code>).</p>
+<p>rate: Abtastfrequenz [Hz]. Beim Default 1.0 ist die Einheit der Rückgabe &quot;Abtastwerte&quot;.</p>
+<p>weight: Gewichtung des Kreuzspektrums.</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> = reine Kreuzkorrelation (am besten bei hohem SNR und ohne Reflexionen),</p>
+<p><code style="color:#22d3bf">&quot;phat&quot;</code> = Phasentransformation (weißt die Amplitude; gilt als robust gegen Nachhall),</p>
+<p><code style="color:#22d3bf">&quot;roth&quot;</code> = <code style="color:#22d3bf">1/|A|²</code>, <code style="color:#22d3bf">&quot;scot&quot;</code> = <code style="color:#22d3bf">1/sqrt(|A|²|B|²)</code>.</p>
+<p>★<b>PHAT gewinnt nicht immer</b>: Auf Pfaden mit asymmetrischen Reflexionen ist die Verzögerung selbst</p>
+<p>verzerrt, sodass keine Gewichtung das beseitigt (gemessen: bei Reflexion 0.8 raw 0.134 m /</p>
+<p>PHAT 0.114 m, nur 1 Zehntel Unterschied, und der RMS ist fast vollständig Bias).</p>
+<p>band: grenzt das Band mit <code style="color:#22d3bf">(lo_hz, hi_hz)</code> ein (gleiche Einheit wie <code style="color:#22d3bf">rate</code>; bei <code style="color:#22d3bf">rate=1.0</code></p>
+<p>0–0.5 in cycles / Abtastwert). <code style="color:#22d3bf">None</code> für das volle Band.</p>
+<p>★<b>Pflicht bei <code style="color:#22d3bf">weight=&quot;phat&quot;</code> (Default)</b> (2026-10-06, Breaking Change in 0.5.0).</p>
+<p>PHAT weißt alle Bins auf dasselbe Gewicht, daher gehen bei einem bandbegrenzten Signal die Bins ohne Signal</p>
+<p>(Rauschen, Leckage, Rundung) mit demselben Gewicht wie das Signal in die Korrelation ein, und der Peak liegt daneben</p>
+<p>(bei einem tieffrequenten Signal sinkt die Trefferquote ohne band stark und erholt sich mit Band ——</p>
+<p>der Regressionstest in <code style="color:#22d3bf">tests/test_acoustics.py</code>). Weiß man, dass das Signal das volle Band belegt,</p>
+<p>gibt man <code style="color:#22d3bf">band=(0.0, rate / 2)</code> <b>explizit</b> an. Bei <code style="color:#22d3bf">&quot;none&quot;</code> / <code style="color:#22d3bf">&quot;roth&quot;</code> /</p>
+<p><code style="color:#22d3bf">&quot;scot&quot;</code> bleibt es optional.</p>
+<p>interpolate: liest per Parabelinterpolation um den Peak bis auf Sub-Sample-Genauigkeit (Default True).</p>
+<p>Ausgeschaltet bleibt der Quantisierungsschritt als <b>Bias statt Streuung</b> (bei fester Position</p>
+<p>jedes Mal Abweichung in dieselbe Richtung; wie das Peak-Locking bei PIV).</p>
+<p>★<b>Auch Interpolation beseitigt den Bias nicht</b>: Der Korrelationspeak ist sinc-förmig, eine Parabel</p>
+<p>kann ihn nicht vollständig annähern. In Messungen mit weißem Rauschen, vollem Band und Verschiebungen um 0–1 Abtastwerte</p>
+<p>ist der Fehler eine S-Kurve von <b>höchstens 0.117 Abtastwerten</b> (0 nahe ganzen Zahlen, maximal um 0.3 / 0.7,</p>
+<p>Richtung <b>zur ganzen Zahl hin gezogen</b>). Bei Aussagen zur Sub-Sample-Genauigkeit diesen Bias einbeziehen.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> は秒(<code style="color:#22d3bf">rate=1.0</code> なら標本)の float。</p>
-<p><code style="color:#22d3bf">table</code> は <code style="color:#22d3bf">{&quot;lags&quot;: (2N-1,) の遅れ, &quot;r&quot;: 相関値, &quot;peak&quot;: ピーク値, &quot;snr_peak&quot;: ピーク / 副次ピークの比}</code>。</p>
-<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>)は宣言 out 型の <code style="color:#22d3bf">delay</code> だけを</p>
-<p>返す。相関曲線も要るときは <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>。</p>
+<p><code style="color:#22d3bf">(delay, table)</code>: <code style="color:#22d3bf">delay</code> ist ein float in Sekunden (in Abtastwerten bei <code style="color:#22d3bf">rate=1.0</code>).</p>
+<p><code style="color:#22d3bf">table</code> ist <code style="color:#22d3bf">{&quot;lags&quot;: Verzögerungen der Form (2N-1,), &quot;r&quot;: Korrelationswerte, &quot;peak&quot;: Peakwert, &quot;snr_peak&quot;: Verhältnis Peak / Nebenpeak}</code>.</p>
+<p>★Über das Register (<code style="color:#22d3bf">fullseye.ledger.gcc_delay</code>) wird nur <code style="color:#22d3bf">delay</code>, der deklarierte out-Typ,</p>
+<p>zurückgegeben. Wird auch die Korrelationskurve gebraucht: <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code>.</p>
 <p>Raises:</p>
-<p>ValueError: 長さが違う / 2 未満 / 非有限、<code style="color:#22d3bf">weight</code> が未知、<code style="color:#22d3bf">band</code> が</p>
-<p><code style="color:#22d3bf">(lo, hi)</code> でない・<code style="color:#22d3bf">lo &gt;= hi</code>・<code style="color:#22d3bf">rate</code> に対して無効なとき、</p>
-<p><code style="color:#22d3bf">weight=&quot;phat&quot;</code> で <code style="color:#22d3bf">band</code> が <code style="color:#22d3bf">None</code> のとき(fail-closed)。</p>
-<p><b>限界(honest)</b>: (1) 反射・分散・経路差が作る<b>偏り</b>は取れない —— 取れるのは雑音による散らばりだけ。(2) 相関のピークを 1 つ選ぶので、多重路で副次ピークが勝つと<b>不連続に</b>外す(<code style="color:#22d3bf">snr_peak</code> を見ること)。</p>
-<p style="margin:2px 0 2px 12px">(3) 遅延が記録長の半分を超えると折り返す。</p>
+<p>ValueError: Längen verschieden / kleiner als 2 / nicht endlich, <code style="color:#22d3bf">weight</code> unbekannt, <code style="color:#22d3bf">band</code></p>
+<p>nicht <code style="color:#22d3bf">(lo, hi)</code>, <code style="color:#22d3bf">lo &gt;= hi</code> oder ungültig für <code style="color:#22d3bf">rate</code>,</p>
+<p>oder <code style="color:#22d3bf">band</code> ist <code style="color:#22d3bf">None</code> bei <code style="color:#22d3bf">weight=&quot;phat&quot;</code> (fail-closed).</p>
+<p><b>Grenzen (honest)</b>: (1) Der durch Reflexion, Dispersion und Pfaddifferenzen erzeugte <b>Bias</b> lässt sich nicht entfernen —— entfernen lässt sich nur die Streuung durch Rauschen. (2) Da nur 1 Korrelationspeak gewählt wird, liegt es bei Mehrwegeausbreitung <b>sprunghaft</b> daneben, wenn ein Nebenpeak gewinnt (<code style="color:#22d3bf">snr_peak</code> prüfen).</p>
+<p style="margin:2px 0 2px 12px">(3) Verzögerungen über der halben Aufzeichnungslänge werden zurückgefaltet.</p>
 <p>Reference (public): C. H. Knapp, G. C. Carter, &quot;The Generalized Correlation Method for Estimation of Time Delay&quot;, IEEE Trans. ASSP 24(4), 1976, 320-327.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">Leitfaden zur Familie acoustic_condition_monitoring</a></p>

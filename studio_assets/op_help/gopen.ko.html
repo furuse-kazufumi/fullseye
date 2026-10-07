@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이스케일 열림 연산(침식 후 팽창). HALCON의 <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の一辺を <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に振る。<code style="color:#22d3bf">b</code> が<b>構造要素の形</b>を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> で正方形(2026-09-17 までの挙動、分離可能なので最速)、以降 <code style="color:#22d3bf">十字</code> / <code style="color:#22d3bf">円板</code> / <code style="color:#22d3bf">水平線</code>。円板は HALCON の <code style="color:#22d3bf">gen_disc_se</code> に、水平線は方向性のある欠陥(横筋・スジ)を残したまま縦方向だけ均すのに使う。★正方形以外は footprint 経由になるので<b>目に見えて遅い</b>。明るい小さな突起（ノイズ状の輝点）を除去しつつ、大きな明域の形はほぼ保つ。</p>
+<p><code style="color:#22d3bf">a</code>가 구조 요소의 한 변의 길이를 <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)로 바꾼다. <code style="color:#22d3bf">b</code>가 <b>구조 요소의 모양</b>을 고른다: <code style="color:#22d3bf">b &lt;= 0.5</code>이면 정사각형(2026-09-17까지의 동작, 분리 가능하므로 가장 빠름), 그 이후는 <code style="color:#22d3bf">십자</code> / <code style="color:#22d3bf">원판</code> / <code style="color:#22d3bf">수평선</code>. 원판은 HALCON의 <code style="color:#22d3bf">gen_disc_se</code>에 해당하고, 수평선은 방향성이 있는 결함(가로 줄무늬)을 남긴 채 세로 방향만 고르게 하는 데 쓴다. ★정사각형 이외는 footprint를 거치므로 <b>눈에 띄게 느리다</b>. 밝은 작은 돌기(잡음 같은 휘점)를 제거하면서 큰 밝은 영역의 모양은 거의 유지한다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology 패밀리 가이드</a></p>
