@@ -47,7 +47,11 @@ version: 0.5.0  # fullseye lib version this note was generated for
     - ``grid`` / ``center`` / ``axis``: :func:`cylinder_sdf` と同じ(軸はドーナツの穴の向き)。
     - ``major_radius``: 芯線の半径(負は拒否)。
     - ``minor_radius``: 管の半径(負は拒否)。``minor_radius >= major_radius`` だと穴が
-      潰れた形になるが、距離場としては正しいので**拒否しない**。
+      潰れた形(スピンドルトーラス)になる。拒否はしないが、**厳密なのは ``minor_radius <
+      major_radius`` のときだけ**(2026-10-07 訂正: 以前は「距離場としては正しい」と書いていた)。
+      管が軸の上で重なる内側では、値は境界までの真の距離より絶対値が小さい(major 1・minor 2 の
+      中心で −1、真値は −1.73)。符号と零等値面、外側の値は正しく、内側の絶対値は真の距離の下界
+      なので、球追跡(sphere tracing)には安全に使える。
 
     返り値: ``grid.shape[:-1]`` の float64。
 

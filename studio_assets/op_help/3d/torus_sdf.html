@@ -8,7 +8,7 @@
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>: <code style="color:#22d3bf">cylinder_sdf</code> と同じ(軸はドーナツの穴の向き)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major_radius</code>: 芯線の半径(負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>: 管の半径(負は拒否)。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> だと穴が潰れた形になるが、距離場としては正しいので<b>拒否しない</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>: 管の半径(負は拒否)。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> だと穴が潰れた形(スピンドルトーラス)になる。拒否はしないが、<b>厳密なのは <code style="color:#22d3bf">minor_radius &lt; major_radius</code> のときだけ</b>(2026-10-07 訂正: 以前は「距離場としては正しい」と書いていた)。管が軸の上で重なる内側では、値は境界までの真の距離より絶対値が小さい(major 1・minor 2 の中心で −1、真値は −1.73)。符号と零等値面、外側の値は正しく、内側の絶対値は真の距離の下界なので、球追跡(sphere tracing)には安全に使える。</p>
 <p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
 <p>使いどころ: <code style="color:#22d3bf">sdf_subtract</code> で内隅にフィレットを削り出す / <code style="color:#22d3bf">sdf_union</code> で O リング溝の形を作る。角を丸めるだけなら <code style="color:#22d3bf">sdf_smooth_union</code> のほうが手軽だが、あちらは丸みの半径が形状に依存する —— <b>半径を設計値として持ちたいときはこちら</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>

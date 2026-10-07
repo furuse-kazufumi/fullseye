@@ -5,7 +5,7 @@
 
 本倉庫把「為什麼是這樣」寫在**原始碼註解**裡。其中標了 `★` 的是真正管用的部分——量出來的結論、踩過的坑、這樣做的理由。本頁由它們機械彙集而成，正本在原始碼一側，因此兩者不會走樣。
 
-**翻譯進度**：610 / 1299 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
+**翻譯進度**：610 / 1312 條。未翻譯的條目照原文（日文）顯示——悄悄回退到原文會看著像已翻譯，所以沒譯就明說沒譯。
 
 
 ## `accel.py`
@@ -1321,6 +1321,10 @@
 - **L33** — ★不要把本地絕對路徑燒進發布物(2026-09-05 的稽核中,非公開的兄弟專案名出現在了 PyPI 的 wheel 裡)。預設值透過環境變數給出。Unitree G1 的場景 XML。指向 MuJoCo Menagerie 的 `unitree_g1/scene.xml`。
 - **L61** — ★安全邊界。`pickle` 在 load 期間可呼叫任意 callable，因此若讓 `find_class` 直接放行，則**僅僅打開檢查點就會執行程式碼**。RL 的檢查點是以從他人處取得為前提的產物,所以這是現實的威脅。(2026-09-05 實測:放行版會直接回傳 `os.system` / `subprocess.Popen` / `builtins.eval`,並能在 `load()` 期間實際建立檔案。)此處列出的僅是 brax PPO 檢查點實際引用的數值類。出現缺失時**加入本清單**(例外訊息會印出模組名)。
 
+## `gicp.py`
+
+- **L178** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ← (I+[ω]×)R は原点まわりの回転なので、原点から 遠い点群(オフセット 1e3 で回転誤差 20°)では回転と並進がほぼ縮退して誤った姿勢に落ちた。 target の外接箱の中心 c へ両点群を寄せて解き、t = t' + c − R·c で世界へ戻す (外接箱の中心は点の順に依らない = reproducible=True のビット一致を保つ)。
+
 ## `glyphops.py`
 
 - **L44** _(ja)_ — ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので 気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
@@ -1386,12 +1390,17 @@
 ## `match3d.py`
 
 - **L333** — ★2026-09-07：改用 numpy 的 FFT。式子相同(float32 的 fftn -> 僅相位 -> ifftn 的實部 -> argmax),沒有任何地方需要用 torch。在不裝 torch 的 CI(py3.10 / 3.12)上,這個 op 會變成 ImportError,PoC 隨之失敗。
-- **L1703** — ★2026-09-07：把主體改寫為 numpy。這個 ICP 是**最近鄰搜尋用 cKDTree、位姿更新用 3x3 的 SVD**,沒有一件事需要 torch,卻把 torch 設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,4 個 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落敗而暴露(本地有 torch 所以沒能察覺 -- 「門要立在事故發生的地方」的實例)。數值是相同的 float64 式,因此**結果不因環境而變**。回傳型別為相容而保留:有 torch 則 torch.Tensor,沒有則 numpy.ndarray(數值相同)。若請求 "cpu" 以外的 device 則 fail-closed。
-- **L1938** — ★2026-09-07：把主體改寫為 numpy。最近鄰搜尋、6x6 的正規方程、Rodrigues 都是 CPU 上的小型線性代數,本無需 torch,卻被設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落敗而暴露。式子是相同的 float64,故結果不變(實測與 torch 版之差在 R/t 上為 0、RMSE 上為 0)。
-- **L2926** — ★2026-09-07：**若環在影像之外則 fail-closed**。``r_in``/``r_out`` 以像素為單位,故若按 mm 傳入,會讀到視野之外,並無例外地回傳**全部 0**(在 `poc_pipe_wall_loss` 輸出一張漆黑的圖後暴露)。若沒有一個半徑小於從中心到影像四角的最大距離,則回傳值只可能為空。
-- **L2937** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替換為 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同樣的雙線性插值,在不裝 torch 的 CI(py3.10 / 3.12)上也能跑。實測差異最大為 6.0e-06(值域 0..1 的隨機影像;float32 與 float64 的捨入之差)。
-- **L2982** — ★2026-09-07：出於與 polar_unwrap 相同的理由,替換為 map_coordinates(雙線性、範圍外 0)。無 torch 也能跑。實測差異最大為 7.6e-06。
-- **L3233** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替換為 numpy 的座標計算 + scipy 的 map_coordinates(order=1)。torch 僅用於雙線性重取樣,在不裝 torch 的環境(CI 的 py3.10 / 3.12)中這個 op 會變成 ImportError。約定原樣照抄:輸出體素 (d,h,w) 的歸一化座標為 ((i+0.5)/N)*2-1,旋轉後用 (g+1)/2*N-0.5 換回輸入的像素座標(align_corners=False 的定義)。grid 的最末軸為 (x, y, z) = (W, H, D) 的順序。與 torch 版的實測差異最大為 7.6e-06。
+- **L992** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
+- **L1050** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
+- **L1714** — ★2026-09-07：把主體改寫為 numpy。這個 ICP 是**最近鄰搜尋用 cKDTree、位姿更新用 3x3 的 SVD**,沒有一件事需要 torch,卻把 torch 設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,4 個 PoC 以 `ImportError: this operator needs the optional 'torch' backend` 落敗而暴露(本地有 torch 所以沒能察覺 -- 「門要立在事故發生的地方」的實例)。數值是相同的 float64 式,因此**結果不因環境而變**。回傳型別為相容而保留:有 torch 則 torch.Tensor,沒有則 numpy.ndarray(數值相同)。若請求 "cpu" 以外的 device 則 fail-closed。
+- **L1949** — ★2026-09-07：把主體改寫為 numpy。最近鄰搜尋、6x6 的正規方程、Rodrigues 都是 CPU 上的小型線性代數,本無需 torch,卻被設為必需。在不裝 torch 的 CI(py3.10 / 3.12)上,PoC 以 ImportError 落敗而暴露。式子是相同的 float64,故結果不變(實測與 torch 版之差在 R/t 上為 0、RMSE 上為 0)。
+- **L1964** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
+- **L2796** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
+- **L2950** — ★2026-09-07：**若環在影像之外則 fail-closed**。``r_in``/``r_out`` 以像素為單位,故若按 mm 傳入,會讀到視野之外,並無例外地回傳**全部 0**(在 `poc_pipe_wall_loss` 輸出一張漆黑的圖後暴露)。若沒有一個半徑小於從中心到影像四角的最大距離,則回傳值只可能為空。
+- **L2961** — ★2026-09-07：把 grid_sample(bilinear, align_corners=True, zeros padding)替換為 scipy 的 map_coordinates(order=1, mode="constant", cval=0) -- 同樣的雙線性插值,在不裝 torch 的 CI(py3.10 / 3.12)上也能跑。實測差異最大為 6.0e-06(值域 0..1 的隨機影像;float32 與 float64 的捨入之差)。
+- **L3006** — ★2026-09-07：出於與 polar_unwrap 相同的理由,替換為 map_coordinates(雙線性、範圍外 0)。無 torch 也能跑。實測差異最大為 7.6e-06。
+- **L3077** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3281** — ★2026-09-07：把 affine_grid + grid_sample(align_corners=False, zeros padding)替換為 numpy 的座標計算 + scipy 的 map_coordinates(order=1)。torch 僅用於雙線性重取樣,在不裝 torch 的環境(CI 的 py3.10 / 3.12)中這個 op 會變成 ImportError。約定原樣照抄:輸出體素 (d,h,w) 的歸一化座標為 ((i+0.5)/N)*2-1,旋轉後用 (g+1)/2*N-0.5 換回輸入的像素座標(align_corners=False 的定義)。grid 的最末軸為 (x, y, z) = (W, H, D) 的順序。與 torch 版的實測差異最大為 7.6e-06。
 
 ## `mathestimation.py`
 
@@ -1434,6 +1443,10 @@
 ## `medial.py`
 
 - **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+
+## `metrics3d.py`
+
+- **L369** _(ja)_ — ★2026-10-07 レビュー修正: md=None(軸方向は無制限)で球の半径を r にしていたため、 実際は「半径 r の球」で切り取っていた(面が法線方向に r 以上動くと両側が揃わず nan)。 無制限の円筒は球で絞れないので、全点を候補にして軸・半径で判定する。
 
 ## `occupancy.py`
 
@@ -1623,9 +1636,20 @@
 
 - **L472** — ★ 相關峰立不起來的窗（無紋理、全面一樣）返回 nan —— 不返回 0 是為了不把「未動」與「不明」混同。但**有幾成是 nan 只能從返回值得知**，此前的形態是等到 ``flow.mean()`` 變為 nan 才察覺（2026-09-06）。在此計數。實測：均勻背景上只有 16x16 方塊的圖像，98 窗中僅 16 窗為有限（0.163）。全面紋理則為 1.000。
 
+## `pnp3d.py`
+
+- **L241** _(ja)_ — ★2026-10-07 レビュー修正: 旧式は回転ブロックに -[Xc]x(= t も回す更新の微分)を使い、 実際の更新(t は回さない)と食い違っていた。初期値が良いほど収束が線形に遅くなり、 30 反復で最小に届かないことがあった(重心中心化した DLT 初期値で 50 反復要した)。
+- **L309** _(ja)_ — ★2026-10-07 レビュー修正: 世界原点から遠い点群(オフセット 1e4、画素ノイズ 0.5 px)で DLT の脱正規化 M = T2⁻¹·Pn·T3 の並進列が桁落ちし、t が壊れた初期値から LM が 回転誤差 175° の別解へ落ちていた。入口で重心 c を引いて解き、最後に t − R·c で戻す (Xc = R(X − c) + t' = R X + (t' − R c))。
+
 ## `polish.py`
 
 - **L430** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
+
+## `pose_quat.py`
+
+- **L157** _(ja)_ — ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。 cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
+- **L214** _(ja)_ — ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
+- **L315** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
 
 ## `ppf.py`
 
@@ -1709,6 +1733,10 @@
 ## `segcompare.py`
 
 - **L216** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+
+## `shapestats.py`
+
+- **L540** _(ja)_ — ★2026-10-07 レビュー修正: 中点がほぼ一直線(2 番目の広がりが 1 番目の 1e-3 未満) または一点だと、面は直線まわりに決まらず vt[-1] は雑音で決まる(真の面から 90 度 ずれうる)。中点の面の法線が左→右の平均ベクトルと 60 度以上食い違う場合も、鏡映面と して左右の対と矛盾する。どちらも左→右の平均ベクトルの、中点の主方向に直交する成分を 法線にする(面の位置は従来どおり中点の重心)。それも決まらなければ ValueError。
 
 ## `spc.py`
 
@@ -2074,14 +2102,14 @@
 - **L53** _(ja)_ — ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周 しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、 こちらは **判定を一度も計算しない**。まず skip で見えるようにし、 ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
 - **L57** _(ja)_ — ★2026-09-14: **本来の直しを入れて 151 → 0 にした。** 上に「本来の直しは ``conftest.BANKS`` を全 in_sort へ広げること」と自分で書いておきながら、 ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい** ([[feedback_never_weaken_the_probe_to_get_green]])。 足したのは 11 sort: points(56) / signal(27) / video(16) / qimage(11) / cimage(9) / counts(8) / lightfield(8) / rgbimage(6) / matrix(4) / beatcube(4) / keypoints(2) = 151 op。形は推測ではなく ``backends_bridge._EMPTY_OF`` (12 sort すべての**正準の最小値**)と ``problems.py`` の入力生成器から取った。 これで **901 op すべてが 3 つの契約ゲートを実際に通る**。 **0 になった以上、このラチェットの役目は「増えたら落とす」に変わった。** 新しい in_sort を足した人は ``conftest.BANKS`` に探針も足すこと —— 足さないと その op たちは「登録されているのに一度も実行されない」状態に戻る。
 - **L78** _(ja)_ — ★2026-10-07: 契約電池で ``backend_safe.guard`` の fallback に落ちる op の台帳 ``{op: (分類, 落ちる入力名の集合, 理由)}``。 上の 3 契約(例外なし・有限・決定的)は ``op.fn`` を**guard 越しに**呼ぶ。guard は例外を 握って sort の既定値を返し、非有限の出力は置き換えてから返す —— だから op 本体が 例外を投げても NaN を出しても、assert の時点では「例外なし・有限・決定的」に見えていた (2026-10-07 実測: 936 op 中 46 op が電池のどこかで黙って fallback、うち 8 op は 疑わしい欠陥。``inputs_for`` が sort 既定の帯を返すようにしてさらに 10 op)。 今は guard の台帳(``backend_safe.mark`` / ``events_since``)を見て、ここに無い (op, 入力)で劣化が記録されたら赤にする。台帳の op が電池のどこでも落ちなくなったら それも赤(直ったら行を消す)。入力名の集合は「これ以上増えない」上限として使う。
-- **L203** _(ja)_ — ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。 (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
-- **L223** _(ja)_ — ★2026-10-07(CI で判明): optional backend が無い環境の ImportError は「劣化」ではなく 「この環境では走らない」—— requires_backend と同じく skip(py3.11 の完全環境では失敗にする)。
-- **L259** _(ja)_ — ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。 KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・ 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。 sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。 単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と 同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
-- **L300** _(ja)_ — ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
-- **L313** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
-- **L341** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
-- **L363** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
-- **L421** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
+- **L205** _(ja)_ — ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。 (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
+- **L225** _(ja)_ — ★2026-10-07(CI で判明): optional backend が無い環境の ImportError は「劣化」ではなく 「この環境では走らない」—— requires_backend と同じく skip(py3.11 の完全環境では失敗にする)。
+- **L261** _(ja)_ — ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。 KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・ 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。 sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。 単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と 同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
+- **L302** _(ja)_ — ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
+- **L315** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
+- **L343** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
+- **L365** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
+- **L423** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2108,7 +2136,7 @@
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03：由於所有 backend 的 _safe 都匯聚到了 backend_safe.guard，所以按 guard 立起的結構化標記來判定，而不是按 qualname 的字串匹配（guard 也會在 qualname 裡留下 "_safe(...)"，但那是給顯示用的）。
-- **L1182** — ★沒找到的原因：`ops.REGISTRY`（899）與 2-D 筆記（899）一致，所以**只要從 registry 一側計數就會看起來「零缺失」**。曾經這樣下結論並搞錯了。所以這個門從跨 tier 的索引一側計數（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
+- **L1183** — ★沒找到的原因：`ops.REGISTRY`（899）與 2-D 筆記（899）一致，所以**只要從 registry 一側計數就會看起來「零缺失」**。曾經這樣下結論並搞錯了。所以這個門從跨 tier 的索引一側計數（memory: feedback_search_all_tiers_before_declaring_a_gap）。 --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

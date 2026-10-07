@@ -21,9 +21,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 姿勢誤差 = (回転角[度], 並進ノルム)。登録結果の GT 比較。→ (rot_deg, trans_err)。
 
 計算:
-- 回転: ``dR = R_est.T @ R_gt`` の回転角 ``arccos((trace(dR) - 1) / 2)`` を度に
-  直す(``cos`` は ``[-1, 1]`` にクリップして丸め誤差で NaN にしない)。値域
-  ``[0, 180]`` 度。``R_est == R_gt`` なら 0。
+- 回転: ``dR = R_est.T @ R_gt`` の回転角 ``atan2(|axial(dR − dRᵀ)| / 2, (trace(dR) − 1) / 2)``
+  を度に直す(sin を歪対称部、cos を trace から取る。arccos は 1 の近くで √ε の床を持ち
+  1e-6° 以下を 0 と答えていた —— 2026-10-07 修正)。値域 ``[0, 180]`` 度。
+  ``R_est == R_gt`` なら 0。
 - 並進: ``|t_est - t_gt|``(ユークリッドノルム、座標と同じ単位)。
 
 引数: ``R_est``, ``R_gt`` は ``(3, 3)``、``t_est``, ``t_gt`` は長さ 3。float に

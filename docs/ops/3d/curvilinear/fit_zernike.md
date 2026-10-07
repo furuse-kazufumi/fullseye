@@ -14,7 +14,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
 # fit_zernike — 3D `curvilinear` op
 
 - **データ種**: `image2d` → `table`
-- **呼び出し**: `import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72)` (実装を直接呼ぶなら `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72)`、台帳から引くなら `ops3d.get("fit_zernike")`)
+- **呼び出し**: `import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72, center=None, radius=None)` (実装を直接呼ぶなら `import match3d; match3d.fit_zernike(disk_image, n_max=6, device='cpu', nr=48, nt=72, center=None, radius=None)`、台帳から引くなら `ops3d.get("fit_zernike")`)
 - **GPU**: この op は GPU 経路あり(`device="cuda"`)
 
 ## 使い方
@@ -24,12 +24,20 @@ version: 0.5.0  # fullseye lib version this note was generated for
 直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/
 coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。
 
-honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では
-理論上直交のモード間に**最大 ~10% のクロストーク**が残る(例: 純 (2,0) defocus 入力で
-係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が
-要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。
+瞳(単位円板 ρ=1)は既定で画像中心 ``((H-1)/2, (W-1)/2)``、半径 ``min(H, W)/2 - 1`` 画素に
+置かれる。画像の瞳がこれと違うなら ``center=(row, col)`` と ``radius``(画素)で渡す —— 渡さないと
+半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を
+既定で読むと (2,0)=0.984 / (0,0)=−0.015、``radius=(H-1)/2`` を渡せば 0.999999)。瞳の円が画像から
+はみ出す ``center`` / ``radius`` は ValueError。
 
-Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。
+honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% の
+クロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が
+合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は
+(1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で
+いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと
+(examples/poc_zernike_aberrations.py の実測)。
+
+Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。
 
 ## 参考(サンプルデータ・文献)
 

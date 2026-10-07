@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1299. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1312. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -1321,6 +1321,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L33** — ★Keinen lokalen absoluten Pfad in die Distribution einbrennen (im Audit vom 2026-09-05 fuhr ein nicht oeffentlicher Geschwisterprojektname im PyPI-wheel mit). Den Default ueber eine Umgebungsvariable geben. Das Szenen-XML des Unitree G1. Verweist auf `unitree_g1/scene.xml` der MuJoCo Menagerie.
 - **L61** — ★Sicherheitsgrenze. `pickle` kann waehrend des load ein beliebiges callable aufrufen, also bedeutet ein Durchreichen von `find_class`, dass **allein das Oeffnen eines Checkpoints Code ausfuehrt**. Ein RL-Checkpoint ist ein Artefakt, das von anderen empfangen werden soll, also ist dies eine reale Bedrohung. (Gemessen 2026-09-05: die Durchreich-Variante gab `os.system` / `subprocess.Popen` / `builtins.eval` direkt zurueck und konnte waehrend `load()` tatsaechlich eine Datei anlegen.) Hier sind nur die numerischen Klassen aufgefuehrt, die ein brax-PPO-Checkpoint tatsaechlich referenziert. Fehlt etwas, **fuege es dieser Liste hinzu** (die Ausnahmemeldung nennt den Modulnamen).
 
+## `gicp.py`
+
+- **L178** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ← (I+[ω]×)R は原点まわりの回転なので、原点から 遠い点群(オフセット 1e3 で回転誤差 20°)では回転と並進がほぼ縮退して誤った姿勢に落ちた。 target の外接箱の中心 c へ両点群を寄せて解き、t = t' + c − R·c で世界へ戻す (外接箱の中心は点の順に依らない = reproducible=True のビット一致を保つ)。
+
 ## `glyphops.py`
 
 - **L44** _(ja)_ — ★2026-09-18: ここまで __all__ に無かった(api 側は名前で import していたので 気づけなかった)。一次情報は __all__ なので、公開するものは全部書く。
@@ -1386,12 +1390,17 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `match3d.py`
 
 - **L333** — ★2026-09-07: Durch numpys FFT ersetzt. Die Formel ist dieselbe (float32 fftn -> nur Phase -> Realteil von ifftn -> argmax), und torch war nirgends noetig. Auf CI ohne torch (py3.10 / 3.12) wurde dieser op zu einem ImportError, und der PoC schlug fehl.
-- **L1703** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Dieses ICP ist **Naechste-Nachbarn-Suche per cKDTree und Pose-Aktualisierung per 3x3-SVD**, ohne eine einzige Aufgabe fuer torch, machte torch aber zur Pflicht. Auf CI ohne torch (py3.10 / 3.12) fielen 4 PoCs mit `ImportError: this operator needs the optional 'torch' backend` durch und es kam ans Licht (lokal war torch vorhanden, daher unbemerkt -- ein Beispiel fuer 'das Gate dort aufstellen, wo der Unfall passiert'). Die Zahlen sind dieselbe float64-Formel, also **aendert sich das Ergebnis mit der Umgebung nicht**. Der Rueckgabetyp bleibt aus Kompatibilitaetsgruenden erhalten: torch.Tensor, wenn torch vorhanden, sonst numpy.ndarray (Werte identisch). Wird ein anderes device als "cpu" verlangt, fail-closed.
-- **L1938** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Naechste-Nachbarn-Suche, die 6x6-Normalgleichungen und Rodrigues sind allesamt kleine CPU-Lineare-Algebra ohne Bedarf an torch, waren aber zur Pflicht gemacht worden. Auf CI ohne torch (py3.10 / 3.12) fiel der PoC mit einem ImportError durch und es kam ans Licht. Die Formel ist dasselbe float64, also bleibt das Ergebnis unveraendert (die Abweichung von der torch-Version wurde als 0 in R/t und 0 in RMSE gemessen).
-- **L2926** — ★2026-09-07: **fail-closed, wenn der Ring ausserhalb des Bildes liegt**. ``r_in``/``r_out`` sind in Pixeln, also liest ein Uebergeben in mm ausserhalb des Sichtfelds und gibt ohne Ausnahme **komplett 0** zurueck (kam ans Licht, als `poc_pipe_wall_loss` eine pechschwarze Abbildung erzeugte). Liegt kein einziger Radius innerhalb der maximalen Distanz vom Zentrum zu den vier Bildecken, kann die Rueckgabe nur leer sein.
-- **L2937** — ★2026-09-07: grid_sample (bilinear, align_corners=True, zeros padding) durch scipys map_coordinates(order=1, mode="constant", cval=0) ersetzt -- dieselbe bilineare Interpolation, und es laeuft auch auf CI ohne torch (py3.10 / 3.12). Die gemessene Abweichung betraegt hoechstens 6.0e-06 (Zufallsbild im Bereich 0..1; die Rundungsdifferenz zwischen float32 und float64).
-- **L2982** — ★2026-09-07: Aus demselben Grund wie polar_unwrap durch map_coordinates ersetzt (bilinear, ausserhalb des Bereichs 0). Laeuft auch ohne torch. Die gemessene Abweichung betraegt hoechstens 7.6e-06.
-- **L3233** — ★2026-09-07: affine_grid + grid_sample (align_corners=False, zeros padding) durch numpy-Koordinatenberechnung + scipys map_coordinates(order=1) ersetzt. torch wurde nur fuer das bilineare Resampling verwendet, und in einer Umgebung ohne torch (CI py3.10 / 3.12) wurde dieser op zu einem ImportError. Die Konvention wurde wortgetreu uebernommen: die normierte Koordinate eines Ausgabe-Voxels (d,h,w) ist ((i+0.5)/N)*2-1, und nach der Rotation wird sie per (g+1)/2*N-0.5 auf Eingabe-Pixelkoordinaten zurueckgefuehrt (die Definition von align_corners=False). Die letzte Achse von grid ist in der Reihenfolge (x, y, z) = (W, H, D). Die gemessene Abweichung von der torch-Version betraegt hoechstens 7.6e-06.
+- **L992** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層なので、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き = 高い値の側)にある(軸平行で 0.5、斜めで最大 0.87)。d が系統的に その分ずれていた。各 voxel を −|n|₁/2·n だけ iso 面側へ戻してから投票する。 実測(40³、真の法線、半 voxel ずらし 10 通り×表裏): 軸平行の平均誤差 ±0.5 → 0.000、 斜め面は投影の離散化で ±0.3 以内が残る。
+- **L1050** _(ja)_ — ★2026-10-07 レビュー修正: 境界 voxel は占有側の 1 層で、iso 面より平均 |n|₁/2 voxel 内側(勾配 n の向き)にある。半径が明球で −0.6、暗球で +0.6 voxel 系統的にずれていた。 各 voxel を −|n|₁/2·n だけ iso 面へ戻してから投票する(明球・暗球どちらでも同じ式)。 実測(48³、半径 7〜13、中心を半 voxel 内で乱した球): 平均誤差 明球 −0.64 → +0.17 / 暗球 +0.57 → −0.15 voxel (残りは丸め投票と放物線補間の偏り)。
+- **L1714** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Dieses ICP ist **Naechste-Nachbarn-Suche per cKDTree und Pose-Aktualisierung per 3x3-SVD**, ohne eine einzige Aufgabe fuer torch, machte torch aber zur Pflicht. Auf CI ohne torch (py3.10 / 3.12) fielen 4 PoCs mit `ImportError: this operator needs the optional 'torch' backend` durch und es kam ans Licht (lokal war torch vorhanden, daher unbemerkt -- ein Beispiel fuer 'das Gate dort aufstellen, wo der Unfall passiert'). Die Zahlen sind dieselbe float64-Formel, also **aendert sich das Ergebnis mit der Umgebung nicht**. Der Rueckgabetyp bleibt aus Kompatibilitaetsgruenden erhalten: torch.Tensor, wenn torch vorhanden, sonst numpy.ndarray (Werte identisch). Wird ein anderes device als "cpu" verlangt, fail-closed.
+- **L1949** — ★2026-09-07: Den Rumpf in numpy neu geschrieben. Naechste-Nachbarn-Suche, die 6x6-Normalgleichungen und Rodrigues sind allesamt kleine CPU-Lineare-Algebra ohne Bedarf an torch, waren aber zur Pflicht gemacht worden. Auf CI ohne torch (py3.10 / 3.12) fiel der PoC mit einem ImportError durch und es kam ans Licht. Die Formel ist dasselbe float64, also bleibt das Ergebnis unveraendert (die Abweichung von der torch-Version wurde als 0 in R/t und 0 in RMSE gemessen).
+- **L1964** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ≈ I+[ω]× は「原点まわり」の回転。原点から遠い 点群(UTM 座標など、オフセット 1e3 で回転誤差 23°)ではてこの腕 p が巨大になり、 回転と並進の自由度がほぼ縮退して Gauss-Newton が誤った姿勢へ収束していた。 dst の外接箱の中心 c へ両点群を寄せてから解き、最後に t = t' + c − R·c で戻す。 外接箱の中心は点の順に依らない(reproducible=True のビット一致を保つ)。
+- **L2796** _(ja)_ — ★2026-10-07 レビュー修正: 未中心化の |p|² は原点から遠い点群(オフセット 1e6)で桁落ちし 半径が 7.5e5 も狂った。重心へ寄せて解き、中心を戻す(数学的には同じ解)。
+- **L2950** — ★2026-09-07: **fail-closed, wenn der Ring ausserhalb des Bildes liegt**. ``r_in``/``r_out`` sind in Pixeln, also liest ein Uebergeben in mm ausserhalb des Sichtfelds und gibt ohne Ausnahme **komplett 0** zurueck (kam ans Licht, als `poc_pipe_wall_loss` eine pechschwarze Abbildung erzeugte). Liegt kein einziger Radius innerhalb der maximalen Distanz vom Zentrum zu den vier Bildecken, kann die Rueckgabe nur leer sein.
+- **L2961** — ★2026-09-07: grid_sample (bilinear, align_corners=True, zeros padding) durch scipys map_coordinates(order=1, mode="constant", cval=0) ersetzt -- dieselbe bilineare Interpolation, und es laeuft auch auf CI ohne torch (py3.10 / 3.12). Die gemessene Abweichung betraegt hoechstens 6.0e-06 (Zufallsbild im Bereich 0..1; die Rundungsdifferenz zwischen float32 und float64).
+- **L3006** — ★2026-09-07: Aus demselben Grund wie polar_unwrap durch map_coordinates ersetzt (bilinear, ausserhalb des Bereichs 0). Laeuft auch ohne torch. Die gemessene Abweichung betraegt hoechstens 7.6e-06.
+- **L3077** _(ja)_ — ★2026-10-07: 瞳の中心・半径を外から渡せるように(既定は従来どおり)。
+- **L3281** — ★2026-09-07: affine_grid + grid_sample (align_corners=False, zeros padding) durch numpy-Koordinatenberechnung + scipys map_coordinates(order=1) ersetzt. torch wurde nur fuer das bilineare Resampling verwendet, und in einer Umgebung ohne torch (CI py3.10 / 3.12) wurde dieser op zu einem ImportError. Die Konvention wurde wortgetreu uebernommen: die normierte Koordinate eines Ausgabe-Voxels (d,h,w) ist ((i+0.5)/N)*2-1, und nach der Rotation wird sie per (g+1)/2*N-0.5 auf Eingabe-Pixelkoordinaten zurueckgefuehrt (die Definition von align_corners=False). Die letzte Achse von grid ist in der Reihenfolge (x, y, z) = (W, H, D). Die gemessene Abweichung von der torch-Version betraegt hoechstens 7.6e-06.
 
 ## `mathestimation.py`
 
@@ -1434,6 +1443,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `medial.py`
 
 - **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
+
+## `metrics3d.py`
+
+- **L369** _(ja)_ — ★2026-10-07 レビュー修正: md=None(軸方向は無制限)で球の半径を r にしていたため、 実際は「半径 r の球」で切り取っていた(面が法線方向に r 以上動くと両側が揃わず nan)。 無制限の円筒は球で絞れないので、全点を候補にして軸・半径で判定する。
 
 ## `occupancy.py`
 
@@ -1623,9 +1636,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L472** — ★ Ein Fenster, in dem der Korrelationspeak nicht steht (keine Textur, überall gleichförmig), gibt nan zurück —— wir geben nicht 0 zurück, um "bewegt sich nicht" nicht mit "unbekannt" zu vermischen. Aber **welcher Anteil nan ist, lässt sich nur aus dem Rückgabewert erkennen**, und die Form war so, dass man es erst bemerkt, wenn ``flow.mean()`` zu nan wird (2026-09-06). Hier zählen wir es. Gemessen: ein Bild mit nur einem 16x16-Quadrat auf gleichförmigem Hintergrund hat nur 16 von 98 Fenstern endlich (0.163). Volle Textur ergibt 1.000.
 
+## `pnp3d.py`
+
+- **L241** _(ja)_ — ★2026-10-07 レビュー修正: 旧式は回転ブロックに -[Xc]x(= t も回す更新の微分)を使い、 実際の更新(t は回さない)と食い違っていた。初期値が良いほど収束が線形に遅くなり、 30 反復で最小に届かないことがあった(重心中心化した DLT 初期値で 50 反復要した)。
+- **L309** _(ja)_ — ★2026-10-07 レビュー修正: 世界原点から遠い点群(オフセット 1e4、画素ノイズ 0.5 px)で DLT の脱正規化 M = T2⁻¹·Pn·T3 の並進列が桁落ちし、t が壊れた初期値から LM が 回転誤差 175° の別解へ落ちていた。入口で重心 c を引いて解き、最後に t − R·c で戻す (Xc = R(X − c) + t' = R X + (t' − R c))。
+
 ## `polish.py`
 
 - **L430** _(ja)_ — ★2026-10-05 chain_fuzz の 2 回目の発見(ttc_from_scale → raster_wipe_area): 面積の 4 項が有限でも、N 本の和(N·single)と 一筆の y 座標((i − (N−1)/2)·pitch)はまだ溢れうる。区切りの NaN 以外に非有限が出たら黙って返さない
+
+## `pose_quat.py`
+
+- **L157** _(ja)_ — ★2026-10-07 レビュー修正: ry = ±90°(ジンバルロック)では R[2,1], R[2,2], R[1,0], R[0,0] が どれも丸め屑になり、rx, rz を屑の atan2 で決めていた(ry=90° ちょうどで行列の往復誤差 0.16)。 cos(ry) = hypot(R[0,0], R[1,0]) が √ε 未満なら rx と rz は和/差しか決まらないので rx = 0 に 固定し、rz を残りの成分から取る(R[0,1] = −sin rz, R[1,1] = cos rz が ±90° の両方で成り立つ)。
+- **L214** _(ja)_ — ★2026-10-07 レビュー修正: 符号を w の正負で揃えると、w≈0 をまたぐ組(yaw +179° と −179°)が 反対の半球に分かれ、平均が恒等(0°)に潰れた。最初の四元数を基準に、内積が負のものを反転する。
+- **L315** _(ja)_ — ★2026-10-07 レビュー修正: 回転が無い(純並進)と sin(θ/2)=0 で割れず、旧実装は 軸 0・並進 0 を返して並進を丸ごと失った。qr = ±1 なら qd = ±(0, t/2) なので t = 2·sign(w)·qd[1:]、軸 = t/|t|、d = |t|(並進も無ければ軸 0・d 0)。
 
 ## `ppf.py`
 
@@ -1709,6 +1733,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `segcompare.py`
 
 - **L216** _(ja)_ — ★2026-10-07: 43*0.1/0.1 = 42.99999999999999 → floor で 1 voxel 手前に落ちた(spacing 0.1 で 1000 個中 47 個)。 整数のごく近く(相対 1e-9)は整数に寄せてから floor
+
+## `shapestats.py`
+
+- **L540** _(ja)_ — ★2026-10-07 レビュー修正: 中点がほぼ一直線(2 番目の広がりが 1 番目の 1e-3 未満) または一点だと、面は直線まわりに決まらず vt[-1] は雑音で決まる(真の面から 90 度 ずれうる)。中点の面の法線が左→右の平均ベクトルと 60 度以上食い違う場合も、鏡映面と して左右の対と矛盾する。どちらも左→右の平均ベクトルの、中点の主方向に直交する成分を 法線にする(面の位置は従来どおり中点の重心)。それも決まらなければ ValueError。
 
 ## `spc.py`
 
@@ -2074,14 +2102,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L53** _(ja)_ — ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周 しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、 こちらは **判定を一度も計算しない**。まず skip で見えるようにし、 ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
 - **L57** _(ja)_ — ★2026-09-14: **本来の直しを入れて 151 → 0 にした。** 上に「本来の直しは ``conftest.BANKS`` を全 in_sort へ広げること」と自分で書いておきながら、 ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい** ([[feedback_never_weaken_the_probe_to_get_green]])。 足したのは 11 sort: points(56) / signal(27) / video(16) / qimage(11) / cimage(9) / counts(8) / lightfield(8) / rgbimage(6) / matrix(4) / beatcube(4) / keypoints(2) = 151 op。形は推測ではなく ``backends_bridge._EMPTY_OF`` (12 sort すべての**正準の最小値**)と ``problems.py`` の入力生成器から取った。 これで **901 op すべてが 3 つの契約ゲートを実際に通る**。 **0 になった以上、このラチェットの役目は「増えたら落とす」に変わった。** 新しい in_sort を足した人は ``conftest.BANKS`` に探針も足すこと —— 足さないと その op たちは「登録されているのに一度も実行されない」状態に戻る。
 - **L78** _(ja)_ — ★2026-10-07: 契約電池で ``backend_safe.guard`` の fallback に落ちる op の台帳 ``{op: (分類, 落ちる入力名の集合, 理由)}``。 上の 3 契約(例外なし・有限・決定的)は ``op.fn`` を**guard 越しに**呼ぶ。guard は例外を 握って sort の既定値を返し、非有限の出力は置き換えてから返す —— だから op 本体が 例外を投げても NaN を出しても、assert の時点では「例外なし・有限・決定的」に見えていた (2026-10-07 実測: 936 op 中 46 op が電池のどこかで黙って fallback、うち 8 op は 疑わしい欠陥。``inputs_for`` が sort 既定の帯を返すようにしてさらに 10 op)。 今は guard の台帳(``backend_safe.mark`` / ``events_since``)を見て、ここに無い (op, 入力)で劣化が記録されたら赤にする。台帳の op が電池のどこでも落ちなくなったら それも赤(直ったら行を消す)。入力名の集合は「これ以上増えない」上限として使う。
-- **L203** _(ja)_ — ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。 (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
-- **L223** _(ja)_ — ★2026-10-07(CI で判明): optional backend が無い環境の ImportError は「劣化」ではなく 「この環境では走らない」—— requires_backend と同じく skip(py3.11 の完全環境では失敗にする)。
-- **L259** _(ja)_ — ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。 KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・ 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。 sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。 単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と 同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
-- **L300** _(ja)_ — ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
-- **L313** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
-- **L341** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
-- **L363** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
-- **L421** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
+- **L205** _(ja)_ — ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。 (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
+- **L225** _(ja)_ — ★2026-10-07(CI で判明): optional backend が無い環境の ImportError は「劣化」ではなく 「この環境では走らない」—— requires_backend と同じく skip(py3.11 の完全環境では失敗にする)。
+- **L261** _(ja)_ — ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。 KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・ 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。 sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。 単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と 同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
+- **L302** _(ja)_ — ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
+- **L315** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
+- **L343** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
+- **L365** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
+- **L423** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2108,7 +2136,7 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `tests/test_opdocs.py`
 
 - **L212** — ★2026-09-03: da das _safe jedes Backends in backend_safe.guard zusammengefasst wurde, nach dem strukturierten Marker urteilen, den der guard setzt, nicht nach String-Abgleich auf qualname (der guard lässt auch "_safe(...)" im qualname, das ist aber zur Anzeige).
-- **L1182** — ★Warum es nicht gefunden wurde: `ops.REGISTRY` (899) und die 2-D-Notizen (899) stimmen überein, sodass es **solange man von der Registerseite zählt wie "null fehlend" aussieht**. Ich habe das einmal geschlossen und lag falsch. Daher zählt dieses Gate von der tier-übergreifenden Index-Seite (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
+- **L1183** — ★Warum es nicht gefunden wurde: `ops.REGISTRY` (899) und die 2-D-Notizen (899) stimmen überein, sodass es **solange man von der Registerseite zählt wie "null fehlend" aussieht**. Ich habe das einmal geschlossen und lag falsch. Daher zählt dieses Gate von der tier-übergreifenden Index-Seite (memory: feedback_search_all_tiers_before_declaring_a_gap). --------------------------------------------------------------------------- #
 
 ## `tests/test_packaging_foundation.py`
 

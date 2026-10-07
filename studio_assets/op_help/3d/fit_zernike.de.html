@@ -1,14 +1,17 @@
 <!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
 <h2 style="color:#f5a524;margin:0 0 4px 0">fit_zernike — 3D <code style="color:#22d3bf">curvilinear</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
-<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fit_zernike&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72, center=None, radius=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import match3d; match3d.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72, center=None, radius=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;fit_zernike&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Scheibenbild → Zernike-Koeffizienten (die <b>Polarkoordinaten-Flächenanpassung</b> der Optik und Wellenfrontmesstechnik). Liefert {(n,m): coef}.</p>
 <p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/ coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
-<p>honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では理論上直交のモード間に<b>最大 ~10% のクロストーク</b>が残る(例: 純 (2,0) defocus 入力で係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。</p>
-<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
+<p>瞳(単位円板 ρ=1)は既定で画像中心 <code style="color:#22d3bf">((H-1)/2, (W-1)/2)</code>、半径 <code style="color:#22d3bf">min(H, W)/2 - 1</code> 画素に置かれる。画像の瞳がこれと違うなら <code style="color:#22d3bf">center=(row, col)</code> と <code style="color:#22d3bf">radius</code>(画素)で渡す —— 渡さないと半径の食い違いがそのまま低次モードへの漏れになる(129×129 で瞳半径 (H-1)/2 の純 defocus を既定で読むと (2,0)=0.984 / (0,0)=−0.015、<code style="color:#22d3bf">radius=(H-1)/2</code> を渡せば 0.999999)。瞳の円が画像からはみ出す <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">radius</code> は ValueError。</p>
+<p>honest 開示(2026-10-07 訂正): 以前ここには「離散サンプリング(nr=48, nt=72)由来の最大 ~10% のクロストーク、nr/nt を上げれば減る」と書いていたが、原因は解像度ではなかった。瞳の半径・中心が合っていて瞳の外にも値が続く画像なら既定の nr/nt で係数はほぼ 1(129×129 で 0.999999)に戻る。漏れの実際の原因は</p>
+<p style="margin:2px 0 2px 12px">(1) 上記の瞳半径・中心の食い違い(nr/nt を上げても 1 桁も減らない)と、(2) 瞳の外が 0 の画像で</p>
+<p>いちばん外のリング(ρ=1)が縁に乗り、双一次補間が外側の 0 を吸い込むこと(examples/poc_zernike_aberrations.py の実測)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ・瞳が画像からはみ出す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>
