@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>geoid height grid को latitude/longitude पर <b>bilinear interpolate</b> करके <code style="color:#22d3bf">N</code> [m] लौटाता है (<code style="color:#22d3bf">signal</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>GNSS が返すのは楕円体高 <code style="color:#22d3bf">h</code>、地図と設計図が使うのは標高 <code style="color:#22d3bf">H</code>。その差がジオイド高 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)で、日本付近では概ね <b>+30〜+40 m</b> ある。この op は公開されているジオイドモデルの格子(GSIGEO / EGM 系のような等間隔グリッド)を読む側の道具で、<b>モデルそのものは持たない</b> —— どの版を使ったかは呼び手の責任であり、版が変われば標高は数 cm 動く。</p>
+<p>GNSS ellipsoidal ऊँचाई <code style="color:#22d3bf">h</code> लौटाता है; maps और design drawings orthometric ऊँचाई <code style="color:#22d3bf">H</code> का उपयोग करते हैं। अंतर geoid ऊँचाई <code style="color:#22d3bf">N</code> है (<code style="color:#22d3bf">H = h - N</code>), जो Japan के पास लगभग <b>+30 से +40 m</b> है। यह op प्रकाशित geoid model grids (GSIGEO / EGM family जैसे समान अंतराल वाले grids) को पढ़ने का tool है, और <b>model स्वयं नहीं रखता</b> —— कौन-सा संस्करण उपयोग हुआ यह caller की ज़िम्मेदारी है, और संस्करण बदलने पर ऊँचाइयाँ कुछ cm खिसक जाती हैं।</p>
 <p>Args:</p>
-<p>geoid: <code style="color:#22d3bf">(H, W)</code> のジオイド高 [m]。<code style="color:#22d3bf">geoid[0, 0]</code> が</p>
-<p><code style="color:#22d3bf">(lat0_deg, lon0_deg)</code>、行が増えると緯度が <code style="color:#22d3bf">d_lat_deg</code> 増え、</p>
-<p>列が増えると経度が <code style="color:#22d3bf">d_lon_deg</code> 増える(どちらの符号でもよい)。</p>
-<p>lat_deg / lon_deg: 引きたい点の緯度・経度 [度]。配列可。</p>
-<p>lat0_deg / lon0_deg: 格子の原点 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 格子の刻み [度]。0 は拒否する。</p>
+<p>geoid: <code style="color:#22d3bf">(H, W)</code> geoid ऊँचाई [m]। <code style="color:#22d3bf">geoid[0, 0]</code></p>
+<p><code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> है; row बढ़ने पर अक्षांश <code style="color:#22d3bf">d_lat_deg</code> से बढ़ता है,</p>
+<p>column बढ़ने पर देशांतर <code style="color:#22d3bf">d_lon_deg</code> से बढ़ता है (कोई भी चिह्न ठीक है)।</p>
+<p>lat_deg / lon_deg: देखे जाने वाले points का अक्षांश/देशांतर [degrees]। Arrays अनुमत।</p>
+<p>lat0_deg / lon0_deg: grid का मूल [degrees]।</p>
+<p>d_lat_deg / d_lon_deg: grid step [degrees]। 0 अस्वीकार किया जाता है।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n,)</code> のジオイド高 [m]。</p>
-<p>閉じた式で検査できること: <code style="color:#22d3bf">N</code> が緯度・経度の <b>1 次式</b>であるような格子に対しては、双一次補間は<b>厳密</b>(機械精度)。2 次の項があるときの誤差は <code style="color:#22d3bf">|∂²N| * d² / 8</code> で上から押さえられる。</p>
-<p><b>ValueError</b>: 格子が 2-D でない / 2x2 未満 / 非有限、刻みが 0 か非有限、緯度が ±90 を外れる、そして<b>格子の外の点</b>(海域や範囲外を黙って端の値で埋めない —— 外挿したジオイド高は測量値ではない)。</p>
+<p><code style="color:#22d3bf">(n,)</code> geoid ऊँचाइयाँ [m]।</p>
+<p>बंद सूत्र से क्या जाँचा जा सकता है: ऐसे grid के लिए जहाँ <code style="color:#22d3bf">N</code> अक्षांश और देशांतर का <b>1st-order (linear) function</b> है, bilinear interpolation <b>सटीक</b> है (machine precision)। 2nd-order पदों के साथ, error ऊपर से <code style="color:#22d3bf">|∂²N| * d² / 8</code> से सीमित है।</p>
+<p><b>ValueError</b>: grid 2-D नहीं / 2x2 से छोटा / non-finite, step 0 या non-finite, ±90 से बाहर अक्षांश, और <b>grid से बाहर के points</b> (समुद्री क्षेत्र या सीमा से बाहर के points चुपचाप किनारे के मानों से नहीं भरे जाते —— extrapolate की गई geoid ऊँचाई survey मान नहीं है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,38 +4,37 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optics; optics.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;fourier_plane_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>4f system के Fourier plane में रखा गया complex transmission function <code style="color:#22d3bf">H(fx, fy)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>返るのは <code style="color:#22d3bf">numpy.fft.fftfreq</code> の並び(<b>fftshift しない</b>)の complex128 <code style="color:#22d3bf">(size, size)</code> で、<code style="color:#22d3bf">four_f_filter</code> にそのまま渡せる。空間周波数の単位は cycles/um(<code style="color:#22d3bf">fftfreq(size, d=pixel_pitch_um)</code>)。</p>
+<p><code style="color:#22d3bf">numpy.fft.fftfreq</code> क्रम (<b>fftshift नहीं किया गया</b>) में shape <code style="color:#22d3bf">(size, size)</code> का complex128 array लौटाता है, जिसे सीधे <code style="color:#22d3bf">four_f_filter</code> को दिया जा सकता है। spatial frequency की इकाई cycles/um है (<code style="color:#22d3bf">fftfreq(size, d=pixel_pitch_um)</code>)।</p>
 <p>*kind*:</p>
 <p><code style="color:#22d3bf">identity</code></p>
-<p><code style="color:#22d3bf">H = 1</code>。4f 系は結像するだけ —— 出力は入力の <b>180 度回転</b>になる。</p>
+<p><code style="color:#22d3bf">H = 1</code>। 4f system केवल image बनाता है —— आउटपुट, इनपुट को <b>180 degrees घुमाकर</b> मिलता है।</p>
 <p><code style="color:#22d3bf">block</code></p>
-<p><code style="color:#22d3bf">H = 0</code>。出力は厳密にゼロ(フーリエ面を塞いだ状態)。</p>
+<p><code style="color:#22d3bf">H = 0</code>। आउटपुट बिल्कुल शून्य है (Fourier plane बंद है)।</p>
 <p><code style="color:#22d3bf">derivative_x</code> / <code style="color:#22d3bf">derivative_y</code></p>
-<p><code style="color:#22d3bf">H = (i*2*pi*f)**order</code>。出力は *order* 階の空間微分。<b>レンズが微分を計算する</b>のがこの 1 行で、光コンピューティングの核である。</p>
+<p><code style="color:#22d3bf">H = (i*2*pi*f)**order</code>। आउटपुट *order* क्रम का spatial derivative है। इस 1 पंक्ति में <b>lens derivative की गणना करता है</b>; यही optical computing का मूल है।</p>
 <p><code style="color:#22d3bf">laplacian</code></p>
-<p><code style="color:#22d3bf">H = -(2*pi)**2 * (fx**2 + fy**2)</code>。等方な 2 階微分。</p>
+<p><code style="color:#22d3bf">H = -(2*pi)**2 * (fx**2 + fy**2)</code>। Isotropic 2nd-order derivative।</p>
 <p><code style="color:#22d3bf">lowpass</code> / <code style="color:#22d3bf">highpass</code></p>
-<p><code style="color:#22d3bf">|f| &lt;= radius_frac * f_nyquist</code> の円形開口(と、その補集合)。</p>
-<p><code style="color:#22d3bf">f_nyquist = 1/(2*pixel_pitch_um)</code>。空間フィルタリングの教科書例。</p>
+<p>वृत्ताकार aperture <code style="color:#22d3bf">|f| &lt;= radius_frac * f_nyquist</code> (और उसका पूरक)।</p>
+<p><code style="color:#22d3bf">f_nyquist = 1/(2*pixel_pitch_um)</code>। spatial filtering का पाठ्यपुस्तक वाला उदाहरण।</p>
 <p><code style="color:#22d3bf">hilbert_x</code></p>
-<p><code style="color:#22d3bf">H = -i*sign(fx)</code>(<code style="color:#22d3bf">fx = 0</code> と、偶数長のナイキストのビンは 0)。</p>
-<p>片側位相で縁が立つ —— シュリーレン法の数値版。★ナイキストを 0 に</p>
-<p>するのは、<code style="color:#22d3bf">fftfreq</code> が偶数長で <code style="color:#22d3bf">-1/2</code> だけを返し対になる <code style="color:#22d3bf">+1/2</code></p>
-<p>が無いためで、残すと実数偶関数の出力が<b>奇対称を厳密に満たさない</b></p>
-<p>(実測 1.6e-09 → 0 にして 2.3e-16)。離散ヒルベルト変換の標準的な扱い。</p>
+<p><code style="color:#22d3bf">H = -i*sign(fx)</code> (<code style="color:#22d3bf">fx = 0</code> पर और सम लंबाइयों के Nyquist bin पर 0)।</p>
+<p>एक-तरफ़ा phase edges को उभारता है —— schlieren method का numerical रूप। ★Nyquist bin को 0 रखा जाता है</p>
+<p>क्योंकि सम लंबाइयों के लिए <code style="color:#22d3bf">fftfreq</code> केवल <code style="color:#22d3bf">-1/2</code> लौटाता है और मेल खाता <code style="color:#22d3bf">+1/2</code> नहीं होता;</p>
+<p>यदि इसे रखा जाता, तो real even function का आउटपुट <b>odd symmetry को सटीक रूप से संतुष्ट नहीं करता</b></p>
+<p>(मापा गया 1.6e-09 → 0 करने पर: 2.3e-16)। discrete Hilbert transform का मानक उपचार।</p>
 <p><code style="color:#22d3bf">vortex</code></p>
-<p><code style="color:#22d3bf">H = exp(i*charge*phi)</code> の渦位相板。*charge* は<b>位相の巻き数</b>で、</p>
-<p>フーリエ面の閉路を 1 周すると位相が厳密に <code style="color:#22d3bf">2*pi*charge</code> 進む</p>
-<p>—— 整数の不変量なので門にできる。★DC 項は 0 にする(<code style="color:#22d3bf">phi</code> が</p>
-<p>原点で定義されないため)。結果として平均が落ちるので、この板は</p>
-<p><b>等方な縁強調</b>(半径方向ヒルベルト変換)として働く。</p>
-<p>真値(この op が再現するもの):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">identity</code> は <code style="color:#22d3bf">four_f_filter</code> を通すと入力の 180 度回転に一致 —— 実測で最大絶対差 3.4e-16(64x64 のガウシアン、<code style="color:#22d3bf">pixel_pitch_um=1</code>)。<b>ビット一致ではない</b>: FFT の往復が 1e-16 の屑を乗せる。ゼロ距離伝搬のように短絡すれば厳密にできるが、それは <code style="color:#22d3bf">identity</code> だけの特別扱いになる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">derivative_x</code> order=1 をガウシアン <code style="color:#22d3bf">exp(-x**2/w**2)</code> に当てると <code style="color:#22d3bf">-2x/w**2 * exp(-x**2/w**2)</code> に一致(帯域制限の範囲で)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vortex</code> の巻き数は閉路上の位相差の和を <code style="color:#22d3bf">2*pi</code> で割って厳密に *charge*。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lowpass</code> + <code style="color:#22d3bf">highpass</code> = <code style="color:#22d3bf">identity</code>(同じ *radius_frac* で厳密に 1)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *kind* が上の一覧に無い / *size* が 2 未満または <code style="color:#22d3bf">MAX_GRID</code> 超 / *order* が 0..8 の外 / *charge* が -32..32 の外 / *radius_frac* が 0 以下または 1 超 / *pixel_pitch_um* が非正・非有限。</p>
+<p>Vortex phase plate <code style="color:#22d3bf">H = exp(i*charge*phi)</code>। *charge* <b>phase का winding number</b> है:</p>
+<p>Fourier plane में एक बंद loop का 1 चक्कर लगाने पर phase ठीक <code style="color:#22d3bf">2*pi*charge</code> बढ़ता है</p>
+<p>—— एक integer invariant, इसलिए यह gate का काम कर सकता है। ★DC term को 0 रखा जाता है (क्योंकि origin पर <code style="color:#22d3bf">phi</code></p>
+<p>अपरिभाषित है)। परिणामस्वरूप mean गिरता है, इसलिए plate</p>
+<p><b>isotropic edge enhancement</b> (radial Hilbert transform) की तरह काम करती है।</p>
+<p>Ground truth (यह op क्या पुनः उत्पन्न करता है):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">four_f_filter</code> से गुज़रा <code style="color:#22d3bf">identity</code> 180 degrees घुमाए गए इनपुट से मेल खाता है —— मापा गया अधिकतम निरपेक्ष अंतर 3.4e-16 (64x64 Gaussian, <code style="color:#22d3bf">pixel_pitch_um=1</code>)। <b>Bit-identical नहीं</b>: FFT round trip 1e-16 के कण जोड़ता है। zero-distance propagation की तरह short-circuit करने से यह सटीक हो जाता, पर वह केवल <code style="color:#22d3bf">identity</code> के लिए विशेष उपचार होता।</p>
+<p style="margin:2px 0 2px 12px">• Gaussian <code style="color:#22d3bf">exp(-x**2/w**2)</code> पर लगाया गया <code style="color:#22d3bf">derivative_x</code> order=1, <code style="color:#22d3bf">-2x/w**2 * exp(-x**2/w**2)</code> से मेल खाता है (band limit के भीतर)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vortex</code> का winding number: बंद loop के साथ phase अंतरों का योग <code style="color:#22d3bf">2*pi</code> से भाग देने पर ठीक *charge* है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lowpass</code> + <code style="color:#22d3bf">highpass</code> = <code style="color:#22d3bf">identity</code> (समान *radius_frac* के साथ ठीक 1)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *kind* ऊपर की सूची में नहीं / *size* 2 से कम या <code style="color:#22d3bf">MAX_GRID</code> से अधिक / *order* 0..8 के बाहर / *charge* -32..32 के बाहर / *radius_frac* 0 या कम या 1 से अधिक / *pixel_pitch_um* धनात्मक नहीं या finite नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

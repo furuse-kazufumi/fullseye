@@ -12,8 +12,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Rolling ball विधि से background subtraction। Image की brightness को terrain मानकर, दी गई radius का गोला उसके नीचे से घुमाकर मिलने वाली envelope surface को background मानता है और मूल image से घटा देता है —— असमान रोशनी (धीमे brightness gradient) को हटाने के लिए इस्तेमाल होता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">v - restoration.rolling_ball(v, radius=5+int(a*20))</code> を <code style="color:#22d3bf">[0,1]</code> へ clip したもの —— a は球の半径を 5〜25 に振る(大きいほど緩やかな照明ムラしか背景とみなさず、細かい構造は残る)。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">v - restoration.rolling_ball(v, radius=5+int(a*20))</code> है जिसे <code style="color:#22d3bf">[0,1]</code> पर clip किया जाता है —— a गेंद की radius को 5–25 पर sweep करता है (यह जितनी बड़ी, उतनी ही केवल धीरे-धीरे बदलने वाली असमान रोशनी पृष्ठभूमि मानी जाती है, और बारीक संरचनाएँ बची रहती हैं)। b उपयोग नहीं होता।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

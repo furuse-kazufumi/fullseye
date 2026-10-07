@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_sample_at_windows(field, info)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_sample_at_windows(field, info)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_sample_at_windows&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर pixel वाले field <code style="color:#22d3bf">(2, H, W)</code> को window केंद्रों के grid पर उतारता है (nearest neighbor)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>真値は画素解像度で作られるが、PIV の出力は窓の格子に載る。<b>比べる前に同じ格子へ持ってくる</b>必要があり、その持ってき方(最近傍か窓内平均か)で誤差が変わる。ここは最近傍 —— 窓内平均にすると、勾配のある場で PIV 自身の平滑化と区別がつかなくなる。</p>
+<p>ground truth pixel resolution पर बनाया जाता है, लेकिन PIV आउटपुट window grid पर होता है। <b>तुलना से पहले, इसे उसी grid पर लाना होगा</b>, और लाने का तरीका (nearest neighbour या window mean) error को बदल देता है। यहाँ nearest neighbour है —— window mean के साथ, gradients वाले fields में इसे PIV की अपनी smoothing से अलग करना असंभव हो जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

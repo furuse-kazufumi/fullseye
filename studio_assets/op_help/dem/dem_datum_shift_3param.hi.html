@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>geodetic datum बदलना — geocentric 3-parameter translation (<code style="color:#22d3bf">points</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
-<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
-<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
+<p>एक ही &quot;35 degrees 41 minutes उत्तर&quot; भी पुराने Japanese geodetic system और world geodetic system में <b>ज़मीन पर कई सौ metres दूर</b> स्थानों की ओर इशारा करता है। यह op उस बदलाव को geocentric Cartesian coordinates में translation के रूप में करता है (बिना rotation या scale वाला <code style="color:#22d3bf">Molodensky-Badekas</code> case)::</p>
+<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; geodetic(a_to, f_to)</p>
+<p>★<b>parameters के लिए कोई डिफ़ॉल्ट मान नहीं</b>। किस datum से किस datum में, किस translation से, यह देश, क्षेत्र और संस्करण के अनुसार भिन्न होता है; चुपचाप मान लेने से &quot;ऐसे coordinates मिलते हैं जो कोई exception नहीं उठाते पर कई सौ metres हटे हुए हैं&quot; —— यही इस op के अस्तित्व का कारण है, इसलिए caller को इन्हें हमेशा लिखना होगा।</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。</p>
-<p>h_m: 元の成果での楕円体高 [m]。</p>
-<p>dx_m / dy_m / dz_m: 地心の平行移動量 [m] (元 → 先)。</p>
-<p>a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。</p>
-<p>a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。</p>
+<p>lat_deg / lon_deg: source datum में अक्षांश/देशांतर [deg]। Arrays अनुमत।</p>
+<p>h_m: source datum में ellipsoidal ऊँचाई [m]।</p>
+<p>dx_m / dy_m / dz_m: geocentric translation [m] (source → target)।</p>
+<p>a_from_m / f_from: source ellipsoid का semi-major axis [m] और flattening।</p>
+<p>a_to_m / f_to: target ellipsoid का semi-major axis [m] और flattening।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b> (往復の床は <code style="color:#22d3bf">dem_ecef_to_geodetic</code> と同じ)。平行移動だけを与えたときの地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。</p>
+<p><code style="color:#22d3bf">(latitude[deg], longitude[deg], ellipsoidal height[m])</code> का <code style="color:#22d3bf">(n, 3)</code>।</p>
+<p>बंद सूत्र से जाँचने योग्य: translation 0 और समान ellipsoid के साथ, <b>identity transform</b> (round-trip floor <code style="color:#22d3bf">dem_ecef_to_geodetic</code> के समान है)। जब केवल translation दिया गया हो, तो ज़मीन पर displacement उस point पर ECEF basis में विघटित उसके components से मेल खाता है।</p>
+<p><b>ValueError</b>: non-finite मान, ±90 से बाहर अक्षांश, non-positive semi-major axis, [0, 1) से बाहर flattening।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

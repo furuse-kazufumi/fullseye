@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;nurbs_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>NURBS curve evaluate करता है (weighted, सामान्यतः control points से नहीं गुज़रता)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>control_points: (m, d) の制御点(d = 2 なら平面、3 なら空間)。</p>
-<p>weights: 長さ m の正の重み。省略すると全部 1(= 普通の B スプライン)。重みを大きくすると曲線がその点に寄る。</p>
-<p>degree: 次数 p(m − 1 以下)。</p>
-<p>knots: 長さ m + p + 1 の節点列。省略すると両端 p+1 重の一様節点(端点だけは制御点を通る)。</p>
-<p>n: 評価する点の数(定義域を等分)。</p>
+<p>control_points: (m, d) control points (planar के लिए d = 2, spatial के लिए 3)।</p>
+<p>weights: लंबाई m के धनात्मक weights। छोड़ने पर सभी 1 (= सामान्य B-spline)। किसी weight को बढ़ाने से curve उस point की ओर खिंचता है।</p>
+<p>degree: degree p (अधिकतम m − 1)।</p>
+<p>knots: लंबाई m + p + 1 का knot vector। छोड़ने पर दोनों सिरों पर multiplicity p+1 वाले uniform knots (curve control points से केवल सिरों पर गुज़रता है)।</p>
+<p>n: evaluate करने वाले points की संख्या (domain को बराबर बाँटा जाता है)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (n, d) 曲線上の点、<code style="color:#22d3bf">u</code> パラメータ、<code style="color:#22d3bf">basis</code> (n, m) 有理基底 R_i(u)(各行の和は 1)、</p>
-<p><code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">degree</code>。</p>
-<p>例: 9 点の 2 次 NURBS で円を <b>厳密に</b> 描く(<code style="color:#22d3bf">nurbs_circle</code> が制御点・重み・節点を返す)。多項式の B スプラインでは円は近似しかできない —— 重みが要る理由がここにある。</p>
+<p><code style="color:#22d3bf">points</code> (n, d) curve पर points, <code style="color:#22d3bf">u</code> parameters, <code style="color:#22d3bf">basis</code> (n, m) rational basis R_i(u) (हर row का योग 1),</p>
+<p><code style="color:#22d3bf">knots</code>, <code style="color:#22d3bf">weights</code>, <code style="color:#22d3bf">degree</code>।</p>
+<p>उदाहरण: 9 points वाला degree-2 NURBS एक वृत्त <b>सटीक रूप से</b> बनाता है (<code style="color:#22d3bf">nurbs_circle</code> control points, weights और knots लौटाता है)। polynomial B-spline वृत्त का केवल सन्निकटन कर सकता है —— इसीलिए weights की ज़रूरत है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

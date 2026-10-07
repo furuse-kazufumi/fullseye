@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Laplacian pyramid से sharpening। <code style="color:#22d3bf">pyrDown</code> से छोटा करके <code style="color:#22d3bf">pyrUp</code> से वापस लाई गई image (low-frequency components) को मूल image से घटाकर मिला अंतर (Laplacian pyramid का 1 layer, band-pass component के बराबर) मूल image में जोड़कर उभारने वाला unsharp mask का एक प्रकार।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は強調係数(<code style="color:#22d3bf">0.5+2.5*a</code> で 0.5〜3.0)を振る —— 大きいほど強くシャープになる(オーバーシュートも増える)。<code style="color:#22d3bf">b</code> は未使用。結果は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> enhancement factor (<code style="color:#22d3bf">0.5+2.5*a</code> से 0.5–3.0) sweep करता है —— जितना बड़ा, sharpening उतनी तेज़ (और overshoot उतना अधिक)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। परिणाम को [0,1] में clip किया जाता है।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराए बिना mirror होता है (d c b | a b c d, OpenCV का <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

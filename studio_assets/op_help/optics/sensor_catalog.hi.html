@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.sensor_catalog(status: &#x27;str&#x27; = None, maker: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sensor_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>असली sensors की specification table (Basler के EMVA1288 मापों के साथ)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">status</code> に current / mature / legacy を渡すと絞れる。ディスコンで古すぎるものは載せていない。新規設計は <code style="color:#22d3bf">status=&quot;current&quot;</code>(Pregius S、2.74 µm 裏面照射)から選ぶ。</p>
-<p><b>ここに載っているのは「カメラ側の値」</b>である。出典が Basler のカメラ実測表なので:</p>
-<p style="margin:2px 0 2px 12px">• 解像度は<b>そのカメラが出す画素数</b>で、センサの全有効画素とは限らない(メーカーは端を切って少し低くすることがある)。</p>
-<p style="margin:2px 0 2px 12px">• フレームレートは<b>接続インターフェース</b>(USB3 / GigE / 5GigE / CXP-12)で変わるので、センサの属性として持たない ―― だからこの表には入れていない。</p>
-<p style="margin:2px 0 2px 12px">• QE / ダークノイズ / 飽和容量 / ダイナミックレンジ / 最大 SNR は <b>カメラの EMVA1288 実測</b>(ace / ace 2 / boost)。センサ単体の理論値ではなく実装込みなので、別のカメラなら少し変わる。</p>
-<p style="margin:2px 0 2px 12px">• 画素ピッチ・シャッタ方式・世代はセンサ由来なので、カメラが変わっても動かない。</p>
-<p><b>自社でセンサを作っているカメラメーカーはここに載せられない</b>(Canon / Photron / Vision Research(Phantom) / Teledyne DALSA / Hamamatsu の一部)。型番から引けず、カメラのデータシートが唯一の出所だからである。画素ピッチが桁違いのものがあり(Phantom の高感度機は 28 µm、Pregius S は 2.74 µm)、回折律速に入る F 値も飽和容量も一桁変わるので、<b>実機の値を直接 sensor_spec に渡すこと</b>。</p>
-<p>世代で何が変わるかは飽和容量に出る: Pregius 1st は 31.8 ke- で、2nd(10.4 ke-)の <b>3 倍</b>。画素を 5.86 µm から 3.45 µm へ小さくした代償である。Pregius S(2.74 µm)は 9.7 ke- で 2nd と同等を保っている(裏面照射)。</p>
-<p>Sony 以外(<code style="color:#22d3bf">maker</code> で引ける)も同じ表から取ってあるので、<b>同じ測定法で横並び比較できる</b>:</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b>(3.2 µm)は APS-C / 35 mm の<b>大判</b>が本領。Sony にこの判は無い。</p>
-<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b>(4.8 µm)は小型・高速だが、ダークノイズが 11-12 e- と Pregius の 5 倍。暗い場面では効いてくる。</p>
-<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b>(2.5 µm)は<b>ダークノイズ 1 e- 級</b>が売り(GMAX2505/2509)。飽和容量は 4-5 ke- と小さいので、ダイナミックレンジは 70 dB でほぼ同等。GMAX3265 は 65 MP(9344x7000)で、超高解像度なら選択肢がここしかない。</p>
-<p style="margin:2px 0 2px 12px">• <b>ams CMV</b>(5.5 µm)は飽和容量が大きい代わりにダークノイズも 14 e-。</p>
+<p><code style="color:#22d3bf">status</code> में current / mature / legacy देने से list सीमित हो जाती है। बहुत पुराने discontinued parts list नहीं किए जाते। नए designs के लिए <code style="color:#22d3bf">status=&quot;current&quot;</code> में से चुनें (Pregius S, 2.74 µm back-illuminated)।</p>
+<p><b>यहाँ list किए गए मान &quot;camera-पक्ष के मान&quot; हैं</b>। चूँकि स्रोत Basler की camera measurements की table है:</p>
+<p style="margin:2px 0 2px 12px">• resolution <b>वह pixel संख्या है जो camera आउटपुट करता है</b>, ज़रूरी नहीं कि sensor के सभी effective pixels हों (निर्माता कभी-कभी किनारे crop करके इसे थोड़ा कम कर देते हैं)।</p>
+<p style="margin:2px 0 2px 12px">• frame rate <b>connection interface के साथ बदलता है</b> (USB3 / GigE / 5GigE / CXP-12), इसलिए इसे sensor attribute के रूप में नहीं रखा जाता ―― इसी कारण यह इस table में नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• QE / dark noise / full-well capacity / dynamic range / max SNR <b>camera की EMVA1288 measurements</b> हैं (ace / ace 2 / boost)। ये केवल sensor के सैद्धांतिक मान नहीं हैं बल्कि implementation भी शामिल करते हैं, इसलिए अलग camera में ये थोड़े बदलते हैं।</p>
+<p style="margin:2px 0 2px 12px">• pixel pitch, shutter type और generation sensor से आते हैं, इसलिए camera बदलने पर ये नहीं बदलते।</p>
+<p><b>जो camera निर्माता अपने sensors खुद बनाते हैं उन्हें यहाँ list नहीं किया जा सकता</b> (Canon / Photron / Vision Research (Phantom) / Teledyne DALSA / Hamamatsu के कुछ)। इन्हें model number से नहीं खोजा जा सकता, क्योंकि camera की datasheet ही एकमात्र स्रोत है। कुछ के pixel pitches में एक order of magnitude का अंतर है (Phantom के high-sensitivity models 28 µm, Pregius S 2.74 µm), और diffraction जिस F-number पर सीमित करता है वह तथा full-well capacity दोनों एक order of magnitude से बदलते हैं, इसलिए <b>असली device के मान सीधे sensor_spec को दें</b>।</p>
+<p>generations के बीच क्या बदलता है वह full-well capacity में दिखता है: Pregius 1st में 31.8 ke- है, जो 2nd (10.4 ke-) का <b>3 गुना</b> है। यह pixel को 5.86 µm से 3.45 µm तक छोटा करने की कीमत है। Pregius S (2.74 µm) 9.7 ke- रखता है, 2nd के बराबर (back-illuminated)।</p>
+<p>Sony के अलावा अन्य निर्माता (<code style="color:#22d3bf">maker</code> से चुने जा सकते हैं) उसी table से लिए गए हैं, इसलिए <b>उनकी साथ-साथ तुलना उसी measurement method से की जा सकती है</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi XGS</b> (3.2 µm) <b>बड़े formats</b> में सबसे अच्छा है, APS-C / 35 mm। Sony के पास ऐसा format नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• <b>onsemi PYTHON</b> (4.8 µm) छोटा और तेज़ है, लेकिन इसका dark noise 11-12 e- है, Pregius का 5 गुना। अंधेरे scenes में यह मायने रखता है।</p>
+<p style="margin:2px 0 2px 12px">• <b>Gpixel GMAX</b> (2.5 µm) <b>1 e- class के dark noise</b> के बल पर बिकता है (GMAX2505/2509)। इसकी full-well capacity 4-5 ke- पर छोटी है, इसलिए dynamic range लगभग वही 70 dB है। GMAX3265 65 MP (9344x7000) है; ultra-high resolution के लिए यही एकमात्र विकल्प है।</p>
+<p style="margin:2px 0 2px 12px">• <b>ams CMV</b> (5.5 µm) की full-well capacity बड़ी है, लेकिन बदले में इसका dark noise भी 14 e- है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

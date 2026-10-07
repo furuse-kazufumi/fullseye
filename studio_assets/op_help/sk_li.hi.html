@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Li की Minimum Cross Entropy विधि से global threshold binarisation। Foreground/background distributions के बीच cross entropy को बार-बार कम करते हुए threshold तय करती है; यह Otsu से अलग परिवार की automatic threshold विधि है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">binary_threshold</code> に相当(近似。アルゴリズムは別物)。実装は <code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code> —— a, b は未使用。大津法よりノイズや裾の重いヒストグラムに強いとされる場面がある。</p>
+<p>HALCON के <code style="color:#22d3bf">binary_threshold</code> के समकक्ष है (एक सन्निकटन; algorithm अलग है)। Implementation <code style="color:#22d3bf">v &gt; filters.threshold_li(v)</code> है —— a, b उपयोग नहीं होते। कुछ स्थितियों में इसे noise और भारी पूँछ वाले histograms के प्रति Otsu की विधि से ज़्यादा मज़बूत माना जाता है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

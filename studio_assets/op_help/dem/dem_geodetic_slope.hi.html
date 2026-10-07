@@ -4,16 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>latitude-longitude grid</b> (समान कोणीय अंतराल) वाले DEM का slope। cell का आकार latitude के साथ बदलता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>公開 DEM の多くは「1 秒メッシュ」のように<b>角度で等間隔</b>です。この格子を</p>
-<p>そのまま <code style="color:#22d3bf">dem_slope</code> に一定のセル寸法で渡すと、経度方向の実距離が <code style="color:#22d3bf">cos(緯度)</code> 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと <b>東西の傾斜が過小</b>になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば今度は南北が過大になります。<b>どちらに転ぶかは何を定数にしたかで決まる</b>ので、「過大/過小」を覚えるのではなく<b>緯度ごとに寸法を計算する</b>のが正解です。</p>
-<p>★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら <b>半分になった</b>(過小)。符号や向きの主張は測ってから書くこと。</p>
-<p>ここでは緯度ごとに東西のセル寸法を計算し、格子を等距離へ直してから測ります。</p>
+<p>कई सार्वजनिक DEMs <b>कोण में समान अंतराल वाले</b> होते हैं, जैसे &quot;1-arc-second mesh&quot;। इस grid को ज्यों-का-त्यों fixed cell size के साथ <code style="color:#22d3bf">dem_slope</code> को पास करने से यह अनदेखा हो जाता है कि देशांतर दिशा में वास्तविक दूरी <code style="color:#22d3bf">cos(latitude)</code> के गुणक से छोटी है। दोनों axes के लिए अक्षांश-दिशा size का उपयोग करने से <b>पूर्व-पश्चिम slopes बहुत छोटी</b> आती हैं (60 degrees उत्तर पर आधी), और दोनों axes के लिए देशांतर-दिशा size का उपयोग करने से उलटे उत्तर-दक्षिण बहुत बड़ी आती हैं। <b>यह किस ओर जाता है यह इस पर निर्भर है कि किसे constant माना गया</b>, इसलिए &quot;बहुत बड़ा/बहुत छोटा&quot; याद रखने के बजाय <b>हर अक्षांश के लिए size की गणना करना</b> ही सही उत्तर है।</p>
+<p>★ शुरुआत में इस docstring में लिखा था &quot;पूर्व-पश्चिम बहुत बड़ा हो जाता है&quot;, लेकिन test में मापने पर यह <b>आधा आया</b> (बहुत छोटा)। चिह्न या दिशा के दावों को लिखने से पहले मापें।</p>
+<p>यहाँ पूर्व-पश्चिम cell size हर अक्षांश के लिए गणना की जाती है, और मापने से पहले grid को समान दूरियों में बदला जाता है।</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code>。行 0 が北。</p>
-<p>lat0_deg: <b>北西角</b>の緯度 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度]。正の値。</p>
-<p>method / units: <code style="color:#22d3bf">dem_slope</code> と同じ。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>। Row 0 उत्तर है।</p>
+<p>lat0_deg: <b>उत्तर-पश्चिम कोने</b> का अक्षांश [degrees]।</p>
+<p>d_lat_deg / d_lon_deg: प्रति 1 cell अक्षांश/देशांतर step [degrees]। धनात्मक मान।</p>
+<p>method / units: <code style="color:#22d3bf">dem_slope</code> के समान।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

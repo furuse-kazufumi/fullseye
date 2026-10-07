@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>pixel/frame → m/s। <b>दोनों आवश्यक argument हैं</b> (कोई default मान नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>単位の取り違えは例外を出さずに桁を変えるので、既定値を置くと事故が既定になる —— <code style="color:#22d3bf">demops</code> の <code style="color:#22d3bf">cell_size</code> と同じ判断。</p>
+<p>Units मिल जाने से बिना exception raise हुए order of magnitude बदल जाता है, इसलिए default देने से दुर्घटनाएँ ही default बन जाएँगी —— <code style="color:#22d3bf">demops</code> में <code style="color:#22d3bf">cell_size</code> जैसा ही निर्णय।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(2, h, w)</code> [m/s]。</p>
+<p><code style="color:#22d3bf">(2, h, w)</code> [m/s]।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

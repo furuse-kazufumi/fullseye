@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Q criterion <code style="color:#22d3bf">-tr(J^2)/2</code>। जहाँ <b>rotation strain से अधिक होता है</b> वहाँ यह धनात्मक होता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出にはこちらを使う。閉形式(解析場を直接与えた実測):</p>
-<p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
-<p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
-<p style="margin:2px 0 2px 12px">• 単純せん断 g=0.02 → <code style="color:#22d3bf">0.0</code>(<b>せん断は渦ではない</b>、が要点)</p>
-<p>★ 閾値を必要とする量である。<code style="color:#22d3bf">Q &gt; 0</code> だけでは薄い領域まで拾うので、閾値をどう決めたかを書かない渦可視化は、絵の美しさが閾値の産物である可能性を隠している。閾値を振ったときの面積変化を併記すること。</p>
+<p>केवल vorticity देखने पर shear layers भी चमक उठती हैं (laminar flow का दीवार के पास वाला region vortex जैसा दिखता है), इसलिए vortices निकालने के लिए इसे इस्तेमाल करें। Closed form (analytic fields सीधे देकर measured):</p>
+<p style="margin:2px 0 2px 12px">• rigid-body rotation ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
+<p style="margin:2px 0 2px 12px">• uniform expansion s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>
+<p style="margin:2px 0 2px 12px">• simple shear g=0.02 → <code style="color:#22d3bf">0.0</code> (<b>shear vortex नहीं है</b> यही मुख्य बात है)</p>
+<p>★ यह ऐसी मात्रा है जिसे threshold चाहिए। केवल <code style="color:#22d3bf">Q &gt; 0</code> धुंधले regions को भी उठा लेता है, इसलिए जो vortex visualisation यह नहीं बताता कि threshold कैसे चुना गया, वह इस संभावना को छिपाता है कि तस्वीर की सुंदरता threshold का परिणाम है। Threshold बदलने पर area का बदलाव साथ में report करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

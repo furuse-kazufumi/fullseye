@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>defect pixels का characterization (खंड 8.8): logarithmic histogram (समीकरण 73 से 75) और accumulated histogram (समीकरण 77), threshold पार करने वाले pixels की संख्या।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>
+<p>*avg_image*: L frames की mean image (औसत से temporal noise हटा)। *L*: औसत किए गए frames की संख्या (bin चौड़ाई को 1/L का integer गुणज बनाती है)। *threshold* (आवश्यक) [DN]: उन pixels को गिनता है जिनका mean से निरपेक्ष विचलन इससे <b>अधिक</b> है (application का &quot;stop band&quot;)।</p>
+<p><code style="color:#22d3bf">{&quot;hist_centers&quot;: mean से विचलन, &quot;hist_counts&quot;, &quot;accum_x&quot;: निरपेक्ष विचलन, &quot;accum_percent&quot;: उस विचलन या उससे अधिक वाले pixels का %, &quot;n_above&quot;: गिनती, &quot;mu&quot;}</code> लौटाता है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D नहीं / L धनात्मक integer नहीं / threshold ऋणात्मक / image स्थिर (histogram चौड़ाई 0)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

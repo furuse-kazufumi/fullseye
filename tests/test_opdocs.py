@@ -1110,7 +1110,7 @@ def test_every_operator_has_a_help_page_in_every_language():
     for r in recs:
         if r["name"] in HAND_AUTHORED:
             continue
-        for lang in ("en", "zh", "tw", "ko", "de"):
+        for lang in [x for x in OD.LANGS if x != "ja"]:
             if "%s.%s.html" % (r["name"], lang) not in pages:
                 missing.append("%s.%s" % (r["name"], lang))
     assert not missing, ("ヘルプの言語版が %d 件欠けている: %s —— "

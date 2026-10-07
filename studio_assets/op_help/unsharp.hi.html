@@ -14,9 +14,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Unsharp mask। ★आउटपुट पर [0,1] में clip करता है (2026-09-02)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v + k*(v - blur)</code> は定義上オーバーシュートする(実測 min=-0.1499 / max=+1.1499)。<code style="color:#22d3bf">_apply</code> は段間で同じ clip を掛けるので <b>パイプライン結果はビット不変</b>だが、<code style="color:#22d3bf">fullseye.apply</code> を単発で呼ぶ経路だけは生値が出ていて、<code style="color:#22d3bf">image</code> の [0,1] 契約を破ったまま保存すると黒/白に潰れていた。GPU 側(<code style="color:#22d3bf">accel._unsharp</code>)も同じ clip を持つ。</p>
-<p><b>端の扱い</b>: 端画素を重複させて折り返す (d c b a | a b c d、scipy の既定 <code style="color:#22d3bf">reflect</code>)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">v + k*(v - blur)</code> परिभाषा से ही overshoot करता है (मापा गया min=-0.1499 / max=+1.1499)। <code style="color:#22d3bf">_apply</code> stages के बीच वही clip लगाता है, इसलिए <b>pipeline का परिणाम bit-identical है</b>, लेकिन जो path <code style="color:#22d3bf">fullseye.apply</code> को अकेले call करता था वह raw मान देता था, और उन्हें <code style="color:#22d3bf">image</code> के [0,1] contract को तोड़ते हुए save करने पर वे काले/सफ़ेद में कुचल जाते थे। GPU की तरफ़ (<code style="color:#22d3bf">accel._unsharp</code>) में भी वही clip है।</p>
+<p><b>Border handling</b>: border pixel को दोहराकर mirror किया जाता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (2026-09-16 को मापकर दर्ज किया गया)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

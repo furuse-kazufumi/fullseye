@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.lens_catalog(maker: &#x27;str&#x27; = None, mount: &#x27;str&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;lens_catalog&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>industrial lenses की specification table (model number से खोजी जा सकती है)। <code style="color:#22d3bf">maker</code> / <code style="color:#22d3bf">mount</code> से छाँटा जा सकता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>スペックシートに載る項目だけ</b>を持つ ―― 焦点距離・F 値の範囲・対応形式・マウント・イメージサークル。ユーザー指摘のとおり「レンズそのもののスペックに載るパラメータはそんなに多くない」ので、これで足りる。収差・MTF・歪曲は機種ごとのグラフでしか出ないため<b>持たない</b>(持つと実測だと誤解させる)。</p>
-<p>返り値の各項目に <code style="color:#22d3bf">image_circle_mm</code> が入るので、センサの対角と比べて「そのセンサを覆えるか」を機械で判定できる。</p>
+<p><b>केवल वे items रखता है जो spec sheet पर आते हैं</b> ―― focal length, F-number range, supported format, mount, image circle। जैसा user ने बताया, &quot;किसी lens के अपने specs में list किए गए parameters ज़्यादा नहीं होते&quot;, इसलिए यह काफ़ी है। aberrations, MTF और distortion केवल प्रति-model graphs के रूप में आते हैं, इसलिए इन्हें <b>नहीं रखा जाता</b> (रखने से लगेगा कि ये मापे गए हैं)।</p>
+<p>return value की हर entry में <code style="color:#22d3bf">image_circle_mm</code> होता है, इसलिए इसकी sensor diagonal से तुलना करके machine तय कर सकती है &quot;कि यह उस sensor को cover कर सकता है या नहीं&quot;।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

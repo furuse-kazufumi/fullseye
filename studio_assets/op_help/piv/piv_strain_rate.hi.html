@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_strain_rate(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_strain_rate(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_strain_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>strain rate का परिमाण <code style="color:#22d3bf">sqrt(2 e_ij e_ij)</code>। rigid-body rotation में यह 0 होता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>実測: 剛体回転 0.0 / 一様膨張 s=0.01 で 0.02 (= 2s) / 単純せん断 g=0.02 で 0.02 (= g)。<b>回転だけを取り除いた変形の強さ</b>なので、Q 基準や λ_ci と合わせて見ると「渦かせん断か」が分かれる。</p>
+<p>Measured: rigid-body rotation 0.0 / uniform expansion s=0.01 पर 0.02 (= 2s) / simple shear g=0.02 पर 0.02 (= g)। यह <b>केवल rotation हटाकर deformation की ताक़त</b> है, इसलिए इसे Q-criterion या λ_ci के साथ देखने पर &quot;vortex या shear&quot; अलग हो जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

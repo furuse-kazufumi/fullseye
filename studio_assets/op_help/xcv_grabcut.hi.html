@@ -11,9 +11,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>GrabCut (iterative graph cut) से foreground/background का automatic अलगाव।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像中央 70%×70%の固定矩形を「たぶん前景」の初期領域として与え、色分布の GMM とグラフカットで前景/背景を反復的に分離する(<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>)。「確実な前景」と「たぶん前景」の画素を合わせて前景 region として返す。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜5 回の範囲で振る(多いほど収束するが遅い)。<code style="color:#22d3bf">b</code> は未使用。矩形が画像中央固定のため、被写体が縁に寄っている画像では抽出に失敗しやすい。</p>
+<p>Image के केंद्र पर एक स्थिर 70%×70% आयत प्रारंभिक &quot;संभवतः foreground&quot; region के रूप में दिया जाता है, और रंग वितरण के GMM और graph cut से foreground/पृष्ठभूमि को पुनरावृत्त रूप से अलग किया जाता है (<code style="color:#22d3bf">cv2.GC_INIT_WITH_RECT</code>)। &quot;निश्चित foreground&quot; और &quot;संभावित foreground&quot; pixels को मिलाकर foreground region के रूप में लौटाया जाता है।</p>
+<p><code style="color:#22d3bf">a</code> iterations की संख्या को 2–5 की सीमा में sweep करता है (ज़्यादा iterations आगे तक converge होते हैं पर धीमे हैं)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। चूँकि आयत image के केंद्र पर स्थिर है, इसलिए जिन images का विषय border के पास है उन पर extraction अक्सर विफल होता है।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> को 0 से 1 तक बदलने पर भी <b>output नहीं बदलता</b> (मापा गया; 5 तरह के inputs पर जाँचा गया)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

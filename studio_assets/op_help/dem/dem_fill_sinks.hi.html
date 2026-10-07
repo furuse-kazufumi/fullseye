@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गड्ढे भरा हुआ DEM। Barnes, Lehman &amp; Mulla (2014) का priority-flood।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">epsilon</code> に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
-<p><code style="color:#22d3bf">nodata</code> は <code style="color:#22d3bf">NODATA_POLICIES</code>。<code style="color:#22d3bf">&quot;outlet&quot;</code> なら欠測セルを外周と同じ <b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測は埋めの対象から外し、値を <code style="color:#22d3bf">nan</code> のまま返す。</p>
-<p>出力は入力以上(<code style="color:#22d3bf">filled &gt;= dem</code>、欠測を除く)。</p>
+<p><code style="color:#22d3bf">epsilon</code> को सूक्ष्म मान (उदा. 1e-6) देने से भरे गए समतल भागों में हल्की slope जुड़ जाती है (इसके बिना, समतल भागों पर flow direction अपरिभाषित होती है और accumulation बीच में ही गायब हो जाता है)।</p>
+<p><code style="color:#22d3bf">nodata</code> <code style="color:#22d3bf">NODATA_POLICIES</code> में से एक है। <code style="color:#22d3bf">&quot;outlet&quot;</code> missing cells को, बाहरी border की तरह, <b>seeds</b> मानता है (जलाशय में बहने वाला पानी वहीं system से बाहर निकल जाता है)। <code style="color:#22d3bf">&quot;barrier&quot;</code> missing cells को भरने से बाहर रखता है और उनके मान <code style="color:#22d3bf">nan</code> के रूप में लौटाता है।</p>
+<p>आउटपुट कम से कम इनपुट के बराबर होता है (<code style="color:#22d3bf">filled &gt;= dem</code>, missing cells को छोड़कर)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

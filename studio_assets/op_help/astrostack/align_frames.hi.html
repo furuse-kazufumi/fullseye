@@ -6,20 +6,19 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>frame की श्रृंखला को 1 reference पर register करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各フレームについて <code style="color:#22d3bf">frame_align</code> で変換を推定し、<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
-<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を <code style="color:#22d3bf">(0.5, 0.5)</code> px だけずらして戻した実測::</p>
-<p>order=1 (双一次)   総フラックス -0.016 %   星のピーク -11.437 %</p>
-<p>order=3 (スプライン) 総フラックス -0.016 %   星のピーク  -0.312 %</p>
-<p>総フラックスはどちらでもほぼ保たれるのに、<b>星のピークは双一次だと 1 割以上落ちる</b> —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う 4 画素の単純平均になるからである。既定を <code style="color:#22d3bf">order=3</code> にしてあるのはこの実測による(<code style="color:#22d3bf">order=3</code> は星の周りに極小の負の縁を作るが、上の測定では最小値 -0.0000 で目に見える量ではなかった)。</p>
-<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> <code style="color:#22d3bf">drizzle_resample</code> へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
-<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す <code style="color:#22d3bf">matrices</code> の並進は「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>हर frame के लिए transform <code style="color:#22d3bf">frame_align</code> से estimate किया जाता है, और <code style="color:#22d3bf">scipy.ndimage.affine_transform</code> inverse mapping और resampling करता है।</p>
+<p><b>एक ईमानदार चेतावनी</b>: interpolation image को सुरक्षित नहीं रखता। Noise-free 64x64 / 12 stars, <code style="color:#22d3bf">(0.5, 0.5)</code> px खिसकाकर वापस खिसकाया, measured::</p>
+<p>order=1 (bilinear)  total flux -0.016 %   star peak -11.437 %</p>
+<p>order=3 (spline)    total flux -0.016 %   star peak  -0.312 %</p>
+<p>Total flux दोनों तरह लगभग सुरक्षित रहता है, फिर भी <b>bilinear में star peak दसवें हिस्से से ज़्यादा गिर जाता है</b> —— 0.5 px shift bilinear के लिए सबसे बुरा phase है, क्योंकि यह 4 पड़ोसी pixels का सीधा mean बन जाता है। Default <code style="color:#22d3bf">order=3</code> इसी measurement की वजह से है (<code style="color:#22d3bf">order=3</code> stars के चारों ओर एक छोटा ऋणात्मक rim बनाता है, लेकिन ऊपर के measurement में minimum -0.0000 था, दिखने लायक मात्रा नहीं)।</p>
+<p><b>अगर flux और peak दोनों बिल्कुल सुरक्षित रखने हैं, तो interpolate न करें</b>: <code style="color:#22d3bf">drizzle_resample</code> को दें —— interpolate न करना ही drizzle के होने का कारण है। हालाँकि, <b>estimate किए गए shifts को जैसे के तैसे न दें</b>: यहाँ लौटाए गए <code style="color:#22d3bf">matrices</code> का translation &quot;reference की ओर वापस&quot; इशारा करता है, जो drizzle की ज़रूरत से उल्टा sign है।</p>
+<p>उन्हें <code style="color:#22d3bf">drizzle_shifts</code> से गुज़ारें::</p>
 <p>aligned, mats = align_frames(frames)</p>
 <p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
-<p>Returns <code style="color:#22d3bf">(aligned, matrices)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 語彙)。基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせるので、通す理由が無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(3, 3)</code>。基準は単位行列。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない / 枚数が 2 未満 / *reference* が範囲外 / *order* が 0〜5 の外 / <code style="color:#22d3bf">frame_align</code> がどれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
+<p><code style="color:#22d3bf">(aligned, matrices)</code> लौटाता है:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— लंबाई <code style="color:#22d3bf">N</code> की list, हर एक <code style="color:#22d3bf">(H, W)</code> float64 (<code style="color:#22d3bf">images</code> vocabulary)। Reference frame <b>बिना transformation के जैसा का तैसा</b> लौटाया जाता है (identity transform भी interpolation से image को धुंधला करता है, इसलिए उसे गुज़ारने का कोई कारण नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— लंबाई <code style="color:#22d3bf">N</code> की list, हर एक <code style="color:#22d3bf">(3, 3)</code>। Reference को identity matrix मिलता है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: अगर *frames* list / tuple नहीं है / 2 से कम frames हैं / *reference* range से बाहर है / *order* 0 से 5 के बाहर है / <code style="color:#22d3bf">frame_align</code> किसी भी 1 frame पर विफल होता है (<b>विफलता को चुपचाप identity में नहीं बदला जाता</b>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

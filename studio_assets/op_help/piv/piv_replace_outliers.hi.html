@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_replace_outliers(flow, mask, method=&#x27;median&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_replace_outliers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>outlier को आस-पास से भरता है। <code style="color:#22d3bf">method=&quot;nan&quot;</code> होने पर <b>भरे बिना missing चिह्नित करता है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>埋めた場所と実測を区別できなくなるのが埋め込みの代償なので、どこを埋めたかは呼ぶ側が <code style="color:#22d3bf">mask</code> として持っている前提にしてある(この op は mask を返さない —— 入力として受け取ったものだから)。</p>
+<p>भरने की कीमत यह है कि भरी गई जगहों को मापी गई जगहों से अलग नहीं पहचाना जा सकता, इसलिए यह माना जाता है कि caller यह कि भराई कहाँ हुई <code style="color:#22d3bf">mask</code> के रूप में रखता है (यह op mask नहीं लौटाता —— यह इनपुट के रूप में मिलने वाली चीज़ है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

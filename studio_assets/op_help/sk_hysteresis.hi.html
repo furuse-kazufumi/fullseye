@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hysteresis thresholding। 2 स्तर के threshold इस्तेमाल करता है: पहले ऊँचे threshold से ऊपर के pixels पक्के करता है, फिर निचले threshold से ऊपर और पक्के pixels से जुड़े pixels को भी अपनाता है —— Canny के edge-linking step वाले विचार को सामान्य response image पर लागू करना।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">hysteresis_threshold</code>(Perform a hysteresis threshold operation on an image.)に相当。実装は <code style="color:#22d3bf">filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)</code> —— a は低い方のしきい値を 0.2〜0.5 に、b は高い方のしきい値を 0.5〜0.8 に振る。a を大きく・b を小さくすると 2 つが逆転しうる(low &gt; high)ので、極端な組み合わせでは skimage 側の挙動に委ねられる点に注意。</p>
+<p>HALCON के <code style="color:#22d3bf">hysteresis_threshold</code> (Perform a hysteresis threshold operation on an image.) के समकक्ष है। Implementation <code style="color:#22d3bf">filters.apply_hysteresis_threshold(v, 0.2+0.3*a, 0.5+0.3*b)</code> है —— a निचले threshold को 0.2–0.5 पर, और b ऊपरी threshold को 0.5–0.8 पर sweep करता है। ध्यान दें कि a को बड़ा और b को छोटा करने से 2 threshold उलट सकते हैं (low &gt; high), इसलिए चरम संयोजनों में व्यवहार skimage पर छोड़ा गया है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

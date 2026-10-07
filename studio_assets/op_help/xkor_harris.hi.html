@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Harris corner response। <code style="color:#22d3bf">kornia.feature.harris_response</code> को call करता है और signed response को <code style="color:#22d3bf">signed01</code> से [0,1] में map करता है (corner धनात्मक और edge ऋणात्मक आने वाले Harris response की चिह्न जानकारी बनाए रखते हुए दिखाने योग्य range में लाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a が Harris のスコア係数 k（<code style="color:#22d3bf">0.04 + 0.02 * a</code>、経験的に 0.04〜0.06 の範囲で使われる値）を振る。b は未使用。</p>
+<p>a, Harris score का गुणांक k (<code style="color:#22d3bf">0.04 + 0.02 * a</code>; अनुभव से 0.04–0.06 की range के मान उपयोग होते हैं) sweep करता है। b उपयोग नहीं होता।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

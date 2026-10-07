@@ -6,14 +6,13 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>correlation map को <b>जोड़ने के बाद</b> peak खोजता है (ensemble correlation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
+<p>कम particles या ज़्यादा noise होने पर, हर pair को अलग मापकर औसत लेने से <b>गलत vectors का औसत</b> मिलता है। Correlation stage पर जोड़ने से कमज़ोर peaks एक ही जगह इकट्ठा होकर उभर आते हैं। Steady flow (सभी pairs में समान displacement) पूर्व शर्त है।</p>
 <p>Args:</p>
-<p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>
+<p>images: 2 या ज़्यादा images का sequence। लगातार pairs <code style="color:#22d3bf">(k, k+1)</code> इस्तेमाल होते हैं।</p>
 <p>window / overlap / peak / window_func / normalize / search_limit:</p>
-<p><code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
+<p><code style="color:#22d3bf">piv_cross_correlate</code> के समान।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>。<code style="color:#22d3bf">info[&quot;pairs&quot;]</code> に使った対の数。</p>
+<p><code style="color:#22d3bf">(flow (2, h, w), info)</code>। <code style="color:#22d3bf">info[&quot;pairs&quot;]</code> में इस्तेमाल हुए pairs की संख्या होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

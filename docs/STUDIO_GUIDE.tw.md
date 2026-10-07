@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: bbeba242062b -->
 # Fullseye Studio 完全指南
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md)
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · **繁體中文** · [한국어](./STUDIO_GUIDE.ko.md) · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** 是一個類似 HDevelop 的視覺化流水線工作台。你可以搜尋並排列運算子，用兩個旋鈕滑桿調整參數，一邊縮放/平移檢視中間結果一邊逐段執行，最後把建好的流水線匯出成 `--ops` 字串 / Python / JSON。它的實體是 `fullseye` API 的一層薄 GUI 前端，流水線邏輯（`PipelineModel`）·Inspector（`inspect_result`）·範例集（`recipes`）皆不依賴 Qt，並且都有各自的單元測試。
 

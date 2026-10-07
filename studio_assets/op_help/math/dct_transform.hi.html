@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;dct_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>N dimensions में orthonormal DCT-II (<code style="color:#22d3bf">inverse=True</code> पर DCT-III = inverse transform)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>x: 任意次元の実配列(信号・画像・ボリューム)。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
-<p>inverse: True なら係数から元に戻す。</p>
+<p>x: किसी भी dimension का real array (signal, image, volume)।</p>
+<p>axes: transform करने वाले axes (छोड़ने पर सभी axes)।</p>
+<p>inverse: यदि True, तो coefficients से फिर से बनाता है।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code>(同じ形)、<code style="color:#22d3bf">energy</code>(Σx²、正規直交なので変換の前後で同じ = Parseval)、<code style="color:#22d3bf">compaction</code> = 大きい順に並べた係数のエネルギーの累積割合(先頭 1% で何割を持つか、が JPEG の理由)。</p>
-<p>門は定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) の行列と一致すること・逆変換で 1e-12 で戻ること。</p>
+<p><code style="color:#22d3bf">coeffs</code> (समान shape), <code style="color:#22d3bf">energy</code> (Σx²; orthonormal है, इसलिए transform से पहले और बाद में समान = Parseval), <code style="color:#22d3bf">compaction</code> = बड़े से छोटे क्रम में लगाए coefficients का संचयी energy अंश (शीर्ष 1% कितना अंश रखते हैं, यही JPEG का कारण है)।</p>
+<p>Gate: परिभाषा सूत्र C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) के matrix से मेल, और inverse transform का 1e-12 के भीतर लौटना।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

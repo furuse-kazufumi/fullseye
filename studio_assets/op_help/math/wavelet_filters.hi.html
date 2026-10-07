@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Daubechies orthonormal wavelet dbN के filters, textbook construction (spectral factorization) से बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
+<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2)), P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k (Daubechies 1988)। P के roots में से unit circle के अंदर वाले zeros चुनकर (1 + z⁻¹)^N से गुणा किया जाता है। कोई table copy नहीं की जाती, इसलिए significant digits खोने से होने वाली नकल की गलतियाँ नहीं होतीं (gate मानों को जाँचता है)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>
-<p><code style="color:#22d3bf">vanishing_moments</code> = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。</p>
+<p><code style="color:#22d3bf">lowpass</code> h (लंबाई 2N, योग √2), <code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n], <code style="color:#22d3bf">order</code>,</p>
+<p><code style="color:#22d3bf">vanishing_moments</code> = N (degree N−1 तक के polynomials detail coefficients में रद्द हो जाते हैं)। order=1, Haar है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

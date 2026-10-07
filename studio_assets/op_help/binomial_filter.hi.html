@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Binomial coefficients (Pascal का त्रिभुज) को weight बनाने वाला separable smoothing filter। <code style="color:#22d3bf">ndimage.correlate1d</code> को खड़ी और आड़ी दिशा में क्रम से लगाकर Gaussian को discrete binomial kernel से approximate करता है ―― HALCON के <code style="color:#22d3bf">binomial_filter</code> (Smooth an image using the binomial filter.) में इस्तेमाल होने वाले kernel जैसे ही विचार का implementation।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が核サイズを <code style="color:#22d3bf">{3,5,7,9}</code> の 4 段階(<code style="color:#22d3bf">_k(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。ガウシアンぼかしより計算が軽く、リンギングも出にくい。</p>
+<p><code style="color:#22d3bf">a</code> kernel size को 4 चरणों <code style="color:#22d3bf">{3,5,7,9}</code> पर sweep करता है (<code style="color:#22d3bf">_k(a)</code>)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। Gaussian blur से गणना में सस्ता और ringing की संभावना कम।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

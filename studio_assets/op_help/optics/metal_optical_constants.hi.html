@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.metal_optical_constants.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">glassmirror.metal_optical_constants</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>metal का complex refractive index (n, k) wavelength से निकालता है (visible range, linear interpolation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot;(<code style="color:#22d3bf">METALS</code>)。</p>
-<p>wavelength_nm: スカラまたは配列 [nm]。表の外は端の値で頭打ち(外挿しない)。</p>
-<p>返り値: (n, k) の 2 要素タプル(入力と同形の配列)。出典は表の定義(<code style="color:#22d3bf">_METAL_NK</code>)を参照 — 5 点の粗い表であることを隠さない。</p>
+<p>metal: &quot;ag&quot; / &quot;au&quot; / &quot;al&quot; / &quot;cu&quot; / &quot;cr&quot; (<code style="color:#22d3bf">METALS</code>)।</p>
+<p>wavelength_nm: scalar या array [nm]। table के बाहर, सिरे के मानों पर clamp (कोई extrapolation नहीं)।</p>
+<p>Returns: 2-element tuple (n, k) (इनपुट जैसे shape के arrays)। स्रोतों के लिए table की परिभाषा (<code style="color:#22d3bf">_METAL_NK</code>) देखें — यह नहीं छिपाता कि यह एक मोटी 5-point table है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: c70ba3c329f3 -->
 # 快速上手（5 分鐘跑起來）
 
-[日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · **繁體中文** · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md)
+[日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · **繁體中文** · [한국어](./GETTING_STARTED.ko.md) · [Deutsch](./GETTING_STARTED.de.md) · [हिन्दी](./GETTING_STARTED.hi.md)
 
 ## 哪個入口適合你的工作(3 個入口)
 

@@ -5,9 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.rough_transmission(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.rough_transmission.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">surfacelib.rough_transmission</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ground glass के transmission को &quot;सीधे जाने वाले component&quot; और &quot;diffuse component&quot; में बाँटता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>cos_i: 入射角の cos。roughness: 面の粗さ(0 = 透明、1 = 完全拡散)。</p>
-<p>返り値: (直進 T_spec, 拡散 T_diff) の 2 本。合計は透明板の透過率に一致する(エネルギーを作らない ―― テストで確認)。曇りガラス越しの見え方は、この直進成分が落ちて拡散成分が増えるだけで説明できる。</p>
+<p>cos_i: आपतन कोण (angle of incidence) का cos। roughness: surface roughness (0 = साफ़, 1 = पूरी तरह diffuse)।</p>
+<p>Returns: 2 मान (direct T_spec, diffuse T_diff)। इनका योग साफ़ plate की transmittance से मेल खाता है (कोई energy पैदा नहीं होती ―― tests में सत्यापित)। frosted glass के पार चीज़ें कैसी दिखती हैं, यह सरलता से इसी से समझाया जाता है कि direct component घटता है और diffuse component बढ़ता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

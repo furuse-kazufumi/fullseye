@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_embed(image, bits, strength: &#x27;float&#x27; = 0.1, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_embed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>DWT-DCT <b>watermark</b> embed करना। watermark वाली image <code style="color:#22d3bf">(H, W)</code> लौटाता है। <code style="color:#22d3bf">image2d</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>1 段 DWT(既定 haar)の LL 副帯域を 8x8 に切り、各ブロックの直交 DCT-II の <b>中帯域係数の対</b> <code style="color:#22d3bf">(3,1)</code> と <code style="color:#22d3bf">(1,3)</code> の大小関係で 1 ビットを表す(Hsu &amp; Wu 1999 の中帯域係数対法)。差が <code style="color:#22d3bf">strength</code> 未満なら差が <code style="color:#22d3bf">strength</code> になるまで <b>対称に</b>動かす(片方だけ動かすとブロックのエネルギーが偏る)。抽出に原画像は要らない(ブラインド)。</p>
-<p>容量は <code style="color:#22d3bf">(LL の高さ // 8) * (LL の幅 // 8)</code> ビット。<code style="color:#22d3bf">bits</code> がそれより短ければ先頭から埋め、残りのブロックは触らない。長ければ <code style="color:#22d3bf">ValueError</code>。</p>
-<p><code style="color:#22d3bf">bits</code> は bool の 1-D(<code style="color:#22d3bf">phash</code> 語彙)。0/1 の int 配列も受けるが、<b>float は受けない</b>(丸めの向きを黙って決めない)。</p>
-<p>強度と画質のトレードオフは <code style="color:#22d3bf">watermark_capacity</code> が掃引して表で返す。実測(256x256 のテクスチャ画像・128 ビット、LL は 128x128 = 容量 256 ビット。<code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
+<p>1-level DWT (default haar) के LL subband को 8x8 blocks में काटता है और 1 bit को इस बात से दर्शाता है कि हर block के orthogonal DCT-II के <b>mid-band coefficients की जोड़ी</b> <code style="color:#22d3bf">(3,1)</code> और <code style="color:#22d3bf">(1,3)</code> में कौन बड़ा है (Hsu &amp; Wu 1999 की mid-band coefficient-pair method)। यदि अंतर <code style="color:#22d3bf">strength</code> से कम है, तो दोनों को <b>सममित रूप से</b> खिसकाया जाता है जब तक अंतर <code style="color:#22d3bf">strength</code> तक न पहुँचे (केवल एक को खिसकाने से block की energy पक्षपाती हो जाती)। निकालने (extraction) के लिए मूल image की ज़रूरत नहीं है (blind)।</p>
+<p>क्षमता <code style="color:#22d3bf">(LL height // 8) * (LL width // 8)</code> bits है। यदि <code style="color:#22d3bf">bits</code> उससे छोटा है, तो यह शुरुआत से भरता है और शेष blocks को अछूता छोड़ता है। यदि लंबा है, तो <code style="color:#22d3bf">ValueError</code>।</p>
+<p><code style="color:#22d3bf">bits</code> एक bool 1-D array है (<code style="color:#22d3bf">phash</code> vocabulary)। 0/1 का int array भी स्वीकार है, लेकिन <b>float नहीं</b> (यह rounding की दिशा चुपचाप तय नहीं करता)।</p>
+<p>strength और image quality के बीच का trade-off <code style="color:#22d3bf">watermark_capacity</code> sweep करके table के रूप में लौटाता है। मापा गया (256x256 texture image, 128 bits, LL 128x128 है = क्षमता 256 bits; <code style="color:#22d3bf">tests/test_imgforensics.py::test_watermark_strength_psnr_tradeoff</code>):</p>
 <p>========= ========== ====== ================= =================</p>
-<p>strength  PSNR (dB)  BER    BER(JPEG 品質 90) BER(JPEG 品質 75)</p>
+<p>strength  PSNR (dB)  BER    BER (JPEG q 90)   BER (JPEG q 75)</p>
 <p>========= ========== ====== ================= =================</p>
 <p>0.02      45.48      0.000  0.008             0.195</p>
 <p>0.05      44.48      0.000  0.000             0.008</p>
@@ -18,8 +17,8 @@
 <p>0.20      40.32      0.000  0.000             0.000</p>
 <p>0.40      36.37      0.000  0.000             0.000</p>
 <p>========= ========== ====== ================= =================</p>
-<p><b>これがトレードオフの実体</b>である。無加工なら最弱の 0.02 でも誤り 0 だが、JPEG 品質 75 を通すと 19.5% が化ける。既定の 0.1 は「品質 75 まで誤り 0、PSNR 42.95 dB」の点として選んである(<code style="color:#22d3bf">clipped</code> はどの強度でも 0)。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p><b>trade-off वास्तव में यही है</b>। बिना processing के, सबसे कमज़ोर 0.02 भी 0 errors देता है, लेकिन JPEG quality 75 से गुज़रने पर 19.5% बिगड़ जाते हैं। default 0.1 को इस बिंदु के रूप में चुना गया &quot;quality 75 तक 0 errors, PSNR 42.95 dB&quot; (हर strength पर <code style="color:#22d3bf">clipped</code> 0 है)।</p>
+<p><b>PyWavelets आवश्यक</b> (<code style="color:#22d3bf">ImportError</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

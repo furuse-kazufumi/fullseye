@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Web Mercator tile का ज़मीनी resolution [m/px]। <b>latitude के साथ बदलता है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(タイルが 256 px の場合)。</p>
-<p>実測の目安: 東京(北緯 35.68 度)の z=15 で <b>3.880 m</b>、赤道では 4.777 m。赤道の値をそのまま使うと東京で傾斜が <b>23 % 過小</b>になります —— これは例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。</p>
+<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code> (256 px tiles के लिए)।</p>
+<p>मापा गया मार्गदर्शन: Tokyo (35.68 degrees उत्तर) पर z=15 देता है <b>3.880 m</b>, भूमध्यरेखा 4.777 m। भूमध्यरेखा का मान ज्यों-का-त्यों उपयोग करने से Tokyo में slopes <b>23 % बहुत छोटी</b> आती हैं —— यह कोई exception नहीं फेंकता और हर downstream संख्या को तिरछा कर देता है, जिससे यह इस family की सबसे आम दुर्घटना है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

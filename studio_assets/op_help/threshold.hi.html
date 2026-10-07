@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Global thresholding। HALCON के <code style="color:#22d3bf">threshold</code> (Segment an image using global threshold.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> がしきい値そのもの（<code style="color:#22d3bf">0〜1</code>）で、<code style="color:#22d3bf">v &gt; a</code> を満たす画素を前景（1）とする region を返す。<code style="color:#22d3bf">b</code> は未使用。HALCON の <code style="color:#22d3bf">threshold</code> は下限・上限の 2 値を取れる帯域しきい値だが、この実装は下限のみの片側しきい値。</p>
+<p><code style="color:#22d3bf">a</code> स्वयं threshold है (<code style="color:#22d3bf">0〜1</code>), और op एक region लौटाता है जिसका foreground (1) वे pixels हैं जो <code style="color:#22d3bf">v &gt; a</code> को संतुष्ट करते हैं। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। HALCON का <code style="color:#22d3bf">threshold</code> एक band threshold है जो 2 मान, निचली और ऊपरी सीमा, ले सकता है, जबकि यह implementation केवल निचली सीमा वाला एकतरफ़ा threshold है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

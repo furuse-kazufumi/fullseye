@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Non-local means noise removal (OpenCV implementation, grayscale संस्करण)। sk_nlm जैसा ही विचार (पूरी image से मिलते-जुलते patches खोजकर औसत लेना) OpenCV के तेज़ implementation से करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">cv2.fastNlMeansDenoising(_u8(v), h=3+20*a, templateWindowSize=7, searchWindowSize=21)</code> を 255 で割ったもの —— a はフィルタ強度 h を 3〜23 に振る(大きいほど強く除去されディテールも失われる)。パッチ/探索窓は既定サイズに固定。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">cv2.fastNlMeansDenoising(_u8(v), h=3+20*a, templateWindowSize=7, searchWindowSize=21)</code> को 255 से भाग देकर मिलता है —— a filter की ताकत h को 3–23 पर sweep करता है (यह जितनी बड़ी, हटाना उतना तेज़ और detail उतनी ज़्यादा खोती है)। Patch/search windows अपने default आकार पर स्थिर हैं। b उपयोग नहीं होता।</p>
 <p><b>Precision (मापा गया)</b>: अंदर <b>8 bit (256 levels) में quantise</b> किया जाता है (output ठीक k/255 के grid पर आता है)। float64 देने पर भी <b>वह precision नहीं बचती</b> — 16-bit camera का step (लगभग 1.5e-5) 1/255 = लगभग 3.9e-3 तक round हो जाता है, और 1/255 से कम अंतर वाली 2 images एक ही उत्तर देती हैं। बहुत छोटे intensity अंतर मापने में, या output को आगे differentiation या regression में देने पर quantisation के steps दिखते हैं, इसलिए ऐसा op चुनें जो 8 bit से होकर न गुज़रे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

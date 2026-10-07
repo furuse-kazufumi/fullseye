@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-D image या 3-D volume के grid पर, obstacles से बचते हुए geodesic distance heat method से निकालता है (Crane et al. 2013 का grid संस्करण)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">mask</code> は通れる画素/ボクセルが True の bool 配列(2-D か 3-D)、<code style="color:#22d3bf">source</code> は始点の添字(1 点 <code style="color:#22d3bf">(i, j[, k])</code> か点の列。省略すると最初の通れる画素)。<code style="color:#22d3bf">spacing</code> は軸ごとの画素の大きさ(スカラーか軸ごと)。</p>
-<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(熱を広げる、Δ は通れる画素の間だけを結ぶ 2d+1 点の Laplacian = 障害物は断熱)</p>
-<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(面の間の差分で)  3) Δφ = ∇·X を解いて始点で 0 にずらす。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(通れない画素と、始点と繋がらない画素は inf)。</p>
-<p>門: 障害物の無い空間ではユークリッド距離へ収束する。画素の Dijkstra(4/8 近傍)は格子の向きの誤差(4 近傍で最大 41%、8 近傍で最大 8%)が細かくしても消えないが、熱法は消えていく。</p>
+<p><code style="color:#22d3bf">mask</code> एक bool array (2-D या 3-D) है जहाँ पार करने योग्य pixels/voxels True हैं; <code style="color:#22d3bf">source</code> start point का index है (1 point <code style="color:#22d3bf">(i, j[, k])</code> या points की list; छोड़ने पर पहला पार करने योग्य pixel)। <code style="color:#22d3bf">spacing</code> हर axis पर pixel का आकार है (scalar या हर axis के लिए)।</p>
+<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ (heat फैलाना; Δ, 2d+1-point Laplacian है जो केवल पार करने योग्य pixels को जोड़ता है = obstacles insulating हैं)</p>
+<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u| (faces के आर-पार differences से)  3) Δφ = ∇·X हल करें और start point पर 0 करने के लिए shift करें।</p>
+<p><code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code> लौटाता है (अगम्य pixels, और start point से न जुड़े pixels, inf हैं)।</p>
+<p>Gate: obstacle-रहित space में यह Euclidean दूरी पर converge करता है। Pixel Dijkstra (4/8-neighbourhood) में grid-orientation error होती है (4-neighbourhood में 41% तक, 8-neighbourhood में 8% तक) जो refinement से गायब नहीं होती, जबकि heat method की होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

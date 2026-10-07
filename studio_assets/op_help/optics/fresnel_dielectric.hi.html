@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import glassmirror; glassmirror.fresnel_dielectric(cos_i, n1=1.0, n2=1.5, polarization=&#x27;unpolarized&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;fresnel_dielectric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>dielectric interface की Fresnel reflectance (array-capable, total internal reflection सहित)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>cos_i: 入射角の cos(スカラまたは配列、0–1)。</p>
-<p>n1/n2: 入射側 / 透過側の実屈折率。</p>
-<p>polarization: &quot;unpolarized&quot;(既定、s と p の平均)/ &quot;s&quot; / &quot;p&quot;。</p>
-<p>返り値: 反射率 R(cos_i と同形、0–1)。臨界角を超えた入射は <b>厳密に 1.0</b>(全反射)。</p>
-<p>検算(テストで固定): 垂直入射で ((n1−n2)/(n1+n2))²(air→BK7 = 0.04)、Brewster 角で p 偏光が 0(1e-15 未満)、臨界角超で 1.0。透過率は 1 − R(吸収の無い界面なのでエネルギーが閉じる)。</p>
+<p>cos_i: angle of incidence का cos (scalar या array, 0–1)।</p>
+<p>n1/n2: incident / transmitted side का real refractive index।</p>
+<p>polarization: &quot;unpolarized&quot; (default, s और p का mean) / &quot;s&quot; / &quot;p&quot;।</p>
+<p>Returns: reflectance R (cos_i जैसा shape, 0–1)। critical angle से आगे की incidence <b>ठीक 1.0</b> देती है (total internal reflection)।</p>
+<p>Cross-check (tests में स्थिर): normal incidence पर ((n1−n2)/(n1+n2))² (air→BK7 = 0.04), Brewster angle पर p polarization 0 (1e-15 से नीचे), critical angle से आगे 1.0। Transmittance 1 − R है (absorption रहित interface, इसलिए energy संरक्षित रहती है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

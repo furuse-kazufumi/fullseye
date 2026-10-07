@@ -14,8 +14,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>छोटे sigma (0.6) वाले Gaussian blur को बार-बार लगाकर mean curvature flow को <b>approximate</b> करने वाली smoothing। यह असली mean curvature PDE (<code style="color:#22d3bf">ops</code> की तरफ़ का अलग implementation जो diffusion equation हल करता है) नहीं, बल्कि बार-बार blur करने वाला कम गणना-लागत वाला विकल्प है; यही इस backend की अपनी सन्निकटन सीमा है। HALCON के <code style="color:#22d3bf">mean_curvature_flow</code> (Apply the mean curvature flow to an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 1〜7 回の範囲で振る(回数が多いほど強く滑らかになる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> iterations की संख्या को 1–7 की सीमा में sweep करता है (iterations जितने ज़्यादा, smoothing उतनी तेज़)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.17、0.33、0.49、0.67、0.83、0.99 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

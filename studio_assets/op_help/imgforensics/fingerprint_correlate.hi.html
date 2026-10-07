@@ -4,38 +4,37 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_correlate(image, fingerprint, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, exclude: &#x27;int&#x27; = 11) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_correlate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 image को fingerprint से मिलाता है। <b>निर्णय नहीं लौटाता</b> — evidence statistic और चेतावनियाँ लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>残差 <code style="color:#22d3bf">W = I - denoise(I)</code> と参照信号 <code style="color:#22d3bf">I·K</code> の巡回相互相関を FFT で取り、正規化相互相関のピークと <b>PCE</b>(peak-to-correlation energy)を返す。</p>
-<p>返り(<code style="color:#22d3bf">table</code> 語彙の dict):</p>
-<p><code style="color:#22d3bf">pce</code>          PCE。<b>しきい値は同梱しない</b>(下の caveats 参照)</p>
-<p><code style="color:#22d3bf">ncc_peak</code>     正規化相互相関のピーク値([-1, 1])</p>
-<p><code style="color:#22d3bf">peak_shift</code>   ピークの位置 <code style="color:#22d3bf">(dy, dx)</code>。<b>(0, 0) でなければ位置がずれている</b></p>
-<p>= 切り出し / 手ぶれ補正 / リサイズを疑う手がかり</p>
-<p><code style="color:#22d3bf">n_pixels</code>     使った画素数</p>
-<p><code style="color:#22d3bf">caveats</code>      この数値が言えないことの列(文字列)</p>
-<p><code style="color:#22d3bf">peak_shift</code> を返すのは重要で、<code style="color:#22d3bf">(0, 0)</code> 以外のピークは「同じセンサだが切り出されている」か「<b>たまたまの相関</b>」のどちらかである。どちらかはこの op には決められない。実測では別センサの照合はいつも <code style="color:#22d3bf">(0, 0)</code> 以外にピークが立ち(<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> など毎回ばらばら)、同一センサは必ず <code style="color:#22d3bf">(0, 0)</code> に立つ。</p>
-<p><b>再圧縮で PRNU は消える</b>(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>、8 枚から作った指紋・128x128):</p>
-<p>========== ========== ==========</p>
-<p>再圧縮      PCE        無圧縮比</p>
-<p>========== ========== ==========</p>
-<p>無圧縮     7246       1.00</p>
-<p>品質 95    6174       0.85</p>
-<p>品質 90    4214       0.58</p>
-<p>品質 75    1412       0.19</p>
-<p>品質 50     530       0.07</p>
-<p>品質 30     207       0.03</p>
-<p>========== ========== ==========</p>
-<p>つまり <b>低い PCE は「別のカメラ」ではなく「情報が残っていない」かもしれない</b>。ここでしきい値を同梱すると、圧縮された画像を機械的に「別カメラ」と判定する道具になってしまう。</p>
-<p><b>黙って間違う経路(実測)</b>: <code style="color:#22d3bf">fingerprint</code> に指紋ではなく普通の画像を渡すと、shape は合っているので例外は出ず、PCE も有限値が返る。指紋は <code style="color:#22d3bf">(H, W)</code> の float64 なので既存の <code style="color:#22d3bf">image2d</code> 述語を完全に満たし、<b>実行時には区別できない</b>。そこで入口で「ゼロ平均でない」ものを <code style="color:#22d3bf">ValueError</code> で弾く(<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)。実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
-<p>============================== ==============</p>
-<p>渡したもの                     <code style="color:#22d3bf">|mean|/std</code></p>
-<p>============================== ============== <code style="color:#22d3bf">sensor_fingerprint</code> の返り 4.8e-18</p>
-<p>普通の自然画像                 4.626</p>
-<p>暗い画像(平均 0.015)         4.626</p>
-<p>高コントラスト画像             1.801</p>
-<p>============================== ==============</p>
-<p>比は<b>スケール不変</b>なので、暗い画像でも明るい画像でも同じように弾ける(0.05 のしきい値から 1.5 桁以上離れている)。</p>
-<p><b>それでも完全ではない</b>: 自分でゼロ平均化した画像を渡すとゲートは通り、PCE = -5.97 という有限値が返る(実測)。つまり実行時チェックは <b>片側しか守れない</b>。これが「指紋を <code style="color:#22d3bf">image2d</code> に相乗りさせず語彙を分ける」判断の根拠で、詳細は <code style="color:#22d3bf">opsimgforensics</code> の docstring にある。</p>
+<p>residual <code style="color:#22d3bf">W = I - denoise(I)</code> और reference signal <code style="color:#22d3bf">I·K</code> का circular cross-correlation FFT से लेता है, और normalized cross-correlation का peak तथा <b>PCE</b> (peak-to-correlation energy) लौटाता है।</p>
+<p>Returns (<code style="color:#22d3bf">table</code> vocabulary का dict):</p>
+<p><code style="color:#22d3bf">pce</code>          PCE। <b>कोई threshold साथ नहीं दिया जाता</b> (नीचे caveats देखें)</p>
+<p><code style="color:#22d3bf">ncc_peak</code>     normalized cross-correlation का peak मान ([-1, 1])</p>
+<p><code style="color:#22d3bf">peak_shift</code>   peak की स्थिति <code style="color:#22d3bf">(dy, dx)</code>। <b>यदि यह (0, 0) नहीं है, तो स्थिति खिसकी हुई है</b></p>
+<p>= cropping / image stabilization / resizing पर शक करने का सुराग</p>
+<p><code style="color:#22d3bf">n_pixels</code>     उपयोग किए गए pixels की संख्या</p>
+<p><code style="color:#22d3bf">caveats</code>      उन बातों की list (strings) जो यह संख्या नहीं बता सकती</p>
+<p><code style="color:#22d3bf">peak_shift</code> लौटाना मायने रखता है: <code style="color:#22d3bf">(0, 0)</code> के अलावा कोई peak या तो &quot;समान sensor लेकिन cropped&quot; है या &quot;<b>संयोग से हुआ correlation</b>&quot;। दोनों में से कौन-सा है, यह op तय नहीं कर सकता। मापों में, अलग sensor से matching का peak हमेशा <code style="color:#22d3bf">(0, 0)</code> के अलावा कहीं और आता है (<code style="color:#22d3bf">(-51, -60)</code> <code style="color:#22d3bf">(31, -8)</code> आदि, हर बार बिखरा हुआ), जबकि समान sensor का peak हमेशा <code style="color:#22d3bf">(0, 0)</code> पर आता है।</p>
+<p><b>Recompression PRNU को खत्म कर देता है</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_dies_under_recompression</code>, 8 images से बना fingerprint, 128x128):</p>
+<p>========== ========== ==============</p>
+<p>Recompr.   PCE        None से अनुपात</p>
+<p>========== ========== ==============</p>
+<p>None       7246       1.00</p>
+<p>Quality 95 6174       0.85</p>
+<p>Quality 90 4214       0.58</p>
+<p>Quality 75 1412       0.19</p>
+<p>Quality 50  530       0.07</p>
+<p>Quality 30  207       0.03</p>
+<p>========== ========== ==============</p>
+<p>इसलिए <b>कम PCE का अर्थ &quot;अलग camera&quot; नहीं बल्कि &quot;कोई जानकारी नहीं बची&quot; भी हो सकता है</b>। यहाँ threshold साथ देने से यह ऐसा tool बन जाएगा जो compressed images को यांत्रिक रूप से &quot;अलग camera&quot; ठहराता है।</p>
+<p><b>एक path जो चुपचाप गलत है (मापा गया)</b>: यदि <code style="color:#22d3bf">fingerprint</code> में fingerprint की जगह एक साधारण image दी जाए, तो shape मेल खाता है, इसलिए कोई exception नहीं उठता और एक finite PCE लौटता है। fingerprint <code style="color:#22d3bf">(H, W)</code> float64 है, इसलिए यह मौजूदा <code style="color:#22d3bf">image2d</code> predicate को पूरी तरह संतुष्ट करता है और <b>run time पर अलग नहीं पहचाना जा सकता</b>। इसलिए जो कुछ भी &quot;zero-mean नहीं&quot; है उसे entry पर ही <code style="color:#22d3bf">ValueError</code> से अस्वीकार किया जाता है (<code style="color:#22d3bf">|mean| &gt; 0.05 * std</code>)। मापा गया (<code style="color:#22d3bf">tests/test_imgforensics.py::test_fingerprint_gate_rejects_plain_images</code>):</p>
+<p>================================= ==============</p>
+<p>क्या दिया गया                      <code style="color:#22d3bf">|mean|/std</code></p>
+<p>================================= ============== <code style="color:#22d3bf">sensor_fingerprint</code> output 4.8e-18</p>
+<p>साधारण natural image               4.626</p>
+<p>Dark image (mean 0.015)           4.626</p>
+<p>High-contrast image               1.801</p>
+<p>================================= ==============</p>
+<p>यह अनुपात <b>scale-invariant</b> है, इसलिए dark और bright images दोनों समान रूप से अस्वीकार होती हैं (threshold 0.05 से 1.5 orders of magnitude से अधिक दूर)।</p>
+<p><b>फिर भी पूरा नहीं</b>: जो image आपने स्वयं zero-mean की है वह gate पार कर लेती है, और एक finite मान PCE = -5.97 लौटता है (मापा गया)। यानी run-time check <b>केवल एक पक्ष की रक्षा कर सकता है</b>। यही निर्णय &quot;fingerprint को <code style="color:#22d3bf">image2d</code> के सहारे न चलने दें; उसे अपनी vocabulary दें&quot; का आधार है, जिसका विवरण <code style="color:#22d3bf">opsimgforensics</code> के docstring में है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

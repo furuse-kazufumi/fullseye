@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Laplacian of Gaussian (LoG) filter। σ = 0.5+2.5a वाले Gaussian kernel से Laplacian लेकर signed01 (signed मानों को [0,1] में, 0.5 = शून्य response) से normalise करता है। b इस्तेमाल नहीं होता। वृत्ताकार बिंदु जैसे patterns (dots) Gaussian की isotropy के कारण तेज़ LoG response दिखाते हैं, इसलिए यह वृत्ताकार dots को उभारने में इस्तेमाल होता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">dots_image</code>（画像中の円形ドットを強調する演算）に相当する近似で、専用のドット検出カーネルではなく一般的な LoG フィルタで代用している。</p>
+<p>HALCON के <code style="color:#22d3bf">dots_image</code> (image में वृत्ताकार बिंदुओं को उभारने वाला operation) के समकक्ष एक सन्निकटन; समर्पित dot-detection kernel की जगह एक सामान्य LoG filter विकल्प के रूप में उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

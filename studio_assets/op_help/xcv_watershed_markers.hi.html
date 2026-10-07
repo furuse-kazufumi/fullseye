@@ -13,10 +13,9 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Marker-controlled watershed से सीमा रेखाएँ निकालना।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">watersheds</code>(ウォーターシェッドと分水嶺盆地を抽出する)に相当するが、ここでは盆地のラベルではなく <b>分水嶺の境界線</b> だけを region として返す(近似)。</p>
-<p>手順は古典的な OpenCV レシピ: Otsu 二値化 -&gt; 膨張で「確実な背景」推定 -&gt; 距離変換のしきい値で「確実な前景」推定 -&gt; 両者の差分を「不明」領域とし、確実な前景の連結成分をマーカーに <code style="color:#22d3bf">cv2.watershed</code> を実行。</p>
-<p><code style="color:#22d3bf">a</code> が確実な前景を決めるしきい値を距離変換最大値の 30%〜70% の範囲で振る(大きいほど前景マーカーが小さく・保守的になり、過分割/過統合の傾向が変わる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">watersheds</code> (watersheds और watershed basins निकालता है) के समकक्ष है, लेकिन यहाँ basin labels की जगह केवल <b>watershed सीमा रेखाएँ</b> region के रूप में लौटाई जाती हैं (सन्निकटन)।</p>
+<p>प्रक्रिया classic OpenCV नुस्खा है: Otsu binarisation -&gt; dilation से &quot;निश्चित पृष्ठभूमि&quot; का अनुमान -&gt; distance transform को threshold करके &quot;निश्चित foreground&quot; का अनुमान -&gt; दोनों के अंतर को &quot;अज्ञात&quot; region मानना, और निश्चित foreground के connected components को markers बनाकर <code style="color:#22d3bf">cv2.watershed</code> चलाना।</p>
+<p><code style="color:#22d3bf">a</code> निश्चित foreground तय करने वाले threshold को distance-transform अधिकतम के 30%–70% की सीमा में sweep करता है (यह जितना बड़ा, foreground markers उतने छोटे और रूढ़िवादी होते हैं, और over-segmentation/over-merging की प्रवृत्ति बदलती है)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image क्रम → समय-औसत, उतार-चढ़ाव का RMS और Reynolds stress।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが出発点で、<code style="color:#22d3bf">u&#x27;v&#x27;</code> の符号と大きさが運動量輸送そのものになる。</p>
-<p><b>1 対だけでは意味が無い</b>(変動が定義できない)ので 3 枚以上を要求する。</p>
+<p>हर लगातार जोड़े के लिए displacement मापा जाता है, और समय के साथ statistics ली जाती हैं। ये 3 turbulence का वर्णन करने का प्रारंभिक बिंदु हैं; <code style="color:#22d3bf">u&#x27;v&#x27;</code> का चिह्न और आकार स्वयं momentum transport है।</p>
+<p><b>केवल 1 जोड़ा अर्थहीन है</b> (उतार-चढ़ाव परिभाषित नहीं किए जा सकते), इसलिए 3 या अधिक images आवश्यक हैं।</p>
 <p>Args:</p>
-<p>images: 3 枚以上の画像列。</p>
-<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code> へ渡す。</p>
+<p>images: 3 या अधिक images का क्रम।</p>
+<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code> को पास किए जाते हैं।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">mean</code>(<code style="color:#22d3bf">(2, h, w)</code>)、<code style="color:#22d3bf">rms</code>(同)、<code style="color:#22d3bf">reynolds</code></p>
-<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>、<code style="color:#22d3bf">(h, w)</code>)、<code style="color:#22d3bf">turbulence_intensity</code>、<code style="color:#22d3bf">n_pairs</code>、</p>
-<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>。</p>
+<p>dict: <code style="color:#22d3bf">mean</code> (<code style="color:#22d3bf">(2, h, w)</code>), <code style="color:#22d3bf">rms</code> (वही), <code style="color:#22d3bf">reynolds</code></p>
+<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>, <code style="color:#22d3bf">(h, w)</code>), <code style="color:#22d3bf">turbulence_intensity</code>, <code style="color:#22d3bf">n_pairs</code>,</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

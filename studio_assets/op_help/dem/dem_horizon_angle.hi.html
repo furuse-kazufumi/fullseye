@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_horizon_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिए गए azimuth में horizon का elevation कोण [degree]। 0 horizontal है, 90 का अर्थ है ठीक ऊपर का आकाश ढका है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各セルから <code style="color:#22d3bf">azimuth_deg</code> の向きへ視線を進め、<code style="color:#22d3bf">atan((z_j - z_0)/d)</code> の最大値を返す。落ちる影・日照時間・天空率の下ごしらえになる。</p>
+<p>हर cell से <code style="color:#22d3bf">azimuth_deg</code> दिशा में line of sight आगे बढ़ाई जाती है, और <code style="color:#22d3bf">atan((z_j - z_0)/d)</code> का अधिकतम लौटाया जाता है। cast shadows, धूप की अवधि और sky view factor के लिए आधार।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

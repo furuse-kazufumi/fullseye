@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">points</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.cie_xyz_from_wavelength.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">matappear.cie_xyz_from_wavelength</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>wavelength [nm] → CIE 1931 2° colour-matching functions (x̄, ȳ, z̄)। इनपुट shape + अंत में 3 वाला array लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Wyman, Sloan &amp; Shirley (JCGT 2013) の多ローブ Gauss 近似。表引きより粗いが、可視域全体で表の値に対し最大誤差 ~1% で、<b>補間も外挿も要らない</b>(閉じた式なので任意の波長格子でそのまま評価できる)。可視域の外は自然に 0 へ落ちる。</p>
-<p>nm: スカラまたは配列(正、単位 nm)。</p>
-<p>返り値: (..., 3) の float64。</p>
+<p>Wyman, Sloan &amp; Shirley (JCGT 2013) का multi-lobe Gauss approximation। table lookup से मोटा है, पर पूरी दृश्य range में table मानों के सापेक्ष अधिकतम error ~1% है, और <b>न interpolation चाहिए न extrapolation</b> (closed सूत्र होने से, इसे किसी भी wavelength grid पर सीधे evaluate किया जा सकता है)। दृश्य range के बाहर यह स्वाभाविक रूप से 0 पर गिरता है।</p>
+<p>nm: scalar या array (धनात्मक, इकाई nm)।</p>
+<p>Returns: shape (..., 3) का float64।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.grating_rgb(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), pitch_um=1.6, orders=(1, 2), strength=1.0, width_nm=60.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;grating_rgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal map + light source + line of sight → <b>diffraction से इंद्रधनुषी रंग</b> (H, W, 3) linear sRGB।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>CD/DVD の記録トラックは等間隔の溝 = 反射型回折格子である。溝に直交する方向の「入射と出射の sin の差」が波長を選ぶので、面の向きが変わると色が変わる。</p>
-<p>normals: (H, W, 3) 法線マップ(長さ 0 = 背景 → 0 を返す)。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 溝の方向(3,)。法線に射影して面内成分を使う。</p>
-<p>pitch_um: 溝間隔 [µm] (CD 1.6 / DVD 0.74 / BD 0.32)。</p>
-<p>orders:   使う回折次数(内部で ±両方を使う — 対称な溝は両側へ回折する)。</p>
-<p>strength: 全体の強さ。</p>
-<p>width_nm: 1 本の回折線に与える波長方向の幅 [nm] (有限のスポットサイズ・帯域の効果)。</p>
-<p>返り値: (H, W, 3) 線形 sRGB(負値は残す = 色域外がそのまま見える)。</p>
+<p>CD/DVD का recording track समान दूरी वाले grooves हैं = एक reflective diffraction grating। grooves के लंबवत दिशा में &quot;incidence और exit के sines का अंतर&quot; wavelength चुनता है, इसलिए surface का orientation बदलने पर रंग बदलता है।</p>
+<p>normals: (H, W, 3) normal map (लंबाई 0 = background → 0 लौटाता है)। light / view: surface से light source / viewpoint की दिशा (3,)।</p>
+<p>tangent: groove की दिशा (3,)। normal plane पर project करके in-plane घटक उपयोग किया जाता है।</p>
+<p>pitch_um: groove spacing [µm] (CD 1.6 / DVD 0.74 / BD 0.32)।</p>
+<p>orders:   उपयोग किए गए diffraction orders (अंदर ± दोनों उपयोग होते हैं — symmetric grooves दोनों तरफ़ diffract करते हैं)।</p>
+<p>strength: कुल तीव्रता।</p>
+<p>width_nm: 1 diffraction line को दी गई wavelength axis के साथ चौड़ाई [nm] (सीमित spot size और band का प्रभाव)।</p>
+<p>Returns: (H, W, 3) linear sRGB (ऋणात्मक मान रखे जाते हैं = out-of-gamut दिखता रहता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

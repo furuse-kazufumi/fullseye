@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Sobel gradient की दिशा (<code style="color:#22d3bf">arctan2(dy, dx)</code> को [0,1] में map किया गया; 0=−π, 1=+π)। Amplitude लौटाने वाले <code style="color:#22d3bf">sobel_amp</code> का जोड़ीदार, edge की दिशा निकालने वाला operation। HALCON के <code style="color:#22d3bf">sobel_dir</code> (Detect edges (amplitude and direction) using the Sobel operator.) के समकक्ष है (HALCON amplitude और दिशा एक साथ लौटाता है, लेकिन यहाँ केवल दिशा को अलग op के रूप में बाँटा गया है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。平坦な領域では勾配がほぼゼロベクトルになり、方向はノイズに支配される点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। ध्यान दें कि समतल regions में gradient लगभग शून्य vector होता है, इसलिए दिशा पर noise हावी रहती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

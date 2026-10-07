@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_box(center_mm, half_size_mm, material=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axis-aligned box part (AABB)। <code style="color:#22d3bf">half_size_mm</code> हर axis का आधा size [mm] है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>辺が x / y / z 軸に平行な箱で、回転は持たない(斜めに置く手段は無い)。占める範囲は各軸で <code style="color:#22d3bf">center ± half</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center_mm</code>: 長さ 3 の有限値 [mm]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">half_size_mm</code>: 長さ 3、<b>全軸とも正</b>。1 つでも 0 以下なら <code style="color:#22d3bf">ValueError</code> (厚さ 0 の板は <code style="color:#22d3bf">scene_plane</code> の有限板で表す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">material</code>: <code style="color:#22d3bf">scene_material</code> の結果。省略時は lambert、albedo 0.6。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">{&quot;kind&quot;: &quot;box&quot;, &quot;c&quot;: (3,), &quot;h&quot;: (3,), &quot;material&quot;}</code> の dict。</p>
-<p>交差はスラブ法(各軸の入口/出口の max/min)。<code style="color:#22d3bf">scene_difference</code> の <code style="color:#22d3bf">solid</code> にも <code style="color:#22d3bf">cavity</code> にも使える(角穴、ポケット)。薄い箱をステージに置けば「有限で厚みのある台」になる。</p>
+<p>x / y / z axes के समानांतर edges वाला और बिना rotation का box (इसे तिरछा रखने का कोई तरीका नहीं है)। हर axis पर घेरी गई range <code style="color:#22d3bf">center ± half</code> है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center_mm</code>: लंबाई 3 के finite मान [mm]।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">half_size_mm</code>: लंबाई 3, <b>सभी axes पर धनात्मक</b>। यदि 1 भी 0 या उससे कम हो तो <code style="color:#22d3bf">ValueError</code> (मोटाई 0 की plate <code style="color:#22d3bf">scene_plane</code> की finite plate से व्यक्त की जाती है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">material</code>: <code style="color:#22d3bf">scene_material</code> का परिणाम। छोड़ देने पर, albedo 0.6 वाला lambert।</p>
+<p style="margin:2px 0 2px 12px">• Returns: एक dict <code style="color:#22d3bf">{&quot;kind&quot;: &quot;box&quot;, &quot;c&quot;: (3,), &quot;h&quot;: (3,), &quot;material&quot;}</code>।</p>
+<p>intersection slab method का उपयोग करता है (हर axis पर entry/exit का max/min)। <code style="color:#22d3bf">scene_difference</code> के <code style="color:#22d3bf">solid</code> और <code style="color:#22d3bf">cavity</code> दोनों के रूप में उपयोगी (चौकोर छेद, pocket)। stage पर रखा पतला box &quot;मोटाई वाली finite table&quot; बन जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

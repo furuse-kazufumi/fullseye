@@ -30,7 +30,7 @@ import re
 _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 _DOCS = os.path.join(_ROOT, "docs")
 
-LANGS = ("en", "zh", "tw", "ko", "de")
+LANGS = ("en", "zh", "tw", "ko", "de", "hi")
 
 #: 生成物。並行訳を置かず、生成器の側で多言語化する(置くと再生成で消える)。
 #: **`regen_all.CHAIN` が docs/ 直下に書く .md と一致させること。**手書きの

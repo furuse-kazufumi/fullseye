@@ -4,32 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsroughness.get(&quot;profile_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>profile के roughness parameter Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku (ISO 4287)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>引数</p>
-<p>p           帯域処理済みの断面(1 次元)。</p>
-<p>dx          標本間隔。パラメータ自体には効かないが <code style="color:#22d3bf">sampling_length</code> の</p>
-<p>報告に要る(単位を持たせないと Rz の条件が書けない)。</p>
-<p>n_sampling  基準長さの分割数。ISO 4287 の既定は 5。</p>
-<p>★ Rz と Rt を<b>両方</b>返す —— 定義差をここで消す ISO 4287 の Rz は「評価長さを <code style="color:#22d3bf">n_sampling</code> 等分し、各区間の最大山高さ + 最大谷深さを平均したもの」。一方 Rt は評価長さ全体の最大高低差。同じ断面でも値が違い、しかも文献や装置によって「Rz」がどちらを指すか揺れる。<b>両方返せば取り違えようがない。</b></p>
-<p>実測(512 点、λc=80 µm で切った断面。深い傷を 1 本含む行を選んだ):</p>
-<p>Rz(5 区間の平均)    1.5076</p>
-<p>Rz_max(区間の最大)  5.4706</p>
-<p>Rt(評価長さ全体)    5.4706</p>
-<p>Rt / Rz               3.63</p>
-<p>傷が 1 区間にしか無いので、5 区間の平均が傷の寄与を 1/5 に薄める。<b>同じ断面で 3.6 倍違う数字が、どちらも「Rz」と呼ばれている。</b> 同じ行から傷だけ抜くと Rt/Rz = 1.21 まで下がる —— <b>差が開くのは孤立した特徴があるときだけ</b>なので、「うちの装置では一致するから同じ」は反例に当たっていないだけ。</p>
-<p>★ 落とし穴 —— 断面 1 本の Rz は面の Sz を代表しない加工目が行方向に走る面(512x512、深い傷 4 本、λc=80 µm)で、断面を 171 本ずつ取った実測:</p>
-<p style="margin:2px 0 2px 12px">• 目に<b>直交</b>する列方向の Rq は、平行な行方向の <b>2.67 倍</b> (0.1853 対 0.0694)。同じ表面・同じ装置で、向きが違うだけ。</p>
-<p style="margin:2px 0 2px 12px">• 行方向の Rt は最小 0.2765 / 最大 5.4706 で <b>19.8 倍</b>ばらつく。</p>
-<p style="margin:2px 0 2px 12px">• 面の Sz(5.9694)の 8 割に届く断面は <b>171 本中 6 本</b>(3.5 %)。</p>
-<p>Rq は数本で足りるが Rz は足りない —— <b>同じ 1 次元断面でも、パラメータごとに必要な本数が違う。</b> Rz を報告するなら本数と向きを必ず添えること。</p>
-<p>定義の細部(規格からの逸脱をここに明示する)</p>
-<p style="margin:2px 0 2px 12px">• 基準線は評価長さ全体の平均線(最小二乗直線ではない)。傾きは <code style="color:#22d3bf">surface_form_remove</code> か <code style="color:#22d3bf">surface_filter</code> で先に除いておくこと。</p>
-<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku は評価長さ全体で計算する(区間平均ではない)。</p>
-<p style="margin:2px 0 2px 12px">• 評価長さが <code style="color:#22d3bf">n_sampling</code> で割り切れないときは余りを捨てる。捨てた点数は <code style="color:#22d3bf">dropped_samples</code> で返す。</p>
+<p>Arguments</p>
+<p>p           Band-processed profile (1-D)।</p>
+<p>dx          Sample spacing। Parameters पर खुद इसका कोई असर नहीं, लेकिन <code style="color:#22d3bf">sampling_length</code> report करने के लिए ज़रूरी है</p>
+<p>(units के बिना Rz की शर्तें बताई नहीं जा सकतीं)।</p>
+<p>n_sampling  Sampling lengths की संख्या। ISO 4287 default 5 है।</p>
+<p>★ Rz और Rt <b>दोनों</b> लौटाता है —— परिभाषा का अंतर यहीं हटा दिया जाता है ISO 4287 Rz है &quot;evaluation length को <code style="color:#22d3bf">n_sampling</code> बराबर भागों में बाँटकर, हर भाग की max peak height + max valley depth का औसत&quot;। दूसरी ओर Rt पूरी evaluation length पर अधिकतम height अंतर है। समान profile पर मान अलग होते हैं, और literature या instrument के अनुसार &quot;Rz&quot; किसे कहता है यह बदलता है। <b>दोनों लौटाएँ तो इन्हें मिलाया नहीं जा सकता।</b></p>
+<p>Measured (512 points, λc=80 µm पर काटा गया profile; 1 गहरी scratch वाली row चुनी गई):</p>
+<p>Rz (mean of 5 parts)        1.5076</p>
+<p>Rz_max (max over parts)     5.4706</p>
+<p>Rt (whole eval. length)     5.4706</p>
+<p>Rt / Rz                     3.63</p>
+<p>चूँकि scratch केवल 1 भाग में है, 5 भागों पर औसत लेने से उसका योगदान 1/5 तक पतला हो जाता है। <b>समान profile पर, 3.6x अलग संख्याएँ दोनों &quot;Rz&quot; कहलाती हैं।</b> उसी row से केवल scratch हटाने पर Rt/Rz 1.21 तक घट जाता है —— <b>अंतर केवल तब खुलता है जब कोई अलग-थलग feature हो</b>, इसलिए &quot;हमारे instrument पर ये मेल खाते हैं, इसलिए ये समान हैं&quot; का अर्थ बस इतना है कि अभी तक कोई counterexample नहीं मिला।</p>
+<p>★ गड्ढा —— एक profile का Rz areal Sz का प्रतिनिधित्व नहीं करता ऐसी surface पर जिसके machining marks rows के साथ चलते हैं (512x512, 4 गहरी scratches, λc=80 µm), हर दिशा में 171 profiles लेकर measured:</p>
+<p style="margin:2px 0 2px 12px">• Marks के <b>लंबवत</b> columns के साथ Rq, समानांतर rows के साथ वाले का <b>2.67x</b> है (0.1853 बनाम 0.0694)। समान surface, समान instrument, केवल दिशा अलग।</p>
+<p style="margin:2px 0 2px 12px">• Rows के साथ Rt न्यूनतम 0.2765 से अधिकतम 5.4706 तक है, <b>19.8x</b> का फैलाव।</p>
+<p style="margin:2px 0 2px 12px">• Areal Sz (5.9694) के 80 % तक पहुँचने वाले profiles: <b>171 में से 6</b> (3.5 %)।</p>
+<p>Rq के लिए कुछ profiles काफ़ी हैं लेकिन Rz के लिए नहीं —— <b>समान 1-D profile के लिए भी, ज़रूरी profiles की संख्या हर parameter के लिए अलग है।</b> Rz report करते समय हमेशा profiles की संख्या और दिशा बताएँ।</p>
+<p>परिभाषा का विवरण (standard से विचलन यहाँ स्पष्ट रूप से बताए गए हैं)</p>
+<p style="margin:2px 0 2px 12px">• Reference line पूरी evaluation length पर mean line है (least-squares line नहीं)। Tilt पहले ही <code style="color:#22d3bf">surface_form_remove</code> या <code style="color:#22d3bf">surface_filter</code> से हटा दें।</p>
+<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku पूरी evaluation length पर गणना होते हैं (हर भाग पर औसत नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• अगर evaluation length <code style="color:#22d3bf">n_sampling</code> से विभाज्य नहीं है, तो शेष फेंक दिया जाता है। फेंके गए points की संख्या <code style="color:#22d3bf">dropped_samples</code> में लौटाई जाती है।</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> が 1 未満、または区間あたり 4 点未満になる。</p>
-<p style="margin:2px 0 2px 12px">• 断面が完全に平坦(Rq=0)。</p>
+<p style="margin:2px 0 2px 12px">• 1-D नहीं / 8 से कम points / NaN या Inf शामिल।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> 1 से कम है, या किसी भाग में 4 से कम points होंगे।</p>
+<p style="margin:2px 0 2px 12px">• Profile पूरी तरह सपाट है (Rq=0)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

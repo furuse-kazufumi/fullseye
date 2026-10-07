@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Area opening। सामान्य morphological opening जहाँ structuring element के shape के आधार पर छोटे चमकीले हिस्से काटता है, वहीं यह केवल क्षेत्रफल (connected pixels की संख्या) से तय करता है और दिए गए क्षेत्रफल से छोटे चमकीले connected components मिटा देता है —— shape की परवाह किए बिना &quot;छोटी&quot; चीज़ें हटा सकता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code> —— a は面積しきい値を 16〜116 画素に振る。b は未使用。connectivity は既定の 1(4 近傍)のまま。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">morphology.area_opening(v, area_threshold=int(16+a*100))</code> है —— a क्षेत्रफल threshold को 16–116 pixels पर sweep करता है। b उपयोग नहीं होता। connectivity default 1 (4-पड़ोस) पर रहती है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>

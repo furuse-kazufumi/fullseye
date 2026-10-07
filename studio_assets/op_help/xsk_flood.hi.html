@@ -12,9 +12,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Flood fill से region निकालना।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像中心の画素を種点とし、skimage.segmentation.flood でその画素値から <code style="color:#22d3bf">tolerance</code> 以内の連結画素を region として広げる。</p>
-<p><code style="color:#22d3bf">a</code> が許容差 <code style="color:#22d3bf">tolerance</code> を 0.05〜0.35 の範囲で振る(大きいほど広く塗りつぶす)。<code style="color:#22d3bf">b</code> は未使用。中心が背景か前景かで結果が大きく変わる(種点固定の単純な実装)。</p>
+<p>Image के केंद्र वाले pixel को seed point लेकर, skimage.segmentation.flood से उस pixel मान के <code style="color:#22d3bf">tolerance</code> के भीतर वाले जुड़े pixels को region के रूप में बढ़ाता है।</p>
+<p><code style="color:#22d3bf">a</code> सहनशीलता <code style="color:#22d3bf">tolerance</code> को 0.05–0.35 की सीमा में sweep करता है (यह जितनी बड़ी, भराव उतना चौड़ा)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। परिणाम इस पर बहुत निर्भर करता है कि केंद्र पृष्ठभूमि है या foreground (स्थिर seed point वाला सरल implementation)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

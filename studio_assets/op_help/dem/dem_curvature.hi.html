@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>curvature [1/m]। <code style="color:#22d3bf">kind</code> <code style="color:#22d3bf">&quot;profile&quot;</code> (profile) / <code style="color:#22d3bf">&quot;planform&quot;</code> (plan) / <code style="color:#22d3bf">&quot;total&quot;</code> है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Zevenbergen &amp; Thorne (1987) の 2 次曲面当てはめ。断面曲率は流下方向の凹凸(加速・減速)、平面曲率は等高線の曲がり(集中・発散)を表す。</p>
+<p>Zevenbergen &amp; Thorne (1987) का 2nd-order (द्विघात) surface fit। Profile curvature प्रवाह की दिशा में उत्तलता/अवतलता को व्यक्त करता है (त्वरण/मंदन), plan curvature contour lines के मुड़ने को (अभिसरण/अपसरण)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

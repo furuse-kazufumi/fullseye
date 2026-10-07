@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Local Gaussian smoothing + offset से thresholding (<code style="color:#22d3bf">gaussian_filter(x, 1+3*a)</code> में offset <code style="color:#22d3bf">(b-0.5)*0.3</code> जोड़कर threshold बनता है)। <code style="color:#22d3bf">dyn_threshold</code> जैसा ही विचार, लेकिन local mean आयताकार window के बजाय Gaussian से निकालता है, यह अंतर है। HALCON के <code style="color:#22d3bf">local_threshold</code> (Segment an image using local thresholding.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が平滑化のシグマを、<code style="color:#22d3bf">b</code> がオフセットを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> smoothing sigma को, और <code style="color:#22d3bf">b</code> offset को sweep करता है। दोनों उपयोग होते हैं।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

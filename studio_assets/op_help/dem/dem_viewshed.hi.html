@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_viewshed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 point से दिखाई देने वाला क्षेत्र (1 = दिखता है)। तय करता है कि line of sight terrain से रुकती है या नहीं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">observer_rc</code> は <code style="color:#22d3bf">(row, col)</code>。観測点自身は常に可視。</p>
-<p>手順: 目の高さ <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>。各セルへの視線を <code style="color:#22d3bf">ceil(hypot(H, W))</code> 等分し、途中の地形の仰角 <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> が目標の仰角 <code style="color:#22d3bf">(z + target_height_m - eye) / d</code> を上回るセルがあれば遮蔽(0)。途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。<b>地球の曲率と大気屈折は入れない</b>(数 km 超では別途補正する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、番兵値は拒否(<code style="color:#22d3bf">dem_slope</code> と同じ契約)。<code style="color:#22d3bf">nan</code> セルは比較が偽になるため<b>遮蔽にも被遮蔽にもならず 1 のまま</b>残る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m]、正。距離判定に使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: 格子内の <code style="color:#22d3bf">(row, col)</code> 整数。外や pair でないものは <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: 地面からの高さ [m]。既定は目の高さ 1.7 m と地表 0 m。鉄塔からの可視域なら <code style="color:#22d3bf">observer_height_m</code> を上げる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: これより遠いセルは 0(省略時は無制限)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 1 / 0。観測点は常に 1。</p>
-<p style="margin:2px 0 2px 12px">• 計算量: 格子全体 × <code style="color:#22d3bf">ceil(hypot(H, W))</code> 回のベクトル演算。</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> は逆に「各セルから空がどれだけ見えるか」を出す。</p>
+<p><code style="color:#22d3bf">observer_rc</code> <code style="color:#22d3bf">(row, col)</code> है। observer स्वयं हमेशा दिखाई देता है।</p>
+<p>प्रक्रिया: आँख की ऊँचाई <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>। हर cell तक की line of sight को <code style="color:#22d3bf">ceil(hypot(H, W))</code> बराबर भागों में बाँटा जाता है, और यदि किसी मध्यवर्ती cell पर terrain elevation angle <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> target elevation angle <code style="color:#22d3bf">(z + target_height_m - eye) / d</code> से अधिक है, तो cell ओझल (occluded) है (0)। मध्यवर्ती points निकटतम cell पर round किए जाते हैं, इसलिए तिरछी lines of sight में grid error शामिल होती है। <b>पृथ्वी की curvature और वायुमंडलीय refraction शामिल नहीं हैं</b> (कुछ km से आगे, अलग से सुधारें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 या बड़ा, sentinel मान अस्वीकार (<code style="color:#22d3bf">dem_slope</code> के समान contract)। <code style="color:#22d3bf">nan</code> cells तुलनाओं को false कर देते हैं, इसलिए वे <b>न ओझल करते हैं न ओझल होते हैं और 1 पर ही रहते हैं</b>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m], धनात्मक। दूरी परीक्षणों के लिए उपयोग होता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: grid के भीतर integer <code style="color:#22d3bf">(row, col)</code>। बाहर होने या जोड़ा न होने पर <code style="color:#22d3bf">ValueError</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: ज़मीन से ऊँचाई [m]। डिफ़ॉल्ट आँख की ऊँचाई 1.7 m और ज़मीन की सतह 0 m हैं। steel tower से viewshed के लिए <code style="color:#22d3bf">observer_height_m</code> बढ़ाएँ।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: इससे अधिक दूर के cells 0 हैं (छोड़ने पर असीमित)।</p>
+<p style="margin:2px 0 2px 12px">• Returns: 1 / 0 का <code style="color:#22d3bf">(H, W)</code> float64। observer हमेशा 1 है।</p>
+<p style="margin:2px 0 2px 12px">• लागत: पूरा grid × <code style="color:#22d3bf">ceil(hypot(H, W))</code> vector operations।</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> इसके विपरीत बताते हैं कि &quot;हर cell से कितना आकाश दिखाई देता है&quot;।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

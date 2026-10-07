@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.wood_grain(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.wood_grain.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">surfacelib.wood_grain</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लकड़ी के grain (वार्षिक छल्लों) का <b>रंग modulation</b> और <b>रेशों की दिशा</b> बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>shape: (H, W)。ring_px: 年輪の間隔 [px]。angle_deg: 木取りの向き [deg]。</p>
-<p>wobble: 年輪のうねり(0 で同心の直線)。seed: 乱数種。</p>
-<p>返り値: (modulation (H,W) 0–1, tangent (H,W,3)) —— 変調は木の色(明るい早材と暗い晩材)に掛け、接線は繊維方向なので <code style="color:#22d3bf">matappear.ward_anisotropic</code> に渡すと <b>木目に沿った光沢</b>になる(木は繊維方向に異方性を持つ)。</p>
+<p>shape: (H, W)। ring_px: वार्षिक छल्लों (annual rings) की दूरी [px]। angle_deg: कट की दिशा [deg]।</p>
+<p>wobble: वार्षिक छल्लों की लहरदारता (0 = concentric सीधी रेखाएँ)। seed: random seed।</p>
+<p>Returns: (modulation (H,W) 0–1, tangent (H,W,3)) —— modulation लकड़ी के रंग पर लगाया जाता है (चमकीली earlywood और गहरी latewood); tangent fibre की दिशा है, इसलिए इसे <code style="color:#22d3bf">matappear.ward_anisotropic</code> को देने पर <b>grain के साथ gloss</b> मिलता है (लकड़ी fibre की दिशा में anisotropic होती है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

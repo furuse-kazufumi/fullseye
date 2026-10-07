@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normalised median test (Westerweel &amp; Scarano 2005) से outlier vector खोजता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
-<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
-<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
+<p>हर vector के लिए, उसके 8 पड़ोसियों के median से residual को <b>पड़ोसियों के residuals के median</b> से भाग दिया जाता है। भाजक में <code style="color:#22d3bf">epsilon</code> (default 0.1 px, PIV measurement uncertainty का मोटा माप) जोड़ा जाता है ताकि uniform field में भाजक 0 न हो जाए और सब कुछ outlier न बन जाए —— इस term के बिना, <b>इनपुट जितना आदर्श, test उतना ही टूटता है</b>।</p>
+<p>★<b>तीखे gradients वाले fields में यह नुकसान करता है</b> (measured 2026-09-06)। Rankine-type vortex पर multi-pass PIV चलाने पर (core radius 28 px), threshold 2 से चुने गए 5 vectors सभी <b>core के किनारे पर</b> थे (centre से 32 px), और उनके असली errors 0.07-0.45 px थे —— outliers नहीं बल्कि <b>ऐसी जगहें जहाँ velocity profile में मोड़ है</b>। पड़ोसी median से smooth करने पर RMS 0.134 से 0.230 तक <b>बदतर</b> हो जाता है (threshold 5 कुछ नहीं चुनता और 0.134 पर रहता है)।</p>
+<p>Test इस मान्यता पर टिका है कि &quot;पड़ोसियों से अलग = गलत&quot;, इसलिए यह <b>असली discontinuity को error कहता है</b>। Field की प्रकृति देखकर तय करें कि इसे लगाना है या नहीं।</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
-<p>epsilon: 分母の下駄 [px]。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>।</p>
+<p>threshold: यह मान पार होने पर outlier। 2 प्रचलित है।</p>
+<p>epsilon: भाजक का offset [px]।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
+<p><code style="color:#22d3bf">(h, w)</code> का bool। <code style="color:#22d3bf">True</code> outlier है (<code style="color:#22d3bf">nan</code> भी <code style="color:#22d3bf">True</code> है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

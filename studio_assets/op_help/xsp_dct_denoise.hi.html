@@ -12,8 +12,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>DCT coefficients की hard thresholding से noise removal (wavelet shrinkage का DCT संस्करण)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>しきい値は最大係数に対する相対値で決める（<code style="color:#22d3bf">thr = (0.01 + 0.2*a) * max(|C|)</code>）。<code style="color:#22d3bf">a</code> が大きいほど強く間引かれ、<code style="color:#22d3bf">b</code> は未使用。しきい値未満の DCT 係数を 0 にしてから逆変換するので、弱いテクスチャごと消えやすい代わりに広い平坦領域のノイズはよく落ちる。</p>
+<p>Threshold सबसे बड़े coefficient के सापेक्ष तय होता है (<code style="color:#22d3bf">thr = (0.01 + 0.2*a) * max(|C|)</code>)। <code style="color:#22d3bf">a</code> जितना बड़ा, coefficients उतनी तेज़ी से छँटते हैं; <code style="color:#22d3bf">b</code> उपयोग नहीं होता। Threshold से नीचे के DCT coefficients inverse transform से पहले 0 कर दिए जाते हैं, इसलिए कमज़ोर textures noise के साथ गायब हो जाते हैं, लेकिन बदले में चौड़े समतल regions की noise अच्छी तरह हटती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

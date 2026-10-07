@@ -5,10 +5,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.refract_rays(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">points</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.refract_rays.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">glassmirror.refract_rays</code> को सीधे call करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Snell refraction का vector संस्करण। <b>हर ray के लिए total internal reflection तय करता है</b> और (direction, TIR mask) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>directions: (..., 3) 入射方向(面へ向かう)。normals: (..., 3) 入射側の外向き法線。n1 / n2: 入射側 / 透過側の屈折率。</p>
-<p>返り値: (refracted (...,3), tir (...,)) —— TIR の光線は方向を<b>鏡面反射</b>で埋め、マスクを True にする(NaN を返さない: 下流のレンダが黙って穴を開けるより、物理的に正しい「全反射した」方向を返す方が使える)。</p>
-<p>★ <code style="color:#22d3bf">match3d.refract</code> との違い: あちらは「1 本でも TIR ならバッチ全体が None」。画像サイズのバッチでは 1 画素の全反射で<b>全部が消える</b>ので、per-ray に直した。</p>
+<p>directions: (..., 3) incident दिशाएँ (surface की ओर)। normals: (..., 3) incident side पर बाहर की ओर normals। n1 / n2: incident / transmitted side का refractive index।</p>
+<p>Returns: (refracted (...,3), tir (...,)) —— TIR rays के लिए दिशा <b>specular reflection</b> से भरी जाती है, और mask को True रखा जाता है (कोई NaN नहीं लौटाया जाता: downstream renderer को चुपचाप छेद करने देने के बजाय, भौतिक रूप से सही &quot;पूर्णतः परावर्तित&quot; दिशा लौटाना अधिक उपयोगी है)।</p>
+<p>★ <code style="color:#22d3bf">match3d.refract</code> से अंतर: वहाँ, &quot;यदि 1 भी ray TIR है, तो पूरा batch None&quot;। image-आकार के batches में, 1 pixel पर total internal reflection से <b>सब कुछ गायब</b> हो जाता, इसलिए इसे per-ray में बदला गया।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

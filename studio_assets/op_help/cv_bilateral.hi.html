@@ -14,8 +14,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Bilateral filter (OpenCV implementation)। Spatial निकटता और brightness मान की निकटता दोनों को weight बनाकर Gaussian जैसी smoothing, जो edges (बड़े brightness अंतर वाली सीमाएँ) को blur किए बिना केवल समतल हिस्सों को smooth करती है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">bilateral_filter</code>(bilateral filtering of an image.)に相当。実装は <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> —— カーネル直径 d は 5 に固定、<b>a は空間方向の広がり sigmaSpace を 1.0〜4.0 に、b は輝度方向の許容差 sigmaColor を 0.05〜0.45 に振る</b>(引数の並びが sigmaColor, sigmaSpace の順なので a/b の対応がずれやすい点に注意)。</p>
+<p>HALCON के <code style="color:#22d3bf">bilateral_filter</code> (bilateral filtering of an image.) के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.bilateralFilter(v, d=5, sigmaColor=0.05+0.4*b, sigmaSpace=1.0+3.0*a)</code> है —— kernel व्यास d 5 पर स्थिर है; <b>a spatial फैलाव sigmaSpace को 1.0–4.0 पर sweep करता है, और b luminance दिशा की सहनशीलता sigmaColor को 0.05–0.45 पर sweep करता है</b> (ध्यान दें कि arguments का क्रम sigmaColor, sigmaSpace है, जिससे a/b mapping में भ्रम होना आसान है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

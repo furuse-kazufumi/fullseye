@@ -13,9 +13,8 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hessian matrix के सबसे बड़े eigenvalue (absolute value) से blob/ridge strength।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>skimage.feature.hessian_matrix(ガウス微分によるヘッセ行列)から固有値を求め、絶対値が最大の成分 <code style="color:#22d3bf">ev[0]</code> を <code style="color:#22d3bf">_norm</code> で正規化して返す。曲率が強い箇所(ブロブの中心や稜線)ほど値が大きくなる。</p>
-<p><code style="color:#22d3bf">a</code> が微分のスケール <code style="color:#22d3bf">sigma</code> を 0.5〜3.0 に振る(大きいほど太い構造に反応)。<code style="color:#22d3bf">b</code> は未使用。符号は捨てているため、山(明るい blob)と谷(暗い blob)を区別しない。</p>
+<p>skimage.feature.hessian_matrix (Gaussian derivatives से Hessian matrix) से eigenvalues निकाले जाते हैं, और सबसे बड़े absolute value वाला घटक <code style="color:#22d3bf">ev[0]</code> <code style="color:#22d3bf">_norm</code> से normalise करके लौटाया जाता है। Curvature जितनी तेज़ (blob के केंद्र, ridge रेखाएँ), मान उतना बड़ा।</p>
+<p><code style="color:#22d3bf">a</code> derivative scale <code style="color:#22d3bf">sigma</code> को 0.5–3.0 पर sweep करता है (जितना बड़ा, उतनी मोटी संरचनाओं पर response देता है)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। चिह्न हटा दिए जाने से चोटियाँ (चमकीले blobs) और घाटियाँ (अंधेरे blobs) अलग नहीं की जातीं।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

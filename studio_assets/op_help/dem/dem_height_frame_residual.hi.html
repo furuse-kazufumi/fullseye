@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">h - H - N</code> का residual — ऊँचाई की गड़बड़ी को <b>चुप न रहने देने वाला</b> detector (<code style="color:#22d3bf">table</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
+<p>Ellipsoidal ऊँचाई, orthometric ऊँचाई और geoid ऊँचाई 1 identity (<code style="color:#22d3bf">h = H + N</code>) से जुड़ी हैं। जिन points पर सभी 3 उपलब्ध हों वहाँ इसका residual मापने से संख्यात्मक रूप से पता चलता है कि <b>उनमें से कोई एक अलग datum, अलग model या अलग संस्करण से बना था</b>। Survey परिणामों के बीच residual cm स्तर पर रहता है; यदि ellipsoidal ऊँचाई को सीधे orthometric ऊँचाई के रूप में उपयोग किया जाए, तो residual <code style="color:#22d3bf">-N</code> पर अटक जाता है (Japan के आसपास −30 से −40 m)।</p>
 <p>Args:</p>
-<p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
-<p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
-<p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
-<p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
+<p>h_ellipsoidal_m: ellipsoidal ऊँचाई [m] (जैसी GNSS लौटाता है)। Arrays अनुमत।</p>
+<p>h_orthometric_m: उन्हीं points की orthometric ऊँचाई [m] (map, levelling)।</p>
+<p>geoid_height_m: उन्हीं points की geoid ऊँचाई [m]।</p>
+<p>tol_m: मानों को &quot;संगत&quot; मानने का threshold [m]। डिफ़ॉल्ट 0.10 m।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>。</p>
-<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高をそのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
-<p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
+<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>।</p>
+<p>बंद सूत्र से जाँचने योग्य: identity के अनुसार बनाए गए 3-tuples के लिए residual 0 है (मापा गया rms 1.2e-14 m; ठीक 0 नहीं केवल rounding के कारण)। यदि ellipsoidal ऊँचाइयाँ सीधे orthometric-height column में डाल दी जाएँ, तो residual <b>−N</b> पर अटक जाता है —— गड़बड़ी का आकार ज्यों-का-त्यों दिखता है।</p>
+<p><b>ValueError</b>: लंबाई का बेमेल, non-finite मान, ऋणात्मक *tol_m*।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -140,7 +140,7 @@ def main(argv=None) -> int:
         from fullseye.opsearch import main as _search_main
         return _search_main(argv[1:])
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0],
-                                 epilog='search: fullseye-rag search "<what you want to do>" [-k N] [--lang ja|en|zh|tw|ko|de]')
+                                 epilog='search: fullseye-rag search "<what you want to do>" [-k N] [--lang ja|en|zh|tw|ko|de|hi]')
     ap.add_argument("--uninstall", action="store_true",
                     help="remove the installed skill")
     ap.add_argument("--target", type=Path, default=None,

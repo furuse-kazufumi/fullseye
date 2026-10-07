@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_material(kind: &#x27;str&#x27; = &#x27;lambert&#x27;, albedo=0.6, metal: &#x27;str&#x27; = &#x27;al&#x27;, finish: &#x27;str&#x27; = &#x27;random&#x27;, glass: &#x27;str&#x27; = &#x27;N-BK7&#x27;, sigma_per_mm: &#x27;float&#x27; = 0.0, roughness_um: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_material&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 material बनाता है। <code style="color:#22d3bf">kind</code> lambert / conductor / dielectric में से एक, 3 प्रकार।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>3 種しか無いのは<b>混ぜると黙って間違う</b>からで、増やすなら型を分ける(拡散か・金属か・透明か で光線の行き先が根本的に変わる)。</p>
-<p>lambert: <code style="color:#22d3bf">albedo</code>(スカラまたは RGB 3 要素)だけを使う完全拡散。</p>
-<p>conductor: <code style="color:#22d3bf">metal</code>(<code style="color:#22d3bf">glassmirror.METALS</code>)の複素屈折率で色が決まり、</p>
-<p><code style="color:#22d3bf">finish</code>(<code style="color:#22d3bf">metalfinish.FINISHES</code>)で異方性ローブの幅が決まる。<b>色は指定しない</b>。</p>
-<p><code style="color:#22d3bf">roughness_um</code> は面粗さ Rq [µm]。鏡面として返る割合が</p>
-<p>exp(-(4πσcosθ/λ)²) で決まる(Davies 1954 / Bennett-Porteus 1961)ので、</p>
-<p>鏡面(0.01 = 研磨)か拡散寄り(1.0 = 梨地)かはこの 1 つで決まる。</p>
-<p><b>波長が式に入る</b>ので、同じ面でも光源の波長で見え方が変わる。</p>
-<p>dielectric: <code style="color:#22d3bf">glass</code>(<code style="color:#22d3bf">raytrace.glass_catalog()</code>)の Sellmeier 分散で屈折し、</p>
-<p><code style="color:#22d3bf">sigma_per_mm</code> の Beer–Lambert で吸収する。</p>
-<p>返り値: 上記を検証済みで格納した dict(他の scene_* op にそのまま渡す)。</p>
+<p>केवल 3 प्रकार हैं क्योंकि <b>इन्हें मिलाने पर चुपचाप गलत परिणाम आता है</b>; और जोड़ने के लिए, types को अलग करें (diffuse, metal या transparent होना मूल रूप से बदल देता है कि rays कहाँ जाती हैं)।</p>
+<p>lambert: पूरी तरह diffuse, केवल <code style="color:#22d3bf">albedo</code> (scalar या 3 RGB elements) का उपयोग करता है।</p>
+<p>conductor: रंग <code style="color:#22d3bf">metal</code> (<code style="color:#22d3bf">glassmirror.METALS</code>) के complex refractive index से तय होता है,</p>
+<p>और anisotropic lobe की चौड़ाई <code style="color:#22d3bf">finish</code> (<code style="color:#22d3bf">metalfinish.FINISHES</code>) से। <b>कोई रंग निर्दिष्ट नहीं किया जाता</b>।</p>
+<p><code style="color:#22d3bf">roughness_um</code> surface roughness Rq [µm] है। specular के रूप में लौटने वाला अंश</p>
+<p>exp(-(4πσcosθ/λ)²) (Davies 1954 / Bennett-Porteus 1961) से तय होता है, इसलिए</p>
+<p>यह 1 मान specular (0.01 = polished) बनाम diffuse की ओर झुकाव (1.0 = satin finish) तय करता है।</p>
+<p><b>wavelength सूत्र में आता है</b>, इसलिए वही surface light source की wavelength के अनुसार अलग दिखती है।</p>
+<p>dielectric: <code style="color:#22d3bf">glass</code> (<code style="color:#22d3bf">raytrace.glass_catalog()</code>) के Sellmeier dispersion से refract करता है,</p>
+<p>और <code style="color:#22d3bf">sigma_per_mm</code> का उपयोग करके Beer–Lambert से absorb करता है।</p>
+<p>Returns: ऊपर की चीज़ें संग्रहीत करने वाला एक validated dict (इसे जैसा है वैसा अन्य scene_* ops को दें)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

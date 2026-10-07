@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>heat method से surface पर geodesic distance (Crane et al. 2013)। <code style="color:#22d3bf">source</code> vertex index है (या indices की series, default vertex 0)। mesh <code style="color:#22d3bf">(vertices, faces)</code> या 1 mesh tuple के रूप में दिया जा सकता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p style="margin:2px 0 2px 12px">1) (M − tL) u = δ を 1 ステップ解く(熱を時間 t だけ広げる、t の既定 = 平均辺長²)</p>
-<p style="margin:2px 0 2px 12px">2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
-<p style="margin:2px 0 2px 12px">3) L φ = ∇·X を解き、source で 0 になるようずらす</p>
-<p>門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。</p>
+<p style="margin:2px 0 2px 12px">1) (M − tL) u = δ को 1 step के लिए हल करें (समय t तक heat फैलाएँ; default t = औसत edge लंबाई²)</p>
+<p style="margin:2px 0 2px 12px">2) हर triangle पर, X = −∇u / |∇u| (heat जिस दिशा से आई उसके विपरीत = वह दिशा जिसमें दूरी बढ़ती है)</p>
+<p style="margin:2px 0 2px 12px">3) L φ = ∇·X हल करें और shift करें ताकि source पर यह 0 हो</p>
+<p>Gate: refine करने पर planar mesh पर Euclidean दूरी और sphere पर great-circle दूरी Rθ के निकट पहुँचता है। <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code> लौटाता है (जो vertices किसी face में उपयोग नहीं होते, और जो start point से जुड़े नहीं हैं, वे inf हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

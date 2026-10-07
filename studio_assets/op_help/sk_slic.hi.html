@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>SLIC (Simple Linear Iterative Clustering) से superpixel segmentation। रंग (यहाँ gray value) और coordinates को मिलाकर बने space में k-means clustering करता है और image को लगभग बराबर आकार के regions में बाँटता है। यहाँ segmentation परिणाम की सीमा रेखाओं को region के रूप में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))</code> —— a はおおよそのセグメント数を 10〜90 に振る(大きいほど細かく分割される)。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.slic(v, n_segments=int(10+80*a), channel_axis=None))</code> है —— a segments की अनुमानित संख्या को 10–90 पर sweep करता है (यह जितनी बड़ी, बँटवारा उतना बारीक)। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

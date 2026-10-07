@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.watermark_extract(image, n_bits: &#x27;int&#x27;, wavelet: &#x27;str&#x27; = &#x27;haar&#x27;, level: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;watermark_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>watermark का <b>blind extraction</b>। bool का 1-D (<code style="color:#22d3bf">phash</code> शब्दावली) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>同じ DWT / ブロック分割で中帯域係数の対の大小を読むだけ。原画像も鍵も要らない —— これは <b>秘匿ではなく完全性の印</b>であり、鍵が無いので <b>誰でも消せるし誰でも書ける</b>。所有権の主張には使えない。</p>
-<p>返りが <code style="color:#22d3bf">phash</code> 語彙なので、埋めたビット列との一致は <code style="color:#22d3bf">hash_distance</code> でそのまま数えられる(BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>)。語彙を合わせてあるのはそのため。</p>
-<p><b>PyWavelets 必須</b>(<code style="color:#22d3bf">ImportError</code>)。</p>
+<p>यह उसी DWT / block विभाजन के साथ केवल यह पढ़ता है कि हर mid-band coefficient जोड़ी में कौन बड़ा है। इसे न मूल image चाहिए न कोई key —— यह <b>गोपनीयता का नहीं, integrity का चिह्न</b> है; चूँकि कोई key नहीं है, <b>कोई भी इसे मिटा सकता है और कोई भी इसे लिख सकता है</b>। इसका उपयोग स्वामित्व का दावा करने के लिए नहीं किया जा सकता।</p>
+<p>चूँकि आउटपुट <code style="color:#22d3bf">phash</code> vocabulary में है, embed की गई bit string से मेल को सीधे <code style="color:#22d3bf">hash_distance</code> से गिना जा सकता है (BER = <code style="color:#22d3bf">hash_distance(sent, got) / n_bits</code>)। इसी कारण vocabularies को एक जैसा रखा गया है।</p>
+<p><b>PyWavelets आवश्यक</b> (<code style="color:#22d3bf">ImportError</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Local maxima निकालने वाला non-maximum suppression। केवल उन pixels को foreground के रूप में रखता है जो window के अधिकतम मान के बराबर हैं और threshold <code style="color:#22d3bf">0.3+0.4b</code> से ऊपर भी हैं। a window के आकार को 3/5/7/9 में बदलता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">nonmax_suppression_amp</code>（エッジ振幅画像上で法線方向に非極大点を抑制し、稜線を 1 画素幅に絞る演算）とは異なり、この実装は方向を考慮しない単純な局所最大値判定で、エッジ法線方向のサブピクセル抑制は行わない近似。</p>
+<p>HALCON के <code style="color:#22d3bf">nonmax_suppression_amp</code> (edge-amplitude image पर normal दिशा के साथ गैर-अधिकतम बिंदुओं को दबाकर ridges को 1 pixel चौड़ाई तक संकरा करने वाला operation) के विपरीत, यह implementation दिशा को अनदेखा करने वाली सरल local-maximum जाँच से बना सन्निकटन है, जिसमें edge normal के साथ sub-pixel suppression नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

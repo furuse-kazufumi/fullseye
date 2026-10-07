@@ -8,7 +8,7 @@
 <p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
 <p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
 <p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>なぜ Lambert では足りないか: Lambert は端(terminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

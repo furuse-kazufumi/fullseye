@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Morphological Laplacian (<code style="color:#22d3bf">scipy.ndimage.morphological_laplace</code>) से edge enhancement।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は構造要素のサイズを 3, 5, 7, 9 に振る（<code style="color:#22d3bf">size = 3 + 2*int(a*3)</code>）。<code style="color:#22d3bf">b</code> は未使用。グレースケール膨張と収縮の差の差というべき演算で、通常の（線形）ラプラシアンよりノイズに敏感な代わりに輪郭を鋭く拾う。符号付きの結果を <code style="color:#22d3bf">signed01</code> で [0,1] に写像するので 0.5 が無変化（ゼロ交差）にあたる。</p>
+<p><code style="color:#22d3bf">a</code> structuring element के आकार को 3, 5, 7, 9 पर sweep करता है (<code style="color:#22d3bf">size = 3 + 2*int(a*3)</code>)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। एक operation जिसे greyscale dilation और erosion के अंतरों का अंतर कहना सबसे सही है; यह सामान्य (linear) Laplacian से noise के प्रति ज़्यादा संवेदनशील है लेकिन बदले में contours को तीखेपन से पकड़ता है। Signed परिणाम <code style="color:#22d3bf">signed01</code> से [0,1] पर map होता है, इसलिए 0.5 कोई बदलाव नहीं (zero crossing) के समकक्ष है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

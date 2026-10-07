@@ -14,8 +14,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>OpenCV का bilateral filter (<code style="color:#22d3bf">cv2.bilateralFilter</code>)। पड़ोसी pixels को spatial दूरी और brightness अंतर दोनों से weight देकर औसत लेने वाली, edges बचाते हुए smoothing करने की मानक विधि। HALCON के <code style="color:#22d3bf">bilateral_filter</code> (bilateral filtering of an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が空間方向のシグマ(1〜4)を、<code style="color:#22d3bf">b</code> が輝度(色)方向のシグマ(0.05〜0.45) を振る。両方が使われる。<code style="color:#22d3bf">cv2</code> が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> spatial sigma (1–4) को, और <code style="color:#22d3bf">b</code> luminance (रंग) दिशा के sigma (0.05–0.45) को sweep करता है। दोनों उपयोग होते हैं। <code style="color:#22d3bf">cv2</code> के बिना वाले वातावरण में यह branch call नहीं की जा सकती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

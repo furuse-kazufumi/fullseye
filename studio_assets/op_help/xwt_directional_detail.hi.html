@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>दिशा के अनुसार edge detection। 1 स्तर के <code style="color:#22d3bf">db2</code> decomposition से horizontal (cH), vertical (cV), diagonal (cD) में से कोई 1 detail subband चुनकर, absolute value normalise करके मूल resolution तक block बड़ा करके (<code style="color:#22d3bf">kron</code> से 2x2 copy) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">b</code> でどの方向を見るか選ぶ(<code style="color:#22d3bf">min(2,int(b*3))</code> で cH→cV→cD の 3 択)。<code style="color:#22d3bf">a</code> は未使用。サブバンドは元画像の半分の解像度なのでブロック状に拡大されることに注意(滑らかな拡大ではない)。</p>
+<p><code style="color:#22d3bf">b</code> चुनता है कि कौन सी दिशा देखनी है (<code style="color:#22d3bf">min(2,int(b*3))</code> से cH→cV→cD में से 3 विकल्प)। <code style="color:#22d3bf">a</code> उपयोग नहीं होता। ध्यान दें कि subband का resolution मूल image का आधा है, इसलिए इसे blocky ढंग से बड़ा किया जाता है (smooth upscale नहीं)।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

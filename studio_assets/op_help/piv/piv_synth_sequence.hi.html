@@ -6,23 +6,22 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>उन्हीं particle को बार-बार खिसकाकर बना image क्रम। <code style="color:#22d3bf">(frames, truth)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
+<p>जहाँ <code style="color:#22d3bf">piv_synth_pair</code> 2 images बनाता है, वहीं यह <b>एक ऐसा sequence बनाता है जो 1 flow का लगातार पीछा करता है</b>। Ensemble correlation और temporal statistics केवल इसी से जाँचे जा सकते हैं —— स्वतंत्र pairs के समूह को sequence कहने पर 2 पड़ोसी images के बीच कोई correspondence नहीं बचता, और statistics अर्थहीन हो जाते हैं (measured: 0.73 px के mean के मुकाबले fluctuation RMS 4.05 px था, एक ऐसी संख्या जिसने flow की बजाय बनावट को मापा)।</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 1 コマあたりの変位(<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
-<p>n_frames: コマ数(2 以上)。</p>
-<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
-<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
-<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
-<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
-<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
-<p>それは PIV の性質であって間違いではないが、<b>時間統計の検証には使えない</b>ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>।</p>
+<p>displacement: प्रति 1 frame displacement (<code style="color:#22d3bf">piv_synth_pair</code> जैसा format)।</p>
+<p>n_frames: frames की संख्या (2 या ज़्यादा)।</p>
+<p>jitter: हर frame पर <b>पूरे field में</b> जोड़े गए disturbance का standard deviation [px]। 0 का अर्थ steady flow।</p>
+<p>Temporal statistics (fluctuations, Reynolds stresses) test करने के लिए इसे 0 से बड़ा रखें।</p>
+<p>★ यह <b>हर frame पर एक disturbance</b> है, हर particle पर स्वतंत्र disturbance नहीं।</p>
+<p>इसे हर particle पर बदलने से window के अंदर इसका औसत हो जाता है, जो इसे N के वर्गमूल से छोटा कर देता है,</p>
+<p>और डाले गए और मापे गए मान मेल नहीं खाते (measured: डाले गए 0.3 के मुकाबले 0.15)।</p>
+<p>यह PIV का गुण है, त्रुटि नहीं, लेकिन यह <b>temporal statistics जाँचने के लिए बेकार है</b>, इसलिए यहाँ यह खुद एक unsteady flow की नकल करता है।</p>
 <p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
-<p><code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p><code style="color:#22d3bf">piv_synth_pair</code> के समान।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は</p>
-<p><b>1 コマあたり</b>の平均変位。</p>
+<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>। <code style="color:#22d3bf">truth</code> <b>प्रति 1 frame</b></p>
+<p>mean displacement है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>planar NURBS curve (r, z) को z axis के चारों ओर 1 पूरा चक्कर घुमाकर बनी surface of revolution (Piegl &amp; Tiller §8.5)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>断面の各制御点を <code style="color:#22d3bf">nurbs_circle</code> の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
+<p>cross-section के हर control point को <code style="color:#22d3bf">nurbs_circle</code> के 9 points से घुमाता है और weights को गुणा करता है। यदि cross-section सटीक वृत्ताकार चाप है, तो परिणामी surface भी सटीक sphere, torus या cone होती है (polynomial surfaces केवल इनका सन्निकटन कर सकती हैं)।</p>
 <p>Args:</p>
-<p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>
-<p>weights, degree, knots: 断面の NURBS(<code style="color:#22d3bf">nurbs_curve</code> と同じ)。</p>
-<p>n: (周方向, 断面方向) の評価点数。</p>
+<p>profile: cross-section के (m, 2) control points (r, z)। r, axis से दूरी है (0 या अधिक)।</p>
+<p>weights, degree, knots: cross-section का NURBS (<code style="color:#22d3bf">nurbs_curve</code> के समान)।</p>
+<p>n: evaluation points की संख्या (परिधि की दिशा में, cross-section के साथ)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nurbs_surface</code> と同じ dict に <code style="color:#22d3bf">control_net</code>・<code style="color:#22d3bf">net_weights</code> を足したもの。</p>
+<p><code style="color:#22d3bf">nurbs_surface</code> जैसा ही dict, जिसमें <code style="color:#22d3bf">control_net</code> और <code style="color:#22d3bf">net_weights</code> जोड़े गए हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

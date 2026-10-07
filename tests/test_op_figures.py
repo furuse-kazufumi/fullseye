@@ -299,6 +299,13 @@ def test_every_ok_op_note_embeds_its_figure_and_program():
                      % (len(bad), "\n  ".join(bad[:10])))
 
 
+def _help_langs():
+    """ヘルプの言語は opdocs.LANGS が正本(手書きの一覧だと言語を足したとき門から漏れる)。"""
+    sys.path.insert(0, str(ROOT / "tools"))
+    import opdocs
+    return opdocs.LANGS
+
+
 def test_every_ok_op_help_page_shows_the_figure_and_the_buttons():
     """★Studio のヘルプ HTML(人が開く側)。6 言語すべてで図とボタンが出ること。"""
     if not HELP.is_dir():
@@ -309,7 +316,7 @@ def test_every_ok_op_help_page_shows_the_figure_and_the_buttons():
     for n in st["ok"]:
         if n in hand:
             continue
-        for lang in ("", "en", "zh", "tw", "ko", "de"):
+        for lang in [""] + [x for x in _help_langs() if x != "ja"]:
             p = HELP / ("%s.html" % n if not lang else "%s.%s.html" % (n, lang))
             if not p.is_file():
                 continue                                  # 言語版の有無は test_opdocs が見る

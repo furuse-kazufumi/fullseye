@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: 7254141ce9cd -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
-[日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
+[日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
 
 Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베이스(RAG)로 사용**"하는 것입니다. 모든 op가 기계가 읽을 수 있는 Markdown 노트(`docs/ops`, 단일 진실 원천)를 가지고 있으므로, 추가적인 벡터 DB나 임베딩 서비스는 **필요하지 않습니다**. grep이 가능한 환경이라면 그 자체가 곧 RAG가 됩니다.
 

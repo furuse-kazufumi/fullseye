@@ -12,8 +12,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Total variation denoising (TV denoising, Chambolle विधि)। Edges को बचाते हुए समतल हिस्सों का noise smooth करता है —— median/Gaussian blur के विपरीत, इसकी खासियत है कि contour की sharpness आसानी से नहीं बिगड़ती।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> —— a は denoising weight を 0.02〜0.32 に振り、<b>大きいほど強く平滑化される</b>(この符号の向きは後述の sk_tv_bregman と逆なので混同注意)。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">restoration.denoise_tv_chambolle(v, weight=0.02+0.3*a)</code> है —— a denoise weight को 0.02–0.32 पर sweep करता है, और <b>यह जितना बड़ा, smoothing उतनी तेज़</b> (यह चिह्न-दिशा आगे बताए गए sk_tv_bregman के उलट है, इसलिए दोनों में भ्रम न करें)। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

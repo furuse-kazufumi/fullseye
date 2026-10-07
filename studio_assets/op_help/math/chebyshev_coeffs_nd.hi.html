@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_coeffs_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>tensor-product Chebyshev–Lobatto grid पर sample किए गए मानों से N-dimensional Chebyshev coefficients निकालता है (DCT-I)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>values: 形 (n1, …, nd) の配列。軸 i の標本は <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(昇順)の上の値。</p>
-<p>box: 軸ごとの区間 [(lo, hi), …] (省略で全軸 [−1, 1]、1 組なら全軸に共通)。</p>
+<p>values: shape (n1, …, nd) का array। axis i पर samples, <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code> (बढ़ते क्रम में) पर के मान हैं।</p>
+<p>box: हर axis का interval [(lo, hi), …] (छोड़ने पर सभी axes पर [−1, 1]; 1 जोड़ा सभी axes में साझा होता है)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i は [−1, 1] に写した座標)、<code style="color:#22d3bf">box</code>、</p>
-<p><code style="color:#22d3bf">decay</code> = 軸ごとに |c| の最大を次数ごとに並べた列(滑らかな関数は幾何級数的に落ちる = スペクトル収束)、</p>
-<p><code style="color:#22d3bf">tail</code> = 各軸の最後の 2 次数の |c| の最大(打ち切り誤差の目安。小さいほど点数が足りている)。</p>
-<p>門: 次数が各軸 n_i − 1 以下の多項式は厳密に再現する / 1/(a − x) 型の極を持つ関数の係数は ρ^−k(ρ = a + √(a² − 1)、Bernstein の楕円)で落ちる。画像では、照明むら・反りなどの<b>滑らかな面</b>を数十の係数で表す(多項式のべき基底は高次で悪条件、Chebyshev は安定)。</p>
+<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i) (t_i, [−1, 1] पर map किया गया coordinate है), <code style="color:#22d3bf">box</code>,</p>
+<p><code style="color:#22d3bf">decay</code> = हर axis पर, degree के क्रम में |c| का max (smooth functions के लिए यह ज्यामितीय रूप से गिरता है = spectral convergence),</p>
+<p><code style="color:#22d3bf">tail</code> = हर axis पर, अंतिम 2 degrees पर |c| का max (truncation error का पैमाना; जितना छोटा, points की संख्या उतनी पर्याप्त)।</p>
+<p>Gate: हर axis पर अधिकतम degree n_i − 1 के polynomials सटीक रूप से फिर से बनते हैं / 1/(a − x) रूप के pole वाले functions के लिए coefficients ρ^−k की तरह गिरते हैं (ρ = a + √(a² − 1), Bernstein ellipse)। images के लिए, असमान illumination या warping जैसी <b>smooth surfaces</b> कुछ दर्जन coefficients से दर्शाई जाती हैं (polynomial power basis ऊँची degree पर ill-conditioned है; Chebyshev stable है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

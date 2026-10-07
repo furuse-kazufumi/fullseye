@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक ही exposure पर ली गई 2 images से mean, temporal variance और spatial variance निकालता है (समीकरण 16, 18, 32)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2(式 16)、<code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2(式 18: 2 枚の平均の差の補正は Release 4 の新規)、<code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (式 32、負にならないことが示されている)。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の実数でない / 形が違う / NaN・inf / 画素が 2 未満。</p>
+<p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2 (eq. 16), <code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2 (eq. 18: 2 frame means के अंतर का correction Release 4 में नया है), <code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (eq. 32, कभी ऋणात्मक न होना दिखाया गया है)।</p>
+<p><code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code> लौटाता है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D real नहीं / अलग shapes / NaN, inf / 2 से कम pixels।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

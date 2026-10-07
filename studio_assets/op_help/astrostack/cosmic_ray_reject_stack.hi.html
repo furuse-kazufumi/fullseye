@@ -6,24 +6,19 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(cleaned, masks) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>frame की तुलना से cosmic ray हटाना — <b>एक ही जगह पर दो बार नहीं लगती</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>宇宙線が単一フレームの検出で難しいのは「星も尖っている」からだが、位置合わせ済みのフレームが何枚もあれば話は簡単になる: 星は<b>毎回同じ画素</b> に居て、宇宙線は<b>一度しか来ない</b>。そこで画素ごとにフレーム方向の中央値と MAD を取り、<code style="color:#22d3bf">value &gt; median + kappa * sigma</code> のフレームだけを落として中央値で埋める(下側は落とさない —— 宇宙線は必ず<b>足す</b>方向の外れ値で、下側を落とすと欠損画素まで消してしまう)。</p>
-<p><code style="color:#22d3bf">min_frames</code> 枚未満では中央値も MAD も意味を成さないので拒否する(3 枚が最低限: 2 枚だとどちらが外れ値か決まらない)。<b>フレームは位置合わせ済みであること</b> —— ずれたまま渡すと星が「一度しか来ない」ことになり、星の方が消える。</p>
-<p><b>枚数が少ないと MAD 自体が当てにならない、という実測。</b> 8 枚の背景で MAD 推定は真の σ 9.22 に対し 7.89(-14.5 %)、しかも画素ごとに大きく散るので、<code style="color:#22d3bf">kappa=5</code> のつもりが実質 4.3 になり、偽陽性が真陽性の 2.4 倍(546 対 227 画素)出た。しかも<b>偽陽性は星の上ではなく背景に居た</b> (偽陽性画素の真値の中央値が 60 = sky そのもの)ので、「星が尖っているから」では説明がつかない —— 少数標本の MAD が画素ごとに大きく散ることが原因。対策は 2 つ重ねてある:</p>
-<p style="margin:2px 0 2px 12px">1. <code style="color:#22d3bf">_mad_correction</code>(Croux &amp; Rousseeuw 1992)の小標本補正を掛ける。</p>
-<p style="margin:2px 0 2px 12px">2. *read_sigma* を渡すと、<b>このモジュールが持つ唯一のノイズモデル</b> <code style="color:#22d3bf">sigma = sqrt(median/gain + read_sigma^2)</code> を尺度の<b>床</b>にする。</p>
-<p>これは <code style="color:#22d3bf">synth_starfield</code> が使っているのと同じ</p>
-<p>「Poisson(信号) + Gauss(読み出し)」で、二つ目の理論ではない。</p>
-<p>床を入れると、標本のゆらぎで MAD がたまたま小さく出た画素が</p>
-<p>宇宙線に化けることが無くなる。</p>
-<p>効き方の実測(128x128 / 25 星 / 1 枚あたり 10 宇宙線 / 8 枚、真の宇宙線 227 画素、<code style="color:#22d3bf">kappa=5</code>)::</p>
-<p>read_sigma=None  -&gt;  594 画素検出、偽陽性 367、適合率 0.382</p>
-<p>read_sigma=5.0   -&gt;  228 画素検出、偽陽性   1、適合率 0.996</p>
-<p>再現率はどちらも <b>1.000</b>(1 画素も取りこぼさない)。床は宇宙線を見逃す方向には効かない —— 宇宙線は雑音の何十倍もあるので、床が数 e- 上がっても越えてくる。</p>
-<p>Returns <code style="color:#22d3bf">(cleaned, masks)</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 語彙)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">masks</code> —— <code style="color:#22d3bf">(N, H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない / 枚数が *min_frames* 未満 / 形が揃っていない / *kappa* が非正 / *gain* が非正 / *read_sigma* が負の場合。</p>
+<p>एक frame में cosmic rays पहचानना कठिन है क्योंकि &quot;तारे भी नुकीले होते हैं&quot;, लेकिन कई aligned frames के साथ यह सरल हो जाता है: तारा <b>हर बार उसी pixel पर</b> होता है, और cosmic ray <b>केवल एक बार आती है</b>। इसलिए हर pixel के लिए frame axis के साथ median और MAD लिए जाते हैं, और केवल <code style="color:#22d3bf">value &gt; median + kappa * sigma</code> वाले frames हटाए जाते हैं और median से भरे जाते हैं (निचली ओर नहीं हटाई जाती —— cosmic rays हमेशा <b>जोड़ने</b> की दिशा में outliers होती हैं, और निचली ओर हटाने से missing pixels भी मिट जाएँगे)।</p>
+<p><code style="color:#22d3bf">min_frames</code> frames से कम पर न median का कोई अर्थ है न MAD का, इसलिए इसे अस्वीकार किया जाता है (3 frames न्यूनतम है: 2 के साथ यह तय नहीं हो सकता कि outlier कौन है)। <b>Frames aligned होने चाहिए</b> —— misaligned देने पर, तारे &quot;केवल एक बार आते हैं&quot; और गायब होने वाले तारे ही होते हैं।</p>
+<p><b>मापा गया: कम frames के साथ MAD पर ही भरोसा नहीं किया जा सकता।</b> 8 frames के background पर MAD अनुमान सही σ 9.22 के मुकाबले 7.89 था (-14.5 %), और यह pixel दर pixel बहुत बिखरता है, इसलिए इच्छित <code style="color:#22d3bf">kappa=5</code> व्यावहारिक रूप से 4.3 था, और false positives true positives के 2.4 गुना आए (546 बनाम 227 pixels)। इसके अलावा <b>false positives तारों पर नहीं, background पर थे</b> (false-positive pixels का median ground truth 60 था = स्वयं आकाश), इसलिए &quot;क्योंकि तारे नुकीले होते हैं&quot; इसकी व्याख्या नहीं करता —— कारण यह है कि छोटे sample का MAD हर pixel पर बहुत बिखरता है। 2 उपाय एक साथ लगाए गए हैं:</p>
+<p style="margin:2px 0 2px 12px">1. <code style="color:#22d3bf">_mad_correction</code> (Croux &amp; Rousseeuw 1992) का small-sample correction लागू करें।</p>
+<p style="margin:2px 0 2px 12px">2. *read_sigma* देने से <b>इस module का एकमात्र noise model</b>, <code style="color:#22d3bf">sigma = sqrt(median/gain + read_sigma^2)</code>, scale का <b>floor</b> बन जाता है। यह वही &quot;Poisson(signal) + Gauss(readout)&quot; है जो <code style="color:#22d3bf">synth_starfield</code> उपयोग करता है, कोई दूसरा सिद्धांत नहीं। floor के साथ, वे pixels जिनका MAD sampling उतार-चढ़ाव से संयोगवश छोटा आया, अब cosmic rays में नहीं बदलते।</p>
+<p>मापा गया प्रभाव (128x128 / 25 तारे / प्रति frame 10 cosmic rays / 8 frames, सही cosmic rays 227 pixels, <code style="color:#22d3bf">kappa=5</code>)::</p>
+<p>read_sigma=None  -&gt;  594 px detected, false positives 367, precision 0.382</p>
+<p>read_sigma=5.0   -&gt;  228 px detected, false positives   1, precision 0.996</p>
+<p>दोनों मामलों में recall <b>1.000</b> है (1 pixel भी नहीं छूटा)। floor cosmic rays को छोड़ने की दिशा में काम नहीं करता —— cosmic rays noise से दसियों गुना होती हैं, इसलिए floor कुछ e- बढ़ जाए तब भी वे उसे पार कर जाती हैं।</p>
+<p><code style="color:#22d3bf">(cleaned, masks)</code> लौटाता है:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— लंबाई <code style="color:#22d3bf">N</code> की list, हर एक <code style="color:#22d3bf">(H, W)</code> float64 (<code style="color:#22d3bf">images</code> vocabulary)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">masks</code> —— <code style="color:#22d3bf">(N, H, W)</code> bool, <code style="color:#22d3bf">True</code> = cosmic ray माना गया pixel।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: यदि *frames* list / tuple नहीं / frames की संख्या *min_frames* से कम / shapes मेल नहीं खाते / *kappa* non-positive / *gain* non-positive / *read_sigma* ऋणात्मक है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -15,8 +15,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पहले binomial (Gaussian) smoothing लगाकर Harris corner response। पहले <code style="color:#22d3bf">b</code> से तय sigma से image को smooth करता है, फिर उस पर Harris response (skimage हो तो <code style="color:#22d3bf">corner_harris</code>, न हो तो structure tensor हाथ से गणना, k=0.04) निकालता है। HALCON के <code style="color:#22d3bf">points_harris_binomial</code> (Detect points of interest using the binomial approximation of the Harris operator.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が Harris 応答自体のシグマ(0.5〜2.5)を、<code style="color:#22d3bf">b</code> が前段の平滑化シグマ(0.5〜2.0)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> स्वयं Harris response के sigma (0.5–2.5) को, <code style="color:#22d3bf">b</code> पहले होने वाली smoothing के sigma (0.5–2.0) को sweep करता है। दोनों उपयोग होते हैं।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>

@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Otsu की discriminant analysis method (Otsu&#x27;s method) से global threshold binarisation। Class के बीच variance को अधिकतम करने वाला threshold अपने आप चुनता है और पूरी image को foreground/background में बाँटता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">binary_threshold</code>(Segment an image using binary thresholding.)に相当。実装は <code style="color:#22d3bf">v &gt; filters.threshold_otsu(v)</code> —— a, b は未使用(しきい値は完全自動)。双峰性(2 山)のヒストグラムを持つ画像で最もうまく働き、コントラストが低い/単峰の画像では境界がずれやすい。</p>
+<p>HALCON के <code style="color:#22d3bf">binary_threshold</code> (Segment an image using binary thresholding.) के समकक्ष है। Implementation <code style="color:#22d3bf">v &gt; filters.threshold_otsu(v)</code> है —— a, b उपयोग नहीं होते (threshold पूरी तरह स्वचालित है)। यह bimodal (2-चोटी) histogram वाली images पर सबसे अच्छा काम करता है; कम contrast या unimodal images पर सीमा खिसक जाती है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

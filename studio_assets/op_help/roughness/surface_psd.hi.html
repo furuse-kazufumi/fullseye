@@ -6,48 +6,47 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>height field का power spectral density। <code style="color:#22d3bf">(q, C)</code> लौटाता है। <b>परिपाटी argument से स्पष्ट की जाती है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>引数</p>
-<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2 次元 PSD <code style="color:#22d3bf">C_2D(q)</code> の環平均。</p>
-<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1 次元動径 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
-<p>規約(ここを書かないと較正なしでは読めない ―― 既存の <code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> は <b>cycles / length</b>(角周波数 <code style="color:#22d3bf">2π/λ</code> ではない)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。規格化は Parseval に合わせてある: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> かつ <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
-<p style="margin:2px 0 2px 12px">• 自己アフィン面 <code style="color:#22d3bf">H</code> に対する傾きは <b>面 PSD で <code style="color:#22d3bf">-2(H+1)</code>、動径 PSD で <code style="color:#22d3bf">-2H-1</code></b>(ちょうど 1 だけ違う)。</p>
-<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
-<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
-<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
-<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
-<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
-<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
-<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
-<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
-<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
-<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
-<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
-<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
-<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
-<p>実装でやると誤差が消える。原因を切り分けたところ、<b>環の代表 <code style="color:#22d3bf">q</code> にビン番号 <code style="color:#22d3bf">i·Δq</code> を使うか、環内の <code style="color:#22d3bf">q</code> の平均を使うかの差</b>だった</p>
-<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
-<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
-<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
-<p><b>この関数は環内の <code style="color:#22d3bf">q</code> の平均を返す。</b></p>
-<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
-<p>正方格子の最大 <code style="color:#22d3bf">|q|</code> は <code style="color:#22d3bf">√2/(2 dx)</code> だが、<code style="color:#22d3bf">q &gt; 1/(2 dx)</code> の環は</p>
-<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
-<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 <code style="color:#22d3bf">2πq/Δq</code> に対して</p>
-<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
-<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
-<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
-<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
-<p style="margin:2px 0 2px 12px">• 2 次元の全格子で <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> を取ると <b>+0.0000 %</b>(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して 1 次元に潰した時点でこの分は失われる —— <b>環平均は要約であって可逆ではない。</b> 0.5 % を超える精度が要る用途では 2 次元の <code style="color:#22d3bf">C_2D</code> を自分で積分すること。</p>
-<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 % のまま変わらない(角の分に中身が無い)。角に中身がある面(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
+<p>Arguments</p>
+<p>z       Height field (mean अंदर घटाया जाता है; DC bin नहीं लौटाया जाता)।</p>
+<p>dx, dy  Sample spacing। <code style="color:#22d3bf">dy=None</code> का अर्थ square pixels।</p>
+<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> ... 2-D PSD <code style="color:#22d3bf">C_2D(q)</code> का ring average।</p>
+<p><code style="color:#22d3bf">&quot;radial&quot;</code> ... 1-D radial PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>।</p>
+<p>Conventions (इन्हें लिखे बिना इसे calibration के बिना पढ़ा नहीं जा सकता ―― मौजूदा <code style="color:#22d3bf">radial_power_spectrum</code> के docstring में ये नहीं हैं)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> <b>cycles / length</b> में है (angular frequency <code style="color:#22d3bf">2π/λ</code> नहीं)। <code style="color:#22d3bf">q = 1/λ</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>। Normalisation Parseval से मेल खाता है: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> और <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>।</p>
+<p style="margin:2px 0 2px 12px">• Self-affine surface <code style="color:#22d3bf">H</code> के लिए slope <b>areal PSD में <code style="color:#22d3bf">-2(H+1)</code> और radial PSD में <code style="color:#22d3bf">-2H-1</code></b> है (ठीक 1 का अंतर)।</p>
+<p>★ Measured —— किसी भी convention में H calibration के बिना वापस मिलता है</p>
+<p><code style="color:#22d3bf">surface_synth_psd</code> से H डाला गया, q ∈ [2/λ_hi, 0.4/dx] पर log-log में सीधी रेखा fit की गई,</p>
+<p>और H वापस निकाला गया (512², band 2-64 µm):</p>
+<p>injected H   areal PSD slope   recovered H   radial slope   recovered H   slope diff</p>
+<p>0.30        -2.600            0.300         -1.600         0.300        1.0000</p>
+<p>0.50        -3.000            0.500         -2.000         0.500        1.0000</p>
+<p>0.80        -3.600            0.800         -2.600         0.800        1.0000</p>
+<p>0.95        -3.901            0.950         -2.901         0.950        1.0000</p>
+<p>सभी 4 स्थितियों में error <b>±0.0003 के अंदर</b> है, और दोनों conventions के slope का अंतर</p>
+<p>हर H के लिए ठीक 1.0000 है। <b>Calibration के बिना पढ़ने लायक।</b></p>
+<p>★ यहीं PoC को दोबारा मापने पर निष्कर्ष बदला। PoC ने मौजूदा</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> से <b>-0.013 (H का 1.6 %) का एक समान systematic error</b> पाया था और</p>
+<p>निष्कर्ष निकाला था कि यह &quot;ring average के discretisation से systematic error&quot; है। इसी implementation से</p>
+<p>वही cross-check करने पर error गायब हो जाता है। कारण अलग करने पर पता चला कि यह <b>ring के प्रतिनिधि <code style="color:#22d3bf">q</code> के रूप में bin index <code style="color:#22d3bf">i·Δq</code> या ring के अंदर <code style="color:#22d3bf">q</code> का mean इस्तेमाल करने का अंतर</b> था</p>
+<p>—— bin index से -0.0007 से -0.0010 का ऋणात्मक offset आता है (measured, समान surface, समान</p>
+<p>fitting band)। दिशा PoC के observation से मेल खाती है लेकिन आकार 1/15 है, इसलिए</p>
+<p>-0.013 का बाकी हिस्सा ring-average discretisation से नहीं बल्कि उस function के दूसरे implementation अंतरों से आता है।</p>
+<p><b>यह function ring के अंदर <code style="color:#22d3bf">q</code> का mean लौटाता है।</b></p>
+<p>★ गड्ढा —— Nyquist से आगे के rings &quot;केवल corners&quot; से बने होते हैं</p>
+<p>Square grid का अधिकतम <code style="color:#22d3bf">|q|</code> <code style="color:#22d3bf">√2/(2 dx)</code> है, लेकिन <code style="color:#22d3bf">q &gt; 1/(2 dx)</code> वाले rings</p>
+<p>में frequency plane के केवल चार corners होते हैं। Measured (512²): सभी 362 bins में से ऊपर के</p>
+<p>107 bins (29.6 %) Nyquist से आगे हैं। Ring में point count आदर्श <code style="color:#22d3bf">2πq/Δq</code> से कितना कम पड़ता है,</p>
+<p>यह Nyquist से नीचे भी कम से कम 0.838x तक गिरता है</p>
+<p>(grid discretisation), लेकिन Nyquist से आगे 0 तक गिर जाता है।</p>
+<p><b>Slope fit के लिए Nyquist से आगे के bins इस्तेमाल न करें।</b></p>
+<p>★ Parseval cross-check पर कितना भरोसा किया जा सकता है (measured, 512², Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• पूरे 2-D grid पर <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> लेने से <b>+0.0000 %</b> मिलता है (exact)।</p>
+<p style="margin:2px 0 2px 12px">• लौटाए गए radial PSD का trapezoidal integration <b>-0.55 %</b> देता है। यह मात्रा उसी क्षण खो जाती है जब data को हर ring पर औसत करके 1-D में समेटा जाता है —— <b>ring average एक सारांश है और invertible नहीं है।</b> 0.5 % से बेहतर accuracy चाहने वाले इस्तेमाल के लिए, 2-D <code style="color:#22d3bf">C_2D</code> को खुद integrate करें।</p>
+<p style="margin:2px 0 2px 12px">• इस surface का band Nyquist पर ख़त्म होता है, इसलिए Nyquist पर truncate करने से यह -0.55 % पर ही बना रहता है (corners में कोई content नहीं)। जिन surfaces के corners में content है (Nyquist से आगे का band), उनमें truncation से वह खो जाता है।</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;areal&quot;</code>・<code style="color:#22d3bf">&quot;radial&quot;</code> 以外。</p>
+<p style="margin:2px 0 2px 12px">• 2-D नहीं / 8x8 से छोटा / NaN या Inf शामिल / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> धनात्मक नहीं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> <code style="color:#22d3bf">&quot;areal&quot;</code> या <code style="color:#22d3bf">&quot;radial&quot;</code> के अलावा।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

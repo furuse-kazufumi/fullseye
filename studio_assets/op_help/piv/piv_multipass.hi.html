@@ -6,16 +6,15 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>मोटी window से बारीक window तक चरण घटाने वाला multi-pass PIV। <code style="color:#22d3bf">(flow, info)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各段の結果を<b>次の段の予測変位</b>として使う(整数量だけ 2 枚目の窓をずらす)。段の間で外れ値を除いて埋めるのは意図的 —— 外れたベクトルをそのまま予測に使うと、その窓は次の段でも外れたまま固定される。</p>
+<p>हर pass का परिणाम <b>अगले pass के अनुमानित displacement</b> के रूप में इस्तेमाल होता है (2nd image की window integer मात्रा से खिसकाई जाती है)। Passes के बीच outliers हटाना और भरना जानबूझकर है —— अगर गलत vector को जैसे का तैसा prediction में इस्तेमाल किया जाए, तो वह window अगले pass में भी गलत ही बंद रहती है।</p>
 <p>Args:</p>
-<p>a, b: 画像対。</p>
-<p>windows: 大きい順の窓列。各段は前段の<b>倍数関係でなくてよい</b>が、</p>
-<p>格子が変わるので予測は最近傍で載せ替える。</p>
-<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> と同じ。</p>
-<p>outlier_threshold: 段間の正規化中央値検定の閾値。<code style="color:#22d3bf">None</code> で無効。</p>
+<p>a, b: image pair।</p>
+<p>windows: घटते आकार में windows का sequence। हर pass को पिछले का <b>गुणज होना ज़रूरी नहीं</b>,</p>
+<p>लेकिन चूँकि grid बदलता है, prediction nearest neighbour से स्थानांतरित किया जाता है।</p>
+<p>overlap / peak / window_func: <code style="color:#22d3bf">piv_cross_correlate</code> के समान।</p>
+<p>outlier_threshold: passes के बीच normalised median test का threshold। <code style="color:#22d3bf">None</code> इसे बंद करता है।</p>
 <p>Returns:</p>
-<p>最終段の <code style="color:#22d3bf">(flow, info)</code>。<code style="color:#22d3bf">info[&quot;passes&quot;]</code> に各段の窓の大きさ。</p>
+<p>अंतिम pass का <code style="color:#22d3bf">(flow, info)</code>। <code style="color:#22d3bf">info[&quot;passes&quot;]</code> में हर pass का window size होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

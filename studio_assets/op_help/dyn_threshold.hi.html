@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Local thresholding। Local mean (window भुजा <code style="color:#22d3bf">_k(a)</code> वाला <code style="color:#22d3bf">uniform_filter</code>) में offset <code style="color:#22d3bf">(b-0.5)*0.4</code> जोड़कर उसे threshold बनाता है ―― असमान रोशनी वाली image में भी local contrast से foreground निकाल सकता है। HALCON के <code style="color:#22d3bf">dyn_threshold</code> (Segment an image using a local threshold.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が局所平均の窓サイズを、<code style="color:#22d3bf">b</code> がオフセット(しきい値を上下に振る量) を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> स्थानीय mean के window size को, और <code style="color:#22d3bf">b</code> offset (threshold को कितना ऊपर या नीचे खिसकाया जाए) को sweep करता है। दोनों उपयोग होते हैं।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>

@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Diameter closing (skimage <code style="color:#22d3bf">morphology.diameter_closing</code>)। xsk3_area_closing के क्षेत्रफल के बजाय connected component के bounding rectangle की diagonal लंबाई (व्यास) से लक्ष्य चुनने वाला closing —— लंबी-पतली संरचनाओं के लिए व्यास मानदंड और गोल संरचनाओं के लिए क्षेत्रफल मानदंड उपयुक्त है, इस तरह उपयोग बाँटा जा सकता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は直径閾値(<code style="color:#22d3bf">4+int(a*30)</code> で 4〜34 画素)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> व्यास threshold (<code style="color:#22d3bf">4+int(a*30)</code> से 4–34 pixels) sweep करता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

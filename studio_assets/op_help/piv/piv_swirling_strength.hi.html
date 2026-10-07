@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>swirling strength λ_ci — velocity-gradient tensor के complex eigenvalue के काल्पनिक भाग का परिमाण।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
-<p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
+<p>Q-criterion की तरह यह &quot;shear को vortices से अलग करने वाली&quot; मात्रा है, लेकिन इसकी <b>units rotation के angular velocity के बराबर</b> हैं (1/frame)। Measured: rigid-body rotation ω=0.01 के लिए <code style="color:#22d3bf">0.01</code>, uniform expansion और shear के लिए <code style="color:#22d3bf">0.0</code>।</p>
+<p>जहाँ eigenvalues real हैं (= कोई rotation नहीं), वहाँ 0 लौटाया जाता है। चूँकि यह हर point पर एक स्वतंत्र 2x2 matrix के eigenvalues हैं, पूरा grid vectorise करके एक साथ हल किया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

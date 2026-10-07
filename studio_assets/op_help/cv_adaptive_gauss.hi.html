@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Local Gaussian-weighted mean से threshold binarisation (adaptive threshold, Gaussian संस्करण, OpenCV implementation)। cv_adaptive_mean जैसा ही ढाँचा, लेकिन local mean साधारण औसत के बजाय Gaussian-weighted औसत से लेता है, इसलिए window की सीमा के पास अचानक बदलाव कम आते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">local_threshold</code>(Segment an image using local thresholding.)に相当。実装は <code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code> —— a は blockSize を 3〜15(奇数)に、b は定数 C を 0〜10 に振る。</p>
+<p>HALCON के <code style="color:#22d3bf">local_threshold</code> (Segment an image using local thresholding.) के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.adaptiveThreshold(_u8(v), 255, ADAPTIVE_THRESH_GAUSSIAN_C, THRESH_BINARY, blockSize=2*int(a*6)+3, C=int(b*10))</code> है —— a blockSize को 3–15 (विषम) पर, और b स्थिरांक C को 0–10 पर sweep करता है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

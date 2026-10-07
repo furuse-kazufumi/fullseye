@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_line_integral_convolution(flow, length=12, upsample=4, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_line_integral_convolution&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line integral convolution (LIC) — flow के साथ white noise को धुंधला करके बने pattern की image।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ベクトルの矢印は密にすると潰れ、疎にすると構造を見落とす。LIC は<b>画素ごと</b> に流線に沿って雑音を平均するので、密度の選択が要らない。向きの情報は落ちる(前後を区別しない)ので、<b>回転の向きを見たいときは矢印か色相図と併用する</b>。</p>
+<p>Vector तीर घने होने पर आपस में गड्डमड्ड हो जाते हैं और विरल होने पर संरचना छूट जाती है। LIC noise को streamlines के साथ <b>हर pixel पर</b> औसत करता है, इसलिए घनत्व चुनने की आवश्यकता नहीं होती। दिशा की जानकारी खो जाती है (आगे और पीछे में अंतर नहीं होता), इसलिए <b>घूर्णन की दिशा देखनी हो तो इसे तीरों या hue map के साथ मिलाएँ</b>।</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>length: 流線に沿って積分する片側の歩数。長いほど滑らかになるが、</p>
-<p>渦の芯のような曲率の大きい場所では<b>構造が伸びて嘘になる</b>。</p>
-<p>upsample: 出力の解像度倍率(格子は粗いので拡大してから積分する)。</p>
-<p>seed: 白色雑音の種。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>।</p>
+<p>length: streamline के साथ एक तरफ़ integrate किए जाने वाले steps की संख्या। लंबा होने पर अधिक smooth, लेकिन</p>
+<p>vortex core जैसी उच्च curvature वाली जगहों पर <b>संरचना खिंच जाती है और झूठ बन जाती है</b>।</p>
+<p>upsample: आउटपुट का resolution गुणक (grid मोटा है, इसलिए integrate करने से पहले बड़ा किया जाता है)।</p>
+<p>seed: white noise का seed।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h * upsample, w * upsample)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h * upsample, w * upsample)</code> float64, range [0, 1]।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

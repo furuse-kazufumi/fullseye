@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Otsu की discriminant analysis method (Otsu&#x27;s method) से automatic threshold binarisation। <code style="color:#22d3bf">binary_threshold</code>/<code style="color:#22d3bf">auto_threshold</code> वाली ही <code style="color:#22d3bf">_sh_threshold</code> की <code style="color:#22d3bf">otsu</code> branch साझा करता है, a, b इस्तेमाल नहीं होते। Threshold से ज़्यादा चमकीले pixels को foreground (1) मानता है। skimage न होने वाले environment में image के mean को threshold बनाने वाला fallback होता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">bin_threshold</code>（複数の自動しきい値決定アルゴリズムから選んで二値化する演算、既定は最大分離度=大津法相当）に相当する近似で、大津法のみをサポートし他のアルゴリズム選択肢は無い。</p>
+<p>HALCON के <code style="color:#22d3bf">bin_threshold</code> (कई स्वचालित threshold-चयन algorithms में से चुनकर binarise करने वाला operation; default अधिकतम पृथक्करणीयता = Otsu की विधि के समकक्ष है) के समकक्ष एक सन्निकटन; केवल Otsu की विधि समर्थित है, और दूसरे algorithms का कोई विकल्प नहीं है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

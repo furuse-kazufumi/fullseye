@@ -4,29 +4,28 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.perceptual_hash(image, mode: &#x27;str&#x27; = &#x27;dct&#x27;, hash_size: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;perceptual_hash&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>perceptual hash। <b>bool की 1-D bit string</b> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
-<p><code style="color:#22d3bf">&quot;dct&quot;</code>   縮小 <code style="color:#22d3bf">(hash_size * 4)</code> 角 → 2-D DCT-II(直交)→ 左上</p>
-<p><code style="color:#22d3bf">hash_size x hash_size</code> を取り、<b>DC を除いた中央値</b>と比較。</p>
-<p>Zauner 2010 の pHash と同じ手順。長さ <code style="color:#22d3bf">hash_size**2</code> ビット。</p>
-<p><code style="color:#22d3bf">&quot;average&quot;</code> 縮小 <code style="color:#22d3bf">hash_size</code> 角 → 平均と比較(aHash)。同じ長さ。<code style="color:#22d3bf">&quot;difference&quot;</code> 縮小 <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> → <b>横に隣り合う画素の大小</b>を比較(dHash)。同じ長さで、平均輝度の変化に強い。</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が数で固定。256x256 の 1/f^1.6 画像、<code style="color:#22d3bf">hash_size=8</code> = 64 ビット。<b>無関係な 2 枚の距離</b>は dct 31.3 / average 34.2 / difference 32.6(20 対の平均。理論値は 32 = ビット長の半分)):</p>
+<p><code style="color:#22d3bf">&quot;dct&quot;</code>   <code style="color:#22d3bf">(hash_size * 4)</code> वर्ग तक downscale → 2-D DCT-II (orthogonal) → ऊपर-बाएँ का</p>
+<p><code style="color:#22d3bf">hash_size x hash_size</code> block लें और <b>DC को छोड़कर median</b> से तुलना करें।</p>
+<p>Zauner 2010 के pHash जैसी ही प्रक्रिया। लंबाई <code style="color:#22d3bf">hash_size**2</code> bits।</p>
+<p><code style="color:#22d3bf">&quot;average&quot;</code> <code style="color:#22d3bf">hash_size</code> वर्ग तक downscale → mean से तुलना (aHash)। समान लंबाई। <code style="color:#22d3bf">&quot;difference&quot;</code> <code style="color:#22d3bf">(hash_size, hash_size + 1)</code> तक downscale → तुलना करें कि <b>क्षैतिज रूप से सटे pixels में कौन बड़ा है</b> (dHash)। समान लंबाई, mean luminance में बदलाव के प्रति robust।</p>
+<p>मापा गया (<code style="color:#22d3bf">tests/test_imgforensics.py</code> इसे संख्याओं में स्थिर करता है; 256x256 1/f^1.6 images, <code style="color:#22d3bf">hash_size=8</code> = 64 bits। <b>2 असंबंधित images के बीच दूरी</b> dct 31.3 / average 34.2 / difference 32.6 है (20 जोड़ियों का औसत; सैद्धांतिक मान 32 = bit length का आधा)):</p>
 <p>===================== ======== ========== ============</p>
-<p>変換                  dct      average    difference</p>
+<p>रूपांतरण              dct      average    difference</p>
 <p>===================== ======== ========== ============</p>
-<p>JPEG 品質 60 再圧縮   0        0          0</p>
-<p>JPEG 品質 30 再圧縮   2        0          0</p>
-<p>1/2 縮小              0        0          0</p>
-<p>1/4 縮小              0        0          0</p>
-<p>明るさ +0.1           0        0          0</p>
-<p><b>左右反転</b>          <b>28</b>   <b>42</b>     <b>34</b></p>
-<p><b>90 度回転</b>         <b>32</b>   <b>30</b>     <b>32</b></p>
-<p>別の画像              28       40         34</p>
+<p>JPEG q60 पुनःसंपीड़न  0        0          0</p>
+<p>JPEG q30 पुनःसंपीड़न  2        0          0</p>
+<p>1/2 छोटा करना         0        0          0</p>
+<p>1/4 छोटा करना         0        0          0</p>
+<p>brightness +0.1       0        0          0</p>
+<p><b>क्षैतिज flip</b>      <b>28</b>   <b>42</b>     <b>34</b></p>
+<p><b>90 deg rotation</b>   <b>32</b>   <b>30</b>     <b>32</b></p>
+<p>अलग image             28       40         34</p>
 <p>===================== ======== ========== ============</p>
-<p><b>この op が言えないこと</b>:</p>
-<p style="margin:2px 0 2px 12px">• 距離が小さい = 同じ画像、ではない。8x8 の粗い縮小に落としているので、<b>細部の改竄は距離 0 のまま通る</b>。実測:512x512 の画像に 24x24 のコピー&amp;ムーブを入れたときの距離は dct 0 / average 0 / difference 1。</p>
-<p style="margin:2px 0 2px 12px">• 距離が大きい = 別画像、でもない。上の表のとおり <b>反転と回転は「別の画像」と区別が付かない</b>(どちらも無関係な 2 枚と同じ距離域に入る)。幾何変換に対する不変性は一切無い。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は <b><code style="color:#22d3bf">phash</code> 語彙</b>であって <code style="color:#22d3bf">signal</code> ではない。bool の 1-D は既存の <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code> の述語をすべて満たすので、取り違えると <code style="color:#22d3bf">signal1d.lowpass</code> などが <b>有限でもっともらしい値</b>を返す(実測 5 op)。だから <code style="color:#22d3bf">hash_distance</code> は dtype を検査する。</p>
+<p><b>यह op क्या नहीं बता सकता</b>:</p>
+<p style="margin:2px 0 2px 12px">• छोटी दूरी का अर्थ समान image नहीं है। चूँकि यह मोटे 8x8 downscale तक गिर जाता है, <b>बारीक detail की छेड़छाड़ दूरी 0 पर पास हो जाती है</b>। मापा गया: 512x512 image में 24x24 copy-move डालने पर, दूरी dct 0 / average 0 / difference 1 है।</p>
+<p style="margin:2px 0 2px 12px">• न ही बड़ी दूरी का अर्थ अलग image है। जैसा ऊपर की table दिखाती है, <b>flips और rotations को &quot;अलग image&quot; से अलग नहीं पहचाना जा सकता</b> (दोनों 2 असंबंधित images जैसी ही दूरी की range में आते हैं)। geometric transforms के प्रति कोई invariance बिल्कुल नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• return value <b><code style="color:#22d3bf">phash</code> vocabulary</b> में है, <code style="color:#22d3bf">signal</code> में नहीं। bool 1-D array <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">indices</code> / <code style="color:#22d3bf">descriptor</code> की सभी मौजूदा predicates को पूरा करता है, इसलिए गड़बड़ी होने पर <code style="color:#22d3bf">signal1d.lowpass</code> और अन्य <b>finite, विश्वसनीय दिखने वाले मान</b> लौटाते हैं (5 ops पर मापा गया)। इसी कारण <code style="color:#22d3bf">hash_distance</code> dtype जाँचता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>projection A(y) से axisymmetric distribution f(r) वापस निकालता है (inverse Abel transform = axisymmetric object की tomography)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy。y = √(r² + u²) と置いて特異点を消し、A を 3 次スプラインで微分する。滑らかな投影には精度が高いが、<b>微分が雑音を増幅する</b>:</p>
-<p>雑音の誤差は標本間隔 dr に反比例して増える(2026-10-03 実測、雑音 1%: 標本数 80 → 640 で</p>
-<p>平均誤差 0.027 → 0.237、両対数の傾き ≈ 1)。粗い格子ではこちらが良い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 殻を剥く: f を半径 dr の殻ごとに一定とみなし、弦の長さの上三角行列を外側から解く。解像度は殻の幅で決まり、微分を取らないぶん雑音の増え方が緩い(同じ実測で 0.036 → 0.100、傾き ≈ 1/2)。<b>細かい格子の実測ではこちら</b>(n=640 で微分の 2.4 分の 1)、粗い格子(n≈80)では逆転する。</p>
-<p>2 つは独立な離散化なので、<b>同じ投影に両方を当てて食い違いを見る</b>のが検算になる。</p>
-<p>門: A(y) = √π σ exp(−y²/σ²) から f(r) = exp(−r²/σ²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy। y = √(r² + u²) रखने से singularity हट जाती है, और A को cubic spline से differentiate किया जाता है। smooth projections के लिए सटीक, पर <b>differentiation noise को बढ़ाता है</b>:</p>
+<p>noise error, sample spacing dr के व्युत्क्रम अनुपात में बढ़ती है (2026-10-03 को मापा गया, 1% noise: 80 → 640 samples पर</p>
+<p>mean error 0.027 → 0.237, log-log slope ≈ 1)। मोटे grids पर यही बेहतर है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— onion peeling: f को radius dr के हर shell में स्थिर माना जाता है, और chord लंबाइयों के upper-triangular matrix को बाहर से अंदर की ओर हल किया जाता है। Resolution, shell की चौड़ाई से तय होता है; derivative नहीं लिया जाता, इसलिए noise धीरे बढ़ता है (उसी माप में: 0.036 → 0.100, slope ≈ 1/2)। <b>बारीक grids पर मापों में यही जीतता है</b> (n=640 पर derivative की error का 1/2.4); मोटे grids (n≈80) पर स्थिति उलट जाती है।</p>
+<p>ये 2 स्वतंत्र discretizations हैं, इसलिए <b>दोनों को एक ही projection पर लगाकर अंतर जाँचना</b> cross-check का काम करता है।</p>
+<p>Gate: A(y) = √π σ exp(−y²/σ²) से, f(r) = exp(−r²/σ²)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

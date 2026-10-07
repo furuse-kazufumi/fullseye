@@ -99,7 +99,7 @@ def oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0),
 
     返り値: (H, W) の放射輝度係数(0 以上)。
 
-    なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、
+    なぜ Lambert では足りないか: Lambert は端(terminator)で cos に比例して落ちるが、
     粗い面は微小面の相互遮蔽と相互反射で**端が平らに明るいまま**になる。満月が
     円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。
     """

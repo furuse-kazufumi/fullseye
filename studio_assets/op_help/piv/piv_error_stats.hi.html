@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ground truth से अंतर का विवरण। <b>bias और बिखराव को अलग-अलग</b> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>इनमें से केवल एक को report करने से systematic offset वाला implementation &quot;error 0.3 px&quot; के रूप में पास हो जाता है। Bias (औसत error) और बिखराव (standard deviation) अलग-अलग कारणों की ओर इशारा करते हैं।</p>
 <p>Args:</p>
-<p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>truth: 同じ格子の真値 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> の返り)。</p>
-<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
-<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>flow: अनुमान <code style="color:#22d3bf">(2, h, w)</code>।</p>
+<p>truth: उसी grid पर ground truth <code style="color:#22d3bf">(2, h, w)</code> (<code style="color:#22d3bf">piv_sample_at_windows</code> का return)।</p>
+<p>trim: बाहरी किनारे से हटाए गए grid cells की संख्या। जब window image के किनारे को छूता है तो correlation गिरता है, इसलिए</p>
+<p>डिफ़ॉल्ट रूप से 1 ring हटाई जाती है। 0 का अर्थ पूरा grid है।</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">bias_dy</code> / <code style="color:#22d3bf">bias_dx</code> / <code style="color:#22d3bf">std_dy</code> / <code style="color:#22d3bf">std_dx</code> / <code style="color:#22d3bf">rms</code></p>
-<p>(2 成分合わせた二乗平均平方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
-<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>。</p>
+<p>(2 components को मिलाकर root mean square) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
+<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

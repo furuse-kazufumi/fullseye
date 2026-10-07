@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Unsharp mask (sharpening)। <code style="color:#22d3bf">kornia.filters.unsharp_mask</code> को 5x5 kernel से call करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>a は未使用</b>、b がぼかしのシグマ（<code style="color:#22d3bf">0.5 + 2.0 * b</code>、範囲 0.5〜2.5）を振る。元画像から低周波成分（ぼかし版）を引いた差分を強調して足し戻す古典的な鮮鋭化。</p>
+<p><b>a उपयोग नहीं होता</b>; b blur sigma (<code style="color:#22d3bf">0.5 + 2.0 * b</code>, range 0.5–2.5) sweep करता है। क्लासिक sharpening: मूल image से low-frequency घटक (blurred संस्करण) घटाकर मिले अंतर को बढ़ाता है और वापस जोड़ता है।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराए बिना mirror होता है (d c b | a b c d, OpenCV का <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

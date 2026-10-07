@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: 7254141ce9cd -->
 # 将 Fullseye 用作 AI 助手 RAG 的方法（面向 Claude Code）
 
-[日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
+[日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · **简体中文** · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md) · [हिन्दी](./AI_RAG_GUIDE.hi.md)
 
 Fullseye 的推荐用法是"**作为 AI 编码助手的知识库（RAG）使用**"。由于所有 op 都拥有机器可读的 Markdown 笔记（`docs/ops`，唯一可信来源），因此**不需要**额外的向量数据库或嵌入服务。只要环境支持 grep，它本身就是一个 RAG。
 

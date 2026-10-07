@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_flow_magnitude(flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_magnitude&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">sqrt(dy^2 + dx^2)</code>। दिशा फेंक देने वाला <b>एक-तरफ़ा</b> रूपांतरण।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">reprconv.flow_magnitude</code> の 2 次元版。あちらは <code style="color:#22d3bf">(3, D, H, W)</code> 専用で、ここへ渡すと形で弾かれる(型を分けてある理由がこれ)。</p>
+<p><code style="color:#22d3bf">reprconv.flow_magnitude</code> का 2-D version। वह <code style="color:#22d3bf">(3, D, H, W)</code> के लिए समर्पित है, और उसे यहाँ देने पर shape से reject होता है (इसी कारण types अलग रखे गए हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

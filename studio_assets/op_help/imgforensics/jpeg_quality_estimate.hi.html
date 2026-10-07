@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_quality_estimate(image, max_step: &#x27;int&#x27; = 64, n_coeff: &#x27;int&#x27; = 21) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_quality_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>decode की गई image से <b>quantisation table और JPEG quality का blind अनुमान</b> लगाता है। <code style="color:#22d3bf">table</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ファイルの DQT を読むのではなく、<b>画素だけ</b>から推定する(そこが要点で、PNG に保存し直された / 貼り付けられた画像でも「元は JPEG 品質 N だった」が見える)。8x8 ブロック DCT を取り、係数ごとに櫛の間隔を推定して(Fan &amp; de Queiroz 2003)、IJG の公開スケーリング規則で作った標準表の族から最も合う品質を選ぶ。</p>
-<p>返り(dict):</p>
-<p><code style="color:#22d3bf">jpeg_compressed</code> 櫛が立った係数が <code style="color:#22d3bf">n_coeff</code> 個中いくつあったかで判断した</p>
-<p>bool。<b>「JPEG である」証明ではない</b>(下記 caveats)</p>
-<p><code style="color:#22d3bf">quality</code>         推定品質 1..100(櫛が無ければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">table</code>           推定した <code style="color:#22d3bf">(8, 8)</code> の量子化ステップ(0 = 推定できず)</p>
-<p><code style="color:#22d3bf">n_quantized</code>     櫛が立った係数の数 / <code style="color:#22d3bf">n_coeff</code></p>
-<p><code style="color:#22d3bf">fit_error</code>       選ばれた品質の標準表との平均絶対差</p>
-<p><code style="color:#22d3bf">caveats</code>         この数値が言えないこと</p>
-<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>、256x256 の 1/f^1.6 画像を Pillow で符号化 → 復号して推定):</p>
+<p>यह file का DQT नहीं पढ़ता बल्कि <b>केवल pixels से</b> अनुमान लगाता है (यही मुख्य बात है:</p>
+<p>PNG के रूप में दोबारा save की गई / चिपकाई गई image के लिए भी &quot;यह मूल रूप से JPEG quality N थी&quot; दिखाई देता है)। यह 8x8 block DCT लेता है, हर coefficient के लिए comb spacing का अनुमान लगाता है (Fan &amp; de Queiroz 2003), और IJG के सार्वजनिक scaling rule से बनी standard tables की family में से सबसे अच्छा मेल खाने वाली quality चुनता है।</p>
+<p>Returns (dict):</p>
+<p><code style="color:#22d3bf">jpeg_compressed</code> bool, इस आधार पर तय कि <code style="color:#22d3bf">n_coeff</code> coefficients में से कितनों में comb दिखा।</p>
+<p><b>&quot;यह JPEG है&quot; का प्रमाण नहीं</b> (नीचे caveats देखें)</p>
+<p><code style="color:#22d3bf">quality</code>         अनुमानित quality 1..100 (comb न होने पर <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">table</code>           अनुमानित <code style="color:#22d3bf">(8, 8)</code> quantization steps (0 = अनुमान नहीं लग सका)</p>
+<p><code style="color:#22d3bf">n_quantized</code>     comb दिखाने वाले coefficients की संख्या / <code style="color:#22d3bf">n_coeff</code></p>
+<p><code style="color:#22d3bf">fit_error</code>       चुनी गई quality की standard table से औसत निरपेक्ष अंतर</p>
+<p><code style="color:#22d3bf">caveats</code>         वह जो यह संख्या नहीं बता सकती</p>
+<p>मापा गया (<code style="color:#22d3bf">tests/test_imgforensics.py::test_jpeg_quality_estimate_recovers_quality</code>, 256x256 1/f^1.6 images को Pillow से encode → decode किया, फिर अनुमान लगाया):</p>
 <p>======= ========= =============== ============</p>
-<p>真の Q  推定 Q    櫛が立った係数  fit_error</p>
+<p>सही Q   अनुमा. Q  Comb coeffs     fit_error</p>
 <p>======= ========= =============== ============</p>
 <p>95      95        11/20           0.091</p>
 <p>90      90        19/20           0.579</p>
@@ -27,8 +27,8 @@
 <p>40      40         6/20           3.333</p>
 <p>30      <b>None</b>   4/20           —</p>
 <p>======= ========= =============== ============</p>
-<p><b>低品質側で崩れるのは原理的な限界</b>である。品質が下がるほど高周波係数は 0 に量子化され、櫛を読む材料そのものが画像から消える(「櫛が立った係数」の列がその消え方)。品質 30 では材料が足りず、<b>推定を返さない</b>(<code style="color:#22d3bf">quality=None</code>)。ここで無理に答えを出さないのがこの op の設計方針である。</p>
-<p>そして <b>無圧縮 PNG では <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4 つの seed で確認、同テストで固定)。ここで黙って「品質 100」と答えないことが肝で、そうすると「無圧縮」と「ほぼ無劣化の JPEG」が同じ答えになる。</p>
+<p><b>कम quality वाली ओर की विफलता एक सैद्धांतिक सीमा है</b>। quality जितनी कम होती है, उतने अधिक high-frequency coefficients 0 पर quantize होते हैं, और comb पढ़ने की सामग्री ही image से गायब हो जाती है (&quot;comb coefficients&quot; column दिखाता है कि यह कैसे गायब होती है)। quality 30 पर पर्याप्त सामग्री नहीं है, और <b>यह कोई अनुमान नहीं लौटाता</b> (<code style="color:#22d3bf">quality=None</code>)। यहाँ ज़बरदस्ती उत्तर न देना इस op की design नीति है।</p>
+<p>और <b>uncompressed PNG पर, <code style="color:#22d3bf">jpeg_compressed=False</code> / <code style="color:#22d3bf">quality=None</code></b> (4 seeds से पुष्टि की गई, उसी test में पक्का किया गया)। यहाँ चुपचाप &quot;quality 100&quot; उत्तर न देना बहुत ज़रूरी है; अन्यथा &quot;uncompressed&quot; और &quot;लगभग lossless JPEG&quot; एक ही उत्तर देंगे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

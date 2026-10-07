@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;dwt_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Daubechies dbN का multi-level, N-dimensional discrete wavelet transform (periodic boundary पर exact रूप से orthonormal)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。</p>
-<p>order: dbN の N(1 = Haar)。</p>
-<p>levels: 段数。各段で近似(全軸ローパス)をさらに分ける。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
+<p>x: real array (1-D signal, 2-D image, 3-D volume)। transform होने वाले हर axis की लंबाई 2^levels का गुणज है।</p>
+<p>order: dbN का N (1 = Haar)।</p>
+<p>levels: levels की संख्या। हर level पर approximation (सभी axes पर low-pass) को और बाँटा जाता है।</p>
+<p>axes: transform करने वाले axes (छोड़ने पर सभी axes)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">approx</code> 最後の近似、<code style="color:#22d3bf">details</code> = 段ごとの dict(キーは軸ごとの &#x27;a&#x27;/&#x27;d&#x27; の並び、例 2-D なら &#x27;ad&#x27;・&#x27;da&#x27;・&#x27;dd&#x27;)、<code style="color:#22d3bf">energy_in</code>・<code style="color:#22d3bf">energy_out</code>(Parseval で一致)、<code style="color:#22d3bf">order</code>・<code style="color:#22d3bf">levels</code>・<code style="color:#22d3bf">axes</code>。<code style="color:#22d3bf">dwt_inverse</code> に丸ごと渡すと元に戻る。</p>
+<p><code style="color:#22d3bf">approx</code> अंतिम approximation, <code style="color:#22d3bf">details</code> = हर level का एक dict (keys हर axis के लिए &#x27;a&#x27;/&#x27;d&#x27; का क्रम हैं, जैसे 2-D के लिए &#x27;ad&#x27;, &#x27;da&#x27;, &#x27;dd&#x27;), <code style="color:#22d3bf">energy_in</code>, <code style="color:#22d3bf">energy_out</code> (Parseval से बराबर), <code style="color:#22d3bf">order</code>, <code style="color:#22d3bf">levels</code>, <code style="color:#22d3bf">axes</code>। पूरा परिणाम <code style="color:#22d3bf">dwt_inverse</code> को देने पर मूल फिर से बन जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

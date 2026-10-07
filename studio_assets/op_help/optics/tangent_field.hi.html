@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.tangent_field(shape, kind=&#x27;linear&#x27;, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;tangent_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>finish की <b>धारियों की दिशा</b> को (H, W, 3) tangent field के रूप में बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>shape: (H, W)。kind: <code style="color:#22d3bf">FINISHES</code> のいずれか。</p>
-<p>angle_deg: linear / crosshatch の筋の向き [deg] (画像座標、+x から反時計回り)。</p>
-<p>center: circular / radial の中心 (row, col)。既定は画像中心。</p>
-<p>返り値: (H, W, 3) の単位接線場(z 成分 0 = 面内)。<code style="color:#22d3bf">random</code> は画素ごとに向きを散らす(無方向 = ビーズブラスト)。</p>
-<p>★ 定ベクトルではなく<b>場</b>なのが要点: 旋盤の削り目は同心円なので、一定方向の接線ではハイライトが物理的に成立しない。</p>
+<p>shape: (H, W)। kind: <code style="color:#22d3bf">FINISHES</code> में से एक।</p>
+<p>angle_deg: linear / crosshatch के लिए धारियों की दिशा [deg] (image coordinates, +x से वामावर्त)।</p>
+<p>center: circular / radial के लिए केंद्र (row, col)। Default image का केंद्र है।</p>
+<p>Returns: (H, W, 3) unit tangent field (z घटक 0 = in-plane)। <code style="color:#22d3bf">random</code> हर pixel पर दिशा बिखेरता है (दिशाहीन = bead blasting)।</p>
+<p>★ मुख्य बात यह है कि यह एक <b>field</b> है, constant vector नहीं: lathe cutting के निशान concentric वृत्त होते हैं, इसलिए एक स्थिर दिशा वाले tangent से highlight भौतिक रूप से नहीं बन सकता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

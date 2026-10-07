@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: b5eeee92dc95 -->
 # 安裝 / 環境建置完整指南
 
-[日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md)
+[日本語](./INSTALL.md) · [English](./INSTALL.en.md) · [简体中文](./INSTALL.zh.md) · **繁體中文** · [한국어](./INSTALL.ko.md) · [Deutsch](./INSTALL.de.md) · [हिन्दी](./INSTALL.hi.md)
 
 這是一份從開發機到嵌入式 Linux、依用途建置 Fullseye(工作代號 imgevolve)的指南。若只想在 5 分鐘內跑起來，[GETTING_STARTED.md](GETTING_STARTED.md) 是比較快的捷徑。
 

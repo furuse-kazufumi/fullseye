@@ -4,20 +4,20 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>4f optical processor: 2 lenses और Fourier plane के filter से गुज़रने के बाद का आउटपुट।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>入力面 → レンズ 1 → <b>フーリエ面</b>(<code style="color:#22d3bf">transfer</code> を掛ける)→ レンズ 2 → 出力面。スカラ回折の理想 4f 系では出力は</p>
+<p>इनपुट plane → lens 1 → <b>Fourier plane</b> (<code style="color:#22d3bf">transfer</code> से गुणा) → lens 2 → आउटपुट plane। scalar diffraction के आदर्श 4f system में आउटपुट है</p>
 <p><code style="color:#22d3bf">out(x, y) = (u * h)(-x, -y)</code></p>
-<p>—— 畳み込みに<b>座標反転</b>が付く。2 枚のレンズがそれぞれ*前向きの*フーリエ変換を行い、<code style="color:#22d3bf">F{F{u}}(x) = u(-x)</code> だからである。「フーリエ面で掛けるだけ」の計算と実物の 4f 系はここが違うので、反転は既定で<b>する</b>。</p>
-<p>離散でもこの反転は厳密で、添字の写像 <code style="color:#22d3bf">n -&gt; (-n) mod N</code> になる(<code style="color:#22d3bf">np.roll(a[::-1], 1)</code>)。反転そのものは添字の入れ替えなので誤差を持たない —— 残る誤差は FFT の往復が乗せる 1e-16 台だけである(<code style="color:#22d3bf">transfer</code> を 1 にした実測で最大絶対差 3.4e-16)。</p>
-<p>*invert* を <code style="color:#22d3bf">False</code> にすると反転を省く(フィルタ後の場を<b>入力座標のまま</b> 見たいとき。物理の 4f 系ではないので、既定にはしない)。</p>
-<p>真値(この op が再現するもの):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">identity</code> フィルタ → 入力の 180 度回転に一致(実測 3.4e-16)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">block</code> フィルタ → 厳密にゼロ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">derivative_x</code> order=n → *n* 階の空間微分。ガウシアン(w=8, 64x64)で 1 階 5.8e-08 / 2 階 5.4e-08 の相対誤差 —— <b>1e-16 にならない</b>のはガウシアンが厳密に帯域制限されていないから(打ち切りの分)。</p>
-<p style="margin:2px 0 2px 12px">• 線形性 <code style="color:#22d3bf">4f(a*u1 + b*u2) = a*4f(u1) + b*4f(u2)</code>。</p>
-<p style="margin:2px 0 2px 12px">• 合成 <code style="color:#22d3bf">4f(4f(u, H1), H2)</code> = <code style="color:#22d3bf">4f(u, H1*H2)</code>(反転を 2 回かけた分だけずれるので、合成を試すときは *invert* を <code style="color:#22d3bf">False</code> にする)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">|H| = 1</code> のフィルタは総パワーを保つ(Parseval)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *field* / *transfer* が 2-D でない、形が違う、2x2 未満、<code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code> 超、非有限、マスク付き。</p>
+<p>—— convolution के साथ <b>coordinate inversion</b> आता है। 2 lenses में से हर एक *forward* Fourier transform करता है, और <code style="color:#22d3bf">F{F{u}}(x) = u(-x)</code>। यहीं &quot;Fourier plane में बस गुणा करने&quot; वाली गणना असली 4f system से अलग होती है, इसलिए inversion default रूप से <b>on</b> है।</p>
+<p>Discrete स्थिति में भी inversion सटीक है: यह index map <code style="color:#22d3bf">n -&gt; (-n) mod N</code> है (<code style="color:#22d3bf">np.roll(a[::-1], 1)</code>)। inversion स्वयं एक index permutation है और कोई error नहीं लाता —— बची हुई error केवल FFT round trip से जुड़ी 1e-16 स्तर की है (<code style="color:#22d3bf">transfer</code> को 1 रखकर मापा गया:</p>
+<p>अधिकतम निरपेक्ष अंतर 3.4e-16)।</p>
+<p>*invert* को <code style="color:#22d3bf">False</code> रखने से inversion छूट जाता है (जब आप filtered field को <b>इनपुट coordinates में</b> देखना चाहें। यह भौतिक 4f system नहीं है, इसलिए default नहीं है)।</p>
+<p>Ground truth (यह op क्या पुनः उत्पन्न करता है):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">identity</code> filter → 180 degrees घुमाए गए इनपुट से मेल (मापा गया 3.4e-16)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">block</code> filter → बिल्कुल शून्य।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">derivative_x</code> order=n → *n* क्रम का spatial derivative। Gaussian (w=8, 64x64) के लिए relative error 1st order में 5.8e-08 / 2nd order में 5.4e-08 —— यह <b>1e-16 तक नहीं पहुँचता</b> क्योंकि Gaussian सख़्ती से band-limited नहीं है (कटा हुआ भाग)।</p>
+<p style="margin:2px 0 2px 12px">• Linearity <code style="color:#22d3bf">4f(a*u1 + b*u2) = a*4f(u1) + b*4f(u2)</code>।</p>
+<p style="margin:2px 0 2px 12px">• Composition <code style="color:#22d3bf">4f(4f(u, H1), H2)</code> = <code style="color:#22d3bf">4f(u, H1*H2)</code> (यह 2 बार लगे inversion से offset होता है, इसलिए composition test करते समय *invert* को <code style="color:#22d3bf">False</code> रखें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">|H| = 1</code> वाला filter कुल power बनाए रखता है (Parseval)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *field* / *transfer* 2-D नहीं, अलग shapes, 2x2 से छोटा, <code style="color:#22d3bf">MAX_FIELD_ELEMENTS</code> से अधिक, non-finite, masked।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

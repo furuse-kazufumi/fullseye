@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: bbeba242062b -->
 # Fullseye Studio 완전 가이드
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md)
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · **한국어** · [Deutsch](./STUDIO_GUIDE.de.md) · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio**는 HDevelop풍의 시각적 파이프라인 워크벤치입니다. 연산자를 검색해 배치하고, 2개의 다이얼을 슬라이더로 돌리고, 중간 결과를 확대/축소·패닝하며 한 단계씩 실행하고, 완성된 파이프라인을 `--ops` 문자열 / Python / JSON으로 내보낼 수 있습니다. 실체는 `fullseye` API의 얇은 GUI 프런트엔드이며, 파이프라인 로직(`PipelineModel`)·Inspector(`inspect_result`)·샘플 모음(`recipes`)은 모두 Qt에 의존하지 않고 개별적으로 단위 테스트되어 있습니다.
 

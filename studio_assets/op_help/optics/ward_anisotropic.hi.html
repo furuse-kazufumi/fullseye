@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.ward_anisotropic(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), tangent=(1.0, 0.0, 0.0), alpha_x=0.3, alpha_y=0.03) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;ward_anisotropic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ward का anisotropic reflection (elliptical Gaussian microfacet)। hairline finish की <b>खिंची हुई highlight</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>normals: (H, W, 3) 法線マップ。light / view: 面から光源 / 視点への方向(3,)。</p>
-<p>tangent: 研磨の筋の方向(3,)。面内へ射影して使う。alpha_x / alpha_y: 筋方向 / 直交方向の粗さ。<b>この比がハイライトの伸び</b>になる</p>
-<p>(等方なら円、alpha_x &gt;&gt; alpha_y なら筋に沿って伸びた線)。</p>
-<p>返り値: (H, W) の鏡面反射強度(非負)。背景は 0。</p>
-<p>式: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)) で、δ はハーフベクトルと法線の角、φ は接線からの方位角(Ward 1992)。</p>
+<p>normals: (H, W, 3) normal map। light / view: surface से light source / viewpoint की दिशा (3,)।</p>
+<p>tangent: polishing धारियों की दिशा (3,)। उपयोग से पहले surface plane में project किया जाता है। alpha_x / alpha_y: धारियों के साथ / आर-पार roughness। <b>यही अनुपात highlight का खिंचाव है</b></p>
+<p>(isotropic हो तो वृत्त; यदि alpha_x &gt;&gt; alpha_y, तो धारियों के साथ खिंची रेखा)।</p>
+<p>Returns: (H, W) specular reflection तीव्रता (non-negative)। Background 0 है।</p>
+<p>सूत्र: ρ = exp(−tan²δ·(cos²φ/αx² + sin²φ/αy²)) / (4π αx αy √(cosθi cosθo)), जहाँ δ half vector और normal के बीच का कोण है, और φ tangent से azimuth (Ward 1992)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

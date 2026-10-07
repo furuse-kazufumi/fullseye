@@ -4,12 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import matappear; matappear.spectrum_to_srgb(nm, reflectance, illuminant=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;spectrum_to_srgb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>spectral reflectance → <b>linear sRGB</b> (gamma से पहले)। normalisation ऐसा कि सफ़ेद surface (reflectance 1) (1,1,1) बने।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>nm:           波長格子 (K,) [nm]。単調増加。</p>
-<p>reflectance:  (..., K) の分光反射率(0–1 想定、範囲外でも計算は通る)。</p>
-<p>illuminant:   (K,) の光源分光分布。既定は D65 の平滑近似。</p>
-<p>返り値: (..., 3) の線形 sRGB。<b>負の値はクリップしない</b> — 色域外は負で返るのが正直で、クリップしたい呼び手が明示的にやる(黙って丸めると「表現できない色」が見えなくなる)。</p>
-<p>正規化: 反射率 1 の完全拡散面が sRGB の基準白 D65 に落ちるよう、同じ光源・同じ格子で計算した白の XYZ で<b>成分ごとに</b>割る(von Kries 型の白色順応の最小形)。実測で反射率 1 → (1.000000, 1.000000, 0.999999)、0.5 → 0.5。したがって<b>絶対輝度ではなく相対値</b>であり、レンダラの露出に掛ける使い方を想定している。</p>
+<p>nm:           wavelength grid (K,) [nm]। एकदिष्ट रूप से बढ़ता हुआ।</p>
+<p>reflectance:  spectral reflectance (..., K) (0–1 माना गया; उस range के बाहर के मान भी गणना में चलते हैं)।</p>
+<p>illuminant:   light source का spectral वितरण (K,)। Default, D65 का smoothed approximation है।</p>
+<p>Returns: linear sRGB (..., 3)। <b>ऋणात्मक मान clip नहीं किए जाते</b> — gamut से बाहर के रंगों को ऋणात्मक लौटाना ईमानदार विकल्प है, और जिसे clipping चाहिए वह caller इसे स्पष्ट रूप से करता है (चुपचाप rounding &quot;जो रंग दर्शाए नहीं जा सकते&quot; उन्हें छिपा देती)।</p>
+<p>Normalization: ताकि reflectance 1 वाली पूर्ण diffuse surface sRGB reference white D65 पर आए, उसी light source और उसी grid से गणना किए गए white के XYZ से <b>हर घटक के अनुसार</b> भाग दें (von Kries-प्रकार white adaptation का न्यूनतम रूप)। मापा गया:</p>
+<p>reflectance 1 → (1.000000, 1.000000, 0.999999), 0.5 → 0.5। इसलिए ये <b>सापेक्ष मान हैं, absolute luminance नहीं</b>, जिन्हें renderer के exposure से गुणा करना होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

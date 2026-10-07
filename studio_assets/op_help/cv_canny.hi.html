@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Canny edge detection (region संस्करण, OpenCV implementation)। sk_canny जैसा ही algorithm, लेकिन OpenCV संस्करण का API Gaussian smoothing का σ नहीं, बल्कि 2 thresholds सीधे लेता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は <code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code> の結果を真偽値化したもの —— a は下側しきい値(弱いエッジの採用ライン)を 50〜150 に、b は上側しきい値(強いエッジの確定ライン)を 100〜250 に振る。a を大きく b を小さく振ると下側が上側を上回ることがあり、その場合の挙動は OpenCV の実装依存になる点に注意。</p>
+<p>HALCON के <code style="color:#22d3bf">edges_image</code> के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.Canny(_u8(v), threshold1=int(50+100*a), threshold2=int(100+150*b))</code> का परिणाम है जिसे booleans में बदला जाता है —— a निचले threshold (कमज़ोर edges की स्वीकृति रेखा) को 50–150 पर, और b ऊपरी threshold (मज़बूत edges की पुष्टि रेखा) को 100–250 पर sweep करता है। ध्यान दें कि a को बड़ा और b को छोटा करने से निचला ऊपरी से ज़्यादा हो सकता है, ऐसे में व्यवहार OpenCV के implementation पर निर्भर करता है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

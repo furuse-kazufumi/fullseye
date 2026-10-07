@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.scene_cylinder(center_mm, radius_mm: &#x27;float&#x27;, half_height_mm: &#x27;float&#x27;, material=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;scene_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>z axis के parallel सीमित cylinder (end caps सहित)। <b>वह shape जिस पर machining finish वास्तव में बैठती है</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>旋盤の同心目は端面(円盤)に、ヘアラインとローレットは側面に出る ―― 球にヘアラインを掛けるのは現実には珍しい(2026-09-05 のユーザー指摘)。薄くすれば円盤、厚くすれば軸物、<code style="color:#22d3bf">radius_mm</code> を大きく取れば円板ステージにもなる。</p>
+<p>end faces (discs) पर concentric lathe marks दिखते हैं, side पर hairlines और knurling ―― किसी sphere पर hairline होना वास्तविकता में दुर्लभ है (2026-09-05 की user टिप्पणी)। पतला बनाने पर यह एक disc है, मोटा बनाने पर shaft part, और बड़े <code style="color:#22d3bf">radius_mm</code> के साथ यह disc-आकार के stage का काम भी करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

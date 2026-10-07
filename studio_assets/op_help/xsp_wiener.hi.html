@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Wiener adaptive filter (<code style="color:#22d3bf">scipy.signal.wiener</code>) से noise दबाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は近傍窓のサイズを 3, 5, 7, 9 の奇数に振る（<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>、a=0 で 3、a に近い 1 で 9）。<code style="color:#22d3bf">b</code> は未使用。局所分散からノイズ分散を自動推定する適応フィルタで、一様な強さで均すガウシアン/ミーンボックスと違い平坦な領域ほど強く均し、分散の大きい（エッジ/テクスチャの多い）領域は保存されやすい。ガウス性ノイズを仮定するので塩胡椒ノイズには不向き。出力は [0,1] にクリップする。</p>
+<p><code style="color:#22d3bf">a</code> पड़ोस के window size को विषम मानों 3, 5, 7, 9 पर sweep करता है (<code style="color:#22d3bf">k = 3 + 2*int(a*3)</code>; a=0 पर 3, a के 1 के क़रीब होने पर 9)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। एक adaptive filter जो स्थानीय variance से noise variance का स्वतः अनुमान लगाता है; Gaussian/mean box के विपरीत, जो एक समान ताकत से समतल करते हैं, यह समतल regions को ज़्यादा तेज़ी से समतल करता है, जबकि बड़े variance वाले regions (बहुत edges/textures वाले) बचे रहते हैं। चूँकि यह Gaussian noise मानता है, इसलिए salt-and-pepper noise के लिए उपयुक्त नहीं है। आउटपुट [0,1] पर clip किया जाता है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_from_enu&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>local ENU → geodetic coordinate (<code style="color:#22d3bf">dem_enu_from_geodetic</code> का उल्टा)। <code style="color:#22d3bf">points</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
 <p>Args:</p>
-<p>enu: <code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点の測地座標。</p>
+<p>enu: <code style="color:#22d3bf">(east, north, up)</code> का <code style="color:#22d3bf">(n, 3)</code> [m]।</p>
+<p>lat0_deg / lon0_deg / h0_m: reference point के geodetic coordinates।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 往復が 1e-9 m 級、<code style="color:#22d3bf">(0, 0, 0)</code> は基準点そのもの。</p>
-<p><b>ValueError</b>: <code style="color:#22d3bf">(n, 3)</code> でない、非有限、基準点が不正。</p>
+<p><code style="color:#22d3bf">(latitude[deg], longitude[deg], ellipsoidal height[m])</code> का <code style="color:#22d3bf">(n, 3)</code>।</p>
+<p>बंद सूत्र से जाँचने योग्य: 1e-9 m स्तर पर round trip; <code style="color:#22d3bf">(0, 0, 0)</code> स्वयं reference point है।</p>
+<p><b>ValueError</b>: <code style="color:#22d3bf">(n, 3)</code> नहीं, non-finite मान, अमान्य reference point।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

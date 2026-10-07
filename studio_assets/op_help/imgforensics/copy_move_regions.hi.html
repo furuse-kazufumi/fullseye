@@ -4,56 +4,55 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;copy_move_regions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>1 image के अंदर <b>copy-move</b> (स्व-दोहराए गए) region के जोड़े लौटाता है। <code style="color:#22d3bf">table</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code>(既定)</p>
-<p><code style="color:#22d3bf">features.harris_corners</code> でコーナーを取り、</p>
-<p><code style="color:#22d3bf">features.describe_patches</code> で正規化パッチ記述子を作り、</p>
-<p><b>自分から <code style="color:#22d3bf">min_offset</code> px 以上離れた</b>最近傍と Lowe の比率検定で対応を作る</p>
-<p>(<code style="color:#22d3bf">_self_match</code>)。対応をシフトベクトルで束ね、群ごとに</p>
-<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で幾何整合を確認する。</p>
-<p>相似変換は <code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(Umeyama)で当てて</p>
-<p><code style="color:#22d3bf">similarity</code> に入れる。</p>
+<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code> (default)</p>
+<p><code style="color:#22d3bf">features.harris_corners</code> से corners लेता है,</p>
+<p><code style="color:#22d3bf">features.describe_patches</code> से normalized patch descriptors बनाता है,</p>
+<p>और <b>स्वयं से कम से कम <code style="color:#22d3bf">min_offset</code> px दूर</b> nearest neighbour तथा Lowe के ratio test से matches बनाता है</p>
+<p>(<code style="color:#22d3bf">_self_match</code>)। matches को shift vector के अनुसार समूहित किया जाता है, और हर group के लिए</p>
+<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> से geometric consistency जाँची जाती है।</p>
+<p><code style="color:#22d3bf">fit_transform.vector_to_similarity</code> (Umeyama) से एक similarity transform fit किया जाता है और</p>
+<p><code style="color:#22d3bf">similarity</code> में रखा जाता है।</p>
 <p><code style="color:#22d3bf">method=&quot;block&quot;</code></p>
-<p>Fridrich, Soukal &amp; Lukáš 2003。<code style="color:#22d3bf">block</code> 角の重なりブロックを <code style="color:#22d3bf">step</code> px</p>
-<p>刻みで取り(既定 <code style="color:#22d3bf">step=1</code> —— <b>これは飾りではない</b>。下の「歩幅」参照)、</p>
-<p>各ブロックの DCT 低周波 <code style="color:#22d3bf">n_dct</code> 係数を特徴にして辞書順に並べ、</p>
-<p>辞書順で近い <code style="color:#22d3bf">neighbours</code> 件までを候補にし、特徴距離が</p>
-<p><code style="color:#22d3bf">max_feature_dist</code> 以下のものだけをシフトベクトルで数える。</p>
-<p>回転・拡大には効かないが、角の少ない画像で keypoint 法より拾える。</p>
-<p>分散が <code style="color:#22d3bf">min_variance</code> 未満のブロックは捨てる(<b>一様な空を空にコピーしても同じ特徴になる</b> = 検出器が必ず作る偽陽性の主因)。</p>
-<p><b>歩幅 (<code style="color:#22d3bf">step</code>) を 1 にしてある理由(実測で決めた)</b>: ブロック法が「同じ特徴」を見つけられるのは、複製元と複製先が <b>同じ格子に乗ったとき</b>だけである。<code style="color:#22d3bf">step=4</code> にすると、シフトが 4 の倍数でない複製(たとえば <code style="color:#22d3bf">(110, 128)</code>)は <b>原理的に一度も一致しない</b>。実測で <code style="color:#22d3bf">step=4</code> は真のシフトを 1 件も返さず、代わりに偽の群を 60 件返した。<code style="color:#22d3bf">step=1</code> なら真のシフトが第 1 群に来る。大きい画像で重いときは <code style="color:#22d3bf">step</code> を上げてよいが、<b>上げた歩幅の倍数のシフトしか見つからなくなる</b>ことを承知の上で上げること。</p>
-<p>返りは領域対の list(対応数の多い順)。各要素:</p>
-<p><code style="color:#22d3bf">offset</code>       シフト <code style="color:#22d3bf">(dy, dx)</code>(row, col)。向きは <b>位置で正規化</b>してある</p>
-<p>(辞書順で正になる向き)—— 添字で決めると同じ複製が</p>
-<p><code style="color:#22d3bf">(110, 128)</code> にも <code style="color:#22d3bf">(-110, -128)</code> にもなる(実測して直した)</p>
-<p><code style="color:#22d3bf">n_matches</code>    その群の対応数</p>
-<p><code style="color:#22d3bf">n_inliers</code>    RANSAC の内点数(<code style="color:#22d3bf">method=&quot;block&quot;</code> では <code style="color:#22d3bf">n_matches</code> と同じ)</p>
-<p><code style="color:#22d3bf">inlier_ratio</code> 内点率 <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  <code style="color:#22d3bf">(N, 2)</code> の (row, col)</p>
-<p><code style="color:#22d3bf">similarity</code>   Umeyama で当てた <code style="color:#22d3bf">3x3</code>(<code style="color:#22d3bf">method=&quot;keypoint&quot;</code> のみ、なければ <code style="color:#22d3bf">None</code>)</p>
-<p><code style="color:#22d3bf">method</code>       使った方法</p>
-<p><code style="color:#22d3bf">caveats</code>      この結果が言えないこと</p>
-<p><b>正解が手元にあるので当てられることを数で固定してある</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>、256x256 のテクスチャ画像の <code style="color:#22d3bf">(40, 32)</code> にある 64x64 を <code style="color:#22d3bf">(150, 160)</code> へ複製 = 真のシフト <code style="color:#22d3bf">(110, 128)</code>):</p>
+<p>Fridrich, Soukal &amp; Lukáš 2003। overlapping <code style="color:#22d3bf">block</code>-वर्ग blocks <code style="color:#22d3bf">step</code> px के</p>
+<p>अंतराल पर लिए जाते हैं (default <code style="color:#22d3bf">step=1</code> —— <b>यह सजावट नहीं है</b>; नीचे &quot;stride&quot; देखें),</p>
+<p>हर block के low-frequency <code style="color:#22d3bf">n_dct</code> DCT coefficients को feature के रूप में लेकर lexicographic क्रम में sort किया जाता है,</p>
+<p>lexicographic क्रम में पास-पास की अधिकतम <code style="color:#22d3bf">neighbours</code> entries candidates बनती हैं, और केवल वे जिनकी feature distance</p>
+<p>अधिकतम <code style="color:#22d3bf">max_feature_dist</code> है, shift vector के अनुसार गिनी जाती हैं।</p>
+<p>यह rotation या scaling को नहीं संभालता, लेकिन कम corners वाली images पर keypoint method से अधिक पकड़ता है।</p>
+<p><code style="color:#22d3bf">min_variance</code> से कम variance वाले blocks हटा दिए जाते हैं (<b>uniform आकाश को आकाश पर copy करने से समान features मिलते हैं</b> = detector द्वारा अनिवार्य रूप से पैदा होने वाले false positives का मुख्य कारण)।</p>
+<p><b>stride (<code style="color:#22d3bf">step</code>) 1 क्यों है (माप से तय किया गया)</b>: block method &quot;समान features&quot; तभी पा सकता है जब copy का स्रोत और गंतव्य <b>एक ही grid पर हों</b>। <code style="color:#22d3bf">step=4</code> के साथ, ऐसी copy जिसका shift 4 का गुणज नहीं है (उदा. <code style="color:#22d3bf">(110, 128)</code>) <b>सिद्धांततः कभी match नहीं होती</b>। मापों में <code style="color:#22d3bf">step=4</code> ने 1 भी सही shift नहीं लौटाया, और उसकी जगह 60 गलत groups लौटाए। <code style="color:#22d3bf">step=1</code> के साथ सही shift group 1 के रूप में आता है। बड़ी images भारी हों तो आप <code style="color:#22d3bf">step</code> बढ़ा सकते हैं, लेकिन यह जानते हुए बढ़ाएँ कि <b>तब केवल बढ़ाए गए stride के गुणज वाले shifts ही मिल सकते हैं</b>।</p>
+<p>आउटपुट region pairs की list है (match count के घटते क्रम में)। हर element:</p>
+<p><code style="color:#22d3bf">offset</code>       shift <code style="color:#22d3bf">(dy, dx)</code> (row, col)। इसका चिह्न <b>स्थिति के अनुसार normalize</b> किया जाता है</p>
+<p>(वह दिशा जो lexicographic क्रम में धनात्मक है) —— index से तय करने पर वही copy</p>
+<p><code style="color:#22d3bf">(110, 128)</code> और <code style="color:#22d3bf">(-110, -128)</code> दोनों बन जाती (मापकर ठीक किया गया)</p>
+<p><code style="color:#22d3bf">n_matches</code>    उस group में matches की संख्या</p>
+<p><code style="color:#22d3bf">n_inliers</code>    RANSAC inliers की संख्या (<code style="color:#22d3bf">method=&quot;block&quot;</code> के लिए <code style="color:#22d3bf">n_matches</code> के समान)</p>
+<p><code style="color:#22d3bf">inlier_ratio</code> inlier अनुपात <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  shape <code style="color:#22d3bf">(N, 2)</code> के (row, col)</p>
+<p><code style="color:#22d3bf">similarity</code>   Umeyama से fit किया गया <code style="color:#22d3bf">3x3</code> (केवल <code style="color:#22d3bf">method=&quot;keypoint&quot;</code>; अन्यथा <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">method</code>       उपयोग की गई method</p>
+<p><code style="color:#22d3bf">caveats</code>      वह जो यह परिणाम नहीं बता सकता</p>
+<p><b>क्योंकि उत्तर हाथ में है, सही पकड़ने की बात संख्याओं में पक्की की गई है</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>, 256x256 texture image के <code style="color:#22d3bf">(40, 32)</code> पर 64x64 patch को <code style="color:#22d3bf">(150, 160)</code> पर copy किया गया = सही shift <code style="color:#22d3bf">(110, 128)</code>):</p>
 <p>============ ================= ============ ========= ==============</p>
-<p>method       第 1 群の offset  n_matches    群の数    誤差</p>
+<p>method       Group 1 offset    n_matches    Groups    Error</p>
 <p>============ ================= ============ ========= ==============</p>
 <p>keypoint     (110.0, 128.0)    15           1         0 px</p>
 <p>block        (110.0, 128.0)    3249         1         0 px</p>
 <p>============ ================= ============ ========= ==============</p>
-<p><b>偽陽性も測ってある</b>: 改竄していない同じ種類の画像 3 枚では、keypoint 法・block 法とも群 <b>0 件</b>(seed 4/5/6)。</p>
-<p><b>言えないこと</b>(すべて同じテストで測ってある):</p>
-<p style="margin:2px 0 2px 12px">• 一様な領域(空・壁)は複製しなくても同じ特徴になる。上半分を一様な「空」にした(<b>改竄していない</b>)画像で、<code style="color:#22d3bf">min_variance=1e-4</code> と <code style="color:#22d3bf">1e-6</code> はどちらも 0 件だが、<code style="color:#22d3bf">min_variance=0</code> にすると <b>264 対の偽の群が 1 件</b>出る(シフト <code style="color:#22d3bf">(1, -247)</code> = 空の中の適当な対応)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> は正規化パッチ記述子なので <b>回転に効かない</b>。複製を回して貼ると群の数は 0 度 1 件 → <b>5 度 0 件</b> → 15 度 0 件 → 30 度 0 件。<code style="color:#22d3bf">similarity</code> に回転が入って返ることは実質ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code> も <b>回転にまったく効かない</b>(5 度で 0 件)。</p>
-<p style="margin:2px 0 2px 12px">• 検出ゼロ = 複製が無い、ではない。再圧縮を挟んだ複製は特徴距離が伸びて <code style="color:#22d3bf">max_feature_dist</code> を超える。実測(同じ複製画像を JPEG に通してから検出):</p>
+<p><b>False positives भी मापे गए हैं</b>: उसी प्रकार की 3 बिना छेड़छाड़ वाली images पर, keypoint और block method दोनों <b>0 groups</b> देते हैं (seeds 4/5/6)।</p>
+<p><b>यह क्या नहीं बता सकता</b> (सब उसी test में मापा गया):</p>
+<p style="margin:2px 0 2px 12px">• Uniform regions (आकाश, दीवारें) में copy किए बिना भी समान features होते हैं। ऐसी (<b>बिना छेड़छाड़ वाली</b>) image पर जिसका ऊपरी आधा एक uniform &quot;आकाश&quot; है, <code style="color:#22d3bf">min_variance=1e-4</code> और <code style="color:#22d3bf">1e-6</code> दोनों 0 groups देते हैं, लेकिन <code style="color:#22d3bf">min_variance=0</code> के साथ <b>264 pairs का 1 गलत group</b> दिखता है (shift <code style="color:#22d3bf">(1, -247)</code> = आकाश के भीतर मनमाने matches)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> normalized patch descriptors उपयोग करता है, इसलिए यह <b>rotation को नहीं संभालता</b>। चिपकाने से पहले copy को घुमाने पर group counts 0 deg: 1 → <b>5 deg: 0</b> → 15 deg: 0 → 30 deg: 0। व्यवहार में <code style="color:#22d3bf">similarity</code> कभी rotation के साथ वापस नहीं आता।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code> भी <b>rotation को बिल्कुल नहीं संभालता</b> (5 deg पर 0)।</p>
+<p style="margin:2px 0 2px 12px">• शून्य detections का अर्थ यह नहीं कि कोई copy नहीं है। बीच में recompression वाली copy के लिए feature distance बढ़ती है और <code style="color:#22d3bf">max_feature_dist</code> से अधिक हो जाती है। मापा गया (वही copy की गई image detection से पहले JPEG से गुज़ारी गई):</p>
 <p>========== ============================ ==========================</p>
-<p>品質       keypoint 第 1 群の n_matches  block 第 1 群の n_matches</p>
+<p>Quality    keypoint group 1 n_matches   block group 1 n_matches</p>
 <p>========== ============================ ==========================</p>
-<p>無圧縮     15                           3249</p>
+<p>Uncompr.   15                           3249</p>
 <p>95         10                           138</p>
 <p>85          7                           10</p>
-<p>75          7                           <b>0 件(群なし)</b></p>
+<p>75          7                           <b>0 (कोई group नहीं)</b></p>
 <p>========== ============================ ==========================</p>
-<p>シフトはどの品質でも <code style="color:#22d3bf">(110.0, 128.0)</code> のまま正しい。<b>壊れるのは「見つかるかどうか」で、見つかったときの答えではない</b>。</p>
+<p>हर quality पर shift <code style="color:#22d3bf">(110.0, 128.0)</code> पर सही रहता है। <b>जो टूटता है वह &quot;यह मिलता है या नहीं&quot; है, मिलने पर उत्तर नहीं</b>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

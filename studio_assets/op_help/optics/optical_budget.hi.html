@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.optical_budget(focal_mm: &#x27;float&#x27; = 25.0, working_distance_mm: &#x27;float&#x27; = 200.0, f_number: &#x27;float&#x27; = None, na: &#x27;float&#x27; = None, pixel_um: &#x27;float&#x27; = 3.45, wavelength_nm: &#x27;float&#x27; = 550.0, coc_um: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;optical_budget&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>observation optics का <b>resolution budget</b> closed form में निकालता है (image लेने से पहले देखता है कि यह संभव है या नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>NA と F 値はどちらで与えてもよい(N = 1/(2·NA))。倍率は薄肉近似 m = f / (WD − f)、実効(作動)F 値は N_w = (1 + |m|)·N。返す量:</p>
-<p><code style="color:#22d3bf">magnification</code> 倍率 m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
-<p><code style="color:#22d3bf">airy_um</code> エアリー半径 1.22·λ·N_w(像面)/ <code style="color:#22d3bf">airy_object_um</code> それを物体側に換算 /</p>
-<p><code style="color:#22d3bf">pixel_object_um</code> 画素の物体側の実寸 / <code style="color:#22d3bf">limit_um</code> 実際の分解限界</p>
-<p>(回折と標本化の<b>大きい方</b>)/ <code style="color:#22d3bf">limited_by</code> どちらが律速か /</p>
-<p><code style="color:#22d3bf">dof_um</code> 被写界深度(物体側、幾何 2·N_w·c/m² と波動 2·λ·N_w²/m² の和)/</p>
-<p><code style="color:#22d3bf">coc_um</code> 許容錯乱円(既定は画素ピッチ)。</p>
-<p>「見えるか」ではなく「<b>必要なコントラストで写るか</b>」を決める前段の数字で、ここが足りていない構成でいくら画像を作っても、実機では検査が成立しない。</p>
+<p>NA और F-number में से कोई भी दिया जा सकता है (N = 1/(2·NA))। magnification thin-lens approximation है m = f / (WD − f), effective (working) F-number N_w = (1 + |m|)·N है। लौटाई जाने वाली मात्राएँ:</p>
+<p><code style="color:#22d3bf">magnification</code> magnification m / <code style="color:#22d3bf">f_number_working</code> N_w /</p>
+<p><code style="color:#22d3bf">airy_um</code> Airy radius 1.22·λ·N_w (image plane) / <code style="color:#22d3bf">airy_object_um</code> उसे object पक्ष में बदला गया /</p>
+<p><code style="color:#22d3bf">pixel_object_um</code> object पक्ष पर भौतिक pixel आकार / <code style="color:#22d3bf">limit_um</code> वास्तविक resolution सीमा</p>
+<p>(diffraction और sampling में से <b>बड़ा</b>) / <code style="color:#22d3bf">limited_by</code> कौन सा bottleneck है /</p>
+<p><code style="color:#22d3bf">dof_um</code> depth of field (object पक्ष, geometric 2·N_w·c/m² और wave 2·λ·N_w²/m² का योग) /</p>
+<p><code style="color:#22d3bf">coc_um</code> permissible circle of confusion (default pixel pitch है)।</p>
+<p>ये upstream संख्याएँ हैं जो &quot;क्या दिख सकता है&quot; नहीं बल्कि &quot;<b>क्या आवश्यक contrast के साथ image बनती है</b>&quot; तय करती हैं; जो configuration यहाँ कम पड़ता है, उसमें आप कितनी भी images बनाएँ, inspection असली machine पर काम नहीं करेगा।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

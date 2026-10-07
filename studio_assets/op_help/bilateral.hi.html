@@ -14,9 +14,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Edge को बचाते हुए smoothing (bilateral filter)। HALCON के <code style="color:#22d3bf">bilateral_filter</code> (bilateral filtering of an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が空間方向の広がり <code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code> を、<code style="color:#22d3bf">b</code> が明るさ方向の許容差 <code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code> を振る。近傍窓は半径 <code style="color:#22d3bf">r=2</code>（5×5）固定で <code style="color:#22d3bf">a</code> では変わらない。近傍の重みは <code style="color:#22d3bf">exp(-距離²/2σ_s²) × exp(-明度差²/2σ_r²)</code> の積で、明度差が大きい（=エッジをまたぐ）画素は重みが小さくなるため、平滑化しつつ輪郭を保てる。窓内を Python の二重ループで回すため他の平滑化 op より遅い。</p>
-<p><b>端の扱い</b>: 端の画素を複製する(最近傍)(2026-09-16 に実測して記録)。</p>
+<p><code style="color:#22d3bf">a</code> spatial फैलाव <code style="color:#22d3bf">σ_s = 1.0 + 3.0a</code> को और <code style="color:#22d3bf">b</code> brightness दिशा की सहनशीलता <code style="color:#22d3bf">σ_r = 0.05 + 0.4b</code> को sweep करता है। पड़ोस की window radius <code style="color:#22d3bf">r=2</code> (5×5) पर स्थिर है और <code style="color:#22d3bf">a</code> के साथ नहीं बदलती। पड़ोस का weight गुणनफल <code style="color:#22d3bf">exp(-distance²/2σ_s²) × exp(-lightness_diff²/2σ_r²)</code> है; जिन pixels में lightness का अंतर बड़ा है (= edge के पार) उन्हें छोटा weight मिलता है, इसलिए smoothing करते हुए contours सुरक्षित रहते हैं। window को Python की double loop से traverse किया जाता है, इसलिए यह दूसरे smoothing ops से धीमा है।</p>
+<p><b>Border handling</b>: border pixel को replicate किया जाता है (nearest) (2026-09-16 को मापकर दर्ज किया गया)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

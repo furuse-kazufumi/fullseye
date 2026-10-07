@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Felzenszwalb का graph-based region segmentation। Pixels को nodes मानकर minimum spanning tree clustering से, स्पष्ट सीमा न होने पर भी image को over-segment करने वाली तेज़ विधि। यहाँ segmentation परिणाम की सीमा रेखाओं को region के रूप में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code> —— a は scale(観測レベル。大きいほどセグメントが少なく大きくなる)を 20〜220 に振る。sigma(前処理の平滑化)・min_size は既定値(0.8, 20)のまま固定。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">segmentation.find_boundaries(segmentation.felzenszwalb(v, scale=20+200*a, channel_axis=None))</code> है —— a scale (अवलोकन स्तर; यह जितना बड़ा, segments उतने कम और बड़े) को 20–220 पर sweep करता है। sigma (पूर्व-smoothing) और min_size अपने defaults (0.8, 20) पर स्थिर रहते हैं। b उपयोग नहीं होता।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

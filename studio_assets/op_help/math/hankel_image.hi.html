@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>axisymmetric image (गोल aperture, Gaussian blob, diffraction rings) का 2-dimensional Fourier transform, radial दिशा के 1 Hankel transform से निकालता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、<code style="color:#22d3bf">hankel_transform</code>(0 次)にかける。軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称からどれだけ崩れているか(<code style="color:#22d3bf">asymmetry</code>)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>
+<p>image को केंद्र से दूरी के अनुसार 1 pixel चौड़े rings में बाँटकर औसत लिया जाता है (radial profile), फिर <code style="color:#22d3bf">hankel_transform</code> (order 0) को दिया जाता है। यदि axisymmetric हो, तो 2-D transform में <b>सिर्फ़ 1 integral</b> लगता है (rings पर औसत noise को भी 1/√(pixels per ring) तक घटाता है), और axial symmetry से यह कितना हटता है, यह एक संख्या (<code style="color:#22d3bf">asymmetry</code>) के रूप में लौटाया जाता है। frequency step लगभग 1/(2·radius) है, 2-D FFT की तरह; यह और बारीक नहीं होता।</p>
 <p>Args:</p>
-<p>image: 2-D の実画像。</p>
-<p>center: 中心 (行, 列)。省略すると明るさの重心。</p>
-<p>spacing: 1 画素の長さ(周波数の単位を決める)。</p>
-<p>n: Hankel 変換の標本数。</p>
-<p>r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。</p>
+<p>image: 2-D real image।</p>
+<p>center: केंद्र (row, col)। छोड़ने पर brightness centroid।</p>
+<p>spacing: 1 pixel की लंबाई (frequency की इकाई तय करती है)।</p>
+<p>n: Hankel transform के samples की संख्या।</p>
+<p>r_max: उपयोग की जाने वाली radius की ऊपरी सीमा (default = केंद्र से image के किनारे तक की सबसे छोटी दूरी; जिन rings के कोने कटे हों वे उपयोग नहीं होते)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nu</code>(周波数)・<code style="color:#22d3bf">F</code>(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・<code style="color:#22d3bf">r</code>・<code style="color:#22d3bf">profile</code>(動径の分布)・</p>
-<p><code style="color:#22d3bf">center</code>・<code style="color:#22d3bf">asymmetry</code> = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。</p>
-<p>門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、2-D FFT の動径断面と一致。</p>
+<p><code style="color:#22d3bf">nu</code> (frequency), <code style="color:#22d3bf">F</code> (2-D Fourier transform का radial cross-section, ∬ f e^{−2πi k·x} dx का मान), <code style="color:#22d3bf">r</code>, <code style="color:#22d3bf">profile</code> (radial profile),</p>
+<p><code style="color:#22d3bf">center</code>, <code style="color:#22d3bf">asymmetry</code> = ‖image − profile से फिर से बनी axisymmetric image‖ / ‖image‖ (0 का अर्थ axisymmetric; अंधेरे background से कमज़ोर नहीं होता)।</p>
+<p>Gate: radius R की disc F(ν) = R J₁(2πνR)/ν (Airy) देती है, exp(−π r²/σ²) से σ² exp(−π σ² ν²) मिलता है (self-dual scaling), और यह 2-D FFT के radial cross-section से मेल खाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>

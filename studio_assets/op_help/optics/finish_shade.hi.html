@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.finish_shade(normals, kind=&#x27;linear&#x27;, metal=&#x27;al&#x27;, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), angle_deg=0.0, center=None, scale=1.0, patchiness=0.0, strength=1.0, seed=0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;finish_shade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><b>material × finish</b> से metal surface को shade करता है → linear sRGB (H, W, 3)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>材質は複素屈折率から色を作り(<code style="color:#22d3bf">glassmirror.metal_mirror_rgb</code>)、仕上げは接線場と異方性粗さから微小面の分布を作る(<code style="color:#22d3bf">matappear.ward_anisotropic</code>)。さらに角度依存の Fresnel を掛けるので、<b>縁ほど明るくなる</b>(金属でも起きる)。</p>
-<p>normals: (H, W, 3)。kind: <code style="color:#22d3bf">FINISHES</code>。metal: <code style="color:#22d3bf">glassmirror.METALS</code>。</p>
-<p>strength: 全体の強さ。その他は <code style="color:#22d3bf">tangent_field</code> / <code style="color:#22d3bf">roughness_field</code> と同じ。</p>
-<p>返り値: (H, W, 3) 線形 sRGB(拡散項は含まない — 金属に拡散反射は無い)。</p>
+<p>material, complex refractive index (<code style="color:#22d3bf">glassmirror.metal_mirror_rgb</code>) से रंग बनाता है, और finish tangent field और anisotropic roughness (<code style="color:#22d3bf">matappear.ward_anisotropic</code>) से microfacet वितरण बनाता है। इसके ऊपर कोण-निर्भर Fresnel term लगाया जाता है, इसलिए <b>किनारे अधिक चमकीले होते हैं</b> (धातुओं में भी ऐसा होता है)।</p>
+<p>normals: (H, W, 3)। kind: <code style="color:#22d3bf">FINISHES</code>। metal: <code style="color:#22d3bf">glassmirror.METALS</code>।</p>
+<p>strength: कुल तीव्रता। बाकी सब <code style="color:#22d3bf">tangent_field</code> / <code style="color:#22d3bf">roughness_field</code> के समान है।</p>
+<p>Returns: (H, W, 3) linear sRGB (कोई diffuse term नहीं — धातुओं में diffuse reflection नहीं होता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

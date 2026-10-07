@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>topographic position index TPI — cell और उसके 8 पड़ोसियों के औसत का अंतर [m]। धनात्मक = ridge, ऋणात्मक = घाटी।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>式: <code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>(Weiss の TPI を 3x3 の最小近傍で取ったもの)。縁は端の値を複製して埋める。近傍が 1 セル固定なので、<b>スケールは <code style="color:#22d3bf">cell_size</code> 1 つぶんに固定</b>で、より広い尾根/谷を見たいときは先に <code style="color:#22d3bf">dem</code> を粗くする(この op に半径の引数は無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、実数、<code style="color:#22d3bf">inf</code> 不可。欠測は <code style="color:#22d3bf">nan</code>(番兵値 <code style="color:#22d3bf">&lt;= -9000</code> が <code style="color:#22d3bf">nan</code> 無しで入っていれば拒否)。<code style="color:#22d3bf">nan</code> は 3x3 に伝播する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 結果には影響しない(差分に距離は入らない)が、単位が [m] であることを呼び出し側に意識させるため受け取り、正の有限値かを検査する。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 [m]。0 付近が斜面の途中、正が凸(尾根・頂)、負が凹(谷・窪地)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、番兵値、<code style="color:#22d3bf">cell_size</code>)。</p>
-<p><code style="color:#22d3bf">dem_roughness</code>(同じ近傍の RMS)と組み合わせると地形分類の特徴になる。</p>
+<p>सूत्र: <code style="color:#22d3bf">tpi = z - mean(z of the 8 neighbours)</code> (न्यूनतम 3x3 पड़ोस के साथ लिया गया Weiss का TPI)। किनारों को border मानों की नकल से pad किया जाता है। पड़ोस 1 cell पर तय है, इसलिए <b>scale 1 <code style="color:#22d3bf">cell_size</code> पर तय है</b>; व्यापक ridges/valleys देखने के लिए पहले <code style="color:#22d3bf">dem</code> को मोटा करें (इस op में कोई radius argument नहीं है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 या बड़ा, real, <code style="color:#22d3bf">inf</code> नहीं। missing data <code style="color:#22d3bf">nan</code> के रूप में (यदि sentinel मान <code style="color:#22d3bf">&lt;= -9000</code> बिना <code style="color:#22d3bf">nan</code> के मौजूद हों तो अस्वीकार)। <code style="color:#22d3bf">nan</code> 3x3 पर फैलता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: परिणाम को प्रभावित नहीं करता (अंतर में कोई दूरी नहीं आती), लेकिन caller को याद दिलाने के लिए स्वीकार किया जाता है कि इकाई [m] है, और धनात्मक finite होने की जाँच की जाती है।</p>
+<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(H, W)</code> float64 [m]। 0 के पास मध्य-slope है, धनात्मक उत्तल है (ridges, peaks), ऋणात्मक अवतल है (valleys, गड्ढे)।</p>
+<p style="margin:2px 0 2px 12px">• विफलता: <code style="color:#22d3bf">ValueError</code> (shape, sentinel मान, <code style="color:#22d3bf">cell_size</code>)।</p>
+<p><code style="color:#22d3bf">dem_roughness</code> (उसी पड़ोस पर RMS) के साथ मिलाकर यह landform classification के लिए features देता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

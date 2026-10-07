@@ -4,22 +4,21 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>कई image से <b>PRNU sensor fingerprint</b> K का maximum likelihood अनुमान लगाता है (Chen et al. 2008)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。撮像モデル <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> の下で、これが K の最尤推定量になる —— 明るい画素ほど PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
-<p>返りは <code style="color:#22d3bf">(H, W)</code> の float64 で、<code style="color:#22d3bf">zero_mean=True</code>(既定)なら行・列平均を抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は <code style="color:#22d3bf">fingerprint_correlate</code> の PCE をスケール不変にするためで、指紋の絶対的な強さは <code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
-<p><code style="color:#22d3bf">images</code> は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> —— PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は <code style="color:#22d3bf">ValueError</code>)。</p>
-<p>枚数と分離度の実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>、128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>):</p>
+<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code> (<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)। imaging model <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> के अंतर्गत यह K का maximum-likelihood estimator है —— PRNU अधिक चमकीले pixels में अधिक मज़बूती से दिखता है (क्योंकि यह एक multiplicative defect है), इसलिए यह <b>brightness-weighted औसत</b> है।</p>
+<p>आउटपुट <code style="color:#22d3bf">(H, W)</code> float64 है; <code style="color:#22d3bf">zero_mean=True</code> (default) होने पर row और column के mean हटाए जाते हैं और इसे <b>standard deviation 1 पर normalize</b> किया जाता है। normalization से <code style="color:#22d3bf">fingerprint_correlate</code> का PCE scale-invariant बनता है; fingerprint की निरपेक्ष ताकत अलग से <code style="color:#22d3bf">fingerprint_strength_map</code> लौटाता है।</p>
+<p><code style="color:#22d3bf">images</code> समान shape की 2 या अधिक होनी चाहिए। <b>इन्हें मिलाने के लिए resize न करें</b> —— PRNU स्वयं pixel की भौतिक स्थिति (position) है, इसलिए interpolate करते ही fingerprint गायब हो जाता है (shape mismatch पर <code style="color:#22d3bf">ValueError</code> उठता है)।</p>
+<p>images की संख्या बनाम अलगाव का माप (<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>, 128x128, PRNU strength 3%, read noise σ=0.01, default <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>):</p>
 <p>====== ======================== ================= =================</p>
-<p>枚数   真の K との相関          同一センサの PCE  別センサの PCE</p>
+<p>Images सही K से correlation     PCE same sensor   PCE other sensor</p>
 <p>====== ======================== ================= =================</p>
 <p>2      +0.727                   5295             16.5</p>
 <p>4      +0.809                   6472             14.5</p>
 <p>8      +0.859                   7246             13.1</p>
 <p>16     +0.892                   7755             -12.3</p>
 <p>====== ======================== ================= =================</p>
-<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」—— 実際この実装は一度その状態にあった(<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は PCE 自体には無い。</p>
-<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、同一センサ PCE 6068 〜 8852 と一貫して強い。既定を <code style="color:#22d3bf">&quot;wiener&quot;</code> にしてあるのは <b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
-<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、実運用のしきい値ではない。</p>
+<p><b>&quot;सही K से correlation&quot; को मापना ही मायने रखता है</b>। केवल PCE देखने पर, fingerprint sensor pattern का कुछ भी न पकड़े तब भी यह &quot;अलग हुआ दिख&quot; सकता है —— वास्तव में यह implementation एक समय इसी स्थिति में था (<code style="color:#22d3bf">_wiener_denoise</code> का docstring)। PCE &quot;जो समान sensor के लिए लगातार दिखता है&quot; उसे मापता है, इसलिए PCE स्वयं इसकी कोई गारंटी नहीं देता कि वह PRNU है।</p>
+<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code> (PyWavelets आवश्यक) समान शर्तों में लगातार अधिक मज़बूत है: correlation +0.745 से +0.901, same-sensor PCE 6068 से 8852। default <code style="color:#22d3bf">&quot;wiener&quot;</code> है <b>ताकि एक optional dependency अनिवार्य न बने</b>, accuracy के कारण नहीं।</p>
+<p><b>ये synthetic noise पर मान हैं</b>; असली cameras पर scene की सामग्री residual में रिसती है, इसलिए ये कई orders of magnitude छोटे हो जाते हैं। यह table पक्का करती है कि &quot;implementation सही काम करता है&quot;; यह वास्तविक उपयोग के लिए threshold नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

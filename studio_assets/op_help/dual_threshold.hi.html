@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Signed images के लिए thresholding। Median 0.5 को &quot;शून्य&quot; मानकर <code style="color:#22d3bf">|x - 0.5| &gt; 0.1+0.35*a</code> को पूरा करने वाले pixels (0.5 से काफ़ी दूर वाले pixels) को foreground मानता है ―― धनात्मक और ऋणात्मक दोनों तरफ़ सममित रूप से प्रतिक्रिया देता है। HALCON के <code style="color:#22d3bf">dual_threshold</code> (Threshold operator for signed images.) के समकक्ष है (HALCON धनात्मक और ऋणात्मक के लिए अलग thresholds रख सकता है, लेकिन यहाँ 0.5 केंद्र वाले सममित band तक सरल किया गया है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が除外帯域の半幅を振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">highpass_image</code> や <code style="color:#22d3bf">bandpass_image</code> のような符号つき応答(0.5=ゼロ)の後段でよく使う。</p>
+<p><code style="color:#22d3bf">a</code> बहिष्करण band की आधी चौड़ाई को sweep करता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। अक्सर <code style="color:#22d3bf">highpass_image</code> या <code style="color:#22d3bf">bandpass_image</code> जैसे signed responses (0.5 = शून्य) के बाद उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

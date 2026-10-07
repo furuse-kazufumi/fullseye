@@ -4,61 +4,60 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ली गई speckle DIC के लिए उपयुक्त है या नहीं, यह 4 संख्याओं में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(<code style="color:#22d3bf">speckle_filter</code> は SAR の斑点雑音 <b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
-<p>引数</p>
-<p>img  スペックル画像(2 次元)。輝度の規格は問わないが、<code style="color:#22d3bf">coverage</code> は</p>
-<p>画像内の最小・最大を基準にした相対しきい値で数える。</p>
-<p>戻り値は <code style="color:#22d3bf">dict</code>:</p>
-<p><code style="color:#22d3bf">mig</code>                     平均輝度勾配 <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>。</p>
-<p>Pan らの DIC 品質指標。変位の分散の下限が</p>
-<p><code style="color:#22d3bf">σ_noise / (mig √N)</code> で決まるので、これが</p>
-<p>小さいと何をしても測れない。</p>
-<p><code style="color:#22d3bf">grad_rms</code>                x 方向だけの <code style="color:#22d3bf">sqrt(mean(Ix²))</code>。</p>
-<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code> を超える画素の割合。</p>
-<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   斑点の平均直径 [px] の<b>推定値</b>(下記)。</p>
-<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> は推定であって測定ではない</p>
-<p>平均を引いた画像の自己相関の動径平均が 0.5 に落ちる半径 <code style="color:#22d3bf">R½</code> を線形</p>
-<p>内挿で求め、<code style="color:#22d3bf">diameter = √2 · R½</code> を返す。<code style="color:#22d3bf">√2</code> の根拠: 1σ 半径 <code style="color:#22d3bf">r</code> の</p>
-<p>ガウス斑点をランダムに撒いた場の自己相関は 1σ が <code style="color:#22d3bf">r√2</code> のガウスなので</p>
-<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>、斑点の FWHM は <code style="color:#22d3bf">2r√(2ln2)</code>、比がちょうど <code style="color:#22d3bf">√2</code>。</p>
-<p>つまり<b>斑点がガウスで位置が無相関という仮定の上でだけ</b> FWHM に一致する。</p>
-<p>実測(左: 解析スペックル、1σ 半径を振り被覆率が揃うよう個数を調整。</p>
-<p>右: <code style="color:#22d3bf">piv_synth_particles</code>、<code style="color:#22d3bf">diameter_px</code> は 2σ なので FWHM は</p>
-<p><code style="color:#22d3bf">1.1774 × diameter_px</code>):</p>
-<p>1σ r   FWHM   推定   比   |  d_px   FWHM   推定   比    cov     mig</p>
+<p>न <code style="color:#22d3bf">pivops</code> में है न <code style="color:#22d3bf">fullseye</code> में (<code style="color:#22d3bf">speckle_filter</code> SAR speckle-noise का <b>निष्कासन</b> है, अलग चीज़)। capture के दौरान मौके पर ही यह आँकने का entry point कि &quot;क्या यह pattern मापा जा सकता है&quot;।</p>
+<p>Arguments</p>
+<p>img  speckle image (2-D)। luminance का scale मायने नहीं रखता, लेकिन <code style="color:#22d3bf">coverage</code></p>
+<p>image के भीतर न्यूनतम और अधिकतम पर आधारित सापेक्ष threshold से गिना जाता है।</p>
+<p>return value एक <code style="color:#22d3bf">dict</code> है:</p>
+<p><code style="color:#22d3bf">mig</code>                     mean intensity gradient <code style="color:#22d3bf">sqrt(mean(Ix² + Iy²))</code>।</p>
+<p>Pan et al. का DIC quality index। displacement variance की निचली सीमा</p>
+<p><code style="color:#22d3bf">σ_noise / (mig √N)</code> से तय होती है, इसलिए यदि यह</p>
+<p>छोटा है, तो आप कुछ भी करें, इसे माप नहीं सकते।</p>
+<p><code style="color:#22d3bf">grad_rms</code>                केवल x दिशा में <code style="color:#22d3bf">sqrt(mean(Ix²))</code>।</p>
+<p><code style="color:#22d3bf">coverage</code>                <code style="color:#22d3bf">0.2*(max-min) + min</code> से अधिक pixels का अनुपात।</p>
+<p><code style="color:#22d3bf">mean_blob_diameter_px</code>   औसत speckle व्यास [px] का <b>अनुमान</b> (नीचे देखें)।</p>
+<p>★ <code style="color:#22d3bf">mean_blob_diameter_px</code> एक अनुमान है, माप नहीं</p>
+<p>mean घटाई गई image के autocorrelation का radial औसत जिस radius <code style="color:#22d3bf">R½</code> पर 0.5 तक गिरता है, उसे linear</p>
+<p>interpolation से निकाला जाता है, और <code style="color:#22d3bf">diameter = √2 · R½</code> लौटाया जाता है। <code style="color:#22d3bf">√2</code> का आधार: 1σ radius <code style="color:#22d3bf">r</code> के</p>
+<p>यादृच्छिक रूप से बिखरे Gaussian speckles के field के लिए autocorrelation 1σ = <code style="color:#22d3bf">r√2</code> वाला Gaussian है, इसलिए</p>
+<p><code style="color:#22d3bf">R½ = 2r√(ln2)</code>, जबकि speckle का FWHM <code style="color:#22d3bf">2r√(2ln2)</code> है; अनुपात ठीक <code style="color:#22d3bf">√2</code> है।</p>
+<p>दूसरे शब्दों में, यह FWHM से <b>केवल इस मान्यता पर मेल खाता है कि speckles Gaussian हैं और उनकी positions uncorrelated हैं</b>।</p>
+<p>मापा गया (बाएँ: analytic speckle, 1σ radius बदला गया और coverage बराबर रखने के लिए संख्या समायोजित की गई।</p>
+<p>दाएँ: <code style="color:#22d3bf">piv_synth_particles</code>; <code style="color:#22d3bf">diameter_px</code> 2σ है, इसलिए FWHM</p>
+<p><code style="color:#22d3bf">1.1774 × diameter_px</code> है):</p>
+<p>1σ r   FWHM   est.   ratio|  d_px   FWHM   est.   ratio  cov     mig</p>
 <p>0.6    1.41   1.36  0.97  |   1.5   1.77   1.80  1.02  0.043  0.1351</p>
 <p>1.0    2.35   2.39  1.01  |   2.5   2.94   2.93  1.00  0.106  0.1676</p>
 <p>1.6    3.77   3.77  1.00  |   4.0   4.71   4.69  1.00  0.159  0.1775</p>
 <p>2.5    5.89   5.77  0.98  |   6.0   7.06   7.01  0.99  0.286  0.1764</p>
 <p>4.0    9.42   9.18  0.97  |</p>
-<p><b>ガウス斑点なら 3 % 以内</b>。実物のスペックル(印刷・スプレー)は</p>
-<p>ガウスではないので、この表は換算の算数が合っていることの確認であって、</p>
-<p>実写での精度ではない。<b>何に偏るか</b>:</p>
-<p style="margin:2px 0 2px 12px">• 斑点の形がガウスでないと <code style="color:#22d3bf">√2</code> の換算そのものがずれる。</p>
-<p style="margin:2px 0 2px 12px">• 低周波のむら(照明勾配)があると自己相関の裾が持ち上がり<b>過大</b>に出る。先に高域通過を掛けること。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関は循環相関(FFT)なので、周期性のある背景があると乱れる。</p>
-<p style="margin:2px 0 2px 12px">• 環の代表半径は<b>環内の半径の平均</b>を使う。ビン番号を使うと半径 1 の環に対角の √2 が混ざり、1σ=0.6 px で径が <b>0.80 倍</b>(2 割過小)に出た。</p>
-<p>★ MIG は下限を切る指標であって、最大化する目的関数ではない</p>
-<p>上の左表で <code style="color:#22d3bf">mig</code> は斑点が細かいほど大きい(1σ=4.0 の 0.0384 に対し</p>
-<p>1σ=0.6 で 0.1127、2.9 倍)。だが直径 1.4 px のスペックルは標本化が</p>
-<p>足りず、<code style="color:#22d3bf">examples/poc_dic_strain.py</code> の 9 節の実測では偏りも散らばりも</p>
-<p>最悪になる。<b>MIG を最大化すると測れないスペックルを選ぶ。</b></p>
-<p>右表の粒子像では <code style="color:#22d3bf">d=4.0</code> で頭打ちになり <code style="color:#22d3bf">d=6.0</code> でわずかに下がる ——</p>
-<p>同じ指標が入力の作り方で単調にも非単調にもなるので、</p>
-<p><b>絶対値ではなく同じ撮り方どうしの比較に使うこと。</b></p>
-<p>★ <code style="color:#22d3bf">coverage</code> のしきい値は Otsu ではない</p>
-<p><code style="color:#22d3bf">0.2*(max-min) + min</code> の固定しきい値。Otsu は 2 峰の分布を仮定するが、</p>
-<p>スペックルの輝度分布は斑点の重なりで単峰になることが多く、Otsu だと</p>
-<p><b>しきい値が画像ごとに動いて比較できなくなる</b>。固定なら少なくとも</p>
-<p>同じ規格の画像どうしは比べられる。</p>
-<p>★ MIG は単位を持つ</p>
-<p>「輝度 / px」。8 bit 整数のまま渡すか [0, 1] に規格化してから渡すかで</p>
-<p>255 倍違う。<b>同じ規格の画像どうしでしか比べられない。</b></p>
+<p><b>Gaussian speckles के लिए 3 % के भीतर</b>। वास्तविक speckle (छपा हुआ, स्प्रे किया हुआ)</p>
+<p>Gaussian नहीं होता, इसलिए यह table पुष्टि करती है कि रूपांतरण का अंकगणित सही है;</p>
+<p>यह वास्तविक images पर accuracy नहीं है। <b>यह किन कारणों से biased होता है</b>:</p>
+<p style="margin:2px 0 2px 12px">• यदि speckle का shape Gaussian नहीं है, तो <code style="color:#22d3bf">√2</code> रूपांतरण स्वयं गलत हो जाता है।</p>
+<p style="margin:2px 0 2px 12px">• low-frequency असमानता (illumination gradient) autocorrelation की पूँछ उठा देती है और परिणाम <b>बहुत बड़ा</b> आता है। पहले high-pass filter लगाएँ।</p>
+<p style="margin:2px 0 2px 12px">• autocorrelation circular (FFT) है, इसलिए आवधिक background उसे बिगाड़ता है।</p>
+<p style="margin:2px 0 2px 12px">• ring की प्रतिनिधि radius <b>ring के भीतर की औसत radius</b> है। bin index का उपयोग करने से विकर्ण √2 radius-1 ring में मिल जाता है, और 1σ=0.6 px पर व्यास <b>0.80 गुना</b> आया (2 दसवाँ भाग बहुत छोटा)।</p>
+<p>★ MIG निचली कट-ऑफ़ का index है, अधिकतम करने वाला objective function नहीं</p>
+<p>ऊपर की बाईं table में speckles जितने महीन, <code style="color:#22d3bf">mig</code> उतना बढ़ता है (1σ=0.6 पर 0.1127 बनाम</p>
+<p>1σ=4.0 पर 0.0384, 2.9 गुना)। फिर भी 1.4 px व्यास वाला speckle under-</p>
+<p>sampled है, और <code style="color:#22d3bf">examples/poc_dic_strain.py</code> के section 9 के माप में bias और बिखराव दोनों</p>
+<p>सबसे खराब हैं। <b>MIG को अधिकतम करने से ऐसा speckle चुना जाता है जिसे मापा नहीं जा सकता।</b></p>
+<p>दाईं table की particle images के लिए यह <code style="color:#22d3bf">d=4.0</code> पर स्थिर हो जाता है और <code style="color:#22d3bf">d=6.0</code> पर थोड़ा गिरता है ——</p>
+<p>वही index इनपुट बनाने के तरीके के अनुसार monotonic होता है या नहीं, इसलिए</p>
+<p><b>इसे एक ही तरीके से ली गई images की तुलना के लिए उपयोग करें, absolute value के रूप में नहीं।</b></p>
+<p>★ <code style="color:#22d3bf">coverage</code> का threshold Otsu नहीं है</p>
+<p>यह fixed threshold <code style="color:#22d3bf">0.2*(max-min) + min</code> है। Otsu bimodal (2 शिखरों वाला) वितरण मानता है, लेकिन</p>
+<p>speckles के overlap होने से speckle का intensity वितरण अक्सर unimodal होता है, और Otsu के साथ</p>
+<p><b>threshold हर image में खिसकता है, जिससे तुलना असंभव हो जाती है</b>। fixed threshold कम से कम</p>
+<p>समान scale की images की तुलना संभव बनाता है।</p>
+<p>★ MIG की इकाई होती है</p>
+<p>&quot;luminance / px&quot;। 8-bit integers को ज्यों-का-त्यों पास करने बनाम पहले [0, 1] में normalise करने से</p>
+<p>255 गुना का अंतर आता है। <b>इसकी तुलना केवल समान scale की images के बीच की जा सकती है।</b></p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• 画像が完全に一様(<code style="color:#22d3bf">max == min</code>)—— 斑点が 1 つも無い。</p>
-<p style="margin:2px 0 2px 12px">• 自己相関が 0.5 を切らない(視野より斑点が大きい)—— このときだけ <code style="color:#22d3bf">mean_blob_diameter_px</code> が <code style="color:#22d3bf">nan</code>。他の 3 つは返す。</p>
+<p style="margin:2px 0 2px 12px">• 2-D नहीं / 8x8 से छोटी / NaN / Inf युक्त।</p>
+<p style="margin:2px 0 2px 12px">• image पूरी तरह एक समान है (<code style="color:#22d3bf">max == min</code>) —— 1 भी speckle नहीं।</p>
+<p style="margin:2px 0 2px 12px">• autocorrelation 0.5 से नीचे नहीं गिरता (speckles field of view से बड़े) —— केवल इस स्थिति में <code style="color:#22d3bf">mean_blob_diameter_px</code> <code style="color:#22d3bf">nan</code> है। बाकी 3 लौटाए जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

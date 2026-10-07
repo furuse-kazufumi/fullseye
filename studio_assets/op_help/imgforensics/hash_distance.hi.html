@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.hash_distance(hash1, hash2) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;hash_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 perceptual hash के बीच Hamming दूरी (अलग bit की संख्या)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>dtype と長さを検査して fail-closed</b> する。float の 1-D を受け取って <code style="color:#22d3bf">!=</code> で数えると、ほぼ確実に「全ビット違う」= 最大距離という *もっともらしい* 値が出る —— それは型の取り違えであって画像の違いではない。</p>
-<p>返りは Python の <code style="color:#22d3bf">int</code>(<code style="color:#22d3bf">measurement</code> 語彙)。ビット長で割った正規化距離が欲しければ <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>。</p>
+<p>यह <b>dtype और लंबाई जाँचता है और fail closed होता है</b>। यदि float 1-D array स्वीकार करके <code style="color:#22d3bf">!=</code> से गिना जाता, तो लगभग निश्चित रूप से &quot;सभी bits अलग हैं&quot; = अधिकतम दूरी निकलती, एक *विश्वसनीय दिखने वाला* मान —— लेकिन वह type की गड़बड़ी है, images के बीच का अंतर नहीं।</p>
+<p>return एक Python <code style="color:#22d3bf">int</code> है (<code style="color:#22d3bf">measurement</code> vocabulary)। यदि bit length से normalize की गई दूरी चाहिए, तो <code style="color:#22d3bf">hash_distance(a, b) / a.size</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

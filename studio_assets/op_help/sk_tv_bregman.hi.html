@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Total variation denoising (TV denoising, Split-Bregman विधि)। sk_tv जैसा ही TV regularisation का विचार, लेकिन optimisation algorithm अलग है (Bregman splitting), और इसे तेज़ी से converge होने वाला माना जाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_tv_bregman(v, weight=1.0+8.0*a)</code> を <code style="color:#22d3bf">[0,1]</code> へ clip したもの —— a は weight を 1.0〜9.0 に振るが、この関数の weight は<b>小さいほど強く平滑化される</b>(sk_tv の weight とは符号の向きが逆 —— <code style="color:#22d3bf">denoise_tv_chambolle</code> は大きいほど強く、<code style="color:#22d3bf">denoise_tv_bregman</code> は小さいほど強い。混同すると意図と逆方向に a を動かすことになるので注意)。b は未使用。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">restoration.denoise_tv_bregman(v, weight=1.0+8.0*a)</code> है जिसे <code style="color:#22d3bf">[0,1]</code> पर clip किया जाता है —— a weight को 1.0–9.0 पर sweep करता है, लेकिन इस function के लिए <b>weight जितना छोटा, smoothing उतनी तेज़</b> (चिह्न-दिशा sk_tv के weight के उलट है —— <code style="color:#22d3bf">denoise_tv_chambolle</code> जितना बड़ा उतना तेज़, <code style="color:#22d3bf">denoise_tv_bregman</code> जितना छोटा उतना तेज़। इन्हें मिलाने का अर्थ है a को अपने इरादे की उल्टी दिशा में चलाना, इसलिए सावधान रहें)। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

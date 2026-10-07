@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_earth_curvature_drop(distance_m, refraction=0.13)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line-of-sight गणना के लिए <b>पृथ्वी की curvature से गिरावट</b> [m]। <code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。標準大気(<code style="color:#22d3bf">k = 0.13</code>)での目安:</p>
-<p>==========  ============  ============</p>
-<p>距離        曲率のみ      屈折込み</p>
-<p>==========  ============  ============</p>
-<p>1 km        0.078 m       0.068 m</p>
-<p>5 km        1.962 m       1.707 m</p>
-<p>10 km       7.848 m       6.828 m</p>
-<p>30 km       70.63 m       61.45 m</p>
-<p>==========  ============  ============</p>
-<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域はその距離では意味を持ちません。<code style="color:#22d3bf">refraction</code> は標準大気の慣行値であって定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<p>दूर की ज़मीन पृथ्वी की curvature के कारण नीचे दिखती है, और वायुमंडलीय अपवर्तन (refraction) इसे आंशिक रूप से रद्द करता है। मानक वायुमंडल (<code style="color:#22d3bf">k = 0.13</code>) के लिए मार्गदर्शक मान:</p>
+<p>==========  ================  ================</p>
+<p>दूरी        केवल curvature    refraction सहित</p>
+<p>==========  ================  ================</p>
+<p>1 km        0.078 m           0.068 m</p>
+<p>5 km        1.962 m           1.707 m</p>
+<p>10 km       7.848 m           6.828 m</p>
+<p>30 km       70.63 m           61.45 m</p>
+<p>==========  ================  ================</p>
+<p>30 km दूर की line of sight के लिए ज़मीन <b>60 m से अधिक</b> नीचे गिरती है, इसलिए समतल मानकर गणना किया गया viewshed उस दूरी पर अर्थहीन है। <code style="color:#22d3bf">refraction</code> मानक वायुमंडल के लिए एक परंपरागत मान है, constant नहीं —— रात के inversion layer में यह ऋणात्मक या 0.25 तक भी हो सकता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

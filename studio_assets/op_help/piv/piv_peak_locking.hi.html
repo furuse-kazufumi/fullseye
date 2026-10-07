@@ -4,26 +4,25 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>peak locking की शक्ति। भिन्नात्मक भाग का distribution uniform से कितना हटा है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、そこからのずれを測る。</p>
-<p>指標 <code style="color:#22d3bf">c0</code> は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
-<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。一様分布から標本を取ると期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>
-<p>★ ただしこの指標は「真の変位の小数部が一様である」ことを仮定する。窓の数が少ない場や、変位がゆっくり変わる場では<b>真値そのものの c0 も大きくなる</b> (実測: 線形ランプの真値で 82 —— 窓格子が 19 列しか無く小数部が離散的にしか現れないため)。したがって c0 は<b>同じ入力の真値と比べて</b>読むこと。</p>
-<p><b>決定的な診断は別にある</b> —— 一様並進の小数部を 0 から 0.9 まで振り、推定値が対角線に乗るかを見る。実測(win=32、density 0.02):</p>
+<p>Subpixel estimation में एक bias होता है जो वास्तविक displacement के भिन्नात्मक भाग को, जब वह 0 या 0.5 के पास हो, उनकी ओर खींचता है (PIV की पाठ्यपुस्तकीय systematic error, जो इसलिए उत्पन्न होती है क्योंकि correlation peak का shape fit किए गए function के shape से अलग होता है)। <b>जब तक flow एक समान न हो, भिन्नात्मक भाग लगभग समान रूप से वितरित होना चाहिए</b>, और उससे विचलन मापा जाता है।</p>
+<p>index <code style="color:#22d3bf">c0</code> एक chi-square प्रकार का विचलन है जो <b>sample size से स्वतंत्र</b> है:</p>
+<p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>। समान वितरण से sampling करने पर अपेक्षित मान 1 आता है, इसलिए <b>1 के आसपास यह समान वितरण से अलग नहीं पहचाना जा सकता</b>; जितना बड़ा, उतना अधिक biased।</p>
+<p>★ लेकिन यह index मानता है कि &quot;वास्तविक displacement का भिन्नात्मक भाग समान है&quot;। कम windows या धीरे-धीरे बदलते displacement वाले fields में, <b>ground truth का अपना c0 भी बड़ा हो जाता है</b> (मापा गया: linear ramp के ground truth के लिए 82 —— window grid में केवल 19 columns हैं, इसलिए भिन्नात्मक भाग केवल असतत रूप से दिखता है)। इसलिए c0 को <b>उसी इनपुट के ground truth से तुलना करके</b> पढ़ें।</p>
+<p><b>निर्णायक निदान कुछ और है</b> —— एक समान translation के भिन्नात्मक भाग को 0 से 0.9 तक बदलें और देखें कि अनुमान विकर्ण पर हैं या नहीं। मापा गया (win=32, density 0.02):</p>
 <p>==========  =================  ==================</p>
-<p>推定法      小数部誤差の RMS   最大絶対誤差</p>
+<p>method      RMS of frac. err.  max abs. error</p>
 <p>==========  =================  ==================</p>
 <p>gauss3      0.0037 px          0.0088 px</p>
 <p>parabolic   0.0104 px          0.0151 px</p>
 <p>centroid    0.2259 px          0.3701 px</p>
 <p>==========  =================  ==================</p>
-<p><code style="color:#22d3bf">centroid</code> は真値 0.1 を 0.02、0.9 を 0.98 と答える —— 整数へ引き寄せる教科書どおりの S 字。<b>出るはずのものが出た</b>ことの確認であって、実装の不具合ではない(だから 3 つとも残してある)。</p>
+<p><code style="color:#22d3bf">centroid</code> वास्तविक 0.1 के लिए 0.02 और 0.9 के लिए 0.98 उत्तर देता है —— integers की ओर खींचने वाला पाठ्यपुस्तकीय S-curve। यह पुष्टि करता है कि <b>जो दिखना चाहिए था वह दिखा</b>, और यह implementation का दोष नहीं है (इसीलिए सभी 3 रखे गए हैं)।</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
-<p>bins: 小数部のヒストグラムの階級数。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>।</p>
+<p>bins: भिन्नात्मक भाग के histogram की classes की संख्या।</p>
 <p>Returns:</p>
-<p>dict: <code style="color:#22d3bf">c0</code>(両成分合わせた指標)、<code style="color:#22d3bf">hist</code>(<code style="color:#22d3bf">(2, bins)</code>)、</p>
-<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>、<code style="color:#22d3bf">bins</code>。</p>
+<p>dict: <code style="color:#22d3bf">c0</code> (दोनों components को मिलाकर index), <code style="color:#22d3bf">hist</code> (<code style="color:#22d3bf">(2, bins)</code>),</p>
+<p><code style="color:#22d3bf">frac_mean</code> / <code style="color:#22d3bf">frac_std</code>, <code style="color:#22d3bf">bins</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

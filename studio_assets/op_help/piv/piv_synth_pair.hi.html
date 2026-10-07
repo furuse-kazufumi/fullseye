@@ -6,18 +6,17 @@
 <p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ज्ञात displacement field वाला image जोड़ा बनाता है। <code style="color:#22d3bf">(image_a, image_b, truth)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
+<p><b>Particles को खिसकाकर फिर 2nd image बनाई जाती है</b> (1st image को interpolation से warp नहीं किया जाता)। Interpolation से बनाने पर, interpolation की smoothing &quot;ऐसी तस्वीर जिस पर PIV आसानी से सही बैठे&quot; बना देगी, और आप अपने ही implementation को उसके पक्ष वाले इनपुट पर माप रहे होंगे।</p>
 <p>Args:</p>
-<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
-<p>displacement: 変位の与え方。次のいずれか。</p>
-<p style="margin:2px 0 2px 12px">• 長さ 2 の列 —— 一様並進 <code style="color:#22d3bf">(dy, dx)</code> [px]。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— 位置に依存する場。引数は粒子の連続座標の配列。</p>
-<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> と同じ。</p>
-<p>noise_sigma: 2 枚それぞれに独立に足す加法ガウス雑音の標準偏差。</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>।</p>
+<p>displacement: displacement कैसे दिया जाता है। निम्न में से एक।</p>
+<p style="margin:2px 0 2px 12px">• लंबाई 2 का sequence —— uniform translation <code style="color:#22d3bf">(dy, dx)</code> [px]।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">callable(rows, cols) -&gt; (dy, dx)</code> —— position पर निर्भर field। Arguments particles के continuous coordinates के arrays हैं।</p>
+<p>density / diameter_px / seed / intensity / background: <code style="color:#22d3bf">piv_synth_particles</code> के समान।</p>
+<p>noise_sigma: 2 images में से हर एक में स्वतंत्र रूप से जोड़े गए additive Gaussian noise का standard deviation।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は<b>画素ごと</b>の</p>
-<p>真の変位で、窓の格子に落とすには <code style="color:#22d3bf">piv_sample_at_windows</code> を使う。</p>
+<p><code style="color:#22d3bf">(a (H, W), b (H, W), truth (2, H, W))</code>। <code style="color:#22d3bf">truth</code> <b>प्रति pixel</b></p>
+<p>सही displacement है; इसे window grid पर लाने के लिए <code style="color:#22d3bf">piv_sample_at_windows</code> इस्तेमाल करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

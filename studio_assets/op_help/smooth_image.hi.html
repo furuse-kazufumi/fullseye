@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल एक Gaussian blur (sigma <code style="color:#22d3bf">0.5+2.0*a</code>) से approximate की गई सामान्य smoothing। HALCON का <code style="color:#22d3bf">smooth_image</code> (Smooth an image using various filters.) Deriche/Gauss/Mean जैसे कई filter प्रकार चुन सकने वाला बहुउपयोगी operator है, लेकिन यहाँ इसे 1 प्रकार के Gaussian तक सरल कर दिया गया है (सन्निकटन की सीमा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> がシグマを 0.5〜2.5 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> sigma को 0.5–2.5 की सीमा में sweep करता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

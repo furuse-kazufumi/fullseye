@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Local minima (region minima) detection। उन pixels को foreground मानता है जहाँ <code style="color:#22d3bf">x</code> window (<code style="color:#22d3bf">_k(a)</code>) के न्यूनतम मान के बराबर है और <code style="color:#22d3bf">x &lt; 0.7-0.4*b</code> भी पूरा होता है; यह <code style="color:#22d3bf">local_max</code> का अँधेरा संस्करण है। HALCON के <code style="color:#22d3bf">local_min</code> (Detect all local minima in an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が窓サイズを、<code style="color:#22d3bf">b</code> が輝度の上限しきい値を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> window size को, और <code style="color:#22d3bf">b</code> luminance के ऊपरी threshold को sweep करता है। दोनों उपयोग होते हैं।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

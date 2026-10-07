@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray value morphological dilation (OpenCV implementation)। पड़ोस के अधिकतम मान से बदलने वाला operation, जो चमकीले regions को बड़ा और अँधेरे regions को छोटा करता है (cv_erode का उल्टा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">gray_dilation</code>(Perform a gray value dilation on an image.)に相当。実装は <code style="color:#22d3bf">cv2.dilate(v, se)</code>、se は楕円形でサイズ <code style="color:#22d3bf">3+2*int(a*3)</code> —— a は構造要素サイズを 3〜9 に振る。b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">gray_dilation</code> (Perform a gray value dilation on an image.) के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.dilate(v, se)</code> है; se दीर्घवृत्ताकार है जिसका आकार <code style="color:#22d3bf">3+2*int(a*3)</code> है —— a structuring element के आकार को 3–9 पर sweep करता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

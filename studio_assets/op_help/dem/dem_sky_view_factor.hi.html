@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>sky view factor [0,1]। आकाश कितना दिखाई देता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">n_azimuth</code> 方位の地平線仰角から <code style="color:#22d3bf">mean(cos^2(horizon))</code> で求める(等方輝度の空を仮定した標準的な近似)。<b>平坦面では厳密に 1</b>。都市の暑熱や谷底の冷え込みで効く量。</p>
+<p><code style="color:#22d3bf">n_azimuth</code> दिशाओं में horizon elevation angles से <code style="color:#22d3bf">mean(cos^2(horizon))</code> के रूप में गणना की जाती है (isotropic luminance वाले आकाश को मानने वाला मानक सन्निकटन (approximation))। <b>समतल surface पर ठीक 1</b>। शहरी गर्मी और घाटी के तल में ठंडी हवा के जमाव (cold pooling) के लिए महत्वपूर्ण राशि।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

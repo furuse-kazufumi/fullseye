@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>तीर वाला plot (MATLAB का <code style="color:#22d3bf">quiver</code>)। <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p>हर <code style="color:#22d3bf">spacing</code> grid इकाई पर 1 तीर, जिसका मूल grid point पर होता है और नोक <code style="color:#22d3bf">origin + scale * v</code> तक बनाई जाती है। <code style="color:#22d3bf">scale</code> छोड़ने पर <b>सबसे लंबा तीर spacing का 0.9 गुना</b> होता है (MATLAB की automatic scaling जैसा ही विचार, ताकि वह पड़ोसी तीर पर न चढ़े)। <b>scale गुणक हर figure में बदल जाता है</b>, इसलिए साथ-साथ तुलना की जाने वाली figures के लिए <code style="color:#22d3bf">scale</code> तय करें। 1 pixel से छोटे तीर नहीं बनाए जाते (बिना दिशा का बिंदु marker के रूप में पढ़ा जाएगा)।</p>
 <p>Args:</p>
-<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
-<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
-<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
-<p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
-<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
-<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
-<p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
-<p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code> (<code style="color:#22d3bf">dy, dx</code>)।</p>
+<p>spacing: तीरों के बीच की दूरी [grid]। <code style="color:#22d3bf">None</code> देने पर लंबी भुजा पर लगभग 20।</p>
+<p>scale: तीर की लंबाई = <code style="color:#22d3bf">scale * speed</code> [grid]।</p>
+<p>upsample: आउटपुट गुणक (arrowheads बनाने के लिए पर्याप्त बड़ा)।</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> या <code style="color:#22d3bf">(…, 3)</code>। <code style="color:#22d3bf">None</code> का अर्थ सफ़ेद है।</p>
+<p>नीचे hue map (बड़ा किया गया <code style="color:#22d3bf">piv_flow_to_rgbimage</code>) या LIC बिछाया जा सकता है।</p>
+<p>color / width: तीर का रंग (palette role name या RGB) और shaft की मोटाई [px]।</p>
+<p>डिफ़ॉल्ट काले के निकट ink रंग है (hue map के ऊपर भी पढ़ने योग्य)।</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64, range [0, 1]।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

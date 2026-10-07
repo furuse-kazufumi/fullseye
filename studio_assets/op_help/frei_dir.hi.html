@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Frei-Chen प्रकार के kernels से edge दिशा (कोण) map। Horizontal kernel <code style="color:#22d3bf">_FREI[0]</code> (row/खड़ी दिशा gradient) और vertical kernel <code style="color:#22d3bf">_FREI[1]</code> (column/आड़ी दिशा gradient) के convolution responses से <code style="color:#22d3bf">arctan2(gy, gx)</code> की गणना करता है और <code style="color:#22d3bf">sobel_dir</code>/<code style="color:#22d3bf">prewitt_dir</code> वाले ही नियम से [0,1] में map करता है (0/1 = -180°, 0.5 = 0°)। a, b इस्तेमाल नहीं होते।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">frei_dir</code>（Frei-Chen 演算子でエッジの振幅と方向を検出する演算）のうち方向成分に相当する近似。振幅は <code style="color:#22d3bf">frei_amp</code> 側が担当する。</p>
+<p>HALCON के <code style="color:#22d3bf">frei_dir</code> (Frei-Chen operator से edge का amplitude और दिशा पहचानने वाला operation) के दिशा घटक का एक सन्निकटन। Amplitude <code style="color:#22d3bf">frei_amp</code> संभालता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_edges">gallery2d_edges family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

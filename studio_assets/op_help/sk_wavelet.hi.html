@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Wavelet transform से noise removal। Image को wavelet domain में तोड़ता है, BayesShrink मानदंड वाले thresholding से छोटे (= noise माने जा सकने वाले) coefficients हटाता है, फिर inverse transform करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> をそのまま <code style="color:#22d3bf">[0,1]</code> に clip したもので、しきい値やウェーブレット基底はすべて skimage の既定値まかせ —— a, b は未使用(調整点が無い、最も枯れた設定でとりあえずノイズを落としたい時用)。</p>
+<p>HALCON में कोई सीधा समकक्ष नहीं है। Implementation <code style="color:#22d3bf">restoration.denoise_wavelet(v)</code> है जिसे जैसा है वैसा <code style="color:#22d3bf">[0,1]</code> पर clip किया जाता है; threshold और wavelet basis सब skimage के defaults पर छोड़े गए हैं —— a और b उपयोग नहीं होते (कोई knob नहीं; तब के लिए जब आप बस सबसे ज़्यादा परखी गई settings से noise हटाना चाहते हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

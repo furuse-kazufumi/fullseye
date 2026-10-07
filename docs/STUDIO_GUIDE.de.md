@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: bbeba242062b -->
 # Vollständiger Leitfaden zu Fullseye Studio
 
-[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch**
+[日本語](./STUDIO_GUIDE.md) · [English](./STUDIO_GUIDE.en.md) · [简体中文](./STUDIO_GUIDE.zh.md) · [繁體中文](./STUDIO_GUIDE.tw.md) · [한국어](./STUDIO_GUIDE.ko.md) · **Deutsch** · [हिन्दी](./STUDIO_GUIDE.hi.md)
 
 **Fullseye Studio** ist eine visuelle Pipeline-Werkbank im Stil von HDevelop. Man sucht Operatoren, ordnet sie an,
 dreht an zwei Reglern per Schieberegler, verfolgt Zwischenergebnisse mit Zoom/Pan Stufe für Stufe und exportiert die

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जल-संग्रह cell की संख्या: हर cell में बहने वाले upstream cell की गिनती (cell स्वयं 1 गिना जाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">fill=True</code> なら先に窪地を埋める(埋めないと窪地で流れが止まり、下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は <code style="color:#22d3bf">nan</code>。</p>
-<p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で 2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
+<p><code style="color:#22d3bf">fill=True</code> के साथ पहले sinks भरे जाते हैं (अन्यथा प्रवाह sinks में रुक जाता है, और downstream accumulation <b>चुपचाप बहुत छोटा आता है</b>)। missing cells का accumulation <code style="color:#22d3bf">nan</code> है।</p>
+<p>Graph निर्माण vectorised है। लेकिन <b>प्रभाव छोटा है</b>: 1024x1024 पर, 2.71 s -&gt; 2.39 s। प्रमुख समय निर्माण में नहीं बल्कि बाद के topological sweep (सभी cells पर Python loop) में जाता है। इसे तेज़ करने के लिए उस भाग को दोबारा लिखना होगा —— स्पष्ट रूप से बताया गया है ताकि &quot;सोचा ठीक हो गया, पर नहीं हुआ&quot; वाली स्थिति न रहे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

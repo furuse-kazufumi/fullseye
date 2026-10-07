@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray value morphological opening (OpenCV implementation)। पहले erosion फिर dilation करके structuring element से छोटे चमकीले उभार और अकेले points मिटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">gray_opening</code>(Perform a gray value opening on an image.)に相当。実装は <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code>、楕円形の構造要素 se は<code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>、<code style="color:#22d3bf">k=3+2*int(a*3)</code> —— a は構造要素のサイズを 3〜9 に振る。b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">gray_opening</code> (Perform a gray value opening on an image.) के समकक्ष है। Implementation <code style="color:#22d3bf">cv2.morphologyEx(v, MORPH_OPEN, se)</code> है, जिसमें दीर्घवृत्ताकार structuring element se <code style="color:#22d3bf">getStructuringElement(MORPH_ELLIPSE, (k,k))</code>, <code style="color:#22d3bf">k=3+2*int(a*3)</code> से मिलता है —— a structuring element के आकार को 3–9 पर sweep करता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_morphology">gallery2d_morphology family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

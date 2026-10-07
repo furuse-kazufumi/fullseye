@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सरल Canny जैसा edge detection (region लौटाता है)। इसे HALCON के <code style="color:#22d3bf">edges_image</code> (Extract edges using Deriche, Lanser, Shen, or Canny filters.) से जोड़ा गया है, लेकिन यह non-maximum suppression और hysteresis thresholding नहीं करने वाला सरल संस्करण है (सन्निकटन)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が事前平滑化のガウシアン σ を <code style="color:#22d3bf">0.5〜2.0</code> に、<code style="color:#22d3bf">b</code> がしきい値を <code style="color:#22d3bf">0.1〜0.6</code> に振る。ガウシアンでぼかした画像に Sobel 勾配強度を掛け、正規化した値を <code style="color:#22d3bf">b</code> で二値化するだけ——本家 Canny の細線化（1画素幅への収束）は無いため、エッジは本来の Canny より太く、複数画素にまたがって残る。</p>
+<p><code style="color:#22d3bf">a</code> पूर्व-smoothing के Gaussian σ को <code style="color:#22d3bf">0.5〜2.0</code> पर, और <code style="color:#22d3bf">b</code> threshold को <code style="color:#22d3bf">0.1〜0.6</code> पर sweep करता है। यह केवल Gaussian से धुंधली की गई image पर Sobel gradient magnitude लगाता है और normalised मान को <code style="color:#22d3bf">b</code> से binarise करता है —— मूल Canny जैसी thinning (1 pixel चौड़ाई तक सिमटना) नहीं है, इसलिए edges असली Canny से मोटे होते हैं और कई pixels में फैले रहते हैं।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metalfinish; metalfinish.micro_normals(normals, kind=&#x27;linear&#x27;, pitch_px=9.0, depth=0.06, angle_deg=0.0, center=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;micro_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>machining marks को ही <b>normals में उकेरता है</b> (lathe की feed marks, knurl की चोटियाँ)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>normals: (H, W, 3) の法線マップ。kind / angle_deg / center: <code style="color:#22d3bf">tangent_field</code> と同じ。</p>
-<p>pitch_px: 痕の間隔 [px]。depth: 傾ける強さ(0 で無加工)。</p>
-<p>返り値: 摂動後の単位法線マップ。背景(長さ 0)はそのまま 0。</p>
-<p><code style="color:#22d3bf">random</code> は方向を持たないので何もしない(そちらは <code style="color:#22d3bf">blast_normals</code>)。痕は<b>筋に直交する向き</b>へ傾ける ―― 筋に沿って傾けても筋にならない。</p>
+<p>normals: (H, W, 3) normal map। kind / angle_deg / center: <code style="color:#22d3bf">tangent_field</code> के समान।</p>
+<p>pitch_px: निशानों के बीच की दूरी [px]। depth: झुकाव की तीव्रता (0 = बिना machining)।</p>
+<p>Returns: perturbed unit normal map। Background (लंबाई 0) 0 ही रहता है।</p>
+<p><code style="color:#22d3bf">random</code> की कोई दिशा नहीं है, इसलिए यह कुछ नहीं करता (उसके लिए <code style="color:#22d3bf">blast_normals</code> उपयोग करें)। निशान <b>धारियों के लंबवत</b> झुकते हैं ―― धारियों के साथ झुकाने से धारियाँ नहीं बनतीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

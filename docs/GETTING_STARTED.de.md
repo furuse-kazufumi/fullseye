@@ -1,7 +1,7 @@
 <!-- i18n-source-sha: c70ba3c329f3 -->
 # Erste Schritte (in 5 Minuten startklar)
 
-[日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch**
+[日本語](./GETTING_STARTED.md) · [English](./GETTING_STARTED.en.md) · [简体中文](./GETTING_STARTED.zh.md) · [繁體中文](./GETTING_STARTED.tw.md) · [한국어](./GETTING_STARTED.ko.md) · **Deutsch** · [हिन्दी](./GETTING_STARTED.hi.md)
 
 ## Welcher Einstieg passt zu Ihnen (3 Einstiegspunkte)
 

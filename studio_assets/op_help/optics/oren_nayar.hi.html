@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import surfacelib; surfacelib.oren_nayar(normals, light=(0.3, 0.4, 0.87), view=(0.0, 0.0, 1.0), roughness_deg=20.0, albedo=1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;oren_nayar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>खुरदुरी diffuse surface की shading (Oren–Nayar)। कागज़, plaster, concrete और चाँद कैसे दिखते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>normals: (H, W, 3)。light / view: 面から光源 / 視点への方向。</p>
-<p>roughness_deg: 微小面の傾きの標準偏差 [deg]。<b>0 で Lambert に厳密一致</b>。</p>
-<p>albedo: 拡散反射率(スカラまたは (H,W))。</p>
-<p>返り値: (H, W) の放射輝度係数(0 以上)。</p>
-<p>なぜ Lambert では足りないか: Lambert は端(терminator)で cos に比例して落ちるが、粗い面は微小面の相互遮蔽と相互反射で<b>端が平らに明るいまま</b>になる。満月が円盤のように一様に見えるのがこれで、Lambert だと縁が暗くなって球に見えてしまう。</p>
+<p>normals: (H, W, 3)। light / view: surface से light source / viewpoint की ओर की दिशा।</p>
+<p>roughness_deg: microfacet slopes का standard deviation [deg]। <b>0 पर यह Lambert से बिल्कुल मेल खाता है</b>।</p>
+<p>albedo: diffuse reflectance (scalar या (H,W))।</p>
+<p>Returns: (H, W) radiance coefficient (0 या अधिक)।</p>
+<p>Lambert काफ़ी क्यों नहीं है: Lambert किनारे (terminator) पर cos के अनुपात में गिरता है, लेकिन rough surface, microfacets के आपसी shadowing और interreflection के कारण, <b>किनारे तक सपाट और चमकीली रहती है</b>। इसी वजह से पूर्णिमा का चाँद एक disc की तरह एकसमान दिखता है; Lambert में rim गहरा हो जाता है और यह गोले जैसा दिखता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Pillow का unsharp mask। <code style="color:#22d3bf">PIL.ImageFilter.UnsharpMask</code> को call करता है (kornia संस्करण <code style="color:#22d3bf">xkor_unsharp</code> के अनुरूप CPU implementation)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a がぼかし半径（<code style="color:#22d3bf">radius = 1 + 4*a</code>、範囲 1〜5）、b が強調量（<code style="color:#22d3bf">percent = int(50 + 200*b)</code>、範囲 50〜250%）を振る。しきい値は 0固定（すべての差分を強調対象にする）。</p>
+<p>a blur radius (<code style="color:#22d3bf">radius = 1 + 4*a</code>, सीमा 1–5) को, b enhancement की मात्रा (<code style="color:#22d3bf">percent = int(50 + 200*b)</code>, सीमा 50–250%) को sweep करता है। Threshold 0 पर स्थिर है (हर अंतर enhancement के अधीन है)।</p>
 <p><b>Precision (मापा गया)</b>: अंदर <b>8 bit (256 levels) में quantise</b> किया जाता है (output ठीक k/255 के grid पर आता है)। float64 देने पर भी <b>वह precision नहीं बचती</b> — 16-bit camera का step (लगभग 1.5e-5) 1/255 = लगभग 3.9e-3 तक round हो जाता है, और 1/255 से कम अंतर वाली 2 images एक ही उत्तर देती हैं। बहुत छोटे intensity अंतर मापने में, या output को आगे differentiation या regression में देने पर quantisation के steps दिखते हैं, इसलिए ऐसा op चुनें जो 8 bit से होकर न गुज़रे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

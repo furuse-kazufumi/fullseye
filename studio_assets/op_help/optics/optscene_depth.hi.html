@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import optscene; optscene.optscene_depth(scene, camera, supersample: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;optscene_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>depth का <b>ground truth</b> (H, W) [mm]। यह <b>optical axis की दिशा में z</b> है, viewpoint से slant distance नहीं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>深度カメラ・ステレオ・光切断が返すのはどれも光軸方向の z なので、それに合わせる(斜距離と混ぜると、視野の端ほど系統的にずれた真値で採点することになり、しかも中心では一致するので気づけない)。生の光線距離が要るなら trace_rays(...)[&quot;t&quot;] を使う。</p>
-<p>当たらない画素は NaN。0 で埋めない ―― 「距離 0 の面」と区別できなくなる。</p>
+<p>depth cameras, stereo और light sectioning सभी optical axis के साथ z लौटाते हैं, इसलिए यह उसी से मेल खाता है (slant range मिलाने का अर्थ होता ऐसे ground truth से तुलना करना जो field of view के किनारों की ओर व्यवस्थित रूप से हटा हुआ है, और चूँकि केंद्र पर यह मेल खाता है, आपको पता भी नहीं चलता)। raw ray दूरी चाहिए तो trace_rays(...)[&quot;t&quot;] का उपयोग करें।</p>
+<p>जिन pixels ने कुछ नहीं टकराया वे NaN हैं। उन्हें 0 से नहीं भरा जाता ―― वह &quot;दूरी 0 पर एक surface&quot; से अलग नहीं पहचाना जा सकता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

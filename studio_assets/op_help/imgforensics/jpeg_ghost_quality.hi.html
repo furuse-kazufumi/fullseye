@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.jpeg_ghost_quality(ghosts, qualities=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;jpeg_ghost_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ghost map की श्रृंखला → हर pixel के लिए <b>जिस quality पर residual न्यूनतम है</b> उसका map। <code style="color:#22d3bf">image2d</code>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">qualities</code> を省くと <code style="color:#22d3bf">jpeg_ghost_map</code> の既定(40..95 step 5)を仮定する —— <b>枚数が合わなければ <code style="color:#22d3bf">ValueError</code></b>(添字と品質がずれた地図を返さない)。</p>
-<p>返りは品質そのものを画素値に持つ <code style="color:#22d3bf">(H, W)</code> なので、値域は [0, 1] ではない。表示するときは正規化すること(この op は数値を返すのであって絵を返さない)。</p>
-<p>★ <b>合成後に一度でも保存すると、この argmin は使えない。</b> 2026-09-06 に測った。背景 q92・素材 q60 で 32x32 を貼った 128x128 で:</p>
-<p>====================  ==================  ================</p>
-<p>条件                  貼付部の最頻品質    背景の最頻品質</p>
-<p>====================  ==================  ================</p>
-<p>合成後に保存しない            <b>60</b>(正解)              95</p>
-<p>合成後に q95 で保存           <b>95</b>(背景と同じ)         95</p>
-<p>====================  ==================  ================</p>
-<p>理由は掃引の残差が品質に対して<b>単調減少</b>すること —— 最後の保存品質が掃引の上端にあると、<code style="color:#22d3bf">argmin</code> は全画素でそこに張り付く(実測: 保存後の残差平均は 230.7 → 5.9e-02 と一直線に下がる)。実運用の改竄は必ず保存を経るので、<b>この読み出しは実画像では定数地図になる</b>。既存テスト <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> が通るのは、合成後に一度も保存していないからである(それ自体は正しい単体テストで、<code style="color:#22d3bf">argmin</code> の実装は間違っていない —— 読み出し方が現場に合わない)。</p>
-<p><b>代わりに使うもの</b>: 掃引方向の残差曲線の<b>谷の深さ</b>(局所的な凹み)。同じ実験で画素ごとの ROC を取ると、argmin 読み出しは AUC 0.500(乱数と同じ)、谷の深さ読み出しは <b>AUC 0.997 / 偽陽性 1 % で検出率 0.944</b> だった(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)。それでも全体を q60 で保存し直すと 0.475 まで落ちる —— JPEG ゴーストは後処理に弱い、というのが正しい要約。</p>
+<p>यदि <code style="color:#22d3bf">qualities</code> छोड़ दिया जाए, तो <code style="color:#22d3bf">jpeg_ghost_map</code> का default (40..95 step 5) माना जाता है —— <b>यदि maps की संख्या मेल नहीं खाती, तो <code style="color:#22d3bf">ValueError</code></b> (यह ऐसा map नहीं लौटाता जिसके indices और qualities तालमेल में न हों)।</p>
+<p>आउटपुट एक <code style="color:#22d3bf">(H, W)</code> array है जिसमें pixel मानों के रूप में स्वयं quality रखी होती है, इसलिए मान की range [0, 1] नहीं है। दिखाने के लिए इसे normalize करें (यह op संख्याएँ लौटाता है, चित्र नहीं)।</p>
+<p>★ <b>यदि composite एक बार भी save हो जाए, तो यह argmin बेकार हो जाता है।</b> 2026-09-06 को मापा गया, 128x128 image पर 32x32 patch चिपकाकर, background q92 और material q60:</p>
+<p>====================  ==================  ==================</p>
+<p>शर्त                  चिपके भाग का mode q  background mode q</p>
+<p>====================  ==================  ==================</p>
+<p>दोबारा save नहीं       <b>60</b> (सही)        95</p>
+<p>q95 पर दोबारा save     <b>95</b> (= backgr.)  95</p>
+<p>====================  ==================  ==================</p>
+<p>कारण यह है कि sweep residual quality के साथ <b>monotonically घटता है</b> —— यदि अंतिम save की गई quality sweep के ऊपरी सिरे पर है, तो <code style="color:#22d3bf">argmin</code> हर pixel के लिए वहीं अटक जाता है (मापा गया: save के बाद mean residual एक सीधी रेखा में गिरता है, 230.7 → 5.9e-02)। वास्तविक दुनिया की छेड़छाड़ हमेशा एक save से गुज़रती है, इसलिए <b>असली images पर यह readout एक constant map बन जाता है</b>। मौजूदा test <code style="color:#22d3bf">test_jpeg_ghost_finds_the_pasted_quality</code> केवल इसलिए पास होता है क्योंकि composite कभी save नहीं होता (यह अपने आप में एक सही unit test है, और <code style="color:#22d3bf">argmin</code> का implementation गलत नहीं है —— उसे पढ़ने का तरीका वास्तविक उपयोग में फिट नहीं बैठता)।</p>
+<p><b>इसकी जगह क्या उपयोग करें</b>: sweep के साथ residual curve की <b>valley depth</b> (स्थानीय गिरावट)। उसी प्रयोग में per-pixel ROC लेने पर, argmin readout का AUC 0.500 था (random के समान), जबकि valley-depth readout का <b>AUC 0.997 / 1 % false positives पर detection rate 0.944</b> था (<code style="color:#22d3bf">examples/poc_forensics_roc.py</code>)। फिर भी, पूरी image को q60 पर दोबारा save करने से यह 0.475 पर गिर जाता है —— &quot;JPEG ghosts post-processing के विरुद्ध कमज़ोर हैं&quot; सही सारांश है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Firm thresholding (firm/semisoft thresholding, <code style="color:#22d3bf">pywt.threshold_firm</code>) से wavelet noise removal। Soft और hard threshold के बीच की विशेषता रखता है, और <code style="color:#22d3bf">sym4</code> से 2 स्तर में decompose किए गए हर detail coefficient पर लगाकर फिर से बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は下側閾値(0.03〜0.23)、<code style="color:#22d3bf">b</code> は上側閾値(下側+ε 以上、0.15〜0.55)を振る —— 下側未満は 0、上側以上はそのまま、中間は緩やかに減衰させる。xwt_visushrink よりディテールの急な打ち切りを避けたい場合に向く。</p>
+<p><code style="color:#22d3bf">a</code> निचला threshold (0.03–0.23) sweep करता है, <code style="color:#22d3bf">b</code> ऊपरी threshold (कम से कम lower+ε, 0.15–0.55) —— निचले threshold से कम मान 0 हो जाता है, ऊपरी threshold के बराबर या उससे अधिक मान जैसा है वैसा रखा जाता है, और बीच के मान धीरे-धीरे क्षीण किए जाते हैं। जब xwt_visushrink की तरह detail का अचानक कट जाना टालना हो, तब उपयुक्त है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

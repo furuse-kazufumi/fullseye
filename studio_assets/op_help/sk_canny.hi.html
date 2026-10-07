@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Canny edge detection (region संस्करण)। Gaussian smoothing → gradient गणना → non-maximum suppression → hysteresis threshold, इस classic multi-stage pipeline से edge pixels निकालकर उन्हें bool region के रूप में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">edges_image</code> に相当。実装は <code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code> —— a は前段のガウス平滑化の σ を 0.5〜2.5 に振る(大きいほど細かいノイズ由来のエッジが消え、太い輪郭だけ残る)。b は未使用 —— ヒステリシスの低/高しきい値は skimage が画像から自動推定した値のまま(明示指定していない)。</p>
+<p>HALCON के <code style="color:#22d3bf">edges_image</code> के समकक्ष है। Implementation <code style="color:#22d3bf">feature.canny(v, sigma=0.5+2.0*a)</code> है —— a पहले होने वाली Gaussian smoothing के σ को 0.5–2.5 पर sweep करता है (यह जितना बड़ा, बारीक noise से बने edges उतने ज़्यादा गायब होते हैं और केवल मोटे contours बचते हैं)। b उपयोग नहीं होता —— low/high hysteresis thresholds उन मानों पर रहते हैं जिनका skimage image से स्वतः अनुमान लगाता है (स्पष्ट रूप से निर्दिष्ट नहीं)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

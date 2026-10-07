@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>ESF से SFR (edge से मापा गया MTF) निकालता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>
-<p>*window*(必須、px): 切り出す半幅。★迷光(裾)は窓の外に居るので、窓を狭くするほど SFR から見えなくなる。*correction*(必須): 標本化が作る sinc の割り戻し。</p>
-<p><code style="color:#22d3bf">&quot;none&quot;</code> — 割り戻さない(離散の段差を離散の PSF で畳んだ像なら前進差分が離散 LSF そのもので、これが正しい)。</p>
-<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — 連続のエッジを点で標本した ESF の前進差分は幅 Δ の箱で LSF を均すので sinc(fΔ) で割る。</p>
-<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> の升(幅 Δ)の平均がもう 1 つの箱なので sinc(fΔ)² で割る。</p>
-<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> か <code style="color:#22d3bf">&quot;hamming&quot;</code>(ISO 12233:2017 の LSF の窓)。</p>
-<p>返り値 <code style="color:#22d3bf">(n, 2)</code> の pairs: 列 0 = 周波数 [cyc/px] (エッジに垂直)、列 1 = SFR。0 〜 min(1.0, 0.5/Δ) cyc/px (升の刻み Δ の Nyquist まで、ただし画素の Nyquist の 2 倍 = 1 cyc/px で打ち切る。その先は sinc の割り戻しが暴れる)。</p>
-<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf が空・NaN / window が正の有限でない・ESF の長さを越える / ends が window 以上 / correction・apodize が一覧に無い / 黒と白の基準が等しい(エッジが無い)。</p>
+<p>*esf*, <code style="color:#22d3bf">edge_spread</code> का return value (एक dict) है या 1 px step वाला 1-D array (<code style="color:#22d3bf">oversample</code> = 1 माना जाता है)। edge केंद्र (absolute difference का maximum) के आसपास ±*window* px काटें, दोनों सिरों पर *ends* px के means को black/white references मानकर normalize करें, LSF पाने के लिए forward difference लें, और उसके Fourier transform के absolute value को DC से भाग दें।</p>
+<p>*window* (आवश्यक, px): काटने की half-width। ★Stray light (tails) window के बाहर रहता है, इसलिए window जितनी संकरी, SFR उसे उतना कम दिखाता है। *correction* (आवश्यक): sampling से बने sinc को वापस हटाना।</p>
+<p><code style="color:#22d3bf">&quot;none&quot;</code> — कोई correction नहीं (discrete PSF से blur हुए discrete step की image के लिए forward difference स्वयं discrete LSF है, और यह सही है)।</p>
+<p><code style="color:#22d3bf">&quot;derivative&quot;</code> — continuous edge से points पर sample किए ESF का forward difference, LSF को चौड़ाई Δ के box से औसत करता है, इसलिए sinc(fΔ) से भाग दें।</p>
+<p><code style="color:#22d3bf">&quot;derivative+bin&quot;</code> — <code style="color:#22d3bf">edge_spread</code> का bin mean (चौड़ाई Δ) 1 और box है, इसलिए sinc(fΔ)² से भाग दें।</p>
+<p>*apodize*: <code style="color:#22d3bf">&quot;none&quot;</code> या <code style="color:#22d3bf">&quot;hamming&quot;</code> (ISO 12233:2017 का LSF window)।</p>
+<p><code style="color:#22d3bf">(n, 2)</code> जोड़े लौटाता है: column 0 = frequency [cyc/px] (edge के लंबवत), column 1 = SFR। 0 से min(1.0, 0.5/Δ) cyc/px (bin step Δ के Nyquist तक, पर pixel Nyquist के 2 गुना = 1 cyc/px पर काट दिया जाता है; उससे आगे sinc correction बेकाबू हो जाता है)।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: esf खाली या NaN / window धनात्मक finite नहीं या ESF से लंबी / ends ≥ window / correction या apodize सूची में नहीं / black और white references बराबर (कोई edge नहीं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>
