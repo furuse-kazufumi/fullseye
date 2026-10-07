@@ -43,10 +43,20 @@ def test_the_discovery_actually_finds_things():
     実測の下限を置いて、それが起きたら気づけるようにする。
     """
     found = RA.discover_generators()
-    assert len(found) >= 30, (
-        "生成器の列挙が %d 本しか返さない(2026-09-09 の実測は 44 本)—— "
-        "_WRITES の印が壊れていないか" % len(found))
-    assert "imgevolve.py" in found, "tools/ の外にある生成器が列挙から落ちている"
+    assert len(found) >= 120, (
+        "生成器の列挙が %d 本しか返さない(2026-10-07 の実測は 145 本)—— "
+        "_WRITES の印か探す場所が壊れていないか" % len(found))
+    # 探す場所ごとに 1 本ずつ、実在の生成器が釣れていること(どの層が黙って落ちても気づく)。
+    for must, why in (
+            ("imgevolve.py", "repo 直下の生成器"),
+            ("samples.py", "repo 直下の生成器(2026-10-07 まで見えず docs/EXAMPLES.md が 67-op のまま)"),
+            ("tools/impl2/knob_probe.py", "tools/ の下の階層"),
+            ("tools/gen_banner.py", "画像の書き手(PIL の .save)"),
+            ("assets/make_icon.py", "assets/ の生成器"),
+    ):
+        assert must in found, "%s(%s)が列挙から落ちている" % (must, why)
+    # ライブラリ(__main__ 無し)は repo 直下にあっても生成器ではない。
+    assert "imgio.py" not in found, "__main__ の無いライブラリを生成器として拾っている"
 
 
 def test_excluded_entries_carry_a_reason():

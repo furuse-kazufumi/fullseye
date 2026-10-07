@@ -5,7 +5,7 @@
 
 本仓库把「为什么是这样」写在**源码注释**里。其中标了 `★` 的是真正管用的部分——测出来的结论、踩过的坑、这样做的理由。本页由它们机械汇集而成，正本在源码一侧，因此两者不会走样。
 
-**翻译进度**：610 / 1255 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
+**翻译进度**：610 / 1282 条。未翻译的条目照原文（日语）显示——悄悄回退到原文会看着像已翻译，所以没译就明说没译。
 
 
 ## `accel.py`
@@ -77,7 +77,7 @@
 
 - **L159** _(ja)_ — ★2026-09-20(GenSpark 第 44 報 N158): 環状バッファは黙って古い方を捨てる。捨てた数を数えないと、 `fallbacks()` が 256 件しか返さない理由が利用者から見えない(counts と件数が合わない)。
 - **L435** _(ja)_ — ★2026-09-19 の門(tests/test_op_probe_ledger)が最初に捕まえたのがこれ: ``fly_tau_from_expansion`` は 「膨張していない標本の time-to-contact は NaN(数を発明すると plausible-wrong)」と docstring に書き、 レジストリの ``tb_fly_tau_from_expansion`` はそれを signal の既定値で埋めて有限契約を守る。 関数を直接呼べば NaN の意味が保たれる(flyvision の docstring 参照)。ここに足すときは、その op の docstring に「NaN を返す理由」が書いてあることを確かめること。
-- **L506** — ★feature op 返回的是 numpy **标量**而非 ndarray，所以上面的分支从未见到它：NaN/Inf 的测量值(例如对退化帧调用 sk_blur_effect 内部的 0/0)会直接从 api.apply 流出。把非有限标量也洗到 sort 回退，使所声明的"有限、sort 有效"保证对 feature/contour 标量也真正成立。
+- **L523** — ★feature op 返回的是 numpy **标量**而非 ndarray，所以上面的分支从未见到它：NaN/Inf 的测量值(例如对退化帧调用 sk_blur_effect 内部的 0/0)会直接从 api.apply 流出。把非有限标量也洗到 sort 回退，使所声明的"有限、sort 有效"保证对 feature/contour 标量也真正成立。
 
 ## `backends.py`
 
@@ -1474,7 +1474,8 @@
 - **L2086** _(ja)_ — ★pickle は**名前で**(2026-09-19 外部レビュー N5): ``fn`` は ``backend_safe._safe`` のクロージャで pickle できず、Op を丸ごと multiprocessing / joblib に渡すと PicklingError で止まっていた(``Pipeline`` は名前を持つので通る、という非対称)。 復元先は**復元する側の環境の登録**: backend が入っていない環境で戻すと KeyError(不足 extra の案内つき)になり、黙って別の実装にはならない。
 - **L2255** _(ja)_ — ★2026-09-19 の外部レビュー(#1): scikit-image 無しの環境で ``sk_canny`` を呼ぶと 「unknown operator」になり、**存在しない**のか **backend が入っていない**のかを 区別できなかった。fn は ``backend_safe._safe`` に包まれて ``__module__`` を失う ので、登録の側で出自を残す(後勝ち = ``REGISTRY`` の重複解消と同じ規則)。 ``imgevolve.py index`` がこれを ``module`` / ``requires`` として索引に書き、 ``api._resolve`` が未登録の名前を引かれたときに索引から不足 extra を案内する。
 - **L2264** _(ja)_ — ★pyproject の optional-dependencies と食い違うと案内が嘘になるので ``tests/test_usability_review_2026_09_19.py`` が突き合わせる。
-- **L2552** — ★**记录在退化输入下会连整个进程一起崩溃的原生侧 op 的台账**(2026-09-05)。`guard` 只能捕获 Python 的异常。一旦在 C/C++ 内部越界写入,就到此为止,并连用户的整条流水线一起消失 -- fail-soft 最糟的破法。除了在入口拦截别无他法,故**带理由列在此处,并在注册时设卡**。**各平台行为不同**正是此台账存在的理由。下面 3 个在 Linux(Ubuntu 24.04 / Python 3.12 / PyPI 的 wheel)上会崩,但**在 Windows 上以相同输入一件都未复现**。原生构建不同,边界的破坏方式也不同,所以「这类输入就没事」的精细划线不可信 -- **对退化输入一律拒绝**。不是「修好就删」,而是**在能确认上游已修复后**再删(这不是我们自己的代码,故删除条件不同)。
+- **L2549** _(ja)_ — ★2026-10-07: 複素の sort は sanitize(実 sort 向けの規約で**実部だけ**を返す)を通さない。 以前は tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が cimage / beatcube を名乗りながら float64 を返していた(虚部を黙って捨てる = 位相が消える)。 backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
+- **L2564** — ★**记录在退化输入下会连整个进程一起崩溃的原生侧 op 的台账**(2026-09-05)。`guard` 只能捕获 Python 的异常。一旦在 C/C++ 内部越界写入,就到此为止,并连用户的整条流水线一起消失 -- fail-soft 最糟的破法。除了在入口拦截别无他法,故**带理由列在此处,并在注册时设卡**。**各平台行为不同**正是此台账存在的理由。下面 3 个在 Linux(Ubuntu 24.04 / Python 3.12 / PyPI 的 wheel)上会崩,但**在 Windows 上以相同输入一件都未复现**。原生构建不同,边界的破坏方式也不同,所以「这类输入就没事」的精细划线不可信 -- **对退化输入一律拒绝**。不是「修好就删」,而是**在能确认上游已修复后**再删(这不是我们自己的代码,故删除条件不同)。
 
 ## `ops3d.py`
 
@@ -1752,6 +1753,7 @@
 - **L282** _(ja)_ — ★**特異行列は必ず置く。** 一度ここから外しかけたが、それは誤りだった —— `tb_mat_cond` が特異行列で `inf` を返すのは**契約どおり**で、`ops.py` の `NONFINITE_IS_MEANINGFUL` に「厳密に特異な行列は s_min=0 なので inf が 正しい答え。有限に潰すと『十分に良条件』と読めてしまう」と**既に宣言済み** だった。落ちていたのは op ではなく、**有限性ゲートがその台帳を見ていない** こと。探針を削って緑にするのは、欠陥を隠す行為。 (同じ註に 2026-09-05 の教訓が書いてある ——「自分の probe では特異行列を 作っていなかったので tb_mat_cond を取りこぼした」。探針から外すのは その取りこぼしを**わざと再現する**ことになる。)
 - **L400** _(ja)_ — ★新規(2026-09-14): ここまで探針が無く、契約ゲートを一度も通っていなかった 5 sort = 101 op。残る 6 sort(video / qimage / cimage / lightfield / beatcube = 50 op)は形が複素・4-D で退化形の設計に手間が要るため、 **一度に全部入れて切り分け不能にしない**よう次の段で足す。
 - **L408** _(ja)_ — ★第 3 段(2026-09-17): 戻りの橋 ``feature_to_img`` が入るまで、feature を **入力**に取る op は 1 本も無かった(作る op は 125 本ある)。門が「探針の 無い op が 1 本に増えた」と正しく落ちて教えた。
+- **L453** _(ja)_ — ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない) に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。 sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
 
 ## `tests/test_abi_apply.py`
 
@@ -1797,9 +1799,15 @@
 
 - **L1053** — ★ 2026-09-08：新增了第 3 个返回值 vote_margin（第 2 高的峰 / 第 1 高）。若为星野，峰只有一个，故应当小——这一点也在此固定。
 
+## `tests/test_backends_typed.py`
+
+- **L71** _(ja)_ — ★2026-10-07: ``or True`` で無効化されていた。実測 936 op / 重複 0 —— 主張は成り立つので門に戻す
+
 ## `tests/test_backends_typed_liveness.py`
 
 - **L57** — ★ 就这一件而言，记录有**3 处**——此处、``gen_op_figures.DOMAIN_MISMATCH``，以及 op 自身 0/60 的实测。即便如此，“已注册却一次也不运行”的状态仍在持续。**知道某事与在判定中使用它是两回事**（KNOWN_ISSUES §42）。
+- **L129** _(ja)_ — ★2026-10-07: 探針を作れず ``_live_report`` が**検査せずに飛ばす** tb_* op の台帳 ``{op: 理由}``。 以前は ``skipped`` を返すだけで誰も見ておらず、探針の無い op は生死の検査を黙って抜けた。
+- **L725** _(ja)_ — ★2026-10-07: 例外で抜けた組は検査していない —— 何組を実際に見たかに下限を置く (実測 159 op × 5 入力 = 795 組、例外 0)。
 
 ## `tests/test_blob2d.py`
 
@@ -1845,9 +1853,14 @@
 
 ## `tests/test_degenerate_inputs.py`
 
-- **L77** _(ja)_ — ★スカラに「0 要素」は無い(2026-09-17、戻りの橋 ``feature_to_img`` で feature が初めて**入力**になったときに気づいた)。この門が探している のは 0/0 なので、空配列の代わりに**分母を 0 にする値** 0.0 を渡す。
-- **L265** — ★这里棘手的是，**这个测试所守护的缺陷在 Windows 上不会重现**。实测 2026-09-05：在 Linux（Ubuntu 24.04 / py3.12 / PyPI wheel）上 3 个 op 对退化输入 SIGSEGV。把相同的输入送到 Windows 上一个也没崩溃。所以「本地是绿的」不能作为依据，必须保持在一种能在两个环境上验证**台账是否正确生效**的形式。 --------------------------------------------------------------------------- #
-- **L272** — ★``ops.NATIVE_CRASHES_ON_DEGENERATE`` 的**对照**。它必须与本体 1:1 一致。只改一边就会落败 —— 从本体删除，或往本体添加，都要求**在这里同时改写（= 由人确认意图）**。为什么需要对照：在门的变异测试（2026-09-05）中，即使从本体删除 `cv_cc_count`，检查「台账里的 op 都拥有关卡」的测试**依旧通过**。从台账删掉的 op 也会从循环的对象中消失，所以整条检查路径连同它一起消失。所守护的 SIGSEGV 仅限 Linux，在 Windows 上碰巧会返回像样的值，所以最后一道防线也不起作用。只有与独立信息源（这一组）的**等价**，才能在 Windows 上也捕捉到两个方向。与 `test_the_two_nonfinite_ledgers_agree` 同形。
+- **L73** _(ja)_ — ★2026-10-07: 0 サイズ入力で**本体が NaN/Inf を出し、guard が記録して置き換えている** op。 ``test_no_op_returns_a_non_finite_value_for_an_empty_input`` は guard 越しの戻り値だけを 見ていたので、置き換え後の有限値しか見えず、この 16 op の 0/0 を一度も捕まえていなかった (docstring の「0 除算の検出器」は空振りしていた)。台帳(source=output)で数える。 いずれも空配列の縮約(平均・比・最大)を素直に書いた形 —— 明示の拒否にするのが筋(bug-suspect)。
+- **L91** _(ja)_ — ★スカラに「0 要素」は無い(2026-09-17、戻りの橋 ``feature_to_img`` で feature が初めて**入力**になったときに気づいた)。この門が探している のは 0/0 なので、空配列の代わりに**分母を 0 にする値** 0.0 を渡す。
+- **L149** _(ja)_ — ★2026-10-07: 例外で抜けた op は戻り値を検査していない —— 母数が黙って縮まないよう下限を置く
+- **L210** _(ja)_ — ★2026-10-07: 例外で抜けた組は検査していない —— 下限(実測 1738 / 1738)
+- **L246** _(ja)_ — ★2026-10-07: 母数の下限。注意 —— guard は FloatingPointError も握って fallback にする (実測 36 op)ので、ここの FloatingPointError 枝には guard 越しでは来ない。 0/0 が外へ出る op は test_no_op_returns_a_non_finite_value_for_an_empty_input の KNOWN_NONFINITE_ON_EMPTY_INPUT(台帳の source=output)が捕まえる。
+- **L308** _(ja)_ — ★2026-10-07: 以前は呼ぶ**前**に数えていたので、全 op が例外で抜けても n > 700 で緑だった
+- **L317** — ★这里棘手的是，**这个测试所守护的缺陷在 Windows 上不会重现**。实测 2026-09-05：在 Linux（Ubuntu 24.04 / py3.12 / PyPI wheel）上 3 个 op 对退化输入 SIGSEGV。把相同的输入送到 Windows 上一个也没崩溃。所以「本地是绿的」不能作为依据，必须保持在一种能在两个环境上验证**台账是否正确生效**的形式。 --------------------------------------------------------------------------- #
+- **L324** — ★``ops.NATIVE_CRASHES_ON_DEGENERATE`` 的**对照**。它必须与本体 1:1 一致。只改一边就会落败 —— 从本体删除，或往本体添加，都要求**在这里同时改写（= 由人确认意图）**。为什么需要对照：在门的变异测试（2026-09-05）中，即使从本体删除 `cv_cc_count`，检查「台账里的 op 都拥有关卡」的测试**依旧通过**。从台账删掉的 op 也会从循环的对象中消失，所以整条检查路径连同它一起消失。所守护的 SIGSEGV 仅限 Linux，在 Windows 上碰巧会返回像样的值，所以最后一道防线也不起作用。只有与独立信息源（这一组）的**等价**，才能在 Windows 上也捕捉到两个方向。与 `test_the_two_nonfinite_ledgers_agree` 同形。
 
 ## `tests/test_demops.py`
 
@@ -1905,10 +1918,18 @@
 - **L87** — ★不传 PYTHONPATH（这个门的要点）。使用者不会设置环境变量。
 - **L125** _(ja)_ — ★2026-10-07: 以前は**全例を**走らせていた。session fixture はセッションごと(CI のシャードごと・ xdist のワーカーごと)に作られるので、CI では 4 シャード × 3 版 = 12 回、全例を走らせていた (シャードあたり 21〜41 分、run 37474292595)。手元の -n 6 では 6 ワーカーがそれぞれ全例を WORKERS 並列で回し、最大 48 本が同時に走って単独 207 秒の quickstart が 600 秒を超えていた。 いまは (1) xdist のワーカーでは引かれた 1 本だけを走らせ、並列は xdist に任せる (2) それ以外(CI のシャード)では、このセッションに残ったテストの分だけをまとめて並列に走らせる。
 
+## `tests/test_fallback_names_identify_the_op.py`
+
+- **L60** _(ja)_ — ★2026-10-07: 台帳は 256 件の環状バッファ。溢れると ``fallbacks()`` は新しい 256 件しか返さず、 下の「名前が潰れていない」「実在の op 名」は**一部だけ**を見て緑になる(実測 186 件・溢れ 0)。
+
 ## `tests/test_features_do_not_saturate_2026_09_26.py`
 
 - **L82** _(ja)_ — ★族は**6 つ**。対称な矩形だけだと、対称性で消える特徴(奇数次モーメント)や 穴を数える特徴(オイラー数)が原理的に動かず、「潰れている」と区別できない。
 - **L93** _(ja)_ — ★**どの族でも一定で、それが正しい op**。理由つきで名指しし、下の試験が 「本当にまだ一定か」を確かめる —— 動くようになったら外させられる。
+
+## `tests/test_fix_op_name_and_range_2026_09_02.py`
+
+- **L75** _(ja)_ — ★2026-10-07: [0,1] を外れるが、まだ ``ops.UNIT_RANGE_IS_NOT_THE_CONTRACT`` にも載らず 正規化もされていない image op(所有者の判断待ち)。``conftest.inputs_for`` が override の ある op にも sort 既定の帯を返すようにして見つかった。
 
 ## `tests/test_flyvision.py`
 
@@ -2004,6 +2025,10 @@
 - **L215** _(ja)_ — ★数を直書きしない。9 本目(fullseye_fix_text)を足したとき、この門は CI の core ジョブでしか走らず、手元のスイートは緑のまま CI だけ赤になった(2026-09-18)。 正本は checkout の TOOLS —— wheel が同じ集合を名乗ることを見る。
 - **L225** _(ja)_ — ★順位を 3 位までに固定していた門は、新しい op(gauss_quadrature、2026-10-03)が「gauss」に正しく当たっただけで CI の core ジョブ(ここでしか走らない)を赤にした。見たいのは「2-D レジストリの op が索引の層から出る」こと。
 
+## `tests/test_meshres.py`
+
+- **L107** _(ja)_ — ★2026-10-07: ここにあった ``abs(pc_density(P[inner])["nonuniformity"] - 1) < 1e-9 or True`` は ``or True`` で常に真だった。実測 1.9121 —— 内側だけを切り出すと、その部分集合自身の縁で 近傍殻が欠けるので一様にはならない(主張そのものが誤り)。上の spacing の検査が本題なので削除。
+
 ## `tests/test_msa.py`
 
 - **L80** _(ja)_ — ★この恒等式は**交互作用を残すモデル**の性質なので、モデルを明示して問う。 既定の "auto" は規格の手順に従って交互作用を誤差へ畳むことがあり、そのとき EV^2 は「升目ごとの分散の平均」ではなく「畳んだあとの平均平方」になる。 (この門は実際にその切替を捕まえた —— 既定を変えた瞬間に落ちた)
@@ -2025,9 +2050,16 @@
 
 ## `tests/test_op_contracts.py`
 
-- **L52** _(ja)_ — ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周 しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、 こちらは **判定を一度も計算しない**。まず skip で見えるようにし、 ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
-- **L56** _(ja)_ — ★2026-09-14: **本来の直しを入れて 151 → 0 にした。** 上に「本来の直しは ``conftest.BANKS`` を全 in_sort へ広げること」と自分で書いておきながら、 ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい** ([[feedback_never_weaken_the_probe_to_get_green]])。 足したのは 11 sort: points(56) / signal(27) / video(16) / qimage(11) / cimage(9) / counts(8) / lightfield(8) / rgbimage(6) / matrix(4) / beatcube(4) / keypoints(2) = 151 op。形は推測ではなく ``backends_bridge._EMPTY_OF`` (12 sort すべての**正準の最小値**)と ``problems.py`` の入力生成器から取った。 これで **901 op すべてが 3 つの契約ゲートを実際に通る**。 **0 になった以上、このラチェットの役目は「増えたら落とす」に変わった。** 新しい in_sort を足した人は ``conftest.BANKS`` に探針も足すこと —— 足さないと その op たちは「登録されているのに一度も実行されない」状態に戻る。
-- **L98** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
+- **L53** _(ja)_ — ★2026-09-14 実測: 901 op 中 **151 本(16.8 %)** がこの状態で、空ループを 1 周 しただけで緑を返していた —— 「門が判定を計算した直後に捨てる」の親戚で、 こちらは **判定を一度も計算しない**。まず skip で見えるようにし、 ``test_probeless_ops_do_not_grow`` で本数を台帳に固定する(減る分には通る)。
+- **L57** _(ja)_ — ★2026-09-14: **本来の直しを入れて 151 → 0 にした。** 上に「本来の直しは ``conftest.BANKS`` を全 in_sort へ広げること」と自分で書いておきながら、 ラチェットで本数を凍結したまま 9 日が過ぎていた —— **台帳は免罪符になりやすい** ([[feedback_never_weaken_the_probe_to_get_green]])。 足したのは 11 sort: points(56) / signal(27) / video(16) / qimage(11) / cimage(9) / counts(8) / lightfield(8) / rgbimage(6) / matrix(4) / beatcube(4) / keypoints(2) = 151 op。形は推測ではなく ``backends_bridge._EMPTY_OF`` (12 sort すべての**正準の最小値**)と ``problems.py`` の入力生成器から取った。 これで **901 op すべてが 3 つの契約ゲートを実際に通る**。 **0 になった以上、このラチェットの役目は「増えたら落とす」に変わった。** 新しい in_sort を足した人は ``conftest.BANKS`` に探針も足すこと —— 足さないと その op たちは「登録されているのに一度も実行されない」状態に戻る。
+- **L78** _(ja)_ — ★2026-10-07: 契約電池で ``backend_safe.guard`` の fallback に落ちる op の台帳 ``{op: (分類, 落ちる入力名の集合, 理由)}``。 上の 3 契約(例外なし・有限・決定的)は ``op.fn`` を**guard 越しに**呼ぶ。guard は例外を 握って sort の既定値を返し、非有限の出力は置き換えてから返す —— だから op 本体が 例外を投げても NaN を出しても、assert の時点では「例外なし・有限・決定的」に見えていた (2026-10-07 実測: 936 op 中 46 op が電池のどこかで黙って fallback、うち 8 op は 疑わしい欠陥。``inputs_for`` が sort 既定の帯を返すようにしてさらに 10 op)。 今は guard の台帳(``backend_safe.mark`` / ``events_since``)を見て、ここに無い (op, 入力)で劣化が記録されたら赤にする。台帳の op が電池のどこでも落ちなくなったら それも赤(直ったら行を消す)。入力名の集合は「これ以上増えない」上限として使う。
+- **L204** _(ja)_ — ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。 (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate / tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
+- **L227** _(ja)_ — ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。 KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・ 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。 sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。 単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と 同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
+- **L268** _(ja)_ — ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
+- **L281** _(ja)_ — ★**非有限がその op の意味を運んでいる**ものは、この門の対象外。判断は ここで持たず `ops.NONFINITE_IS_MEANINGFUL` を**単一の正本として引く** (`test_backends_typed_liveness.KNOWN_NONFINITE_BY_CONTRACT` が同じ表の 写しで、一致は別の検査が見ている。3 つ目の写しを作らない)。 2026-09-14: 探針バンクを 6 sort 広げたとき、ここで `tb_mat_cond`(特異行列の 条件数 = inf)と `tb_geodesic_distances`(不達 = inf)が落ちた。一度 **探針から特異行列と非連結点群を外して緑にしかけた**が、それは誤り —— 台帳は「inf が正しい答え」と既に宣言しており、落ちていたのは**門がその 台帳を見ていない**ことだった。探針を削って緑にするのは欠陥を隠す行為で、 しかも同じ台帳の註に「自分の probe では特異行列を作っていなかったので tb_mat_cond を取りこぼした」という 2026-09-05 の教訓が書いてある。
+- **L309** _(ja)_ — ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。 上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
+- **L331** _(ja)_ — ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
+- **L389** _(ja)_ — ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/ keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。 形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は dtype も見る(backends_bridge._COMPLEX_SORTS)。
 
 ## `tests/test_op_discovery.py`
 
@@ -2080,14 +2112,19 @@
 - **L367** _(ja)_ — ★完全な係数列で呼ぶ(打ち切ると尾のエネルギーが分からず予言が下界になる)。 parametrisation は "index" —— stroke_resample_closed が**すでに弧長で** 打ち直しているので、ここで "arclength" を選ぶと op が内部でもう 1 度 打ち直して**別の輪郭の係数**になる(弧長の打ち直しは冪等でない)。
 - **L452** _(ja)_ — ★目標の濃さに合うペン幅を閉形式で解くと、偏りが桁で縮む
 
+## `tests/test_profileops.py`
+
+- **L206** _(ja)_ — ★2026-10-07: ``or True`` を外した。実測 none=-0.003086 < rigid=-0.001662 < 0.5*none=-0.001543
+
 ## `tests/test_public_reachability.py`
 
 - **L72** _(ja)_ — ★2026-09-14: この 13 本は 2026-09-05 から wheel に**入っていなかった**もので、 py-modules へ足した結果ここに現れた。演算子としては `unified._3DGS_OPS` が `_lazy_call(モジュール名, 関数名)` で**文字列から**登録しているので、利用者には `fullseye.vision.gsplat.<名前>` 経由で届く(2026-10-02 訂正: `fullseye.op.<名前>` は存在しない。 unified registry を公開経路として数えたら 17 モジュールが島でなくなり行を消した)。 ここに残る 1〜6 本は各モジュールのデモ入口(`render_*_gif` など)で、op ではなく**絵を作る側**。だから内部専用に置く。 —— 「配布から消えていた」を直すと「公開経路から見えない」が現れる、という 二段構えだった([[feedback_registered_only_gates_miss_unregistered]])。
 - **L81** _(ja)_ — ★2026-10-02: py-modules の数え漏れ(68 → 408 本)と facade 経路の数え忘れを直して初めて見えた 9 本。 内部の道具(CLI・ヘルプ書庫・n-ary の組立て・Studio の索引・標本データの取得・大画像の実行補助)、 api が別名で包むもの(mesh_decimate → mesh_decimate_preserving)、fs.<module>.<fn> でだけ届くもの (pipeline3d の合成 op 6 本 —— 2026-10-02 に fs.<名前> から出して行を消した)。 (watershed3d の 3 本は 2026-10-02 に台帳 opssegmentation の watershed3d へ載せて行を消した。)
 - **L94** _(ja)_ — ★2026-09-15: 33 行すべてが公開経路(fullseye.<名前> / .ledger / .op)に届くように なっており、2 番目の検査が「この表から行を消すこと」と 33 件を挙げた。 消した 33: transforms / mosaic / fit_transform / tools_geom / matrix / shapematch / objmodel3d / matching3d / matching / calib / caltab / calibration3d / contours_xld / contours_xld2 / image_channels / filters_freq / filters_flow / regions_setops / regions_gen / region_morph / morph_minkowski / segmentation / image_gen / image_paint / misc_vision / imgops_nary / scattered / inspection / pipeline3d / watershed3d / mesh_decimate / sample_data / scale。 表は空でも残す —— 「出すべきなのに出ていない」ものが次に現れたときの器。
 - **L116** _(ja)_ — ★2026-10-02: コメント行の ``[[feedback_...]]`` で非貪欲の ``\]`` が止まり、py-modules 407 本のうち 68 本しか数えていなかった(339 本が門に映らない)。コメントを剥いでから囲みを取る。
-- **L134** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
-- **L142** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
+- **L126** _(ja)_ — ★2026-10-07: optional 依存が無いと import できない出荷モジュール ``{module: 許す欠落依存}``。 以前は ``except Exception: continue`` で**どんな import 失敗も**母数から黙って外していた —— 壊れたモジュールは「不可視の関数」の数にも島の検査にも入らず、ラチェットはむしろ緑に寄る。 ここに無いモジュールの import 失敗、ここにあっても別の理由の失敗は赤。
+- **L160** _(ja)_ — ★2026-10-02: 4 つ目の公開経路 = 知覚 facade(fullseye.vision.<群>.<関数>、halcon_facade_map.json の "module.func" が実体)。HALCON 章の実装(segmentation.py 等)はここからだけ届いていた。 py-modules の数え漏れ(68 → 408 本)を直した途端に 35 モジュールが「見えない」と出たが、 その多くは facade 経由で届く。利用者が呼べる経路は全部数える。
+- **L168** _(ja)_ — ★2026-10-02: 5 つ目の公開経路 = unified registry(``fs.vision.<名前空間>.<op>``)。3DGS などの op は 文字列 "module.func" から ``_lazy_call`` で登録され、facade map にも台帳にも名前が出ない (sugar_mesh・tsdf_mesh・route_planning 等)。"module.func" 形の ``module`` 欄だけを数える (``fs.apply('x')`` のような呼び出し式は関数名ではない)。
 
 ## `tests/test_pxrd.py`
 
@@ -2141,6 +2178,10 @@
 - **L245** _(ja)_ — ★真値は導出した恒等式と**既存 op**。当てはめた数字を固定しない。 単位空間の MD² の平均はちょうど (n-1)/n で、教科書の「平均 1」を有限標本で 正確に言い直したもの。1.0 を固定する試験はどんな標本でも間違いになる。
 - **L318** _(ja)_ — ★この列の std は **0 ではない**。4.2 を 200 個並べただけで丸め屑が 1.3e-14 残る(実測)。`std == 0.0` で判定していた最初の版はここを取りこぼし、 その屑で割った距離が意味を失っていた。屑が在ることを門に書いておく —— 絶対判定に戻したらこの行が落ちる。
 
+## `tests/test_specularity.py`
+
+- **L790** _(ja)_ — ★2026-10-07: ここにあった ``max|a - 7b| < 7e-12 or True`` は ``or True`` で常に真だった。 実測 max|a - 7b| = 4.91(b は 1.4e-16)—— 画像だけを 7 倍してアルベドを据え置くのはモデル違反で、 残差は 7 倍の線形にはならない(主張そのものが誤り)。成り立つ向き = 「線形ではない」を測った値で固定する。 正しい線形性の形は下の c の検査。
+
 ## `tests/test_studio.py`
 
 - **L945** — ★`setDefaultFormat` 只对无参构造函数生效，而 Studio 的 `QSettings("Fullseye", "Studio")` 固定指向 registry —— 这个 fixture 什么都没隔离（2026-09-05，registry 里残留了 pytest 的路径）。用环境变量把本体一侧的入口 `studio._settings()` 指向 ini。
@@ -2174,7 +2215,8 @@
 
 ## `tests/test_volops.py`
 
-- **L566** _(ja)_ — ★これらは「HALCON がボクセル型を持たない」ことを理由に足した族なので、正しさの 根拠は**幾何が保証する真値**しかない。だから全部、真値の分かる形(球・立方体・ トーラス・既知 sigma の白色雑音)で検査する。 --------------------------------------------------------------------------- #
+- **L384** _(ja)_ — ★2026-10-07: ``or True`` を外した(実測: マスク外で vol と違う 7783 画素はすべて 0)
+- **L567** _(ja)_ — ★これらは「HALCON がボクセル型を持たない」ことを理由に足した族なので、正しさの 根拠は**幾何が保証する真値**しかない。だから全部、真値の分かる形(球・立方体・ トーラス・既知 sigma の白色雑音)で検査する。 --------------------------------------------------------------------------- #
 
 ## `tests/test_wave.py`
 
@@ -2380,11 +2422,14 @@
 
 ## `tools/regen_all.py`
 
-- **L49** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
-- **L58** — ★唯一位于 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找生成器，就永远找不到它。
-- **L61** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
-- **L85** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
-- **L183** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
+- **L43** _(ja)_ — ★最上流。`auto_specs_data.py` は backends_auto が registry を組む入力(wheel 同梱の data/auto_specs/*.json の複製)なので、registry を読む下流すべてより先に回す。 2026-10-07 まで `tools/` の外にあって鎖にも表にも無かった(差分は無かったが、 spec を足して回し忘れても誰も気づけなかった)。
+- **L54** _(ja)_ — ★展示館より**先**に回す —— 生成器は見出しに収蔵番号を出すので、 未発行の展示が 1 つでもあると BuildError で止まる。
+- **L63** — ★唯一位于 `tools/` 之外的生成物。正因如此才被漏掉——只要按 `tools/*.py` 去找生成器，就永远找不到它。
+- **L66** _(ja)_ — ★これも `tools/` の外。2026-09-20 まで鎖に無く、docs/OPERATORS.md が 885 op / 47 分類(2026-09-06 の値)のまま置き去りだった(GenSpark 第 53 報と ユーザー指摘)。生成器が鎖に無い生成物は、必ず古びる。
+- **L70** _(ja)_ — ★2026-10-07: 以下 3 本も `tools/` の外にあり、列挙が `tools/*.py` しか見ていなかったので 鎖にも表にも無かった。どれも registry とコミット済みの入力だけから決まり、2 回 回してバイト一致・各 3 秒(実測)。置き去りの実例: EXAMPLES.md は「67-op」、REFERENCES.md は「153 operators」、 OP_DISPOSITION.json は implemented 324(実際 405)のままだった。
+- **L98** — * ★而且危险：刚生成的文章用**相对路径**写图像。公开版是改成 `raw.githubusercontent.com` 绝对 URL 后的（Qiita 用相对路径不显示图像 —— memory `feedback_qiita_svg_path_and_cache`）。只跑生成器，那些绝对 URL 会回退 42 行。**要跑就一直跑到文章的公开步骤为止。** 排除项要**按文件名**写。用散文归纳（"wing*_gallery 的 10 本"）机器无法比对，下面的 `unclassified()` 就不工作了。
+- **L309** _(ja)_ — ★2026-10-07: 印も探す場所も狭すぎた。初版は ``open(..,"w")`` / ``write_text`` / ``savefig`` / ``json.dump`` だけを ``tools/*.py``(直下のみ)で探していたので、 * **repo 直下の生成器が 1 本も見えなかった** —— ``samples.py``(docs/EXAMPLES.md が 「67-op」のまま)、``references.py``(「153 operators」)、``dispositions.py``、 ``lib_coverage.py``(885 op のまま)、``honest_summary.py`` …。``imgevolve.py`` と ``catalog.py`` だけが手で足されていた —— 手で足す方式は、足し忘れを拾えない。 * **画像の書き手が 1 本も釣れなかった** —— PIL の ``.save``、imageio の ``mimwrite``、``write_bytes``、Fullseye 自身の ``write_video`` / ``save_gif`` …。 ``gen_banner`` の PNG は「731 2-D + 265 3-D」と書いたまま古びている。 * ``tools/impl2/`` など**下の階層**も見ていなかった(docs/op_*.json の台帳)。 印を広げれば門・デモ・ライブラリも釣れる。それは構わない —— **釣れたものは全部 上の表に理由つきで載せる**(印は緩めない)。
+- **L365** — ★位于 `tools/` 之外的生成物。只遍历 `tools/*.py` 永远发现不了它，实际上 `docs/OP_INDEX.json` 就一直被漏掉。
 
 ## `torch_lazy.py`
 

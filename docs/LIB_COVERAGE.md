@@ -12,7 +12,7 @@ registry references counted via the cross-library catalog.
 
 | library | ops |
 |---|---|
-| core (numpy/scipy) | 665 |
+| core (numpy/scipy) | 716 |
 | scikit-image | 86 |
 | OpenCV | 50 |
 | SimpleITK | 14 |
@@ -23,7 +23,7 @@ registry references counted via the cross-library catalog.
 | mahotas | 10 |
 | PyWavelets | 9 |
 | torch | 2 |
-| **total** | **885** |
+| **total** | **936** |
 
 ## Honest reading
 - Inventories are ALL public callables (cv2 ~717, skimage ~316); most are not

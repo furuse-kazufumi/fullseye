@@ -2,11 +2,11 @@
  "n_total": 2313,
  "n_dispositioned": 2313,
  "counts": {
-  "implemented": 324,
-  "out_of_scope_plumbing": 1150,
-  "needs_new_capability": 128,
-  "out_of_scope_model": 586,
-  "nary_multiinput": 125
+  "implemented": 405,
+  "out_of_scope_plumbing": 1129,
+  "needs_new_capability": 92,
+  "out_of_scope_model": 577,
+  "nary_multiinput": 110
  },
  "dispositions": {
   "abs_diff_image": {
@@ -178,8 +178,8 @@
    "arity": 1
   },
   "add_noise_white_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -772,8 +772,8 @@
    "arity": 0
   },
   "change_radial_distortion_contours_xld": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Calibration",
    "arity": 1
   },
@@ -796,8 +796,8 @@
    "arity": 1
   },
   "char_threshold": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 2
   },
@@ -1258,14 +1258,14 @@
    "arity": 0
   },
   "clip_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
   "clip_end_points_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -1276,8 +1276,8 @@
    "arity": 1
   },
   "clip_region_rel": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -1294,14 +1294,14 @@
    "arity": 1
   },
   "close_edges": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 2
   },
   "close_edges_length": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 2
   },
@@ -1372,8 +1372,8 @@
    "arity": 1
   },
   "closing": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 2
   },
@@ -1684,8 +1684,8 @@
    "arity": 2
   },
   "convol_gabor": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 2
   },
@@ -1696,8 +1696,8 @@
    "arity": 1
   },
   "cooc_feature_image": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 2
   },
@@ -2602,8 +2602,8 @@
    "arity": 1
   },
   "crop_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -3046,8 +3046,8 @@
    "arity": 0
   },
   "detect_edge_segments": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 1
   },
@@ -3388,14 +3388,14 @@
    "arity": 2
   },
   "dilation1": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 2
   },
   "dilation2": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 2
   },
@@ -3550,8 +3550,8 @@
    "arity": 1
   },
   "disparity_image_to_xyz": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -3574,20 +3574,20 @@
    "arity": 0
   },
   "dist_ellipse_contour_points_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
   "dist_ellipse_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
   "dist_rectangle2_contour_points_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -3640,8 +3640,8 @@
    "arity": 0
   },
   "distance_pc": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Tools",
    "arity": 1
   },
@@ -3670,8 +3670,8 @@
    "arity": 0
   },
   "distance_pr": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Tools",
    "arity": 1
   },
@@ -3694,8 +3694,8 @@
    "arity": 2
   },
   "distance_sc": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Tools",
    "arity": 1
   },
@@ -4258,8 +4258,8 @@
    "arity": 1
   },
   "erosion1": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 2
   },
@@ -4300,8 +4300,8 @@
    "arity": 0
   },
   "estimate_al_am": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -4312,26 +4312,26 @@
    "arity": 1
   },
   "estimate_sl_al_lr": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_sl_al_zc": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_tilt_lr": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
   "estimate_tilt_zc": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -4414,8 +4414,8 @@
    "arity": 1
   },
   "expand_region": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 2
   },
@@ -4468,8 +4468,8 @@
    "arity": 0
   },
   "fill_interlace": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
@@ -4660,8 +4660,8 @@
    "arity": 1
   },
   "fit_circle_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -4672,8 +4672,8 @@
    "arity": 0
   },
   "fit_ellipse_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -4690,20 +4690,20 @@
    "arity": 0
   },
   "fit_rectangle2_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
   "fit_surface_first_order": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 2
   },
   "fit_surface_second_order": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 2
   },
@@ -4774,8 +4774,8 @@
    "arity": 1
   },
   "full_domain": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 1
   },
@@ -4804,8 +4804,8 @@
    "arity": 1
   },
   "fuzzy_measure_pairs": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "1D Measuring",
    "arity": 1
   },
@@ -4870,14 +4870,14 @@
    "arity": 0
   },
   "gen_bandfilter": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 0
   },
   "gen_bandpass": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 0
   },
@@ -4918,14 +4918,14 @@
    "arity": 0
   },
   "gen_checker_region": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 0
   },
   "gen_circle": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -4936,8 +4936,8 @@
    "arity": 0
   },
   "gen_circle_sector": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 0
   },
@@ -4996,14 +4996,14 @@
    "arity": 0
   },
   "gen_derivative_filter": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 0
   },
   "gen_disc_se": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 0
   },
@@ -5020,8 +5020,8 @@
    "arity": 0
   },
   "gen_ellipse": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Graphics",
    "arity": 0
   },
@@ -5032,8 +5032,8 @@
    "arity": 0
   },
   "gen_ellipse_sector": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 0
   },
@@ -5050,8 +5050,8 @@
    "arity": 0
   },
   "gen_empty_region": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 0
   },
@@ -5086,14 +5086,14 @@
    "arity": 2
   },
   "gen_grid_region": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 0
   },
   "gen_highpass": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 0
   },
@@ -5146,8 +5146,8 @@
    "arity": 0
   },
   "gen_image_proto": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -5182,8 +5182,8 @@
    "arity": 1
   },
   "gen_lowpass": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 0
   },
@@ -5218,8 +5218,8 @@
    "arity": 0
   },
   "gen_parallel_contour_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -5290,8 +5290,8 @@
    "arity": 0
   },
   "gen_rectangle2": {
-   "status": "out_of_scope_model",
-   "reason": "needs a trained model / proprietary algorithm — generic approximation only, not parity",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Deep Learning",
    "arity": 0
   },
@@ -5812,8 +5812,8 @@
    "arity": 0
   },
   "get_domain": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -7156,8 +7156,8 @@
    "arity": 3
   },
   "histo_to_thresh": {
-   "status": "out_of_scope_plumbing",
-   "reason": "not a single-image algorithm operator",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 0
   },
@@ -7924,8 +7924,8 @@
    "arity": 0
   },
   "lowlands": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 1
   },
@@ -8020,8 +8020,8 @@
    "arity": 1
   },
   "mean_image_shape": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Filters",
    "arity": 2
   },
@@ -8194,8 +8194,8 @@
    "arity": 1
   },
   "moments_any_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -8296,8 +8296,8 @@
    "arity": 0
   },
   "move_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -8362,8 +8362,8 @@
    "arity": 1
   },
   "nonmax_suppression_dir": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 2
   },
@@ -8476,8 +8476,8 @@
    "arity": 0
   },
   "opening": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Morphology",
    "arity": 2
   },
@@ -8638,8 +8638,8 @@
    "arity": 1
   },
   "plane_deviation": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 2
   },
@@ -8650,8 +8650,8 @@
    "arity": 1
   },
   "plateaus_center": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Segmentation",
    "arity": 1
   },
@@ -8728,8 +8728,8 @@
    "arity": 1
   },
   "polar_trans_contour_xld_inv": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Transformations",
    "arity": 1
   },
@@ -9790,8 +9790,8 @@
    "arity": 0
   },
   "rectangle1_domain": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
@@ -9862,14 +9862,14 @@
    "arity": 1
   },
   "region_to_label": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 1
   },
   "region_to_mean": {
-   "status": "nary_multiinput",
-   "reason": "needs >=2 image/region inputs — outside the single-image thread (some in the n-ary tier)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Image",
    "arity": 2
   },
@@ -9904,8 +9904,8 @@
    "arity": 0
   },
   "regress_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -10408,8 +10408,8 @@
    "arity": 0
   },
   "select_xld_point": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11548,8 +11548,8 @@
    "arity": 1
   },
   "shade_height_field": {
-   "status": "out_of_scope_model",
-   "reason": "classical 3D/stereo/calibration algorithm — needs camera calibration and/or multiple views; outside the single-image thread (no HALCON-parity op yet)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "3D Reconstruction",
    "arity": 1
   },
@@ -11656,8 +11656,8 @@
    "arity": 1
   },
   "smallest_circle_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11668,8 +11668,8 @@
    "arity": 1
   },
   "smallest_rectangle1_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11680,8 +11680,8 @@
    "arity": 1
   },
   "smallest_rectangle2_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11752,8 +11752,8 @@
    "arity": 0
   },
   "sort_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11776,8 +11776,8 @@
    "arity": 2
   },
   "split_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11788,8 +11788,8 @@
    "arity": 1
   },
   "split_skeleton_region": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
@@ -11920,8 +11920,8 @@
    "arity": 1
   },
   "test_closed_xld": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -11938,20 +11938,20 @@
    "arity": 2
   },
   "test_region_point": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
   "test_region_points": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "Regions",
    "arity": 1
   },
   "test_self_intersection_xld": {
-   "status": "out_of_scope_plumbing",
-   "reason": "HDevelop language / IO / handle / getter / tuple / domain plumbing — not an image algorithm",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
@@ -13192,8 +13192,8 @@
    "arity": 2
   },
   "union_adjacent_contours_xld": {
-   "status": "needs_new_capability",
-   "reason": "algorithmic but needs a new shape/sort not yet in the vocabulary (honest backlog)",
+   "status": "implemented",
+   "reason": "genuine implementation (functionally gated)",
    "chapter": "XLD",
    "arity": 1
   },
