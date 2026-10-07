@@ -806,6 +806,8 @@ from fullseye.golden import (  # noqa: E402,F401
 from fullseye.fixture import (  # noqa: E402,F401
     inspection_fixture, spec_margins,
 )
+# 意味で op を引く(6 言語の要約・BM25、索引は fullseye/data/OP_SEARCH.json —— RAG の入口、2026-10-07)。
+from fullseye.opsearch import search_ops  # noqa: E402,F401
 
 __all__ = [
     "op", "ledger",
@@ -1185,6 +1187,7 @@ __all__ = [
     "glyph_edge_transition_width", "glyph_replace", "glyph_split_cells",
     "glyph_correct_spec", "glyph_find_plate", "glyph_rewrite_line",
     "glyph_find_text_lines", "glyph_make_spec",
+    "search_ops",
     "JSON_SORTS", "to_jsonable", "to_json", "from_jsonable", "from_json",
     "save_json", "load_json", "to_json_lines", "from_json_lines",
     "is_envelope", "as_value", "apply_json",

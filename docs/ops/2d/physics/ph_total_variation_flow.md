@@ -4,7 +4,7 @@ dim: 2d
 category: physics
 in: image
 out: image
-examples: [gallery2d_physics_alife_3d]
+examples: [find_ops_by_meaning, gallery2d_physics_alife_3d]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -66,6 +66,7 @@ ph_total_variation_flow 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_physics_alife_3d](../../../../examples/gallery2d_physics_alife_3d.py) — `py -3.11 examples/gallery2d_physics_alife_3d.py`
 
 ## 型が繋がる次の op(`image` を入力に取れる)

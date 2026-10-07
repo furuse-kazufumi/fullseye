@@ -66,6 +66,7 @@ tb_temporal_bilateral 0.50 0.50
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
 次の例は元の台帳 op `temporal_bilateral` を呼ぶもの。この橋渡し op は同じ実装を `fn(v, a, b)` 規約に合わせただけなので、挙動はそのまま当てはまる(呼び出し形だけ違う)。
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [video_streaming](../../../../examples/video_streaming.py) — `py -3.11 examples/video_streaming.py`
 
 ## 型が繋がる次の op(`video` を入力に取れる)

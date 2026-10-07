@@ -5,7 +5,7 @@ category: segmentation
 in: image
 out: region
 halcon: binary_threshold
-examples: [ct_inspection, degenerate_inputs, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
+examples: [ct_inspection, degenerate_inputs, find_ops_by_meaning, gallery2d_segmentation, genspark_external_review, line_handshake, poc_bone_trabecular_thickness, poc_colocalization_crosstalk, poc_dimensional_inspection, poc_document_scan, poc_fresco_craquelure, poc_matrix_code_reading, poc_metal_grain_size, poc_real_coin_metrology, poc_segmentation_gauntlet, poc_solar_el_inspection, poc_vegetation_cover, quickstart, segment_and_classify, threshold_family_agreement, typed_results_json]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ otsu 0.50 0.50
 
 - [ct_inspection](../../../../examples/ct_inspection.py) — `py -3.11 examples/ct_inspection.py`
 - [degenerate_inputs](../../../../examples/degenerate_inputs.py) — `py -3.11 examples/degenerate_inputs.py`
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_segmentation](../../../../examples/gallery2d_segmentation.py) — `py -3.11 examples/gallery2d_segmentation.py`
 - [genspark_external_review](../../../../examples/genspark_external_review.py) — `py -3.11 examples/genspark_external_review.py`
 - [line_handshake](../../../../examples/line_handshake.py) — `py -3.11 examples/line_handshake.py`

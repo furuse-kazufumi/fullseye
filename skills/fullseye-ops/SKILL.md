@@ -63,9 +63,25 @@ ops by word overlap, and clusters with no matching ops say so. Next to it,
 last activity, verified against the project's API or site) and states where Fullseye
 overlaps, where it stops, and which file format or process boundary connects them.
 
+## Step 1: search by meaning (any language)
+
+Before grepping, ask the search index — it matches **what you want to do** against every op
+summary in six languages (ja / en / zh / tw / ko / de) plus names, HALCON names and types:
+
+```
+fullseye-rag search "remove noise" -k 8            # shell (pip install is enough)
+python -c "import fullseye; print(fullseye.search_ops('边缘检测', k=8))"
+```
+
+MCP clients use the `fullseye_find_ops` tool. Each row gives the op, its family, in/out sorts,
+the summary in the query's language and the note path — open that note next. The note bodies are
+Japanese, so grepping them for an English/German/Chinese/Korean word often finds nothing; this
+search does. It does not know synonyms: if the hits are thin, rephrase or use English, then fall
+back to the grep recipes below.
+
 ## Retrieval recipes
 
-- **Start at `docs/ops/INDEX.md`.** It names every family with its size; pick the
+- **Then `docs/ops/INDEX.md`.** It names every family with its size; pick the
   family before you grep. Choosing a family from memory is how the differentiators
   get missed.
 - Find an op by concept: `Grep docs/ops -i "<keyword>"` — grep the **whole** of

@@ -20,6 +20,28 @@ in the Fullseye repository).
 
 ---
 
+## Start here: find ops by what you want to do (works with every tier)
+
+```
+fullseye-rag search "remove noise"          # command (works with just pip install fullseye)
+fullseye-rag search "ノイズ除去" -k 5 --lang en
+```
+```python
+import fullseye
+fullseye.search_ops("edge detection", k=5)   # Python; over MCP use fullseye_find_ops
+```
+
+Every op summary is indexed in **six languages** (the Japanese original plus English, Simplified and
+Traditional Chinese, Korean and German translations) together with the op name, HALCON name and in/out
+types; results come back ranked, with the summary in your query's language and the path of the note.
+The note bodies are Japanese, so a grep for "Rauschen", "降噪" or "잡음" finds nothing — this search finds
+ops in your own language. No embeddings and no external service (BM25, standard library only).
+**It does not know synonyms**: if the hits look thin, rephrase or try English. If you already know the
+name, MCP `fullseye_search_ops` (substring match) is faster. Runnable example:
+`py -3.11 examples/find_ops_by_meaning.py`.
+
+---
+
 ## Tier 0: just open the repository (zero steps)
 
 Open a checkout of the Fullseye repository in Claude Code and you can search and reference

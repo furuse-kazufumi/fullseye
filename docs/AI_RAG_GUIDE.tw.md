@@ -11,6 +11,25 @@ Fullseye 建議的用法是「**作為 AI 程式設計助理的知識庫（RAG�
 
 ---
 
+## 從這裡開始：用「想做的事」查找 op(適用於所有 Tier)
+
+```
+fullseye-rag search "雜訊去除" --lang tw      # 命令(只需 pip install fullseye)
+fullseye-rag search "edge detection" -k 5 --lang tw
+```
+```python
+import fullseye
+fullseye.search_ops("邊緣", k=5, lang="tw")    # Python；MCP 中為 fullseye_find_ops
+```
+
+所有 op 的摘要都以**六種語言**(日文原文 + 英文、簡體中文、繁體中文、韓文、德文譯文)建立索引，
+並與 op 名稱、HALCON 名稱、輸入/輸出型別一起比對，依排名回傳「摘要 + 筆記位置」。繁體與簡體無法從
+文字種類區分，請以 `--lang tw` 指定。筆記本文為日文，用 grep 搜尋母語詞彙常得到 0 筆，而此搜尋可以用
+母語查找。不使用嵌入向量或外部服務(BM25，僅標準函式庫)。**不辨識同義詞**(摘要寫「偵測」時，
+「檢測」的命中會較弱)：命中較少時請換個說法或改用英文。可執行範例：`py -3.11 examples/find_ops_by_meaning.py`。
+
+---
+
 ## Tier 0：只要開啟儲存庫（零步驟）
 
 在 Claude Code 中開啟 Fullseye 儲存庫的 checkout，即可直接檢索並參照 `docs/ops/INDEX.md` 與各 op 筆記。語料庫屬於儲存庫內容（wheel 中不包含），因此若只做了 pip 安裝，也請一併 clone 儲存庫。

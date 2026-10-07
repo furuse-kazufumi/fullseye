@@ -5,7 +5,7 @@ category: region
 in: region
 out: region
 halcon: remove_noise_region
-examples: [gallery2d_region]
+examples: [find_ops_by_meaning, gallery2d_region]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -64,6 +64,7 @@ remove_noise_region 0.50 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_region](../../../../examples/gallery2d_region.py) — `py -3.11 examples/gallery2d_region.py`
 
 ## 型が繋がる次の op(`region` を入力に取れる)

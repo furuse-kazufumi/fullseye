@@ -4,7 +4,7 @@ dim: 2d
 category: smoothing
 in: image
 out: image
-examples: [gallery2d_smoothing_rank, poc_prnu_camera_fingerprint]
+examples: [find_ops_by_meaning, gallery2d_smoothing_rank, poc_prnu_camera_fingerprint]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -57,6 +57,7 @@ sk_wavelet 0.35 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_smoothing_rank](../../../../examples/gallery2d_smoothing_rank.py) — `py -3.11 examples/gallery2d_smoothing_rank.py`
 - [poc_prnu_camera_fingerprint](../../../../examples/poc_prnu_camera_fingerprint.py) — `py -3.11 examples/poc_prnu_camera_fingerprint.py`
 

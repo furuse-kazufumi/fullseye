@@ -11,6 +11,27 @@ Es werden drei Einführungsstufen bereitgestellt. **Tier 0/1 haben keinerlei ext
 
 ---
 
+## Hier anfangen: Ops über das finden, was Sie tun wollen (für jede Stufe)
+
+```
+fullseye-rag search "Rauschen entfernen"     # Befehl (läuft schon mit pip install fullseye)
+fullseye-rag search "edge detection" -k 5 --lang de
+```
+```python
+import fullseye
+fullseye.search_ops("Kantenerkennung", k=5)  # Python; über MCP: fullseye_find_ops
+```
+
+Die Kurzbeschreibung jedes Ops ist in **sechs Sprachen** indiziert (japanisches Original plus englische,
+chinesische (vereinfacht/traditionell), koreanische und deutsche Übersetzung) und wird zusammen mit
+Op-Name, HALCON-Name und Ein-/Ausgabetyp abgeglichen; zurück kommt eine Rangliste mit der Beschreibung in
+der Sprache der Anfrage und dem Pfad der Notiz. Die Notizen selbst sind japanisch — ein grep nach
+„Rauschen" findet 0 Treffer, diese Suche findet Ops in Ihrer Sprache. Keine Embeddings, kein externer
+Dienst (BM25, nur Standardbibliothek). **Synonyme werden nicht erkannt**: bei dünnen Treffern anders
+formulieren oder Englisch versuchen. Ausführbares Beispiel: `py -3.11 examples/find_ops_by_meaning.py`.
+
+---
+
 ## Tier 0: Einfach das Repository öffnen (null Schritte)
 
 Öffnet man einen Checkout des Fullseye-Repositorys in Claude Code, lassen sich `docs/ops/INDEX.md` und die Pro-Op-Notizen direkt durchsuchen und referenzieren. Der Korpus ist Repository-Inhalt (nicht im Wheel enthalten) — wer also nur per pip installiert hat, sollte zusätzlich das Repository klonen.

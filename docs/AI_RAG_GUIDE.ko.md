@@ -11,6 +11,25 @@ Fullseye의 권장 운용 방식은 "**AI 코딩 어시스턴트의 지식 베�
 
 ---
 
+## 여기서 시작: 하고 싶은 일을 말로 써서 op 찾기(모든 Tier에서 사용 가능)
+
+```
+fullseye-rag search "노이즈 제거"             # 명령(pip install fullseye 만으로 동작)
+fullseye-rag search "edge detection" -k 5 --lang ko
+```
+```python
+import fullseye
+fullseye.search_ops("에지 검출", k=5)          # Python. MCP 에서는 fullseye_find_ops
+```
+
+모든 op 요약을 **6개 언어**(일본어 원문 + 영어·중국어 간체/번체·한국어·독일어 번역)로 색인하고,
+op 이름·HALCON 이름·입출력 타입과 함께 대조해 순위대로 "요약(질의 언어) + 노트 위치"를 돌려줍니다.
+노트 본문은 일본어라 grep 으로 "잡음"을 찾으면 0건이지만, 이 검색으로는 모국어로 찾을 수 있습니다.
+임베딩이나 외부 서비스는 쓰지 않습니다(BM25, 표준 라이브러리만). **동의어는 인식하지 않으므로**
+결과가 적으면 다른 표현이나 영어로 다시 찾으세요. 실행 예: `py -3.11 examples/find_ops_by_meaning.py`.
+
+---
+
 ## Tier 0: 저장소를 여는 것만으로(단계 없음)
 
 Fullseye 저장소의 checkout을 Claude Code에서 열면 `docs/ops/INDEX.md`와 개별 op 노트를 그대로 검색·참조할 수 있습니다. 코퍼스는 저장소 콘텐츠이므로(wheel에는 포함되지 않음), pip 설치만 한 경우에는 저장소도 함께 clone하십시오.

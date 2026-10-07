@@ -1284,6 +1284,12 @@ EXAMPLES = [
      "name": "imgevolve quickstart — 全ワークフローを 1 ファイルで",
      "summary": "レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→"
                 "codegen + 差分テスト(約 1.5 分、repo root から実行)。"},
+    # -- RAG の入口: 意味で op を引く(2026-10-07) ----------------------------------- #
+    {"id": "find_ops_by_meaning", "task": "workflow", "data": "synthetic",
+     "name": "やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)",
+     "summary": "fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」"
+                "と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで"
+                "段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。"},
     # -- machine-vision layout / optics ------------------------------------------ #
     {"id": "vision_layout_from_catalog", "task": "optics_layout", "data": "synthetic",
      "name": "型番から検査セルを組み、撮る前に成立するかを数字で決める",

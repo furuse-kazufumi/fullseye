@@ -11,6 +11,25 @@ Fullseye 的推荐用法是"**作为 AI 编码助手的知识库（RAG）使用*
 
 ---
 
+## 从这里开始：用"想做的事"查找 op(适用于所有 Tier)
+
+```
+fullseye-rag search "去噪"                   # 命令(只需 pip install fullseye)
+fullseye-rag search "edge detection" -k 5 --lang zh
+```
+```python
+import fullseye
+fullseye.search_ops("边缘检测", k=5)          # Python；MCP 中为 fullseye_find_ops
+```
+
+所有 op 的摘要都以**六种语言**(日语原文 + 英语、简体中文、繁体中文、韩语、德语译文)建立了索引，
+并与 op 名、HALCON 名、输入/输出类型一起匹配，按排名返回"摘要(查询所用语言)+ 笔记位置"。
+笔记正文为日语，用 grep 搜"降噪"会得到 0 条，而此搜索可以用母语查找。不使用嵌入向量或外部服务
+(BM25，仅标准库)。**不识别同义词**：命中较少时请换个说法或改用英语。已知名称时，MCP 的
+`fullseye_search_ops`(部分匹配)更快。可运行示例：`py -3.11 examples/find_ops_by_meaning.py`。
+
+---
+
 ## Tier 0：只需打开仓库（零步骤）
 
 在 Claude Code 中打开 Fullseye 仓库的 checkout，即可直接检索和参照 `docs/ops/INDEX.md` 以及各 op 笔记。语料库属于仓库内容（wheel 中不包含），因此若只做了 pip 安装，请同时 clone 仓库。

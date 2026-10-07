@@ -73,6 +73,27 @@ TOOLS: dict[str, dict] = {
             "additionalProperties": False,
         },
     },
+    "fullseye_find_ops": {
+        "description": (
+            "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch)で op を探す。"
+            "op の要約 6 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約とノートの場所を返す。"
+            "名前を知っているなら fullseye_search_ops(部分一致)の方が速い。同義語は拾わないので、"
+            "0 件なら別の言い方・英語で試す。"),
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {"type": "string", "minLength": 1, "maxLength": 200,
+                          "description": "やりたいこと(例: ノイズ除去 / remove noise / 边缘检测)"},
+                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de"],
+                         "description": "要約を返す言語(既定は問い合わせから推す)"},
+                "in_sort": {"type": "string", "description": _SORT_DESC},
+                "out_sort": {"type": "string", "description": _SORT_DESC},
+                "limit": {"type": "integer", "minimum": 1, "maximum": MAX_SEARCH_LIMIT},
+            },
+            "required": ["query"],
+            "additionalProperties": False,
+        },
+    },
     "fullseye_op_help": {
         "description": (
             "op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当・関連ガイド)と、"
@@ -932,6 +953,14 @@ def call_tool(name: str, args: Any, cat: Catalog, store: HandleStore | None = No
         r = cat.search(a.get("query", ""), in_sort=a.get("in_sort"), out_sort=a.get("out_sort"),
                        source=a.get("source"), limit=a.get("limit", 20))
         return tool_result(_search_text(r), r, max_structured_bytes=max_structured_bytes)
+    if name == "fullseye_find_ops":
+        from fullseye.opsearch import _format, search_ops
+        try:
+            r = search_ops(a["query"], a.get("limit", 10), lang=a.get("lang"),
+                           in_sort=a.get("in_sort"), out_sort=a.get("out_sort"))
+        except ValueError as exc:                          # 空の問い合わせ等は引数違反(-32602)
+            raise ArgError(str(exc)) from exc
+        return tool_result(_format(r), r, max_structured_bytes=max_structured_bytes)
     if name == "fullseye_op_help":
         h = cat.help(a["name"])
         if not h["found"]:

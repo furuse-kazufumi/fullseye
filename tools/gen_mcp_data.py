@@ -13,6 +13,9 @@
   ``api.knob_summary`` / ``list_ops`` の ``knobs`` 欄が wheel から読む(2026-09-20)
   読む項目(``fullseye.mcp.catalog.NOTE_KEYS``: op / dim / category / in / out / halcon)
   + ノートの相対パス。**本文は入れない**(140 MB。本文は同梱の Studio help HTML が代わる)。
+* ``fullseye/data/OP_SEARCH.json`` —— 意味で op を引く検索(``fullseye.opsearch``)の索引: op ごとに名前・族・分類・
+  入出力の型・HALCON 名・ノートの相対パスと、要約の 6 言語(ja 原文 = ``tools/opdocs.py`` の要約、5 訳 =
+  ``docs/i18n/op_summary.json`` のうち原文の指紋が今の要約と一致するもの)。古い訳は入れない(2026-10-07)。
 
 なぜ複製か: ``docs/`` はパッケージの外にあり、flat layout の wheel には乗らない。
 0.1.11 の MCP は ``docs/OP_INDEX.json`` をリポジトリ相対で読んでいたので
@@ -32,6 +35,7 @@ if _ROOT not in sys.path:
     sys.path.insert(0, _ROOT)
 
 from fullseye.mcp.catalog import NOTE_KEYS, OP_INDEX, OP_KNOB, OPS_DOCS, PKG_INDEX, PKG_KNOBS, PKG_NOTES, scan_notes  # noqa: E402
+from fullseye.opsearch import PKG_SEARCH  # noqa: E402
 
 DATA_DIR = os.path.join(_ROOT, "fullseye", "data")
 
@@ -67,6 +71,51 @@ def build_knobs() -> list:
     return rows
 
 
+def build_search() -> dict:
+    """``fullseye.opsearch`` の索引。要約は opdocs と同じ切り方(``summary_and_rest``)、訳は指紋が合うものだけ。"""
+    tools_dir = os.path.join(_ROOT, "tools")
+    if tools_dir not in sys.path:
+        sys.path.insert(0, tools_dir)
+    import opdocs as OD
+    from fullseye.opsearch import LANGS
+    recs = OD._records()[0]
+    si = OD.summary_i18n()
+    notes = scan_notes(OPS_DOCS)
+    rows, n_tr = [], {lang: 0 for lang in LANGS}
+    for r in recs:
+        src = (OD.summary_and_rest(r.get("doc"))[0] or "").strip()
+        summ = {}
+        if src:
+            summ["ja"] = src
+            e = si.get("%s/%s" % (r["dim"], r["name"])) or {}
+            if e.get("fp") == OD.fingerprint(src):
+                for lang in LANGS[1:]:
+                    if e.get(lang):
+                        summ[lang] = e[lang]
+        for lang in summ:
+            n_tr[lang] += 1
+        path = None
+        for fm in notes.get(r["name"]) or ():
+            if fm.get("dim") == r["dim"]:
+                path = fm["path"]
+                break
+        row = {"n": r["name"], "d": r["dim"], "c": r.get("category"), "i": r.get("in"), "o": r.get("out"),
+               "h": r.get("halcon") or None, "p": path, "s": summ}
+        rows.append({k: v for k, v in row.items() if v not in (None, "", {})})
+    if not rows:
+        raise SystemExit("opdocs の記録が 0 件 —— 検索索引を書かない")
+    rows.sort(key=lambda x: (x["d"], x["n"]))
+    return {"generated_by": "tools/gen_mcp_data.py", "languages": list(LANGS), "n_ops": len(rows),
+            "summaries_per_language": n_tr, "ops": rows}
+
+
+def _dump_compact(obj) -> str:
+    # 1 op 1 行(差分が読める)で、行の中は詰める —— indent=1 だと 6 言語ぶんで wheel が太る
+    head = {k: v for k, v in obj.items() if k != "ops"}
+    lines = [json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in obj["ops"]]
+    return json.dumps(head, ensure_ascii=False)[:-1] + ', "ops": [\n' + ",\n".join(lines) + "\n]}\n"
+
+
 def _dump(obj) -> str:
     return json.dumps(obj, ensure_ascii=False, indent=1) + "\n"
 
@@ -76,7 +125,7 @@ def main(argv=None) -> int:
     ap.add_argument("--check", action="store_true", help="書かずに一致を確かめる(不一致で exit 1)")
     a = ap.parse_args(argv)
     targets = {PKG_INDEX: _dump(build_index()), PKG_NOTES: _dump(build_notes()),
-               PKG_KNOBS: _dump(build_knobs())}
+               PKG_KNOBS: _dump(build_knobs()), PKG_SEARCH: _dump_compact(build_search())}
     os.makedirs(DATA_DIR, exist_ok=True)
     rc = 0
     for name, text in targets.items():

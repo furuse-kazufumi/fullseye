@@ -13,7 +13,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 
 ## Worked examples(用途 → 使う op の実例=推奨組合せの手本)
 
-### 2-D 画像/信号/幾何(329 例)
+### 2-D 画像/信号/幾何(330 例)
 
 **morphing**
 - **2人の顔の中間を作る(対応点駆動モーフ)** — 作業者が与えた対応点(目・鼻・口)で特徴を中間形状へワープしてからディゾルブし、単純αブレンドの二重像(ゴースト)を避けて『本物の中間顔』を作る。区分アフィン/TPS。 `py -3.11 examples/image_morph.py`
@@ -206,6 +206,7 @@ Fullseye は説明可能な古典/幾何ビジョンの Physical-AI ツールキ
 - **op の返り値(型付き)を JSON に出して bit そのままで戻す** — image / region / points / contour / feature / matrix / table を sort ごとの一つの JSON 形に。浮動小数は base64 の float64 で往復 bit 一致、region は run-length、非有限値は封筒に印を立てて運ぶ。save_json / load_json でファイル一往復、to_json_lines / from_json_lines で JSONL 台帳。★match は慣例が 2 つ混在するので橋を作らず断る(fail-closed)。 `py -3.11 examples/typed_results_json.py`
 - **精度ユニオン型ストレージ(PrecisionUnion)を N-D の実データ様式で使う** — ラベルボリューム(無損失)と深度ボリューム(atol 量子化)をタイル別最小ビット深さで保持し、メモリ比・save/load のファイル比・遅延アフィン連鎖の一致を数値で確かめる。高エントロピー画像では勝たないことも同じ場で示す(honest な境界)。 `py -3.11 examples/precision_union_volume.py`
 - **imgevolve quickstart — 全ワークフローを 1 ファイルで** — レジストリ→型付き手組みパイプライン→ゲノム復号→タスク採点→進化ドライバ→codegen + 差分テスト(約 1.5 分、repo root から実行)。 `py -3.11 examples/quickstart.py`
+- **やりたいことを 6 言語で書いて同じ op にたどり着く(RAG の入口)** — fullseye.search_ops で「エッジ検出 / edge detection / 边缘检测 / 에지 검출 / Kantenerkennung / 邊緣」と「ノイズ除去」を 6 言語で引き、全言語で意味の合う op が上位 8 件に入ること、返った op を呼んで段差で応答が最大・雑音の標準偏差が下がることを確かめる(grep では 0 件の言葉でも引ける)。 `py -3.11 examples/find_ops_by_meaning.py`
 
 **measurement**
 - **レンズに微分を計算させる(4f 光学プロセッサ)** — 2 枚のレンズの間にフィルタを 1 枚置くと、光が空間微分を実行する —— GPU も 畳み込みカーネルも要らず、光が通り抜ける時間で終わる。真値は全部**閉形式か整数**: 恒等フィルタなら出力は入力の 180 度回転(2 枚のレンズがそれぞれ前向きの フーリエ変換を行うため)、(i2πf)^n なら n 階微分でガウシアンの閉形式と一致、渦位相板の**巻き数は整数**。外部の参照値を一つも使わない。--morph で 分数階微分 0→2 の連続変化を動画にする(静止画では別々の絵に見えるものが 1 本の族であることが目で分かる)。★偶数長のナイキストのビンを 0 にしないと 片側位相が奇対称を厳密に満たさないことも、桁で見せる。 `py -3.11 examples/optics_four_f_processor.py`
@@ -1325,9 +1326,9 @@ _計 936 ops / 48 categories。_
 - `it_crop_domain` (halcon: `crop_domain`) `image → image` · 例: `gallery2d_gray_arith`
 
 ### edges(58)
-- `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `gallery2d_edges`
-- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`
-- `roberts_mag` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`
+- `sobel_mag` (halcon: `sobel_amp`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `prewitt_mag` (halcon: `prewitt_amp`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
+- `roberts_mag` (halcon: `roberts`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
 - `dog` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
 - `edge_transition_width` `image → image` · 例: `gallery2d_edges`
 - `grad_dir` `image → image` · 例: `gallery2d_edges`
@@ -1346,11 +1347,11 @@ _計 936 ops / 48 categories。_
 - `derivate_gauss` (halcon: `derivate_gauss`) `image → image` · 例: `gallery2d_edges`
 - `laplace_of_gauss` (halcon: `laplace_of_gauss`) `image → image` · 例: `gallery2d_edges`, `poc_real_defect_floor`
 - `diff_of_gauss` (halcon: `diff_of_gauss`) `image → image` · 例: `gallery2d_edges`
-- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `degenerate_inputs`, `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
+- `sobel_amp` (halcon: `sobel_amp`) `image → image` · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_edges`, `genspark_external_review`, `poc_fiber_orientation`, `poc_focus_stacking`, `poc_real_coin_metrology`, `poc_white_balance`
 - `sobel_dir` (halcon: `sobel_dir`) `image → image` · 例: `gallery2d_edges`, `poc_document_scan`, `poc_fiber_orientation`
 - `prewitt_amp` (halcon: `prewitt_amp`) `image → image` · 例: `gallery2d_edges`, `poc_white_balance`
 - `prewitt_dir` (halcon: `prewitt_dir`) `image → image` · 例: `gallery2d_edges`
-- `roberts` (halcon: `roberts`) `image → image` · 例: `gallery2d_edges`, `poc_white_balance`
+- `roberts` (halcon: `roberts`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`, `poc_white_balance`
 - `kirsch_amp` (halcon: `kirsch_amp`) `image → image` · 例: `gallery2d_edges`
 - `kirsch_dir` (halcon: `kirsch_dir`) `image → image` · 例: `gallery2d_edges`
 - `frei_amp` (halcon: `frei_amp`) `image → image` · 例: `gallery2d_edges`
@@ -1364,9 +1365,9 @@ _計 936 ops / 48 categories。_
 - `edges_color` (halcon: `edges_color`) `color → image` · 例: `gallery2d_edges`
 - `xsk_hessian_eig` `image → image` · 例: `gallery2d_edges`
 - `xpil_contour` `image → image` · 例: `gallery2d_edges`
-- `xpil_find_edges` `image → image` · 例: `gallery2d_edges`
+- `xpil_find_edges` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
 - `xsp_morph_laplace` `image → image` · 例: `gallery2d_edges`
-- `xsp_gauss_grad_mag` `image → image` · 例: `gallery2d_edges`
+- `xsp_gauss_grad_mag` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_edges`
 - `xsk2_corner_kr` `image → image` · 例: `gallery2d_edges`
 - `xsk2_inv_gauss_grad` `image → image` · 例: `gallery2d_edges`
 - `xwt_hf_reconstruct` `image → image` · 例: `gallery2d_edges`
@@ -1617,7 +1618,7 @@ _計 936 ops / 48 categories。_
 - `hx_fill_interlace` (halcon: `fill_interlace`) `image → image` · 例: `gallery2d_halcon_ext`
 - `hx_shade_height_field` (halcon: `shade_height_field`) `image → image` · 例: `gallery2d_halcon_ext`
 - `hx_plane_deviation` (halcon: `plane_deviation`) `image → image` · 例: `gallery2d_halcon_ext`
-- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` · 例: `gallery2d_halcon_ext`
+- `hx_detect_edge_segments` (halcon: `detect_edge_segments`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_halcon_ext`
 - `hx_gen_image_proto` (halcon: `gen_image_proto`) `image → image` · 例: `gallery2d_halcon_ext`
 - `hx_get_domain` (halcon: `get_domain`) `image → region` · 例: `gallery2d_halcon_ext`
 - `hx_region_to_label` (halcon: `region_to_label`) `image → image` · 例: `gallery2d_halcon_ext`
@@ -1715,7 +1716,7 @@ _計 936 ops / 48 categories。_
 - `gray_bothat` (halcon: `gray_bothat`) `image → image` · 例: `gallery2d_morphology`, `poc_metal_grain_size`
 - `gray_erosion_shape` (halcon: `gray_erosion_shape`) `image → image` · 例: `gallery2d_morphology`
 - `gray_dilation_shape` (halcon: `gray_dilation_shape`) `image → image` · 例: `gallery2d_morphology`
-- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `gallery2d_morphology`, `poc_weld_radiograph_porosity`
+- `gray_opening_rect` (halcon: `gray_opening_rect`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_morphology`, `poc_weld_radiograph_porosity`
 - `gray_closing_rect` (halcon: `gray_closing_rect`) `image → image` · 例: `gallery2d_morphology`
 - `xsk2_reconstruction` `image → image` · 例: `gallery2d_morphology`
 - `xsk2_diameter_opening` `image → image` · 例: `gallery2d_morphology`
@@ -1737,7 +1738,7 @@ _計 936 ops / 48 categories。_
 - `ph_reaction_diffusion` `image → image` · 例: `gallery2d_physics_alife_3d`
 - `ph_heat_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
 - `ph_mean_curvature_motion` `image → image` · 例: `gallery2d_physics_alife_3d`
-- `ph_total_variation_flow` `image → image` · 例: `gallery2d_physics_alife_3d`
+- `ph_total_variation_flow` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_physics_alife_3d`
 
 ### rank(23)
 - `median` (halcon: `median_image`) `image → image` · 例: `astro_stacking`, `blas_thread_budget`, `ct_reconstruction`, `gallery2d_smoothing_rank`, `genspark_external_review`, `lightfield_depth`, `photon_timeresolved`, `piv_flow_from_particles`, `poc_am_thermal_to_ct`, `poc_astro_photometry`, `poc_compound_eye`, `poc_dtof_ranging`, `poc_geodetic_height_frames`, `poc_lidar_terrain_change`, `poc_nuclei_ploidy`, `poc_pv_thermal_survey`, `poc_river_surface_velocity`, `poc_tacscalib_sphere_lut`, `poc_web_roll_periodicity`, `poc_weld_bead_profile`, `quickstart`, `specular_photometric`
@@ -1745,8 +1746,8 @@ _計 936 ops / 48 categories。_
 - `max_filter` (halcon: `gray_dilation_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `percentile` (halcon: `rank_image`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_colormap_readability`
 - `sk_median_disk` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_median` (halcon: `median_image`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `median_image` (halcon: `median_image`) `image → image` · 例: `degenerate_inputs`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
+- `cv_median` (halcon: `median_image`) `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
+- `median_image` (halcon: `median_image`) `image → image` · 例: `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `genspark_external_review`, `poc_prnu_camera_fingerprint`
 - `median_rect` (halcon: `median_rect`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_tree_ring_dendro`, `poc_weld_radiograph_porosity`
 - `median_separate` (halcon: `median_separate`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `gray_erosion_rect` (halcon: `gray_erosion_rect`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1813,7 +1814,7 @@ _計 936 ops / 48 categories。_
 - `thinning_golay` (halcon: `thinning_golay`) `region → region` · 例: `gallery2d_region`
 - `thinning_seq` (halcon: `thinning_seq`) `region → region` · 例: `gallery2d_region`
 - `fill_up_shape` (halcon: `fill_up_shape`) `region → region` · 例: `gallery2d_region`
-- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` · 例: `gallery2d_region`
+- `remove_noise_region` (halcon: `remove_noise_region`) `region → region` · 例: `find_ops_by_meaning`, `gallery2d_region`
 - `smallest_rectangle1` (halcon: `smallest_rectangle1`) `region → region` · 例: `gallery2d_region`
 - `get_region_contour` (halcon: `get_region_contour`) `region → region` · 例: `gallery2d_region`, `poc_document_scan`
 - `get_region_convex` (halcon: `get_region_convex`) `region → region` · 例: `gallery2d_region`
@@ -1845,7 +1846,7 @@ _計 936 ops / 48 categories。_
 - `r3_label_to_region` (halcon: `label_to_region`) `region → region` · 例: `gallery2d_region`
 
 ### region-morphology(1)
-- `xmh_majority` `region → region` · 例: `gallery2d_region`
+- `xmh_majority` `region → region` · 例: `find_ops_by_meaning`, `gallery2d_region`
 
 ### region-transform(1)
 - `xmh_bwperim` `region → region` · 例: `gallery2d_region`
@@ -1875,7 +1876,7 @@ _計 936 ops / 48 categories。_
 
 ### segmentation(54)
 - `threshold` (halcon: `threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_bone_trabecular_thickness`, `poc_change_detection_misreg`, `poc_fresco_craquelure`, `poc_gear_tooth_metrology`, `poc_metal_grain_size`, `poc_screw_thread_metrology`, `poc_traffic_counting`, `poc_water_level`, `video_streaming`
-- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
+- `otsu` (halcon: `binary_threshold`) `image → region` · 例: `ct_inspection`, `degenerate_inputs`, `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`, `line_handshake`, `poc_bone_trabecular_thickness`, `poc_colocalization_crosstalk`, `poc_dimensional_inspection`, `poc_document_scan`, `poc_fresco_craquelure`, `poc_matrix_code_reading`, `poc_metal_grain_size`, `poc_real_coin_metrology`, `poc_segmentation_gauntlet`, `poc_solar_el_inspection`, `poc_vegetation_cover`, `quickstart`, `segment_and_classify`, `threshold_family_agreement`, `typed_results_json`
 - `canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `poc_real_coin_metrology`
 - `adaptive_gauss_thresh` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`
 - `sk_otsu` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_am_thermal_to_ct`, `poc_cell_counting`, `poc_fresco_craquelure`, `poc_leaf_disease_area`, `poc_nuclei_ploidy`, `poc_vegetation_cover`, `threshold_family_agreement`
@@ -1883,7 +1884,7 @@ _計 936 ops / 48 categories。_
 - `sk_yen` (halcon: `binary_threshold`) `image → region` · 例: `gallery2d_segmentation`, `threshold_family_agreement`
 - `sk_sauvola` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_matrix_code_reading`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
 - `sk_niblack` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`, `threshold_family_agreement`
-- `sk_canny` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
+- `sk_canny` (halcon: `edges_image`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`, `genspark_external_review`
 - `sk_felzenszwalb` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_slic` `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `sk_chan_vese` `image → region` · 例: `gallery2d_segmentation`, `poc_active_contours`, `poc_segmentation_gauntlet`
@@ -1900,7 +1901,7 @@ _計 936 ops / 48 categories。_
 - `var_threshold` (halcon: `var_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_document_scan`
 - `local_threshold` (halcon: `local_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `hysteresis_threshold` (halcon: `hysteresis_threshold`) `image → region` · 例: `gallery2d_segmentation`, `poc_fresco_craquelure`, `poc_solar_el_inspection`
-- `edges_image` (halcon: `edges_image`) `image → region` · 例: `gallery2d_segmentation`
+- `edges_image` (halcon: `edges_image`) `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
 - `watersheds` (halcon: `watersheds`) `image → region` · 例: `gallery2d_segmentation`, `poc_segmentation_gauntlet`
 - `watersheds_threshold` (halcon: `watersheds_threshold`) `image → region` · 例: `gallery2d_segmentation`
 - `regiongrowing` (halcon: `regiongrowing`) `image → region` · 例: `gallery2d_segmentation`
@@ -1926,7 +1927,7 @@ _計 936 ops / 48 categories。_
 - `xsk3_h_minima` `image → region` · 例: `gallery2d_segmentation`, `genspark_external_review`
 - `xsk3_threshold_local_median` `image → region` · 例: `gallery2d_segmentation`
 - `xsk3_peak_local_max` `image → region` · 例: `gallery2d_segmentation`
-- `xkor_canny` `image → region` · 例: `gallery2d_segmentation`
+- `xkor_canny` `image → region` · 例: `find_ops_by_meaning`, `gallery2d_segmentation`
 - `it_region_to_bin` (halcon: `region_to_bin`) `image → image` · 例: `gallery2d_segmentation`
 
 ### self-similarity(1)
@@ -1937,15 +1938,15 @@ _計 936 ops / 48 categories。_
 - `mean_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`, `quickstart`
 - `unsharp` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`, `poc_camera_shake_deblur`, `poc_real_deblur_honesty`, `poc_superresolution_limits`
-- `sk_tv` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `sk_wavelet` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_tv` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_wavelet` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `sk_rolling_ball` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_weld_radiograph_porosity`
-- `sk_nlm` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
-- `sk_tv_bregman` `image → image` · 例: `gallery2d_smoothing_rank`
+- `sk_nlm` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `sk_tv_bregman` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
 - `cv_bilateral` (halcon: `bilateral_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_box` (halcon: `mean_image`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `cv_gaussian` (halcon: `gauss_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
-- `cv_nlmeans` `image → image` · 例: `gallery2d_smoothing_rank`
+- `cv_nlmeans` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
 - `cv_sharpen` (halcon: `emphasize`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_aniso_diffusion` (halcon: `anisotropic_diffusion`) `image → image` · 例: `gallery2d_smoothing_rank`
 - `dl_guided_filter` (halcon: `guided_filter`) `image → image` · 例: `gallery2d_smoothing_rank`
@@ -1968,13 +1969,13 @@ _計 936 ops / 48 categories。_
 - `xpil_unsharp_mask` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xsp_wiener` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `xsp_savgol` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xsp_dct_denoise` `image → image` · 例: `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
+- `xsp_dct_denoise` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`, `poc_prnu_camera_fingerprint`
 - `xsp_cspline_smooth` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xwt_visushrink` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xwt_firm_denoise` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xwt_firm_denoise` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
 - `xwt_lf_reconstruct` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xsk3_rank_mean_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`
-- `xcv3_denoise_tvl1` `image → image` · 例: `gallery2d_smoothing_rank`
+- `xcv3_denoise_tvl1` `image → image` · 例: `find_ops_by_meaning`, `gallery2d_smoothing_rank`
 - `xcv3_pyr_laplacian` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xkor_gaussian` `image → image` · 例: `gallery2d_smoothing_rank`
 - `xkor_bilateral` `image → image` · 例: `gallery2d_smoothing_rank`

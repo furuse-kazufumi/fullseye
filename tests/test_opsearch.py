@@ -1,92 +1,125 @@
-# Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""opsearch の門: 名前順の一覧を真値にして、二分探索の答え = 全件を愚直に調べた答え。"""
-import random
-import time
+"""意味で op を引く検索(fullseye.opsearch / fullseye-rag search / MCP fullseye_find_ops)の門(2026-10-07)。
+
+ノートの本文が日本語なので、grep では「Rauschen」「降噪」「잡음」が 0 件だった。要約 6 言語を
+索引にした検索が、各言語で意味の合う op を上位に返すこと・索引が正本と同じ範囲を数えることを固定する。
+"""
+import json
+import os
 
 import pytest
 
-import opsearch as OS
+import fullseye
+from fullseye import opsearch
+from fullseye.opsearch import detect_lang, search_ops, tokenize
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+EDGE = {"canny3d", "sobel_mag", "sobel_amp", "prewitt_mag", "roberts_mag", "xpil_find_edges", "xkor_canny",
+        "hx_detect_edge_segments", "xsp_gauss_grad_mag", "sk_canny", "edges_image", "roberts"}
+NOISE = {"xsp_dct_denoise", "xcv3_denoise_tvl1", "cv_median", "sk_wavelet", "sk_tv", "sk_tv_bregman", "sk_nlm",
+         "cv_nlmeans", "temporal_bilateral", "tb_temporal_bilateral", "bilateral_filter_depth", "median_image",
+         "tb_mls_smooth", "mls_smooth", "ph_total_variation_flow", "xwt_firm_denoise", "remove_noise_region",
+         "gray_opening_rect", "xmh_majority"}
 
 
-def _all_op_names():
-    import api
-    return [r["name"] for r in api.list_ops(include_algo=True, include_ledger=True)]
+@pytest.mark.parametrize("lang,query,want", [
+    ("ja", "エッジ検出", EDGE), ("en", "edge detection", EDGE), ("zh", "边缘检测", EDGE),
+    ("ko", "에지 검출", EDGE), ("de", "Kantenerkennung", EDGE), ("tw", "邊緣", EDGE),
+    ("ja", "ノイズ除去", NOISE), ("en", "denoise", NOISE), ("zh", "去噪", NOISE),
+    ("ko", "노이즈 제거", NOISE), ("de", "Rauschen entfernen", NOISE), ("tw", "雜訊去除", NOISE),
+])
+def test_each_language_finds_ops_that_do_the_job(lang, query, want):
+    r = search_ops(query, k=8, lang=lang)
+    names = [o["name"] for o in r["ops"]]
+    assert len(names) == 8
+    assert set(names) & want, "%s %r: %s" % (lang, query, names)
+    rows = r["ops"]
+    assert rows
+    assert all(o["summary"] for o in rows)
 
 
-@pytest.fixture(scope="module")
-def names():
-    ns = _all_op_names()
-    assert len(ns) > 2000, len(ns)                        # 空を数えて通らない
-    return ns
+def test_a_grep_of_the_notes_cannot_do_this():
+    """零点: 同じ問い合わせ語はノート本文に無い(だから要約の訳を索引にした)。"""
+    hits = 0
+    for dp, _, fs in os.walk(os.path.join(ROOT, "docs", "ops")):
+        for f in fs:
+            if f.endswith(".md"):
+                with open(os.path.join(dp, f), encoding="utf-8") as fh:
+                    t = fh.read()
+                hits += ("Rauschen" in t) + ("잡음" in t) + ("降噪" in t)
+    assert hits == 0
+    for q in ("Rauschen entfernen", "잡음 제거", "降噪"):
+        assert search_ops(q, k=5)["ops"]
 
 
-@pytest.fixture(scope="module")
-def index(names):
-    return OS.OpNameIndex(names)
+def test_exact_name_and_halcon_name_come_first():
+    assert search_ops("otsu", k=3)["ops"][0]["name"] == "otsu"
+    r = search_ops("abs_diff_image", k=3)
+    assert r["ops"][0]["name"] == "abs_diff_image"
 
 
-def _queries(names, rng):
-    qs = ["warp", "_warp", "affine", "vx_", "x", "e", "mirror", "zzzz_not_an_op", "WARP", " Affine ", "a_b", "__"]
-    lows = sorted({n.lower() for n in names})
-    for _ in range(300):                                  # 名前の一部を切り出した問い合わせ(当たる)
-        n = rng.choice(lows)
-        i = rng.randrange(len(n))
-        j = rng.randrange(i + 1, len(n) + 1)
-        qs.append(n[i:j])
-    for _ in range(100):                                  # 区切りの直後から(word 順位を通る)
-        n = rng.choice([x for x in lows if "_" in x])
-        k = n.index("_") + 1
-        qs.append(n[k:k + rng.randint(1, 4)])
-    for _ in range(100):                                  # 乱数の文字列(ほぼ当たらない)
-        qs.append("".join(rng.choice("abcdefghijklmnopqrstuvwxyz_0123456789") for _ in range(rng.randint(1, 5))))
-    return qs
+def test_language_is_inferred_from_the_query():
+    assert detect_lang("잡음") == "ko" and detect_lang("ノイズ") == "ja"
+    assert detect_lang("降噪") == "zh" and detect_lang("Rauschunterdrückung") == "de"
+    assert detect_lang("denoise") == "en"
+    # 漢字だけの日本語は文字種で決まらない → 要約の当たりで ja を選ぶ
+    assert search_ops("二値化", k=5)["lang"] == "ja"
+    assert search_ops("Kanten erkennen", k=5)["lang"] == "de"
 
 
-def test_index_equals_brute_force_on_real_op_names(names, index):
-    rng = random.Random(7)
-    qs = _queries(names, rng)
-    assert len(qs) > 500, len(qs)                      # 空の一覧で素通りしない
-    for q in qs:
-        assert index.search(q, limit=None) == OS.brute_force_search(names, q), q
-        assert index.search(q, limit=50) == OS.brute_force_search(names, q, limit=50), q   # 打ち切りの近道も同じ答え
+def test_tokenizer_splits_cjk_into_bigrams_and_stems_latin():
+    assert tokenize("ノイズ除去") == ["ノイ", "イズ", "ズ除", "除去"]
+    assert tokenize("denoising") == tokenize("denoise") == ["denois"]
+    assert tokenize("gauss_filter") == ["gauss", "filter"]
 
 
-def test_prefix_is_a_contiguous_slice_of_the_sorted_list(names, index):
-    lows = sorted({n.lower() for n in names})
-    for q in ["vx_", "mirror", "a", "zz", "drive"]:
-        assert [n.lower() for n in index.prefix(q)] == [n for n in lows if n.startswith(q)]
+def test_index_covers_the_same_ops_as_the_notes():
+    """検索層が自分の範囲を正直に数えること: 索引の op 数 = 出荷ノートの枚数。"""
+    with open(os.path.join(ROOT, "fullseye", "data", "OP_NOTES.json"), encoding="utf-8") as f:
+        notes = json.load(f)
+    with open(os.path.join(ROOT, "fullseye", "data", "OP_SEARCH.json"), encoding="utf-8") as f:
+        ix = json.load(f)
+    assert ix["n_ops"] == len(ix["ops"]) == notes["n_notes"]
+    per = ix["summaries_per_language"]
+    assert per["ja"] == ix["n_ops"]                                      # 要約の無い op は無い
+    # 訳の床(下げたら赤): 2026-10-07 の実測
+    assert per["en"] >= 2396 and min(per[x] for x in ("zh", "tw", "ko", "de")) >= 2997
+    rows = ix["ops"]
+    assert rows
+    assert all(r.get("p") for r in rows)                                # 全行がノートを指す
 
 
-def test_ranking_order():
-    ix = OS.OpNameIndex(["warp", "warp_affine", "vx_warp_affine", "dewarp", "affine_warp", "Warped"])
-    got = ix.search("warp", limit=None, with_rank=True)
-    assert got == [("warp", "exact"), ("warp_affine", "prefix"), ("Warped", "prefix"),
-                   ("affine_warp", "word"), ("vx_warp_affine", "word"), ("dewarp", "contains")]
-    assert ix.search("WARP", limit=2) == ["warp", "warp_affine"]           # 大文字小文字を区別しない・打ち切り
-    assert ix.search("   ") == [] and ix.search("nothing") == []
+def test_index_is_shipped_in_the_wheel():
+    with open(os.path.join(ROOT, "pyproject.toml"), encoding="utf-8") as f:
+        assert '"data/OP_SEARCH.json"' in f.read()
 
 
-def test_bad_inputs_raise():
-    with pytest.raises(TypeError):
-        OS.OpNameIndex(["ok", 3])
-    ix = OS.OpNameIndex(["a_b"])
-    with pytest.raises(TypeError):
-        ix.search(None)
+def test_filters_and_errors():
+    rows = search_ops("threshold", k=20, out_sort="region")["ops"]
+    assert rows
+    assert all(o["out_sort"] == "region" for o in rows)
+    r = search_ops("qqqzzzxx")
+    assert r["total"] == 0 and r["hint"]
     with pytest.raises(ValueError):
-        ix.search("a", limit=-1)
+        search_ops("  ")
+    with pytest.raises(ValueError):
+        search_ops("edge", lang="fr")
+    with pytest.raises(ValueError):
+        search_ops("edge", k=0)
 
 
-def test_a_keystroke_does_not_scan_everything(names, index):
-    """打鍵 1 回の手間: 全件を舐める愚直な版より桁で速い(壁時計なので緩い比で見る)。"""
-    rng = random.Random(3)
-    qs = [q for q in _queries(names, rng) if len(q.strip()) >= 2][:300]   # Studio は 2 文字目から一覧を出す
-    t0 = time.perf_counter()
-    for q in qs:
-        index.search(q, limit=50)
-    t_idx = time.perf_counter() - t0
-    t0 = time.perf_counter()
-    for q in qs:
-        OS.brute_force_search(names, q, limit=50)
-    t_bf = time.perf_counter() - t0
-    assert t_idx * 5 < t_bf, (t_idx, t_bf)
-    assert t_idx / len(qs) < 0.005, t_idx / len(qs)      # 1 打鍵 5 ms 未満
+def test_facade_cli_and_mcp_share_one_search(capsys):
+    assert fullseye.search_ops is opsearch.search_ops
+    from fullseye import rag_setup
+    assert rag_setup.main(["search", "otsu", "-k", "2"]) == 0
+    out = capsys.readouterr().out
+    assert "otsu" in out and "note: docs/ops/" in out
+    assert rag_setup.main(["search", "qqqzzzxx"]) == 1
+    from fullseye.mcp.catalog import Catalog
+    from fullseye.mcp.server import ArgError, call_tool
+    cat = Catalog.load()
+    res = call_tool("fullseye_find_ops", {"query": "边缘检测", "limit": 5}, cat)
+    rows = res["structuredContent"]["ops"]
+    assert len(rows) == 5 and set(o["name"] for o in rows) & EDGE
+    with pytest.raises(ArgError):
+        call_tool("fullseye_find_ops", {"query": " "}, cat)

@@ -5,7 +5,7 @@ Claude Code 向け RAG セットアップ(``fullseye-rag`` console script)。
 SKILL.md の ``FULLSEYE_REPO =`` 行をコーパスの実在パスに固定する。2 モード:
 
 - **checkout モード**(git clone / ``pip install -e .``): リポジトリの
-  ``docs/ops``(per-op ノート 1000 枚)がフルコーパス。
+  ``docs/ops``(op ごとのノート。枚数は ``docs/ops/INDEX.md`` が数える)がフルコーパス。
 - **wheel モード**(PyPI からの ``pip install fullseye``): インストール済み
   パッケージ内の ``OP_CATALOG.md``(AI 向け全 op カタログ)+ ``studio_assets``
   の help がコーパス。フルの per-op ノートはリポジトリ clone で得られる旨を
@@ -19,6 +19,7 @@ fail-closed: どちらのモードでもコーパス実体が見つからなけ�
     fullseye-rag                # インストール(再実行=更新)
     fullseye-rag --uninstall    # 削除
     fullseye-rag --target DIR   # テスト/別環境用
+    fullseye-rag search "ノイズ除去"   # 意味で op を引く(ja/en/zh/tw/ko/de、fullseye.opsearch)
 """
 from __future__ import annotations
 
@@ -134,7 +135,12 @@ def uninstall(target_dir: Path) -> bool:
 
 
 def main(argv=None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if argv[:1] == ["search"]:
+        from fullseye.opsearch import main as _search_main
+        return _search_main(argv[1:])
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0],
+                                 epilog='search: fullseye-rag search "<what you want to do>" [-k N] [--lang ja|en|zh|tw|ko|de]')
     ap.add_argument("--uninstall", action="store_true",
                     help="remove the installed skill")
     ap.add_argument("--target", type=Path, default=None,
@@ -156,6 +162,7 @@ def main(argv=None) -> int:
               "clone the repo for the full per-op notes)" % PKG)
     print("next: open Claude Code anywhere and ask an image-processing question — "
           "the 'fullseye-ops' skill routes it through the corpus")
+    print('try:  fullseye-rag search "remove noise"   (any of ja/en/zh/tw/ko/de)')
     return 0
 
 

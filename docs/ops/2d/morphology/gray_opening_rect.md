@@ -5,7 +5,7 @@ category: morphology
 in: image
 out: image
 halcon: gray_opening_rect
-examples: [gallery2d_morphology, poc_weld_radiograph_porosity]
+examples: [find_ops_by_meaning, gallery2d_morphology, poc_weld_radiograph_porosity]
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.5.0  # fullseye lib version this note was generated for
@@ -61,6 +61,7 @@ gray_opening_rect 0.35 0.50
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 
+- [find_ops_by_meaning](../../../../examples/find_ops_by_meaning.py) — `py -3.11 examples/find_ops_by_meaning.py`
 - [gallery2d_morphology](../../../../examples/gallery2d_morphology.py) — `py -3.11 examples/gallery2d_morphology.py`
 - [poc_weld_radiograph_porosity](../../../../examples/poc_weld_radiograph_porosity.py) — `py -3.11 examples/poc_weld_radiograph_porosity.py`
 

@@ -15,6 +15,26 @@ Fullseye の推奨運用は「**AI コーディングアシスタントの知識
 
 ---
 
+## まず探す: やりたいことの言葉で op を引く(どの Tier でも使える)
+
+```
+fullseye-rag search "ノイズ除去"            # コマンド(pip install fullseye だけで動く)
+fullseye-rag search "edge detection" -k 5 --lang en
+```
+```python
+import fullseye
+fullseye.search_ops("边缘检测", k=5)          # Python。MCP なら fullseye_find_ops
+```
+
+op の要約は **6 言語**(日本語の原文 + 英語・中文 簡体 / 繁体・한국어・Deutsch の訳)で索引にしてあり、
+名前・HALCON 名・入出力の型と一緒に照合して、順位つきで「要約(問い合わせの言語)+ ノートの場所」を返します。
+ノートの本文は日本語なので grep では「Rauschen」「降噪」「잡음」が 0 件ですが、この検索なら母語で引けます。
+埋め込みや外部サービスは使いません(BM25、標準ライブラリだけ)。**同義語は拾わない**ので、当たりが薄いときは
+別の言い方か英語で引き直してください。名前が分かっているなら MCP の `fullseye_search_ops`(部分一致)が速いです。
+実行できる例: `py -3.11 examples/find_ops_by_meaning.py`。
+
+---
+
 ## Tier 0: リポジトリを開くだけ(手順ゼロ)
 
 Fullseye リポジトリのチェックアウトを Claude Code で開けば、`docs/ops/INDEX.md` と
