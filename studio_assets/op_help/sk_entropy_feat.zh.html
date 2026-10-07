@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>整幅图像的香农熵(1 个标量特征量)。用一个数值概括亮度直方图分布的离散程度、信息量 —— 数值越高,表示亮度分布越均匀分散(信息量越多/对比度越丰富)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">entropy_gray</code>(Determine the entropy and anisotropy of images.)に相当(近似。異方性は計算しない)。実装は <code style="color:#22d3bf">measure.shannon_entropy(v)</code>(既定の底 2、単位はビット)。a, b は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">entropy_gray</code>(Determine the entropy and anisotropy of images.)（近似。不计算各向异性）。实现为 <code style="color:#22d3bf">measure.shannon_entropy(v)</code>（默认底数 2，单位为比特）。a、b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

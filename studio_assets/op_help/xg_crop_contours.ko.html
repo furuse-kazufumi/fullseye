@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.inputs.jpg">xg_crop_contours: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>형상의 중앙 a 비율 창 안에 드는 contour 점만 남깁니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像中心に置いた、高さ <code style="color:#22d3bf">a*H</code>、幅 <code style="color:#22d3bf">a*W</code> の矩形窓の内側にある輪郭点だけを残す(<code style="color:#22d3bf">a</code> は [0,1] に clip、<code style="color:#22d3bf">b</code> は未使用)。窓は行 <code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>、列 <code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code> の閉区間。<code style="color:#22d3bf">H, W</code> は辞書の <code style="color:#22d3bf">shape</code> から取り、無ければ全点の最大座標+1 で代用する。</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>。窓内に 1 点も残らない輪郭は捨て、<code style="color:#22d3bf">a=0</code> では中心線上に正確に乗る点しか残らないためほぼ空、<code style="color:#22d3bf">a=1</code> で全点が残る。</p>
-<p>注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、<code style="color:#22d3bf">xg_area_center</code> の面積や折れ線長が実際より大きく出る。切り口を正しく扱いたいなら、領域の段階で <code style="color:#22d3bf">r3_clip_region</code> を掛けてから輪郭を取り直す。座標は (row, col)。長さで輪郭ごと選別するのは <code style="color:#22d3bf">xg_clip_contours</code>。</p>
+<p>영상 중심에 놓은 높이 <code style="color:#22d3bf">a*H</code>, 폭 <code style="color:#22d3bf">a*W</code>의 사각형 창 안쪽에 있는 윤곽점만남긴다(<code style="color:#22d3bf">a</code>는 [0,1]로 클립, <code style="color:#22d3bf">b</code>는 사용하지 않는다). 창은 행 <code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>, 열 <code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code>의 닫힌 구간이다. <code style="color:#22d3bf">H, W</code>는 사전의 <code style="color:#22d3bf">shape</code>에서 가져오며, 없으면 모든 점의 최대 좌표+1로 대신한다.</p>
+<p>반환값은 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>. 창 안에 1점도 남지 않은 윤곽은 버리며, <code style="color:#22d3bf">a=0</code>에서는 중심선 위에 정확히 놓인 점만 남으므로 거의 비고, <code style="color:#22d3bf">a=1</code>에서 모든 점이남는다.</p>
+<p>주의: 창에 잘린 윤곽은 분할되지 않는다. 남은 점을 그대로 1개의 꺾은선으로이으므로, 윤곽이 창을 드나들 때마다 &quot;창의 가장자리를 뛰어넘는 변&quot;이 생기고, <code style="color:#22d3bf">xg_area_center</code>의 면적이나 꺾은선 길이가 실제보다 크게 나온다. 잘린 단면을 올바르게다루려면, 영역 단계에서 <code style="color:#22d3bf">r3_clip_region</code>을 적용한 뒤 윤곽을 다시 얻는다. 좌표는 (row, col). 길이로 윤곽 단위 선별을 하는 것은 <code style="color:#22d3bf">xg_clip_contours</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

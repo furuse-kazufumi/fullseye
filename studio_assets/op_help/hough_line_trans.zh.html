@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用于直线检测的 Hough 变换累加器。先由 Sobel 梯度生成边缘掩膜，用 <code style="color:#22d3bf">skimage.transform.hough_line</code> 计算累加器空间（角度×距离），归一化后再缩放到与输入相同的像素形状后返回（以图像的形式可视化，而非累加器本身的坐标系）。相当于 HALCON 的 <code style="color:#22d3bf">hough_line_trans</code>（Produce the Hough transform for lines within regions.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がエッジ抽出の閾値(0.2〜0.6)を振る。<code style="color:#22d3bf">b</code> は未使用。半径・角度分解能は skimage の既定値に固定されている。</p>
+<p><code style="color:#22d3bf">a</code> 调节边缘提取的阈值(0.2～0.6)。<code style="color:#22d3bf">b</code> 未使用。半径和角度分辨率固定为 skimage 的默认值。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>

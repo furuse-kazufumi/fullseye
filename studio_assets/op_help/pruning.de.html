@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/pruning.inputs.jpg">pruning: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nach der Skelettierung (<code style="color:#22d3bf">skeletonize</code>, oder unverändert die Eingabe, falls nicht verfügbar) werden wiederholt (<code style="color:#22d3bf">1+4*a</code> mal) Endpunktpixel mit einer Nachbarnzahl von 1 oder weniger (Sporen = versprengte Zweige) entfernt, wodurch kurze Zweige aus dem Skelett entfernt werden. Entspricht HALCONs <code style="color:#22d3bf">pruning</code> (Prune the branches of a region.) (HALCON kann die Zweiglänge angeben, hier handelt es sich jedoch um eine Annäherung über die Anzahl der Iterationen).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が削り取る反復回数を 1〜5 回の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。回数が多いほど主要な骨格まで削れてしまうことがある。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Anzahl der Abtrag-Iterationen im Bereich 1-5. <code style="color:#22d3bf">b</code> wird nicht verwendet. Je mehr Iterationen, desto eher wird auch das Hauptskelett abgetragen.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

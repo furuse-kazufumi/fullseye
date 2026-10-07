@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gabor 濾波器的響應強度。透過卷積以正弦波調製的高斯核，對具有特定空間頻率與方向的紋理產生強烈響應的經典特徵擷取器。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)に相当(近似。カーネル生成ではなく畳み込み結果を返す)。実装は <code style="color:#22d3bf">filters.gabor(v, frequency=0.1+0.3*a)</code> の実部(戻り値の 1 番目、虚部は捨てている)を絶対値化して正規化したもの —— a は周波数を 0.1〜0.4 に振る。方向 <code style="color:#22d3bf">theta</code> は既定の 0(水平方向のしま模様に最も反応)に固定されており、b は未使用。方向を振りたい場合は本 op ではできないので注意。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)（近似。回傳的是摺積結果而不是產生的核）。實作是對 <code style="color:#22d3bf">filters.gabor(v, frequency=0.1+0.3*a)</code> 的實部（回傳值的第 1 個，虛部被捨棄）取絕對值後正規化 —— a 把頻率在 0.1〜0.4 之間調整。方向 <code style="color:#22d3bf">theta</code> 固定為預設的 0（對水平方向的條紋圖案響應最強），b 未使用。請注意，此 op 無法調整方向。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

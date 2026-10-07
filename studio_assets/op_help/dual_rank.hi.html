@@ -14,8 +14,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Percentile (order statistics) filter। Window के pixels को बढ़ते क्रम में लगाकर b से दिए गए percentile (5 से 95%, <code style="color:#22d3bf">rank_image</code>/<code style="color:#22d3bf">rank_rect</code> वाली ही <code style="color:#22d3bf">_sh_rank</code> की <code style="color:#22d3bf">rank</code> branch) का मान लौटाता है। a window के आकार को 3/5/7/9 में बदलता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">dual_rank</code>（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。</p>
+<p>HALCON के <code style="color:#22d3bf">dual_rank</code> (वृत्ताकार या आयताकार mask से opening, median और closing को मिलाकर करने वाला operation) से अलग, यह implementation केवल एक rank filter वाला सरलीकृत सन्निकटन है, जो opening/closing processing के संयोजन को पुनः उत्पन्न नहीं करता।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

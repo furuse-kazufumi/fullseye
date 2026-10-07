@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_studio.inputs.jpg">tb_env_studio: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스튜디오 환경의 방사휘도(방향 -&gt; 밝기). <b>무채색</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ソフトボックス 2 枚 + 天空の勾配 + 細い水平の帯。色を付けないのは、金属の色が環境ではなく <b>Fresnel(n, k) から出ている</b>ことを絵の中で保証するため。<code style="color:#22d3bf">directions</code> は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">env_studio</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">key</code>(既定 12)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">fill</code>(既定 3.2)を振る。</p>
+<p>소프트박스 2장 + 하늘의 기울기 + 가는 수평 띠. 색을 넣지 않는 것은, 금속의 색이환경이 아니라 <b>Fresnel(n, k)에서 나온다</b>는 것을 그림 안에서 보장하기 위해서다. <code style="color:#22d3bf">directions</code>는 (..., 3)의 단위 벡터(z 위쪽). 반환값은 그 형상의 (...,).</p>
+<p>2-D 진화 레지스트리로 연결한 optics의 op <code style="color:#22d3bf">env_studio</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">key</code>(기본값 12), <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">fill</code>(기본값 3.2)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

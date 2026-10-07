@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_points.chain.jpg">hx_test_region_points: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The fraction of a grid of points that lies inside the region (test_region_points).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region を <code style="color:#22d3bf">step</code> 画素おきの格子(<code style="color:#22d3bf">reg[::step, ::step]</code>、原点は (0,0))でサンプリングし、格子点のうち region に入っている割合を <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 格子間隔 <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code>(短辺の 10%〜40%、最小 2 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 格子点が 0 個なら 0.0。</p>
-<p>格子が細かければ region の面積率の近似になり、粗ければ「代表点がどれだけ region に落ちるか」の粗い指標になる。格子の原点は固定なので、region を少しずらすだけで値が飛ぶ。面積率そのものが欲しいなら region の平均値を取る方が正確。1 点の判定は <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p>Samples the region <code style="color:#22d3bf">v &gt; 0.5</code> on a grid every <code style="color:#22d3bf">step</code> pixels (<code style="color:#22d3bf">reg[::step, ::step]</code>, origin at (0,0)), and returns the fraction of grid points inside the region as <code style="color:#22d3bf">np.float64</code> (0 to 1).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → grid spacing <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code> (10% to 40% of the shorter side, minimum 2 pixels).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there are 0 grid points.</p>
+<p>A fine grid approximates the region&#x27;s area fraction; a coarse one gives a rough indicator of &quot;how many representative points fall in the region&quot;. The grid origin is fixed, so shifting the region slightly makes the value jump. If you want the area fraction itself, taking the mean of the region is more accurate. Testing 1 point is <code style="color:#22d3bf">hx_test_region_point</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

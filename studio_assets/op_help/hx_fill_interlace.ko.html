@@ -12,11 +12,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>두 장의 비디오 반프레임을 보간(홀수 행을 이웃 짝수 행의 평균으로 = 디인터레이스).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>1 枚の画像を奇数行・偶数行の 2 フィールドとみなし、奇数行(<code style="color:#22d3bf">1::2</code>)を上下の隣接行の平均 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code> で置き換える。偶数行はそのまま。出力は入力と同形の float 画像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 上下の行は <code style="color:#22d3bf">np.roll</code> で取るため、高さが偶数のとき最終行(奇数行)の「下」は先頭行になる(端 1 行だけ循環)。</p>
-<p>インターレース映像の櫛状ずれを消す最も単純な線形補間で、奇数フィールドの情報は捨てられる(縦の解像度は半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの前処理として、<code style="color:#22d3bf">hx_nonmax_dir</code> など微分系 op の前に置く。</p>
+<p>1장의 영상을 홀수 행·짝수 행의 2필드로 간주하고, 홀수 행(<code style="color:#22d3bf">1::2</code>)을 위아래 인접 행의 평균 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code>으로 바꾼다. 짝수 행은 그대로. 출력은 입력과 같은 형태의 float 영상.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 위아래 행은 <code style="color:#22d3bf">np.roll</code>로 가져오므로, 높이가 짝수일 때 마지막 행(홀수 행)의 &quot;아래&quot;는 첫 행이 된다(끝 1행만 순환).</p>
+<p>인터레이스 영상의 빗 모양 어긋남을 없애는 가장 단순한 선형 보간으로, 홀수 필드의 정보는 버려진다(세로 해상도는절반으로 떨어진다). 어느 필드를 남길지는 고를 수 없다(항상 짝수 행이 살아남는다). 행 방향의 줄무늬가 의심될 때의전처리로서, <code style="color:#22d3bf">hx_nonmax_dir</code> 등 미분 계열 op 앞에 둔다.</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

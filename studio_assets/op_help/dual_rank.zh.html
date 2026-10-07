@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>百分位数（顺序统计量）滤波器。将窗口内像素按升序排列，返回由 b 指定百分位（5〜95%，与 <code style="color:#22d3bf">rank_image</code>/<code style="color:#22d3bf">rank_rect</code> 共享 <code style="color:#22d3bf">_sh_rank</code> 中的 <code style="color:#22d3bf">rank</code> 分支）的值。a 将窗口大小分为 3/5/7/9。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">dual_rank</code>（円形または矩形マスクでオープニング・中央値・クロージングを組み合わせて行う演算）とは異なり、この実装は単一の順位フィルタのみで、開閉処理の組み合わせは再現しない簡略近似。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">dual_rank</code>（用圆形或矩形掩模组合执行开运算、中位数和闭运算的运算）不同，该实现只有单一的秩滤波器，是不再现开闭处理组合的简化近似。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

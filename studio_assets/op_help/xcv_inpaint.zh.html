@@ -11,9 +11,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过推测缺失区域并进行填补的修复（inpainting）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>8bit 変換後、極端に明るい(&gt;235)/暗い(&lt;20)画素を「欠損」とみなして自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、<code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)で周囲から埋める。<code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 法)と同じ発想の別アルゴリズム版。</p>
-<p>半径 3 画素の近傍を使う(固定)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値が固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう場合がある。</p>
+<p>转换为 8bit 后，将极亮(&gt;235)/极暗(&lt;20)的像素视为“缺失”，自动生成掩模，并用 OpenCV 的 Telea 法(基于快速行进法，<code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)从周围填补。是与 <code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 法)思路相同的另一种算法版本。</p>
+<p>使用半径 3 像素的邻域(固定)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。由于阈值固定，原本有意义的高光溢出/暗部死黑像素也可能被填补。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

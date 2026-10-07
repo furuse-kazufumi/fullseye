@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Aspect ratio <code style="color:#22d3bf">height / width</code> of the axis-parallel surrounding rectangle. There is no upper bound — a tall region exceeds 1 (160x4 gives 40.0). It is the <b>same quantity as the Ratio</b> among the three values HALCON&#x27;s <code style="color:#22d3bf">height_width_ratio</code> (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) returns (Height and Width are pixel lengths and are not returned — see docs/KNOWN_ISSUES.md §51).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Until 2026-09-26 it was cut off with <code style="color:#22d3bf">min(1, height/width)</code>, so <b>all tall objects became 1.0</b> (1.0 for 60x20, ground truth 3.0). Wide objects come out correctly, so <b>the information vanishes the moment the orientation changes</b>. The saturation was described in the description text as &quot;by design&quot;, but the range [0,1] is not part of the feature contract, and there was no reason to crush it -- <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

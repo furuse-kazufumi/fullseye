@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_remove_holes.inputs.jpg">sk_remove_holes: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kleine Löcher füllen. Füllt nur die Hintergrundlöcher innerhalb der Vordergrundregion, deren Fläche unter einem Schwellenwert liegt -- größere Löcher (beabsichtigte Öffnungen) bleiben erhalten.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.) (Näherung; die HALCON-Version füllt alle Löcher, diese hat einen Flächenfilter). Die Implementierung ist <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> - a variiert die Flächenobergrenze der zu füllenden Löcher über 8-68 Pixel. b wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

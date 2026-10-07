@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_closed_xld.chain.jpg">hx_test_closed_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>बंद contours का अनुपात लौटाता है (सिरों के बीच की दूरी threshold से कम = बंद, feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>contour dict の各 contour について、点数が 3 以上かつ始点と終点のユークリッド距離が <code style="color:#22d3bf">tol</code> 以下なら「閉じている」と数え、閉じた contour の本数を全 contour 数で割った割合を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*4</code>(1〜5 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。</p>
-<p>始点=終点を重複させて閉じる <code style="color:#22d3bf">close_contours_xld</code> の出力は距離 0 なので必ず閉と判定される。<code style="color:#22d3bf">hx_clip_end_points</code> や <code style="color:#22d3bf">hx_clip_contours</code> で端を落とした後は開いた扱いになる。個々の contour がどれかは返さない(割合のみ)。</p>
+<p>contour dict के हर contour के लिए, यदि points की संख्या 3 या अधिक है और start point तथा end point के बीच Euclidean distance <code style="color:#22d3bf">tol</code> या उससे कम है, तो उसे &quot;closed&quot; गिना जाता है, और closed contours की संख्या को कुल contours की संख्या से भाग देकर मिला अनुपात <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → tolerance <code style="color:#22d3bf">tol = 1 + a*4</code> (1 से 5 pixel)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p style="margin:2px 0 2px 12px">• contour न हो तो 0.0।</p>
+<p>start = end को duplicate करके बंद करने वाले <code style="color:#22d3bf">close_contours_xld</code> के output में distance 0 होती है, इसलिए वह हमेशा closed माना जाता है। <code style="color:#22d3bf">hx_clip_end_points</code> या <code style="color:#22d3bf">hx_clip_contours</code> से सिरे हटाने के बाद contour open माना जाता है। कौन-से अलग-अलग contour closed हैं, यह नहीं लौटाया जाता (केवल अनुपात)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

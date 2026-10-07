@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3x3 혼합 행렬로 채널 간 선형 변환을 수행한다(아핀 색상 변환). HALCON의 <code style="color:#22d3bf">linear_trans_color</code>(다채널 이미지의 색상 값에 대한 아핀 변환을 계산)에 해당한다(본 구현은 오프셋 항이 없는 순수 선형 변환이다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 <code style="color:#22d3bf">theta = pi * a</code> を振って対角成分の一部を <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> で回転的に変化させた行列を作り、各行を合計 1 に正規化してから <code style="color:#22d3bf">c @ M.T</code> を掛ける。a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
+<p>대각 성분 0.6 + 비대각 0.2를 기본형으로 하고, a로 위상 <code style="color:#22d3bf">theta = pi * a</code>를바꿔 대각 성분의 일부를 <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code>로 회전적으로 변화시킨행렬을 만들고, 각 행을 합계 1로 정규화한 뒤 <code style="color:#22d3bf">c @ M.T</code>를 적용한다. a가 0→1로 가면 R/G 쪽 가중치가 주기적으로 뒤바뀐다. b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

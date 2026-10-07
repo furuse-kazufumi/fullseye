@@ -13,13 +13,12 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image की 1 row (या 1 column) को photons के expected value के रूप में पढ़कर Poisson sample की 1-D count series बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">expected = profile * n_max</code> を期待値とする Poisson 乱数(固定 seed 20260907)。光子計数の族(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)が受ける <b>非負整数の 1-D 列</b> の合成器で、<code style="color:#22d3bf">tcspc_simulate</code> と同じく「期待値が既知」なのが検算の根拠になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行/列の位置(<code style="color:#22d3bf">img_to_signal</code> と同じ規則。<code style="color:#22d3bf">b</code> が向きも決める)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> で行、<code style="color:#22d3bf">b ≥ 0.5</code> で列。加えて <b>1 画素あたりの最大光子数</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0 で 10、b=0.5 で 100、b=1 で 1,000)。少ないほど散布雑音が目立つ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D <code style="color:#22d3bf">int64</code>、非負。長さは行なら W、列なら H。</p>
-<p style="margin:2px 0 2px 12px">• 決定的(seed 固定)。同じ入力・同じノブなら同じ列。</p>
-<p>注意: 期待値 0 の画素はカウント 0 になる(Poisson(0) は常に 0)。</p>
+<p><code style="color:#22d3bf">expected = profile * n_max</code> को expected value मानकर बनाए गए Poisson random numbers (fixed seed 20260907)। photon counting family (<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …) जो <b>non-negative integer का 1-D sequence</b> लेती है, उसका synthesiser है; <code style="color:#22d3bf">tcspc_simulate</code> की तरह, &quot;expected value ज्ञात है&quot; यही cross-check का आधार है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → row/column की स्थिति (<code style="color:#22d3bf">img_to_signal</code> वाला ही नियम। <code style="color:#22d3bf">b</code> दिशा भी तय करता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> पर row, <code style="color:#22d3bf">b ≥ 0.5</code> पर column। साथ ही <b>प्रति 1 pixel अधिकतम photon संख्या</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code> (b=0 पर 10, b=0.5 पर 100, b=1 पर 1,000)। जितने कम, shot noise उतना ज़्यादा दिखता है।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: 1-D <code style="color:#22d3bf">int64</code>, non-negative। लंबाई row के लिए W, column के लिए H।</p>
+<p style="margin:2px 0 2px 12px">• deterministic (seed fixed)। same input और same knob पर same sequence।</p>
+<p>ध्यान दें: expected value 0 वाले pixel का count 0 होता है (Poisson(0) हमेशा 0 होता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

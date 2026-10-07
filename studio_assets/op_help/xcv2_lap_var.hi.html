@@ -8,8 +8,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Laplacian variance से focus (blur) संकेतक (<code style="color:#22d3bf">cv2.Laplacian</code> का variance)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像全体に Laplacian を掛けた結果の分散を計算し、<code style="color:#22d3bf">min(1.0, 分散*20)</code> で [0,1] にクリップしたスカラーを返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどエッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、絶対的なボケ量ではなく相対比較に向く。</p>
+<p>पूरी image पर Laplacian लगाने के परिणाम का variance गणना करता है, और <code style="color:#22d3bf">min(1.0, variance*20)</code> से [0,1] में clip किया गया scalar लौटाता है। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। मान जितना बड़ा, edge/texture उतना समृद्ध = focus में; जितना छोटा, blur होने की संभावना उतनी अधिक — यह एक क्लासिक autofocus मूल्यांकन मापदंड है। गुणक 20 एक अनुभवजन्य scaling है, जो blur की निरपेक्ष मात्रा के बजाय सापेक्ष तुलना के लिए उपयुक्त है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

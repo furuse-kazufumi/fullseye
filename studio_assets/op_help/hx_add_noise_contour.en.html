@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.inputs.jpg">hx_add_noise_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Add white Gaussian noise to the contour points (std from a; deterministic with a fixed seed).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 <code style="color:#22d3bf">std</code> のガウス雑音を独立に加えて返す。乱数は <code style="color:#22d3bf">np.random.default_rng(12345)</code> を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 標準偏差 <code style="color:#22d3bf">std = a*3</code>(0〜3 画素。a=0 なら無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ <code style="color:#22d3bf">a</code> でも雑音の当たり方が変わる。ロバスト性の検証(<code style="color:#22d3bf">hx_fit_circle_contour</code> の残差がどれだけ増えるか等)や、<code style="color:#22d3bf">smooth_contours_xld</code> の効果確認に使う。</p>
+<p>Adds independent Gaussian noise with mean 0 and standard deviation <code style="color:#22d3bf">std</code> to all point coordinates (row, col) of each contour and returns the result. The random generator <code style="color:#22d3bf">np.random.default_rng(12345)</code> is recreated on every call, so the same input always gets the same noise (deterministic).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → standard deviation <code style="color:#22d3bf">std = a*3</code> (0 to 3 pixels; no change at a=0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>The noise sequence depends on the order and number of points of the contours, so if an upstream step changes the point order or the number of contours, the same <code style="color:#22d3bf">a</code> hits differently. Used for robustness checks (how much the residual of <code style="color:#22d3bf">hx_fit_circle_contour</code> grows, etc.) or to confirm the effect of <code style="color:#22d3bf">smooth_contours_xld</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

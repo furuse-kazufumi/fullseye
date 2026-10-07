@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Grundfarbe einer nassen Oberfläche. <b>Die diffuse Reflexion wird dunkler</b> (und die Spiegelreflexion nimmt zu).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
+<p>base_rgb: Farbe im trockenen Zustand, (H,W,3) oder (3,). wet: Nässegrad (0–1).</p>
+<p>ior: Brechungsindex des Wasserfilms.</p>
+<p>Rückgabewert: diffuse Farbe im nassen Zustand (gleiche Form).</p>
+<p>Warum es dunkler wird: Im Inneren des Wasserfilms tritt Totalreflexion auf, das diffuse Licht wird immer wieder zur Oberfläche zurückgeworfen und jedes Mal absorbiert. Als Näherung wird auf den trockenen Reflexionsgrad ρ eine Rückabsorption entsprechend dem inneren Reflexionsgrad Ri = 1 − (1 − Ri0)/n² angewandt ―― genau das Phänomen, dass nasser Sand dunkel aussieht (die Zunahme der Spiegelung wird durch Überlagern von <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> dargestellt).</p>
+<p>Die optics-Op <code style="color:#22d3bf">wetness</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">wet</code> (Standard 1), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">ior</code> (Standard 1.33).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

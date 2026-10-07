@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_slice.inputs.jpg">vol_slice: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D volume से 1 2D slice निकालता है। इसके समकक्ष कोई HALCON op निर्धारित नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が取り出すスライス番号を先頭軸（<code style="color:#22d3bf">axis=0</code>）に沿って <code style="color:#22d3bf">0</code> から <code style="color:#22d3bf">shape[0]-1</code> まで線形に振る（<code style="color:#22d3bf">int(a * shape[0])</code> を範囲内にクランプ）。<code style="color:#22d3bf">b</code> は未使用。値は <code style="color:#22d3bf">[0,1]</code> に clip して返す（3D フィルタ後に生じ得るオーバーシュートの後始末）。</p>
+<p><code style="color:#22d3bf">a</code> निकाले जाने वाले slice number को पहले axis (<code style="color:#22d3bf">axis=0</code>) के साथ <code style="color:#22d3bf">0</code> से <code style="color:#22d3bf">shape[0]-1</code> तक linear रूप से बदलता है (<code style="color:#22d3bf">int(a * shape[0])</code> को range के भीतर clamp किया जाता है)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। value को <code style="color:#22d3bf">[0,1]</code> में clip करके लौटाया जाता है (3D filter के बाद बन सकने वाले overshoot की सफ़ाई)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>真圓度 <code style="color:#22d3bf">1 - σ/μ</code>,<code style="color:#22d3bf">μ</code> 與 <code style="color:#22d3bf">σ</code> 是<b>從重心到輪廓像素的距離</b>的平均與標準差;距離越均勻(越接近正圓)越接近 1。與 HALCON 的 <code style="color:#22d3bf">roundness</code>(Shape factors from contour.)<b>是同一個公式</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">4・面積/(π・長軸長²)</code> という別の量を返していた(16x64 の矩形で 0.239 対 0.577)。<code style="color:#22d3bf">circularity</code> が「面積が最大距離の円をどれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前回傳的是 <code style="color:#22d3bf">4·面積/(π·長軸長²)</code> 這個不同的量(16x64 的矩形上 0.239 對 0.577)。<code style="color:#22d3bf">circularity</code> 看的是「面積能把以最大距離為半徑的圓填滿多少」,而這裡看的是<b>邊緣的凹凸</b>。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>μ 律压扩(compand = compress + expand)。<code style="color:#22d3bf">a</code> 为 μ，<code style="color:#22d3bf">b</code> 为位数。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">F(x) = ln(1 + mu*x) / ln(1 + mu)</code> で暗部を伸ばしてから量子化し、逆変換で戻す。結果として<b>刻みが暗部で細かく明部で粗くなる</b> —— 目も撮像系も暗部の差に敏感なので、同じビット数で見た目の劣化が小さい。電話の音声符号化(G.711)と同じ原理で、画像では対数的な階調割り当てにあたる。</p>
-<p><code style="color:#22d3bf">a</code> は <code style="color:#22d3bf">mu = 1 + 254*a</code>(1〜255、<code style="color:#22d3bf">a=0</code> で実質そのまま)、<code style="color:#22d3bf">b</code> がビット数 1〜8。</p>
-<p><b>Lloyd–Max との違い</b>: あちらは<b>その画像の分布</b>に合わせるので符号表が画像ごとに変わる。こちらは<b>固定の曲線</b>なので、別の画像・別の装置と値をそのまま比べられる。分布が対数的に偏っているという仮定が当たっていれば近い性能が出て、外れていれば Lloyd–Max のほうが良い。</p>
-<p><b>適用条件(実測つき)</b>: 入力が <code style="color:#22d3bf">[0,1]</code> で、<b>0 付近に画素が集中している</b>とき。指数分布の合成画像で一様量子化と比べると、暗部集中なら二乗誤差は <code style="color:#22d3bf">0.57</code> 倍(3 bit)・<code style="color:#22d3bf">0.51</code> 倍(5 bit)に下がる。<b>明部集中では逆に <code style="color:#22d3bf">7.7</code> 倍(3 bit)・ <code style="color:#22d3bf">18</code> 倍(5 bit)悪化する</b> —— 白地に暗い傷、という検査画像はまさにこれなので、そのときは <code style="color:#22d3bf">1 - x</code> を通してから当てること。段数が非常に少ないとき(2 bit)は曲線が強すぎて偏った分布でも一様量子化に負ける(実測 1.17 倍)。</p>
+<p>用 <code style="color:#22d3bf">F(x) = ln(1 + mu*x) / ln(1 + mu)</code> 拉伸暗部后再量化，然后用逆变换还原。结果是<b>步长在暗部变细、在亮部变粗</b> —— 人眼和成像系统都对暗部的差异敏感，因此在相同比特数下观感上的劣化更小。与电话语音编码（G.711）原理相同，在图像中相当于对数式的灰阶分配。</p>
+<p><code style="color:#22d3bf">a</code> 给出 <code style="color:#22d3bf">mu = 1 + 254*a</code>（1〜255，<code style="color:#22d3bf">a=0</code> 时实际上保持原样），<code style="color:#22d3bf">b</code> 是比特数 1〜8。</p>
+<p><b>与 Lloyd–Max 的区别</b>：那个 op 适配<b>该图像的分布</b>，因此码表随图像而变。本 op 是<b>固定的曲线</b>，因此可以与其他图像、其他设备的值直接比较。若“分布呈对数式偏斜”的假定成立，性能接近；若不成立，则 Lloyd–Max 更好。</p>
+<p><b>适用条件（附实测）</b>：输入在 <code style="color:#22d3bf">[0,1]</code> 内，且<b>像素集中在 0 附近</b>时。在指数分布的合成图像上与均匀量化比较，暗部集中时平方误差降到 <code style="color:#22d3bf">0.57</code> 倍（3 bit）、<code style="color:#22d3bf">0.51</code> 倍（5 bit）。<b>亮部集中时反而恶化为 <code style="color:#22d3bf">7.7</code> 倍（3 bit）、<code style="color:#22d3bf">18</code> 倍（5 bit）</b> —— 白底上的暗划痕这类检测图像恰好属于这种情况，此时应先通过 <code style="color:#22d3bf">1 - x</code> 再应用。级数非常少时（2 bit），曲线过强，即使分布有偏也会输给均匀量化（实测 1.17 倍）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -13,13 +13,12 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image के bright spots को FMCW radar targets (range = column, velocity = row) के रूप में पढ़कर complex beat cube (A,C,S) बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>平滑化(σ=2)した画像の局所極大を値の降順に <code style="color:#22d3bf">K</code> 個拾い、各点を標的にする:</p>
-<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>、<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>、振幅 = 画素値。前方モデルは台帳の <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) そのもので、<code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code>(素子間隔は既定の半波長、標的はすべて正面 = 到来角 0°)、その他は同関数の既定(標本化 10 MHz、掃引 20 THz/s、チャープ周期 50 µs、波長 3.89 mm)。この既定では <b>距離は 0〜37.5 m、速度は ±19.5 m/s が曖昧さの無い範囲</b> で、上の写像はその内側に収まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 複素白色雑音の σ <code style="color:#22d3bf">= 0.5 * a</code>(a=0 で無雑音)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 標的数 <code style="color:#22d3bf">K = 1 + int(b * 6)</code>(b=0.5 で 4。極大が足りなければその数)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(4, 32, 64)</code> complex128。<code style="color:#22d3bf">tb_range_doppler_map</code> で 2-D FFT すると標的ごとの峰が「列 → 距離ビン、行 → ドップラービン」に立ち、<code style="color:#22d3bf">tb_beamform_delay_sum</code> は 4 素子で到来角 0° の峰を返す。</p>
-<p style="margin:2px 0 2px 12px">• 乱数 seed は 0 固定(決定的)。速度の符号は <code style="color:#22d3bf">fmcw_beat_simulate</code> の規約(<b>正 = 遠ざかる</b>)。</p>
+<p>smoothing (σ=2) की हुई image के local maxima को value के घटते क्रम में <code style="color:#22d3bf">K</code> चुनकर, हर point को target बनाया जाता है:</p>
+<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>, <code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>, amplitude = pixel value। forward model ledger का <code style="color:#22d3bf">fmcw_beat_simulate</code> (<code style="color:#22d3bf">rangedoppler</code>) ही है, <code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code> के साथ (element spacing default आधी wavelength है, सभी target ठीक सामने = angle of arrival 0°), बाक़ी उसी function के default (sampling 10 MHz, sweep 20 THz/s, chirp period 50 µs, wavelength 3.89 mm)। इन default में <b>दूरी 0 से 37.5 m और velocity ±19.5 m/s बिना ambiguity वाली range है</b>, और ऊपर का mapping उसके अंदर ही रहता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → complex white noise का σ <code style="color:#22d3bf">= 0.5 * a</code> (a=0 पर noise नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → target की संख्या <code style="color:#22d3bf">K = 1 + int(b * 6)</code> (b=0.5 पर 4। maxima कम हों तो उतने ही)।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: <code style="color:#22d3bf">(4, 32, 64)</code> complex128। <code style="color:#22d3bf">tb_range_doppler_map</code> से 2-D FFT करने पर हर target का peak &quot;column → range bin, row → Doppler bin&quot; पर उठता है, और <code style="color:#22d3bf">tb_beamform_delay_sum</code> 4 elements से angle of arrival 0° का peak लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• random seed 0 पर fixed है (deterministic)। velocity का sign <code style="color:#22d3bf">fmcw_beat_simulate</code> के convention के अनुसार है (<b>धनात्मक = दूर जाना</b>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

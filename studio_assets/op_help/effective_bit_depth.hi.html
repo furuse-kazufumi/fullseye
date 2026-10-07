@@ -8,12 +8,11 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image <b>वास्तव में</b> कितने bit इस्तेमाल करती है, इसका अनुमान लगाकर उसे <code style="color:#22d3bf">[0,1]</code> में map करके लौटाता है (feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">8</code> ビットの器に入っていても、中身が <code style="color:#22d3bf">6</code> ビット相当しかないことはよくある —— 低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
-<p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み <code style="color:#22d3bf">Δ</code> とみて <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>。返り値は <code style="color:#22d3bf">bits / 16</code> (<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は未使用)。</p>
-<p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数のまま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、推定は <code style="color:#22d3bf">log2(N)</code> 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測 <b>13.7 bit</b>。16 に飽和するわけではないので、<b>「これ以上は測れない」線を画素数から先に引いておくこと</b>(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>
-<p style="margin:2px 0 2px 12px">(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は<b>高く</b>出る ——</p>
-<p>それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。</p>
+<p><code style="color:#22d3bf">8</code> bit के container में होने पर भी सामग्री का केवल <code style="color:#22d3bf">6</code> bit के बराबर होना आम है — कम bit वाले sensor को खींचा गया हो, एक बार JPEG से गुज़रा हो, gamma लगाया गया हो, आदि। यहाँ भरे हुए gray level के <b>वास्तविक अंतराल</b> से effective bit संख्या का अनुमान लगाया जाता है:</p>
+<p>जो pixel value आती हैं उन्हें क्रम में रखकर, पड़ोसी value के अंतर के <b>mode</b> को step <code style="color:#22d3bf">Δ</code> मानकर <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>। return value <code style="color:#22d3bf">bits / 16</code> है (<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> उपयोग नहीं होते)।</p>
+<p><b>लागू होने की शर्तें और चूक के तरीके</b>: (1) ★<b>pixel की संख्या ऊपरी सीमा तय करती है</b>। जब gray level लगभग continuous हों (floating point में ही process की गई image), तो सबसे छोटा step &quot;N value होने पर औसत अंतराल ~1/N&quot; होता है, इसलिए अनुमान <code style="color:#22d3bf">log2(N)</code> के आसपास saturate हो जाता है — 128x128 (N=16384) की continuous image पर मापा गया <b>13.7 bit</b>। यह 16 पर saturate नहीं होता, इसलिए <b>&quot;इससे आगे नहीं मापा जा सकता&quot; वाली रेखा pixel संख्या से पहले ही खींच लें</b> (छोटे crop पर मापने से कम आता है)। (2) non-linear transform (gamma, logarithm) के बाद step जगह के अनुसार अलग होता है, इसलिए mode &quot;प्रतिनिधि step&quot; है, uniform step नहीं।</p>
+<p style="margin:2px 0 2px 12px">(3) dithering वाली image में gray level भर जाते हैं, इसलिए effective bit संख्या <b>अधिक</b> आती है —</p>
+<p>वह &quot;information के रूप में कितने bit हैं&quot; का नहीं, बल्कि &quot;कितने level उपयोग हो रहे हैं&quot; का उत्तर है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

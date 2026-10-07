@@ -12,10 +12,9 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이값의 1 차 평면 근사로부터의 편차 |v − plane|(평탄도/결함 검사).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>座標を [-1,1] に正規化した基底 <code style="color:#22d3bf">[1, x, y]</code> で gray 値を最小二乗の平面に当て(<code style="color:#22d3bf">hx_fit_surface1</code> と同じ回帰)、残差の絶対値 <code style="color:#22d3bf">|v - plane|</code> を [0,1] に clip して返す。正規化はしない(純粋な平面なら丸め誤差程度のほぼ 0 画像になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平面からの偏差が大きい画素=照明の傾きでは説明できない構造(傷・打痕・異物)。出力は符号を捨てているので「平面より明るい/暗い」は区別しない。区別が要るなら <code style="color:#22d3bf">hx_fit_surface1</code> の結果と元画像を別途引く。1 次面なので緩やかに曲がった背景は残差に出る。その場合は <code style="color:#22d3bf">hx_fit_surface2</code> 側で背景を推定する。後段は <code style="color:#22d3bf">threshold</code> で欠陥 region 化、あるいは <code style="color:#22d3bf">hx_char_threshold</code> の前処理として背景差し引き代わりに使える。</p>
+<p>좌표를 [-1,1]로 정규화한 기저 <code style="color:#22d3bf">[1, x, y]</code>로 gray 값을 최소제곱 평면에 맞추고(<code style="color:#22d3bf">hx_fit_surface1</code>과 같은회귀), 잔차의 절댓값 <code style="color:#22d3bf">|v - plane|</code>을 [0,1]로 clip하여 반환한다. 정규화는 하지 않는다(순수한 평면이면 반올림 오차 정도의거의 0인 영상이 된다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>평면으로부터의 편차가 큰 화소 = 조명의 기울기로는 설명할 수 없는 구조(흠집·타흔·이물). 출력은 부호를 버리므로 &quot;평면보다 밝다/어둡다&quot;는 구별하지 않는다. 구별이 필요하면 <code style="color:#22d3bf">hx_fit_surface1</code>의 결과와 원래 영상을 따로 뺀다. 1차 면이므로 완만하게 휜 배경은 잔차에 나온다. 그 경우는 <code style="color:#22d3bf">hx_fit_surface2</code> 쪽에서 배경을 추정한다. 후단은 <code style="color:#22d3bf">threshold</code>로 결함 region화, 또는 <code style="color:#22d3bf">hx_char_threshold</code>의 전처리로서 배경 빼기 대신 쓸 수 있다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

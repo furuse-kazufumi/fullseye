@@ -12,14 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_resample_uniform.inputs.jpg">tb_resample_uniform: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依弧長等間隔重新取樣為 n 個點（線性內插）。→ (n,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず折れ線を細かく刻むだけ。</p>
-<p style="margin:2px 0 2px 12px">• 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。</p>
-<p style="margin:2px 0 2px 12px">• 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が捨てられる。形状検証は無い。</p>
-<p style="margin:2px 0 2px 12px">• 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても <code style="color:#22d3bf">np.interp</code> は通るが、その区間は長さ 0 として扱われる。</p>
-<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> は index パラメータの差分なので、間隔が不均一な点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は <code style="color:#22d3bf">fit_spline_curve</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">resample_uniform</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>以 <code style="color:#22d3bf">arc_length</code> 的累積弧長為參數取 <code style="color:#22d3bf">np.linspace(0, total, n)</code> 的位置, 對 x、y、z 分別獨立用 <code style="color:#22d3bf">np.interp</code> 線性內插。輸出為 float64 的 (n,3)。起點與終點與輸入的開頭、末尾一致,中間點落在折線上(不一定經過原來的點)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 輸出點數。為 1 時只有起點 1 點,為 0 時為空的 (0,3)。即使多於輸入也不會增加資訊, 只是把折線切得更細。</p>
+<p style="margin:2px 0 2px 12px">• 全長小於 1e-12(全部點重合)時,把開頭點複製 n 次回傳。</p>
+<p style="margin:2px 0 2px 12px">• 輸出行數固定為 3,輸入不是 (N,3) 時,要麼因行數不足而失敗,要麼多餘的行被丟棄。沒有形狀驗證。</p>
+<p style="margin:2px 0 2px 12px">• 閉曲線不會閉合(終點→起點的區間不在內插對象內)。即使有重複點 <code style="color:#22d3bf">np.interp</code> 也能通過,但該區間按長度 0 處理。</p>
+<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 是 index 參數的差分,因此間隔不均勻的點列先用本 op 等間隔化後再傳入,數值微分會更穩定。想要平滑內插時用 <code style="color:#22d3bf">fit_spline_curve</code>。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">resample_uniform</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

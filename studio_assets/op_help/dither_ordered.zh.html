@@ -13,9 +13,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用有序抖动(Bayer 矩阵)进行量化。<code style="color:#22d3bf">a</code> 为位数 1〜8，<code style="color:#22d3bf">b</code> 为矩阵大小。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>量子化の<b>前に</b>、画素位置で決まる決まった量(Bayer 行列、<code style="color:#22d3bf">b</code> が 2x2 / 4x4 / 8x8 を振る)を足してから丸める。平坦部の誤差が画素ごとに散るので、段差が細かい市松に化けて <b>縞が見えなくなる</b>。誤差そのものは減らない —— 見え方を変えているだけで、平均二乗誤差はむしろ <code style="color:#22d3bf">_quantize_uniform</code> よりわずかに大きい。</p>
-<p><b>誤差拡散(<code style="color:#22d3bf">dither_floyd_steinberg</code>)との使い分け</b>: 順序ディザは <b>画素ごとに独立</b>なので、タイル分割しても継ぎ目が出ず、並列化も自由、同じ入力に必ず同じ出力を返す。誤差拡散のほうが見た目は滑らかだが、走査順に依存するので<b>切り出す位置を変えると結果が変わる</b>。</p>
+<p>在量化<b>之前</b>，先加上由像素位置决定的固定量（Bayer 矩阵，<code style="color:#22d3bf">b</code> 在 2x2 / 4x4 / 8x8 之间调节）再舍入。平坦部的误差逐像素分散，阶跃化为细密的棋盘格，<b>条纹就看不见了</b>。误差本身并不减少 —— 只是改变了观感，均方误差反而比 <code style="color:#22d3bf">_quantize_uniform</code> 略大。</p>
+<p><b>与误差扩散（<code style="color:#22d3bf">dither_floyd_steinberg</code>）的取舍</b>：有序抖动 <b>逐像素独立</b>，因此分块也不会出现接缝，可自由并行，对相同输入总是返回相同输出。误差扩散在观感上更平滑，但依赖扫描顺序，因此<b>改变裁剪位置结果就会改变</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -9,12 +9,11 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lee-Rosenfeld: the light-source azimuth tilt = atan2(&lt;Ey&gt;, &lt;Ex&gt;) (the mean gradient direction). Normalised to [0,1].</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">Ex</code>(列方向)・<code style="color:#22d3bf">Ey</code>(行方向)を画像全体で平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に現れるという Lee-Rosenfeld の推定。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと <code style="color:#22d3bf">arctan2(0, 0) = 0</code> で</p>
-<p>0 に落ちる。</p>
-<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
+<p>Averages the Sobel gradients <code style="color:#22d3bf">Ex</code> (column direction) and <code style="color:#22d3bf">Ey</code> (row direction) over the whole image and returns <code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code> mapped to [0,1) by <code style="color:#22d3bf">(tilt / 2π) mod 1</code> as <code style="color:#22d3bf">np.float64</code>. This is the Lee-Rosenfeld estimate, in which the light source azimuth (tilt) of a Lambertian surface appears in the direction of the mean gradient.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0 is the +column direction, 0.25 the +row direction (downward in the image), and so on in that sense. If the mean gradient is almost 0, <code style="color:#22d3bf">arctan2(0, 0) = 0</code> gives</p>
+<p>0.</p>
+<p>Because it uses the raw mean of the gradient, it is pulled toward the direction of high-contrast parts. It assumes that surface reflectance and shape are random and that only the illumination tilt creates the overall bias of the gradient. The version that suppresses the effect of local contrast is <code style="color:#22d3bf">hx_estimate_tilt_zc</code>. The angle value is periodic, so values near 0 and 1 are the same direction (take care when taking differences).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

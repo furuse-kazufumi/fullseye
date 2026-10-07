@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_central.chain.jpg">moments_region_central: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The absolute value of the sum of normalized central moments (up to second order), <code style="color:#22d3bf">|μ20+μ11+μ02|</code>. An approximation corresponding to HALCON&#x27;s <code style="color:#22d3bf">moments_region_central</code> (Geometric moments of regions.), composed from multiple components into a single scalar.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, ...)</code> で頭打ちしていた —— 細長い形(幅 4・長さ 80 以上)で<b>全部 1.0</b> になり、形が違うのに同じ数が返っていた。値域 [0,1] は feature の契約ではない(<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>)。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Until 2026-09-26 it levelled off at <code style="color:#22d3bf">min(1, ...)</code> -- for elongated shapes (width 4, length 80 or more) it became <b>all 1.0</b>, returning the same number for different shapes. The range [0,1] is not part of the feature contract (<code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>).</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

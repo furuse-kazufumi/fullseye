@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중심을 지나는 캘리퍼 선 위의 서브픽셀 에지 위치를 추출한다(HALCON <code style="color:#22d3bf">measure_pos</code>에 해당: 사각형/원호에 수직인 직선 에지를 검출).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>線は画像中心を通り、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code> に振る。輝度プロファイルをガウシアンで軽く平滑化してから <code style="color:#22d3bf">|d/ds gray|</code> のピークをサブピクセル（3 点放物線補間）で検出し、<code style="color:#22d3bf">b</code>（0〜1）を最大振幅に対する相対しきい値として弱いエッジを捨てる。戻り値は CONTOUR（<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2 の (row, col) 点, ...]}</code>）、座標単位は入力画像のピクセル。主な使い道はエッジ数を <code style="color:#22d3bf">count_contours</code>で数えること。</p>
+<p>선은 영상 중심을 지나며, <code style="color:#22d3bf">a</code>로 방향을 <code style="color:#22d3bf">theta = a*pi</code>로 바꾼다. 휘도 프로파일을 가우시안으로 가볍게 평활화한 뒤 <code style="color:#22d3bf">|d/ds gray|</code>의 피크를 서브픽셀(3점 포물선 보간)로 검출하고, <code style="color:#22d3bf">b</code>(0~1)를 최대 진폭에 대한 상대 임계값으로 하여 약한 에지를 버린다. 반환값은 CONTOUR(<code style="color:#22d3bf">{&quot;shape&quot;: (H,W), &quot;cs&quot;: [1x2의 (row, col) 점, ...]}</code>)이며, 좌표 단위는 입력 영상의 화소. 주된 용도는 에지 수를 <code style="color:#22d3bf">count_contours</code>로 세는 것이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

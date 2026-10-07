@@ -13,11 +13,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.inputs.jpg">hx_polar_trans_inv: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contour points को (radius, angle) मानकर Cartesian coordinates में inverse transform करता है (polar_trans का उलटा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各 contour の点を <code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code> とみなし、<code style="color:#22d3bf">ang = col / W * 2*pi</code> として <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code>(<code style="color:#22d3bf">cy, cx = H/2, W/2</code>)の直交座標に戻した contour を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。</p>
-<p>注意: 順変換 <code style="color:#22d3bf">polar_trans_contour_xld</code> は行を <code style="color:#22d3bf">r / max(H, W) * H</code>、列を <code style="color:#22d3bf">(θ + π) / 2π * W</code> として出力するため、この op はその厳密な逆にはなっていない。角度に π のずれ(点が中心対称の位置に写る)、非正方画像では半径に <code style="color:#22d3bf">max(H, W)/H</code> 倍のずれが出る(往復で半径の 2 倍の誤差が出る実測)。順変換との往復を期待するときはこの差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。</p>
+<p>हर contour के point को <code style="color:#22d3bf">(row, col) = (radius rad, angle)</code> मानकर, <code style="color:#22d3bf">ang = col / W * 2*pi</code> लेकर <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code> (<code style="color:#22d3bf">cy, cx = H/2, W/2</code>) के Cartesian coordinates में वापस बदला गया contour लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• radius के लिए row की value को सीधे pixel distance माना जाता है; angle के लिए column को image की width पर 0 से 2π में map किया जाता है।</p>
+<p>ध्यान दें: forward transform <code style="color:#22d3bf">polar_trans_contour_xld</code> row को <code style="color:#22d3bf">r / max(H, W) * H</code> और column को <code style="color:#22d3bf">(θ + π) / 2π * W</code> के रूप में output करता है, इसलिए यह op उसका exact inverse नहीं है। angle में π का अंतर आता है (points centre-symmetric position पर पहुँचते हैं), और non-square images में radius में <code style="color:#22d3bf">max(H, W)/H</code> गुना का अंतर आता है (round trip में radius के 2 गुना की error measured हुई)। forward transform के साथ round trip की उम्मीद हो तो इस अंतर को ध्यान में रखें, या इस op को अकेले &quot;column = angle और row = radius वाले सामान्य polar representation से Cartesian में&quot; conversion के रूप में इस्तेमाल करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

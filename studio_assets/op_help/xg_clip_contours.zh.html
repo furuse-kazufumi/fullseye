@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_clip_contours.inputs.jpg">xg_clip_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>丢弃折线长度低于 a × 最长的 contour(a 在 [0,1])。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各輪郭の折れ線長(隣接点間のユークリッド距離の和)を求め、最長の輪郭の長さ <code style="color:#22d3bf">L_max</code> に対して <code style="color:#22d3bf">length &gt;= a * L_max</code> を満たす輪郭だけ残す。<code style="color:#22d3bf">a</code> は [0,1] に clip され、<code style="color:#22d3bf">a=0</code> で全輪郭を残し、<code style="color:#22d3bf">a=1</code> で最長の輪郭(同長なら複数)だけ残す。<code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同じ <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> 形式の輪郭辞書(点配列はコピー)。輪郭が無ければ <code style="color:#22d3bf">cs</code> は空。<code style="color:#22d3bf">L_max &lt;= 1e-12</code>(全輪郭が 1 点)なら全輪郭をそのまま返す。しきい値が画像サイズでなく「最長輪郭に対する相対値」なので、最長の輪郭が変わると選別基準も動く(点数の絶対値で選ぶなら <code style="color:#22d3bf">select_contours_xld</code>)。名前から想像される矩形での切り取りではなく、長さによる選別である(矩形で切るのは <code style="color:#22d3bf">xg_crop_contours</code> / <code style="color:#22d3bf">hx_clip_contours</code>)。閉輪郭の重複終点も長さに含むが、0 長の辺なので影響しない。</p>
+<p>求出每条轮廓的折线长度（相邻点之间欧氏距离之和），相对于最长轮廓的长度 <code style="color:#22d3bf">L_max</code>，只保留满足 <code style="color:#22d3bf">length &gt;= a * L_max</code> 的轮廓。<code style="color:#22d3bf">a</code> 被裁剪(clip)到 [0,1]，<code style="color:#22d3bf">a=0</code> 保留全部轮廓，<code style="color:#22d3bf">a=1</code> 只保留最长的轮廓（等长时保留多条）。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值是与输入相同 <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> 格式的轮廓字典（点数组为副本）。没有轮廓时 <code style="color:#22d3bf">cs</code> 为空。<code style="color:#22d3bf">L_max &lt;= 1e-12</code>（所有轮廓都只有 1 个点）时原样返回全部轮廓。阈值不是相对于图像尺寸，而是“相对于最长轮廓的值”，因此最长轮廓一变，筛选标准也随之变化（按点数绝对值筛选请用 <code style="color:#22d3bf">select_contours_xld</code>）。它不是名称让人联想到的矩形裁切，而是按长度筛选（用矩形裁切的是 <code style="color:#22d3bf">xg_crop_contours</code> / <code style="color:#22d3bf">hx_clip_contours</code>）。闭合轮廓重复的终点也计入长度，但因为是长度为 0 的边，所以没有影响。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

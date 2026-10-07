@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>FFT आधारित high-pass filter (contour और high-frequency components निकालना)। HALCON के <code style="color:#22d3bf">highpass_image</code> (Extract high frequency components from an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が遮断周波数 <code style="color:#22d3bf">cutoff = 0.02 + 0.3a</code> を振る。<code style="color:#22d3bf">b</code> は未使用。2-D FFT で <code style="color:#22d3bf">rad &gt; cutoff</code> の高周波成分だけを残し、逆 FFT の実部を <code style="color:#22d3bf">_signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写す（0.5 が「変化なし」、それより明暗が高周波成分の符号を表す）。低域フィルタ同様、境界は周期的（FFT）に扱われる。</p>
+<p><code style="color:#22d3bf">a</code> cutoff frequency <code style="color:#22d3bf">cutoff = 0.02 + 0.3a</code> को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। 2-D FFT से केवल <code style="color:#22d3bf">rad &gt; cutoff</code> वाले high-frequency component रखे जाते हैं, और inverse FFT के real part को <code style="color:#22d3bf">_signed01</code> से <code style="color:#22d3bf">[0,1]</code> में map किया जाता है (0.5 &quot;कोई बदलाव नहीं&quot; है; उससे अधिक चमकीला या अंधेरा high-frequency component का sign दर्शाता है)। low-pass filter की तरह ही border को periodic (FFT) माना जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

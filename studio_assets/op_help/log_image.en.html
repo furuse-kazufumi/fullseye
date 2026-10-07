@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Logarithmic compression mapping [0,1] to [0,1] via <code style="color:#22d3bf">log1p(x) / log(2)</code> (normalized so that x=1 gives 1). A tone curve, opposite to <code style="color:#22d3bf">exp_image</code>, that compresses the highlights and lifts shadow detail. Stands in for HALCON&#x27;s <code style="color:#22d3bf">log_image</code> (Calculate the logarithm of an image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。ゲイン付き対数変換が欲しい場合は <code style="color:#22d3bf">lut</code> の <code style="color:#22d3bf">log_gain</code> 分岐(<code style="color:#22d3bf">a</code> でゲインを振れる、ただし SEED には未登録) に近い実装が別途ある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. If you want a log transform with gain, the <code style="color:#22d3bf">log_gain</code> branch of <code style="color:#22d3bf">lut</code> (<code style="color:#22d3bf">a</code> sweeps the gain, though it is not registered in SEED) is a separate implementation close to that.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

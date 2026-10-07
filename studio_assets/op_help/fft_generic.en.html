@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the log-compressed amplitude spectrum of the image&#x27;s Fourier transform (<code style="color:#22d3bf">log1p(|F|)</code> normalized by its maximum). The center corresponds to low-frequency components and the periphery to high-frequency components (already <code style="color:#22d3bf">fftshift</code>-ed). a and b are unused.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">fft_generic</code>（順変換・逆変換・実数/複素数など多数のモードを持つ汎用 FFT 演算）のうち、順方向の振幅スペクトル表示だけを実装した近似 —— 逆変換や位相成分などの他モードは別 op（<code style="color:#22d3bf">fft_image_inv</code>、<code style="color:#22d3bf">phase_deg</code> など）が個別に担う。</p>
+<p>Of HALCON&#x27;s <code style="color:#22d3bf">fft_generic</code> (a general-purpose FFT operation with many modes such as forward/inverse transform and real/complex), an approximation that implements only the forward amplitude-spectrum display -- the other modes, such as the inverse transform and the phase component, are handled individually by separate ops (<code style="color:#22d3bf">fft_image_inv</code>, <code style="color:#22d3bf">phase_deg</code>, etc.).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mean_curvature.inputs.jpg">tb_mean_curvature: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Mean curvature H=(k1+k2)/2। → (N,)। दिशा पर निर्भर मात्रा।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
-<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
-<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">mean_curvature</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 25)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>normals (orientation वाले reference normals, (N,3)) न दिए हों तो convex side heuristic इस्तेमाल होता है (open surface का concave/convex sign अनिश्चित रहता है)। orientation वाले normals देने पर यह global orientation से मेल खाता है और सही sign देता है।</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• computation <code style="color:#22d3bf">principal_curvatures</code> जैसा ही है (k+1 neighbourhood का PCA normal + local quadric fit), और <code style="color:#22d3bf">(k1 + k2) / 2</code> लौटाता है। unit 1/length।</p>
+<p style="margin:2px 0 2px 12px">• sign convention में convex positive है; global concave/convex से यह तभी मेल खाता है जब <code style="color:#22d3bf">normals</code> दिए हों। न दिए हों तो open surface का H हमेशा convex side पर रहता है (absolute value के बराबर)।</p>
+<p style="margin:2px 0 2px 12px">• 5 से कम neighbours वाले points पर 0। <code style="color:#22d3bf">k</code> को N-1 तक सीमित किया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• radius R के sphere पर <code style="color:#22d3bf">1/R</code>, cylinder पर <code style="color:#22d3bf">1/(2R)</code>, plane पर 0। saddle point (k1 = -k2) पर भी 0, पर वहाँ <code style="color:#22d3bf">gaussian_curvature</code> negative होता है, इसलिए दोनों को अलग पहचाना जा सकता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> (N,3), finite और non-zero rows वाला होना चाहिए (<code style="color:#22d3bf">ValueError</code>)। deterministic।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">mean_curvature</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">k</code> (default 25) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detects saddle points of the gray-value surface with sub-pixel accuracy (equivalent to HALCON <code style="color:#22d3bf">saddle_points_sub_pix</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>3x3 の 2 次曲面フィットのヘッセ行列が不定符号（<code style="color:#22d3bf">det H &lt; 0</code>、両主曲率の符号が逆）になる画素を鞍点候補とし、勾配 0 点がセル内（<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>）に収まるものだけを残す。<code style="color:#22d3bf">a</code> は鞍点の強さ（より小さい方の主曲率の絶対値）のしきい値を 1e-4〜0.0201 に振る（<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>）。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。</p>
+<p>Pixels where the Hessian of a 3x3 2nd-order surface fit is indefinite (<code style="color:#22d3bf">det H &lt; 0</code>, the two principal curvatures have opposite signs) are taken as saddle-point candidates, and only those whose point of gradient 0 lies inside the cell (<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>) are kept. <code style="color:#22d3bf">a</code> sweeps the threshold on saddle strength (the absolute value of the smaller principal curvature) from 1e-4 to 0.0201 (<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>). <code style="color:#22d3bf">b</code> is unused. Returns a CONTOUR; coordinates are in pixels of the input image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

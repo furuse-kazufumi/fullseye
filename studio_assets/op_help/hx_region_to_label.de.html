@@ -13,11 +13,10 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt die Zusammenhangskomponenten der bei a geschwellten Region in ein Labelbild um (normiert).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景として <code style="color:#22d3bf">ndimage.label</code>(8 近傍)で連結成分にラベル付けし、ラベル番号 <code style="color:#22d3bf">1..n</code> を <code style="color:#22d3bf">n</code> で割った float 画像を返す。背景は 0、成分は <code style="color:#22d3bf">1/n, 2/n, ..., 1</code> の等間隔の値になる。成分が無ければ全 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(region を渡すときは 0.5 にする)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>ラベル番号は走査順(左上から)で振られるため、同じ成分でも画像内の他の成分数 <code style="color:#22d3bf">n</code> が変わると値が変わる。値で成分を識別する用途にのみ向き、値の大小に意味は無い。成分ごとの統計が欲しければ <code style="color:#22d3bf">hx_region_to_mean</code> (平均 gray 値で塗る)を使う。ラベル画像から 1 成分だけを取り出すには <code style="color:#22d3bf">threshold</code> 系で値域を切る。</p>
+<p>Labelt die Zusammenhangskomponenten des Vordergrunds <code style="color:#22d3bf">v &gt; a</code> mit <code style="color:#22d3bf">ndimage.label</code> (8er-Nachbarschaft) und gibt ein float-Bild der durch <code style="color:#22d3bf">n</code> geteilten Labelnummern <code style="color:#22d3bf">1..n</code> zurück. Der Hintergrund ist 0, die Komponenten erhalten die gleichabständigen Werte <code style="color:#22d3bf">1/n, 2/n, ..., 1</code>. Ohne Komponenten alles 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Binarisierungs-Schwellwert (bei Übergabe einer Region 0.5 setzen).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Labelnummern werden in Abtastreihenfolge (von links oben) vergeben; auch dieselbe Komponente ändert daher ihren Wert, wenn sich die Anzahl <code style="color:#22d3bf">n</code> der übrigen Komponenten im Bild ändert. Nur zur Identifikation von Komponenten über den Wert geeignet; die Größe der Werte hat keine Bedeutung. Für Statistiken je Komponente <code style="color:#22d3bf">hx_region_to_mean</code> (füllt mit dem mittleren gray-Wert) verwenden. Um 1 Komponente aus einem Labelbild herauszuholen, mit einem Op der <code style="color:#22d3bf">threshold</code>-Familie einen Wertebereich ausschneiden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -10,8 +10,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在中央水平剖面上数边缘对(亮条的上升边界 → 下降边界)(1D 计量)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>レベル閾値の交差で境界を 1 回ずつ取る(np.gradient はステップを 2 画素に滲ませ二重計上するため不可)。閾値 lvl は a で可変。返り値は対の数(/10 で正規化した feature)。</p>
+<p>在电平阈值的交叉处各取 1 次边界(np.gradient 会把阶跃扩散到 2 个像素而重复计数, 因此不可用)。阈值 lvl 可由 a 改变。返回值是对的数量(以 /10 归一化的 feature)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

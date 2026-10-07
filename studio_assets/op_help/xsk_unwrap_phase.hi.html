@@ -12,8 +12,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Phase unwrapping। इनपुट [0,1] को phase [-pi, pi] मानकर, skimage.restoration.unwrap_phase से 2*pi का मुड़ना (wrap) हटाता है, फिर <code style="color:#22d3bf">signed01</code> से चिह्न बनाए रखते हुए वापस [0,1] में लाता है (0 -&gt; 0.5)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある結果にならないことがある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। यह interference fringes जैसी आवर्ती रूप से wrap हुई phase images को सतत बनाने के लिए उपयोग होने वाला op है, समान gradient या random noise जैसे इनपुट, जो मूल रूप से phase जैसे नहीं हैं, उन पर सार्थक परिणाम नहीं मिल सकता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對最大的輪廓計算緊湊度 <code style="color:#22d3bf">max(1, 周長²/(4π・面積))</code>(區域版 <code style="color:#22d3bf">compactness</code> 的輪廓版)。圓為 1,越細長/越粗糙就越大,<b>沒有上限</b>。與 HALCON 的 <code style="color:#22d3bf">compactness_xld</code>(Shape factor for the compactness of contours or polygons.)<b>是同一個公式</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">/10</code> して 1 で頭打ちしていた —— <b>領域版と同じ欠陥が輪郭版にも在った</b>。直した op の双子を見落とすと穴が半分残る(<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>)。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前先 <code style="color:#22d3bf">/10</code> 再在 1 處封頂 —— <b>與區域版相同的瑕疵在輪廓版中也存在</b>。若漏看了修好的 op 的雙胞胎,漏洞會殘留一半(<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>)。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

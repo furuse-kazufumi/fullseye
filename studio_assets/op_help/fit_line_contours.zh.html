@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fit_line_contours.inputs.jpg">fit_line_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用一条直线近似每条 XLD 轮廓。相当于 HALCON 的 <code style="color:#22d3bf">fit_line_contour_xld</code>（Approximate XLD contours by line segments.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。以通过轮廓点群质心、由 SVD（奇异值分解）求出的第一主成分方向作为直线方向（使到所有点的距离平方和最小的直线），并替换为在原点群的投影范围内等间隔重新打点的点列。不同之处在于 HALCON 版可分割为折线（多条线段），而本实现把整个轮廓变成 1 条直线。点数少于 2 的轮廓原样返回。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

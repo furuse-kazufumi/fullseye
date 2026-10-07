@@ -9,8 +9,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पूरी image की Shannon entropy (1 scalar feature)। Brightness histogram के distribution के फैलाव और सूचना की मात्रा को 1 संख्या में समेटता है —— मान जितना ऊँचा, brightness distribution उतना ही समान रूप से फैला हुआ (ज़्यादा सूचना / भरपूर contrast)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">entropy_gray</code>(Determine the entropy and anisotropy of images.)に相当(近似。異方性は計算しない)。実装は <code style="color:#22d3bf">measure.shannon_entropy(v)</code>(既定の底 2、単位はビット)。a, b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">entropy_gray</code>(Determine the entropy and anisotropy of images.) के बराबर (approximation; anisotropy नहीं निकाली जाती)। implementation <code style="color:#22d3bf">measure.shannon_entropy(v)</code> है (default base 2, इकाई bit)। a, b उपयोग नहीं होते।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

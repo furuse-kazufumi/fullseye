@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对裁剪到 [0,1] 的像素值取平方根。这会形成一种提升暗部的类伽玛阶调压缩（平方根会把 x=0.25 提升到 0.5，把 x=0.04 提升到 0.2）。相当于 HALCON 的 <code style="color:#22d3bf">sqrt_image</code>（Calculate the square root of an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら <code style="color:#22d3bf">gamma_image</code>(exponent が <code style="color:#22d3bf">a</code> で振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用 —— 固定的平方根映射,没有可调参数。若要改变强度, 请使用 <code style="color:#22d3bf">gamma_image</code>(指数可由 <code style="color:#22d3bf">a</code> 调节)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,11 +14,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>국소적인 <b>방향의 정렬 정도</b>(구조 텐서의 이방성)를 <code style="color:#22d3bf">[0,1]</code>로 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">(lambda1 - lambda2) / (lambda1 + lambda2)</code> そのもの。<code style="color:#22d3bf">1</code> は完全に一方向(理想的な縞)、<code style="color:#22d3bf">0</code> は等方(平坦面・白色雑音・十字の交点)。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">structure_tensor_orientation</code> と同じ 2 つのスケール。</p>
-<p><b><code style="color:#22d3bf">structure_tensor_orientation</code> と対で使う</b>: 向きの図は全画素に値が入るので、向きが意味を持たない所も色がつく。この op を重みにして初めて「どこの向きを信じてよいか」が分かる。</p>
-<p><b>適用条件と既知の落とし穴</b>: (1) <code style="color:#22d3bf">b</code>(積分窓)が小さすぎるとテンソルの階数が 1 に落ちて<b>どこでも 1 に貼りつく</b> —— 揃っているのではなく測れていない。(2) 2 方向が同じ強さで交差する所(織物の交点・格子)では <code style="color:#22d3bf">0</code> に落ちる —— 「構造が無い」のではなく「向きが 1 つに決まらない」で、平坦面と区別できない。区別したいときは <code style="color:#22d3bf">local_std</code> を併記する。</p>
-<p>跡が全画像最大の <code style="color:#22d3bf">1e-6</code> を下回る画素は <code style="color:#22d3bf">0</code> を返す(平坦面)。HALCON に対応する単体 op は無い。</p>
+<p><code style="color:#22d3bf">(lambda1 - lambda2) / (lambda1 + lambda2)</code> 그 자체. <code style="color:#22d3bf">1</code>은 완전히 한 방향(이상적인 줄무늬), <code style="color:#22d3bf">0</code>은 등방(평탄면, 백색 잡음, 십자의 교점). <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">structure_tensor_orientation</code>과 같은 2개의 스케일.</p>
+<p><b><code style="color:#22d3bf">structure_tensor_orientation</code>과 짝으로 쓴다</b>: 방향 그림은 모든 화소에 값이 들어가므로방향이 의미를 갖지 않는 곳에도 색이 칠해진다. 이 op를 가중치로 삼아야 비로소 &quot;어디의 방향을 믿어도 되는가&quot; 를 알 수 있다.</p>
+<p><b>적용 조건과 알려진 함정</b>: (1) <code style="color:#22d3bf">b</code>(적분 창)가 너무 작으면 텐서의 계수가 1로떨어져 <b>어디서나 1에 달라붙는다</b> —— 가지런한 것이 아니라 측정되지 않은 것이다. (2) 2 방향이같은 세기로 교차하는 곳(직물의 교점, 격자)에서는 <code style="color:#22d3bf">0</code>으로 떨어진다 —— &quot;구조가 없다&quot;는 것이아니라 &quot;방향이 1개로 정해지지 않는다&quot;는 것이며, 평탄면과 구별할 수 없다. 구별하고 싶을 때는 <code style="color:#22d3bf">local_std</code>를 함께 적는다.</p>
+<p>대각합이 전체 영상 최대의 <code style="color:#22d3bf">1e-6</code>을 밑도는 화소는 <code style="color:#22d3bf">0</code>을 반환한다(평탄면). HALCON에 대응하는단독 op는 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

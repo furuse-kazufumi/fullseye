@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_trans_region.inputs.jpg">affine_trans_region: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對區域施加仿射變換（旋轉+剪切）。使用與 <code style="color:#22d3bf">affine_trans_image</code> 相同的 <code style="color:#22d3bf">_sh_geom</code> 中的 <code style="color:#22d3bf">affine</code> 分支將其作為連續值變換，再透過 <code style="color:#22d3bf">_rebinarise</code> 以 0.5 重新二值化，回傳 {0,1} 的區域（以消除幾何變換內插產生的中間值）。a 調整旋轉角（-20°〜+20°），b 調整剪切量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_region</code>（領域に任意のアフィン 2D 変換を適用する演算）に相当する近似。</p>
+<p>近似於 HALCON 的 <code style="color:#22d3bf">affine_trans_region</code>（對區域套用任意仿射 2D 轉換的運算）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

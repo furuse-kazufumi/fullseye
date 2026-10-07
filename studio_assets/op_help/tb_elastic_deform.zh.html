@@ -12,11 +12,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_elastic_deform.inputs.jpg">tb_elastic_deform: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过平滑随机位移场进行弹性变形（相关距离 <code style="color:#22d3bf">sigma</code>，均方根振幅 <code style="color:#22d3bf">alpha</code>）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各点に独立ガウス乱数ベクトルを置き、空間ガウス重み <code style="color:#22d3bf">exp(-d²/2σ²)</code> で平滑化した変位場を生成する(近接点は coherent に動く)。場は RMS を 1 に正規化してから <code style="color:#22d3bf">alpha</code> 倍するので、変位の RMS ノルムはちょうど <code style="color:#22d3bf">alpha</code> になる(<code style="color:#22d3bf">σ→∞</code> で場は定数=剛体並進, <code style="color:#22d3bf">σ→0</code> で各点独立)。非剛体な物体変形/柔軟物の学習に。</p>
-<p>注意(honest): 近傍探索は <code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code>。<code style="color:#22d3bf">σ</code> が雲の直径に近いほどペア数は O(N²) に近づくため、大規模雲では <code style="color:#22d3bf">σ</code> を局所スケールに保つこと。</p>
-<p><code style="color:#22d3bf">sigma &lt; 0</code> は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> または 1 点だけの雲では平滑化せず各点独立の変位になる。<code style="color:#22d3bf">alpha</code> は検証しない(0 なら無変位、負なら場が反転するだけ)。<code style="color:#22d3bf">seed</code> で決定論的。返り値は float64 <code style="color:#22d3bf">(N,3)</code> で点数・順序は保たれる(変形前後の対応が添字で分かるので、非剛体位置合わせの誤差を直接測れる)。空入力は空を返す。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">elastic_deform</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>在每个点上放置独立的高斯随机向量，用空间高斯权重 <code style="color:#22d3bf">exp(-d²/2σ²)</code> 平滑，生成位移场(邻近点协同运动)。场先归一化为 RMS 1 再乘以 <code style="color:#22d3bf">alpha</code>，因此位移的 RMS 范数恰好为 <code style="color:#22d3bf">alpha</code>(<code style="color:#22d3bf">σ→∞</code> 时场为常数=刚体平移，<code style="color:#22d3bf">σ→0</code> 时各点独立)。用于非刚性物体变形/柔性物体的训练。</p>
+<p>注意(honest)：邻域搜索为 <code style="color:#22d3bf">cKDTree.query_pairs(r=3σ)</code>。<code style="color:#22d3bf">σ</code> 越接近点云直径，点对数越接近 O(N²)，因此大规模点云应把 <code style="color:#22d3bf">σ</code> 保持在局部尺度。</p>
+<p><code style="color:#22d3bf">sigma &lt; 0</code> 为 <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> 或只有 1 个点的点云不做平滑，各点为独立位移。<code style="color:#22d3bf">alpha</code> 不做校验(0 则无位移，负值只是让场反向)。由 <code style="color:#22d3bf">seed</code> 确定。返回值为 float64 <code style="color:#22d3bf">(N,3)</code>，点数与顺序保持不变(变形前后的对应可由下标得知，因此能直接测量非刚性配准的误差)。空输入返回空。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">elastic_deform</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

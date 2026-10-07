@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>SLIC 기법에 의한 슈퍼픽셀 과분할(over-segmentation)의 경계 격자를 반환한다(<code style="color:#22d3bf">skimage.segmentation.slic</code>, 대응하는 HALCON 연산자 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）がセグメント数とコンパクトネスの両方を振る: 大きいほどセグメント数が少なく（<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>）、コンパクトネスが高くなる（<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>、形が四角く整う）。<code style="color:#22d3bf">b</code> は未使用。戻り値はスーパーピクセルの境界線（外側の輪郭）をなぞった region で、境界はコンパクトネスが低いほど輝度エッジにスナップしやすい。</p>
+<p><code style="color:#22d3bf">a</code>(0~1)가 세그먼트 수와 컴팩트니스를 모두 바꾼다: 클수록 세그먼트 수가 적어지고(<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>), 컴팩트니스가 높아진다(<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>, 모양이 네모반듯해진다). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환값은 슈퍼픽셀의 경계선(바깥쪽 윤곽)을 따라 그린 region이며, 경계는 컴팩트니스가 낮을수록 휘도 에지에 스냅하기 쉽다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

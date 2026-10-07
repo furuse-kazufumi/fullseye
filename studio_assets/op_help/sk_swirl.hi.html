@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Swirl warp। Image के केंद्र के चारों ओर, केंद्र के जितना करीब उतना ज़्यादा घुमाने वाला non-linear geometric transform —— polar coordinate transform पर आधारित distortion effect।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_image</code>(Transform an image to polar coordinates)に相当(近似。極座標画像そのものではなく、渦状に歪ませた直交座標画像を返す)。実装は <code style="color:#22d3bf">transform.swirl(v, strength=1+4*a, radius=30)</code> を <code style="color:#22d3bf">[0,1]</code> へ clip したもの —— a は渦の強さを 1〜5 に振る。渦の半径は 30 画素に固定。b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">polar_trans_image</code>(Transform an image to polar coordinates) के बराबर (approximation; यह polar coordinate image नहीं, बल्कि भँवर जैसी विकृत Cartesian image लौटाता है)। implementation <code style="color:#22d3bf">transform.swirl(v, strength=1+4*a, radius=30)</code> को <code style="color:#22d3bf">[0,1]</code> में clip करता है — a भँवर की ताकत को 1-5 पर बदलता है। भँवर की radius 30 pixel पर fixed है। b उपयोग नहीं होता।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराए बिना mirror होता है (d c b | a b c d, OpenCV का <code style="color:#22d3bf">BORDER_REFLECT_101</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.inputs.jpg">xsp_chamfer_dist: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>到最近背景像素的城市街區（倒角）距離，正規化到 [0,1]。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>★2026-09-02: 縮退入力での <b>符号つきセンチネル</b> を潰す。<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code> は「背景画素が 1 つも無い」入力に対して距離ではなく <b>-1 を全画素に</b>書く(実測: <code style="color:#22d3bf">np.ones((8,8), bool)</code> -&gt; min=max=-1)。旧実装はそれをそのまま <code style="color:#22d3bf">_norm</code> に通していたので、<b>塗り潰された領域の距離マップが一様 -1 の「画像」</b>になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を破り、保存・表示では全面が黒に潰れる。</p>
-<p>背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは <b>一様 1.0</b>。前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。</p>
+<p>★2026-09-02：消除退化輸入時的 <b>帶正負號哨兵值</b>。<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code> 對於「連 1 個背景像素都沒有」的輸入，寫入的不是距離，而是 <b>對所有像素寫入 -1</b>(實測：<code style="color:#22d3bf">np.ones((8,8), bool)</code> -&gt; min=max=-1)。舊實作將其原樣傳給 <code style="color:#22d3bf">_norm</code>，因此 <b>填滿區域的距離圖變成了一致為 -1 的「影像」</b> —— 在既無例外也無警告的情況下破壞了值域 [0,1] 的 image 約定，儲存或顯示時整面塌縮為黑色。</p>
+<p>沒有背景 = 每個像素都「無限遠」，因此正規化後的誠實答案是 <b>一致的 1.0</b>。沒有前景時則是距離 0 的一致 0.0。兩者都不傳回帶正負號的值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -12,14 +12,13 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回<b>可见色阶断层(色带)的位置</b>。<code style="color:#22d3bf">a</code> 为位数，<code style="color:#22d3bf">b</code> 为窗口。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
-<p style="margin:2px 0 2px 12px">1. <b>刻みの上に乗っている</b> —— 値が <code style="color:#22d3bf">k*Δ</code> の格子にある。量子化していない画像にバンディングは無い(浮動小数の雑音はここで落ちる)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が <code style="color:#22d3bf">Δ</code> の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>
-<p style="margin:2px 0 2px 12px">3. <b>まばらな線である</b> —— 段差は等高線に沿った細い線として出る。広い範囲が一斉に反応しているなら、それは段差ではなく<b>ディザや細かい模様</b>。</p>
-<p><code style="color:#22d3bf">a</code> は量子化のビット数 1〜8(入力が既に量子化済みなら、その段数を指定する)。<code style="color:#22d3bf">b</code> は窓の広さ(3〜9 画素)。</p>
-<p><b>この 3 段にした理由(実測)</b>: peak-to-peak だけで判定したところ、白色雑音で画素の <b>41.7 %</b>、順序ディザ済みの画像で <b>97.7 %</b> が「段差」と出た —— 局所の ptp がたまたま <code style="color:#22d3bf">Δ</code> になるだけで条件を満たしてしまうため。条件 1 が雑音を、条件 3 がディザを落とす。3-bit に量子化した傾斜では <b>7.0 %</b>(段差の線そのもの) が残る。</p>
-<p><b>適用条件</b>: (1) 入力のビット数を間違えると全く効かない —— 分からないときは <code style="color:#22d3bf">effective_bit_depth</code> で先に測る。(2) 入力が一度でも滑らかに補間・再標本化されていると条件 1 が崩れる(格子から外れる)。段差を測るなら<b>量子化した直後の画像に当てる</b>こと。</p>
+<p>阶跃“可见”的条件是 3 个条件同时成立，本 op 把这 3 个依次相乘。</p>
+<p style="margin:2px 0 2px 12px">1. <b>落在步长网格上</b> —— 值位于 <code style="color:#22d3bf">k*Δ</code> 的网格上。未经量化的图像没有色带（浮点噪声在这一步被去掉）。</p>
+<p style="margin:2px 0 2px 12px">2. <b>窗口内恰好变化 1 个步长</b> —— 窗口内最大与最小之差（peak-to-peak）为 <code style="color:#22d3bf">Δ</code> 的 1 倍。既不是 0 倍（平坦），也不是 2 倍以上（真正的轮廓）。</p>
+<p style="margin:2px 0 2px 12px">3. <b>是稀疏的线</b> —— 阶跃以沿等高线的细线形式出现。若大范围一齐响应，那不是阶跃，而是<b>抖动或细密的纹样</b>。</p>
+<p><code style="color:#22d3bf">a</code> 是量化的比特数 1〜8（若输入已量化，则指定其级数）。<code style="color:#22d3bf">b</code> 是窗口的大小（3〜9 像素）。</p>
+<p><b>做成这 3 级的理由（实测）</b>：只用 peak-to-peak 判定时，白噪声中 <b>41.7 %</b> 的像素、有序抖动后的图像中 <b>97.7 %</b> 的像素被判为“阶跃”—— 因为局部 ptp 只要碰巧等于 <code style="color:#22d3bf">Δ</code> 就满足条件。条件 1 去掉噪声，条件 3 去掉抖动。在量化到 3-bit 的斜坡上，<b>7.0 %</b>（即阶跃线本身）被保留下来。</p>
+<p><b>适用条件</b>：(1) 输入的比特数弄错就完全不起作用 —— 不清楚时先用 <code style="color:#22d3bf">effective_bit_depth</code> 测量。(2) 输入只要经过一次平滑插值、重采样，条件 1 就会失效（偏离网格）。若要测量阶跃，<b>应作用于刚量化后的图像</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

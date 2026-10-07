@@ -14,12 +14,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>理想带通滤波图像(频域圆环,中心半径 a・宽度 b)。与 gen_bandpass 是不同的算子。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ <code style="color:#22d3bf">fftshift</code> 済の正規化周波数半径 <code style="color:#22d3bf">r</code>(中心=DC)に対し <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 円環の中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半幅 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>(0.03〜0.18)。内半径 <code style="color:#22d3bf">c - half</code> が負になる組み合わせ(小さい a と</p>
-<p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
-<p><code style="color:#22d3bf">hx_gen_bandpass</code> が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数(縞の周期 <code style="color:#22d3bf">1/c</code> 画素)だけを抜き出すマスクを作り、<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルと画素積で使う。</p>
+<p>对与 <code style="color:#22d3bf">hx_gen_lowpass</code> 相同的已 <code style="color:#22d3bf">fftshift</code> 的归一化频率半径 <code style="color:#22d3bf">r</code>（中心=DC），返回把 <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> 的圆环设为 1 的 0/1 float 图像（频域掩模）。输入 <code style="color:#22d3bf">v</code> 只用于获取形状。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 圆环的中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>（0.05〜0.45）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半宽 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>（0.03〜0.18）。内半径 <code style="color:#22d3bf">c - half</code> 为负的组合（小的 a 与</p>
+<p>大的 b）会成为包含 DC 的圆盘，实质上变为低通。</p>
+<p><code style="color:#22d3bf">hx_gen_bandpass</code> 用“内半径和宽度”，而本 op 用“中心和半宽”指定同一圆环。可制作只提取特定空间频率（条纹周期 <code style="color:#22d3bf">1/c</code> 像素）的掩模，与 <code style="color:#22d3bf">fft_generic</code> 等中心=DC 的频谱做逐像素乘积使用。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

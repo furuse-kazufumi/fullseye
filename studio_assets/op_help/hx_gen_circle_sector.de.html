@@ -14,11 +14,10 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Kreissektor-Region (Startwinkel b*2pi, Überstreichung a*2pi).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>・半径 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>(固定)の円板のうち、開始角から掃引角ぶんの扇形を 1 とする 0/1 の float region を返す。角度は <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> で測る(0 が +列方向。行が下向きに増える画像座標では画面上で時計回りに増える)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 掃引角 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>(約 5.7°〜360°。a=1 で完全な円板)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 開始角 <code style="color:#22d3bf">start = b*2*pi</code>。</p>
-<p>扇形の判定は <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code> なので 360° をまたいでも途切れない。半径は固定で、変えたいときは <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code> を重ねる。楕円版は <code style="color:#22d3bf">hx_gen_ellipse_sector</code>。入力画像の中身は見ない。</p>
+<p>Gibt eine 0/1-float-Region zurück, in der von der Kreisscheibe mit Bildmitte <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code> und Radius <code style="color:#22d3bf">r = 0.42*min(h, w)</code> (fest) der Sektor vom Startwinkel über den Sweep-Winkel 1 ist. Der Winkel wird mit <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> gemessen (0 ist die +Spaltenrichtung; in Bildkoordinaten, in denen Zeilen nach unten zunehmen, wächst er auf dem Bildschirm im Uhrzeigersinn).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Sweep-Winkel <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code> (etwa 5.7° bis 360°; a=1 ergibt die volle Kreisscheibe).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Startwinkel <code style="color:#22d3bf">start = b*2*pi</code>.</p>
+<p>Der Sektortest lautet <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code>, daher bricht er beim Überschreiten von 360° nicht ab. Der Radius ist fest; um ihn zu ändern, <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code> überlagern. Die Ellipsenvariante ist <code style="color:#22d3bf">hx_gen_ellipse_sector</code>. Der Inhalt des Eingabebildes wird nicht betrachtet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

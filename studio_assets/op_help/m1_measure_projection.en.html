@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_projection.b.jpg">m1_measure_projection: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Places a measurement caliper line (straight line) on the image and returns the mean of the brightness profile averaged in the perpendicular direction (equivalent to HALCON <code style="color:#22d3bf">measure_projection</code>: extracts a 1-D projection perpendicular to a rectangle/arc).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>キャリパー線は画像の端から端まで引かれ、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code>に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。<code style="color:#22d3bf">b</code> は線を法線方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる場合は 0.0 を返す。</p>
+<p>The caliper line is drawn from edge to edge of the image, and <code style="color:#22d3bf">a</code> sweeps its orientation <code style="color:#22d3bf">theta = a*pi</code> (0 = horizontal, 0.5 = diagonal 45 degrees, 1 = horizontal in the reverse direction). <code style="color:#22d3bf">b</code> is the perpendicular offset that shifts the line along its normal (0 to 1; 0.5 passes through the image centre). A band 1px wide along the line is sampled and averaged (a true &quot;projection&quot;), and that mean luminance ([0,1]) is returned as the feature. If the line does not hit the image or the image is too small, 0.0 is returned.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_from_rgb.inputs.jpg">trans_from_rgb: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>RGB image को दूसरे colour space (HSV / Lab / YUV / XYZ) में बदलता है। HALCON के <code style="color:#22d3bf">trans_from_rgb</code> (RGB colour space से किसी भी colour space में बदलना) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>内部は OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> を 8bit 経由で呼ぶだけで、変換先の色空間そのものの定義は OpenCV の実装に従う。</p>
-<p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code>）。b は未使用。8bit 量子化を経由するため、逆変換（<code style="color:#22d3bf">trans_to_rgb</code>）と組み合わせても厳密には可逆でない。</p>
+<p>अंदर से यह केवल OpenCV के <code style="color:#22d3bf">cv2.cvtColor</code> को 8bit के माध्यम से call करता है, और लक्ष्य colour space की परिभाषा स्वयं OpenCV के implementation का पालन करती है।</p>
+<p>a लक्ष्य को 4 विकल्पों (HSV, Lab, YUV, XYZ के क्रम में) में से चुनता है (<code style="color:#22d3bf">min(3, int(a * 4))</code>)। b उपयोग नहीं होता। 8bit quantisation से गुज़रने के कारण, inverse transform (<code style="color:#22d3bf">trans_to_rgb</code>) के साथ मिलाने पर भी यह पूरी तरह उलटने योग्य (invertible) नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

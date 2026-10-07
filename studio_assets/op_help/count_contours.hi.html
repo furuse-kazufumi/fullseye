@@ -11,12 +11,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_contours.chain.jpg">count_contours: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contours (objects) की संख्या लौटाने वाला feature। HALCON के <code style="color:#22d3bf">count_obj</code> (Number of objects in a tuple.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭リストの長さをそのまま返すだけ。</p>
-<p style="margin:2px 0 2px 12px">• 入力は XLD 輪郭 dict <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [(N_i, 2), ...]}</code>。数えるのは <code style="color:#22d3bf">cs</code> の要素数で、各輪郭の点数・長さ・閉じているかは見ない(点が 1 つの輪郭も 1 本)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は <code style="color:#22d3bf">np.float64</code>(sort <code style="color:#22d3bf">feature</code>)。0 本なら 0.0。</p>
-<p style="margin:2px 0 2px 12px">• 前段の輪郭抽出(<code style="color:#22d3bf">sk_find_contours</code> / <code style="color:#22d3bf">edges_sub_pix</code> / <code style="color:#22d3bf">hx_gen_contours_skeleton</code>)がどう分割するかで値が決まる —— 同じ形でも 1 画素の切れ目で本数が増える。本数を安定させたいなら <code style="color:#22d3bf">select_contours</code>(長さでの選別)や <code style="color:#22d3bf">hx_union_adjacent_contours</code> を間に置く。</p>
-<p style="margin:2px 0 2px 12px">• 「物体の数」として使うなら <code style="color:#22d3bf">connection</code>(region の連結成分)+ <code style="color:#22d3bf">count_regions</code> 相当のほうが切れ目に強い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। यह केवल contour list की लंबाई जैसी की तैसी लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• input XLD contour dict <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [(N_i, 2), ...]}</code> है। गिना जाता है <code style="color:#22d3bf">cs</code> के element की संख्या; हर contour के point की संख्या, लंबाई और बंद है या नहीं, यह नहीं देखा जाता (1 point वाला contour भी 1 गिना जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• return value <code style="color:#22d3bf">np.float64</code> (sort <code style="color:#22d3bf">feature</code>) है। 0 contour पर 0.0।</p>
+<p style="margin:2px 0 2px 12px">• value इस पर निर्भर है कि पिछला contour extraction (<code style="color:#22d3bf">sk_find_contours</code> / <code style="color:#22d3bf">edges_sub_pix</code> / <code style="color:#22d3bf">hx_gen_contours_skeleton</code>) किस तरह बाँटता है — समान आकार में भी 1 pixel की दरार से संख्या बढ़ जाती है। संख्या stable रखनी हो तो बीच में <code style="color:#22d3bf">select_contours</code> (लंबाई से चयन) या <code style="color:#22d3bf">hx_union_adjacent_contours</code> रखें।</p>
+<p style="margin:2px 0 2px 12px">• &quot;वस्तुओं की संख्या&quot; के रूप में उपयोग करना हो तो <code style="color:#22d3bf">connection</code> (region के connected component) + <code style="color:#22d3bf">count_regions</code> जैसा तरीका दरारों के प्रति अधिक robust है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

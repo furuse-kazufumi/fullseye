@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the boundary grid of a SLIC superpixel over-segmentation (<code style="color:#22d3bf">skimage.segmentation.slic</code>; no corresponding HALCON operator).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）がセグメント数とコンパクトネスの両方を振る: 大きいほどセグメント数が少なく（<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>）、コンパクトネスが高くなる（<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>、形が四角く整う）。<code style="color:#22d3bf">b</code> は未使用。戻り値はスーパーピクセルの境界線（外側の輪郭）をなぞった region で、境界はコンパクトネスが低いほど輝度エッジにスナップしやすい。</p>
+<p><code style="color:#22d3bf">a</code> (0 to 1) sweeps both the number of segments and the compactness: the larger it is, the fewer segments (<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>) and the higher the compactness (<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>; shapes become squarer). <code style="color:#22d3bf">b</code> is unused. Returns a region tracing the superpixel boundary lines (outer contours); the lower the compactness, the more readily the boundaries snap to luminance edges.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

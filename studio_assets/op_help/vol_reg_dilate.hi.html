@@ -15,8 +15,7 @@
 <p><img src="fig/vol_reg_dilate.gif" alt="vol_reg_dilate: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3D binary region का dilation (region volume का dilation)। इसके समकक्ष कोई HALCON op निर्धारित नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">max(1, 1+int(3a))</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。構造要素は 6 近傍（<code style="color:#22d3bf">generate_binary_structure(3,1)</code>、十字形）。反復回数を明示的に <code style="color:#22d3bf">1</code> 以上へクランプしているのは、scipy が <code style="color:#22d3bf">iterations&lt;1</code> を「収束するまで反復」と解釈し、<code style="color:#22d3bf">a</code> が小さい側で全充填・全消去に発散するのを防ぐため（敵対的レビューで見つかった不具合の修正、D3）。</p>
+<p><code style="color:#22d3bf">a</code> iteration की संख्या को <code style="color:#22d3bf">1〜4</code> (<code style="color:#22d3bf">max(1, 1+int(3a))</code>) पर बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। structuring element 6-neighbourhood (<code style="color:#22d3bf">generate_binary_structure(3,1)</code>, cross आकार) है। iteration की संख्या को स्पष्ट रूप से कम से कम <code style="color:#22d3bf">1</code> पर clamp किया गया है, क्योंकि scipy <code style="color:#22d3bf">iterations&lt;1</code> को &quot;converge होने तक iterate करो&quot; समझता है, और <code style="color:#22d3bf">a</code> के छोटे होने पर सब भर जाने या सब मिट जाने की ओर diverge होने से रोकना है (adversarial review में मिले defect का सुधार, D3)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

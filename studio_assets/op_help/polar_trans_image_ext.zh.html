@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将整幅图像转换为极坐标（半径、角度）表示（<code style="color:#22d3bf">cv2.warpPolar</code>，正向、线性插值）。中心固定为图像中心，半径最大值为 <code style="color:#22d3bf">min(h,w)/2</code>。a、b 未使用（与 <code style="color:#22d3bf">polar_trans_image</code> 共享 <code style="color:#22d3bf">_sh_geom</code> 中相同的 <code style="color:#22d3bf">polar</code> 分支）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_image_ext</code>（中心・半径範囲・角度範囲などを個別指定できる、環状の一部だけを切り出して極座標変換する拡張版演算）とは異なり、この実装は画像全体を固定パラメータで変換する簡略近似 —— 環状領域や角度範囲の指定はできない。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">polar_trans_image_ext</code>（可分别指定中心、半径范围、角度范围等，只截取环形的一部分进行极坐标变换的扩展版运算）不同，该实现是以固定参数变换整幅图像的简化近似 —— 无法指定环形区域或角度范围。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>

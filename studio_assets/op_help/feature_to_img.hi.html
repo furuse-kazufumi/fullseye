@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/feature_to_img.inputs.jpg">feature_to_img: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>scalar feature को <b>tick marks वाली पट्टी</b> बनाकर वापस image में बदलता है —— वह sort जिसे 2-D ledger में <b>125 ops बनाते हैं, फिर भी image में बदल सकने वाला 1 भी op नहीं था</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★<b>数字そのものは描かない。</b> 文字を焼くと絵が<b>環境に入っている書体</b>で変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の<b>位置</b>で、目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)に渡すこと。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → スケールの上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 で 0.01、a=0.5 で <b>1.0</b>、a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目盛りの張り方。<code style="color:#22d3bf">b &lt; 0.5</code> は <b>片側</b> <code style="color:#22d3bf">[0, hi]</code>(左端が 0)、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>両側</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央が 0</b>。相関・歪度など符号のある量向け)。</p>
-<p style="margin:2px 0 2px 12px">• 上限を超える値は<b>端で止める</b>(帯が振り切れた状態 = 「スケールが小さい」の合図)。★NaN / Inf は<b>白紙</b>を返す(振り切れと区別する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64、白地([0,1])。</p>
+<p>★<b>संख्याएँ ख़ुद नहीं बनाई जातीं।</b> text को image में जलाने पर चित्र <b>environment में installed font</b> के अनुसार बदल जाता है, और same input पर same pixel वाला contract टूट जाता है। जो बनाया जाता है वह value की <b>स्थिति</b> है, और tick marks (0, 1/4, 1/2, 3/4, 1) पढ़ने के संकेत बनते हैं। संख्यात्मक मान चाहिए तो <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code> (paper family) को दें।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → scale की ऊपरी सीमा <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code> (a=0 पर 0.01, a=0.5 पर <b>1.0</b>, a=1 पर 100)। feature के order अलग-अलग होते हैं, इसलिए जो order देखना है वह यहाँ चुनें।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → tick marks फैलाने का तरीका। <code style="color:#22d3bf">b &lt; 0.5</code> <b>एक तरफ़ा</b> <code style="color:#22d3bf">[0, hi]</code> (बायाँ सिरा 0), <code style="color:#22d3bf">b &gt;= 0.5</code> <b>दो तरफ़ा</b> <code style="color:#22d3bf">[-hi, +hi]</code> (<b>बीच 0 है</b>। correlation, skewness जैसी signed मात्राओं के लिए)।</p>
+<p style="margin:2px 0 2px 12px">• ऊपरी सीमा से ज़्यादा value <b>सिरे पर रोक दी जाती है</b> (bar का सिरे तक भर जाना = &quot;scale छोटा है&quot; का संकेत)। ★NaN / Inf पर <b>कोरा पन्ना</b> लौटाता है (सिरे तक भरने से अलग पहचान के लिए)।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: <code style="color:#22d3bf">(128, 128)</code> float64, सफ़ेद पृष्ठभूमि ([0,1])।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

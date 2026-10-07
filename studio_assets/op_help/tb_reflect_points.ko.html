@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_reflect_points.inputs.jpg">tb_reflect_points: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군을 평면(점 <code style="color:#22d3bf">plane_point</code>, 법선 <code style="color:#22d3bf">plane_normal</code>)에 대해 반사(거울 대칭). → (N,3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各点 p の平面からの符号付き距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n は正規化した法線)を取り、<code style="color:#22d3bf">p&#x27; = p - 2 d n</code> を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。点の並び順は保たれるので <code style="color:#22d3bf">p&#x27;[i]</code> は <code style="color:#22d3bf">p[i]</code> の鏡像。座標の単位はそのまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の配列(float に変換)。形状検証はしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 平面上の 1 点 (3,)。<code style="color:#22d3bf">plane_normal</code>: 法線 (3,)(長さは任意、内部で正規化。符号は結果に影響しない)。</p>
-<p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼそのまま返る(fail-closed ではない)。<code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の点群に連結する)形状補完にも使える。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">reflect_points</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>각 점 p의 평면으로부터의 부호 있는 거리 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n은 정규화한 법선)을 취해 <code style="color:#22d3bf">p&#x27; = p - 2 d n</code>을 반환한다(Householder 반사). 평면 위의 점은 움직이지 않고, 평면 양쪽의 점이 서로 바뀐다. 점의 순서는 유지되므로 <code style="color:#22d3bf">p&#x27;[i]</code>는 <code style="color:#22d3bf">p[i]</code>의 거울상. 좌표 단위는 그대로.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 배열(float로 변환). 형상 검증은 하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 평면 위의 1점 (3,). <code style="color:#22d3bf">plane_normal</code>: 법선 (3,)(길이는 임의, 내부에서 정규화. 부호는 결과에 영향을 주지 않는다).</p>
+<p>주의: 법선은 노름에 1e-12를 더해 나누므로, 영벡터를 넘겨도 예외가 나지 않고 점군이 거의그대로 반환된다(fail-closed(실패 시 거부)가 아니다). <code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> 내부에서 쓰는 외에, 검출한 대칭면으로 결손 쪽을 메우는(거울상을 원래점군에 이어 붙이는) 형상 보완에도 쓸 수 있다.</p>
+<p>2-D 진화 레지스트리로 연결한 3d의 op <code style="color:#22d3bf">reflect_points</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

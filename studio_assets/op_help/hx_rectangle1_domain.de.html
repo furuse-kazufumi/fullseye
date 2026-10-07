@@ -14,12 +14,11 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verkleinert den Bilddefinitionsbereich auf ein achsenparalleles Rechteck (den zentralen a×b-Anteil), als Region.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で、画像中央に置いた高さ <code style="color:#22d3bf">hh</code>・幅 <code style="color:#22d3bf">ww</code> の軸並行矩形を 1 とする 0/1 の float 配列(region)を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの割合 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 幅の割合 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• 左上は <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> で、中央からのずれは整数切り捨てぶんだけ。</p>
-<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ <code style="color:#22d3bf">hx_full_domain</code>、既存 region の周辺を削るなら <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
+<p>Gibt ein 0/1-float-Array (Region) in der Form der Eingabe <code style="color:#22d3bf">v</code> zurück, in dem ein achsenparalleles Rechteck der Höhe <code style="color:#22d3bf">hh</code> und Breite <code style="color:#22d3bf">ww</code> in der Bildmitte 1 ist. Der Eingabeinhalt wird nicht betrachtet.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Höhenanteil <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code> (20% bis 90%).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Breitenanteil <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code> (20% bis 90%).</p>
+<p style="margin:2px 0 2px 12px">• Die linke obere Ecke ist <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>; die Abweichung von der Mitte ist nur der ganzzahlige Abschnitt.</p>
+<p>Dient zum Bilden einer ROI, die die Bildperipherie (Beleuchtungsabfall, Objektivrand) von der Prüfung ausschließt. Für das ganze Bild <code style="color:#22d3bf">hx_full_domain</code>, zum Abtragen der Peripherie einer vorhandenen Region <code style="color:#22d3bf">hx_clip_region_rel</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

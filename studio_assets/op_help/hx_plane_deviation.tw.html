@@ -12,10 +12,9 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰階相對一次平面擬合的偏差 |v − plane|(平面度/缺陷檢測)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>座標を [-1,1] に正規化した基底 <code style="color:#22d3bf">[1, x, y]</code> で gray 値を最小二乗の平面に当て(<code style="color:#22d3bf">hx_fit_surface1</code> と同じ回帰)、残差の絶対値 <code style="color:#22d3bf">|v - plane|</code> を [0,1] に clip して返す。正規化はしない(純粋な平面なら丸め誤差程度のほぼ 0 画像になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平面からの偏差が大きい画素=照明の傾きでは説明できない構造(傷・打痕・異物)。出力は符号を捨てているので「平面より明るい/暗い」は区別しない。区別が要るなら <code style="color:#22d3bf">hx_fit_surface1</code> の結果と元画像を別途引く。1 次面なので緩やかに曲がった背景は残差に出る。その場合は <code style="color:#22d3bf">hx_fit_surface2</code> 側で背景を推定する。後段は <code style="color:#22d3bf">threshold</code> で欠陥 region 化、あるいは <code style="color:#22d3bf">hx_char_threshold</code> の前処理として背景差し引き代わりに使える。</p>
+<p>以座標正規化到 [-1,1] 的基底 <code style="color:#22d3bf">[1, x, y]</code> 把 gray 值擬合到最小平方平面（與 <code style="color:#22d3bf">hx_fit_surface1</code> 相同的迴歸），把殘差的絕對值 <code style="color:#22d3bf">|v - plane|</code> 截斷到 [0,1] 後回傳。不做正規化（純平面時會成為捨入誤差程度的幾乎為 0 的影像）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>偏離平面大的像素=無法以照明傾斜解釋的結構（刮痕、壓痕、異物）。輸出捨棄了正負號，因此不區分「比平面亮/暗」。需要區分時，另行以原影像減去 <code style="color:#22d3bf">hx_fit_surface1</code> 的結果。由於是 1 次面，平緩彎曲的背景會出現在殘差中。此時改以 <code style="color:#22d3bf">hx_fit_surface2</code> 估計背景。後續可以 <code style="color:#22d3bf">threshold</code> 轉為瑕疵 region，或作為 <code style="color:#22d3bf">hx_char_threshold</code> 的前處理代替背景扣除。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

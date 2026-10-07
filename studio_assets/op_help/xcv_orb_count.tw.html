@@ -9,9 +9,8 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>OpenCV 版 ORB（Oriented FAST and Rotated BRIEF）偵測到的關鍵點數量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">cv2.ORB_create</code> で検出のみ行い(記述子は計算しない)、検出できたキーポイント数を返す(feature 出力)。<code style="color:#22d3bf">xsk_orb_count</code>(skimage 版) と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは限らない。</p>
-<p><code style="color:#22d3bf">a</code> が要求する最大特徴点数 <code style="color:#22d3bf">nfeatures</code> を 50〜500 の範囲で振る(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>以 <code style="color:#22d3bf">cv2.ORB_create</code> 只進行偵測(不計算描述子)，傳回偵測到的關鍵點數(feature 輸出)。與 <code style="color:#22d3bf">xsk_orb_count</code>(skimage 版) 思路相同但實作不同，由於偵測器的實作不同，個數不一定一致。</p>
+<p><code style="color:#22d3bf">a</code> 在 50~500 的範圍內調整所要求的最大特徵點數 <code style="color:#22d3bf">nfeatures</code> (這是上限，實際偵測數取決於影像內容，會少於它)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

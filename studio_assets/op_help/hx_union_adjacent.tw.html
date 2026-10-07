@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.inputs.jpg">hx_union_adjacent: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把端點相近(閾值 a)的 contour 貪心地連接起來。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>contour のリストを走査し、<code style="color:#22d3bf">cs[i]</code> の終点と <code style="color:#22d3bf">cs[j]</code>(<code style="color:#22d3bf">j &gt; i</code>)の始点の距離が <code style="color:#22d3bf">tol</code> 以下なら <code style="color:#22d3bf">cs[j]</code> を <code style="color:#22d3bf">cs[i]</code> の後ろにつないで 1 本にする。1 回つなぐたびに先頭から走査をやり直し、つなげる対が無くなるまで繰り返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*8</code>(1〜9 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>判定は「終点→始点」の向きだけで、始点どうし・終点どうしが近い場合に反転してつなぐことはしない(向きの揃った contour 列を想定)。貪欲法なので 3 本以上が候補になるときはリスト順で先に見つかった相手とつながる(<code style="color:#22d3bf">hx_sort_contours</code> で順序を整えると結果が安定する)。つなぎ目の点は重複せず、隙間は直線で飛ぶ。計算量は本数の 2 乗×連結回数。つないだ後の閉じ具合は <code style="color:#22d3bf">hx_test_closed_xld</code> で確認する。</p>
+<p>掃描 contour 列表,若 <code style="color:#22d3bf">cs[i]</code> 的終點與 <code style="color:#22d3bf">cs[j]</code>(<code style="color:#22d3bf">j &gt; i</code>)的起點的距離在 <code style="color:#22d3bf">tol</code> 以下,就把 <code style="color:#22d3bf">cs[j]</code> 接在 <code style="color:#22d3bf">cs[i]</code> 後面合成 1 條。每連接 1 次就從頭重新掃描,重複直到沒有可連接的對為止。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 容許距離 <code style="color:#22d3bf">tol = 1 + a*8</code>(1〜9 像素)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>只判定「終點→起點」這一方向,起點之間或終點之間相近時不會反轉後連接(假定方向一致的 contour 列)。由於是貪婪法,3 條以上成為候選時,會與按列表順序最先找到的對象相連(用 <code style="color:#22d3bf">hx_sort_contours</code> 整理順序可使結果穩定)。連接處的點不重複,間隙以直線跳過。計算量為條數的 2 次方×連接次數。連接後的閉合程度用 <code style="color:#22d3bf">hx_test_closed_xld</code> 確認。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

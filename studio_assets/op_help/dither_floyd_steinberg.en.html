@@ -12,9 +12,8 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Error-diffusion dithering (Floyd–Steinberg). <code style="color:#22d3bf">a</code> is the bit count 1 to 8; <code style="color:#22d3bf">b</code> is unused.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。<b>平均は保たれる</b>(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。</p>
-<p><b>適用条件</b>: (1) 走査順に依存するので、<b>画像を切り出す位置を変えると結果が変わる</b> —— タイル処理や並列化には向かない(そちらは <code style="color:#22d3bf">dither_ordered</code>)。(2) 誤差を隣へ送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では <code style="color:#22d3bf">dither_ordered</code> よりずっと遅い。</p>
+<p>After rounding each pixel, it distributes the resulting error: 7/16 to the right, 3/16 to the lower left, 5/16 below, 1/16 to the lower right. <b>The mean is preserved</b> (additions and subtractions balance locally), so flat gradations are rendered as dot density instead of stripes. This is why the picture stays readable even when reduced to 1 bit.</p>
+<p><b>Conditions of use</b>: (1) It depends on the scan order, so <b>changing the position where the image is cropped changes the result</b> — unsuitable for tile processing or parallelisation (use <code style="color:#22d3bf">dither_ordered</code> for that). (2) Because it sends the error to its neighbours, it leaves tails around thin lines. (3) This is a plain sequential implementation, so on large images it is much slower than <code style="color:#22d3bf">dither_ordered</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

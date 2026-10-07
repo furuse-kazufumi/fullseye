@@ -13,12 +13,11 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nutzt das Bild als Amplitude und eine Phase aus Pixelwert plus Neigung, um ein komplexes Feld (H,W) complex128 zu bauen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>。振幅 = 画素値(透過率・開口として読む)、位相は <b>値に比例する成分</b>(位相物体としての厚み)と <b>x 方向の線形な傾き</b>(平面波の入射角)の和。角スペクトル法 <code style="color:#22d3bf">tb_angular_spectrum_propagate</code> や <code style="color:#22d3bf">tb_cx_*</code> の族が受ける複素画像の合成器。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位相の深さ <code style="color:#22d3bf">2π * a * img</code>(a=0 で実場、a=0.5 で最大 π)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 傾き。<code style="color:#22d3bf">(b - 0.5) * 8</code> 周期ぶんの線形位相を x 方向に掛ける(b=0.5 で傾き 0。8 は「128 px で 8 縞」の目安)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> complex128。<code style="color:#22d3bf">|field| = img</code>、<code style="color:#22d3bf">arg</code> は上式。</p>
-<p style="margin:2px 0 2px 12px">• 値 0 の画素は位相が定義できない(<code style="color:#22d3bf">0 * exp(iφ) = 0</code>)。</p>
+<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>. Amplitude = Pixelwert (als Transmissionsgrad / Apertur gelesen); die Phase ist die Summe aus <b>einem dem Wert proportionalen Anteil</b> (Dicke als Phasenobjekt) und <b>einer linearen Neigung in x-Richtung</b> (Einfallswinkel einer ebenen Welle). Ein Synthesizer komplexer Bilder, die die Winkelspektrum-Methode <code style="color:#22d3bf">tb_angular_spectrum_propagate</code> und die <code style="color:#22d3bf">tb_cx_*</code>-Familie entgegennehmen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Phasentiefe <code style="color:#22d3bf">2π * a * img</code> (reelles Feld bei a=0, höchstens π bei a=0.5).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Neigung. Multipliziert in x-Richtung mit einer linearen Phase von <code style="color:#22d3bf">(b - 0.5) * 8</code> Perioden (Neigung 0 bei b=0.5; 8 ist ein Richtwert für &quot;8 Streifen auf 128 px&quot;).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(H, W)</code> complex128. <code style="color:#22d3bf">|field| = img</code>, <code style="color:#22d3bf">arg</code> gemäß obiger Formel.</p>
+<p style="margin:2px 0 2px 12px">• Für Pixel mit Wert 0 ist die Phase nicht definiert (<code style="color:#22d3bf">0 * exp(iφ) = 0</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

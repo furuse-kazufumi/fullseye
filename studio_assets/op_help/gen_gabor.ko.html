@@ -15,8 +15,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>단일 Gabor 커널(방향 <code style="color:#22d3bf">θ=π*a</code>, 주파수 <code style="color:#22d3bf">0.1+0.3*b</code>)에 의한 컨볼루션 응답의 절댓값을 커널의 L1 노름으로 정규화하여 반환한다. DC 성분을 제거한(평균을 뺀) 실수부만의 커널로, 지정한 방향·주파수의 줄무늬 패턴에 선택적으로 반응하는 밴드패스 텍스처 필터이다. HALCON의 <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)에 해당한다(허수부/위상을 갖지 않는 실수 커널만의 간이판).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が向き θ(0〜180°)を、<code style="color:#22d3bf">b</code> が空間周波数(0.1〜0.4)を振る。両方が使われる。<code style="color:#22d3bf">a=0</code> が縦縞、<code style="color:#22d3bf">a=0.5</code>(90°)が横縞に応答する規約。</p>
+<p><code style="color:#22d3bf">a</code>가 방향 θ(0~180°)를, <code style="color:#22d3bf">b</code>가 공간 주파수(0.1~0.4)를 바꾼다. 둘 다사용된다. <code style="color:#22d3bf">a=0</code>이 세로 줄무늬, <code style="color:#22d3bf">a=0.5</code>(90°)가 가로 줄무늬에 응답하는 규약이다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

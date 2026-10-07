@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DCT 계수 중 저주파 정사각 블록만 남긴 뒤 역변환하는 저역통과 필터.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は残す低周波係数ブロックの一辺の長さを決める（<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>、<code style="color:#22d3bf">a</code> が大きいほど高周波まで残りぼけが弱くなる）。<code style="color:#22d3bf">b</code> は未使用。ガウシアンぼかしと違い矩形の周波数マスクを掛けるので、強くかけるとリンギング（波打ち）が出やすい。</p>
+<p><code style="color:#22d3bf">a</code>는 남길 저주파 계수 블록의 한 변의 길이를 정한다(<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>, <code style="color:#22d3bf">a</code>가 클수록 고주파까지 남아블러가 약해진다). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 가우시안 블러와 달리 직사각형 주파수마스크를 적용하므로, 강하게 걸면 링잉(물결)이 생기기 쉽다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

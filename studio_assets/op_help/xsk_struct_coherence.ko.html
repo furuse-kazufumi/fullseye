@@ -13,9 +13,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구조 텐서의 코히런스(방향의 일관성).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>skimage.feature.structure_tensor で勾配の 2 次モーメント行列を計算し、その固有値 <code style="color:#22d3bf">l1&gt;=l2</code> から <code style="color:#22d3bf">(l1-l2)/(l1+l2)</code> を求める。値は 1 に近いほど局所的に強い一方向の構造(エッジ・線状パターン)、0 に近いほど等方(平坦またはコーナー状)であることを示す。</p>
-<p><code style="color:#22d3bf">a</code> が構造テンソルの平滑化スケール <code style="color:#22d3bf">sigma</code> を 0.5〜2.5 に振る。<code style="color:#22d3bf">b</code> は未使用。テクスチャの方向性の強さを測る特徴として使う(向き自体は返さない)。</p>
+<p>skimage.feature.structure_tensor로 기울기의 2차 모멘트 행렬을 계산하고, 그 고윳값 <code style="color:#22d3bf">l1&gt;=l2</code>로부터 <code style="color:#22d3bf">(l1-l2)/(l1+l2)</code>를 구한다. 값이 1에가까울수록 국소적으로 강한 한 방향의 구조(에지·선 모양 패턴), 0에 가까울수록등방(평탄 또는 코너 모양)임을 나타낸다.</p>
+<p><code style="color:#22d3bf">a</code>가 구조 텐서의 평활화 스케일 <code style="color:#22d3bf">sigma</code>를 0.5~2.5로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 텍스처의 방향성 강도를 측정하는 특징으로 사용한다(방향 자체는 반환하지 않는다).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

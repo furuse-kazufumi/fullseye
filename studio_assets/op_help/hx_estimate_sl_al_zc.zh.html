@@ -9,10 +9,9 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Zheng-Chellappa:用梯度能量修正后估计 slant。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">hx_estimate_sl_al_lr</code> と同じ <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> の slant に、Sobel 勾配振幅の平均 <code style="color:#22d3bf">e</code>(1 で頭打ち)による係数 <code style="color:#22d3bf">(1 + min(e, 1))</code> を掛けて、<code style="color:#22d3bf">pi/2</code> で割り 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。「勾配が強い=斜光=slant 大」という向きの補正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも増えるので、照明以外の要因で slant が過大に出る。前段に <code style="color:#22d3bf">gauss_filter</code> を置くと雑音分の勾配は減る。反射率の推定は <code style="color:#22d3bf">hx_estimate_al_am</code>、方位は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。</p>
+<p>在与 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> 相同的 <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> 的 slant 上,乘以由 Sobel 梯度幅值的平均 <code style="color:#22d3bf">e</code>(以 1 饱和截顶)得到的系数 <code style="color:#22d3bf">(1 + min(e, 1))</code>,除以 <code style="color:#22d3bf">pi/2</code> 并以 1 饱和截顶后返回 <code style="color:#22d3bf">np.float64</code>。这是“梯度强=斜射光=slant 大” 这一方向的修正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>修正系数为 1〜2 倍,平均亮度低且梯度也强的图像会贴在上限 1。梯度幅值也会因纹理或噪声而增大,因此照明以外的因素会让 slant 偏大。在前级放置 <code style="color:#22d3bf">gauss_filter</code> 可减少噪声带来的梯度。反射率的估计见 <code style="color:#22d3bf">hx_estimate_al_am</code>,方位见 <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Minimum वाले &quot;basins&quot; (आसपास से नीचे के समतल regions) के centroids लौटाता है (HALCON <code style="color:#22d3bf">lowlands_center</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sp_plateaus</code> と同じ量子化による平坦領域抽出を行った上で、外周の画素がすべて厳密に高い（領域極小である）ものだけを残し、さらに深さ（外周の最小値との差）が <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 以上のものだけを採用する。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、各盆地につき 1 点（重心座標、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す。</p>
+<p><code style="color:#22d3bf">sp_plateaus</code> जैसे ही quantization से flat regions निकालने के बाद, केवल वे रखे जाते हैं जिनके बाहरी किनारे के सभी pixels सख्ती से ऊँचे हों (regional minimum), और फिर उनमें से केवल वे अपनाए जाते हैं जिनकी गहराई (बाहरी किनारे के न्यूनतम मान से अंतर) कम से कम <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> हो। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value CONTOUR है, हर basin के लिए 1 point (centroid coordinates, इकाई pixel)। input 200,000 pixels से अधिक हो तो सुरक्षा के लिए खाली set लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

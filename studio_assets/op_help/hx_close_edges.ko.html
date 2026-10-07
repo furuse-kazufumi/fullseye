@@ -14,12 +14,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>에지 진폭 이미지의 틈을 메웁니다: 임계값 a 로 이진화 → 형태학적 닫기(반지름 b).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化した後、<code style="color:#22d3bf">scipy.ndimage.binary_closing</code> を 3×3 全結合(8 近傍)構造要素の <code style="color:#22d3bf">it</code> 回反復 = <code style="color:#22d3bf">(2*it+1)</code> 角の正方形で 1 回クロージング(膨張→収縮)し、0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 構造要素の反復回数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね</p>
-<p><code style="color:#22d3bf">2*it</code> 画素以下。</p>
-<p>注意: <code style="color:#22d3bf">binary_closing</code> は画像外を 0 として収縮するため、画像端から <code style="color:#22d3bf">it</code> 画素の帯は必ず 0 になる(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。<code style="color:#22d3bf">hx_nonmax_dir</code> や <code style="color:#22d3bf">sobel_amp</code> の後に置き、つながったエッジは <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hx_detect_edge_segments</code> へ渡す。</p>
+<p><code style="color:#22d3bf">v &gt; a</code>로 이진화한 뒤, <code style="color:#22d3bf">scipy.ndimage.binary_closing</code>을 3×3 완전 결합(8근방) 구조 요소의 <code style="color:#22d3bf">it</code>회 반복 = <code style="color:#22d3bf">(2*it+1)</code> 정사각형으로 1회 닫힘 연산(팽창→침식)하여, 0/1의 float 영상으로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 이진화 임계값(에지 진폭 영상을 상정. a=0에서는 0보다 큰 화소가 모두 전경).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 구조 요소의 반복 횟수 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1~4, 정사각형의 변은 3~9화소). 닫을 수 있는 틈은 대략</p>
+<p><code style="color:#22d3bf">2*it</code>화소 이하.</p>
+<p>주의: <code style="color:#22d3bf">binary_closing</code>은 영상 밖을 0으로 하여 침식하므로, 영상 끝에서 <code style="color:#22d3bf">it</code>화소의 띠는 반드시 0이 된다(전면 1인 20×20에 it=1을 걸면 남는 것은 18×18). 끝에 접하는 에지를 다룰 때는 미리 여백을 붙이거나, 결과를다시 팽창시킨다. 입력은 image(에지 진폭)이고 출력도 image sort이지만 내용은 이진. <code style="color:#22d3bf">hx_nonmax_dir</code>나 <code style="color:#22d3bf">sobel_amp</code>의뒤에 두고, 이어진 에지는 <code style="color:#22d3bf">hx_region_to_label</code>이나 <code style="color:#22d3bf">hx_detect_edge_segments</code>로 넘긴다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

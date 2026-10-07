@@ -9,9 +9,8 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Anzahl der von OpenCVs ORB (Oriented FAST and Rotated BRIEF) erkannten Schlüsselpunkte.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">cv2.ORB_create</code> で検出のみ行い(記述子は計算しない)、検出できたキーポイント数を返す(feature 出力)。<code style="color:#22d3bf">xsk_orb_count</code>(skimage 版) と同じ発想の別実装で、検出器の実装が異なるため件数が一致するとは限らない。</p>
-<p><code style="color:#22d3bf">a</code> が要求する最大特徴点数 <code style="color:#22d3bf">nfeatures</code> を 50〜500 の範囲で振る(上限であり、実際の検出数は画像内容に依存してそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Führt mit <code style="color:#22d3bf">cv2.ORB_create</code> nur die Detektion aus (Deskriptoren werden nicht berechnet) und gibt die Anzahl der detektierten Keypoints zurück (feature-Ausgabe). Eine separate Implementierung derselben Idee wie <code style="color:#22d3bf">xsk_orb_count</code> (skimage-Version); da sich die Detektor-Implementierungen unterscheiden, stimmen die Anzahlen nicht unbedingt überein.</p>
+<p><code style="color:#22d3bf">a</code> variiert die angeforderte maximale Anzahl an Merkmalspunkten <code style="color:#22d3bf">nfeatures</code> im Bereich 50-500 (eine Obergrenze; die tatsächliche Anzahl hängt vom Bildinhalt ab und ist geringer). <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

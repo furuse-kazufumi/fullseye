@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_sc.chain.jpg">hx_distance_sc: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der minimale Abstand von einem horizontalen Segment (Zeile a*H) zur Kontur (ein Merkmal).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>行 <code style="color:#22d3bf">a*H</code> の水平線から、全 contour の頂点までの縦方向の距離 <code style="color:#22d3bf">|row - a*H|</code> の最小値を <code style="color:#22d3bf">max(H, 1)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。列は見ないので、線分は画像の幅いっぱいに伸びる水平線として扱う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 水平線の行位置(0 で最上行、1 で最下行の 1 つ下)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(線上に点がある場合と区別できない)。</p>
-<p>距離は頂点までなので、隣接 2 頂点の間で線を横切る contour でも 0 にはならず「近い方の頂点の行差」になる。点から contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>、点から region までは <code style="color:#22d3bf">hx_distance_pr</code>。</p>
+<p>Gibt den kleinsten vertikalen Abstand <code style="color:#22d3bf">|row - a*H|</code> von der horizontalen Linie in Zeile <code style="color:#22d3bf">a*H</code> zu den Eckpunkten aller Konturen, geteilt durch <code style="color:#22d3bf">max(H, 1)</code> und bei 1 gekappt, als <code style="color:#22d3bf">np.float64</code> zurück. Spalten werden nicht betrachtet, die Linie gilt also als horizontale Linie über die volle Bildbreite.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Zeilenposition der horizontalen Linie (0 ist die oberste Zeile, 1 liegt 1 unter der untersten Zeile).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0.0, wenn die Konturen keine Punkte haben (nicht davon zu unterscheiden, dass ein Punkt auf der Linie liegt).</p>
+<p>Der Abstand wird zu den Eckpunkten gemessen; auch eine Kontur, die die Linie zwischen 2 benachbarten Eckpunkten kreuzt, ergibt daher nicht 0, sondern &quot;die Zeilendifferenz des näheren Eckpunkts&quot;. Den Abstand von einem Punkt zu einer Kontur liefert <code style="color:#22d3bf">hx_distance_pc</code>, von einem Punkt zu einer Region <code style="color:#22d3bf">hx_distance_pr</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

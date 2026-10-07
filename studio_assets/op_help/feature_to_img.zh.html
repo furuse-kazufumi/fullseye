@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/feature_to_img.inputs.jpg">feature_to_img: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把标量 feature 画成<b>带刻度的条带</b>并转回图像 —— 在 2-D 台账中，这是<b>有 125 个 op 会生成、却没有 1 个 op 能落到图像上</b>的 sort。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★<b>数字そのものは描かない。</b> 文字を焼くと絵が<b>環境に入っている書体</b>で変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の<b>位置</b>で、目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)に渡すこと。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → スケールの上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 で 0.01、a=0.5 で <b>1.0</b>、a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目盛りの張り方。<code style="color:#22d3bf">b &lt; 0.5</code> は <b>片側</b> <code style="color:#22d3bf">[0, hi]</code>(左端が 0)、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>両側</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央が 0</b>。相関・歪度など符号のある量向け)。</p>
-<p style="margin:2px 0 2px 12px">• 上限を超える値は<b>端で止める</b>(帯が振り切れた状態 = 「スケールが小さい」の合図)。★NaN / Inf は<b>白紙</b>を返す(振り切れと区別する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64、白地([0,1])。</p>
+<p>★<b>不画数字本身。</b> 把文字烧进图里，画面会随<b>环境中安装的字体</b> 而变化，破坏“同一输入得到同一像素”的约定。画的是值的<b>位置</b>，刻度(0、1/4、1/2、3/4、1)是读数的线索。需要数值时，请传给 <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 刻度上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 时为 0.01，a=0.5 时为 <b>1.0</b>，a=1 时为 100)。特征量的数量级各不相同，在这里选择想看的数量级。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 刻度的铺设方式。<code style="color:#22d3bf">b &lt; 0.5</code> 为 <b>单侧</b> <code style="color:#22d3bf">[0, hi]</code>(左端为 0)，<code style="color:#22d3bf">b &gt;= 0.5</code> 为 <b>双侧</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央为 0</b>。面向相关、偏度等带符号的量)。</p>
+<p style="margin:2px 0 2px 12px">• 超过上限的值<b>停在端点</b>(条带顶到头的状态 = “刻度太小”的提示)。★NaN / Inf 返回<b>空白</b>(与顶到头区分开)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(128, 128)</code> float64，白底([0,1])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

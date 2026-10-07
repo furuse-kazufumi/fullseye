@@ -12,11 +12,10 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>插補兩場視訊半影格(把奇數列換成相鄰偶數列的平均 = 去交錯)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>1 枚の画像を奇数行・偶数行の 2 フィールドとみなし、奇数行(<code style="color:#22d3bf">1::2</code>)を上下の隣接行の平均 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code> で置き換える。偶数行はそのまま。出力は入力と同形の float 画像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 上下の行は <code style="color:#22d3bf">np.roll</code> で取るため、高さが偶数のとき最終行(奇数行)の「下」は先頭行になる(端 1 行だけ循環)。</p>
-<p>インターレース映像の櫛状ずれを消す最も単純な線形補間で、奇数フィールドの情報は捨てられる(縦の解像度は半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの前処理として、<code style="color:#22d3bf">hx_nonmax_dir</code> など微分系 op の前に置く。</p>
+<p>把 1 張影像視為奇數列、偶數列 2 個圖場，把奇數列（<code style="color:#22d3bf">1::2</code>）替換為上下相鄰列的平均 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code>。偶數列保持不變。輸出為與輸入同形的 float 影像。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 上下列以 <code style="color:#22d3bf">np.roll</code> 取得，因此高度為偶數時，最後一列（奇數列）的「下方」是第一列（只有邊界 1 列循環）。</p>
+<p>這是消除交錯掃描影片梳狀錯位的最簡單線性內插，奇數圖場的資訊被捨棄（垂直解析度降為一半）。無法選擇保留哪個圖場（總是偶數列留下）。作為懷疑有列方向條紋時的前處理，放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 等微分類 op 之前。</p>
 <p><b>邊界處理</b>：環繞到對側（週期）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

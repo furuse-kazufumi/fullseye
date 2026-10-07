@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가우스 백색 잡음을 더한다(<code style="color:#22d3bf">np.random.default_rng</code>로 생성, 표준편차 <code style="color:#22d3bf">0.02+0.2*b</code>). 난수 시드는 <code style="color:#22d3bf">int(a*997)+7</code>로 <code style="color:#22d3bf">a</code>에서 결정적으로 도출되므로, 같은 <code style="color:#22d3bf">a</code>라면 항상 같은 잡음 패턴이 재현된다(진짜 무작위가 아니라 <code style="color:#22d3bf">a</code>를 &quot;잡음이 보이는 유형&quot;을 고르는 의사(疑似) 노브로 쓰고 있다는 점에 주의). HALCON의 <code style="color:#22d3bf">add_noise_white</code>(Add noise to an image.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は乱数シード(=ノイズパターン)を、<code style="color:#22d3bf">b</code> はノイズの強さ(標準偏差) を振る。両方が使われるが、<code style="color:#22d3bf">a</code> の意味は「強さ」ではなく「パターン」である点が他の op と異なる。</p>
+<p><code style="color:#22d3bf">a</code>는 난수 시드(=잡음 패턴)를, <code style="color:#22d3bf">b</code>는 잡음의 강도(표준편차) 를 바꾼다. 둘 다 사용되지만, <code style="color:#22d3bf">a</code>의 의미가 「강도」가 아니라 「패턴」이라는점이 다른 op와 다르다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

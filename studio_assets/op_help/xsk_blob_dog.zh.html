@@ -10,9 +10,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsk_blob_dog.b.jpg">xsk_blob_dog: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测到的斑点（斑点状结构）数量（以 LoG/DoG/DoH 之一检测）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>skimage.feature の Laplacian of Gaussian(LoG)/ Difference of Gaussian(DoG)/ Determinant of Hessian(DoH)のいずれか(このコードは 3 種を共通実装しており、どれを使うかは呼び出し元がどの op 名で登録したか —— <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> —— で決まる)を用いてブロブを検出し、その個数をそのまま返す(feature 出力)。</p>
-<p><code style="color:#22d3bf">a</code> が探索する最大スケール <code style="color:#22d3bf">max_sigma</code> を 5〜25 の範囲で振る(大きいほど大きなブロブまで拾う)。<code style="color:#22d3bf">b</code> が検出しきい値 <code style="color:#22d3bf">threshold</code> を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。</p>
+<p>使用 skimage.feature 的 Laplacian of Gaussian(LoG)/ Difference of Gaussian(DoG)/ Determinant of Hessian(DoH)之一(此代码对 3 种方法采用共同实现，使用哪一种取决于调用方以哪个 op 名注册 —— <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> ——)检测斑点(blob)，并直接返回其个数(feature 输出)。</p>
+<p><code style="color:#22d3bf">a</code> 在 5~25 的范围内调节搜索的最大尺度 <code style="color:#22d3bf">max_sigma</code> (越大越能检测到更大的斑点)。<code style="color:#22d3bf">b</code> 将检测阈值 <code style="color:#22d3bf">threshold</code> 在 0.02~0.17 之间调节(越小越能检测到更弱的斑点，检测数也越容易增加)。3 种方法在速度和精度上不同(LoG 最准确但较慢，DoH 对边缘较强，但不擅长小斑点，等)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

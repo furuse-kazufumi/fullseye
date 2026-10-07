@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Frequency domain में low band (radius <code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>) को रोककर बाकी को inverse FFT से वापस spatial domain में लाने वाला high-pass filter। Response zero-mean और <b>signed</b> होता है, इसलिए <code style="color:#22d3bf">signed01</code> से [0,1] में map किया जाता है (0.5 शून्य है, यानी लगभग आधे pixels का 0.5 से कम होना सामान्य है)। HALCON के <code style="color:#22d3bf">highpass_image</code> (Extract high frequency components from an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が遮断半径(カットオフ周波数)を振る。<code style="color:#22d3bf">b</code> は未使用。単純に <code style="color:#22d3bf">&gt; 0.5</code> で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は <code style="color:#22d3bf">_sh_freq</code> の docstring)。</p>
+<p><code style="color:#22d3bf">a</code> cutoff radius (cutoff frequency) को बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। ध्यान दें कि केवल <code style="color:#22d3bf">&gt; 0.5</code> से binarise करने पर लगभग आधे pixel काले हो जाते हैं (विवरण के लिए <code style="color:#22d3bf">_sh_freq</code> का docstring देखें)।</p>
 <p><b>Border handling</b>: दूसरी ओर wrap around होता है (periodic) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

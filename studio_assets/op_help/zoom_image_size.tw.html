@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重新取樣到目標尺寸(高度<code style="color:#22d3bf">H*(0.5+a)</code>、寬度<code style="color:#22d3bf">W*(0.5+b)</code>)的縮放。相較於<code style="color:#22d3bf">zoom_image_factor</code>採用兩個倍率,此op則是分別獨立指定高與寬的<b>尺寸</b>本身——在HALCON語意上是不同的東西。不過由於此流水線的<code style="color:#22d3bf">image</code>契約要求「以與輸入相同的畫布尺寸回傳」,因此重新取樣的結果會放置在原始解析度畫布的左上角,空白處補0,超出部分則被裁切(實際上影像被縮小/放大在外觀上可以看出,但陣列的shape本身不變)。相當於HALCON的<code style="color:#22d3bf">zoom_image_size</code>(Zoom an image to a given size.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が目標高さの比率、<code style="color:#22d3bf">b</code> が目標幅の比率を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 調整目標高度的比例,<code style="color:#22d3bf">b</code> 調整目標寬度的比例。兩者都會使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

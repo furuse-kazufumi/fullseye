@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_skeleton_region.inputs.jpg">hx_split_skeleton_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在分叉点处分割 1 像素宽骨架:去掉 junction(邻域&gt;=3)后取连通成分。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の骨格画素ごとに 8 近傍の骨格画素数 <code style="color:#22d3bf">nb</code> を数え、<code style="color:#22d3bf">nb &gt;= 3</code> の画素(分岐点)を取り除いた 0/1 の float 配列を返す。分岐点を抜くことで骨格が枝ごとの連結成分に分かれる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>前提は 1 画素幅の骨格(<code style="color:#22d3bf">skeleton</code> の出力)。太い線や塊を渡すと内部の画素はすべて <code style="color:#22d3bf">nb &gt;= 3</code> となりほぼ全部が消える。分岐点そのものは出力に含まれない(分岐の位置が要るなら <code style="color:#22d3bf">junctions_skeleton</code>)。分かれた枝を個別に扱うには後段で <code style="color:#22d3bf">hx_region_to_label</code> を掛ける。分岐点の隣接画素は除かないので、多方向が集まる太めの交差では 1 画素の残骸がつながったまま残ることがある。同系の op に <code style="color:#22d3bf">r2_split_skeleton_lines</code>。</p>
+<p>对 <code style="color:#22d3bf">v &gt; 0.5</code> 的每个骨架像素统计 8 邻域内的骨架像素数 <code style="color:#22d3bf">nb</code>，返回去除了 <code style="color:#22d3bf">nb &gt;= 3</code> 的像素（分支点）的 0/1 float 数组。去掉分支点后，骨架会按枝分成各自的连通分量。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>前提是 1 像素宽的骨架（<code style="color:#22d3bf">skeleton</code> 的输出）。传入粗线或块时，内部像素全部为 <code style="color:#22d3bf">nb &gt;= 3</code>，几乎全部消失。分支点本身不包含在输出中（需要分支位置时用 <code style="color:#22d3bf">junctions_skeleton</code>）。要单独处理分开的枝，在后续施加 <code style="color:#22d3bf">hx_region_to_label</code>。分支点的相邻像素不会去除，因此在多方向汇集的较粗交叉处，1 像素的残余可能仍连着留下。同类 op 有 <code style="color:#22d3bf">r2_split_skeleton_lines</code>。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

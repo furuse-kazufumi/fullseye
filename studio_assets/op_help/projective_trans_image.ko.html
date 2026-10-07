@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원근(투영) 변환(<code style="color:#22d3bf">cv2.warpPerspective</code>). 네 모서리 중 위쪽 두 모서리를 <code style="color:#22d3bf">d=0.06+0.12*a</code> 비율로 안쪽으로 당겨 사다리꼴(원근이 걸린) 왜곡을 만든다. 프레임 밖은 반사로 채운다. HALCON의 <code style="color:#22d3bf">projective_trans_image</code>(Apply a projective transformation to an image.)에 해당(HALCON은 임의의 호모그래피 행렬을 지정할 수 있지만, 여기서는 사다리꼴 왜곡 한 가지 패턴으로 한정한 근사이다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が歪みの強さを、<code style="color:#22d3bf">b</code> が左右の非対称さ(どちら側をより歪ませるか)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code>가 왜곡의 강도를, <code style="color:#22d3bf">b</code>가 좌우의 비대칭 정도(어느 쪽을 더 왜곡할지)를바꾼다. 둘 다 사용된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

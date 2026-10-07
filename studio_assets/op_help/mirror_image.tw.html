@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依<code style="color:#22d3bf">a</code>的值切換3種鏡射方式(<code style="color:#22d3bf">a&lt;0.34</code>:上下翻轉、<code style="color:#22d3bf">a&lt;0.67</code>:左右翻轉、其餘:轉置)。請注意這是離散的模式選擇,而非連續的鏡射變換。相當於HALCON的<code style="color:#22d3bf">mirror_image</code>(Mirror an image.)(HALCON以明確的模式參數選擇上下/左右/對角,此處則是以<code style="color:#22d3bf">a</code>的值域偽選擇的近似)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が鏡映モードを 3 段階で選ぶ。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 從 3 檔中選擇鏡像模式。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

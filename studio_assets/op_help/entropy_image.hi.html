@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>वृत्ताकार window के अंदर grayscale Shannon entropy (<code style="color:#22d3bf">skimage.filters.rank. entropy</code>, 8bit quantisation) को normalise की गई image। Window के अंदर tones के &quot;बिखराव&quot; को मापने वाला texture संकेतक, जो एकसमान regions में कम और मिले-जुले tones वाले regions में ज़्यादा होता है। HALCON के <code style="color:#22d3bf">entropy_image</code> (Calculate the entropy of gray values within a rectangular window.) के समकक्ष है (HALCON आयताकार window लेता है, यहाँ वृत्ताकार window वाला सन्निकटन)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が窓の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> window की radius को 1-4 की सीमा (<code style="color:#22d3bf">_rad(a)</code>) में बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। जिस environment में skimage नहीं है, वहाँ यह branch call नहीं की जा सकती।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.33、0.67、0.99 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

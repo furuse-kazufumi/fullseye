@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsitk_signed_maurer_dist.inputs.jpg">xsitk_signed_maurer_dist: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將符號距離圖（SimpleITK <code style="color:#22d3bf">SignedMaurerDistanceMap</code>）用tanh壓縮到[0,1]所得的結果。將二值區域邊界的距離（內側、外側皆含）表示為連續值影像，越靠近邊界的位置越偏離0.5。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は tanh のスケール(<code style="color:#22d3bf">1.0+9.0*a</code> で 1〜10。大きいほど遷移が緩やかで広い範囲がグレーになる)を振る。<code style="color:#22d3bf">b</code> は未使用。距離を画素座標のスケールで解釈する点、符号(内側/外側どちらが正か)は SimpleITK のデフォルト規約に従う点に注意。</p>
+<p><code style="color:#22d3bf">a</code> 調整 tanh 的尺度(由 <code style="color:#22d3bf">1.0+9.0*a</code> 得到 1~10。越大過渡越平緩，變為灰色的範圍越廣)。<code style="color:#22d3bf">b</code> 未使用。請注意，距離是依像素座標的尺度解讀的，正負號(內側/外側哪一側為正)遵循 SimpleITK 的預設約定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

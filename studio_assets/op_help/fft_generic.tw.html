@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳影像傅立葉轉換振幅頻譜的對數壓縮結果（<code style="color:#22d3bf">log1p(|F|)</code> 依最大值正規化）。中心對應低頻分量，周邊對應高頻分量（已做 <code style="color:#22d3bf">fftshift</code>）。a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">fft_generic</code>（順変換・逆変換・実数/複素数など多数のモードを持つ汎用 FFT 演算）のうち、順方向の振幅スペクトル表示だけを実装した近似 —— 逆変換や位相成分などの他モードは別 op（<code style="color:#22d3bf">fft_image_inv</code>、<code style="color:#22d3bf">phase_deg</code> など）が個別に担う。</p>
+<p>在 HALCON 的 <code style="color:#22d3bf">fft_generic</code>(具有正轉換、逆轉換、實數/複數等多種模式的通用 FFT 運算)中,只實作了正向振幅頻譜顯示的近似 —— 逆轉換、相位分量等其他模式由別的 op(<code style="color:#22d3bf">fft_image_inv</code>、<code style="color:#22d3bf">phase_deg</code> 等)分別負責。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

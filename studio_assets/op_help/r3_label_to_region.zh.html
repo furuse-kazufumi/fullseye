@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_label_to_region.inputs.jpg">r3_label_to_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从标签图像中仅提取具有某一个灰度值(标签)的像素(相当于 HALCON <code style="color:#22d3bf">label_to_region</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた<code style="color:#22d3bf">round(a * (ラベル数-1))</code> 番目のラベルを選んで、その値を持つ画素を領域として返す。<code style="color:#22d3bf">b</code> は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
+<p>把输入舍入到小数 3 位后，把大于 0 的值视为标签，在升序排列中选出第 <code style="color:#22d3bf">round(a * (标签数-1))</code> 个标签，并把具有该值的像素作为区域返回。<code style="color:#22d3bf">b</code> 未使用。简单的 0/1 掩模只有 1 个标签，因此总是返回其前景。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

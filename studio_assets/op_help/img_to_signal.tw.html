@@ -13,11 +13,10 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>取影像一列(或一欄)的灰階剖面作為一維訊號。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位置。<code style="color:#22d3bf">b &lt; 0.5</code> なら行 <code style="color:#22d3bf">r = round(a * (H-1))</code> を横に読む(長さ W)、<code style="color:#22d3bf">b ≥ 0.5</code> なら列 <code style="color:#22d3bf">c = round(a * (W-1))</code> を縦に読む(長さ H)。a=0.5 は中央。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64、値はそのまま(正規化しない。画像が [0,1] なら [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• 補間はしない(画素の値をそのまま並べる)。斜めの線が要るなら <code style="color:#22d3bf">line_profile</code> (台帳)を使う。</p>
-<p>使いどころ: 1-D 関数の族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)を画像の断面で試す入口。周期構造(市松・縞)を横切る行を選ぶとスペクトル系 op の効果が見える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位置。<code style="color:#22d3bf">b &lt; 0.5</code> 時橫向讀取列 <code style="color:#22d3bf">r = round(a * (H-1))</code>(長度 W)，<code style="color:#22d3bf">b ≥ 0.5</code> 時縱向讀取行 <code style="color:#22d3bf">c = round(a * (W-1))</code>(長度 H)。a=0.5 為中央。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 1-D float64，值保持原樣(不正規化。影像為 [0,1] 則為 [0,1])。</p>
+<p style="margin:2px 0 2px 12px">• 不做內插(直接排列像素值)。需要斜線時用 <code style="color:#22d3bf">line_profile</code> (台帳)。</p>
+<p>用途: 在影像截面上試用 1-D 函數族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)的入口。選一列橫穿週期結構(棋盤格、條紋)的，就能看到頻譜類 op 的效果。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

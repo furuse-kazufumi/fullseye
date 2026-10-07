@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주파수 영역에서 저주파(반경 <code style="color:#22d3bf">&lt;= 0.02+0.3*a</code>)를 차단하고, 나머지를 역FFT로 실공간으로 되돌린 하이패스 필터. 평균이 0인 <b>부호 있는</b> 응답이 되므로 <code style="color:#22d3bf">signed01</code>로 [0,1]에 매핑한다(0.5가 0에 해당하며, 즉 화소의 약 절반이 0.5 미만이 되는 것이 정상이다). HALCON의 <code style="color:#22d3bf">highpass_image</code>(Extract high frequency components from an image.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が遮断半径(カットオフ周波数)を振る。<code style="color:#22d3bf">b</code> は未使用。単純に <code style="color:#22d3bf">&gt; 0.5</code> で二値化するとほぼ半分の画素が黒に潰れるので注意(詳細は <code style="color:#22d3bf">_sh_freq</code> の docstring)。</p>
+<p><code style="color:#22d3bf">a</code>가 차단 반경(컷오프 주파수)을 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 단순히 <code style="color:#22d3bf">&gt; 0.5</code>로 이진화하면 거의 절반의 화소가 검은색으로 뭉개지므로 주의(자세한 내용은 <code style="color:#22d3bf">_sh_freq</code>의 docstring).</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

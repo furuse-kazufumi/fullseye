@@ -13,21 +13,20 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mls_smooth.inputs.jpg">tb_mls_smooth: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर point को local polynomial surface पर project करके noise हटाता है (Moving Least Squares smoothing)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>点ごとに半径 <code style="color:#22d3bf">radius</code> 内の近傍を集め、重み付き PCA で局所平面(法線 n と接平面の 2 軸)を推定し、近傍の「接平面上座標 (u,v) → 法線方向の高さ h」に order 次の多項式曲面をガウス重み付き最小二乗で当てはめる。注目点自身は局所座標の原点 (0,0) にあたるので、当てはめた曲面の (0,0) での高さ(= 定数項)ぶんだけ法線方向へ動かして曲面上へ射影する。面の形は保ったままセンサノイズだけを均せる。</p>
+<p>हर point के लिए radius <code style="color:#22d3bf">radius</code> के भीतर के neighbours इकट्ठे करके, weighted PCA से local plane (normal n और tangent plane की 2 axes) estimate किया जाता है, और neighbours के &quot;tangent plane पर coordinates (u,v) → normal की दिशा में height h&quot; पर degree order का polynomial surface Gaussian-weighted least squares से fit किया जाता है। जिस point को देख रहे हैं वह खुद local coordinates के origin (0,0) पर है, इसलिए उसे fit किए गए surface की (0,0) पर height (= constant term) जितना normal की दिशा में खिसकाकर surface पर project किया जाता है। surface का shape बनाए रखते हुए केवल sensor noise smooth होता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>input point cloud।</p>
 <p>radius : float</p>
-<p>近傍球の半径(&gt; 0)。局所曲面のサポート。</p>
+<p>neighbourhood sphere का radius (&gt; 0)। local surface का support।</p>
 <p>order : int</p>
-<p>局所多項式の次数(既定 2)。項数は (order+1)(order+2)/2。</p>
+<p>local polynomial की degree (default 2)। terms की संख्या (order+1)(order+2)/2 है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (N, 3)</p>
-<p>平滑後の点群(順序・点数は保持)。近傍が多項式の項数に満たない点は原位置のまま。</p>
+<p>smoothing के बाद का point cloud (क्रम और points की संख्या बनी रहती है)। जिन points के neighbours polynomial के terms से कम हैं, वे अपनी जगह पर रहते हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>近似手法である。近傍数が項数未満/局所平面が縮退する点は動かさず原位置を維持する(穴や境界で暴れないための安全策)。<code style="color:#22d3bf">radius &lt;= 0</code> は ValueError、空入力は空を返す。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">mls_smooth</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">order</code>(既定 2)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>यह approximation method है। जिन points के neighbours terms से कम हैं / जिनका local plane degenerate है, वे नहीं खिसकते और अपनी मूल जगह पर रहते हैं (holes या borders पर बेकाबू न होने के लिए safety measure)। <code style="color:#22d3bf">radius &lt;= 0</code> पर ValueError, खाली input पर खाली लौटता है।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">mls_smooth</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">order</code> (default 2) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

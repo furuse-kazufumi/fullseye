@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用圆盘(disk)形 footprint 的中值滤波。与普通的正方形核不同,得到的是接近圆形的各向同性平滑效果。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)に相当。実装は <code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code> —— a は円盤の半径を 1〜4 に振る(半径が大きいほど強く滑らかになるが細部も消える)。b は未使用。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">median_image</code>(Compute a median filter with various masks.)。实现为 <code style="color:#22d3bf">filters.median(v, footprint=disk(1+int(a*3)))</code> —— a 把圆盘半径在 1〜4 之间调节（半径越大平滑越强，但细节也会消失）。b 未使用。</p>
 <p><b>边界处理</b>：复制边缘像素（最近邻）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

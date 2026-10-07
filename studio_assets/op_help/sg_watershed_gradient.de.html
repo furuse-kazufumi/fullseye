@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt die Grenzen einer Wasserscheiden-(Watershed-)Segmentierung zurück, die von h-Minima-Markern im Gradientenbild ausgeht (<code style="color:#22d3bf">skimage</code>; kein entsprechender HALCON-Operator).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Sobel 勾配の大きさを正規化し、深さ <code style="color:#22d3bf">h = 0.02 + a*0.3</code> の h-minima 変換で生き残った領域極小をマーカーとして（<code style="color:#22d3bf">a</code> が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。<code style="color:#22d3bf">b</code> は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。</p>
+<p>Normiert den Betrag des Sobel-Gradienten, nimmt die regionalen Minima, die eine h-Minima-Transformation der Tiefe <code style="color:#22d3bf">h = 0.02 + a*0.3</code> überstehen, als Marker (je größer <code style="color:#22d3bf">a</code>, desto weniger Marker und desto gröber die Segmentierung) und berechnet die Wasserscheide auf diesem Gradientenbild. <code style="color:#22d3bf">b</code> wird nicht verwendet. Rückgabewert ist eine Region, die die Dammlinien (Grenzen) zwischen den Einzugsgebieten (catchment basin/Objekten) darstellt.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

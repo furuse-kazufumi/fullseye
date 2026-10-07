@@ -14,11 +14,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回局部<b>条纹走向</b>(结构张量的主轴)，并映射到 <code style="color:#22d3bf">[0,1]</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> がともに水平、<code style="color:#22d3bf">0.5</code> が垂直にあたる(向きは 180 度で一周するので、<code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> は同じ向き —— <b>この出力を差分すると境目で偽の段差が出る</b>ことに注意)。</p>
-<p><code style="color:#22d3bf">a</code> が微分前の平滑 <code style="color:#22d3bf">sigma</code>(0.5〜3.0 画素)、<code style="color:#22d3bf">b</code> が積分窓 <code style="color:#22d3bf">rho</code>(1.0〜8.0 画素)。<code style="color:#22d3bf">rho</code> は「どれくらいの広さで向きが揃っているとみなすか」で、繊維や研磨目のピッチより大きく取る。</p>
-<p><b>適用条件</b>: 向きが定義できるのは<b>勾配が構造的に偏っている所だけ</b>。テンソルの異方度が跡に対して <code style="color:#22d3bf">1e-6</code> を下回る画素(平坦面・等方な雑音)は「向き未定義」として <code style="color:#22d3bf">0.5</code> を返す —— ここで床を置かないと、一様な面で丸め屑が <code style="color:#22d3bf">arctan2</code> に増幅されて <b>明るさを 0.01 変えただけで向きが一斉に反転する</b>。向きの確からしさは <code style="color:#22d3bf">structure_tensor_coherence</code> で別に測ること。</p>
-<p><b>用途</b>: 繊維強化材の繊維配向、圧延・研磨の条痕方向、木目、結晶粒の伸長方向。HALCON に対応する単体 op は無い。</p>
+<p><code style="color:#22d3bf">0</code> 和 <code style="color:#22d3bf">1</code> 都对应水平，<code style="color:#22d3bf">0.5</code> 对应垂直（方向每 180 度绕一周，因此 <code style="color:#22d3bf">0</code> 和 <code style="color:#22d3bf">1</code> 是同一方向 —— 请注意<b>对该输出做差分会在接缝处出现虚假的阶跃</b>）。</p>
+<p><code style="color:#22d3bf">a</code> 是求导前的平滑 <code style="color:#22d3bf">sigma</code>（0.5〜3.0 像素），<code style="color:#22d3bf">b</code> 是积分窗口 <code style="color:#22d3bf">rho</code>（1.0〜8.0 像素）。<code style="color:#22d3bf">rho</code> 表示“在多大范围内视为方向一致”，应取得比纤维或研磨痕的间距更大。</p>
+<p><b>适用条件</b>：方向只在<b>梯度存在结构性偏向的地方</b>才能定义。张量的各向异性相对于迹低于 <code style="color:#22d3bf">1e-6</code> 的像素（平坦面、各向同性噪声）作为“方向未定义” 返回 <code style="color:#22d3bf">0.5</code> —— 若这里不设下限，均匀面上的舍入残渣会被 <code style="color:#22d3bf">arctan2</code> 放大，<b>亮度仅改变 0.01 方向就会一齐反转</b>。方向的可信度请另用 <code style="color:#22d3bf">structure_tensor_coherence</code> 测量。</p>
+<p><b>用途</b>：纤维增强材料的纤维取向、轧制/研磨的条痕方向、木纹、晶粒的伸长方向。HALCON 中没有对应的单体 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

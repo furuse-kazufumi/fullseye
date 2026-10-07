@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fits a 2-class Gaussian mixture model (EM algorithm) to the intensity values and returns the brighter cluster as the region (a self-contained EM implementation independent of <code style="color:#22d3bf">skimage</code>; no corresponding HALCON operator).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。<code style="color:#22d3bf">a</code>（0〜1）は事後確率のしきい値 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。<code style="color:#22d3bf">b</code> は未使用。乱数を使わないので再現性がある。</p>
+<p>Fits a 1-D 2-component Gaussian mixture with deterministic EM initialised from the 25/75 percentiles, and takes the component with the higher mean as the &quot;bright class&quot;. <code style="color:#22d3bf">a</code> (0 to 1) sweeps the posterior-probability threshold <code style="color:#22d3bf">t = 0.25 + 0.5*a</code>; the larger it is, the more it picks only pixels judged &quot;certainly bright&quot;. <code style="color:#22d3bf">b</code> is unused. Since it uses no random numbers, it is reproducible.</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

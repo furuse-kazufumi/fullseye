@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过 <code style="color:#22d3bf">(sin(2πx) + 1) / 2</code> 以正弦波方式折叠阶调的周期性 LUT。在 x=0 和 x=1 处回到 0.5，在 x=0.25/0.75 附近分别达到 0/1 —— 它不是单调递增，而是一种多个不同输入阶调共享同一输出的不可逆变换。用作 HALCON <code style="color:#22d3bf">sin_image</code>（Calculate the sine of an image.）的替代。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。周期や位相を変える調整点は無い。等高線状の疑似カラー効果や階調の折返しを作る用途向けで、通常のコントラスト調整には向かない。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。没有改变周期或相位的可调参数。适用于制作等高线状的伪彩色效果或灰阶折返,不适合普通的对比度调整。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

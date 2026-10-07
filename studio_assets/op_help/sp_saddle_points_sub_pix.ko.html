@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이 값 곡면의 안장점(새들 포인트)을 서브픽셀 정밀도로 검출한다(HALCON <code style="color:#22d3bf">saddle_points_sub_pix</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>3x3 の 2 次曲面フィットのヘッセ行列が不定符号（<code style="color:#22d3bf">det H &lt; 0</code>、両主曲率の符号が逆）になる画素を鞍点候補とし、勾配 0 点がセル内（<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>）に収まるものだけを残す。<code style="color:#22d3bf">a</code> は鞍点の強さ（より小さい方の主曲率の絶対値）のしきい値を 1e-4〜0.0201 に振る（<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>）。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。</p>
+<p>3x3 2차 곡면 피팅의 헤세 행렬이 부정부호(<code style="color:#22d3bf">det H &lt; 0</code>, 두 주곡률의 부호가 반대)가 되는 화소를 안장점 후보로 삼고, 기울기 0인 점이 셀 안(<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>)에 들어오는 것만 남긴다. <code style="color:#22d3bf">a</code>는 안장점 강도(더 작은 주곡률의 절댓값)의 임계값을 1e-4~0.0201 범위에서 바꾼다(<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환값은 CONTOUR이며, 좌표 단위는 입력 영상의 화소이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

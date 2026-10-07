@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Curvature flow smoothing (SimpleITK <code style="color:#22d3bf">CurvatureFlow</code>)। Contour lines की curvature के अनुपात वाली गति से image को blur करने वाला non-linear diffusion; सीधे edges आसानी से बचे रहते हैं, और गोल छोटे details पहले मिटते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*8)</code> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> number of iterations (<code style="color:#22d3bf">1+int(a*8)</code> से 1-9 बार) को बदलता है — जितना अधिक, smoothing उतनी तेज़। time step 0.0625 पर स्थिर है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। आउटपुट [0,1] में clip किया जाता है।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>

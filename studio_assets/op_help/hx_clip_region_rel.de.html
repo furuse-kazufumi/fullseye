@@ -14,13 +14,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.inputs.jpg">hx_clip_region_rel: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Beschneidet eine Region relativ zu ihrer Bounding Box (schneidet an jeder Seite den Anteil a ab).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region の外接矩形 <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code> を求め、その高さ・幅の <code style="color:#22d3bf">0.5*a</code> ずつを上下左右から削った内側の矩形に含まれる画素だけを残して 0/1 の float 配列で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 各辺から削る割合 <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>、<code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>。a=0 で無変化、a=1 で</p>
-<p>外接矩形の中心線付近(1 行・1 列程度)しか残らない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• region が空なら空のまま返す。</p>
-<p>削るのは外接矩形に対する相対量なので、region の大きさが違っても「周辺 x% を落とす」意味が保たれる。外接矩形は region 全体で 1 つ(成分ごとではない)ため、離れた小成分が並ぶ場合は端の成分がまるごと消えることがある。画像基準の中央矩形で切るなら <code style="color:#22d3bf">hx_rectangle1_domain</code> との論理積を使う。</p>
+<p>Bestimmt das umschreibende Rechteck <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code> der Region <code style="color:#22d3bf">v &gt; 0.5</code>, behält nur die Pixel im inneren Rechteck, das entsteht, wenn je <code style="color:#22d3bf">0.5*a</code> seiner Höhe und Breite oben, unten, links und rechts abgetragen werden, und gibt ein 0/1-float-Array zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → von jeder Seite abgetragener Anteil <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>, <code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>. a=0 ändert nichts; bei a=1</p>
+<p>bleibt nur die Umgebung der Mittellinien des umschreibenden Rechtecks (etwa 1 Zeile und 1 Spalte).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• Eine leere Region wird leer zurückgegeben.</p>
+<p>Da relativ zum umschreibenden Rechteck abgetragen wird, bleibt die Bedeutung &quot;äußere x% entfernen&quot; auch bei unterschiedlich großen Regionen erhalten. Es gibt 1 umschreibendes Rechteck für die ganze Region (nicht je Komponente); liegen getrennte kleine Komponenten nebeneinander, können die Komponenten am Rand vollständig verschwinden. Um mit einem bildbezogenen Mittelrechteck zu schneiden, das logische UND mit <code style="color:#22d3bf">hx_rectangle1_domain</code> verwenden.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>

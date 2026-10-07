@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/total_length.chain.jpg">total_length: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Merkmal, das die gesamte Bogenlänge aller XLD-Konturen zurückgibt. Entspricht HALCONs <code style="color:#22d3bf">length_xld</code> (Length of contours or polygons.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。各輪郭について隣接点間のユークリッド距離を足し合わせたもの（折れ線の全長）を、全輪郭ぶん合算する。点が 2 点未満の輪郭は長さ 0 として扱われる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Für jede Kontur werden die euklidischen Abstände zwischen benachbarten Punkten aufsummiert (die Gesamtlänge des Polygonzugs) und über alle Konturen addiert. Konturen mit weniger als 2 Punkten gelten als Länge 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

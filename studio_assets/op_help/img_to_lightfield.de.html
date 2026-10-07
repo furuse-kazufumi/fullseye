@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_lightfield.gif" alt="img_to_lightfield: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt das Bild in Vorder- und Hintergrundschicht und baut ein 4-D-Lichtfeld (V,U,H,W) mit Parallaxe.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">lf_synthesize</code> と同じ前方モデルの 2 層版: 視点 <code style="color:#22d3bf">(v, u)</code> は層ごとに <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> だけ画像をずらして見る(線形補間、縁は最近傍)。背景層は傾き 0(無限遠)、前景層(しきい値以上の画素)は傾き <code style="color:#22d3bf">slope</code> で、前景が背景を<b>遮蔽</b>する(視点ごとにマスクもずらす)。変位が角度インデックスに線形なので、EPI の傾き・リフォーカスの最良スロープ・両端視点の視差 <code style="color:#22d3bf">slope * (U - 1)</code> がすべて閉形式で分かる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景の傾き <code style="color:#22d3bf">slope = 1.5 * a</code> 画素/視点(a=0.5 で 0.75。5×5 なら両端で 3 px)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 前景のしきい値 <code style="color:#22d3bf">thr = b</code>(<code style="color:#22d3bf">img &gt;= thr</code> が前景。b=0.5 で明るい部分)。</p>
-<p style="margin:2px 0 2px 12px">• 角度サンプルは <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>。返り値 <code style="color:#22d3bf">(5, 5, H, W)</code> float64。</p>
-<p style="margin:2px 0 2px 12px">• 中央視点 <code style="color:#22d3bf">(2, 2)</code> は入力そのもの(ずれ 0)。</p>
-<p>使いどころ: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> の入口。深度推定の答えは「前景 = slope、背景 = 0」の 2 値。</p>
+<p>Eine 2-Schichten-Version desselben Vorwärtsmodells wie <code style="color:#22d3bf">lf_synthesize</code>: Blickpunkt <code style="color:#22d3bf">(v, u)</code> sieht das Bild je Schicht um <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> verschoben (lineare Interpolation, nächster Nachbar an den Rändern). Die Hintergrundschicht hat Steigung 0 (unendlich fern), die Vordergrundschicht (Pixel ab dem Schwellwert) die Steigung <code style="color:#22d3bf">slope</code>, und der Vordergrund <b>verdeckt</b> den Hintergrund (auch die Maske wird je Blickpunkt verschoben). Da die Verschiebung linear im Winkelindex ist, sind die EPI-Steigung, die beste Refokus-Steigung und die Disparität der äußersten Blickpunkte <code style="color:#22d3bf">slope * (U - 1)</code> alle in geschlossener Form bekannt.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Steigung des Vordergrunds <code style="color:#22d3bf">slope = 1.5 * a</code> Pixel/Blickpunkt (0.75 bei a=0.5; bei 5×5 3 px zwischen den Enden).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Schwellwert des Vordergrunds <code style="color:#22d3bf">thr = b</code> (<code style="color:#22d3bf">img &gt;= thr</code> ist Vordergrund; bei b=0.5 die hellen Teile).</p>
+<p style="margin:2px 0 2px 12px">• Die Winkelabtastung ist <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>. Rückgabewert <code style="color:#22d3bf">(5, 5, H, W)</code> float64.</p>
+<p style="margin:2px 0 2px 12px">• Der mittlere Blickpunkt <code style="color:#22d3bf">(2, 2)</code> ist die Eingabe selbst (Versatz 0).</p>
+<p>Einsatz: der Eingang zu <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code>. Die Antwort der Tiefenschätzung ist 2-wertig: &quot;Vordergrund = slope, Hintergrund = 0&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

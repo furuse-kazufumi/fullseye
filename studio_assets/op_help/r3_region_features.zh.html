@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_region_features.chain.jpg">r3_region_features: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回区域的一个形状特征量(实现了 HALCON <code style="color:#22d3bf">region_features</code> 的一部分)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a &lt; 0.5</code> なら正規化面積（前景画素数/全画素数）、<code style="color:#22d3bf">a &gt;= 0.5</code> なら真円度の逆数にあたるコンパクトネス <code style="color:#22d3bf">P^2 / (4*pi*A)</code>（<code style="color:#22d3bf">P</code> は 4 連結境界の周囲長。円で 1、正方形で約 1.27、細長いほど大きくなる）を返す。<code style="color:#22d3bf">b</code> は未使用。領域が空なら 0.0。</p>
+<p><code style="color:#22d3bf">a &lt; 0.5</code> 时返回归一化面积（前景像素数/全部像素数），<code style="color:#22d3bf">a &gt;= 0.5</code> 时返回相当于圆度倒数的紧凑度 <code style="color:#22d3bf">P^2 / (4*pi*A)</code>（<code style="color:#22d3bf">P</code> 为 4 连通边界的周长。圆为 1，正方形约 1.27，越细长越大）。<code style="color:#22d3bf">b</code> 未使用。区域为空时为 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

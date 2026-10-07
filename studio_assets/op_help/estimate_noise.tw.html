@@ -9,8 +9,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>穩健地估計加性雜訊的標準差 σ（<code style="color:#22d3bf">_noise_sigma</code>：把拉普拉斯響應的 MAD 換算為常態分佈等效尺度，再除以 5 點拉普拉斯核的雜訊增益 <code style="color:#22d3bf">sqrt(20)</code>）。設計上對邊緣產生的離群值不敏感，只擷取平坦區域的雜訊（2026-09-02 已修正舊實作中「σ 沒有單位、在 σ≈0.08 以上會飽和到 1.0」的缺陷，詳見 <code style="color:#22d3bf">_noise_sigma</code> 的 docstring）。相當於 HALCON 的 <code style="color:#22d3bf">estimate_noise</code>（Estimate the image noise from a single image.）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

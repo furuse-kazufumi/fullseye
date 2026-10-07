@@ -14,11 +14,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>逐像素<b>选择窗口大小</b>的局部标准差(Lepski / ICI 规则)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>窓を広げるほど推定は安定するが(相対標準誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code>)、縁がにじんで分解能が落ちる —— <b>大きさを 1 つ選ぶ限りこの矛盾は解けない</b>。解き方は「時間でも場所でもなく<b>場所ごとに別の答えを持つ</b>」こと: 小さい窓から順に、推定値の信頼区間が交わり続ける間だけ窓を広げ、交わらなくなった 1 つ手前で止める。平坦な所では大きな窓(安定)、縁の近くでは小さな窓(にじまない)が自動で選ばれる。</p>
-<p><code style="color:#22d3bf">a</code> が試す窓の上限(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> のどこまでか)、<code style="color:#22d3bf">b</code> が信頼区間の倍率 <code style="color:#22d3bf">gamma</code>(1.0〜3.0)。<code style="color:#22d3bf">gamma</code> を大きくすると窓が伸びやすくなる(安定寄り)。</p>
-<p><b><code style="color:#22d3bf">local_std</code> との関係</b>: <code style="color:#22d3bf">local_std</code> は窓を固定する。平坦部の推定を締めたくて窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。<b>縁の鋭さを保ったまま平坦部の誤差だけ下げられる</b>のが取り柄で、代わりに計算量が窓の数だけ増える。</p>
-<p><b>適用条件</b>: (1) 「交わるか」の判定は誤差限界が正しいことに依存する —— 白色雑音でない(空間相関のある)雑音では窓が伸びすぎる。(2) <code style="color:#22d3bf">gamma</code> が小さすぎると常に最小窓が選ばれ、<code style="color:#22d3bf">local_std</code> の 3x3 と同じになる(効いていないときの見分け方)。</p>
+<p>窗口越宽估计越稳定（相对标准误差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code>），但边缘会模糊、分辨率会下降 —— <b>只要选定 1 个大小，这个矛盾就无法解决</b>。解法是“既不在时间上也不在空间上，而是<b>每个位置各有不同的答案</b>”：从小窗口开始依次，只在估计值的置信区间持续相交期间扩大窗口，在不再相交的前 1 个停下。平坦处自动选择大窗口（稳定），边缘附近自动选择小窗口（不模糊）。</p>
+<p><code style="color:#22d3bf">a</code> 是尝试的窗口上限（到 <code style="color:#22d3bf">3,5,7,9,11,13,15</code> 中的哪一个为止），<code style="color:#22d3bf">b</code> 是置信区间的倍率 <code style="color:#22d3bf">gamma</code>（1.0〜3.0）。<code style="color:#22d3bf">gamma</code> 越大窗口越容易扩展（偏向稳定）。</p>
+<p><b>与 <code style="color:#22d3bf">local_std</code> 的关系</b>：<code style="color:#22d3bf">local_std</code> 固定窗口。为了收紧平坦部的估计而扩大窗口会使边缘模糊，本 op 按位置解决这一取舍。<b>在保持边缘锐利的同时只降低平坦部的误差</b>是其优点，代价是计算量随窗口数增加。</p>
+<p><b>适用条件</b>：(1) “是否相交”的判定依赖于误差界正确 —— 对于非白噪声（有空间相关）的噪声，窗口会扩得过大。(2) <code style="color:#22d3bf">gamma</code> 太小时总是选中最小窗口，结果与 <code style="color:#22d3bf">local_std</code> 的 3x3 相同（这是判断其未起作用的方法）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

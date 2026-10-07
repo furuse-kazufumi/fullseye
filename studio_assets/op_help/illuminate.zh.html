@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>非锐化蒙版式的局部对比度增强。将高斯模糊(半径 <code style="color:#22d3bf">3+12*a</code>)得到的 <code style="color:#22d3bf">sm</code> 与原图相减得到差分 <code style="color:#22d3bf">x - sm</code>,再加回原图,从而在保留低频照明不均的同时提升局部边缘与纹理。是 HALCON 的 <code style="color:#22d3bf">illuminate</code>(Illuminate image.)的替代实现。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> はぼかしの強さ(構造とみなすスケール、シグマ 3〜15)を、<code style="color:#22d3bf">b</code> は強調の強さ(0.3〜1.0)を振る。両方が使われる。強すぎるとハローアーティファクトが出る。</p>
+<p><code style="color:#22d3bf">a</code> 调节模糊强度(视为结构的尺度,sigma 3～15),<code style="color:#22d3bf">b</code> 调节增强强度(0.3～1.0)。两者都会使用。过强时会出现光晕伪影。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

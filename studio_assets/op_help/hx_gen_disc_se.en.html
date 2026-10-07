@@ -13,11 +13,10 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generate a disc structuring element as a region (radius a).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>入力 <code style="color:#22d3bf">v</code> は画布の形状のためだけに使い、画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code> から半径 <code style="color:#22d3bf">r</code> 以内の画素を 1 とする円板を 0/1 の float 配列(region)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = (0.05 + 0.35*a) * min(h, w)</code>(短辺の 5%〜40%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>名前は「構造要素」だが、この op が返すのは画像と同じ大きさの region であり、<code style="color:#22d3bf">hx_erosion1</code> などが内部で使う小さなカーネルではない。中心固定の円 region が欲しいときの生成器として、<code style="color:#22d3bf">hx_gen_circle</code>(半径 10%〜50%)の小径版にあたる。他の region と重ねて ROI を作るのに使う。</p>
+<p>The input <code style="color:#22d3bf">v</code> is used only for the canvas shape; returns as a 0/1 float array (region) a disc in which pixels within radius <code style="color:#22d3bf">r</code> of the image centre <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code> are 1.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → radius <code style="color:#22d3bf">r = (0.05 + 0.35*a) * min(h, w)</code> (5% to 40% of the shorter side).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>The name says &quot;structuring element&quot;, but what this op returns is a region of the same size as the image, not the small kernel used internally by <code style="color:#22d3bf">hx_erosion1</code> and the like. As a generator for when you want a centre-fixed circular region, it is the small-radius version of <code style="color:#22d3bf">hx_gen_circle</code> (radius 10% to 50%). Used to build an ROI by overlaying it with other regions.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

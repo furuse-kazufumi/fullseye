@@ -8,8 +8,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fokus-(Unschärfe-)Kennzahl auf Basis der Laplace-Varianz (Varianz von <code style="color:#22d3bf">cv2.Laplacian</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像全体に Laplacian を掛けた結果の分散を計算し、<code style="color:#22d3bf">min(1.0, 分散*20)</code> で [0,1] にクリップしたスカラーを返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどエッジ/テクスチャが豊富＝合焦、小さいほどボケている可能性が高い、という古典的なオートフォーカス評価指標。倍率 20 は経験的なスケーリングで、絶対的なボケ量ではなく相対比較に向く。</p>
+<p>Berechnet die Varianz des Ergebnisses einer Laplace-Filterung (Laplacian) des ganzen Bildes und gibt einen mit <code style="color:#22d3bf">min(1.0, Varianz*20)</code> auf [0,1] begrenzten Skalar zurück. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Je größer der Wert, desto reicher an Kanten/Textur = fokussiert, je kleiner, desto wahrscheinlicher unscharf; ein klassisches Autofokus-Bewertungsmaß. Der Faktor 20 ist eine empirische Skalierung, geeignet für relative Vergleiche statt für den absoluten Unschärfegrad.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

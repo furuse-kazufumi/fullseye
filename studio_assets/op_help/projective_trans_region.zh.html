@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/projective_trans_region.inputs.jpg">projective_trans_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将与 <code style="color:#22d3bf">projective_trans_image</code> 相同的梯形畸变应用于区域（二值掩膜）。由于 <code style="color:#22d3bf">out_sort</code> 为 <code style="color:#22d3bf">region</code>，<code style="color:#22d3bf">build()</code> 会用 <code style="color:#22d3bf">_rebinarise</code> 包裹，将插值产生的小数值以 <code style="color:#22d3bf">&gt;0.5</code> 转回二值后再返回（这是为了不破坏区域 {0,1} 约定所做的后处理）。相当于 HALCON 的 <code style="color:#22d3bf">projective_trans_region</code>（Apply a projective transformation to a region.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が歪みの強さ、<code style="color:#22d3bf">b</code> が非対称さを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节畸变强度,<code style="color:#22d3bf">b</code> 调节不对称程度。两者都会使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

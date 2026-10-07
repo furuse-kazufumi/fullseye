@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv2_hitmiss.inputs.jpg">xcv2_hitmiss: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用擊中擊不中變換（hit-or-miss transform）偵測「中心為背景、上下左右為前景」的十字形圖樣（<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>固定カーネル <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code> を使う（1=前景必須、-1=背景必須、0=不問）。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。前景に囲まれた 1 画素の窪み（孤立した背景画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力はしきい値 0.5 で二値化してから判定する。</p>
+<p>使用固定核 <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code>（1=必須為前景，-1=必須為背景，0=不限）。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。會檢出被前景包圍的 1 像素凹陷（孤立的背景像素），因此可用於細化後的缺口偵測或形狀的凹口偵測。輸入先以閾值 0.5 二值化後再判定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

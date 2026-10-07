@@ -13,11 +13,10 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittelwertglättung mit beliebiger Maske (einer Scheibe). Der Radius r variiert mit a (ein anderer Operator als der Rechteckmittelwert).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>半径 <code style="color:#22d3bf">r</code> の円板(<code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> を満たす画素を 1、総和で割って正規化)を <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code> で畳み込む。出力は入力と同形の float 配列で、値域は入力の範囲を出ない(重みの和が 1)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code>(1〜5 画素、5 になるのは a=1 のときだけ)。カーネルは <code style="color:#22d3bf">(2r+1)</code> 角の中の円板。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>矩形窓の <code style="color:#22d3bf">mean_image</code> と違い方向による重みの偏りが少なく、円板半径以下の構造を等方的にぼかす。境界は鏡映で延長するので端の暗落ちは起きない。入力検証は無く、NaN が含まれるとそのまま伝播する。</p>
+<p>Faltet mit einer Kreisscheibe vom Radius <code style="color:#22d3bf">r</code> (Pixel mit <code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> auf 1 gesetzt, durch die Summe normiert) per <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code>. Die Ausgabe ist ein float-Array in der Form der Eingabe, und die Werte verlassen den Bereich der Eingabe nicht (Gewichtssumme 1).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> (1 bis 5 Pixel; 5 nur bei a=1). Der Kernel ist eine Kreisscheibe in einem <code style="color:#22d3bf">(2r+1)</code>-Quadrat.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Anders als <code style="color:#22d3bf">mean_image</code> mit Rechteckfenster hat es weniger richtungsabhängigen Gewichtungs-Bias und zeichnet Strukturen bis zum Scheibenradius isotrop weich. Der Rand wird gespiegelt fortgesetzt, sodass an den Rändern keine Abdunklung auftritt. Es gibt keine Eingabeprüfung; enthaltene NaN breiten sich unverändert aus.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

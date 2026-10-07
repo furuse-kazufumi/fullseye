@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के न्यूनतम से अधिकतम मानों को पूरे [0,1] तक फैलाने वाला min-max normalisation (<code style="color:#22d3bf">(x - min) / (max - min)</code>, constant image हो तो कोई बदलाव नहीं)। HALCON के <code style="color:#22d3bf">scale_image_max</code> (Maximum gray value spreading in the value range 0 to 255.) के समकक्ष है (मानों की सीमा 0 से 255 नहीं, बल्कि [0,1] contract)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。画像全体の統計から自動的に決まるため調整の余地がない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। यह पूरी image के आँकड़ों से अपने-आप तय होता है, इसलिए समायोजन की गुंजाइश नहीं है।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

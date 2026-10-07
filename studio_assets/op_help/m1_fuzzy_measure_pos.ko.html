@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중심을 지나는 캘리퍼 선 위의 에지를 퍼지 소속도 점수로 걸러낸 뒤 반환한다(HALCON <code style="color:#22d3bf">fuzzy_measure_pos</code>에 해당: 사각형/원호에 수직인 직선 에지를 퍼지 판정으로 검출).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code> と同じ。各エッジの振幅を<code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code>（<code style="color:#22d3bf">lo = 0.05*gmax</code>）で [0,1] のファジィスコアに写像し、<code style="color:#22d3bf">b</code>（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が <code style="color:#22d3bf">measure_pos</code> と違う）。<code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。戻り値は CONTOUR、座標単位はピクセル。</p>
+<p>에지 검출은 <code style="color:#22d3bf">m1_measure_pos</code>와 같다. 각 에지의 진폭을 <code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code>(<code style="color:#22d3bf">lo = 0.05*gmax</code>)로 [0,1]의 퍼지 점수로 사상하고, <code style="color:#22d3bf">b</code>(0~1) 이상인 것만 남긴다(0/1 하드 임계값이 아니라 진폭에 따른 연속적인 신뢰도로 선별한다는 점이 <code style="color:#22d3bf">measure_pos</code>와 다르다). <code style="color:#22d3bf">a</code>는 선의 방향(<code style="color:#22d3bf">theta = a*pi</code>). 반환값은 CONTOUR이며, 좌표 단위는 화소.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

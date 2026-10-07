@@ -14,15 +14,14 @@
 <p><img src="fig/tb_capsule_sdf.gif" alt="tb_capsule_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>line segment <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> को radius <code style="color:#22d3bf">radius</code> से मोटा करके बने capsule का <b>exact</b> signed distance field।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>: 芯線の端点(要素数 3)。<code style="color:#22d3bf">a == b</code> なら球(<code style="color:#22d3bf">sphere_sdf</code> と一致)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 太さ(負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: 工具の到達性を「工具の掃引体積が部品と交わらないか」で見るとき、工具をカプセルで置いて <code style="color:#22d3bf">sdf_intersect</code> の最小値が正かを見る。骨梁・血管・繊維の合成にも。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">capsule_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>। यह line segment तक की न्यूनतम दूरी ही है, इसलिए <b>पूरे space में gradient norm 1 है</b> (cylinder से अलग इसके सिरे गोल हैं, इसलिए कोई corner नहीं और यह exact है)। rib, piping, हड्डी, wire और tool के swept volume के approximation के लिए उपयुक्त।</p>
+<p>argument और validation (<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: अंतिम axis 3 वाला float array <code style="color:#22d3bf">(..., 3)</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> / <code style="color:#22d3bf">b</code>: core line के सिरे (3 element)। <code style="color:#22d3bf">a == b</code> हो तो sphere (<code style="color:#22d3bf">sphere_sdf</code> से मेल)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: मोटाई (ऋणात्मक अस्वीकार)।</p>
+<p>return value: <code style="color:#22d3bf">grid.shape[:-1]</code> का float64।</p>
+<p>उपयोग: tool की पहुँच को &quot;क्या tool का swept volume part से टकराता है&quot; से जाँचते समय tool को capsule के रूप में रखकर देखें कि <code style="color:#22d3bf">sdf_intersect</code> का न्यूनतम मान धनात्मक है या नहीं। trabecula, रक्त वाहिका और fibre के synthesis में भी।</p>
+<p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">capsule_sdf</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

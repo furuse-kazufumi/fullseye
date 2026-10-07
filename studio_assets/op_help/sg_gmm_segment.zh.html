@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对亮度值拟合 2 类高斯混合模型（EM 算法），并将较亮的簇作为区域返回（不依赖 <code style="color:#22d3bf">skimage</code> 的自实现 EM，HALCON 无对应算子）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。<code style="color:#22d3bf">a</code>（0〜1）は事後確率のしきい値 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。<code style="color:#22d3bf">b</code> は未使用。乱数を使わないので再現性がある。</p>
+<p>用以 25/75 百分位数初始化的确定性 EM 拟合 1 维 2 成分高斯混合，把均值较高的一方作为“亮类”。<code style="color:#22d3bf">a</code>（0〜1）调节后验概率阈值 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code>，越大越只拾取被判定为“确实亮”的像素。<code style="color:#22d3bf">b</code> 未使用。不使用随机数，因此具有可复现性。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

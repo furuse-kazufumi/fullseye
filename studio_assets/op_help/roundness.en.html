@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Roundness <code style="color:#22d3bf">1 - sigma/mu</code>, where <code style="color:#22d3bf">mu</code> and <code style="color:#22d3bf">sigma</code> are the mean and standard deviation of the <b>distances from the centre of gravity to the contour pixels</b>; the more uniform those distances are (the rounder the shape), the closer to 1. <b>The same formula as</b> HALCON&#x27;s <code style="color:#22d3bf">roundness</code> (Shape factors from contour.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">4・面積/(π・長軸長²)</code> という別の量を返していた(16x64 の矩形で 0.239 対 0.577)。<code style="color:#22d3bf">circularity</code> が「面積が最大距離の円をどれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Until 2026-09-26 it returned a different quantity, <code style="color:#22d3bf">4·area/(π·major_axis_length²)</code> (0.239 vs 0.577 for a 16x64 rectangle). Whereas <code style="color:#22d3bf">circularity</code> looks at &quot;how much of the circle of maximum distance the area fills&quot;, this one looks at <b>the unevenness of the border</b>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

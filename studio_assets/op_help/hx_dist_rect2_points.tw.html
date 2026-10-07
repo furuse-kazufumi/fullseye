@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_rect2_points.chain.jpg">hx_dist_rect2_points: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>contour 各點到最小面積有向矩形中心的正規化距離的平均(feature)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全 contour の点をまとめ、点の重心からの各点のユークリッド距離の平均を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。</p>
-<p>注意: 名前は最小面積外接矩形の中心からの距離だが、現実装は矩形を求めず点群の重心を中心にしている。点が偏っている場合(弧が欠けた輪郭など)は矩形中心と重心がずれるため、名前どおりの値にはならない。実質は「重心からの平均半径」で、<code style="color:#22d3bf">hx_moments_any_xld</code>(二乗平均)の 1 乗版にあたる。矩形そのものは <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>。</p>
+<p>把全部 contour 的點合在一起,求各點到點質心的歐氏距離的平均,除以 <code style="color:#22d3bf">max(H, W)</code> 並以 1 飽和截頂後回傳 <code style="color:#22d3bf">np.float64</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 點少於 3 個時為 0.0。</p>
+<p>注意: 名稱是到最小面積外接矩形中心的距離,但目前實作並不求矩形,而是以點集的質心為中心。點分布有偏(圓弧缺失的輪廓等)時,矩形中心與質心不一致,因此不會得到名稱所示的值。實質是「到質心的平均半徑」,相當於 <code style="color:#22d3bf">hx_moments_any_xld</code>(平方平均)的 1 次方版。矩形本身見 <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

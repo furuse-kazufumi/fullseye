@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.inputs.jpg">transpose_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将区域(二值掩码)转置(<code style="color:#22d3bf">x.T</code>,即关于对角线的镜像=行列互换)。类别为geometry,但输入/输出类型为<code style="color:#22d3bf">region</code>。作为几何变换的一种以<code style="color:#22d3bf">_sh_geom</code>实现,但由于转置不涉及插值,即使经过<code style="color:#22d3bf">build()</code>的<code style="color:#22d3bf">_rebinarise</code>,数值也不会改变(本来就已经是{0,1})。相当于HALCON的<code style="color:#22d3bf">transpose_region</code>(Reflect a region about a point.)(严格来说与HALCON「关于点的反转」是不同的变换,此处是以矩阵转置=关于对角线的反转来近似)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

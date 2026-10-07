@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>伽瑪校正 <code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code>。<code style="color:#22d3bf">a</code> 越接近 0，指數越接近 0.3，會提升暗部；<code style="color:#22d3bf">a</code> 越接近 1，指數越接近 2.8，會壓暗暗部、增強對比度。用作 HALCON <code style="color:#22d3bf">gamma_image</code>（Perform a gamma encoding or decoding of an image.）的替代。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> はガンマ指数を 0.3〜2.8 の範囲で<b>線形に</b>振る（既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.55 であって素通しではない。γ=1 が要るなら <code style="color:#22d3bf">a=0.28</code>）。<code style="color:#22d3bf">b</code> は未使用。HALCON の実装は Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは単純なべき乗写像 1 本に単純化している(近似)。</p>
+<p><code style="color:#22d3bf">a</code> 在 0.3～2.8 範圍內<b>線性地</b>調整伽瑪指數(預設 <code style="color:#22d3bf">a=0.5</code> 對應 γ=1.55,並非直通。若需要 γ=1,請用 <code style="color:#22d3bf">a=0.28</code>)。<code style="color:#22d3bf">b</code> 未使用。HALCON 的實作有 Encode/Decode 切換與 AmpFactor 等多個參數,這裡簡化為 1 個單純的冪映射(近似)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

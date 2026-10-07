@@ -12,10 +12,9 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के domain को region के रूप में लेता है (default पूरी सतह)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状の全 1 の float64 配列(region)を返す。この実装は画像に ROI(定義域)の概念を持たないため、定義域は常に画像全面であり、<code style="color:#22d3bf">hx_full_domain</code> と同じ結果になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。入力の gray 値も見ない。</p>
-<p>用途は「今の定義域を region として取り出し、他の region 演算の初期値にする」こと。ROI を絞った region が欲しいときは <code style="color:#22d3bf">hx_rectangle1_domain</code>(中央矩形)か <code style="color:#22d3bf">threshold</code> で作る。</p>
+<p>input <code style="color:#22d3bf">v</code> के समान shape का पूरी तरह 1 वाला float64 array (region) लौटाता है। इस implementation में images के लिए ROI (domain) की अवधारणा नहीं है, इसलिए domain हमेशा पूरी image होता है, और परिणाम <code style="color:#22d3bf">hx_full_domain</code> जैसा ही होता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। input के gray मान भी नहीं देखे जाते।</p>
+<p>इसका उपयोग &quot;वर्तमान domain को region के रूप में निकालकर दूसरे region operations का प्रारंभिक मान बनाना&quot; है। सीमित ROI वाला region चाहिए तो <code style="color:#22d3bf">hx_rectangle1_domain</code> (केंद्र rectangle) या <code style="color:#22d3bf">threshold</code> से बनाएँ।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

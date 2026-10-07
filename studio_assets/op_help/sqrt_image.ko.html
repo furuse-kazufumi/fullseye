@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>[0,1]로 클리핑한 화소값의 제곱근을 취한다. 어두운 부분을 끌어올리는 감마 방식의 계조 압축이 된다(제곱근은 x=0.25를 0.5로, x=0.04를 0.2로 끌어올린다). HALCON의 <code style="color:#22d3bf">sqrt_image</code>(Calculate the square root of an image.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら <code style="color:#22d3bf">gamma_image</code>(exponent が <code style="color:#22d3bf">a</code> で振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다 —— 고정된 제곱근 사상으로 조정점이 없다. 강도를 바꾸고 싶다면 <code style="color:#22d3bf">gamma_image</code>(지수를 <code style="color:#22d3bf">a</code>로 바꿀 수 있다)를 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

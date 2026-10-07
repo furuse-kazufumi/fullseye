@@ -11,8 +11,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A flattening filter that removes the linear trend (slope) of the whole image separately along the vertical and horizontal directions, then normalizes.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">scipy.signal.detrend</code> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので<code style="color:#22d3bf">*0.5+0.5</code> で [0,1] に写像し直している。</p>
+<p>Applies <code style="color:#22d3bf">scipy.signal.detrend</code> along the columns and then along the rows, subtracting the linear-regression component of each row/column. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Used to remove gentle slopes overlaid on the whole image, such as uneven illumination, so that local contrast is easier to see. Because the result is signed, it is mapped back to [0,1] with <code style="color:#22d3bf">*0.5+0.5</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

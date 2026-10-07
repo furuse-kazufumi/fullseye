@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>傳回相同(量化後)灰階值相連而成的平坦區域(平台)的重心子像素位置(相當於 HALCON <code style="color:#22d3bf">plateaus</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>隣接画素同士がしきい値 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 以内で等しければ同じ平坦領域とみなす（Union-Find で連結成分化）。<code style="color:#22d3bf">a</code> はこの許容量子化幅と最小面積（<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>、これ未満の領域は無視）の両方を振る。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR で、各プラトーにつき 1 点（その領域の画素座標の平均、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す（計算量ガード）。</p>
+<p>相鄰像素之間若在閾值 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 以內相等，就視為同一平坦區域（以 Union-Find 求連通元件）。<code style="color:#22d3bf">a</code> 同時調整這個容許的量化寬度與最小面積（<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>，小於它的區域會被忽略）。<code style="color:#22d3bf">b</code> 未使用。回傳值為 CONTOUR，每個平台 1 個點（該區域像素座標的平均，單位為像素）。輸入超過 200,000 像素時，基於安全考量回傳空集合（計算量防護）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

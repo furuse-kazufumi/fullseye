@@ -14,11 +14,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以<b>与输入相同的单位</b>返回局部窗口内的标准差(不做归一化)。相当于 HALCON 的 <code style="color:#22d3bf">deviation_image</code>(Calculate the standard deviation of gray values within rectangular windows.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の<b>幅</b>を、<code style="color:#22d3bf">b</code> が窓の<b>高さ</b>をそれぞれ <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k</code>）に振る —— HALCON の <code style="color:#22d3bf">deviation_image(image, width, height)</code> と同じく矩形窓を取れる。</p>
-<p><b><code style="color:#22d3bf">std_filter</code> との違いはここだけで、そこが肝心</b>: <code style="color:#22d3bf">std_filter</code> は出力をその画像の最大値で正規化するので、<b>画像をまたいで値を比較できない</b>(弱いテクスチャしか無い画像では雑音が 1.0 まで持ち上がる)。この op は割らないので、<b>別の画像・別の時刻の値とそのまま比べられる</b>。HALCON の <code style="color:#22d3bf">deviation_image</code> も正規化しないので、意味としてはこちらが忠実。平滑化フィルタの <code style="color:#22d3bf">sigma_image</code> とは別物(あちらは σ を使って平滑化する)。</p>
-<p><b>推定量と誤差(閉形式)</b>: 窓の画素数を <code style="color:#22d3bf">n = 幅 x 高さ</code> として、平均を引いた分散を <code style="color:#22d3bf">n/(n-1)</code> で不偏化し、さらに <code style="color:#22d3bf">sigma</code> の残る偏りを <code style="color:#22d3bf">c4(n) ≈ 1 - 1/(4n)</code> で抜く。したがって推定はほぼ無偏(実測: 真値の 99.8〜100.1%)。<b>1 画素あたりの相対標準誤差は <code style="color:#22d3bf">1/sqrt(2(n-1))</code></b> —— 3x3 窓で約 25%、9x9 窓で約 7.9%(実測が理論と一致)。粗さや雑音量を数字で言うときは、この幅を併記すること。</p>
-<p>入力が <code style="color:#22d3bf">[0,1]</code> なら出力は <code style="color:#22d3bf">0</code> 以上 <code style="color:#22d3bf">0.55</code> 以下(最大は窓の半分が 0・半分が 1 のとき)。</p>
+<p><code style="color:#22d3bf">a</code> 调节窗口的<b>宽度</b>，<code style="color:#22d3bf">b</code> 调节窗口的<b>高度</b>，各自在 <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k</code>）之间 —— 与 HALCON 的 <code style="color:#22d3bf">deviation_image(image, width, height)</code> 一样可以使用矩形窗口。</p>
+<p><b>与 <code style="color:#22d3bf">std_filter</code> 的区别仅此一点，而这正是关键</b>：<code style="color:#22d3bf">std_filter</code> 用该图像的最大值对输出归一化，因此<b>无法跨图像比较值</b>（只有弱纹理的图像中，噪声会被抬升到 1.0）。本 op 不做除法，因此<b>可以与其他图像、其他时刻的值直接比较</b>。HALCON 的 <code style="color:#22d3bf">deviation_image</code> 也不做归一化，因此从含义上说本 op 才是忠实的。它与平滑滤波器 <code style="color:#22d3bf">sigma_image</code> 是不同的东西（那个是利用 σ 来做平滑）。</p>
+<p><b>估计量与误差（闭式）</b>：设窗口的像素数为 <code style="color:#22d3bf">n = 宽 x 高</code>，把减去平均后的方差用 <code style="color:#22d3bf">n/(n-1)</code> 无偏化，再用 <code style="color:#22d3bf">c4(n) ≈ 1 - 1/(4n)</code> 去除 <code style="color:#22d3bf">sigma</code> 残留的偏差。因此估计几乎无偏（实测：真值的 99.8〜100.1%）。<b>每 1 个像素的相对标准误差为 <code style="color:#22d3bf">1/sqrt(2(n-1))</code></b> —— 3x3 窗口约 25%，9x9 窗口约 7.9%（实测与理论一致）。用数字表述粗糙度或噪声量时，请同时注明这一幅度。</p>
+<p>若输入在 <code style="color:#22d3bf">[0,1]</code> 内，则输出在 <code style="color:#22d3bf">0</code> 以上、<code style="color:#22d3bf">0.55</code> 以下（最大值出现在窗口一半为 0、一半为 1 时）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

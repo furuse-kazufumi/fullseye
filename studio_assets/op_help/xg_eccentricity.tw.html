@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_eccentricity.chain.jpg">xg_eccentricity: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由點集共變異數求離心率 sqrt(1 - λ_min/λ_max)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>輪郭辞書 <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> の全輪郭の点を 1 つの点集合にまとめ、その(row, col) 座標の母共分散行列の固有値 <code style="color:#22d3bf">λ_min &lt;= λ_max</code> から離心率 <code style="color:#22d3bf">e = sqrt(1 - λ_min/λ_max)</code> を返す。閉輪郭の重複した終点(先頭と同じ点)は数えない。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code> で [0, 1]。真円・正方形など等方な点配置で 0、一直線上の点(<code style="color:#22d3bf">λ_min = 0</code>)で 1。点が 2 個未満、または <code style="color:#22d3bf">λ_max &lt;= 1e-12</code> (全点同一)なら 0.0。輪郭が複数あればそれらをまとめた分布の離心率になり、個々の輪郭の形ではなく配置の広がりも混ざる(輪郭ごとに評価したいなら先に <code style="color:#22d3bf">select_contours_xld</code> などで 1 本に絞る)。輪郭点の密度に依存する(点が密な部分が重く効く)点は面積ベースの指標と異なる。軸比そのものは <code style="color:#22d3bf">xg_elliptic_axis</code>、主軸の向きは <code style="color:#22d3bf">xg_orientation</code>。</p>
+<p>把輪廓字典 <code style="color:#22d3bf">{&quot;shape&quot;, &quot;cs&quot;}</code> 中全部輪廓的點合併為 1 個點集，由其(row, col) 座標的母體共變異數矩陣的特徵值 <code style="color:#22d3bf">λ_min &lt;= λ_max</code> 回傳離心率 <code style="color:#22d3bf">e = sqrt(1 - λ_min/λ_max)</code>。閉合輪廓重複的終點（與起點相同的點）不計入。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>回傳值為 <code style="color:#22d3bf">numpy.float64</code>，範圍 [0, 1]。正圓、正方形等等向性的點分布為 0，一直線上的點（<code style="color:#22d3bf">λ_min = 0</code>）為 1。點數少於 2 個，或 <code style="color:#22d3bf">λ_max &lt;= 1e-12</code> （所有點相同）時為 0.0。若有多個輪廓，則是它們合併後分布的離心率，混入的不只是各輪廓的形狀，還有排列的擴展（若要逐輪廓評估，先以 <code style="color:#22d3bf">select_contours_xld</code> 等篩選為 1 條）。它依賴輪廓點的密度（點密集的部分權重較大），這點與以面積為基礎的指標不同。軸比本身用 <code style="color:#22d3bf">xg_elliptic_axis</code>，主軸方向用 <code style="color:#22d3bf">xg_orientation</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

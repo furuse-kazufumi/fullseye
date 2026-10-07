@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以子像素精度检测灰度曲面的局部极大值(HALCON <code style="color:#22d3bf">local_max_sub_pix</code> 的替代实现。<code style="color:#22d3bf">halcon=&quot;&quot;</code>:因为同名坐标已由现有的 core op 覆盖,故不重复申报)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>3x3 近傍に 2 次曲面 <code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code> を最小二乗フィットし、勾配 0 の点へのオフセットを解いてサブピクセル位置を求める（ヘッセ行列が退化する場合は 1 次元放物線補間にフォールバック）。<code style="color:#22d3bf">a</code>は極大の顕著さ（周囲の最小値からの深さ）のしきい値を 0.01〜0.31 に振る（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>）。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル（小数値＝サブピクセル）。検出点数は<code style="color:#22d3bf">count_contours</code> で数えられる。</p>
+<p>对 3x3 邻域用最小二乘拟合 2 次曲面 <code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code>，求解到梯度为 0 的点的偏移，从而得到亚像素位置（黑塞矩阵退化时回退到 1 维抛物线插值）。<code style="color:#22d3bf">a</code> 将极大值显著度（相对于周围最小值的深度）的阈值在 0.01~0.31 之间调节（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>）。<code style="color:#22d3bf">b</code> 未使用。返回值为 CONTOUR，坐标单位为输入图像的像素（小数值＝亚像素）。检测点数可用 <code style="color:#22d3bf">count_contours</code> 统计。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

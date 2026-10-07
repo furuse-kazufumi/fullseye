@@ -12,23 +12,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.inputs.jpg">tb_radius_outlier_removal: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जिन points के radius के अंदर पड़ोसियों की संख्या min_neighbors से कम है उन्हें हटाता है (अकेले points हटाना)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<p>हर point के चारों ओर <code style="color:#22d3bf">radius</code> radius का sphere बनाकर, जिन points के sphere के अंदर दूसरे points की संख्या <code style="color:#22d3bf">min_neighbors</code> तक नहीं पहुँचती, उन्हें &quot;अलग-थलग कण&quot; मानकर हटा दिया जाता है। statistical method से ज़्यादा local और सीधा है, और sensor का असली scale पता हो तो threshold तय करना आसान है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>input point cloud।</p>
 <p>radius : float</p>
-<p>近傍とみなす球の半径(&gt; 0)。</p>
+<p>neighbourhood माने जाने वाले sphere का radius (&gt; 0)।</p>
 <p>min_neighbors : int</p>
-<p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
+<p>point रखने के लिए ज़रूरी neighbours (खुद को नहीं गिना जाता, default 8)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>बचे हुए points (मूल क्रम बना रहता है)।</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。</p>
+<p>हर input point रखना है या नहीं (True = रखें)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">radius_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_neighbors</code>(既定 8)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">radius &lt;= 0</code> पर ValueError। खाली input पर खाली लौटता है (graceful)।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">radius_outlier_removal</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">min_neighbors</code> (default 8) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

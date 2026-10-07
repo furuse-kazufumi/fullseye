@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>SLIC विधि से superpixel over-segmentation का boundary grid लौटाता है (<code style="color:#22d3bf">skimage.segmentation.slic</code>, HALCON में इसके समकक्ष कोई operator नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）がセグメント数とコンパクトネスの両方を振る: 大きいほどセグメント数が少なく（<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>）、コンパクトネスが高くなる（<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>、形が四角く整う）。<code style="color:#22d3bf">b</code> は未使用。戻り値はスーパーピクセルの境界線（外側の輪郭）をなぞった region で、境界はコンパクトネスが低いほど輝度エッジにスナップしやすい。</p>
+<p><code style="color:#22d3bf">a</code> (0 से 1) segments की संख्या और compactness दोनों को बदलता है: जितना बड़ा, segments उतने कम (<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>) और compactness उतनी अधिक (<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>, आकार अधिक चौकोर और व्यवस्थित)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value superpixels की boundary lines (बाहरी contour) को trace करने वाला region है; compactness जितनी कम, boundary उतनी आसानी से luminance edges पर snap होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

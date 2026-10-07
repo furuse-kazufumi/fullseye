@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hybrid Hessian filter। लगभग Frangi जैसा tubular structure detection, लेकिन smoothing का तरीका अलग है (लगभग Frangi के विकल्प के रूप में इस्तेमाल किया जा सकता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">lines_gauss</code> に相当(近似)。a, b は未使用 —— スケールは <code style="color:#22d3bf">sigmas=range(1, 4)</code> に固定。sk_frangi / sk_meijering と 3 兄弟で、同じ入力に対する応答の違いを見比べる目的で並べてある。</p>
+<p>HALCON के <code style="color:#22d3bf">lines_gauss</code> के बराबर (approximation)। a, b उपयोग नहीं होते — scale <code style="color:#22d3bf">sigmas=range(1, 4)</code> पर fixed है। sk_frangi / sk_meijering के साथ यह 3 भाइयों का समूह है, जिन्हें समान input पर response के अंतर की तुलना करने के लिए साथ रखा गया है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

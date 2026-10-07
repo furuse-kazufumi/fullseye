@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_select_region_point.inputs.jpg">r3_select_region_point: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留包含指定 1 个点的连通分量(相当于 HALCON <code style="color:#22d3bf">select_region_point</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>（いずれも 0〜1）を画像の行・列に線形写像した座標<code style="color:#22d3bf">(round(a*(H-1)), round(b*(W-1)))</code> の画素を指定点とし、その画素が属する連結成分だけを返す。指定点が背景なら結果は空。</p>
+<p>把 <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code>（均为 0〜1）线性映射到图像的行、列所得坐标 <code style="color:#22d3bf">(round(a*(H-1)), round(b*(W-1)))</code> 处的像素作为指定点，只返回该像素所属的连通分量。指定点为背景时结果为空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

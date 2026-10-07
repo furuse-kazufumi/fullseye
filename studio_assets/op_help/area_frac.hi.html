@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_frac.chain.jpg">area_frac: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region द्वारा घेरे गए pixels का अनुपात (area ratio) लौटाने वाला feature। HALCON के <code style="color:#22d3bf">area_center</code> (Area and center of regions.) से अलग, यह केवल क्षेत्रफल लौटाता है और centroid की गणना नहीं करता (कार्य के केवल एक हिस्से का मेल)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">v &gt; 0.5</code> で二値化した画素の平均値（= 前景画素数 / 全画素数）をスカラーで返す。値域は <code style="color:#22d3bf">[0,1]</code>。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। <code style="color:#22d3bf">v &gt; 0.5</code> से binarise किए गए pixel का mean (= foreground pixel की संख्या / कुल pixel की संख्या) scalar के रूप में लौटाता है। range <code style="color:#22d3bf">[0,1]</code> है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

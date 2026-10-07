@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>考虑旋转的模板匹配（基于形状的匹配）。相当于 HALCON 的 <code style="color:#22d3bf">find_shape_model</code>（Find the best matches of a shape model in an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用——テンプレートは <code style="color:#22d3bf">_ncc_locate</code> と同じく <code style="color:#22d3bf">set_match_template</code> で事前登録する。テンプレートを <code style="color:#22d3bf">0°〜330°</code> まで <code style="color:#22d3bf">30°</code> 刻みで回転させながらそれぞれ <code style="color:#22d3bf">_ncc_map</code>（NCC）を計算し、全位置・全角度を通じて最良の相関を <code style="color:#22d3bf">[相関値, y, x, 角度]</code> で返す。角度の刻みが粗い（30°）ぶん、HALCON の <code style="color:#22d3bf">find_shape_model</code> のような連続的な角度精度は出ない——大まかな向き検出用。テンプレート未設定時は <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用——模板与 <code style="color:#22d3bf">_ncc_locate</code> 一样用 <code style="color:#22d3bf">set_match_template</code> 预先登记。把模板从 <code style="color:#22d3bf">0°〜330°</code> 以 <code style="color:#22d3bf">30°</code> 为步长旋转，分别计算 <code style="color:#22d3bf">_ncc_map</code>（NCC），并以 <code style="color:#22d3bf">[相关值, y, x, 角度]</code> 返回所有位置、所有角度中最佳的相关。由于角度步长较粗（30°），达不到 HALCON 的 <code style="color:#22d3bf">find_shape_model</code> 那样连续的角度精度——用于大致的方向检测。未设置模板时为 <code style="color:#22d3bf">[0,0,0,0]</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

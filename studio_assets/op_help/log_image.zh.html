@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过 <code style="color:#22d3bf">log1p(x) / log(2)</code> 将 [0,1] 映射到 [0,1] 的对数压缩（已归一化，使 x=1 时为 1）。这是一条压缩高光、提升暗部细节的色调曲线，与 <code style="color:#22d3bf">exp_image</code> 相反。用作 HALCON <code style="color:#22d3bf">log_image</code>（Calculate the logarithm of an image.）的替代。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。ゲイン付き対数変換が欲しい場合は <code style="color:#22d3bf">lut</code> の <code style="color:#22d3bf">log_gain</code> 分岐(<code style="color:#22d3bf">a</code> でゲインを振れる、ただし SEED には未登録) に近い実装が別途ある。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。若需要带增益的对数变换, <code style="color:#22d3bf">lut</code> 的 <code style="color:#22d3bf">log_gain</code> 分支(可由 <code style="color:#22d3bf">a</code> 调节增益,但未登记在 SEED 中) 另有相近的实现。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

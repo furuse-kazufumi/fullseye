@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gradient image के h-minima markers से watershed segmentation की सीमाएँ लौटाता है (<code style="color:#22d3bf">skimage</code>, HALCON में इसके समकक्ष कोई operator नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Sobel 勾配の大きさを正規化し、深さ <code style="color:#22d3bf">h = 0.02 + a*0.3</code> の h-minima 変換で生き残った領域極小をマーカーとして（<code style="color:#22d3bf">a</code> が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。<code style="color:#22d3bf">b</code> は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。</p>
+<p>Sobel gradient के magnitude को normalise करता है, गहराई <code style="color:#22d3bf">h = 0.02 + a*0.3</code> वाले h-minima transform में बचे regional minima को markers मानता है (<code style="color:#22d3bf">a</code> जितना बड़ा, markers उतने कम और segmentation उतना मोटा), और उस gradient image पर watershed की गणना करता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value catchment basins (catchment basin/objects) को अलग करने वाली dam lines (boundaries) को दर्शाने वाला region है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

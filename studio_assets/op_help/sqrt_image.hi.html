@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>[0,1] में clip किए गए pixel मानों का square root लेता है। यह अँधेरे हिस्सों को उठाने वाला gamma जैसा tone compression है (√x, x=0.25 को 0.5 तक और x=0.04 को 0.2 तक उठाता है)। HALCON के <code style="color:#22d3bf">sqrt_image</code> (Calculate the square root of an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 —— 固定の平方根写像で調整点はない。強さを変えたいなら <code style="color:#22d3bf">gamma_image</code>(exponent が <code style="color:#22d3bf">a</code> で振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता -- यह एक स्थिर square-root mapping है, इसमें कोई समायोजन बिंदु नहीं है। ताकत बदलनी हो तो <code style="color:#22d3bf">gamma_image</code> (जिसका exponent <code style="color:#22d3bf">a</code> से बदला जा सकता है) का उपयोग करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

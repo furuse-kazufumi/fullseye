@@ -11,8 +11,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 전체의 1차 트렌드(기울기)를 세로·가로 각각 제거한 뒤 정규화하는 평탄화 필터.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">scipy.signal.detrend</code> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので<code style="color:#22d3bf">*0.5+0.5</code> で [0,1] に写像し直している。</p>
+<p><code style="color:#22d3bf">scipy.signal.detrend</code>를 열 방향·행 방향 순으로 적용하여, 각 행/각 열의 선형 회귀 성분을 뺀다. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 조명 불균일 등 영상 전체에 실린 완만한 기울기를 제거해 국소 대비를 보기 쉽게 하는 용도. 결과는 부호가 있으므로 <code style="color:#22d3bf">*0.5+0.5</code>로 [0,1]에 다시 사상하고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

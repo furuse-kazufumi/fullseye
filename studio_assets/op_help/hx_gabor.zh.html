@@ -15,9 +15,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gabor 滤波(方位 theta=a*pi,频率 freq=0.08+0.35b)。返回响应的幅度。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>向きの規約は core の <code style="color:#22d3bf">gabor</code> と同じ: <code style="color:#22d3bf">a=0</code> (θ=0) が <b>縦縞</b>、<code style="color:#22d3bf">a=0.5</code> (θ=90°) が横縞に最も応答する。</p>
-<p>★正規化(2026-09-02 の修正): <b>カーネルの L1 ノルムで割る固定スケール</b>。以前は <code style="color:#22d3bf">_norm01</code>(その画像の min–max を [0,1] へ引き伸ばす)だったため、向きによる応答の大小が潰れるどころか <b>順序が逆転していた</b> —— 実測(96×96 の横縞、b=0.5): 横縞検出器 (a=0.5) の平均 0.34663 に対し、ほとんど反応しないはずの縦縞検出器 (a=0) が 0.58434 と <b>高く</b>出ていた(弱い応答ほど引き伸ばし率が大きいため)。<code style="color:#22d3bf">|v| &lt;= 1</code> なら <code style="color:#22d3bf">|v * g| &lt;= sum|g|</code> なので L1 で割れば [0,1] を保ったまま向き・画像を跨いで比較できる。</p>
+<p>方向约定与 core 的 <code style="color:#22d3bf">gabor</code> 相同：<code style="color:#22d3bf">a=0</code> (θ=0) 对 <b>竖条纹</b>、<code style="color:#22d3bf">a=0.5</code> (θ=90°) 对横条纹响应最强。</p>
+<p>★归一化（2026-09-02 的修正）：<b>除以核的 L1 范数的固定尺度</b>。以前是 <code style="color:#22d3bf">_norm01</code>（把该图像的 min–max 拉伸到 [0,1]），因此按方向的响应大小不仅被压平，甚至 <b>顺序发生了颠倒</b> —— 实测（96×96 的横条纹，b=0.5）：横条纹检测器 (a=0.5) 的平均为 0.34663，而几乎不应有反应的竖条纹检测器 (a=0) 却为 0.58434，<b>更高</b>（因为响应越弱，拉伸倍率越大）。若 <code style="color:#22d3bf">|v| &lt;= 1</code>，则 <code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>，因此除以 L1 就能在保持 [0,1] 的同时跨方向、跨图像进行比较。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

@@ -9,9 +9,8 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Texture की जटिलता मापने वाला Minkowski-Bouligand (box counting) fractal dimension।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>閾値 <code style="color:#22d3bf">a</code>(既定 0.5)で二値化し、箱サイズ <code style="color:#22d3bf">s = 1, 2, 4, …</code> について「構造を含む s×s 箱」の数 <code style="color:#22d3bf">N(s)</code> を数え、<code style="color:#22d3bf">log N(s)</code> を <code style="color:#22d3bf">log(1/s)</code> に最小二乗回帰した傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己相似な縁は中間の非整数(Sierpinski 三角形なら <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)。表面粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
-<p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の過小評価)。<code style="color:#22d3bf">a</code> が二値化の閾値、<code style="color:#22d3bf">b</code> は未使用。構造が無い/1 スケールしか取れないときは 0 を返す。</p>
+<p>threshold <code style="color:#22d3bf">a</code> (default 0.5) से binarise करके, box sizes <code style="color:#22d3bf">s = 1, 2, 4, …</code> के लिए &quot;structure वाले s×s boxes&quot; की संख्या <code style="color:#22d3bf">N(s)</code> गिनता है, और <code style="color:#22d3bf">log N(s)</code> का <code style="color:#22d3bf">log(1/s)</code> पर least squares regression करके मिला slope लौटाता है (Mandelbrot 1982)। रेखा जैसी structures में ~1, समतल भरने वाले regions में ~2, और self- similar किनारों में बीच का non-integer मान (Sierpinski triangle में <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)। surface roughness, tissue texture, terrain, fracture surfaces आदि के सस्ते complexity feature के रूप में उपयोगी।</p>
+<p>सीमित resolution के कारण भरे हुए regions 2 से थोड़ा नीचे आते हैं (coarse scales पर boxes के saturate होने से होने वाला ज्ञात underestimate)। <code style="color:#22d3bf">a</code> binarisation का threshold है, <code style="color:#22d3bf">b</code> उपयोग नहीं होता। structure न हो या केवल 1 scale मिल सके, तो 0 लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

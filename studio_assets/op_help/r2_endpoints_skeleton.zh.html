@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_endpoints_skeleton.inputs.jpg">r2_endpoints_skeleton: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>提取骨架的端点(8 邻域中恰有 1 个骨架像素的点)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">junctions_skeleton</code> は EndPoints と JuncPoints の両方を返すが、fullseye の <code style="color:#22d3bf">junctions_skeleton</code> は分岐点のみなので、端点側をこの op が担う。入力が骨格でない場合は em_skeleton で細線化してから端点を取る。孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。</p>
+<p>HALCON 的 <code style="color:#22d3bf">junctions_skeleton</code> 同时返回 EndPoints 和 JuncPoints，但 fullseye 的 <code style="color:#22d3bf">junctions_skeleton</code> 只返回分支点，因此端点这一侧由本 op 负责。输入不是骨架时，先用 em_skeleton 细化再取端点。孤立的 1 个像素(邻域 0)也计为端点。旋钮 a, b 未使用。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

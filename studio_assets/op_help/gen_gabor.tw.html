@@ -15,8 +15,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳單一Gabor核(方向<code style="color:#22d3bf">θ=π*a</code>,頻率<code style="color:#22d3bf">0.1+0.3*b</code>)卷積響應的絕對值,並以核的L1範數正規化。這是去除直流分量(減去平均值)的純實部核,對指定方向、頻率的條紋圖案有選擇性反應的帶通紋理濾波器。相當於HALCON的<code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)(不含虛部/相位的純實數核簡化版)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が向き θ(0〜180°)を、<code style="color:#22d3bf">b</code> が空間周波数(0.1〜0.4)を振る。両方が使われる。<code style="color:#22d3bf">a=0</code> が縦縞、<code style="color:#22d3bf">a=0.5</code>(90°)が横縞に応答する規約。</p>
+<p><code style="color:#22d3bf">a</code> 調整方向 θ(0～180°),<code style="color:#22d3bf">b</code> 調整空間頻率(0.1～0.4)。兩者都會使用。約定 <code style="color:#22d3bf">a=0</code> 回應直條紋,<code style="color:#22d3bf">a=0.5</code>(90°)回應橫條紋。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

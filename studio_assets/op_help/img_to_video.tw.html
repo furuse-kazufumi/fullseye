@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_video.gif" alt="img_to_video: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像變成以恆定速度平移的 T 幀影片 (T,H,W)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>フレーム <code style="color:#22d3bf">t</code> は入力を <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> だけ動かしたもの(<code style="color:#22d3bf">scipy.ndimage.shift</code>、線形補間、縁は最近傍で延長)。<b>変位が閉形式で分かる</b>ので、動画の族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)の検算に使える。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1 フレームあたりの歩幅 <code style="color:#22d3bf">step = 4 * a</code> 画素(a=0.5 で 2 px/frame)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
-<p style="margin:2px 0 2px 12px">• フレーム数 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。フレーム 0 は入力そのもの。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、値域は入力と同じ([0,1] なら [0,1] のまま。線形補間は値域を広げない)。</p>
-<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<p>影格 <code style="color:#22d3bf">t</code> 是把輸入平移 <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> 後的結果(<code style="color:#22d3bf">scipy.ndimage.shift</code>，線性內插，邊緣以最近鄰延伸)。<b>位移以閉合式已知</b>，因此可用於驗算影片族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 每 1 影格的步距 <code style="color:#22d3bf">step = 4 * a</code> 像素(a=0.5 時為 2 px/frame)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 為 +x，b=0.25 為 +y(向下)，b=0.5 為 −x)。</p>
+<p style="margin:2px 0 2px 12px">• 影格數 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。影格 0 就是輸入本身。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(T, H, W)</code> float64，值域與輸入相同([0,1] 則保持 [0,1]。線性內插不會擴大值域)。</p>
+<p>注意: 移動的是<b>整個畫面</b>(攝影機平移)，而不只是物體。背景相減族假定「不動的背景」，所以在整體平移下前景會出現在所有像素上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

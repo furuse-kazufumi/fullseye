@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.inputs.jpg">trans_to_rgb: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從色彩空間轉換回 RGB 的逆變換。號稱相當於 HALCON 的 <code style="color:#22d3bf">trans_to_rgb</code>（從任意色彩空間轉換為 RGB 色彩空間），但<b>實作僅具有 HSV→RGB 這一個方向</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">trans_from_rgb</code> は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、この逆変換は常に入力を HSV とみなして <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> を掛ける。Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、出力は破綻した色になる。a, b は未使用。</p>
+<p><code style="color:#22d3bf">trans_from_rgb</code> 可以用 a 選擇 4 種色彩空間（HSV/Lab/YUV/XYZ），而此逆轉換始終將輸入視為 HSV 並套用 <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code>。從 Lab/YUV/XYZ 呼叫時，會在錯誤解讀色彩空間的情況下進行轉換，因此輸出顏色會崩壞。a, b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

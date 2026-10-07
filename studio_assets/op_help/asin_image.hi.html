@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">arcsin(x) / (π/2)</code> से [0,1] को [0,1] में map करने वाला inverse sine LUT। x=0 और x=1 के पास ढलान तीखी हो जाती है (domain के छोरों पर derivative अनंत हो जाता है), जिससे बीच के tones compress होते हैं और दोनों छोरों का contrast उभरता है। HALCON के <code style="color:#22d3bf">asin_image</code> (Calculate the arcsine of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。端点付近で数値的に敏感になる点に注意(x が 1 にごく近いとわずかな量子化誤差でも出力が大きく動く)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। ध्यान दें कि अंत-बिंदुओं के पास यह संख्यात्मक रूप से संवेदनशील हो जाता है (x जब 1 के बहुत क़रीब हो, तो छोटी-सी quantization त्रुटि से भी output बहुत बदल जाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

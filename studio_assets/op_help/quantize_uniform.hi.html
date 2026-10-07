@@ -12,12 +12,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Uniform quantiser (<b>rounding</b>)। <code style="color:#22d3bf">a</code> bit की संख्या 1 से 8 है, <code style="color:#22d3bf">b</code> इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code>、<code style="color:#22d3bf">L = 2**bits</code>。刻みは <code style="color:#22d3bf">Δ = 1/(L-1)</code>。</p>
-<p><b><code style="color:#22d3bf">xpil_posterize</code> との違いはここで、無視できない</b>: あちらは PIL の実装で <b>下位ビットを切り捨てる</b>ので、出力の平均が入力より <code style="color:#22d3bf">Δ/2</code> だけ低い。一様分布の入力で実測すると、bits=4 で平均誤差 <code style="color:#22d3bf">-0.0312</code>(理論 <code style="color:#22d3bf">-Δ/2 = -0.03125</code>)。分散はどちらも <code style="color:#22d3bf">Δ²/12</code> で同じだが、偏りがある分だけ二乗誤差が</p>
-<p>切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12</p>
-<p>と <b>4 倍</b>ちがう。明るさを測る前段に置くなら丸めでなければならない。</p>
-<p><b>適用条件と誤差(閉形式)</b>: 入力が刻みに対して十分ばらついている(量子化雑音が入力と無相関とみなせる)とき、誤差は <code style="color:#22d3bf">[-Δ/2, +Δ/2]</code> の一様分布で、平均 0・分散 <code style="color:#22d3bf">Δ²/12</code>。<b>この仮定が崩れるのは平坦部</b>で、そこでは誤差が信号と相関して縞(バンディング)になる —— 誤差を雑音として扱いたいなら <code style="color:#22d3bf">dither_ordered</code> か <code style="color:#22d3bf">dither_floyd_steinberg</code> を通すこと。段差が見えているかは <code style="color:#22d3bf">banding_map</code> で測れる。</p>
+<p><code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code>, <code style="color:#22d3bf">L = 2**bits</code>। step <code style="color:#22d3bf">Δ = 1/(L-1)</code> है।</p>
+<p><b><code style="color:#22d3bf">xpil_posterize</code> से अंतर यहीं है, और इसे नज़रअंदाज़ नहीं किया जा सकता</b>: वह PIL का implementation है और <b>निचले bit काट देता है</b>, इसलिए output का mean input से <code style="color:#22d3bf">Δ/2</code> कम होता है। uniform distribution वाले input पर मापने से bits=4 पर mean error <code style="color:#22d3bf">-0.0312</code> आता है (theory <code style="color:#22d3bf">-Δ/2 = -0.03125</code>)। variance दोनों में <code style="color:#22d3bf">Δ²/12</code> ही है, लेकिन bias के कारण squared error</p>
+<p>truncation: Δ²/12 + (Δ/2)² = Δ²/3     rounding: Δ²/12</p>
+<p>में <b>4 गुना</b> अंतर होता है। brightness मापने से पहले रखना हो तो rounding ही होनी चाहिए।</p>
+<p><b>लागू होने की शर्तें और error (closed form)</b>: जब input step की तुलना में पर्याप्त रूप से बिखरा हो (quantization noise को input से uncorrelated माना जा सके), तब error <code style="color:#22d3bf">[-Δ/2, +Δ/2]</code> पर uniform distribution में होता है, mean 0 और variance <code style="color:#22d3bf">Δ²/12</code>। <b>यह assumption flat हिस्सों में टूटता है</b>, जहाँ error signal से correlated होकर धारियाँ (banding) बन जाता है — यदि error को noise की तरह संभालना है तो <code style="color:#22d3bf">dither_ordered</code> या <code style="color:#22d3bf">dither_floyd_steinberg</code> से गुज़ारें। step दिख रहे हैं या नहीं, यह <code style="color:#22d3bf">banding_map</code> से मापा जा सकता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

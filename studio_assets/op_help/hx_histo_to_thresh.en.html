@@ -12,12 +12,11 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Threshold from the valley of the histogram and binarise (valley detection, not Otsu&#x27;s variance criterion — a different op).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">v</code> の 64 bin ヒストグラム(範囲 [0,1])を σ=1.5 のガウスで平滑化し、最も高い bin <code style="color:#22d3bf">p1</code> と、<code style="color:#22d3bf">p1</code> から 5 bin 以上離れた中で次に高い bin <code style="color:#22d3bf">p2</code> を取り、その間で最小の bin(谷)の左端の値をしきい値 <code style="color:#22d3bf">thr</code> にして <code style="color:#22d3bf">v &gt; thr</code> を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用(しきい値は完全に自動)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p2</code> が見つからない(5 bin 以上離れた bin が無い)ときは <code style="color:#22d3bf">lo == hi</code> となり谷を bin 32、つまり <code style="color:#22d3bf">thr = 0.5</code></p>
-<p>に固定する。</p>
-<p>注意: <code style="color:#22d3bf">p2</code> は「2 番目のモード」ではなく「p1 から 5 bin 以上離れた 2 番目に高い bin」なので、単峰の裾でも選ばれる。その場合の谷はピークと裾の間の最小値になり、意図と違う位置で切れる(単峰のガウス雑音画像で大半が前景になる実測あり)。双峰性がはっきりした画像向け。分散基準で決めたいときは <code style="color:#22d3bf">otsu</code>、局所的なら <code style="color:#22d3bf">dyn_threshold</code>。</p>
+<p>Smooths the 64-bin histogram of <code style="color:#22d3bf">v</code> (range [0,1]) with a Gaussian of σ=1.5, takes the highest bin <code style="color:#22d3bf">p1</code> and, among bins at least 5 bins away from <code style="color:#22d3bf">p1</code>, the next highest bin <code style="color:#22d3bf">p2</code>; the left-edge value of the minimum bin (valley) between them becomes the threshold <code style="color:#22d3bf">thr</code>, and a 0/1 float region with <code style="color:#22d3bf">v &gt; thr</code> set to 1 is returned.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused (the threshold is fully automatic).</p>
+<p style="margin:2px 0 2px 12px">• If <code style="color:#22d3bf">p2</code> cannot be found (no bin at least 5 bins away), <code style="color:#22d3bf">lo == hi</code> and the valley is fixed at bin 32, i.e.</p>
+<p><code style="color:#22d3bf">thr = 0.5</code>.</p>
+<p>Caution: <code style="color:#22d3bf">p2</code> is not &quot;the 2nd mode&quot; but &quot;the 2nd highest bin at least 5 bins away from p1&quot;, so it is chosen even in the tail of a unimodal distribution. The valley is then the minimum between the peak and the tail, and the cut lands somewhere unintended (measured: in a unimodal Gaussian-noise image most of it becomes foreground). Meant for images with clear bimodality. To decide by a variance criterion, use <code style="color:#22d3bf">otsu</code>; for local thresholds, <code style="color:#22d3bf">dyn_threshold</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -8,8 +8,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>模糊程度估計(1 個純量特徵量)。刻意將影像再稍微模糊化,透過比較原始影像與再模糊化後邊緣銳利度的變化程度,回傳一個 0(無模糊)〜1(最大程度模糊)的分數 —— 不需參考影像即可量化對焦/晃動情況。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">measure.blur_effect(v)</code>。a, b は未使用 —— 再ぼかしフィルタのサイズは既定値(11)のまま。</p>
+<p>HALCON 中沒有直接對應的運算子。實作為 <code style="color:#22d3bf">measure.blur_effect(v)</code>。a、b 未使用 —— 再模糊濾波器的大小保持預設（11）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

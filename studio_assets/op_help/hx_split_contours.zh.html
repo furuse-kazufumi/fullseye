@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_contours.inputs.jpg">hx_split_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在支配点处(RDP)把每条 contour 分割成线段(容差 eps 由 a)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各 contour(点数 3 以上)に Ramer-Douglas-Peucker を掛けて支配点の index を求め、隣り合う支配点の間の部分列 <code style="color:#22d3bf">c[s:e+1]</code> を新しい contour として並べる(隣り合う線分は端点を共有する)。点数 2 以下の contour はそのまま通す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">eps = 0.5 + a*5</code>(0.5〜5.5 画素)。この距離以内の折れは無視されるので、大きいほど線分が</p>
-<p>長く少なくなる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>出力は「線分ごとの contour」であって折れ線の頂点だけではない(元の点は全部残る)。閉じた contour(始点=終点)は始点から最も遠い点で最初に分割される。線分の本数が角の数の目安になり、<code style="color:#22d3bf">hx_regress_contours</code> を後段に置くと各線分の直線性が測れる。</p>
+<p>对每个 contour(点数 3 以上)施加 Ramer-Douglas-Peucker 求支配点的 index,把相邻支配点之间的子序列 <code style="color:#22d3bf">c[s:e+1]</code> 作为新的 contour 排列(相邻线段共享端点)。点数在 2 以下的 contour 原样通过。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 容许距离 <code style="color:#22d3bf">eps = 0.5 + a*5</code>(0.5〜5.5 像素)。此距离以内的折弯被忽略,因此越大线段越</p>
+<p>长越少。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>输出是“每条线段一个 contour”,而不只是折线的顶点(原来的点全部保留)。闭合的 contour(起点=终点) 首先在离起点最远的点处分割。线段条数可作为角数的参考,把 <code style="color:#22d3bf">hx_regress_contours</code> 放在后级即可测量各线段的直线性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

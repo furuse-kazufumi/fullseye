@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_points.chain.jpg">hx_test_region_points: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Grid जैसे कई points में से region के अंदर आने वाले points का अनुपात (test_region_points)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region を <code style="color:#22d3bf">step</code> 画素おきの格子(<code style="color:#22d3bf">reg[::step, ::step]</code>、原点は (0,0))でサンプリングし、格子点のうち region に入っている割合を <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 格子間隔 <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code>(短辺の 10%〜40%、最小 2 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 格子点が 0 個なら 0.0。</p>
-<p>格子が細かければ region の面積率の近似になり、粗ければ「代表点がどれだけ region に落ちるか」の粗い指標になる。格子の原点は固定なので、region を少しずらすだけで値が飛ぶ。面積率そのものが欲しいなら region の平均値を取る方が正確。1 点の判定は <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> वाले region को हर <code style="color:#22d3bf">step</code> pixels पर grid (<code style="color:#22d3bf">reg[::step, ::step]</code>, मूल बिंदु (0,0)) से sample करके, grid points में से region के भीतर आने वालों का अनुपात <code style="color:#22d3bf">np.float64</code> (0 से 1) के रूप में लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → grid spacing <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code> (छोटी भुजा का 10% से 40%, न्यूनतम 2 pixels)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p style="margin:2px 0 2px 12px">• grid points 0 हों तो 0.0।</p>
+<p>grid बारीक हो तो यह region के area fraction का approximation है, और मोटा हो तो &quot;कितने प्रतिनिधि points region में पड़ते हैं&quot; का मोटा संकेतक। grid का मूल बिंदु स्थिर है, इसलिए region को थोड़ा खिसकाने से ही मान उछल जाता है। area fraction स्वयं चाहिए तो region का औसत मान लेना अधिक सटीक है। 1 point की जाँच <code style="color:#22d3bf">hx_test_region_point</code> से होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -15,12 +15,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Disparity image से depth Z = f*baseline/disparity की गणना करता है (focal length/baseline a,b से बदलते हैं)। Normalised Z।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
-<p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p><code style="color:#22d3bf">v</code> (0 से 1) को <code style="color:#22d3bf">disp = v*63 + 0.5</code> pixel के बराबर disparity में map करके, <code style="color:#22d3bf">Z = f * baseline / disp</code> निकाला जाता है और min-max से [0,1] में normalize की गई image लौटाई जाती है। X, Y नहीं निकाले जाते (केवल Z)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → focal length <code style="color:#22d3bf">f = 200 + 600*a</code>।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → baseline length <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>।</p>
+<p style="margin:2px 0 2px 12px">• disparity की निचली सीमा 0.5 रखी गई है, इसलिए zero से भाग नहीं होता।</p>
+<p>ध्यान दें: <code style="color:#22d3bf">f * baseline</code> सभी pixels के लिए एक जैसा constant factor है और आख़िरी min-max normalization में cancel हो जाता है, इसलिए <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> बदलने पर भी output नहीं बदलता (measured: पूरी तरह समान)। output असल में &quot;disparity के reciprocal का normalized रूप&quot; है: सबसे बड़ी disparity (<code style="color:#22d3bf">v = 1</code>) पर 0, सबसे छोटी disparity (<code style="color:#22d3bf">v = 0</code>) पर 1 (जितना पास, उतना गहरा)। जहाँ absolute depth चाहिए वहाँ यह काम का नहीं। reciprocal के कारण दूर की quantization मोटी हो जाती है, इसलिए छोटे <code style="color:#22d3bf">v</code> वाले क्षेत्रों की values unstable हैं।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> को 0 से 1 तक बदलने पर भी <b>output नहीं बदलता</b> (मापा गया; 5 तरह के inputs पर जाँचा गया)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

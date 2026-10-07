@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_drag_coefficient_sphere.inputs.jpg">tb_drag_coefficient_sphere: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Empirische Formel für den Widerstandsbeiwert einer glatten Kugel (Morrison 2013, Re ≲ 1e6): 24/Re + 2.6(Re/5)/(1 + (Re/5)^1.52) + 0.411(Re/263000)^−7.94/(1 + (Re/263000)^−8) + 0.25(Re/1e6)/(1 + Re/1e6). Für einen Tischtennisball (Re ≈ 1 bis 5 × 10⁴) ergibt sich ≈ 0.4 bis 0.5.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2-D 進化レジストリへ橋渡しした drive の op <code style="color:#22d3bf">drag_coefficient_sphere</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>Die drive-Op <code style="color:#22d3bf">drag_coefficient_sphere</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

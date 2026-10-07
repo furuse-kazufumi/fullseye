@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_trans_polygon_xld.inputs.jpg">affine_trans_polygon_xld: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>XLD contour (polygon/curve के vertices की sequence) पर affine rotation लगाता है। Image के केंद्र को आधार मानकर कोण <code style="color:#22d3bf">-20°+40a</code> से घुमाता है (shear और translation नहीं करता, केवल rotation वाला आंशिक affine)। b इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_polygon_xld</code>（XLD 多角形に任意のアフィン 2D 変換を適用する演算）とは異なり、この実装は回転成分だけを再現する近似で、拡大縮小やせん断は反映されない。</p>
+<p>HALCON के <code style="color:#22d3bf">affine_trans_polygon_xld</code> (XLD polygon पर कोई भी affine 2D transform लागू करने वाला operation) से अलग, यह implementation केवल rotation घटक को पुनः उत्पन्न करने वाला सन्निकटन है, scaling और shear प्रतिबिंबित नहीं होते।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

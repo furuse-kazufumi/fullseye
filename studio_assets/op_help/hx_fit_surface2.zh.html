@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以最小二乘法将灰度值拟合为二次多项式曲面。相当于 HALCON 的 <code style="color:#22d3bf">fit_surface_second_order</code>(计算灰度值矩并拟合二次曲面)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>基底を <code style="color:#22d3bf">[1, x, y, x^2, y^2, xy]</code> に拡張したこと以外は <code style="color:#22d3bf">hx_fit_surface1</code> と同じ(座標 [-1,1] 正規化 -&gt; 最小二乗 -&gt; [0,1] 正規化)。曲がった照明ムラや緩い凹凸の背景推定に使う。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>除了把基底扩展为 <code style="color:#22d3bf">[1, x, y, x^2, y^2, xy]</code> 之外，与 <code style="color:#22d3bf">hx_fit_surface1</code> 相同（坐标 [-1,1] 归一化 -&gt; 最小二乘 -&gt; [0,1] 归一化）。用于估计弯曲的光照不均或平缓凹凸的背景。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildet den Absolutwert der Pixelwerte (<code style="color:#22d3bf">np.abs</code>). Da fullseyes <code style="color:#22d3bf">image</code> bereits dem [0,1]-Vertrag (nicht-negativ) folgt, wirkt dies bei einem normalen Bild als Identitätsabbildung, die nichts verändert. Es hat nur dann eine Wirkung, wenn ein vorzeichenbehaftetes Zwischenergebnis wie ein Differenzbild direkt übergeben wird. Ersatz für HALCONs <code style="color:#22d3bf">abs_image</code> (Calculate the absolute value (modulus) of an image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。clip 前の生値 <code style="color:#22d3bf">v</code> にそのまま <code style="color:#22d3bf">abs</code> を掛けている点に注意(他の pointwise 分岐は <code style="color:#22d3bf">x = clip(v,0,1)</code> を使うが、この分岐だけ <code style="color:#22d3bf">v</code> を直接見る)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Beachte, dass <code style="color:#22d3bf">abs</code> direkt auf den Rohwert <code style="color:#22d3bf">v</code> vor dem Clipping angewendet wird (die anderen pointwise-Zweige verwenden <code style="color:#22d3bf">x = clip(v,0,1)</code>, nur dieser Zweig betrachtet <code style="color:#22d3bf">v</code> direkt).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

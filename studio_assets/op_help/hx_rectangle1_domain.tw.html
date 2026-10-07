@@ -14,12 +14,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的定義域縮小為軸對齊矩形(中央 a×b 比例)的 region。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で、画像中央に置いた高さ <code style="color:#22d3bf">hh</code>・幅 <code style="color:#22d3bf">ww</code> の軸並行矩形を 1 とする 0/1 の float 配列(region)を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの割合 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 幅の割合 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• 左上は <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> で、中央からのずれは整数切り捨てぶんだけ。</p>
-<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ <code style="color:#22d3bf">hx_full_domain</code>、既存 region の周辺を削るなら <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
+<p>回傳與輸入 <code style="color:#22d3bf">v</code> 同形狀、把放在影像中央的高 <code style="color:#22d3bf">hh</code>、寬 <code style="color:#22d3bf">ww</code> 的軸平行矩形設為 1 的 0/1 float 陣列（region）。不查看輸入的內容。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高度比例 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>（20%〜90%）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 寬度比例 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>（20%〜90%）。</p>
+<p style="margin:2px 0 2px 12px">• 左上為 <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>，與中央的偏差僅為整數截斷的部分。</p>
+<p>用於建構把影像周邊（照明衰減、鏡頭邊緣）排除在檢查對象之外的 ROI。想要整張影像時用 <code style="color:#22d3bf">hx_full_domain</code>，削去既有 region 的周邊用 <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

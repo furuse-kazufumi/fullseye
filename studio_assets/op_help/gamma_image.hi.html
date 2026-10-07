@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gamma correction <code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code>। <code style="color:#22d3bf">a</code> 0 के जितना करीब, exponent 0.3 के उतना करीब पहुँचकर अँधेरे हिस्सों को उठाता है; <code style="color:#22d3bf">a</code> 1 के जितना करीब, exponent 2.8 के उतना करीब पहुँचकर अँधेरे हिस्सों को दबाता है और contrast बढ़ाता है। HALCON के <code style="color:#22d3bf">gamma_image</code> (Perform a gamma encoding or decoding of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> はガンマ指数を 0.3〜2.8 の範囲で<b>線形に</b>振る（既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.55 であって素通しではない。γ=1 が要るなら <code style="color:#22d3bf">a=0.28</code>）。<code style="color:#22d3bf">b</code> は未使用。HALCON の実装は Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは単純なべき乗写像 1 本に単純化している(近似)。</p>
+<p><code style="color:#22d3bf">a</code> gamma exponent को 0.3-2.8 की सीमा में <b>रैखिक रूप से</b> बदलता है (default <code style="color:#22d3bf">a=0.5</code> का मतलब γ=1.55 है, यह pass-through नहीं है; γ=1 चाहिए तो <code style="color:#22d3bf">a=0.28</code>)। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। HALCON के implementation में Encode/Decode switch और AmpFactor जैसे कई parameters हैं, लेकिन यहाँ इसे 1 सरल power mapping तक सीमित किया गया है (सन्निकटन)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

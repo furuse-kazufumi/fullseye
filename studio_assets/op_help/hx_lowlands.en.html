@@ -13,11 +13,10 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detect the basins of the grey values (flat local minima): the region of pixels equal to their neighbourhood minimum.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">ndimage.minimum_filter</code>(<code style="color:#22d3bf">size</code> 角の正方形窓、鏡映境界)で局所最小 <code style="color:#22d3bf">mn</code> を取り、<code style="color:#22d3bf">v &lt;= mn + 1e-6</code> かつ <code style="color:#22d3bf">v &lt; 画像平均</code> の画素を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窓の一辺 <code style="color:#22d3bf">size = 3 + int(a*6)</code>(3〜9 画素)。大きいほど広い範囲で最小である必要があり、点が減る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平坦な窪みは窓内の全画素が最小値に等しいため、領域ごと(1 点ではなく面で)拾われる。逆に画像全体が平坦だと <code style="color:#22d3bf">v &lt; mean</code> を満たす画素が無く空になる。「平均より暗い」条件のため、明るい面の中の浅い窪みは拾えない。雑音があると小さな極小が大量に出るので、前段に <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> を置く。反対の隆起は画像を反転して同じ op を掛ける。</p>
+<p>Takes the local minimum <code style="color:#22d3bf">mn</code> with <code style="color:#22d3bf">ndimage.minimum_filter</code> (a square window of side <code style="color:#22d3bf">size</code>, mirrored border), and returns a 0/1 float region in which pixels with <code style="color:#22d3bf">v &lt;= mn + 1e-6</code> and <code style="color:#22d3bf">v &lt; image mean</code> are 1.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → window side <code style="color:#22d3bf">size = 3 + int(a*6)</code> (3 to 9 pixels). The larger, the wider the range over which a pixel must be minimal, and the fewer points.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>In a flat hollow every pixel in the window equals the minimum, so it is picked up as a whole area (as a surface, not 1 point). Conversely, if the whole image is flat, no pixel satisfies <code style="color:#22d3bf">v &lt; mean</code> and the result is empty. Because of the &quot;darker than the mean&quot; condition, shallow hollows within bright surfaces are not picked up. With noise, lots of small minima appear, so put <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> before it. For the opposite, ridges, invert the image and apply the same op.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

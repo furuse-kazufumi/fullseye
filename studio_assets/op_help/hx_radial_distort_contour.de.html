@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet radiale Verzeichnung r&#x27; = r(1 + k r^2) auf eine Kontur an (k aus (a−0,5): tonnen- oder kissenförmig).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各 contour の点を画像中心 <code style="color:#22d3bf">(H/2, W/2)</code> からの相対座標 <code style="color:#22d3bf">d</code> にし、正規化半径 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> に対して <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 歪み係数 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75〜+0.75)。<code style="color:#22d3bf">k &lt; 0</code> で点が中心に寄る(樽型)、<code style="color:#22d3bf">k &gt; 0</code> で</p>
-<p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>半径は画像長辺の半分で正規化しているので、画像の隅で <code style="color:#22d3bf">r</code> が 1 前後になり、<code style="color:#22d3bf">k = ±0.75</code> なら隅の点は 1.75 倍/0.25 倍まで動く。逆変換は無い(<code style="color:#22d3bf">k</code> の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour 計測(<code style="color:#22d3bf">hx_fit_circle_contour</code> 等)で試す、あるいは合成的にデータを増やす用途。</p>
+<p>Wandelt jeden Konturpunkt in Koordinaten <code style="color:#22d3bf">d</code> relativ zum Bildmittelpunkt <code style="color:#22d3bf">(H/2, W/2)</code> um und gibt mit dem normierten Radius <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> die gemäß <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> gestreckte Kontur zurück (der Term 1. Ordnung eines radialen Verzeichnungsmodells).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Verzeichnungskoeffizient <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code> (-0.75 bis +0.75). <code style="color:#22d3bf">k &lt; 0</code> zieht Punkte zur Mitte (tonnenförmig), <code style="color:#22d3bf">k &gt; 0</code></p>
+<p>spreizt sie nach außen (kissenförmig), bei a=0.5 keine Änderung.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Der Radius ist mit der halben langen Bildseite normiert, daher liegt <code style="color:#22d3bf">r</code> in den Bildecken um 1, und bei <code style="color:#22d3bf">k = ±0.75</code> bewegen sich Eckpunkte bis zum 1.75- / 0.25-Fachen. Es gibt keine Umkehrung (das Vorzeichen von <code style="color:#22d3bf">k</code> umzudrehen stellt nicht exakt wieder her). Zum Testen des Einflusses der Linsenverzeichnung auf Kontur- messungen (<code style="color:#22d3bf">hx_fit_circle_contour</code> usw.) oder zur synthetischen Datenvermehrung.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -9,11 +9,10 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lee-Rosenfeld: schätzt den Slant der Lichtquelle (Zenitwinkel, 0 = frontal bis pi/2 = streifend). Auf [0,1] normiert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像の平均輝度 <code style="color:#22d3bf">&lt;I&gt;</code> を反射率 1 の Lambertian 面の関係 <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code> に当てはめ、<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> を <code style="color:#22d3bf">pi/2</code> で割った <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横(平均 0)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから <code style="color:#22d3bf">arccos</code> に渡すので範囲外にはならない。</p>
-<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も斜光と区別できない)。勾配で補正する版は <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>、反射率の代理値は <code style="color:#22d3bf">hx_estimate_al_am</code>。<code style="color:#22d3bf">hx_shade_height_field</code> の仰角 <code style="color:#22d3bf">b</code> と組み合わせて陰影を再現する際の目安に使う。</p>
+<p>Passt die mittlere Leuchtdichte des Bildes <code style="color:#22d3bf">&lt;I&gt;</code> an die Beziehung einer Lambert-Fläche mit Reflexionsgrad 1, <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code>, an und gibt <code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> geteilt durch <code style="color:#22d3bf">pi/2</code> als <code style="color:#22d3bf">np.float64</code> (0 bis 1) zurück. 0 ist frontales Licht (Mittel 1.0), 1 ist streifend von der Seite (Mittel 0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• Der Mittelwert wird vor der Übergabe an <code style="color:#22d3bf">arccos</code> auf [0,1] geclippt, verlässt also nie den Bereich.</p>
+<p>Effektiv ist es eine 1-zu-1-Abbildung &quot;je niedriger die mittlere Leuchtdichte, desto größer der slant&quot;, mit angenommenem Reflexionsgrad 1 (auch ein dunkles Material ist nicht von Schräglicht zu unterscheiden). Die gradientenkorrigierte Version ist <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>, ein Ersatzwert für den Reflexionsgrad <code style="color:#22d3bf">hx_estimate_al_am</code>. Als Anhaltspunkt verwenden, wenn Schattierung zusammen mit der Elevation <code style="color:#22d3bf">b</code> von <code style="color:#22d3bf">hx_shade_height_field</code> nachgebildet wird.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

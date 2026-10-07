@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_color_sub_pix.inputs.jpg">edges_color_sub_pix: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert zusammenhängende Komponenten auf Farbkanten als Konturen. Soll HALCONs <code style="color:#22d3bf">edges_color_sub_pix</code> (extrahiert subpixelgenaue Farbkanten mit Deriche/Shen/Canny) entsprechen, <b>die Implementierung ist jedoch nicht subpixelgenau</b> -- sie binarisiert die Gradientenstärke aus <code style="color:#22d3bf">_edges_color</code> mit einem Schwellenwert, verbindet sie mit 8er-Nachbarschafts-Labeling (<code style="color:#22d3bf">scipy.ndimage.label</code>) und gibt die resultierenden Pixelkoordinaten unverändert als Konturpunkte zurück (alle Koordinaten liegen auf dem Ganzzahlgitter). Komponenten mit weniger als 3 Pixeln werden verworfen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a はしきい値 <code style="color:#22d3bf">0.15 + 0.5 * a</code> を振る（大きいほど輪郭が減る）。b は未使用。戻り値は <code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [輪郭ごとの (N,2) 座標配列]}</code>。</p>
+<p>a variiert den Schwellwert <code style="color:#22d3bf">0.15 + 0.5 * a</code> (je größer, desto weniger Konturen). b wird nicht verwendet. Der Rückgabewert ist <code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [(N,2)-Koordinatenarray je Kontur]}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -14,8 +14,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A general affine transform combining rotation (<code style="color:#22d3bf">-20 to +20 degrees</code>, determined by <code style="color:#22d3bf">a</code>) and shear (determined by <code style="color:#22d3bf">b</code>). Applies <code style="color:#22d3bf">ndimage.affine_transform</code> relative to the center, filling outside the frame by reflection. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">affine_trans_image</code> (Apply an arbitrary affine 2D transformation to images) -- HALCON allows passing an arbitrary 2x3/3x3 transform matrix directly, but this is an approximation limited to a two-parameter rotation+shear.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が回転角、<code style="color:#22d3bf">b</code> がせん断量を振る。両方が使われる。平行移動・独立な拡大縮小はこの op では表現できない。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the rotation angle and <code style="color:#22d3bf">b</code> the amount of shear. Both are used. Translation and independent scaling cannot be expressed with this op.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

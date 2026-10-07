@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kontrastanpassung (lineare Dehnung zentriert auf die mittlere Helligkeit des Bildes). Ruft <code style="color:#22d3bf">PIL.ImageEnhance.Contrast</code> auf.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a が強調係数（<code style="color:#22d3bf">factor = 2*a</code>、範囲 0〜2）を振る。a=0.5 で係数 1.0（元画像のまま）、a=0 に近づくほど平均輝度一色のグレーに潰れ、a=1 に近づくほどコントラストが 2 倍まで強調される。b は未使用。</p>
+<p>a variiert den Verstärkungsfaktor (<code style="color:#22d3bf">factor = 2*a</code>, Bereich 0-2). Bei a=0.5 ist der Faktor 1.0 (Originalbild unverändert); je näher a an a=0, desto mehr fällt das Bild zu einem einheitlichen Grau der mittleren Leuchtdichte zusammen, je näher an a=1, desto stärker wird der Kontrast verstärkt, bis zum 2-Fachen. b wird nicht verwendet.</p>
 <p><b>Genauigkeit (gemessen)</b>: intern auf <b>8 Bit (256 Stufen) quantisiert</b> — die Ausgabe liegt exakt auf dem Raster k/255. Eine Übergabe als float64 <b>erhält diese Genauigkeit nicht</b>: die Stufung einer 16-Bit-Kamera (etwa 1,5e-5) wird auf 1/255 ≈ 3,9e-3 gerundet, und zwei Bilder, die sich um weniger als 1/255 unterscheiden, liefern dieselbe Antwort. Wo feine Helligkeitsunterschiede gemessen werden oder die Ausgabe in Ableitung oder Regression weiterläuft, werden die Quantisierungsstufen sichtbar — dann einen Operator wählen, der nicht über 8 Bit geht.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>

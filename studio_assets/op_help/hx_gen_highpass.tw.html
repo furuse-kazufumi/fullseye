@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>產生理想高通濾波器的頻域遮罩。相當於 HALCON 的 <code style="color:#22d3bf">gen_highpass</code>(產生理想高通濾波器)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>DC を中心に fftshift した正規化周波数半径 <code style="color:#22d3bf">r</code> を計算し、<code style="color:#22d3bf">r &gt; cutoff</code> の画素を 1 とする(<code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code>)。兄弟 op <code style="color:#22d3bf">hx_gen_lowpass</code> / <code style="color:#22d3bf">hx_gen_bandpass</code> と半径の計算式を共有する。<code style="color:#22d3bf">b</code> は未使用。返り値はフィルタそのもの(周波数領域のマスク画像)で、画像に畳み込む前段にあたる。</p>
+<p>計算以 DC 為中心經 fftshift 的正規化頻率半徑 <code style="color:#22d3bf">r</code>，把 <code style="color:#22d3bf">r &gt; cutoff</code> 的像素設為 1（<code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code>）。與兄弟 op <code style="color:#22d3bf">hx_gen_lowpass</code> / <code style="color:#22d3bf">hx_gen_bandpass</code> 共用半徑的計算式。<code style="color:#22d3bf">b</code> 未使用。回傳值是濾波器本身（頻域的遮罩影像），相當於與影像卷積之前的一步。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

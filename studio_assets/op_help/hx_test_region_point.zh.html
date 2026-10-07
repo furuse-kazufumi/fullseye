@@ -12,11 +12,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_point.chain.jpg">hx_test_region_point: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>region 是否包含该点(归一化 a=行, b=列):1/0(test_region_point)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region が、正規化座標 <code style="color:#22d3bf">(a, b)</code> の画素を含むかを 1.0/0.0 の <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行 <code style="color:#22d3bf">r = min(int(a*h), h-1)</code>(0 で先頭行、1 で最終行)。</p>
+<p>以 1.0/0.0 的 <code style="color:#22d3bf">np.float64</code> 返回 <code style="color:#22d3bf">v &gt; 0.5</code> 的 region 是否包含归一化坐标 <code style="color:#22d3bf">(a, b)</code> 处的像素。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行 <code style="color:#22d3bf">r = min(int(a*h), h-1)</code>（0 为首行，1 为末行）。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 列 <code style="color:#22d3bf">c = min(int(b*w), w-1)</code>。</p>
-<p>座標は (行, 列) 順で、切り捨てで画素に丸める。1 画素の判定なので region の縁ぎりぎりでは不安定になる。点の周辺で判定したいときは先に <code style="color:#22d3bf">hx_dilation1</code> で region を太らせる。複数点の包含率は <code style="color:#22d3bf">hx_test_region_points</code>、点から region までの距離は <code style="color:#22d3bf">hx_distance_pr</code>。</p>
+<p>坐标按 (行, 列) 顺序，以截断取整到像素。由于是 1 个像素的判定，在 region 边缘附近会不稳定。想在点的周边判定时，先用 <code style="color:#22d3bf">hx_dilation1</code> 使 region 变粗。多个点的包含率用 <code style="color:#22d3bf">hx_test_region_points</code>，点到 region 的距离用 <code style="color:#22d3bf">hx_distance_pr</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

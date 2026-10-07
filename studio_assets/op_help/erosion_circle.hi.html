@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/erosion_circle.inputs.jpg">erosion_circle: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Disk आकार के structuring element से binary erosion (<code style="color:#22d3bf">ndimage.binary_erosion</code>)। Foreground region को बाहरी सीमा से काटकर छोटा करने वाला सबसे बुनियादी binary morphology operation। HALCON के <code style="color:#22d3bf">erosion_circle</code> (Erode a region with a circular structuring element.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> はこのバックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の円形・矩形いずれも)に共通して<b>未使用</b>。</p>
+<p><code style="color:#22d3bf">a</code> structuring element की radius को 1-4 की सीमा (<code style="color:#22d3bf">_rad(a)</code>) में बदलता है। <code style="color:#22d3bf">b</code> इस backend के सभी binary morphology ops (erosion/dilation/opening/closing, दोनों circular और rectangular) में समान रूप से <b>अप्रयुक्त</b> है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

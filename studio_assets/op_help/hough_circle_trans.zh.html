@@ -15,8 +15,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用于圆检测的 Hough 变换。对边缘掩膜使用半径 4〜19（步长 3）的一组圆模板计算 <code style="color:#22d3bf">skimage.transform.hough_circle</code>，并把所有半径中的最大响应归一化到 [0,1] 后返回。相当于 HALCON 的 <code style="color:#22d3bf">hough_circle_trans</code>（Return the Hough-Transform for circles with a given radius.）（HALCON 会明确指定半径，此处则用固定范围做穷举的近似）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がエッジ抽出の閾値を振り、<code style="color:#22d3bf">b</code> が探索する半径の上限を決める(<code style="color:#22d3bf">radii = arange(4, max(7, round(4 + 32*b)), 3)</code>。既定の <code style="color:#22d3bf">b=0.5</code> は従来どおり半径 4〜19)。★<b>対象より小さい半径しか探していないと、この op は落ちずに意味の無い累算器を返す</b>。実写のコイン 24 枚(半径 19〜31 px)で非極大抑制して数えると <code style="color:#22d3bf">b=0.5</code> で 13 峰、上限まで広げた <code style="color:#22d3bf">b=1.0</code> でも 19 峰にしかならない ―― 半径の刻みが 3 で、しかも全半径の最大に潰しているため。<b>半径を明示できる HALCON の同名 op の代わりにはならない</b> (<code style="color:#22d3bf">examples/poc_real_coin_metrology.py</code> が数字で示す)。</p>
+<p><code style="color:#22d3bf">a</code> 调节边缘提取的阈值,<code style="color:#22d3bf">b</code> 决定搜索半径的上限(<code style="color:#22d3bf">radii = arange(4, max(7, round(4 + 32*b)), 3)</code>。默认 <code style="color:#22d3bf">b=0.5</code> 与以往相同, 半径为 4～19)。★<b>如果只搜索比目标小的半径,此 op 不会报错,而是返回无意义的累加器</b>。对实拍的 24 枚硬币(半径 19～31 px) 做非极大值抑制后计数,<code style="color:#22d3bf">b=0.5</code> 时为 13 个峰,即使扩大到上限的 <code style="color:#22d3bf">b=1.0</code> 也只有 19 个峰 —— 因为半径步长为 3,而且压缩成了所有半径中的最大值。<b>它无法替代可以明确指定半径的 HALCON 同名 op</b> (<code style="color:#22d3bf">examples/poc_real_coin_metrology.py</code> 用数字展示了这一点)。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

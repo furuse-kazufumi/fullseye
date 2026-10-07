@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.inputs.jpg">hx_union_adjacent: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>끝점이 가까운(임계 a) contour 를 탐욕적으로 잇습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>contour のリストを走査し、<code style="color:#22d3bf">cs[i]</code> の終点と <code style="color:#22d3bf">cs[j]</code>(<code style="color:#22d3bf">j &gt; i</code>)の始点の距離が <code style="color:#22d3bf">tol</code> 以下なら <code style="color:#22d3bf">cs[j]</code> を <code style="color:#22d3bf">cs[i]</code> の後ろにつないで 1 本にする。1 回つなぐたびに先頭から走査をやり直し、つなげる対が無くなるまで繰り返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*8</code>(1〜9 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>判定は「終点→始点」の向きだけで、始点どうし・終点どうしが近い場合に反転してつなぐことはしない(向きの揃った contour 列を想定)。貪欲法なので 3 本以上が候補になるときはリスト順で先に見つかった相手とつながる(<code style="color:#22d3bf">hx_sort_contours</code> で順序を整えると結果が安定する)。つなぎ目の点は重複せず、隙間は直線で飛ぶ。計算量は本数の 2 乗×連結回数。つないだ後の閉じ具合は <code style="color:#22d3bf">hx_test_closed_xld</code> で確認する。</p>
+<p>contour 리스트를 주사하여 <code style="color:#22d3bf">cs[i]</code>의 끝점과 <code style="color:#22d3bf">cs[j]</code>(<code style="color:#22d3bf">j &gt; i</code>)의 시작점 거리가 <code style="color:#22d3bf">tol</code> 이하이면 <code style="color:#22d3bf">cs[j]</code>를 <code style="color:#22d3bf">cs[i]</code> 뒤에 이어 1개로 만든다. 1번 이을 때마다 처음부터 주사를 다시 하며, 이을 쌍이 없어질 때까지 반복한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 허용 거리 <code style="color:#22d3bf">tol = 1 + a*8</code>(1~9 화소).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>판정은 &quot;끝점→시작점&quot; 방향뿐이며, 시작점끼리·끝점끼리가 가까운 경우에 반전해서 잇지는 않는다(방향이 맞춰진 contour 열을 상정). 탐욕법이므로 3개 이상이 후보가 될 때는 리스트 순서로 먼저 찾은 상대와 이어진다(<code style="color:#22d3bf">hx_sort_contours</code>로 순서를 정리하면 결과가 안정된다). 이음매의 점은 중복되지 않고, 틈은 직선으로 건너뛴다. 계산량은 개수의 2제곱×연결 횟수. 이은 뒤의 닫힘 정도는 <code style="color:#22d3bf">hx_test_closed_xld</code>로 확인한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

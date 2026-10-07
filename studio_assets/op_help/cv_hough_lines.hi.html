@@ -10,8 +10,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Probabilistic Hough transform से सीधी रेखा (line segment) detection (1 scalar feature, OpenCV implementation)। पहले Canny से edge image बनाता है, फिर उसमें सीधी रेखा में लगे edge pixels के समूहों को voting से खोजकर line segments के रूप में पहचानता है —— यहाँ केवल पहचाने गए line segments की संख्या लौटाता है (0 हों तो 0)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)に相当(近似。線のパラメータではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a は投票数のしきい値(直線と認める最低票数)を 20〜60 に、b は最小線分長を 10〜30 に振る。Canny の内部しきい値(50, 150)と maxLineGap(5)は固定。</p>
+<p>HALCON के <code style="color:#22d3bf">hough_lines</code> (Detect lines in edge images with the help of the Hough transform and returns it in HNF.) के समकक्ष है (सन्निकटन: line के parameters नहीं, केवल संख्या)। implementation <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> है -- a vote की threshold (किसी सीधी रेखा को मान्य करने के लिए न्यूनतम vote) को 20-60 में, और b न्यूनतम segment लंबाई को 10-30 में बदलता है। Canny की आंतरिक threshold (50, 150) और maxLineGap (5) स्थिर हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

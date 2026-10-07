@@ -9,8 +9,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Hochwertige Eckenerkennung nach der Shi-Tomasi-Methode (ein skalares Merkmal, OpenCV-Implementierung). Bewertet die &quot;Eckenhaftigkeit&quot; anhand desselben Minimal-Eigenwert-Kriteriums wie cv_min_eigen und erkennt die besten Ecken, nachdem sie durch Nicht-Maximum-Unterdrückung und einen Mindestabstandsfilter ausgedünnt wurden - hier wird nur die Anzahl der erkannten Ecken zurückgegeben (0, wenn keine gefunden werden).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
+<p>HALCON hat keine direkte Entsprechung. Die Implementierung ist <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> -- a variiert die maximale Anzahl an Detektionen im Bereich 10-50, b den Qualitätsschwellwert (relativ zur stärksten Ecke; größer filtert strenger und liefert weniger Detektionen) im Bereich 0.01-0.11. Der Mindestabstand ist auf 5 Pixel fest.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

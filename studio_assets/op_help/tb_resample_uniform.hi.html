@@ -12,14 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_resample_uniform.inputs.jpg">tb_resample_uniform: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Arc length के अनुसार बराबर अंतराल वाले n points पर resample (linear interpolation)। → (n,3)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず折れ線を細かく刻むだけ。</p>
-<p style="margin:2px 0 2px 12px">• 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。</p>
-<p style="margin:2px 0 2px 12px">• 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が捨てられる。形状検証は無い。</p>
-<p style="margin:2px 0 2px 12px">• 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても <code style="color:#22d3bf">np.interp</code> は通るが、その区間は長さ 0 として扱われる。</p>
-<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> は index パラメータの差分なので、間隔が不均一な点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は <code style="color:#22d3bf">fit_spline_curve</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">resample_uniform</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">arc_length</code> की cumulative arc length को parameter बनाकर <code style="color:#22d3bf">np.linspace(0, total, n)</code> वाली positions ली जाती हैं, और x, y, z को अलग-अलग <code style="color:#22d3bf">np.interp</code> से linear interpolate किया जाता है। output float64 (n,3) है। start और end points input के पहले और आख़िरी point से मेल खाते हैं, बीच के points polyline पर रहते हैं (ज़रूरी नहीं कि वे मूल points से गुज़रें)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: output points की संख्या। 1 पर केवल start का 1 point, 0 पर खाली (0,3)। input से ज़्यादा करने पर भी जानकारी नहीं बढ़ती, बस polyline बारीक कटती है।</p>
+<p style="margin:2px 0 2px 12px">• कुल length 1e-12 से कम हो (सभी points एक ही जगह) तो पहले point को n बार duplicate करके लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• output columns की संख्या 3 पर fixed है; input (N,3) न हो तो या तो columns की कमी से fail होता है या अतिरिक्त columns हटा दिए जाते हैं। shape की कोई जाँच नहीं।</p>
+<p style="margin:2px 0 2px 12px">• closed curve बंद नहीं होता (end → start वाला segment interpolate नहीं होता)। duplicate points होने पर भी <code style="color:#22d3bf">np.interp</code> चल जाता है, पर उस segment की length 0 मानी जाती है।</p>
+<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> index parameter के differences इस्तेमाल करते हैं, इसलिए असमान spacing वाली point sequence को पहले इस op से बराबर spacing में करके देने से numerical differentiation stable होता है। smooth interpolation चाहिए तो <code style="color:#22d3bf">fit_spline_curve</code>।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">resample_uniform</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

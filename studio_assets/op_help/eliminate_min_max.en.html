@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Smoothing via a median filter. The implementation shares the <code style="color:#22d3bf">median</code> branch of <code style="color:#22d3bf">_sh_rank</code> with ops like <code style="color:#22d3bf">median_image</code>, simply replacing each pixel with the median of its window. a sets the window size to one of 3/5/7/9 (<code style="color:#22d3bf">_k(a)</code>). b is unused.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">eliminate_min_max</code>（最小値・最大値の画素だけを周辺の平均値等で置き換えてノイズを抑える演算）とは異なり、この実装は最小・最大画素を選別せず窓全体を単純な中央値フィルタにかけているだけの近似（本来の「外れ値だけを直す」性質は再現しない）。</p>
+<p>Unlike HALCON&#x27;s <code style="color:#22d3bf">eliminate_min_max</code> (an operation that suppresses noise by replacing only the minimum and maximum pixels with the mean of their surroundings, etc.), this implementation does not single out the minimum/maximum pixels but merely applies a plain median filter to the whole window -- an approximation (the original property of &quot;fixing only the outliers&quot; is not reproduced).</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

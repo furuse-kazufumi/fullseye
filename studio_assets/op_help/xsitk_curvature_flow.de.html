@@ -13,8 +13,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Krümmungsfluss-Glättung (SimpleITK <code style="color:#22d3bf">CurvatureFlow</code>). Eine nichtlineare Diffusion, die das Bild mit einer zur Krümmung der Höhenlinien proportionalen Geschwindigkeit weichzeichnet; gerade Kanten bleiben eher erhalten, während gerundete Details zuerst verschwinden.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*8)</code> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Anzahl der Iterationen (1-9 über <code style="color:#22d3bf">1+int(a*8)</code>) — je mehr, desto stärker die Glättung. Die Zeitschrittweite ist auf 0.0625 festgelegt. <code style="color:#22d3bf">b</code> wird nicht verwendet. Die Ausgabe wird auf [0,1] begrenzt.</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>

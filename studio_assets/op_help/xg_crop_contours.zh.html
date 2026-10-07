@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.inputs.jpg">xg_crop_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留位于形状中央 a 比例窗口内的 contour 点。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像中心に置いた、高さ <code style="color:#22d3bf">a*H</code>、幅 <code style="color:#22d3bf">a*W</code> の矩形窓の内側にある輪郭点だけを残す(<code style="color:#22d3bf">a</code> は [0,1] に clip、<code style="color:#22d3bf">b</code> は未使用)。窓は行 <code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>、列 <code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code> の閉区間。<code style="color:#22d3bf">H, W</code> は辞書の <code style="color:#22d3bf">shape</code> から取り、無ければ全点の最大座標+1 で代用する。</p>
-<p>返り値は <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>。窓内に 1 点も残らない輪郭は捨て、<code style="color:#22d3bf">a=0</code> では中心線上に正確に乗る点しか残らないためほぼ空、<code style="color:#22d3bf">a=1</code> で全点が残る。</p>
-<p>注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、<code style="color:#22d3bf">xg_area_center</code> の面積や折れ線長が実際より大きく出る。切り口を正しく扱いたいなら、領域の段階で <code style="color:#22d3bf">r3_clip_region</code> を掛けてから輪郭を取り直す。座標は (row, col)。長さで輪郭ごと選別するのは <code style="color:#22d3bf">xg_clip_contours</code>。</p>
+<p>只保留位于以图像中心为中心、高 <code style="color:#22d3bf">a*H</code>、宽 <code style="color:#22d3bf">a*W</code> 的矩形窗口内侧的轮廓点（<code style="color:#22d3bf">a</code> 裁剪到 [0,1]，<code style="color:#22d3bf">b</code> 未使用）。窗口为行 <code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>、列 <code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code> 的闭区间。<code style="color:#22d3bf">H, W</code> 取自字典的 <code style="color:#22d3bf">shape</code>，没有时用全部点的最大坐标+1 代替。</p>
+<p>返回值为 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>。窗口内 1 个点都没剩下的轮廓被丢弃； <code style="color:#22d3bf">a=0</code> 时只剩恰好落在中心线上的点，因此几乎为空，<code style="color:#22d3bf">a=1</code> 时全部点保留。</p>
+<p>注意：被窗口截断的轮廓不会被分割。剩下的点原样连成 1 条折线，所以轮廓每次进出窗口都会产生“跳过窗口边缘的边”，<code style="color:#22d3bf">xg_area_center</code> 的面积和折线长度会比实际大。若要正确处理切口，应在区域阶段先施加 <code style="color:#22d3bf">r3_clip_region</code>，再重新提取轮廓。坐标为 (row, col)。按长度逐条筛选轮廓的是 <code style="color:#22d3bf">xg_clip_contours</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

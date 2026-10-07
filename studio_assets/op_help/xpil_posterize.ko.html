@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>포스터라이제이션(계조 수 감소). <code style="color:#22d3bf">PIL.ImageOps.posterize</code>를 호출해 각 채널의 유효 비트 수를 줄여 색상 수를 낮춘다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>a が保持ビット数（<code style="color:#22d3bf">bits = 1 + int(a*6)</code>、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
+<p>a가 유지 비트 수(<code style="color:#22d3bf">bits = 1 + int(a*6)</code>, 범위 1~7)를 바꾼다. b는 사용하지 않는다. bits=1에서는 각 채널이 2값화에 가까운 극단적인 계조 손실이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

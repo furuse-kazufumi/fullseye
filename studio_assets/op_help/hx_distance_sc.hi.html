@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_sc.chain.jpg">hx_distance_sc: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Horizontal line segment (row a*H) से contour तक की न्यूनतम दूरी (feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行 <code style="color:#22d3bf">a*H</code> の水平線から、全 contour の頂点までの縦方向の距離 <code style="color:#22d3bf">|row - a*H|</code> の最小値を <code style="color:#22d3bf">max(H, 1)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。列は見ないので、線分は画像の幅いっぱいに伸びる水平線として扱う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 水平線の行位置(0 で最上行、1 で最下行の 1 つ下)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(線上に点がある場合と区別できない)。</p>
-<p>距離は頂点までなので、隣接 2 頂点の間で線を横切る contour でも 0 にはならず「近い方の頂点の行差」になる。点から contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>、点から region までは <code style="color:#22d3bf">hx_distance_pr</code>。</p>
+<p>row <code style="color:#22d3bf">a*H</code> वाली horizontal line से सभी contours के vertices तक की vertical distance <code style="color:#22d3bf">|row - a*H|</code> का minimum <code style="color:#22d3bf">max(H, 1)</code> से भाग देकर 1 पर cap करके <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है। columns नहीं देखे जाते, इसलिए line को image की पूरी width में फैली horizontal line माना जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → horizontal line की row position (0 पर सबसे ऊपर की row, 1 पर सबसे नीचे की row से 1 नीचे)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p style="margin:2px 0 2px 12px">• contours में कोई point न हो तो 0.0 (line पर point होने वाली स्थिति से अलग नहीं पहचाना जा सकता)।</p>
+<p>distance vertices तक है, इसलिए जो contour 2 पड़ोसी vertices के बीच line को पार करता है, उस पर भी value 0 नहीं होती, बल्कि &quot;पास वाले vertex का row अंतर&quot; होती है। point से contour तक की distance <code style="color:#22d3bf">hx_distance_pc</code> देता है, point से region तक <code style="color:#22d3bf">hx_distance_pr</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

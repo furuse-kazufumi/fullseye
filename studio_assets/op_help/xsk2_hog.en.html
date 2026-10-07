@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A visualization image of HOG (Histogram of Oriented Gradients) features. Calls <code style="color:#22d3bf">skimage.feature.hog</code> with <code style="color:#22d3bf">visualize=True</code> and returns the visualization image (discarding the feature vector itself).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>a がセル 1 辺のピクセル数（<code style="color:#22d3bf">6 + 2*int(a*3)</code>、6/8/10/12 の 4 段階）を振る。方向数は 8、ブロックは 2x2 に固定。b は未使用。出力は最大値で正規化した勾配方向強度の可視化であり、HOG 特徴ベクトルそのものではない。</p>
+<p>a sweeps the number of pixels on 1 side of a cell (<code style="color:#22d3bf">6 + 2*int(a*3)</code>, 4 steps: 6/8/10/12). The number of orientations is fixed at 8 and the block at 2x2. b is unused. The output is a visualisation of gradient-orientation strength normalised by the maximum, not the HOG feature vector itself.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

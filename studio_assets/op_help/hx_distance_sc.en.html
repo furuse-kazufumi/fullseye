@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_sc.chain.jpg">hx_distance_sc: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The minimum distance from a horizontal segment (row a*H) to the contour (a feature).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>行 <code style="color:#22d3bf">a*H</code> の水平線から、全 contour の頂点までの縦方向の距離 <code style="color:#22d3bf">|row - a*H|</code> の最小値を <code style="color:#22d3bf">max(H, 1)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。列は見ないので、線分は画像の幅いっぱいに伸びる水平線として扱う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 水平線の行位置(0 で最上行、1 で最下行の 1 つ下)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(線上に点がある場合と区別できない)。</p>
-<p>距離は頂点までなので、隣接 2 頂点の間で線を横切る contour でも 0 にはならず「近い方の頂点の行差」になる。点から contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>、点から region までは <code style="color:#22d3bf">hx_distance_pr</code>。</p>
+<p>Returns the minimum vertical distance <code style="color:#22d3bf">|row - a*H|</code> from the horizontal line at row <code style="color:#22d3bf">a*H</code> to the vertices of all contours, divided by <code style="color:#22d3bf">max(H, 1)</code> and capped at 1, as <code style="color:#22d3bf">np.float64</code>. Columns are ignored, so the line is treated as a horizontal line spanning the full image width.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → row position of the horizontal line (0 is the top row, 1 is 1 below the bottom row).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if the contours have no points (indistinguishable from a point lying on the line).</p>
+<p>The distance is to the vertices, so even a contour that crosses the line between 2 adjacent vertices does not give 0 but &quot;the row difference of the nearer vertex&quot;. The distance from a point to a contour is <code style="color:#22d3bf">hx_distance_pc</code>; from a point to a region <code style="color:#22d3bf">hx_distance_pr</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

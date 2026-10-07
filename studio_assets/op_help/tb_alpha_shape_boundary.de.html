@@ -12,16 +12,15 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_alpha_shape_boundary.inputs.jpg">tb_alpha_shape_boundary: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert die <b>Randpunkt-Indizes</b> mittels Alpha-Shapes (Punktwolke → Randpunkte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>Sammelt die Oberflächendreiecke (Randflächen) der Tetraeder der Delaunay-Tetraederzerlegung mit Umkugelradius &lt; 1/alpha und nimmt ihre Eckpunkt- menge als Randpunkte. Geeignet, um aus einer massiven (Oberfläche + Inneres) Punktwolke nur die Punkte der Oberflächenhülle zu extrahieren. Ein größeres alpha macht den zulässigen Radius 1/alpha kleiner und ergibt einen enger anliegenden (Details erfassenden) Rand.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数。半径しきい値は 1/alpha。<code style="color:#22d3bf">estimate_alpha</code> で目安を得られる。</p>
+<p>Eine positive reelle Zahl. Die Radiusschwelle ist 1/alpha. <code style="color:#22d3bf">estimate_alpha</code> liefert einen Richtwert.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>boundary_point_indices : numpy.ndarray (K,) int64</p>
-<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">alpha_shape_boundary</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>Indizes der Randpunkte in points (aufsteigend, ohne Duplikate). Ein leeres Array, wenn es keinen Rand gibt.</p>
+<p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">alpha_shape_boundary</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese op hat keine Stellpunkte; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

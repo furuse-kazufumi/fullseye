@@ -14,12 +14,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把图像的定义域缩小为轴对齐矩形(中央 a×b 比例)的 region。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で、画像中央に置いた高さ <code style="color:#22d3bf">hh</code>・幅 <code style="color:#22d3bf">ww</code> の軸並行矩形を 1 とする 0/1 の float 配列(region)を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの割合 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 幅の割合 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• 左上は <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> で、中央からのずれは整数切り捨てぶんだけ。</p>
-<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ <code style="color:#22d3bf">hx_full_domain</code>、既存 region の周辺を削るなら <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
+<p>返回与输入 <code style="color:#22d3bf">v</code> 同形状、把放在图像中央的高 <code style="color:#22d3bf">hh</code>、宽 <code style="color:#22d3bf">ww</code> 的轴平行矩形设为 1 的 0/1 float 数组（region）。不查看输入的内容。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高度比例 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>（20%〜90%）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 宽度比例 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>（20%〜90%）。</p>
+<p style="margin:2px 0 2px 12px">• 左上为 <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code>，与中央的偏差仅为整数截断部分。</p>
+<p>用于构造把图像周边（照明衰减、镜头边缘）排除在检查对象之外的 ROI。想要整幅图像时用 <code style="color:#22d3bf">hx_full_domain</code>，削去已有 region 的周边用 <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

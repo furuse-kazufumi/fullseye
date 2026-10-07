@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>로그 계조 변환(log transform). <code style="color:#22d3bf">out = gain * log(1 + in)</code> 형태의 로그 곡선으로 어두운 부분을 밝게 올리는 계조 보정이다 —— 감마 보정과 용도는 비슷하지만, 어두운 부분만 더 강하게 끌어올리는 비선형 곡선이 된다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)に相当。実装は <code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code> の結果を <code style="color:#22d3bf">[0,1]</code> へ clip したもの —— a は gain を 0.5〜2.0 に振る。b は未使用。gain が 1 を超えると出力が 1 を僅かに超えることが実測されている(a=0.5 で max=1.1380)ため、<code style="color:#22d3bf">image</code> 契約([0,1])を守るために出口で明示的に clip している —— パイプライン内では <code style="color:#22d3bf">ops._apply</code> の段間 clip と同じ値になるためビット不変だが、直接呼び出した時の白飛びの見え方は clip 追加前と変わる。</p>
+<p>HALCON의 <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)에 상당. 구현은 <code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code>의 결과를 <code style="color:#22d3bf">[0,1]</code>로 clip한 것 —— a는 gain을 0.5〜2.0으로 바꾼다. b는 사용하지 않는다. gain이 1을 넘으면 출력이 1을 약간 넘는 것이 실측되어 있으므로(a=0.5에서 max=1.1380), <code style="color:#22d3bf">image</code> 계약([0,1])을 지키기 위해 출구에서 명시적으로 clip하고 있다 —— 파이프라인 안에서는 <code style="color:#22d3bf">ops._apply</code>의 단 간 clip과 같은 값이 되므로 비트 불변이지만, 직접 호출했을 때 하이라이트 날아감의 보이는 방식은 clip 추가 전과 달라진다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

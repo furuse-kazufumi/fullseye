@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测灰度的洼地(局部极小的平坦域):与邻域最小值相等的像素 region。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">ndimage.minimum_filter</code>(<code style="color:#22d3bf">size</code> 角の正方形窓、鏡映境界)で局所最小 <code style="color:#22d3bf">mn</code> を取り、<code style="color:#22d3bf">v &lt;= mn + 1e-6</code> かつ <code style="color:#22d3bf">v &lt; 画像平均</code> の画素を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窓の一辺 <code style="color:#22d3bf">size = 3 + int(a*6)</code>(3〜9 画素)。大きいほど広い範囲で最小である必要があり、点が減る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平坦な窪みは窓内の全画素が最小値に等しいため、領域ごと(1 点ではなく面で)拾われる。逆に画像全体が平坦だと <code style="color:#22d3bf">v &lt; mean</code> を満たす画素が無く空になる。「平均より暗い」条件のため、明るい面の中の浅い窪みは拾えない。雑音があると小さな極小が大量に出るので、前段に <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> を置く。反対の隆起は画像を反転して同じ op を掛ける。</p>
+<p>用 <code style="color:#22d3bf">ndimage.minimum_filter</code>（边长 <code style="color:#22d3bf">size</code> 的正方形窗口，镜像边界）取局部最小 <code style="color:#22d3bf">mn</code>，返回把满足 <code style="color:#22d3bf">v &lt;= mn + 1e-6</code> 且 <code style="color:#22d3bf">v &lt; 图像平均</code> 的像素设为 1 的 0/1 float region。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窗口边长 <code style="color:#22d3bf">size = 3 + int(a*6)</code>（3〜9 像素）。越大，需要在越大的范围内为最小，点越少。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>平坦的凹陷中窗口内全部像素都等于最小值，因此会整片（不是 1 点而是面）被拾取。反之若整幅图像平坦，则没有满足 <code style="color:#22d3bf">v &lt; mean</code> 的像素而为空。由于“比平均暗”的条件，明亮面中的浅凹陷拾取不到。有噪声时会出现大量小极小值，因此前面放置 <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code>。相反的隆起，把图像反转后施加同一 op。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

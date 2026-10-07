@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">(sin(2πx) + 1) / 2</code> से tones को sine wave की तरह मोड़ने वाला periodic LUT। x=0 और x=1 पर 0.5 पर लौटता है, और x=0.25/0.75 के पास 0/1 तक पहुँचता है ―― यह monotonic increasing नहीं है, बल्कि <b>एक ही आउटपुट को कई इनपुट tones साझा करते हैं</b> — यानी यह non-invertible transform है। HALCON के <code style="color:#22d3bf">sin_image</code> (Calculate the sine of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。周期や位相を変える調整点は無い。等高線状の疑似カラー効果や階調の折返しを作る用途向けで、通常のコントラスト調整には向かない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। period या phase बदलने का कोई समायोजन बिंदु नहीं है। यह contour जैसे pseudo-colour प्रभाव या tone के मुड़ने (folding) के लिए है, सामान्य contrast समायोजन के लिए उपयुक्त नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

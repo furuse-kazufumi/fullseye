@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>FFT के real part के absolute value <code style="color:#22d3bf">|Re(F)|</code> को normalise की गई image (<code style="color:#22d3bf">fft_image</code> के log power spectrum से अलग, log नहीं लेता और केवल real part देखता है)। HALCON के <code style="color:#22d3bf">power_real</code> (Return the power spectrum of a complex image.) के समकक्ष सन्निकटन (HALCON की मूल परिभाषा |F|² power है, लेकिन यहाँ real part के absolute value से काम चलाया गया है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_thresh.b.jpg">m1_measure_thresh: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>统计穿过中心的卡尺线上亮度剖面越过指定电平的次数(相当于 HALCON <code style="color:#22d3bf">measure_thresh</code>:沿矩形/圆弧提取具有特定灰度值的点)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）、<code style="color:#22d3bf">b</code> はグレー値のしきい値レベル（0〜1、そのまま）。生のプロファイル（平滑化なし）がこのレベルをまたぐ回数を feature（整数値）として返す。線が画像に掛からない場合は 0.0。</p>
+<p><code style="color:#22d3bf">a</code> 是线的方向（<code style="color:#22d3bf">theta = a*pi</code>），<code style="color:#22d3bf">b</code> 是灰度值的阈值水平（0〜1，直接使用）。把原始剖面（不平滑）穿过该水平的次数作为 feature（整数值）返回。线不与图像相交时为 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fits the gray values with a first-order polynomial surface (a plane) by least squares. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">fit_surface_first_order</code> (computes gray-value moments and fits a first-order surface).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>座標を [-1, 1] に正規化してから <code style="color:#22d3bf">[1, x, y]</code> を基底に最小二乗回帰し、近似面を min-max で [0, 1] に正規化して返す(照明ムラ推定に使う)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>After normalising coordinates to [-1, 1], performs a least-squares regression on the basis <code style="color:#22d3bf">[1, x, y]</code>, and returns the approximating surface normalised by min-max to [0, 1] (used for estimating uneven illumination). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

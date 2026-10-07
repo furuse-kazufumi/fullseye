@@ -13,9 +13,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>OpenCV का pencilSketch (pencil drawing जैसा rendering)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>エッジ保存平滑化とドッジ合成で鉛筆デッサン風の白黒スケッチを作る(返り値のうちグレースケール版のみ使用し、カラー版は捨てている)。</p>
-<p><code style="color:#22d3bf">a</code> が平滑化の空間範囲 <code style="color:#22d3bf">sigma_s</code> を 20〜100 で振る。<code style="color:#22d3bf">b</code> は色差許容 <code style="color:#22d3bf">sigma_r</code>(0.05〜0.2)と陰影の濃さ <code style="color:#22d3bf">shade_factor</code> (0.02〜0.08)の両方を同時に振る(2 つのパラメータを 1 つのノブにまとめている)。</p>
+<p>edge-preserving smoothing और dodge blending से pencil drawing जैसी black-and-white sketch बनाता है (return values में से केवल grayscale version उपयोग होता है, colour version छोड़ दिया जाता है)।</p>
+<p><code style="color:#22d3bf">a</code> smoothing की spatial range <code style="color:#22d3bf">sigma_s</code> को 20-100 में बदलता है। <code style="color:#22d3bf">b</code> रंग-अंतर सहनसीमा <code style="color:#22d3bf">sigma_r</code> (0.05-0.2) और छाया की गहराई <code style="color:#22d3bf">shade_factor</code> (0.02-0.08) दोनों को एक साथ बदलता है (2 parameters को 1 knob में जोड़ा गया है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

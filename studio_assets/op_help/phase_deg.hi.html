@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Complex image का phase angle map। <code style="color:#22d3bf">np.angle(F)</code> (-π से π) को <code style="color:#22d3bf">(angle+π)/(2π)</code> से [0,1] में linear रूप से map करता है। a, b इस्तेमाल नहीं होते।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>名称は「度（degree）」を示唆するが、実装は phase_rad と同じ <code style="color:#22d3bf">_sh_freq</code> の <code style="color:#22d3bf">fft_phase</code> 分岐を共有しており、度数法への変換は行っていない —— 返るのは [0,1] に正規化された角度で、実際の度数（0-360°）ではない。HALCON の <code style="color:#22d3bf">phase_deg</code>（複素画像の位相を度単位で返す演算）の代役としては単位が違う近似である点に注意。</p>
+<p>नाम &quot;degree&quot; का संकेत देता है, पर implementation, phase_rad के समान <code style="color:#22d3bf">_sh_freq</code> की <code style="color:#22d3bf">fft_phase</code> branch साझा करता है और degree में कोई रूपांतरण नहीं करता — लौटाया जाने वाला मान [0,1] में normalise किया गया कोण है, वास्तविक degree (0-360°) नहीं। ध्यान दें कि HALCON के <code style="color:#22d3bf">phase_deg</code> (complex image की phase को degree में लौटाने वाला operation) के विकल्प के रूप में यह अलग इकाई वाला सन्निकटन है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

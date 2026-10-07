@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को translate करता है (dy=a, dx=b को केंद्र 0 वाले offset में)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる — 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
+<p>np.roll के कारण <b>किनारे चक्रीय हैं</b> (बाहर निकला region विपरीत ओर से प्रकट होता है)। HALCON का move_region किनारे पर गायब हो जाता है (clip), इसलिए किनारे को छूने वाली movement में व्यवहार अलग होता है — evolution ops के feature उपयोग में चक्रीयता से एकरूपता बनाए रखने वाला design कायम रखा गया है, और अंतर यहाँ प्रकट किया गया है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>젖은 표면의 바탕색. <b>확산 반사가 어두워짐</b>(그리고 정반사가 증가함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
+<p>base_rgb: 마른 상태의 색 (H,W,3) 또는 (3,). wet: 젖은 정도(0–1).</p>
+<p>ior: 수막의 굴절률.</p>
+<p>반환값: 젖은 상태의 확산색(같은 형상).</p>
+<p>왜 어두워지는가: 수막 안쪽에서 전반사가 일어나 확산광이 몇 번이고 표면으로 되돌려져그때마다 흡수된다. 근사로서, 마른 반사율 ρ에 내부 반사율 Ri = 1 − (1 − Ri0)/n² 상당의 재흡수를 곱한다 ―― 젖은 모래가 검게 보이는 현상 그 자체(경면이 늘어나는 것은 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code>을 겹쳐서 나타낸다).</p>
+<p>2-D 진화 레지스트리로 연결한 optics의 op <code style="color:#22d3bf">wetness</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">wet</code>(기본값 1), <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">ior</code>(기본값 1.33)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

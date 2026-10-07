@@ -9,8 +9,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>AGAST-Merkmalspunktanzahl (OpenCV-AGAST-Detektor, eine adaptive Baumstruktur-Version von FAST). Gibt die Anzahl der erkannten Keypoints als Feature zurück.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は検出閾値(<code style="color:#22d3bf">int(5+40*a)</code> で 5〜45。高いほど検出数が減る)を振る。<code style="color:#22d3bf">b</code> は未使用。実装注記: cv2 5.0.0 で <code style="color:#22d3bf">AgastFeatureDetector_create</code> が <code style="color:#22d3bf">cv2.xfeatures2d</code> に移動したため、両方の場所を <code style="color:#22d3bf">getattr</code> で試す互換コードになっている(xcv3_brisk_count と同じ事情)。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Detektionsschwellwert (5-45 über <code style="color:#22d3bf">int(5+40*a)</code>; je höher, desto weniger Detektionen). <code style="color:#22d3bf">b</code> wird nicht verwendet. Implementierungshinweis: Da <code style="color:#22d3bf">AgastFeatureDetector_create</code> in cv2 5.0.0 nach <code style="color:#22d3bf">cv2.xfeatures2d</code> verschoben wurde, ist der Code als Kompatibilitätscode geschrieben, der beide Orte per <code style="color:#22d3bf">getattr</code> versucht (dieselbe Situation wie bei xcv3_brisk_count).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.inputs.jpg">trans_to_rgb: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Colour space से वापस RGB में inverse transform। इसे HALCON के <code style="color:#22d3bf">trans_to_rgb</code> (किसी भी colour space से RGB colour space में बदलना) के समकक्ष माना जाता है, लेकिन <b>implementation में केवल HSV→RGB की 1 दिशा</b> ही है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">trans_from_rgb</code> は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、この逆変換は常に入力を HSV とみなして <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> を掛ける。Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、出力は破綻した色になる。a, b は未使用。</p>
+<p>जहाँ <code style="color:#22d3bf">trans_from_rgb</code> a से 4 colour spaces (HSV/Lab/YUV/XYZ) में से चुन सकता है, वहीं यह inverse transform हमेशा इनपुट को HSV मानकर <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> लागू करता है। Lab/YUV/XYZ से call करने पर colour space की गलत व्याख्या के साथ ही रूपांतरण होता है, इसलिए आउटपुट के रंग बिगड़ जाते हैं। a, b उपयोग नहीं होते।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

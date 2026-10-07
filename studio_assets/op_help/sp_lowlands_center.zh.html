@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回极小值&quot;盆地&quot;(比周围低的平坦区域)的重心(相当于 HALCON <code style="color:#22d3bf">lowlands_center</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sp_plateaus</code> と同じ量子化による平坦領域抽出を行った上で、外周の画素がすべて厳密に高い（領域極小である）ものだけを残し、さらに深さ（外周の最小値との差）が <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 以上のものだけを採用する。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、各盆地につき 1 点（重心座標、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す。</p>
+<p>先用与 <code style="color:#22d3bf">sp_plateaus</code> 相同的量化提取平坦区域，然后只保留外周像素全部严格更高（区域极小）的区域，再只采用深度（与外周最小值之差）不小于 <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 的区域。<code style="color:#22d3bf">b</code> 未使用。返回值为 CONTOUR，每个盆地 1 个点（质心坐标，单位为像素）。输入超过 200,000 像素时，出于安全考虑返回空集。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

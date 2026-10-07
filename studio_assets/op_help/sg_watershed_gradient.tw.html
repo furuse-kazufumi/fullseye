@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳從梯度影像的 h-minima 標記出發進行分水嶺分割的邊界（<code style="color:#22d3bf">skimage</code>，HALCON 無對應運算子）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Sobel 勾配の大きさを正規化し、深さ <code style="color:#22d3bf">h = 0.02 + a*0.3</code> の h-minima 変換で生き残った領域極小をマーカーとして（<code style="color:#22d3bf">a</code> が大きいほどマーカーが少なく・粗い分割になる）、その勾配画像に対するウォーターシェッドを計算する。<code style="color:#22d3bf">b</code> は未使用。戻り値は集水域（catchment basin/物体）を分けるダムライン（境界）を表す region。</p>
+<p>把 Sobel 梯度大小正規化，以經深度 <code style="color:#22d3bf">h = 0.02 + a*0.3</code> 的 h-minima 轉換後存留的區域極小作為標記（<code style="color:#22d3bf">a</code> 越大標記越少、分割越粗），對該梯度影像計算分水嶺。<code style="color:#22d3bf">b</code> 未使用。回傳值是表示分隔集水盆（catchment basin/物體）之壩線（邊界）的 region。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>

@@ -12,9 +12,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>양자화로 잃은 양 <code style="color:#22d3bf">|x - Q(x)|</code>를 <code style="color:#22d3bf">Δ/2</code>로 나누어 <code style="color:#22d3bf">[0,1]</code>로 만든 지도.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がビット数 1〜8(<code style="color:#22d3bf">_quantize_uniform</code> と同じ振り方)、<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">1.0</code> が「その画素で取りうる最大の誤差(<code style="color:#22d3bf">Δ/2</code>)」にあたる。</p>
-<p><b>何のために見るのか</b>: 誤差が一様に散っていれば量子化雑音として扱ってよい。<b>特定の等高線に沿って揃っていたら、そこがバンディングの出る場所</b>。数字で言うと、正しく振る舞っているとき地図の平均は <code style="color:#22d3bf">0.5</code> 付近(一様分布の平均)に来る。</p>
+<p><code style="color:#22d3bf">a</code>가 비트 수 1〜8(<code style="color:#22d3bf">_quantize_uniform</code>과 같은 방식으로 바꾼다), <code style="color:#22d3bf">b</code>는 사용하지 않는다. <code style="color:#22d3bf">1.0</code>이 &quot;그 화소에서 가질 수 있는 최대 오차(<code style="color:#22d3bf">Δ/2</code>)&quot;에 해당한다.</p>
+<p><b>무엇을 위해 보는가</b>: 오차가 균일하게 흩어져 있으면 양자화 잡음으로 다뤄도 된다. <b>특정 등고선을 따라 가지런히 놓여 있다면, 그곳이 밴딩이 나타나는 곳이다</b>. 숫자로 말하면, 올바르게 동작할 때 지도의 평균은 <code style="color:#22d3bf">0.5</code> 부근(균일 분포의 평균)에 온다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_remove_holes.inputs.jpg">sk_remove_holes: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>छोटे छेद भरता है। Foreground region के अंदर background के छेदों में से केवल उन्हें भरता है जिनका क्षेत्रफल threshold से कम है —— बड़े छेद (जानबूझकर बनाए गए खुले हिस्से) बने रहते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.) के बराबर (approximation; HALCON version सभी छेद भरता है, जबकि इसमें area filter है)। implementation <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> है — a भरे जाने वाले छेदों की area की ऊपरी सीमा को 8-68 pixel पर बदलता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

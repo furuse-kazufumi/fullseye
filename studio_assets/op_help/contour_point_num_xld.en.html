@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contour_point_num_xld.chain.jpg">contour_point_num_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Selects the contour with the most points among a group of XLD contours and returns its vertex count normalized by 500 into [0,1] (saturating at 1.0 for 500 or more points). a and b are unused. Returns 0 if there are no contours.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">contour_point_num_xld</code>（XLD 輪郭に含まれる点の実数をそのまま返す演算）とは異なり、この実装は点数そのものではなく 500 点でスケーリングした比率を返す近似（feature sort が [0,1] 想定の値を運ぶ契約のため）。</p>
+<p>Unlike HALCON&#x27;s <code style="color:#22d3bf">contour_point_num_xld</code> (an operation that returns the actual number of points contained in an XLD contour as is), this implementation is an approximation that returns not the point count itself but a ratio scaled by 500 points (because of the contract that the feature sort carries values assumed to lie in [0,1]).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

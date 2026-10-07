@@ -9,11 +9,10 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lee-Rosenfeld:估计光源的 slant(天顶角,0=正面 ~ pi/2=侧向)。归一化到 [0,1]。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像の平均輝度 <code style="color:#22d3bf">&lt;I&gt;</code> を反射率 1 の Lambertian 面の関係 <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code> に当てはめ、<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> を <code style="color:#22d3bf">pi/2</code> で割った <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横(平均 0)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから <code style="color:#22d3bf">arccos</code> に渡すので範囲外にはならない。</p>
-<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も斜光と区別できない)。勾配で補正する版は <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>、反射率の代理値は <code style="color:#22d3bf">hx_estimate_al_am</code>。<code style="color:#22d3bf">hx_shade_height_field</code> の仰角 <code style="color:#22d3bf">b</code> と組み合わせて陰影を再現する際の目安に使う。</p>
+<p>把图像的平均亮度 <code style="color:#22d3bf">&lt;I&gt;</code> 套入反射率为 1 的 Lambertian 面的关系 <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code>,把 <code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> 除以 <code style="color:#22d3bf">pi/2</code> 后以 <code style="color:#22d3bf">np.float64</code>(0〜1)返回。0 是正面光(平均 1.0),1 是正侧面(平均 0)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 平均值先 clip 到 [0,1] 再传给 <code style="color:#22d3bf">arccos</code>,因此不会越界。</p>
+<p>实质上是“平均亮度越低 slant 越大”的 1 对 1 映射,并假定反射率为 1(暗的材质也无法与斜射光区分)。用梯度修正的版本是 <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>,反射率的代理值见 <code style="color:#22d3bf">hx_estimate_al_am</code>。在与 <code style="color:#22d3bf">hx_shade_height_field</code> 的仰角 <code style="color:#22d3bf">b</code> 组合来再现阴影时作为参考使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -13,9 +13,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>结构张量的相干性（方向的一致性）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>skimage.feature.structure_tensor で勾配の 2 次モーメント行列を計算し、その固有値 <code style="color:#22d3bf">l1&gt;=l2</code> から <code style="color:#22d3bf">(l1-l2)/(l1+l2)</code> を求める。値は 1 に近いほど局所的に強い一方向の構造(エッジ・線状パターン)、0 に近いほど等方(平坦またはコーナー状)であることを示す。</p>
-<p><code style="color:#22d3bf">a</code> が構造テンソルの平滑化スケール <code style="color:#22d3bf">sigma</code> を 0.5〜2.5 に振る。<code style="color:#22d3bf">b</code> は未使用。テクスチャの方向性の強さを測る特徴として使う(向き自体は返さない)。</p>
+<p>用 skimage.feature.structure_tensor 计算梯度的 2 阶矩矩阵，由其特征值 <code style="color:#22d3bf">l1&gt;=l2</code> 求 <code style="color:#22d3bf">(l1-l2)/(l1+l2)</code>。值越接近 1，表示局部越是强烈的单一方向结构(边缘、线状图案)；越接近 0，表示越是各向同性(平坦或角点状)。</p>
+<p><code style="color:#22d3bf">a</code> 将结构张量的平滑尺度 <code style="color:#22d3bf">sigma</code> 在 0.5~2.5 之间调节。<code style="color:#22d3bf">b</code> 未使用。用作衡量纹理方向性强弱的特征(不返回方向本身)。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

@@ -13,12 +13,11 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Rotate about the image centre by <code style="color:#22d3bf">-45° + 90°·a</code> (a=0.5 → 0°). <code style="color:#22d3bf">b</code> unused.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★呼び出し規約(2026-09-02 に明文化。実装は変えていない):</p>
-<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (<code style="color:#22d3bf">reshape=False</code>)。出力の shape は入力と同じで、回転で枠外へ出た画素は捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)。つまり回すと <b>四隅に元画像が折り返して写り込む</b>(帳票を回すと隅に鏡文字が出る)。</p>
-<p>どちらが正典かは用途で割れる。<b>この op の正典は「連鎖しても常に同じ形・同じ値域の画像が出ること」</b> — 進化パイプラインは image を段間で無条件に繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」ではなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
-<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化にそのまま乗る。背景色で埋めたい場合はこの op を使わず、<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> を直接呼ぶこと(<code style="color:#22d3bf">fullseye.apply</code> の 2 つまみ界面では背景色を渡せない)。同じ規約が backends_auto の <code style="color:#22d3bf">rotate_image</code> (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;)にもそのまま当てはまる。</p>
+<p>★Calling convention (documented on 2026-09-02; the implementation was not changed):</p>
+<p style="margin:2px 0 2px 12px">• <b>The canvas is not changed</b> (<code style="color:#22d3bf">reshape=False</code>). The output shape is the same as the input, and pixels that leave the frame through rotation are discarded.</p>
+<p style="margin:2px 0 2px 12px">• <b>Outside the frame is filled by mirroring</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>). So rotating makes <b>the original image fold back and appear in the four corners</b> (rotating a form makes mirrored characters appear in the corners).</p>
+<p>Which is canonical depends on the use. <b>The canon of this op is &quot;chaining it always yields an image of the same shape and the same value range&quot;</b> — the evolution pipeline connects images between stages unconditionally, so if the shape changes or a constant enters outside the frame, downstream statistics (mean, variance, histogram) move depending on the rotation amount. Mirroring keeps the image&#x27;s own statistics rather than &quot;a constant made from nothing&quot;, so for this use it is the one adopted.</p>
+<p><b>Not suitable for deskew (correcting the tilt of a form)</b>: the folded-back mirrored characters ride along into OCR / binarisation as they are. If you want to fill with the background colour, do not use this op; call <code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> directly (the 2-knob interface of <code style="color:#22d3bf">fullseye.apply</code> cannot pass a background colour). The same convention applies as is to <code style="color:#22d3bf">rotate_image</code> in backends_auto (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;) as well.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

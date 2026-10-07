@@ -15,12 +15,11 @@
 <p><img src="fig/img_to_volume.gif" alt="img_to_volume: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrudiert das Bild als Höhenfeld zu einem (D,H,W)-Volumen (z zuerst).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
-<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
+<p>Ein Voxel <code style="color:#22d3bf">(z, y, x)</code> erhält den Pixelwert, wenn seine Höhe höchstens der Höhe des Pixels entspricht, sonst 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>. Also <b>ein &quot;gefüllter&quot; Festkörper des Höhenfelds</b> (Gelände, Stufen, extrudierte Teile), mit dem sich die Volumen-Familie (<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …) an 1 Bild ausprobieren lässt. Die Achsenreihenfolge folgt der Konvention des 3-D-Registers, <b>(depth, row, col)</b>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Höhenfaktor <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code> (1.125 bei a=0.5. Was über 1 hinausgeht, sättigt in der obersten Stufe <code style="color:#22d3bf">D-1</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Anzahl der Stufen <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code> (36 bei b=0.5, 8 bei b=0, 64 bei b=1).</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(D, H, W)</code> float64, Wertebereich wie die Eingabe. <b>Die Bodenfläche bei z=0 wird von allen Pixeln mit Wert &gt; 0 gefüllt</b> (auch bei Höhe 0 liegen sie auf der Bodenfläche).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

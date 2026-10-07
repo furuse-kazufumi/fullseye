@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>稳健地估计加性噪声的标准差 σ（<code style="color:#22d3bf">_noise_sigma</code>：把拉普拉斯响应的 MAD 换算为正态分布等效尺度，再除以 5 点拉普拉斯核的噪声增益 <code style="color:#22d3bf">sqrt(20)</code>）。设计上对边缘产生的离群值不敏感，只拾取平坦区域的噪声（2026-09-02 已修复旧实现中“σ 没有单位、在 σ≈0.08 以上会饱和到 1.0”的缺陷，详见 <code style="color:#22d3bf">_noise_sigma</code> 的 docstring）。相当于 HALCON 的 <code style="color:#22d3bf">estimate_noise</code>（Estimate the image noise from a single image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

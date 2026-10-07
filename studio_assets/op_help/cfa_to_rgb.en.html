@@ -13,9 +13,8 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Demosaicing from a Bayer pattern (CFA: Color Filter Array) to an RGB image. Approximates HALCON&#x27;s <code style="color:#22d3bf">cfa_to_rgb</code> (converts a single-chip color filter array image to an RGB image).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>Treats a single-channel grayscale image as raw Bayer-pattern data and demosaics it with OpenCV&#x27;s <code style="color:#22d3bf">cv2.cvtColor</code>, restoring 3-channel RGB. A bridge op from <code style="color:#22d3bf">image</code> to <code style="color:#22d3bf">color</code> (the only entry point by which evolution enters the colour lineage).</p>
+<p>a selects the order of the Bayer pattern from 4 options (the BG/GB/RG/GR orders) (quantised to 0-3 by <code style="color:#22d3bf">min(3, int(a * 4))</code>). b is unused. If the pattern does not match the actual input, colour shifts and moiré appear (for synthetic images whose true Bayer layout is unknown, every option is merely a &quot;plausible-looking&quot; RGB conversion).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_self_intersect.chain.jpg">hx_test_self_intersect: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Anteil selbstschneidender Konturen (ein Merkmal). Geprüft werden nicht benachbarte Segmentpaare.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各 contour(点数 4 以上)について、隣接しない線分の全対 <code style="color:#22d3bf">(i, i+1)</code> と <code style="color:#22d3bf">(j, j+1)</code>(<code style="color:#22d3bf">j &gt;= i+2</code>)を向き付き面積の符号(ccw 判定)で交差判定し、1 対でも交差する contour の本数を全 contour 数で割った割合を <code style="color:#22d3bf">np.float64</code> で返す。始点と終点が一致(距離 1e-6 未満)する閉曲線では、最初の線分と最後の線分の対は隣接扱いで除外する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。点数 3 以下の contour は交差なしとして数える。</p>
-<p>判定は真に交差する場合のみで、端点が相手の線分上に乗る接触や同一直線上の重なりは検出しない(不等号が厳密)。計算量は contour ごとに線分数の 2 乗で、点の多い contour では遅い(<code style="color:#22d3bf">hx_split_contours</code> や <code style="color:#22d3bf">smooth_contours_xld</code> で点を減らしてから)。<code style="color:#22d3bf">hx_gen_parallel_contour</code> で内側にずらした輪郭の破綻検出に使える。</p>
+<p>Prüft für jede Kontur (4 oder mehr Punkte) alle Paare nicht benachbarter Segmente <code style="color:#22d3bf">(i, i+1)</code> und <code style="color:#22d3bf">(j, j+1)</code> (<code style="color:#22d3bf">j &gt;= i+2</code>) über das Vorzeichen der orientierten Fläche (ccw-Test) auf Schnitt und gibt den Anteil der Konturen mit mindestens 1 sich schneidenden Paar an der Gesamtzahl der Konturen als <code style="color:#22d3bf">np.float64</code> zurück. Bei einer geschlossenen Kurve, deren Start und Ende zusammenfallen (Abstand unter 1e-6), gilt das Paar aus erstem und letztem Segment als benachbart und wird ausgeschlossen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0.0, wenn keine Konturen vorhanden sind. Konturen mit 3 oder weniger Punkten zählen als schnittfrei.</p>
+<p>Erkannt werden nur echte Schnitte; Berührungen (ein Endpunkt liegt auf dem anderen Segment) und kollineare Überlappungen nicht (die Ungleichungen sind strikt). Der Aufwand wächst pro Kontur mit der 2. Potenz der Segmentzahl, daher langsam bei Konturen mit vielen Punkten (Punkte vorher mit <code style="color:#22d3bf">hx_split_contours</code> oder <code style="color:#22d3bf">smooth_contours_xld</code> reduzieren). Nützlich, um das Zusammenbrechen eines mit <code style="color:#22d3bf">hx_gen_parallel_contour</code> nach innen versetzten Umrisses zu erkennen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -9,8 +9,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hough transform से circle detection (1 scalar feature, OpenCV implementation)। Edge की gradient जानकारी इस्तेमाल करने वाली HOUGH_GRADIENT विधि से वृत्त का केंद्र और radius voting से पहचानता है —— यहाँ केवल पहचाने गए वृत्तों की संख्या लौटाता है (0 हों तो 0)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)に相当(近似。中心座標ではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a は検出する円同士の最小中心間距離を 10〜30 に、b は中心検出の投票しきい値 param2(小さいほど誤検出が増える)を 20〜40 に振る。param1(内部の Canny 高しきい値)と半径範囲(3〜20)は固定。</p>
+<p>HALCON के <code style="color:#22d3bf">hough_circles</code> (Detect centers of circles for a specific radius using the Hough transform.) के समकक्ष है (सन्निकटन: केंद्र के निर्देशांक नहीं, केवल संख्या)। implementation <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> है -- a detect होने वाले circles के केंद्रों के बीच न्यूनतम दूरी को 10-30 में, और b केंद्र detection की vote threshold param2 (जितनी छोटी, उतने अधिक गलत detection) को 20-40 में बदलता है। param1 (आंतरिक Canny high threshold) और radius की सीमा (3-20) स्थिर हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

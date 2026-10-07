@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>창 내의 화소값을 오름차순으로 정렬하여 지정된 백분위수 위치의 값을 반환하는 범용 랭크 필터(<code style="color:#22d3bf">ndimage.percentile_filter</code>). 백분위수 0에서 침식에 해당하고, 100에서 팽창에 해당하며, 50에서 미디언에 해당하는 연속적인 일반화이다. HALCON의 <code style="color:#22d3bf">rank_image</code>(Compute a rank filter with arbitrary masks.)에 해당한다(HALCON은 임의 형상의 마스크를 취할 수 있지만, 여기서는 정사각형 마스크로 고정한다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で、<code style="color:#22d3bf">b</code> がパーセンタイルを 5〜95% の範囲で振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code>가 창의 한 변의 길이를 <code style="color:#22d3bf">{3,5,7,9}</code>로, <code style="color:#22d3bf">b</code>가 퍼센타일을 5~95%의범위에서 바꾼다. 둘 다 사용된다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

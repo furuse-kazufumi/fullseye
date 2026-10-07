@@ -13,11 +13,10 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर connected region को उसके mean gray value से रंगता है (image -&gt; image)। Threshold a से foreground/background बाँटकर label बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景とし <code style="color:#22d3bf">ndimage.label</code>(4 近傍)で連結成分に分け、各成分の画素を <code style="color:#22d3bf">ndimage.mean</code> で求めた成分内の平均 gray 値で塗りつぶす。背景(<code style="color:#22d3bf">v &lt;= a</code>)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>結果は成分ごとに一定値になるので、後段の <code style="color:#22d3bf">threshold</code> で「平均が明るい部品だけ」を選ぶような使い方ができる。4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
+<p><code style="color:#22d3bf">v &gt; a</code> को foreground मानकर <code style="color:#22d3bf">ndimage.label</code> (4-neighbourhood) से connected components में बाँटता है, और हर component के pixels को <code style="color:#22d3bf">ndimage.mean</code> से निकाले गए component के भीतर के औसत gray मान से भरता है। background (<code style="color:#22d3bf">v &lt;= a</code>) को सभी background pixels के 1 औसत मान से भरा जाता है (background न हो तो 0.0)। output input के समान shape की float image है, और मान input की range के भीतर रहते हैं (normalise नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → foreground/background को अलग करने वाला threshold। a=0 पर 0 से बड़े सभी pixels foreground।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>परिणाम हर component में स्थिर मान होता है, इसलिए बाद के <code style="color:#22d3bf">threshold</code> से &quot;केवल चमकीले औसत वाले parts&quot; चुनने जैसा उपयोग हो सकता है। 4-neighbourhood labels के कारण तिरछे छूने वाले गुच्छों को अलग-अलग औसत मिलते हैं। input की जाँच नहीं होती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

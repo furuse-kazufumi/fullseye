@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Maxima, minima और saddle points की sub-pixel positions एक साथ पहचानता है (HALCON <code style="color:#22d3bf">critical_points_sub_pix</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> の 3 つを同じしきい値 <code style="color:#22d3bf">a</code> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。<code style="color:#22d3bf">b</code> は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
+<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> इन 3 को एक ही threshold <code style="color:#22d3bf">a</code> से चलाता है और detect हुए points को maxima → minima → saddle points के क्रम में 1 CONTOUR में जोड़ता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। लौटाए गए coordinates की इकाई input image के pixels है (sub-pixel दशमलव मान)। जब अलग-अलग प्रकारों में भेद किए बिना केवल &quot;critical points कहाँ हैं&quot; जानना हो, तब इसका उपयोग करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

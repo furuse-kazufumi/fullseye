@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गीली surface का base रंग। <b>diffuse गहरा होता है</b> (और specular बढ़ता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
+<p>base_rgb: सूखी अवस्था का रंग (H,W,3) या (3,)। wet: गीलापन (0–1)।</p>
+<p>ior: पानी की परत का refractive index।</p>
+<p>return value: गीली अवस्था का diffuse रंग (समान shape)।</p>
+<p>यह गहरा क्यों होता है: पानी की परत के अंदर total internal reflection होता है, और diffuse प्रकाश बार-बार surface की ओर लौटता है और हर बार absorb होता है। approximation के रूप में, सूखी reflectance ρ पर internal reflectance Ri = 1 − (1 − Ri0)/n² के बराबर re-absorption लगाया जाता है ―― गीली रेत के काली दिखने की यही घटना है (specular का बढ़ना <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> को ऊपर जोड़कर दर्शाया जाता है)।</p>
+<p>2-D evolution registry में bridge किया गया optics का op <code style="color:#22d3bf">wetness</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">wet</code> (default 1) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">ior</code> (default 1.33) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

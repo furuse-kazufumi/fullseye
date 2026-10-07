@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.inputs.jpg">r3_rank_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>区域的形态学秩(rank)算子(HALCON 正宗的 <code style="color:#22d3bf">rank_region</code>:既非纯腐蚀也非纯膨胀的一般化)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">sz x sz</code>（<code style="color:#22d3bf">sz</code> は 3, 5, 7 のいずれかを <code style="color:#22d3bf">a</code> で選ぶ）の窓の中で、領域に属する画素が <code style="color:#22d3bf">number</code> 個以上あれば出力を立てる。<code style="color:#22d3bf">number</code> は<code style="color:#22d3bf">b</code>（0〜1）を窓面積に対する割合として決める（<code style="color:#22d3bf">number = sz*sz</code> で収縮相当、<code style="color:#22d3bf">number = 1</code> で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
+<p>在 <code style="color:#22d3bf">sz x sz</code>（<code style="color:#22d3bf">sz</code> 由 <code style="color:#22d3bf">a</code> 从 3, 5, 7 中选择）的窗口中，若属于区域的像素有 <code style="color:#22d3bf">number</code> 个以上，就把输出置位。<code style="color:#22d3bf">number</code> 把 <code style="color:#22d3bf">b</code>（0〜1）作为相对窗口面积的比例来确定（<code style="color:#22d3bf">number = sz*sz</code> 相当于腐蚀，<code style="color:#22d3bf">number = 1</code> 相当于膨胀，中间则表现为相当于秩/中值滤波的行为）。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

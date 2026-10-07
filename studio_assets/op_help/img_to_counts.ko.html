@@ -13,13 +13,12 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상의 한 행(또는 열)을 광자 기댓값으로 읽어 Poisson 표본의 1-D 카운트 열을 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">expected = profile * n_max</code> を期待値とする Poisson 乱数(固定 seed 20260907)。光子計数の族(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)が受ける <b>非負整数の 1-D 列</b> の合成器で、<code style="color:#22d3bf">tcspc_simulate</code> と同じく「期待値が既知」なのが検算の根拠になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行/列の位置(<code style="color:#22d3bf">img_to_signal</code> と同じ規則。<code style="color:#22d3bf">b</code> が向きも決める)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> で行、<code style="color:#22d3bf">b ≥ 0.5</code> で列。加えて <b>1 画素あたりの最大光子数</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0 で 10、b=0.5 で 100、b=1 で 1,000)。少ないほど散布雑音が目立つ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D <code style="color:#22d3bf">int64</code>、非負。長さは行なら W、列なら H。</p>
-<p style="margin:2px 0 2px 12px">• 決定的(seed 固定)。同じ入力・同じノブなら同じ列。</p>
-<p>注意: 期待値 0 の画素はカウント 0 になる(Poisson(0) は常に 0)。</p>
+<p><code style="color:#22d3bf">expected = profile * n_max</code>를 기댓값으로 하는 Poisson 난수(고정 seed 20260907). 광자 계수 계열(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)이 받는 <b>음이 아닌 정수의 1-D 열</b>의 합성기로, <code style="color:#22d3bf">tcspc_simulate</code>와 마찬가지로 “기댓값이 알려져 있다”는 점이 검산의 근거가 된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 행/열의 위치(<code style="color:#22d3bf">img_to_signal</code>과 같은 규칙. <code style="color:#22d3bf">b</code>가 방향도 정한다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code>이면 행, <code style="color:#22d3bf">b ≥ 0.5</code>이면 열. 더해서 <b>화소 1개당 최대 광자 수</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0에서 10, b=0.5에서 100, b=1에서 1,000). 적을수록 산탄 잡음이 두드러진다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 1-D <code style="color:#22d3bf">int64</code>, 음이 아님. 길이는 행이면 W, 열이면 H.</p>
+<p style="margin:2px 0 2px 12px">• 결정적(seed 고정). 같은 입력·같은 손잡이면 같은 열.</p>
+<p>주의: 기댓값 0인 화소는 카운트 0이 된다(Poisson(0)은 항상 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

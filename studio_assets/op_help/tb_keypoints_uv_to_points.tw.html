@@ -12,17 +12,16 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.inputs.jpg">tb_keypoints_uv_to_points: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 點雲 <code style="color:#22d3bf">(N,3) = (z, y, x)</code>。<code style="color:#22d3bf">keypoints</code> 的出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><b>op 名に軸の約束が書いてある</b>のは、この repo で <code style="color:#22d3bf">keypoints</code> を産む <code style="color:#22d3bf">match3d.project_points</code> が <b>(u, v) = (列, 行)</b> を返し、<code style="color:#22d3bf">points</code> を産む <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> と明示的に入れ替えて渡す。</p>
-<p><code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
+<p><b>op 名中寫明軸的約定</b>，是因為在本 repo 中產出 <code style="color:#22d3bf">keypoints</code> 的 <code style="color:#22d3bf">match3d.project_points</code> 回傳 <b>(u, v) = (行, 列)</b>，而產出 <code style="color:#22d3bf">points</code> 的 <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> 回傳 <b>(z, y, x)</b> —— 若直接當作「前 2 行」連接，就會<b>在不拋出例外也不出現 NaN 的情況下列行互換</b>。這裡明確地按 <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> 交換後再傳遞。</p>
+<p>與 <code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> 往返時 <b>bit 一致</b>(傳入 z 的方向)。</p>
 <p>Args:</p>
-<p>keypoints: (N, 2) の (u, v)。</p>
-<p>z: 載せる平面の z(スカラ、または (N,) の配列)。</p>
+<p>keypoints: (N, 2) 的 (u, v)。</p>
+<p>z: 放置平面的 z(純量，或 (N,) 的陣列)。</p>
 <p>Returns:</p>
-<p>(N, 3) float64 の (z, y, x)。</p>
+<p>(N, 3) float64 的 (z, y, x)。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / z の長さ不一致。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_uv_to_points</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>ValueError: 形狀不正確 / 非有限 / z 的長度不一致。</p>
+<p>橋接到 2-D 演化註冊表的 reprconv op <code style="color:#22d3bf">keypoints_uv_to_points</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

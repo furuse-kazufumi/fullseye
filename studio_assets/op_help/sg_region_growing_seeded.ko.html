@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 중심을 씨앗(seed)으로 하여 밝기가 비슷한 픽셀들을 연결해 나가는 씨앗 영역 확장(region growing)(HALCON <code style="color:#22d3bf">regiongrowing</code>은 이미 다른 op에서 다루고 있으므로, 중복 보고를 피하기 위해 여기서는 <code style="color:#22d3bf">halcon=&quot;&quot;</code>로 설정함).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>種は画像中心の 1 画素。<code style="color:#22d3bf">a</code>（0〜1）が同質性の許容差（種の輝度 ±a 以内なら繋がる）、<code style="color:#22d3bf">b</code> が連結性を切り替える（<code style="color:#22d3bf">b &gt; 0.5</code> で 8 連結、それ以外は 4 連結）。結果は種を含む連結成分のみ。</p>
+<p>시드는 영상 중심의 1화소. <code style="color:#22d3bf">a</code>(0~1)가 동질성의 허용차(시드의 휘도 ±a 이내면 이어진다), <code style="color:#22d3bf">b</code>가 연결성을 전환한다(<code style="color:#22d3bf">b &gt; 0.5</code>이면 8연결, 그 밖에는 4연결). 결과는 시드를 포함하는 연결 성분뿐이다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

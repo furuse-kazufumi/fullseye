@@ -12,19 +12,18 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_voxel_grid_downsample.inputs.jpg">tb_voxel_grid_downsample: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以邊長 voxel_size 的網格對點雲進行抽稀，將每個格子聚合成一個重心點（決定性演算法）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>空間を一辺 <code style="color:#22d3bf">voxel_size</code> の立方体セルに区切り、同じセルに落ちた点をその重心 1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<p>把空間劃分為邊長 <code style="color:#22d3bf">voxel_size</code> 的立方體單元,落入同一單元的點由其質心 1 點代表。是均勻化密度不均、按點數抑制下游(ICP、特徵量)計算量的標準方法。輸出順序固定為體素座標的字典序(相同輸入總是得到相同輸出=確定性)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>輸入點雲。</p>
 <p>voxel_size : float</p>
-<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<p>單元的邊長(&gt; 0)。越大抽稀越強。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>ndarray, shape (M, 3)</p>
-<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<p>各佔用單元的質心(M &lt;= N)。全部落在輸入的軸平行 bounding box 內。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> は ValueError。空入力は空 (0,3) を返す(graceful)。重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">voxel_grid_downsample</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> 時 ValueError。空輸入回傳空的 (0,3)(graceful)。質心是單元內點的平均,因此必定落在輸入點的凸包(因而在 bbox)內。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">voxel_grid_downsample</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

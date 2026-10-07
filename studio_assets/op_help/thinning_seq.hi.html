@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning_seq.inputs.jpg">thinning_seq: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को पतला (thinning) करता है। Implementation thinning_golay जैसा ही है (skimage का <code style="color:#22d3bf">thin</code>, converge होने तक दोहराने वाला Guo–Hall प्रकार का thinning), a, b इस्तेमाल नहीं होते।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">thinning_seq</code>（構造要素を逐次適用して細線化していく演算）に相当する近似だが、この backend では thinning_golay と実装上の区別がない。</p>
+<p>HALCON के <code style="color:#22d3bf">thinning_seq</code> (structuring elements को क्रमिक रूप से लागू करके thinning करने वाला operation) के समकक्ष सन्निकटन, पर इस backend में implementation के स्तर पर thinning_golay से इसका कोई अंतर नहीं है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

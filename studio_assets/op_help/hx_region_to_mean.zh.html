@@ -13,11 +13,10 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每个连通区域涂成其平均灰度(image -&gt; image)。以阈值 a 分前景/背景后 label 化。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景とし <code style="color:#22d3bf">ndimage.label</code>(4 近傍)で連結成分に分け、各成分の画素を <code style="color:#22d3bf">ndimage.mean</code> で求めた成分内の平均 gray 値で塗りつぶす。背景(<code style="color:#22d3bf">v &lt;= a</code>)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>結果は成分ごとに一定値になるので、後段の <code style="color:#22d3bf">threshold</code> で「平均が明るい部品だけ」を選ぶような使い方ができる。4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
+<p>以 <code style="color:#22d3bf">v &gt; a</code> 为前景，用 <code style="color:#22d3bf">ndimage.label</code>（4 邻域）分为连通分量，把各分量的像素用 <code style="color:#22d3bf">ndimage.mean</code> 求得的分量内平均 gray 值填充。背景（<code style="color:#22d3bf">v &lt;= a</code>）用全部背景像素的 1 个平均值填充（没有背景时为 0.0）。输出是与输入同形的 float 图像，值域在输入的范围内（不归一化）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 区分前景/背景的阈值。a=0 时大于 0 的像素全部为前景。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>结果按分量为常数，因此可以在后续用 <code style="color:#22d3bf">threshold</code> 选出“只有平均较亮的部件”之类。由于是 4 邻域标签，斜向接触的块会得到各自的平均值。没有输入校验。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

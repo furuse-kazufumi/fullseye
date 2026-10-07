@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">(sin(2πx) + 1) / 2</code>로 계조를 정현파 형태로 접는 주기 LUT. x=0과 x=1에서 0.5로 돌아오고, x=0.25/0.75 부근에서 0/1에 도달한다 —— 단조 증가가 아니라 같은 출력을 여러 입력 계조가 공유하는 비가역 변환이 된다. HALCON의 <code style="color:#22d3bf">sin_image</code>(Calculate the sine of an image.)의 대역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。周期や位相を変える調整点は無い。等高線状の疑似カラー効果や階調の折返しを作る用途向けで、通常のコントラスト調整には向かない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 주기나 위상을 바꾸는 조정점은 없다. 등고선 모양의 의사 컬러효과나 계조 접힘을 만드는 용도이며, 일반적인 대비 조정에는 맞지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

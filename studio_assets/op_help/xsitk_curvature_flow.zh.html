@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率流平滑（SimpleITK <code style="color:#22d3bf">CurvatureFlow</code>）。一种以等高线曲率成比例的速度模糊图像的非线性扩散，直线状边缘容易被保留，而弯曲的细节会先消失。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*8)</code> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 调节迭代次数(由 <code style="color:#22d3bf">1+int(a*8)</code> 得到 1~9 次) —— 越多平滑越强。时间步长固定为 0.0625。<code style="color:#22d3bf">b</code> 未使用。输出裁剪(clip)到 [0,1]。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

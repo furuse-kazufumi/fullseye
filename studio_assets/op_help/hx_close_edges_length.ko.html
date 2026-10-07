@@ -14,12 +14,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>close_edges 에 더해, 길이(화소 수)가 임계 미만인 짧은 에지 조각을 제거합니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化 → 3×3(8 近傍)構造要素で 1 回 <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code>(既定の 4 近傍連結)で連結成分にし、画素数が <code style="color:#22d3bf">min_len</code> 未満の成分を落として 0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 残す最小画素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>(2〜22)。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければクロージング結果をそのまま返す。</p>
-<p>注意: クロージングの構造要素は固定 3×3 で、<code style="color:#22d3bf">hx_close_edges</code> のような幅の調整は無い。ラベリングが 4 近傍のため斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。<code style="color:#22d3bf">binary_closing</code> は画像外を 0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p><code style="color:#22d3bf">v &gt; a</code>로 이진화 → 3×3(8근방) 구조 요소로 1회 <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code>(기본 4근방 연결)로연결 성분으로 만들고, 화소 수가 <code style="color:#22d3bf">min_len</code> 미만인 성분을 떨어뜨려 0/1의 float 영상으로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 이진화 임계값.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 남길 최소 화소 수 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>(2~22).</p>
+<p style="margin:2px 0 2px 12px">• 성분이 1개도 없으면 닫힘 연산 결과를 그대로 반환한다.</p>
+<p>주의: 닫힘 연산의 구조 요소는 고정 3×3이며, <code style="color:#22d3bf">hx_close_edges</code>와 같은 폭 조정은 없다. 라벨링이 4근방이므로대각선으로 이어지는 1화소 폭의 선은 다른 성분으로 갈라지고, &quot;길이&quot;가 짧게 세어져 사라지기 쉽다. <code style="color:#22d3bf">binary_closing</code>은 영상 밖을 0으로 다루므로 끝 1화소의 띠는 항상 0이 된다. &quot;길이&quot;는 성분의 화소 수이지 기하학적인 선 길이가 아니다(덩어리도 길다고 센다).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

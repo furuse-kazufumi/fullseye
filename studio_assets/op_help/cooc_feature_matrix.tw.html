@@ -11,14 +11,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cooc_feature_matrix.b.jpg">cooc_feature_matrix: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從灰階共生矩陣(GLCM,<code style="color:#22d3bf">skimage.feature.graycomatrix</code>,量化為 16 階,距離 <code style="color:#22d3bf">1+3*a</code>,角度 0°)計算 Haralick 紋理特徵 <code style="color:#22d3bf">energy</code>(角二次矩,即矩陣值的集中程度=紋理均勻性)。相當於 HALCON 的 <code style="color:#22d3bf">cooc_feature_matrix</code>(Calculate gray value features from a co-occurrence matrix.)(HALCON 可同時回傳多個特徵、多個角度,但這裡簡化為固定 energy、角度 0°)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が共起を取る画素間距離を 1〜4 の範囲で振る。★<code style="color:#22d3bf">b &gt;= 0.75</code> で <b>0/45/90/135 度の 4 方向を平均</b>する(既定 <code style="color:#22d3bf">b=0.5</code> は従来どおり 0 度だけなので、既存の結果は 1 ビットも変わらない)。</p>
-<p>実写テクスチャ(brick / grass / gravel)を回して測ると(<code style="color:#22d3bf">poc_real_texture_invariance</code> の節 6)、<b>効くかどうかは距離 <code style="color:#22d3bf">a</code> で変わる</b>:</p>
-<p style="margin:2px 0 2px 12px">• まず <code style="color:#22d3bf">a</code> を伸ばすと<b>素材どうしの分解能そのものが潰れる</b>(0.0328 -&gt; 0.0122、2.7 分の 1)。異方な brick の振れ幅は分解能の <b>0.30 -&gt; 3.13 倍</b>へ膨らむ。</p>
-<p style="margin:2px 0 2px 12px">• 4 方向平均は<b>等方な素材には短中距離で効く</b>(grass 0.23 -&gt; 0.12、gravel 0.20 -&gt; 0.11)。</p>
-<p style="margin:2px 0 2px 12px">• 異方な brick には<b>距離 4 でだけ効き</b>(3.13 -&gt; 1.54)、<b>距離 1 では逆に悪化する</b>(0.30 -&gt; 0.56)。</p>
-<p style="margin:2px 0 2px 12px">• 距離 4 まで来ると等方な grass すら改善しない(0.17 -&gt; 0.19)—— 分解能が潰れたあとは平均しても取り返せない。</p>
-<p><b>長い距離で使うときは、平均を掛ける前に素材がまだ分かれているかを確かめること。</b>なお「取り違えの回数」で測ると手順(補間の次数・切り出し方・角度の刻み)に敏感で、比(振れ幅 / 分解能)のほうが安定する。</p>
+<p><code style="color:#22d3bf">a</code> 在 1～4 的範圍內調整取共生的像素間距。★<code style="color:#22d3bf">b &gt;= 0.75</code> 時<b>對 0/45/90/135 度 4 個方向取平均</b>(預設 <code style="color:#22d3bf">b=0.5</code> 仍與以往一樣只用 0 度,因此現有結果連 1 個位元都不會變)。</p>
+<p>旋轉實拍紋理(brick / grass / gravel)進行測量(<code style="color:#22d3bf">poc_real_texture_invariance</code> 的第 6 節)可知,<b>是否有效取決於距離 <code style="color:#22d3bf">a</code></b>:</p>
+<p style="margin:2px 0 2px 12px">• 首先,增大 <code style="color:#22d3bf">a</code> 會<b>使材質之間的解析度本身崩潰</b>(0.0328 -&gt; 0.0122,降為 2.7 分之 1)。異向性的 brick 的波動幅度膨脹到解析度的 <b>0.30 -&gt; 3.13 倍</b>。</p>
+<p style="margin:2px 0 2px 12px">• 4 方向平均<b>對等向性的材質在短中距離上有效</b>(grass 0.23 -&gt; 0.12,gravel 0.20 -&gt; 0.11)。</p>
+<p style="margin:2px 0 2px 12px">• 對異向性的 brick <b>只在距離 4 時有效</b>(3.13 -&gt; 1.54),<b>在距離 1 時反而變差</b>(0.30 -&gt; 0.56)。</p>
+<p style="margin:2px 0 2px 12px">• 到了距離 4,連等向性的 grass 也不再改善(0.17 -&gt; 0.19)—— 解析度崩潰之後,即使平均也無法挽回。</p>
+<p><b>在長距離下使用時,應在施加平均之前確認材質是否仍能區分。</b>另外,用「混淆次數」來衡量會對步驟(內插階數、裁切方式、角度步長)敏感,比值(波動幅度 / 解析度)較穩定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

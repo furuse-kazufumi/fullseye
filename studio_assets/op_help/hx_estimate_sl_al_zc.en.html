@@ -9,10 +9,9 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Zheng-Chellappa: estimate the slant, corrected by the gradient energy.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">hx_estimate_sl_al_lr</code> と同じ <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> の slant に、Sobel 勾配振幅の平均 <code style="color:#22d3bf">e</code>(1 で頭打ち)による係数 <code style="color:#22d3bf">(1 + min(e, 1))</code> を掛けて、<code style="color:#22d3bf">pi/2</code> で割り 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。「勾配が強い=斜光=slant 大」という向きの補正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも増えるので、照明以外の要因で slant が過大に出る。前段に <code style="color:#22d3bf">gauss_filter</code> を置くと雑音分の勾配は減る。反射率の推定は <code style="color:#22d3bf">hx_estimate_al_am</code>、方位は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。</p>
+<p>Multiplies the same <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> slant as <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> by a factor <code style="color:#22d3bf">(1 + min(e, 1))</code> based on the mean Sobel gradient magnitude <code style="color:#22d3bf">e</code> (capped at 1), divides by <code style="color:#22d3bf">pi/2</code>, caps at 1 and returns <code style="color:#22d3bf">np.float64</code>. A correction in the direction of &quot;strong gradient = oblique light = large slant&quot;.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p>The correction factor is 1× to 2×, and for images with low mean luminance and strong gradients the result sticks at the upper limit 1. The gradient magnitude also grows with texture and noise, so factors other than illumination make the slant come out too large. Placing <code style="color:#22d3bf">gauss_filter</code> in front reduces the noise part of the gradient. Reflectance estimation is <code style="color:#22d3bf">hx_estimate_al_am</code>; the azimuth is <code style="color:#22d3bf">hx_estimate_tilt_zc</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

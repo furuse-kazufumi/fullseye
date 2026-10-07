@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gabor 滤波器的响应强度。通过卷积以正弦波调制的高斯核，对具有特定空间频率和方向的纹理产生强烈响应的经典特征提取器。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)に相当(近似。カーネル生成ではなく畳み込み結果を返す)。実装は <code style="color:#22d3bf">filters.gabor(v, frequency=0.1+0.3*a)</code> の実部(戻り値の 1 番目、虚部は捨てている)を絶対値化して正規化したもの —— a は周波数を 0.1〜0.4 に振る。方向 <code style="color:#22d3bf">theta</code> は既定の 0(水平方向のしま模様に最も反応)に固定されており、b は未使用。方向を振りたい場合は本 op ではできないので注意。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">gen_gabor</code>(Generate a Gabor filter.)（近似。返回的是卷积结果而不是生成的核）。实现是对 <code style="color:#22d3bf">filters.gabor(v, frequency=0.1+0.3*a)</code> 的实部（返回值的第 1 个，虚部被丢弃）取绝对值后归一化 —— a 把频率在 0.1〜0.4 之间调节。方向 <code style="color:#22d3bf">theta</code> 固定为默认的 0（对水平方向的条纹图案响应最强），b 未使用。请注意，本 op 无法调节方向。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

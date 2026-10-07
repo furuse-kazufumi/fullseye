@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_projection.b.jpg">m1_measure_projection: 旋钮 b 扫描</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在图像上放置测量用的卡尺线(直线),返回沿垂直方向平均后的亮度剖面的平均值(相当于 HALCON <code style="color:#22d3bf">measure_projection</code>:提取垂直于矩形/圆弧的一维投影)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>キャリパー線は画像の端から端まで引かれ、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code>に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。<code style="color:#22d3bf">b</code> は線を法線方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる場合は 0.0 を返す。</p>
+<p>卡尺线从图像的一端拉到另一端，<code style="color:#22d3bf">a</code> 把方向调节为 <code style="color:#22d3bf">theta = a*pi</code>（0＝横向，0.5＝斜 45 度，1＝横向的反方向）。<code style="color:#22d3bf">b</code> 是沿法线方向平移该线的垂直偏移（0〜1，0.5 时通过图像中心）。沿线对 1px 宽的带做平均采样（真正的“投影”），并把其平均亮度（[0,1]）作为 feature 返回。线不与图像相交或图像过小时返回 0.0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

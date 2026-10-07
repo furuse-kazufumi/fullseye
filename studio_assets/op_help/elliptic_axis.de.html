@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis.chain.jpg">elliptic_axis: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert <code style="color:#22d3bf">(Ra, Rb, Phi)</code> der äquivalenten Ellipse der Region (die Ellipse mit denselben Trägheitsmomenten) als dreikomponentigen Vektor der Sortierung <code style="color:#22d3bf">match</code> — <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> sind große und kleine Halbachse in <b>Pixeln</b>, <code style="color:#22d3bf">Phi</code> ist der Winkel der Hauptachse (Bogenmaß, gegen den Uhrzeigersinn von der Spaltenachse). Dieselben drei Werte wie HALCONs <code style="color:#22d3bf">elliptic_axis</code> (Calculate the parameters of the equivalent ellipse.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">Ra/Rb</code>(= <b>別の演算子 <code style="color:#22d3bf">eccentricity</code> の出力</b> Anisometry)を 10 で割った 1 スカラーを返していた —— 名前が約束している量ではなかった。docs/hardening/halcon-named-shape-factors.md。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Bis 2026-09-26 wurde 1 Skalar zurückgegeben: <code style="color:#22d3bf">Ra/Rb</code> (= <b>Ausgabe eines anderen Operators, <code style="color:#22d3bf">eccentricity</code></b>, Anisometry) geteilt durch 10 — nicht die Größe, die der Name verspricht. docs/hardening/halcon-named-shape-factors.md.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直方圖均化（線性化）。相當於 HALCON 的 <code style="color:#22d3bf">equ_histo_image</code>（Histogram linearization of images）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">[0,1]</code> を 256 ビンに分けたヒストグラムの累積分布関数（CDF）を求め、各画素値をその CDF で置き換えることで、出力のヒストグラムがほぼ一様になるよう引き伸ばす。コントラストが低い（値域が狭い）画像を見やすくするのに使う。全画素が同一値だと CDF が定義できず <code style="color:#22d3bf">cdf[-1]</code> が 0 になり、変換は事実上恒等（変化なし）になる。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。求出把 <code style="color:#22d3bf">[0,1]</code> 分成 256 個 bin 的直方圖的累積分布函數（CDF），以該 CDF 取代各像素值，從而拉伸使輸出直方圖近似均勻。用於讓對比低（值域窄）的影像更易看清。若所有像素為同一值，CDF 無法定義，<code style="color:#22d3bf">cdf[-1]</code> 為 0，轉換實際上成為恆等（無變化）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

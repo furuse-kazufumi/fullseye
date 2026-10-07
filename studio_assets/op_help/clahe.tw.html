@@ -13,13 +13,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對比度受限的自適應直方圖均衡(分塊,雙線性拼接)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> — タイル数 <code style="color:#22d3bf">nb = 2 + int(3a)</code> (画像を nb×nb に分割)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> — <b>clip limit</b>。ビン平均カウントに対する倍率 <code style="color:#22d3bf">256**b</code> で与える(<code style="color:#22d3bf">b=0</code> → 1 倍 = 完全に平坦化されたヒストグラム = トーンマップ直線 = 強調ゼロ、<code style="color:#22d3bf">b=1</code> → 256 倍 = 1 ビンが取り得る最大値なので切り取りが効かない = 素の AHE、<code style="color:#22d3bf">b=0.5</code> → 16 倍。OpenCV の既定 <code style="color:#22d3bf">clipLimit=40</code> はおおよそ <code style="color:#22d3bf">b=0.665</code>)。</p>
-<p>★2026-09-02(この修正): それまで <code style="color:#22d3bf">b</code> は <b>完全に死んでいた</b>(実測:</p>
-<p><code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> きっかり)。CLAHE の &quot;C&quot; は contrast <b>limited</b> の C であり、clip limit こそが AHE と CLAHE を分ける当のものなので、<b>実装は AHE であって CLAHE ではなかった</b> —— 名前が嘘をついていた。ここで clip limit を実装して <code style="color:#22d3bf">b</code> に割り当て、<code style="color:#22d3bf">b=1</code> が旧実装とビット一致する端になるよう倍率を選んである(切り取りが起きない上限 = ビン数 256 倍)。</p>
-<p>Tiles PARTITION the image (linspace boundaries, so the last tile absorbs the H % nb / W % nb remainder), each tile&#x27;s clip-limited CDF is its local tone map, and every pixel blends the maps of its (up to) 4 nearest tile centres with bilinear weights — the standard CLAHE interpolation (Zuiderveld 1994).</p>
-<p>2026-08-30: 補間を追加(KNOWN_ISSUES #4 — 旧実装はタイルごとに独立に平坦化しており、タイル境界に不連続(肉眼で見える格子)が出ていた)。タイル中心の近傍領域ではそのタイルの CDF がそのまま支配的なので、旧実装と同じ写像族の連続版になっている。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> — 分塊數 <code style="color:#22d3bf">nb = 2 + int(3a)</code>（把影像分成 nb×nb）</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> — <b>clip limit</b>。以相對於每個 bin 平均計數的倍率 <code style="color:#22d3bf">256**b</code> 給出（<code style="color:#22d3bf">b=0</code> → 1 倍 = 完全平坦化的直方圖 = 色調映射為直線 = 零強化，<code style="color:#22d3bf">b=1</code> → 256 倍 = 1 個 bin 可能取到的最大值，因此截斷不起作用 = 樸素的 AHE，<code style="color:#22d3bf">b=0.5</code> → 16 倍。OpenCV 的預設 <code style="color:#22d3bf">clipLimit=40</code> 大約相當於 <code style="color:#22d3bf">b=0.665</code>）。</p>
+<p>★2026-09-02（本次修正）：此前 <code style="color:#22d3bf">b</code> <b>完全不起作用</b>（實測： <code style="color:#22d3bf">max|clahe(x,0.5,0.0) - clahe(x,0.5,1.0)| == 0.0</code> 分毫不差）。CLAHE 的 &quot;C&quot; 是 contrast <b>limited</b> 的 C，clip limit 正是區分 AHE 與 CLAHE 的關鍵所在，因此<b>實作是 AHE 而不是 CLAHE</b> —— 名稱在說謊。這裡實作了 clip limit 並分配給 <code style="color:#22d3bf">b</code>，並選定倍率使 <code style="color:#22d3bf">b=1</code> 成為與舊實作逐位元一致的一端（不發生截斷的上限 = bin 數 256 倍）。</p>
+<p>分塊對影像進行劃分（PARTITION）（邊界用 linspace，因此最後一塊吸收 H % nb / W % nb 的餘數），各塊經 clip limit 限制的 CDF 就是其局部色調映射，每個像素以雙線性權重混合其（最多）4 個最近塊中心的映射 —— 這是標準的 CLAHE 內插（Zuiderveld 1994）。</p>
+<p>2026-08-30：加入內插（KNOWN_ISSUES #4 —— 舊實作對每個塊獨立地平坦化，在塊邊界出現了不連續（肉眼可見的網格））。在塊中心的鄰域內，該塊的 CDF 仍原樣占主導，因此這是與舊實作相同映射族的連續版本。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

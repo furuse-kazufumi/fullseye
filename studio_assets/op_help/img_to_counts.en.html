@@ -13,13 +13,12 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read one row (or column) of the image as expected photon numbers and draw a Poisson-sampled 1-D count series.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">expected = profile * n_max</code> を期待値とする Poisson 乱数(固定 seed 20260907)。光子計数の族(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)が受ける <b>非負整数の 1-D 列</b> の合成器で、<code style="color:#22d3bf">tcspc_simulate</code> と同じく「期待値が既知」なのが検算の根拠になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行/列の位置(<code style="color:#22d3bf">img_to_signal</code> と同じ規則。<code style="color:#22d3bf">b</code> が向きも決める)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> で行、<code style="color:#22d3bf">b ≥ 0.5</code> で列。加えて <b>1 画素あたりの最大光子数</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0 で 10、b=0.5 で 100、b=1 で 1,000)。少ないほど散布雑音が目立つ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D <code style="color:#22d3bf">int64</code>、非負。長さは行なら W、列なら H。</p>
-<p style="margin:2px 0 2px 12px">• 決定的(seed 固定)。同じ入力・同じノブなら同じ列。</p>
-<p>注意: 期待値 0 の画素はカウント 0 になる(Poisson(0) は常に 0)。</p>
+<p>Poisson random numbers with expected value <code style="color:#22d3bf">expected = profile * n_max</code> (fixed seed 20260907). A synthesiser for the photon-counting family (<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …), producing the <b>non-negative integer 1-D sequences</b> it accepts; as with <code style="color:#22d3bf">tcspc_simulate</code>, the fact that &quot;the expected value is known&quot; is the basis for cross-checking.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → position of the row/column (same rule as <code style="color:#22d3bf">img_to_signal</code>; <code style="color:#22d3bf">b</code> also sets the orientation).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → a row for <code style="color:#22d3bf">b &lt; 0.5</code>, a column for <code style="color:#22d3bf">b ≥ 0.5</code>. In addition, <b>the maximum photon count per 1 pixel</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code> (10 at b=0, 100 at b=0.5, 1,000 at b=1). The fewer, the more the shot noise stands out.</p>
+<p style="margin:2px 0 2px 12px">• Returns: 1-D <code style="color:#22d3bf">int64</code>, non-negative. Length W for a row, H for a column.</p>
+<p style="margin:2px 0 2px 12px">• Deterministic (fixed seed). The same input and the same knobs give the same sequence.</p>
+<p>Note: pixels with expected value 0 get count 0 (Poisson(0) is always 0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

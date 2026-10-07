@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把區域外接矩形分成 NxN 網格,保留與區域重疊的儲存格。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>領域の外接軸並行矩形を <code style="color:#22d3bf">N x N</code> の格子に等分し、領域と 1 画素でも重なるセルを丸ごと 1.0 で塗ったマスクを返す。<code style="color:#22d3bf">N = 2 + int(a*4)</code> で <code style="color:#22d3bf">a=0</code> → 2、<code style="color:#22d3bf">a=1</code> → 6 分割(<code style="color:#22d3bf">a</code> は [0,1] に clip)。セル境界は <code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code> を整数化したもので、bbox がセル数より小さいと幅 0 のセルが生じ、そのセルはスキップされる。<code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で bbox いっぱいに詰まった領域では全セルが該当し、<code style="color:#22d3bf">a</code> を変えても出力は bbox そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルはつながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
+<p>將區域的外接軸平行矩形等分為 <code style="color:#22d3bf">N x N</code> 的網格，傳回把與區域哪怕只有 1 個像素重疊的單元格整個塗為 1.0 的遮罩。<code style="color:#22d3bf">N = 2 + int(a*4)</code>，<code style="color:#22d3bf">a=0</code> → 2，<code style="color:#22d3bf">a=1</code> → 6 等分(<code style="color:#22d3bf">a</code> 截斷(clip)到 [0,1])。單元格邊界是將 <code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code> 取整得到的，bbox 小於單元格數時會產生寬度為 0 的單元格，該單元格會被跳過。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>回傳值是與輸入同形的 float64 0/1 遮罩。沒有前景時全為零。輸出是「覆蓋區域的單元格之聯集」，因此必定包含輸入區域，bbox 之外不會被塗。對於內部為凸且填滿 bbox 的區域，所有單元格都符合條件，無論 <code style="color:#22d3bf">a</code> 如何變化，輸出都是 bbox 本身。只有在孔洞或凹陷較大的區域，網格的粗細才會顯現。用途是粗略的磚塊分割(局部處理的視窗決定)或佔用模式的粗粒化。相鄰單元格會連成 1 個塊，因此不適合依單元格分開處理的用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

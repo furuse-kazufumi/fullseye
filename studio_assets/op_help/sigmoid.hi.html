@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Logistic function (sigmoid) से S-आकार का contrast enhancement। इसे HALCON के <code style="color:#22d3bf">scale_image_max</code> (Maximum gray value spreading in the value range 0 to 255.) से जोड़ा गया है, लेकिन dynamic range को अधिकतम तक फैलाने वाले <code style="color:#22d3bf">scale_image_max</code> से इसका processing अलग है (सन्निकटन से ज़्यादा एक अलग चीज़ के करीब)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が S字の傾き <code style="color:#22d3bf">k = 4 + 12a</code>（<code style="color:#22d3bf">4〜16</code>）を、<code style="color:#22d3bf">b</code> が中心（変曲点）の位置 <code style="color:#22d3bf">x0 = 0.2 + 0.6b</code>（<code style="color:#22d3bf">0.2〜0.8</code>）を振る（<code style="color:#22d3bf">1/(1+exp(-k*(v-x0)))</code>）。<code style="color:#22d3bf">x0</code> 付近の階調差を強調し、両端の階調差は圧縮する。</p>
+<p><code style="color:#22d3bf">a</code> S-curve की ढलान <code style="color:#22d3bf">k = 4 + 12a</code> (<code style="color:#22d3bf">4〜16</code>) को, और <code style="color:#22d3bf">b</code> केंद्र (inflection point) की position <code style="color:#22d3bf">x0 = 0.2 + 0.6b</code> (<code style="color:#22d3bf">0.2〜0.8</code>) को बदलता है (<code style="color:#22d3bf">1/(1+exp(-k*(v-x0)))</code>)। <code style="color:#22d3bf">x0</code> के आसपास gray level के अंतर को उभारता है और दोनों सिरों के gray level अंतर को compress करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

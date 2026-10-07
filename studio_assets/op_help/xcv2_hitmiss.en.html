@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv2_hitmiss.inputs.jpg">xcv2_hitmiss: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detects the cross pattern &#x27;center is background, up/down/left/right are foreground&#x27; using the hit-or-miss transform (<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>固定カーネル <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code> を使う（1=前景必須、-1=背景必須、0=不問）。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。前景に囲まれた 1 画素の窪み（孤立した背景画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力はしきい値 0.5 で二値化してから判定する。</p>
+<p>Uses the fixed kernel <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code> (1=foreground required, -1=background required, 0=don&#x27;t care). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. It picks up 1-pixel pits surrounded by foreground (isolated background pixels), so it can be used to detect gaps after thinning or notches in shapes. The input is binarised with threshold 0.5 before the test.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

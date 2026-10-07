@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.inputs.jpg">sk_convex: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>볼록 껍질(convex hull)에 의한 영역 변형. 전경 영역을 감싸는 최소 볼록 다각형을 구하여 그 내부를 채운 영역을 반환한다 —— 잘록한 부분과 오목한 부분을 모두 메운다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)に相当(近似。<code style="color:#22d3bf">shape_trans</code> は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は <code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>。a, b は未使用。</p>
+<p>HALCON의 <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)에 상당(근사. <code style="color:#22d3bf">shape_trans</code>는 다른 변형 모드도 가진 범용 명령이지만, 여기서는 볼록 껍질만). 구현은 <code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>. a, b는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

@@ -9,9 +9,8 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Number of ORB (Oriented FAST and Rotated BRIEF) keypoints detected.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>skimage.feature.ORB で検出・記述を行い、実際に検出できたキーポイント数を返す(feature 出力)。</p>
-<p><code style="color:#22d3bf">a</code> が要求する最大キーポイント数 <code style="color:#22d3bf">n_keypoints</code> を 50〜450 の範囲で振る(上限であり、画像のコントラストや構造が乏しいと実際の検出数はそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。テクスチャの豊富さ・特徴点密度の目安として使える。</p>
+<p>Performs detection and description with skimage.feature.ORB and returns the number of keypoints actually detected (feature output).</p>
+<p><code style="color:#22d3bf">a</code> sweeps the requested maximum number of keypoints <code style="color:#22d3bf">n_keypoints</code> over the range 50-450 (it is an upper limit; if the image is poor in contrast or structure, the actual count is lower). <code style="color:#22d3bf">b</code> is unused. Usable as a rough indicator of texture richness and feature-point density.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

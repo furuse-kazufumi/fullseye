@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Solarization (film developing में बीच से उलटने वाला effect)। <code style="color:#22d3bf">PIL.ImageOps.solarize</code> को call करता है, और threshold से ऊपर वाले pixel मानों को उलट देता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a がしきい値（<code style="color:#22d3bf">threshold = int(64 + 160*a)</code>、範囲 64〜224）を振る。b は未使用。しきい値が低いほど反転される範囲が広がる。</p>
+<p>a threshold (<code style="color:#22d3bf">threshold = int(64 + 160*a)</code>, range 64-224) को बदलता है। b उपयोग नहीं होता। threshold जितना कम, उलटे जाने वाले मानों की range उतनी चौड़ी।</p>
 <p><b>Precision (मापा गया)</b>: अंदर <b>8 bit (256 levels) में quantise</b> किया जाता है (output ठीक k/255 के grid पर आता है)। float64 देने पर भी <b>वह precision नहीं बचती</b> — 16-bit camera का step (लगभग 1.5e-5) 1/255 = लगभग 3.9e-3 तक round हो जाता है, और 1/255 से कम अंतर वाली 2 images एक ही उत्तर देती हैं। बहुत छोटे intensity अंतर मापने में, या output को आगे differentiation या regression में देने पर quantisation के steps दिखते हैं, इसलिए ऐसा op चुनें जो 8 bit से होकर न गुज़रे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

@@ -13,10 +13,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_smallest_rectangle2.inputs.jpg">r2_smallest_rectangle2: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最小面積的<b>有向</b>外接矩形作為遮罩(旋轉卡尺)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>領域の全前景画素を含む最小面積の回転矩形をマスクとして描く。前景座標の凸包を取り、凸包の各辺に平行な向きで外接矩形を作って面積最小のものを選ぶ(rotating calipers。最小面積矩形は凸包のいずれかの辺に接するという性質を使う)。内部表現は中心 <code style="color:#22d3bf">(cy, cx)</code>、長辺 <code style="color:#22d3bf">long_len</code>、短辺 <code style="color:#22d3bf">short_len</code>、長辺の向き <code style="color:#22d3bf">angle</code>(画像座標 x=col, y=row で測ったラジアン)。</p>
-<p><code style="color:#22d3bf">a</code> は長辺だけを <code style="color:#22d3bf">1 + 0.3*a</code> 倍に伸ばす(<code style="color:#22d3bf">a=0</code> で最小矩形そのもの、<code style="color:#22d3bf">a=1</code> で長辺 1.3 倍。短辺は変えない)。<code style="color:#22d3bf">b</code> は未使用。描画は中心からの射影 <code style="color:#22d3bf">|pu| &lt;= long/2 + 0.5</code>、<code style="color:#22d3bf">|pv| &lt;= short/2 + 0.5</code> で、画素の広がりぶん 0.5 画素の余白を足すため出力は入力領域を必ず含む。</p>
-<p>返り値は入力と同形の float64 0/1 マスク、前景が無ければ全零。角度や辺長の数値は返さない。複数の連結成分があれば全体で 1 つの矩形。前景が 1 画素や一直線上の場合は退化(点・線分)し、描画は 1 画素幅程度の細い帯になる。軸並行でよければ <code style="color:#22d3bf">r2_smallest_rectangle1</code> の方が軽い。細長い部品の向きを見る前処理や、<code style="color:#22d3bf">r2_inner_rectangle1</code> との面積比で矩形らしさを見る用途に。</p>
+<p>將包含區域全部前景像素的最小面積旋轉矩形繪製為遮罩。取前景座標的凸包，以平行於凸包各邊的方向建構外接矩形，並選出面積最小者(rotating calipers。利用了最小面積矩形必與凸包某一條邊相接的性質)。內部表示為中心 <code style="color:#22d3bf">(cy, cx)</code>、長邊 <code style="color:#22d3bf">long_len</code>、短邊 <code style="color:#22d3bf">short_len</code>、長邊方向 <code style="color:#22d3bf">angle</code>(在影像座標 x=col, y=row 中測得的弧度)。</p>
+<p><code style="color:#22d3bf">a</code> 只將長邊拉伸為 <code style="color:#22d3bf">1 + 0.3*a</code> 倍(<code style="color:#22d3bf">a=0</code> 時就是最小矩形本身，<code style="color:#22d3bf">a=1</code> 時長邊為 1.3 倍。短邊不變)。<code style="color:#22d3bf">b</code> 未使用。繪製時使用從中心出發的投影 <code style="color:#22d3bf">|pu| &lt;= long/2 + 0.5</code>、<code style="color:#22d3bf">|pv| &lt;= short/2 + 0.5</code>，為像素的擴展加上 0.5 像素的餘量，因此輸出必定包含輸入區域。</p>
+<p>回傳值是與輸入同形的 float64 0/1 遮罩，沒有前景時全為零。不回傳角度或邊長的數值。若有多個連通元件，則整體為 1 個矩形。前景為 1 個像素或位於一條直線上時會退化(點、線段)，繪製結果是約 1 像素寬的細帶。若軸平行即可，<code style="color:#22d3bf">r2_smallest_rectangle1</code> 更輕量。可用於查看細長零件方向的前處理，或透過與 <code style="color:#22d3bf">r2_inner_rectangle1</code> 的面積比判斷矩形程度。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

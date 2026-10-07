@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_from_rgb.inputs.jpg">trans_from_rgb: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts an RGB image to another color space (HSV / Lab / YUV / XYZ). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">trans_from_rgb</code> (conversion from RGB color space to an arbitrary color space).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>内部は OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> を 8bit 経由で呼ぶだけで、変換先の色空間そのものの定義は OpenCV の実装に従う。</p>
-<p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code>）。b は未使用。8bit 量子化を経由するため、逆変換（<code style="color:#22d3bf">trans_to_rgb</code>）と組み合わせても厳密には可逆でない。</p>
+<p>Internally it merely calls OpenCV&#x27;s <code style="color:#22d3bf">cv2.cvtColor</code> via 8bit, and the definition of the target colour space itself follows OpenCV&#x27;s implementation.</p>
+<p>a selects the target from 4 options (in the order HSV, Lab, YUV, XYZ) (<code style="color:#22d3bf">min(3, int(a * 4))</code>). b is unused. Because it goes through 8bit quantisation, it is not strictly invertible even when combined with the inverse transform (<code style="color:#22d3bf">trans_to_rgb</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

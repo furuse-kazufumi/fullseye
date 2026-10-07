@@ -13,12 +13,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>绕图像中心旋转 <code style="color:#22d3bf">-45° + 90°·a</code>(a=0.5 → 0°)。<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★呼び出し規約(2026-09-02 に明文化。実装は変えていない):</p>
-<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (<code style="color:#22d3bf">reshape=False</code>)。出力の shape は入力と同じで、回転で枠外へ出た画素は捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)。つまり回すと <b>四隅に元画像が折り返して写り込む</b>(帳票を回すと隅に鏡文字が出る)。</p>
-<p>どちらが正典かは用途で割れる。<b>この op の正典は「連鎖しても常に同じ形・同じ値域の画像が出ること」</b> — 進化パイプラインは image を段間で無条件に繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」ではなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
-<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化にそのまま乗る。背景色で埋めたい場合はこの op を使わず、<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> を直接呼ぶこと(<code style="color:#22d3bf">fullseye.apply</code> の 2 つまみ界面では背景色を渡せない)。同じ規約が backends_auto の <code style="color:#22d3bf">rotate_image</code> (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;)にもそのまま当てはまる。</p>
+<p>★调用约定（2026-09-02 成文。实现没有改变）：</p>
+<p style="margin:2px 0 2px 12px">• <b>不改变画布</b>（<code style="color:#22d3bf">reshape=False</code>）。输出的 shape 与输入相同，因旋转移出框外的像素被丢弃。</p>
+<p style="margin:2px 0 2px 12px">• <b>框外用镜像填充</b>（<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>）。也就是说旋转后<b>原图像会折返映入四角</b>（旋转表单时角落会出现镜像文字）。</p>
+<p>哪种才算正统，因用途而异。<b>本 op 的正统是“即使串联也总是输出相同形状、相同值域的图像”</b> — 进化流水线在各级之间无条件地连接 image，因此若 shape 改变或框外填入常数，后级的统计量（平均、方差、直方图）就会随旋转量而变动。镜像不是“凭空造出的常数”，而是保持图像自身的统计量，因此在这一用途中采用它。</p>
+<p><b>不适合 deskew（表单的倾斜校正）</b>：折返的镜像文字会原样带入 OCR / 二值化。若想用背景色填充，请不要用本 op，而是直接调用 <code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> （<code style="color:#22d3bf">fullseye.apply</code> 的 2 旋钮接口无法传入背景色）。同样的约定也原样适用于 backends_auto 的 <code style="color:#22d3bf">rotate_image</code>（<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

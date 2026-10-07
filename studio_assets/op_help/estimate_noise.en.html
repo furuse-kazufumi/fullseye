@@ -9,8 +9,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Robustly estimates the standard deviation σ of additive noise (<code style="color:#22d3bf">_noise_sigma</code>: converts the MAD of the Laplacian response to a Gaussian-equivalent scale, then divides by the noise gain <code style="color:#22d3bf">sqrt(20)</code> of the 5-point Laplacian kernel). Designed to be insensitive to edge-derived outliers and pick up only the noise in flat areas (a bug in the old implementation, where &quot;σ had no proper unit and saturated to 1.0 above σ≈0.08,&quot; was fixed on 2026-09-02 — see the <code style="color:#22d3bf">_noise_sigma</code> docstring for details). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">estimate_noise</code> (Estimate the image noise from a single image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

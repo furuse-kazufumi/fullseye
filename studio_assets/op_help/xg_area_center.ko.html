@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_area_center.chain.jpg">xg_area_center: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>신발끈 공식으로 contour 의 다각형 면적을(절대값의 합).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>輪郭辞書 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 の (row, col) 点列, ...]}</code> の各輪郭を多角形とみなし、靴ひも公式 <code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code> で面積を求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code>(単位は画素²、正規化なし)。輪郭が無い・辞書でない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取るので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は返さない(面積のみ)。同じ点集合の 2 次モーメントは <code style="color:#22d3bf">xg_moments</code>、bbox の縦横比は <code style="color:#22d3bf">xg_height_width_ratio</code>。</p>
+<p>윤곽 사전 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2의 (row, col) 점열, ...]}</code>의 각 윤곽을다각형으로 간주하고, 신발끈 공식 <code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code>으로 면적을구해 모든 윤곽의 합계를 반환한다. 점이 3개 미만인 윤곽은 0으로 무시한다. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는사용하지 않는다.</p>
+<p>반환값은 <code style="color:#22d3bf">numpy.float64</code>(단위는 화소², 정규화 없음). 윤곽이 없거나, 사전이아니거나, 비유한 값을 포함한 윤곽은 건너뛰며 합계에 기여하지 않는다(비어 있으면 0.0). 열린 윤곽이라도 &quot;마지막 점과 첫 점을 이어 닫은 다각형&quot;의 면적이 된다는 점에주의(직선 모양의 열린 윤곽은 0, 꺾은선 모양의 열린 윤곽은 0이 아니다). 절댓값을 취하므로점열의 방향(시계 방향/반시계 방향)은 결과에 영향을 주지 않는다. 자기 교차하는 윤곽에서는교차점에서 부호가 상쇄되어 실제 면적보다 작게 나온다. 이름과 달리 무게중심은반환하지 않는다(면적만). 같은 점 집합의 2차 모멘트는 <code style="color:#22d3bf">xg_moments</code>, bbox의종횡비는 <code style="color:#22d3bf">xg_height_width_ratio</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

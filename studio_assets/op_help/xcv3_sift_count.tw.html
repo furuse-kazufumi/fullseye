@@ -8,8 +8,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SIFT 特徵點數(OpenCV <code style="color:#22d3bf">cv2.SIFT_create().detect</code>)。將影像中偵測到的尺度不變特徵點(SIFT keypoints)的數量作為 feature 回傳——可作為紋理複雜度／可用於匹配之特徵點豐富程度的指標。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は検出上限数 <code style="color:#22d3bf">nfeatures</code>(<code style="color:#22d3bf">int(50+450*a)</code> で 50〜500)を振る —— 上限に達するまでは実際の検出数がそのまま返るので、上限に張り付いていないか確認が要る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 調整偵測上限數 <code style="color:#22d3bf">nfeatures</code>(由 <code style="color:#22d3bf">int(50+450*a)</code> 得到 50~500) —— 在達到上限之前會原樣傳回實際偵測數，因此需要確認它是否貼在上限上。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

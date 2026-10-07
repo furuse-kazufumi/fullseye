@@ -9,8 +9,7 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>허프 변환에 의한 원 검출(단일 스칼라 특징량, OpenCV 구현). 에지의 그래디언트 정보를 사용하는 HOUGH_GRADIENT 방식으로 원의 중심·반지름을 투표 방식으로 검출한다 —— 여기서는 검출된 원의 개수만을 반환한다(0개면 0).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)に相当(近似。中心座標ではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a は検出する円同士の最小中心間距離を 10〜30 に、b は中心検出の投票しきい値 param2(小さいほど誤検出が増える)を 20〜40 に振る。param1(内部の Canny 高しきい値)と半径範囲(3〜20)は固定。</p>
+<p>HALCON의 <code style="color:#22d3bf">hough_circles</code>(Detect centers of circles for a specific radius using the Hough transform.)에 해당한다(근사. 중심 좌표가 아니라 개수만). 구현은 <code style="color:#22d3bf">cv2.HoughCircles(_u8(v), HOUGH_GRADIENT, dp=1, minDist=10+int(a*20), param1=100, param2=20+int(b*20), minRadius=3, maxRadius=20)</code> —— a는 검출할 원끼리의 최소 중심 간 거리를 10~30으로, b는 중심 검출의 투표 임계값 param2(작을수록 오검출이 늘어난다)를 20~40으로 바꾼다. param1(내부 Canny 상한 임계값)과 반경 범위(3~20)는 고정이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

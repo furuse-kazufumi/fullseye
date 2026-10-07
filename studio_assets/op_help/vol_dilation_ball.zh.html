@@ -15,8 +15,7 @@
 <p><img src="fig/vol_dilation_ball.gif" alt="vol_dilation_ball: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用球形结构元素的 3D 二值膨胀。未指定对应的 HALCON op。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が球の半径を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">1+int(3a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。球は <code style="color:#22d3bf">x²+y²+z² &lt;= r²</code> で作る（<code style="color:#22d3bf">skimage.morphology.ball</code> と同じ定義）。<code style="color:#22d3bf">_vol_reg_dilate</code>（6近傍固定）より広い近傍を扱え、<code style="color:#22d3bf">a</code> で半径そのものを直接変えられる。</p>
+<p><code style="color:#22d3bf">a</code> 将球的半径在 <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">1+int(3a)</code>）之间调节。<code style="color:#22d3bf">b</code> 未使用。球用 <code style="color:#22d3bf">x²+y²+z² &lt;= r²</code> 构造（与 <code style="color:#22d3bf">skimage.morphology.ball</code> 定义相同）。能处理比 <code style="color:#22d3bf">_vol_reg_dilate</code>（固定 6 邻域）更宽的邻域，并可用 <code style="color:#22d3bf">a</code> 直接改变半径本身。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_project_cylindrical.inputs.jpg">tb_project_cylindrical: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원통형 거리 영상으로 투영 (<code style="color:#22d3bf">z_bins</code>, <code style="color:#22d3bf">h_res</code>). 방위각(열) × z(행), 픽셀값 = 수평 반경 ρ = hypot(x,y).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>球面投影が仰角で層を切るのに対し、円柱投影は<b>高さ z を等間隔に切る</b>(壁/柱/回廊の展開に向く)。画素値は z 軸からの水平距離 ρ(円柱上の点が一定になる自然な不変量)。空セル=0, 近い点優先(最小 ρ)。z_range=(z_min,z_max) 未指定なら点群の [z.min, z.max] を採用。z 幅ゼロは fail-closed(ValueError)。行 0 = 上端(z=z_max)。z_range 外、z 軸上(ρ=0)、非有限座標の点は落とす。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">project_cylindrical</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">h_res</code>(既定 1024)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">z_bins</code>(既定 64)を振る。</p>
+<p>구면 투영이 앙각으로 층을 자르는 데 비해, 원기둥 투영은 <b>높이 z를 등간격으로 자른다</b>(벽/기둥/회랑의 전개에 알맞다). 화소값은 z축으로부터의 수평 거리 ρ(원기둥 위의 점이 일정해지는 자연스러운 불변량). 빈 셀=0, 가까운 점 우선(최소 ρ). z_range=(z_min,z_max)를 지정하지 않으면 점군의 [z.min, z.max]를 채택. z 폭이 0이면 fail-closed(실패 시 거부)(ValueError). 행 0 = 위끝(z=z_max). z_range 밖, z축 위(ρ=0), 비유한 좌표의 점은 버린다.</p>
+<p>2-D 진화 레지스트리로 연결한 3d의 op <code style="color:#22d3bf">project_cylindrical</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">h_res</code>(기본값 1024), <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">z_bins</code>(기본값 64)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -10,14 +10,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_estimate_alpha.chain.jpg">tb_estimate_alpha: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Liefert einen empfohlenen Alpha-Wert basierend auf der Skala der Punktwolke (basierend auf dem Median des Abstands zum nächsten Nachbarn).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各点の最近傍距離の中央値 <code style="color:#22d3bf">m</code> を求め、半径しきい値 1/alpha ≈ 2m(隣接間隔の約 2 倍まで許す)となるよう <code style="color:#22d3bf">alpha = 1/(2m)</code> を返す。これで表面付近の素性の良い四面体は残しつつ、大きく間延びした四面体(=凹み・外側)を切り落とせる。重複点は最近傍 0 になるため正の距離のみ使う。</p>
+<p>Bestimmt den Median <code style="color:#22d3bf">m</code> des Nächster-Nachbar-Abstands jedes Punktes und gibt <code style="color:#22d3bf">alpha = 1/(2m)</code> zurück, sodass die Radiusschwelle 1/alpha ≈ 2m beträgt (bis etwa zum 2-Fachen des Nachbarabstands zulässig). So bleiben die gutartigen Tetraeder nahe der Oberfläche erhalten, während stark gestreckte Tetraeder (= Mulden, Außenbereich) abgeschnitten werden. Doppelte Punkte haben Nächster-Nachbar-Abstand 0, daher werden nur positive Abstände verwendet.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>alpha : float</p>
-<p>正の有限値。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">estimate_alpha</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>Ein positiver endlicher Wert.</p>
+<p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">estimate_alpha</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese op hat keine Stellpunkte; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

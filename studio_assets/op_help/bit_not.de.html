@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Tonwertumkehr (Negativ/Positiv-Umkehrung). Implementiert als <code style="color:#22d3bf">1 - x</code> (Umkehrung als kontinuierlicher Wert in [0,1]); a und b werden nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">bit_not</code>（画素の全ビットを反転するビット単位演算）とは動作原理が異なる近似 —— 8bit 整数のビット補数ではなく浮動小数の線形反転なので、量子化された画像でのビットパターンは再現しない。明るい/暗いを単純に入れ替えたい用途には使える。</p>
+<p>Eine Näherung mit anderem Funktionsprinzip als HALCONs <code style="color:#22d3bf">bit_not</code> (eine bitweise Operation, die alle Bits eines Pixels invertiert) -- es ist kein Bitkomplement einer 8bit-Ganzzahl, sondern eine lineare Inversion in Gleitkomma, daher werden Bitmuster in quantisierten Bildern nicht reproduziert. Brauchbar, wenn man einfach hell und dunkel vertauschen will.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

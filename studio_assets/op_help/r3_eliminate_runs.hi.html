@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_eliminate_runs.inputs.jpg">r3_eliminate_runs: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Horizontal दिशा के connected runs (लगातार foreground pixels की कतारें) में से दी गई लंबाई से छोटे runs मिटाता है (HALCON <code style="color:#22d3bf">eliminate_runs</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）から最小ラン長 <code style="color:#22d3bf">min_len = 1 + max(1, round(8*a))</code> を決め、これに満たない水平ランを除去する（<code style="color:#22d3bf">a=0</code> で <code style="color:#22d3bf">min_len=2</code>、すなわち1 画素だけの細い橋を切る）。<code style="color:#22d3bf">b</code> は未使用。走査は行ごと・水平方向のみ（縦方向のランは対象外）。</p>
+<p><code style="color:#22d3bf">a</code> (0 से 1) से न्यूनतम run लंबाई <code style="color:#22d3bf">min_len = 1 + max(1, round(8*a))</code> तय करता है और इससे छोटे horizontal runs हटाता है (<code style="color:#22d3bf">a=0</code> पर <code style="color:#22d3bf">min_len=2</code>, यानी केवल 1 pixel के पतले पुलों को काटता है)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। scanning हर row में, केवल horizontal दिशा में होती है (vertical runs शामिल नहीं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

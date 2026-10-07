@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Opening by reconstruction (SimpleITK <code style="color:#22d3bf">OpeningByReconstruction</code>). Unlike ordinary grayscale opening (erosion followed by dilation), the dilation after erosion is performed as masked reconstruction, so only small bright protrusions are removed without distorting the contours of the remaining regions.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は構造要素の半径(<code style="color:#22d3bf">1+int(a*4)</code> で両軸とも 1〜5)を振る。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the radius of the structuring element (1-5 on both axes via <code style="color:#22d3bf">1+int(a*4)</code>). <code style="color:#22d3bf">b</code> is unused. The output is clipped to [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

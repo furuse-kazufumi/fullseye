@@ -13,11 +13,10 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Färbt jede zusammenhängende Region mit ihrem mittleren Grauwert (Bild -&gt; Bild). Vorder-/Hintergrund bei Schwelle a getrennt, dann gelabelt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景とし <code style="color:#22d3bf">ndimage.label</code>(4 近傍)で連結成分に分け、各成分の画素を <code style="color:#22d3bf">ndimage.mean</code> で求めた成分内の平均 gray 値で塗りつぶす。背景(<code style="color:#22d3bf">v &lt;= a</code>)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>結果は成分ごとに一定値になるので、後段の <code style="color:#22d3bf">threshold</code> で「平均が明るい部品だけ」を選ぶような使い方ができる。4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
+<p>Nimmt <code style="color:#22d3bf">v &gt; a</code> als Vordergrund, teilt ihn mit <code style="color:#22d3bf">ndimage.label</code> (4er-Nachbarschaft) in Zusammenhangskomponenten und füllt die Pixel jeder Komponente mit dem per <code style="color:#22d3bf">ndimage.mean</code> bestimmten mittleren gray-Wert innerhalb der Komponente. Der Hintergrund (<code style="color:#22d3bf">v &lt;= a</code>) wird mit dem 1 Mittelwert aller Hintergrundpixel gefüllt (0.0, wenn es keinen Hintergrund gibt). Die Ausgabe ist ein float-Bild in der Form der Eingabe, mit Werten im Bereich der Eingabe (nicht normiert).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Schwellwert zwischen Vordergrund/Hintergrund. Bei a=0 ist jedes Pixel größer als 0 Vordergrund.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Da das Ergebnis je Komponente konstant ist, lässt sich etwa mit einem nachfolgenden <code style="color:#22d3bf">threshold</code> &quot;nur Teile mit hellem Mittelwert&quot; auswählen. Wegen der Labels mit 4er-Nachbarschaft erhalten sich diagonal berührende Klumpen getrennte Mittelwerte. Es gibt keine Eingabeprüfung.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

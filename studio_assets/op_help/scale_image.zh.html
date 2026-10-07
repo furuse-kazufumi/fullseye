@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线性灰度缩放 <code style="color:#22d3bf">clip((0.5 + 1.5*a) * x + (b - 0.5), 0, 1)</code>。这是一个同时调整斜率(对比度)和偏移量(亮度)的线性 LUT,超出范围的值会被裁剪到 [0,1]。相当于 HALCON 的 <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は傾き(Mult 相当)を 0.5〜2.0 の範囲で、<code style="color:#22d3bf">b</code> はオフセット(Add 相当)を -0.5〜+0.5 の範囲で振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 在 0.5～2.0 范围内调节斜率(相当于 Mult),<code style="color:#22d3bf">b</code> 在 -0.5～+0.5 范围内调节偏移(相当于 Add)。两者都会使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

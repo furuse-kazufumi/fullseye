@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_regress_contours.chain.jpg">hx_regress_contours: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对每条 contour 拟合回归直线,返回平均残差(偏离直线的程度;feature)。越小越直。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>点数 3 以上の各 contour について、点の重心を通る全最小二乗直線(座標共分散の最小固有ベクトルを法線とする)を当て、点から直線までの距離の RMS を求める。全 contour の RMS を平均し <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 有効な contour が無ければ 0.0(「完全な直線」と区別できない)。</p>
-<p>小さいほど直線的。直線そのものの傾きや位置は返さない(当てはめ結果が要るなら <code style="color:#22d3bf">fit_line_contours</code>)。折れ線としての角の数を見たいなら <code style="color:#22d3bf">hx_split_contours</code> で分割してから線分数を数える。点数 2 以下の contour は評価から外れる。1 本の contour だけを対象にした同種の指標は <code style="color:#22d3bf">xg_regress_contours</code>。</p>
+<p>对点数在 3 以上的每个 contour,拟合通过点质心的总体最小二乘直线(以坐标协方差的最小特征向量为法线), 求点到直线距离的 RMS。将全部 contour 的 RMS 取平均,除以 <code style="color:#22d3bf">max(H, W)</code> 并以 1 饱和截顶, 以 <code style="color:#22d3bf">np.float64</code> 返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 没有有效 contour 时为 0.0(与“完美直线”无法区分)。</p>
+<p>越小越直。不返回直线本身的斜率和位置(需要拟合结果时用 <code style="color:#22d3bf">fit_line_contours</code>)。若想看折线的角数,先用 <code style="color:#22d3bf">hx_split_contours</code> 分割再数线段数。点数在 2 以下的 contour 不参与评估。只针对 1 个 contour 的同类指标是 <code style="color:#22d3bf">xg_regress_contours</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

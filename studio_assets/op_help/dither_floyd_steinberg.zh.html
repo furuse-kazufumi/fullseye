@@ -12,9 +12,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>误差扩散抖动(Floyd–Steinberg)。<code style="color:#22d3bf">a</code> 为位数 1〜8，<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。<b>平均は保たれる</b>(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。</p>
-<p><b>適用条件</b>: (1) 走査順に依存するので、<b>画像を切り出す位置を変えると結果が変わる</b> —— タイル処理や並列化には向かない(そちらは <code style="color:#22d3bf">dither_ordered</code>)。(2) 誤差を隣へ送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では <code style="color:#22d3bf">dither_ordered</code> よりずっと遅い。</p>
+<p>对各像素舍入之后，把产生的误差按右 7/16、左下 3/16、下 5/16、右下 1/16 分配出去。<b>平均值得以保持</b>（局部的加减相互抵消），因此平坦的灰阶不会变成条纹，而是用点的密度来表现。即使降到 1 比特仍能当作图画看懂，正是因为这一点。</p>
+<p><b>适用条件</b>：(1) 依赖扫描顺序，因此<b>改变裁剪图像的位置结果就会改变</b> —— 不适合分块处理或并行化（那种场合用 <code style="color:#22d3bf">dither_ordered</code>）。(2) 误差被送往邻近像素，因此在细线周围会拖尾。(3) 这里是朴素的逐次实现，在大图像上比 <code style="color:#22d3bf">dither_ordered</code> 慢得多。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

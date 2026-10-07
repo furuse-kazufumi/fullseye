@@ -15,12 +15,11 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Berechnet die Tiefe Z = f*Basis/Disparität aus einem Disparitätsbild (Brennweite/Basis über a, b). Normiertes Z.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
-<p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p>Bildet <code style="color:#22d3bf">v</code> (0 bis 1) auf eine Disparität von <code style="color:#22d3bf">disp = v*63 + 0.5</code> Pixeln ab, berechnet <code style="color:#22d3bf">Z = f * baseline / disp</code> und gibt das per min-max auf [0,1] normierte Bild zurück. X und Y werden nicht berechnet (nur Z).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Brennweite <code style="color:#22d3bf">f = 200 + 600*a</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Basislänge <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>.</p>
+<p style="margin:2px 0 2px 12px">• Die Disparität hat die Untergrenze 0.5, daher tritt keine Division durch null auf.</p>
+<p>Achtung: <code style="color:#22d3bf">f * baseline</code> ist ein für alle Pixel gemeinsamer konstanter Faktor und wird durch die abschließende min-max-Normierung aufgehoben; ein Ändern von <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> ändert die Ausgabe daher nicht (gemessen: völlig identisch). Die Ausgabe ist effektiv &quot;der normierte Kehrwert der Disparität&quot;: maximale Disparität (<code style="color:#22d3bf">v = 1</code>) ergibt 0, minimale Disparität (<code style="color:#22d3bf">v = 0</code>) ergibt 1 (je näher, desto dunkler). Für Anwendungen, die absolute Tiefe brauchen, unbrauchbar. Durch den Kehrwert wird die Quantisierung in der Ferne grob, daher sind Werte in Bereichen mit kleinem <code style="color:#22d3bf">v</code> instabil.</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> von 0 bis 1 zu variieren <b>ändert die Ausgabe nicht</b> (an fünf verschiedenen Eingaben gemessen).</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

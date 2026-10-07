@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/convex_fill.inputs.jpg">convex_fill: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>छेदों और सँकरे हिस्सों को भरकर shape को convex hull के करीब लाता है (closing द्वारा सन्निकटन)। उद्देश्य HALCON के <code style="color:#22d3bf">shape_trans</code> (Transform the shape of a region.) के convex hull transform के समकक्ष होना है, लेकिन implementation कई iterations वाला closing है, सटीक convex hull गणना नहीं (सन्निकटन)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">3〜6</code>（<code style="color:#22d3bf">_it(a)+2</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">border_value=1</code> の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。</p>
+<p><code style="color:#22d3bf">a</code> iteration की संख्या को <code style="color:#22d3bf">3〜6</code> (<code style="color:#22d3bf">_it(a)+2</code>) पर बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। यह केवल <code style="color:#22d3bf">border_value=1</code> वाला binary closing लगाता है, इसलिए iteration की संख्या से बड़े संकरे हिस्से और छेद नहीं भरते (असली convex hull हमेशा भर देता)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

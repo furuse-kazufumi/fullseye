@@ -12,15 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/em_skeleton.inputs.jpg">em_skeleton: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Invariante Ausdünnung nach Eckhardt–Maderlechner (dieselbe Familie wie HALCON <code style="color:#22d3bf">skeleton</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93 定義に従うクリーンルーム実装。<b>同ノートが公表する EM93 の参照出力と突き合わせ済み</b>: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、形状 2/3 は画素数が公表値と一致(2434 / 3895)。tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
-<p>参照出力と一致している):</p>
-<p>interior = 4 近傍がすべて前景の画素</p>
-<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
-<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
-<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
-<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
-<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の <code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<p>Quelle: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993). Die Implementierungsregeln folgen M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot;: eine Clean-Room-Implementierung der EM93- Definition. <b>Abgeglichen mit den in dieser Note veröffentlichten EM93-Referenzausgaben</b>: Bei Form 1 stimmt die Pixelmenge des Skeletts bitgenau überein (724/724), bei den Formen 2/3 stimmen die Pixelzahlen mit den veröffentlichten Werten überein (2434 / 3895). tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference. (Ein direkter Abgleich mit einer echten HALCON-Installation wurde nicht durchgeführt, aber es stimmt mit der Referenzausgabe desselben veröffentlichten Algorithmus überein, auf den HALCON sich stützt):</p>
+<p>interior = Pixel, dessen 4-Nachbarn alle Vordergrund sind</p>
+<p>simple   = (8,4)-einfacher Punkt (1 Vordergrund-8-Zusammenhangskomponente ∧ 1 angrenzende Hintergrund-4-Zusammenhangskomponente)</p>
+<p>perfect  = der Nachbar in einer der 4 Richtungen ist interior, und die Gegenrichtung ist Hintergrund</p>
+<p>&quot;alle Pixel, die simple und perfect sind, gleichzeitig löschen&quot; bis zum Fixpunkt wiederholen</p>
+<p>Hinweis: Wird die Transkription der Note wörtlich implementiert, &quot;simple nur mit starken (4) Zusammenhangskomponenten zählen&quot;, entfernt das parallele Löschen diagonale Brücken gleichzeitig und zerstört die Topologie (an einem Gegenbeispiel gemessen). Diese Implementierung, die simple als standardmäßigen (8,4)-einfachen Punkt auffasst, stimmte bitgenau mit der Referenzausgabe überein, was belegt, dass dies die korrekte Lesart von EM93 ist.</p>
+<p>Vollständig parallel, symmetrisch (kommutiert mit 90-Grad-Drehung/Spiegelung), topologieerhaltend und idempotent. Behält mehr Äste als das Zhang–Suen-artige <code style="color:#22d3bf">sk_skeleton</code> (gemessen 1.4-1.5-fache Pixelzahl = im Einklang mit dem Charakter von EM in Coupries Vergleichstabelle: symmetrisch, viele Äste). Sporne mit <code style="color:#22d3bf">pruning</code> nachzubearbeiten ist ebenfalls dieselbe Praxis wie bei HALCON. Die Regler a, b werden nicht verwendet.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

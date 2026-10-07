@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_from_rgb.inputs.jpg">trans_from_rgb: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>RGB 이미지를 다른 색 공간(HSV / Lab / YUV / XYZ)으로 변환한다. HALCON의 <code style="color:#22d3bf">trans_from_rgb</code>(RGB 색 공간에서 임의의 색 공간으로의 변환)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>内部は OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> を 8bit 経由で呼ぶだけで、変換先の色空間そのものの定義は OpenCV の実装に従う。</p>
-<p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code>）。b は未使用。8bit 量子化を経由するため、逆変換（<code style="color:#22d3bf">trans_to_rgb</code>）と組み合わせても厳密には可逆でない。</p>
+<p>내부는 OpenCV의 <code style="color:#22d3bf">cv2.cvtColor</code>를 8bit 경유로 호출할 뿐이며, 변환 대상색 공간 자체의 정의는 OpenCV의 구현을 따른다.</p>
+<p>a는 변환 대상을 4가지(HSV, Lab, YUV, XYZ 순) 중에서 고른다(<code style="color:#22d3bf">min(3, int(a * 4))</code>). b는 사용하지 않는다. 8bit 양자화를 거치므로, 역변환(<code style="color:#22d3bf">trans_to_rgb</code>)과 조합해도 엄밀하게는 가역이 아니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

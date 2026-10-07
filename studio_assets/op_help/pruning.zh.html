@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/pruning.inputs.jpg">pruning: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在骨架化（<code style="color:#22d3bf">skeletonize</code>，若不可用则直接使用输入）之后，反复（<code style="color:#22d3bf">1+4*a</code> 次）削去邻居数为 1 以下的端点像素（毛刺=杂散分支），从骨架上去除短分支。相当于 HALCON 的 <code style="color:#22d3bf">pruning</code>（Prune the branches of a region.）（HALCON 可指定分支长度，此处则用迭代次数做近似）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が削り取る反復回数を 1〜5 回の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。回数が多いほど主要な骨格まで削れてしまうことがある。</p>
+<p><code style="color:#22d3bf">a</code> 在 1～5 次的范围内调节削除的迭代次数。<code style="color:#22d3bf">b</code> 未使用。次数越多,有时连主要骨架也会被削掉。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

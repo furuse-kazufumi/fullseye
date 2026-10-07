@@ -12,11 +12,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_point.chain.jpg">hx_test_region_point: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>region 이 점(정규화 a=행, b=열)을 포함하는지: 1/0(test_region_point).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region が、正規化座標 <code style="color:#22d3bf">(a, b)</code> の画素を含むかを 1.0/0.0 の <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行 <code style="color:#22d3bf">r = min(int(a*h), h-1)</code>(0 で先頭行、1 で最終行)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 列 <code style="color:#22d3bf">c = min(int(b*w), w-1)</code>。</p>
-<p>座標は (行, 列) 順で、切り捨てで画素に丸める。1 画素の判定なので region の縁ぎりぎりでは不安定になる。点の周辺で判定したいときは先に <code style="color:#22d3bf">hx_dilation1</code> で region を太らせる。複数点の包含率は <code style="color:#22d3bf">hx_test_region_points</code>、点から region までの距離は <code style="color:#22d3bf">hx_distance_pr</code>。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code>의 region이 정규화 좌표 <code style="color:#22d3bf">(a, b)</code>의 화소를 포함하는지를 1.0/0.0의 <code style="color:#22d3bf">np.float64</code>로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 행 <code style="color:#22d3bf">r = min(int(a*h), h-1)</code>(0이면 첫 행, 1이면 마지막 행).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 열 <code style="color:#22d3bf">c = min(int(b*w), w-1)</code>.</p>
+<p>좌표는 (행, 열) 순이며, 버림으로 화소에 반올림한다. 1화소의 판정이므로 region의 가장자리 아슬아슬한 곳에서는 불안정해진다. 점의 주변에서 판정하고 싶을 때는 먼저 <code style="color:#22d3bf">hx_dilation1</code>로 region을 굵게 한다. 여러 점의 포함률은 <code style="color:#22d3bf">hx_test_region_points</code>, 점에서 region까지의 거리는 <code style="color:#22d3bf">hx_distance_pr</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

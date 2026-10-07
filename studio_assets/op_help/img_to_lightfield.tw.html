@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_lightfield.gif" alt="img_to_lightfield: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像分成前景/背景兩層，產生帶視差的 4-D 光場 (V,U,H,W)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">lf_synthesize</code> と同じ前方モデルの 2 層版: 視点 <code style="color:#22d3bf">(v, u)</code> は層ごとに <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> だけ画像をずらして見る(線形補間、縁は最近傍)。背景層は傾き 0(無限遠)、前景層(しきい値以上の画素)は傾き <code style="color:#22d3bf">slope</code> で、前景が背景を<b>遮蔽</b>する(視点ごとにマスクもずらす)。変位が角度インデックスに線形なので、EPI の傾き・リフォーカスの最良スロープ・両端視点の視差 <code style="color:#22d3bf">slope * (U - 1)</code> がすべて閉形式で分かる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景の傾き <code style="color:#22d3bf">slope = 1.5 * a</code> 画素/視点(a=0.5 で 0.75。5×5 なら両端で 3 px)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 前景のしきい値 <code style="color:#22d3bf">thr = b</code>(<code style="color:#22d3bf">img &gt;= thr</code> が前景。b=0.5 で明るい部分)。</p>
-<p style="margin:2px 0 2px 12px">• 角度サンプルは <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>。返り値 <code style="color:#22d3bf">(5, 5, H, W)</code> float64。</p>
-<p style="margin:2px 0 2px 12px">• 中央視点 <code style="color:#22d3bf">(2, 2)</code> は入力そのもの(ずれ 0)。</p>
-<p>使いどころ: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> の入口。深度推定の答えは「前景 = slope、背景 = 0」の 2 値。</p>
+<p>與 <code style="color:#22d3bf">lf_synthesize</code> 相同前向模型的 2 層版: 視點 <code style="color:#22d3bf">(v, u)</code> 對每一層把影像平移 <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> 後觀看(線性內插，邊緣取最近鄰)。背景層斜率為 0(無窮遠)，前景層(閾值以上的像素)斜率為 <code style="color:#22d3bf">slope</code>，前景<b>遮蔽</b>背景(遮罩也依視點平移)。位移對角度索引是線性的，因此 EPI 的斜率、重新對焦的最佳斜率、兩端視點的視差 <code style="color:#22d3bf">slope * (U - 1)</code> 全都以閉合式已知。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景斜率 <code style="color:#22d3bf">slope = 1.5 * a</code> 像素/視點(a=0.5 時為 0.75。5×5 時兩端相差 3 px)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 前景閾值 <code style="color:#22d3bf">thr = b</code>(<code style="color:#22d3bf">img &gt;= thr</code> 為前景。b=0.5 時為明亮部分)。</p>
+<p style="margin:2px 0 2px 12px">• 角度取樣為 <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>。回傳值 <code style="color:#22d3bf">(5, 5, H, W)</code> float64。</p>
+<p style="margin:2px 0 2px 12px">• 中央視點 <code style="color:#22d3bf">(2, 2)</code> 就是輸入本身(偏移 0)。</p>
+<p>用途: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> 的入口。深度估計的答案是「前景 = slope、背景 = 0」這 2 個值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

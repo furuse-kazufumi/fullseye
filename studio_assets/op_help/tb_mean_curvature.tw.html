@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mean_curvature.inputs.jpg">tb_mean_curvature: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平均曲率 H=(k1+k2)/2。→ (N,)。與方向相關的量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
-<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
-<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">mean_curvature</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 25)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>未指定 normals(帶朝向的參考法線,(N,3))時使用凸側啟發式(開放面的凹/凸符號不確定)。傳入帶朝向的法線則與全域朝向一致,給出正確的符號。</p>
+<p>補充:</p>
+<p style="margin:2px 0 2px 12px">• 計算與 <code style="color:#22d3bf">principal_curvatures</code> 相同(k+1 鄰域的 PCA 法線 + 局部二次曲面擬合),回傳 <code style="color:#22d3bf">(k1 + k2) / 2</code>。單位為 1/長度。</p>
+<p style="margin:2px 0 2px 12px">• 符號慣例以凸為正,只有傳入 <code style="color:#22d3bf">normals</code> 時才對應全域的凹/凸。未指定時開放面的 H 總在凸側(相當於絕對值)。</p>
+<p style="margin:2px 0 2px 12px">• 鄰域少於 5 點的點為 0。<code style="color:#22d3bf">k</code> 截為 N-1。</p>
+<p style="margin:2px 0 2px 12px">• 半徑 R 的球為 <code style="color:#22d3bf">1/R</code>,圓柱為 <code style="color:#22d3bf">1/(2R)</code>,平面為 0。鞍點(k1 = -k2)也為 0,但 <code style="color:#22d3bf">gaussian_curvature</code> 為負,因此可以區分。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 須為 (N,3)、有限且各列非零(<code style="color:#22d3bf">ValueError</code>)。確定性。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">mean_curvature</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">k</code>(預設 25)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

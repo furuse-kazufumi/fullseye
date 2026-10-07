@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對數階調變換(log transform)。使用 <code style="color:#22d3bf">out = gain * log(1 + in)</code> 型對數曲線來提亮暗部的階調校正 —— 用途與伽瑪校正類似,但屬於只對暗部提亮更強的非線性曲線。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)に相当。実装は <code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code> の結果を <code style="color:#22d3bf">[0,1]</code> へ clip したもの —— a は gain を 0.5〜2.0 に振る。b は未使用。gain が 1 を超えると出力が 1 を僅かに超えることが実測されている(a=0.5 で max=1.1380)ため、<code style="color:#22d3bf">image</code> 契約([0,1])を守るために出口で明示的に clip している —— パイプライン内では <code style="color:#22d3bf">ops._apply</code> の段間 clip と同じ値になるためビット不変だが、直接呼び出した時の白飛びの見え方は clip 追加前と変わる。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)。實作是把 <code style="color:#22d3bf">exposure.adjust_log(clip(v,0,1), gain=0.5+1.5*a)</code> 的結果 clip 到 <code style="color:#22d3bf">[0,1]</code> —— a 把 gain 在 0.5〜2.0 之間調整。b 未使用。實測發現 gain 超過 1 時輸出會略超過 1（a=0.5 時 max=1.1380），因此為遵守 <code style="color:#22d3bf">image</code> 約定（[0,1]）在出口處明確 clip —— 在管線內與 <code style="color:#22d3bf">ops._apply</code> 的級間 clip 得到相同的值，因此逐位元不變，但直接呼叫時過曝的外觀與加入 clip 之前不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

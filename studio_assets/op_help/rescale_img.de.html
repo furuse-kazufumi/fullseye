@@ -14,13 +14,12 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Isotrope, mittenerhaltende Skalierung um <code style="color:#22d3bf">s = 0,7 + 0,6·a</code>, Leinwand bleibt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">b</code> = <b>補間の次数</b> — <code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code>(0 = 最近傍、1 = 双一次、3 = 三次スプライン)。<code style="color:#22d3bf">b=0.5</code> は 3 次で、<code style="color:#22d3bf">b</code> が死んでいた頃の既定(<code style="color:#22d3bf">ndimage</code> の order=3)と <b>ビット一致</b>する。</p>
-<p>★2026-09-02: それまで <code style="color:#22d3bf">rescale_img</code> / <code style="color:#22d3bf">zoom_image_factor</code> / <code style="color:#22d3bf">zoom_image_size</code> は <b>3 つとも同じ実装</b>(実測: 相互の最大差 0.0 と 4.9e-14)で、3 つとも <code style="color:#22d3bf">b</code> を使っていなかった。3 つの役割を分けた:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rescale_img</code>      — 等方倍率 1 つ + <b>補間次数</b>(この関数)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_factor</code>— 縦横 <b>2 つの倍率</b>(HALCON の ScaleHeight/ScaleWidth)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_size</code>  — <b>目標サイズ</b>指定(出力 shape が変わる)</p>
-<p>HALCON 名も実態に合わせて <code style="color:#22d3bf">zoom_image_size</code> → <code style="color:#22d3bf">zoom_image_factor</code> へ付け替えた(この op はサイズではなく倍率で駆動するため)。</p>
+<p><code style="color:#22d3bf">b</code> = <b>Interpolationsordnung</b> — <code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code> (0 = nächster Nachbar, 1 = bilinear, 3 = kubischer Spline). <code style="color:#22d3bf">b=0.5</code> ist Ordnung 3 und mit dem Standard aus der Zeit, als <code style="color:#22d3bf">b</code> wirkungslos war (<code style="color:#22d3bf">ndimage</code> order=3), <b>bitidentisch</b>.</p>
+<p>★2026-09-02: Bis dahin waren <code style="color:#22d3bf">rescale_img</code> / <code style="color:#22d3bf">zoom_image_factor</code> / <code style="color:#22d3bf">zoom_image_size</code> <b>alle 3 dieselbe Implementierung</b> (gemessen: maximale gegenseitige Differenzen 0.0 und 4.9e-14), und keine der 3 nutzte <code style="color:#22d3bf">b</code>. Die 3 Rollen wurden getrennt:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rescale_img</code>      — 1 isotroper Faktor + <b>Interpolationsordnung</b> (diese Funktion)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_factor</code>— <b>2 Faktoren</b>, vertikal und horizontal (HALCONs ScaleHeight/ScaleWidth)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_size</code>  — Angabe der <b>Zielgröße</b> (die Ausgabe-shape ändert sich)</p>
+<p>Auch der HALCON-Name wurde passend zur Realität von <code style="color:#22d3bf">zoom_image_size</code> → <code style="color:#22d3bf">zoom_image_factor</code> umgehängt (da dieses Op über einen Faktor und nicht über eine Größe gesteuert wird).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Moment-preserving विधि से binarisation (SimpleITK <code style="color:#22d3bf">MomentsThreshold</code>, Tsai की विधि)। Threshold ऐसे चुनता है कि binarisation के बाद histogram के statistical moments (mean, variance आदि) मूल histogram वालों से मेल खाएँ।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> はヒストグラムのビン数(64〜256)を振る。<code style="color:#22d3bf">b</code> は未使用。xsitk_maxentropy_thresh・xsitk_huang_thresh とは閾値選択の基準が異なるだけで、同じ入出力形。</p>
+<p><code style="color:#22d3bf">a</code> histogram के bins की संख्या (64-256) को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। xsitk_maxentropy_thresh और xsitk_huang_thresh से केवल threshold चुनने का मानदंड अलग है, इनपुट/आउटपुट का रूप समान है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>

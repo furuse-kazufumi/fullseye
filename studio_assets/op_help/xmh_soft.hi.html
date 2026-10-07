@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Soft thresholding (<code style="color:#22d3bf">mahotas.thresholding.soft_threshold</code>, shrinkage)। Threshold से कम absolute value वाले pixels को 0 कर देता है, और बाकी को threshold जितना 0 की ओर खिसकाता है। Wavelet/sparse signal के noise removal में अक्सर इस्तेमाल होने वाली processing को सीधे pixel मानों पर लागू करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は閾値(<code style="color:#22d3bf">a*0.5</code> で 0〜0.5)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> threshold (<code style="color:#22d3bf">a*0.5</code> से 0-0.5) को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

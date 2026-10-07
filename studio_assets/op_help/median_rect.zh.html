@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形中值滤波。与 <code style="color:#22d3bf">median_image</code> 使用相同的 <code style="color:#22d3bf">scipy</code> 实现,但可以独立指定高度和宽度(<code style="color:#22d3bf">size=(k_a, k_b)</code>)。相当于 HALCON 的 <code style="color:#22d3bf">median_rect</code>(Compute a median filter with rectangular masks.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の高さ、<code style="color:#22d3bf">b</code> が窓の幅を、それぞれ <code style="color:#22d3bf">{3,5,7,9}</code>(<code style="color:#22d3bf">_k</code>)の 4 段階で振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节窗口高度、<code style="color:#22d3bf">b</code> 调节窗口宽度,各自在 <code style="color:#22d3bf">{3,5,7,9}</code>(<code style="color:#22d3bf">_k</code>)的 4 档中调节。两者都会使用。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

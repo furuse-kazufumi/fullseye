@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_self_intersect.chain.jpg">hx_test_self_intersect: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>自相交 contour 的比例(feature)。判定非相邻的线段对。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各 contour(点数 4 以上)について、隣接しない線分の全対 <code style="color:#22d3bf">(i, i+1)</code> と <code style="color:#22d3bf">(j, j+1)</code>(<code style="color:#22d3bf">j &gt;= i+2</code>)を向き付き面積の符号(ccw 判定)で交差判定し、1 対でも交差する contour の本数を全 contour 数で割った割合を <code style="color:#22d3bf">np.float64</code> で返す。始点と終点が一致(距離 1e-6 未満)する閉曲線では、最初の線分と最後の線分の対は隣接扱いで除外する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。点数 3 以下の contour は交差なしとして数える。</p>
-<p>判定は真に交差する場合のみで、端点が相手の線分上に乗る接触や同一直線上の重なりは検出しない(不等号が厳密)。計算量は contour ごとに線分数の 2 乗で、点の多い contour では遅い(<code style="color:#22d3bf">hx_split_contours</code> や <code style="color:#22d3bf">smooth_contours_xld</code> で点を減らしてから)。<code style="color:#22d3bf">hx_gen_parallel_contour</code> で内側にずらした輪郭の破綻検出に使える。</p>
+<p>对每个 contour(点数 4 以上),对所有不相邻的线段对 <code style="color:#22d3bf">(i, i+1)</code> 与 <code style="color:#22d3bf">(j, j+1)</code>(<code style="color:#22d3bf">j &gt;= i+2</code>) 用有向面积的符号(ccw 判定)做相交判定,把哪怕有 1 对相交的 contour 条数除以全部 contour 数所得的比例以 <code style="color:#22d3bf">np.float64</code> 返回。对于起点与终点重合(距离小于 1e-6)的闭曲线,第一条线段与最后一条线段这一对按相邻处理而排除。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 没有 contour 时为 0.0。点数在 3 以下的 contour 按无相交计数。</p>
+<p>只判定真正相交的情况,端点落在对方线段上的接触或共线重叠不检测(不等号是严格的)。计算量对每个 contour 为线段数的 2 次方,点多的 contour 会很慢(先用 <code style="color:#22d3bf">hx_split_contours</code> 或 <code style="color:#22d3bf">smooth_contours_xld</code> 减少点)。可用于检测用 <code style="color:#22d3bf">hx_gen_parallel_contour</code> 向内偏移的轮廓是否崩坏。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

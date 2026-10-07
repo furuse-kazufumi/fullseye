@@ -11,8 +11,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Evolutionary search द्वारा खोजी गई fixed pipeline: <code style="color:#22d3bf">gamma(a=0.39,b=0.94)</code> → <code style="color:#22d3bf">bilateral(a=0.22,b=0.08)</code> → <code style="color:#22d3bf">sobel_mag(a=0.81,b=0.80)</code> → <code style="color:#22d3bf">scale_clip(a=1.00,b=0.90)</code> → <code style="color:#22d3bf">otsu(a=0.78,b=0.93)</code> (gamma correction → smoothing → gradient magnitude → scaling → Otsu की discriminant analysis method (Otsu&#x27;s method) से binarisation, ये 5 स्तर)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は凍結済みで未使用。edge 課題（F1）でロック済みホールドアウト0.91、手作りベースライン 0.77 を上回る。出力は image ではなく region（二値マスク）。HALCON に対応する単一オペレータは無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> frozen हैं और उपयोग नहीं होते। edge task (F1) में locked holdout पर 0.91, जो hand-made baseline के 0.77 से बेहतर है। output image नहीं, बल्कि region (binary mask) है। HALCON में इसके बराबर कोई single operator नहीं है।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> को 0 से 1 तक बदलने पर भी <b>output नहीं बदलता</b> (मापा गया; 5 तरह के inputs पर जाँचा गया)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

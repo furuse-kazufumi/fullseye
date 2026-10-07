@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>항등 매핑(identity mapping). HALCON의 <code style="color:#22d3bf">copy_image</code>(Copy an image and allocate new memory for it.)에 대응되지만, 새 메모리를 할당하여 복제하는 <code style="color:#22d3bf">copy_image</code>와 달리 이 구현은 입력 배열을 그대로 반환할 뿐(복제하지 않음)이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。sort が <code style="color:#22d3bf">ANY</code>（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. sort가 <code style="color:#22d3bf">ANY</code>(image/region/feature 어느 입력과도 일치)인 것은 이 op만의 특별 취급으로, 파이프라인의 타입을 바꾸지 않고 &quot;아무것도 하지 않는&quot; 슬롯을 두기 위해 쓴다(진화가 슬롯 수만 채우고 싶을 때 등). 값을 새로 만들지 않고 입력을 그대로 반환하므로, 호출 측에서 반환값을 수정하면 입력 배열도 함께 바뀐다는 점에 주의.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

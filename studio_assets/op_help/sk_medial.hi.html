@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_medial.inputs.jpg">sk_medial: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Medial axis transform। Distance transform की ridge lines निकालकर skeleton प्राप्त करने वाली विधि, जो sk_skeleton से अलग algorithm है। इसका skeleton contour से दूरी की जानकारी को बनाए रखने की प्रवृत्ति रखता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">skeleton</code> に相当(近似)。実装は <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> —— <code style="color:#22d3bf">rng=0</code> はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(<code style="color:#22d3bf">return_distance</code>)は使っておらず、骨格の真偽値マスクのみを返す。</p>
+<p>HALCON के <code style="color:#22d3bf">skeleton</code> के बराबर (approximation)। implementation <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> है — <code style="color:#22d3bf">rng=0</code> बराबरी (tie) तोड़ने का तरीका तय करने वाले random seed को fix करता है, ताकि हर बार वही result आए। a, b उपयोग नहीं होते। distance output (<code style="color:#22d3bf">return_distance</code>) उपयोग नहीं होता; केवल skeleton का boolean mask लौटाया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

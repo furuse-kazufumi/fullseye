@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직사각형도. <b>1차·2차 모멘트가 같은</b> 직사각형을 만들고, 영역과의 차이 면적을 그 직사각형의 면적으로 정규화한다(<code style="color:#22d3bf">1 - |영역 XOR 직사각형| / |직사각형|</code>). 직사각형이면 1이다. HALCON의 <code style="color:#22d3bf">rectangularity</code>(Shape factor for the rectangularity of a region.)와 <b>같은 정의</b>이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(<code style="color:#22d3bf">skimage</code> の <code style="color:#22d3bf">extent</code>)だった。向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b> (HALCON は 0.998 のまま)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大になる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26까지 <b>축에 평행한</b> 외접 사각형과의 비(<code style="color:#22d3bf">skimage</code>의 <code style="color:#22d3bf">extent</code>)였다. 방향을 보지 않으므로 <b>같은 직사각형을 30도 돌리기만 해도 1.000이 0.359로 떨어졌다</b> (HALCON은 0.998 그대로). <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>.</p>
+<p>★정사각형이나 원처럼 2차 모멘트로 방향이 정해지지 않는 형상에서는 「같은 모멘트를가진 사각형」이 방향의 수만큼 존재해 정의가 방향을 정하지 못한다. 여기서는 겹침이 최대가되는 방향을 고른다 —— 그대로 임의의 방향으로 맞추면 정사각형이 0.651이 되어 HALCON의「사각형이면 1」과 어긋난다. HALCON도 이런 형상에서는 최대 10% 과소평가한다고 명기한다.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

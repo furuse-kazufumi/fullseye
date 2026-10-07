@@ -13,9 +13,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>OpenCV का detailEnhance (details को उभारना)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>エッジ保存平滑化をベースに、平坦部は滑らかに保ったまま微細なディテール(テクスチャ)のコントラストを持ち上げる。</p>
-<p><code style="color:#22d3bf">a</code> が空間範囲 <code style="color:#22d3bf">sigma_s</code> を 10〜50 で振る。<code style="color:#22d3bf">b</code> が色差許容 <code style="color:#22d3bf">sigma_r</code> を 0.1〜0.4 で振る。<code style="color:#22d3bf">xcv_edge_preserving</code> と同系の処理だが、こちらは細部を「消す」のではなく「強調する」方向のフィルタ。</p>
+<p>edge-preserving smoothing को आधार बनाकर, समतल हिस्सों को smooth रखते हुए बारीक विवरण (texture) का contrast बढ़ाता है।</p>
+<p><code style="color:#22d3bf">a</code> spatial range <code style="color:#22d3bf">sigma_s</code> को 10-50 में बदलता है। <code style="color:#22d3bf">b</code> रंग-अंतर सहनसीमा <code style="color:#22d3bf">sigma_r</code> को 0.1-0.4 में बदलता है। <code style="color:#22d3bf">xcv_edge_preserving</code> के समान परिवार की processing है, पर यह filter विवरण को &quot;मिटाने&quot; के बजाय &quot;उभारने&quot; की दिशा में काम करता है।</p>
 <p><b>Precision (मापा गया)</b>: अंदर <b>8 bit (256 levels) में quantise</b> किया जाता है (output ठीक k/255 के grid पर आता है)। float64 देने पर भी <b>वह precision नहीं बचती</b> — 16-bit camera का step (लगभग 1.5e-5) 1/255 = लगभग 3.9e-3 तक round हो जाता है, और 1/255 से कम अंतर वाली 2 images एक ही उत्तर देती हैं। बहुत छोटे intensity अंतर मापने में, या output को आगे differentiation या regression में देने पर quantisation के steps दिखते हैं, इसलिए ऐसा op चुनें जो 8 bit से होकर न गुज़रे।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

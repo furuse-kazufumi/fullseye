@@ -13,9 +13,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ordered dither (Bayer matrix) से quantise करता है। <code style="color:#22d3bf">a</code> bit की संख्या 1 से 8 है, <code style="color:#22d3bf">b</code> matrix का आकार है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>量子化の<b>前に</b>、画素位置で決まる決まった量(Bayer 行列、<code style="color:#22d3bf">b</code> が 2x2 / 4x4 / 8x8 を振る)を足してから丸める。平坦部の誤差が画素ごとに散るので、段差が細かい市松に化けて <b>縞が見えなくなる</b>。誤差そのものは減らない —— 見え方を変えているだけで、平均二乗誤差はむしろ <code style="color:#22d3bf">_quantize_uniform</code> よりわずかに大きい。</p>
-<p><b>誤差拡散(<code style="color:#22d3bf">dither_floyd_steinberg</code>)との使い分け</b>: 順序ディザは <b>画素ごとに独立</b>なので、タイル分割しても継ぎ目が出ず、並列化も自由、同じ入力に必ず同じ出力を返す。誤差拡散のほうが見た目は滑らかだが、走査順に依存するので<b>切り出す位置を変えると結果が変わる</b>。</p>
+<p>quantization से <b>पहले</b>, pixel की position से तय एक निश्चित मात्रा (Bayer matrix; <code style="color:#22d3bf">b</code> 2x2 / 4x4 / 8x8 के बीच बदलता है) जोड़कर फिर round किया जाता है। flat हिस्सों का error हर pixel में बिखर जाता है, इसलिए step बारीक checkerboard में बदल जाते हैं और <b>धारियाँ दिखनी बंद हो जाती हैं</b>। error खुद कम नहीं होता — केवल दिखने का तरीका बदलता है, और mean squared error उल्टा <code style="color:#22d3bf">_quantize_uniform</code> से थोड़ा अधिक होता है।</p>
+<p><b>error diffusion (<code style="color:#22d3bf">dither_floyd_steinberg</code>) के साथ चुनाव</b>: ordered dithering <b>हर pixel में स्वतंत्र</b> है, इसलिए tile में बाँटने पर भी जोड़ नहीं दिखते, parallelisation मुक्त है, और समान input पर हमेशा समान output लौटता है। error diffusion दिखने में अधिक smooth है, लेकिन scan order पर निर्भर है, इसलिए <b>crop की position बदलने से result बदल जाता है</b>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

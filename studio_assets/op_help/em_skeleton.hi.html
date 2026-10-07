@@ -12,15 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/em_skeleton.inputs.jpg">em_skeleton: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Eckhardt–Maderlechner प्रकार की invariant thinning (HALCON <code style="color:#22d3bf">skeleton</code> के ही परिवार की)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93 定義に従うクリーンルーム実装。<b>同ノートが公表する EM93 の参照出力と突き合わせ済み</b>: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、形状 2/3 は画素数が公表値と一致(2434 / 3895)。tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
-<p>参照出力と一致している):</p>
-<p>interior = 4 近傍がすべて前景の画素</p>
-<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
-<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
-<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
-<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
-<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の <code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<p>स्रोत: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)। implementation के नियम M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; की EM93 परिभाषा का पालन करने वाला clean-room implementation हैं। <b>उसी note में प्रकाशित EM93 के reference output से मिलान किया गया</b>: shape 1 में skeleton का pixel समूह bit-स्तर पर मेल खाता है (724/724), shapes 2/3 में pixels की संख्या प्रकाशित मानों से मेल खाती है (2434 / 3895)। tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference। (वास्तविक HALCON के साथ सीधा मिलान नहीं किया गया है, पर HALCON जिस प्रकाशित algorithm पर आधारित है उसके reference output से यह मेल खाता है):</p>
+<p>interior = वह pixel जिसके सभी 4-पड़ोसी foreground हैं</p>
+<p>simple   = (8,4) simple point (foreground का 8-connected component 1 ∧ सटा हुआ background का 4-connected component 1)</p>
+<p>perfect  = किसी 4-दिशा का पड़ोसी interior है, और उसकी विपरीत दिशा background है</p>
+<p>&quot;simple और perfect दोनों वाले सभी pixels को एक साथ हटाना&quot; fixed point तक दोहराया जाता है</p>
+<p>टिप्पणी: note के प्रतिलेखन को शब्दशः &quot;simple को केवल strong (4) connected components से गिनना&quot; मानकर implement करने पर parallel deletion विकर्ण पुलों को एक साथ गिरा देता है और topology टूट जाती है (प्रति-उदाहरण पर मापा गया)। simple को मानक (8,4) simple point मानने वाला यह implementation reference output से bit-स्तर पर मेल खाया, इसलिए यह पुष्टि होती है कि यही EM93 की सही व्याख्या है।</p>
+<p>पूर्णतः parallel, सममित (90 डिग्री rotation/mirror के साथ commute करता है), topology-संरक्षी और idempotent। Zhang–Suen परिवार के <code style="color:#22d3bf">sk_skeleton</code> की तुलना में अधिक शाखाएँ रखता है (मापा गया 1.4-1.5 गुना pixels = Couprie की तुलना तालिका में EM के सममित, अधिक शाखाओं वाले स्वभाव से संगत)। spurs को <code style="color:#22d3bf">pruning</code> से post-process करने का तरीका भी HALCON जैसा ही है। knobs a, b उपयोग नहीं होते।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

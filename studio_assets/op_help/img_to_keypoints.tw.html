@@ -13,13 +13,12 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的局部極大值變成像面點 (u, v) = (欄, 列)，形狀 (N,2)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">scipy.ndimage.maximum_filter</code> で窓内最大と一致し、かつ値がしきい値以上の画素を極大とする(同値の平坦部は全画素が極大になる —— 前段に <code style="color:#22d3bf">gaussian</code> を置くと減る)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窓の一辺 <code style="color:#22d3bf">k = 3 + 2 * int(a * 4)</code>(a=0.5 で 7。大きいほど疎)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → しきい値 <code style="color:#22d3bf">thr = b</code>(値 ≥ thr の極大だけ残す。b=0 で全極大)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 2)</code> float64 の <code style="color:#22d3bf">(u, v) = (col, row)</code>。値の降順、同値は行優先で並ぶ(決定的)。<b>極大が 1 つも無ければ (0, 2)</b> —— 空でも形の契約は満たすが、下流の op によっては空を拒否する。</p>
-<p style="margin:2px 0 2px 12px">• 画像の縁は <code style="color:#22d3bf">mode=&quot;nearest&quot;</code> で処理するので縁の画素も極大になりうる。</p>
-<p>使いどころ: <code style="color:#22d3bf">tb_keypoints_to_image2d</code>(点を画像に戻す)、<code style="color:#22d3bf">tb_keypoints_uv_to_points</code>(z=0 の点群にする)への入口。</p>
+<p>以 <code style="color:#22d3bf">scipy.ndimage.maximum_filter</code> 判定與視窗內最大值相等、且值在閾值以上的像素為極大值(值相同的平坦部分每個像素都會成為極大值 —— 在前面放 <code style="color:#22d3bf">gaussian</code> 可以減少)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 視窗邊長 <code style="color:#22d3bf">k = 3 + 2 * int(a * 4)</code>(a=0.5 時為 7。越大越稀疏)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 閾值 <code style="color:#22d3bf">thr = b</code>(只保留值 ≥ thr 的極大值。b=0 時保留全部極大值)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(N, 2)</code> float64 的 <code style="color:#22d3bf">(u, v) = (col, row)</code>。依值降冪，同值依列優先排列(確定性)。<b>連 1 個極大值都沒有時為 (0, 2)</b> —— 即使為空也滿足形狀約定，但有些下游 op 會拒絕空輸入。</p>
+<p style="margin:2px 0 2px 12px">• 影像邊緣以 <code style="color:#22d3bf">mode=&quot;nearest&quot;</code> 處理，所以邊緣像素也可能成為極大值。</p>
+<p>用途: 通往 <code style="color:#22d3bf">tb_keypoints_to_image2d</code>(把點放回影像)、<code style="color:#22d3bf">tb_keypoints_uv_to_points</code>(變成 z=0 的點雲)的入口。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

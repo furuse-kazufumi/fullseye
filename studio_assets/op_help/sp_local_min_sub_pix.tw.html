@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以子像素精度偵測灰階曲面的局部極小值(相當於 HALCON <code style="color:#22d3bf">local_min_sub_pix</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>アルゴリズムは <code style="color:#22d3bf">sp_local_max_sub_pix</code> と対称（3x3 の 2 次曲面フィットで勾配 0 点へサブピクセル補正）。<code style="color:#22d3bf">a</code> は極小の顕著さ（周囲の最大値からの深さ）のしきい値を 0.01〜0.31 に振り（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>）、<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。暗いスポット・くぼみの検出に向く。</p>
+<p>演算法與 <code style="color:#22d3bf">sp_local_max_sub_pix</code> 對稱（以 3x3 的 2 次曲面擬合向梯度為 0 之點做次像素校正）。<code style="color:#22d3bf">a</code> 將極小值顯著度（相對於周圍最大值的深度）的閾值在 0.01~0.31 之間調整（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>），<code style="color:#22d3bf">b</code> 未使用。回傳值為 CONTOUR，座標單位為輸入影像的像素。適合偵測暗斑、凹陷。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

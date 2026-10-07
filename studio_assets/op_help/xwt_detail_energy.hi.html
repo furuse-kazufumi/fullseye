@@ -8,8 +8,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Wavelet detail components का energy अनुपात। <code style="color:#22d3bf">db2</code> से 3 स्तर में decompose करता है, और सभी detail coefficients (हर स्तर के horizontal/vertical/diagonal) के mean square के कुल योग को, उसमें approximation component का mean square जोड़कर बनी कुल energy से भाग देकर लौटाता है —— high frequency (texture/noise/edge) पूरी image में कितना हिस्सा रखती है इसका संकेतक, जिसकी range लगभग [0,1) है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどざらついた/エッジの多い画像、小さいほど滑らかな画像であることを示す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। मान जितना बड़ा, image उतनी खुरदरी/अधिक edges वाली; जितना छोटा, image उतनी smooth होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -16,15 +16,14 @@
 <p><img src="fig/tb_background_subtraction_window.gif" alt="tb_background_subtraction_window: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>인과적 윈도우 중앙값 배경 → 프레임별 0/1 전경 마스크 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>フレーム <code style="color:#22d3bf">t</code> ごとに、直近 <code style="color:#22d3bf">window</code> 枚(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>、<b>そのフレーム自身を含む</b>)の画素ごとの中央値を背景 <code style="color:#22d3bf">bg</code> とし、<code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では枚数が足りないぶん窓が短い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> の配列、または同形・同 dtype の 2-D フレームの list。uint8/uint16 は dtype の最大値で <code style="color:#22d3bf">[0, 1]</code> に、float はそのまま <code style="color:#22d3bf">[0, 1]</code> にクリップ。カラー <code style="color:#22d3bf">(T, H, W, C)</code> は受けない。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。偶数枚のときの中央値は中間 2 値の平均。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> の強度単位(uint8 なら <code style="color:#22d3bf">/255</code> 換算)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64 の 0 / 1。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・範囲・非有限)。</p>
-<p>ゆっくり動く物体は <code style="color:#22d3bf">window</code> 枚以内に背景へ溶けるので、その場合は <code style="color:#22d3bf">running_gaussian_foreground</code>(選択的更新)か <code style="color:#22d3bf">exponential_foreground</code> を。背景そのものが要るなら <code style="color:#22d3bf">temporal_median_window</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした videostream の op <code style="color:#22d3bf">background_subtraction_window</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">window</code>(既定 5)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">threshold</code>(既定 0.1)を振る。</p>
+<p>프레임 <code style="color:#22d3bf">t</code>마다 직전 <code style="color:#22d3bf">window</code>장(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>, <b>그 프레임자신을 포함</b>)의 화소별 중앙값을 배경 <code style="color:#22d3bf">bg</code>로 하고, <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 를 1, 그 밖을 0으로 한다. 미래의 프레임은 보지 않으므로(인과적) 앞부분에서는장수가 모자란 만큼 창이 짧다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 배열, 또는 같은 형상·같은 dtype의 2-D 프레임의 list. uint8/uint16은 dtype의 최댓값으로 <code style="color:#22d3bf">[0, 1]</code>로, float는 그대로 <code style="color:#22d3bf">[0, 1]</code>로클립. 컬러 <code style="color:#22d3bf">(T, H, W, C)</code>는 받지 않는다. NaN/Inf는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1〜4096의 int(bool 불가). 1이면 배경 = 자기 자신이므로 모든 화소 0. 짝수 장일 때의 중앙값은 가운데 2값의 평균.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code>의 강도 단위(uint8이면 <code style="color:#22d3bf">/255</code> 환산).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64의 0 / 1.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형상·dtype·범위·비유한).</p>
+<p>천천히 움직이는 물체는 <code style="color:#22d3bf">window</code>장 이내에 배경으로 녹아들므로, 그 경우에는 <code style="color:#22d3bf">running_gaussian_foreground</code>(선택적 갱신)나 <code style="color:#22d3bf">exponential_foreground</code>를. 배경 그 자체가 필요하면 <code style="color:#22d3bf">temporal_median_window</code>.</p>
+<p>2-D 진화 레지스트리로 연결한 videostream의 op <code style="color:#22d3bf">background_subtraction_window</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">window</code>(기본값 5), <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">threshold</code>(기본값 0.1)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

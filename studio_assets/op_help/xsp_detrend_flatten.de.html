@@ -11,8 +11,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Flattening-Filter, der zunächst den linearen Trend (die Neigung) des gesamten Bildes separat in vertikaler und horizontaler Richtung entfernt und dann normalisiert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">scipy.signal.detrend</code> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので<code style="color:#22d3bf">*0.5+0.5</code> で [0,1] に写像し直している。</p>
+<p>Wendet <code style="color:#22d3bf">scipy.signal.detrend</code> zuerst in Spalten- und dann in Zeilenrichtung an und zieht die lineare Regressionskomponente jeder Zeile/Spalte ab. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Dient dazu, sanfte Neigungen über dem ganzen Bild wie ungleichmäßige Beleuchtung zu entfernen, damit der lokale Kontrast besser sichtbar wird. Da das Ergebnis vorzeichenbehaftet ist, wird es mit <code style="color:#22d3bf">*0.5+0.5</code> wieder auf [0,1] abgebildet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

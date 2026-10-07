@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_polar_trans_region.inputs.jpg">r3_polar_trans_region: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildet die Region in Polarkoordinaten um ihren Schwerpunkt ab (entspricht HALCON <code style="color:#22d3bf">polar_trans_region</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>出力の行が半径軸（0〜<code style="color:#22d3bf">rmax</code>）、列が角度軸（0〜<code style="color:#22d3bf">angle_end</code>）にあたる。<code style="color:#22d3bf">a</code>（0〜1）は半径方向の広がり（<code style="color:#22d3bf">rmax</code> は重心から最遠画素までの距離に <code style="color:#22d3bf">0.25+0.75*a</code> を掛けたもの）、<code style="color:#22d3bf">b</code>（0〜1）は角度方向の掃引幅（<code style="color:#22d3bf">angle_end = 2*pi*(0.25+0.75*b)</code>）を振る。最近傍サンプリング。出力の形状は入力と同じ。</p>
+<p>Die Ausgabezeilen entsprechen der Radiusachse (0 bis <code style="color:#22d3bf">rmax</code>), die Spalten der Winkelachse (0 bis <code style="color:#22d3bf">angle_end</code>). <code style="color:#22d3bf">a</code> (0 bis 1) variiert die radiale Ausdehnung (<code style="color:#22d3bf">rmax</code> ist der Abstand vom Schwerpunkt zum entferntesten Pixel multipliziert mit <code style="color:#22d3bf">0.25+0.75*a</code>), <code style="color:#22d3bf">b</code> (0 bis 1) die Sweep-Breite in Winkelrichtung (<code style="color:#22d3bf">angle_end = 2*pi*(0.25+0.75*b)</code>). Abtastung nach nächstem Nachbarn. Die Ausgabeform ist dieselbe wie die der Eingabe.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

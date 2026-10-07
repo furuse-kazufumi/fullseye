@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_remove_holes.inputs.jpg">sk_remove_holes: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>小孔洞填補。僅將前景區域內部背景孔(洞)中面積小於閾值的部分填滿 —— 較大的孔洞(有意的開口)則予以保留。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)（近似。HALCON 版填補所有孔，而這裡帶有面積過濾）。實作為 <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a 把要填補的孔的面積上限在 8〜68 像素之間調整。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

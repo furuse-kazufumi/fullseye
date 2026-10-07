@@ -13,12 +13,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以影像為振幅、以像素值和傾斜給出相位，產生複數場 (H,W) complex128。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>。振幅 = 画素値(透過率・開口として読む)、位相は <b>値に比例する成分</b>(位相物体としての厚み)と <b>x 方向の線形な傾き</b>(平面波の入射角)の和。角スペクトル法 <code style="color:#22d3bf">tb_angular_spectrum_propagate</code> や <code style="color:#22d3bf">tb_cx_*</code> の族が受ける複素画像の合成器。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位相の深さ <code style="color:#22d3bf">2π * a * img</code>(a=0 で実場、a=0.5 で最大 π)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 傾き。<code style="color:#22d3bf">(b - 0.5) * 8</code> 周期ぶんの線形位相を x 方向に掛ける(b=0.5 で傾き 0。8 は「128 px で 8 縞」の目安)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> complex128。<code style="color:#22d3bf">|field| = img</code>、<code style="color:#22d3bf">arg</code> は上式。</p>
-<p style="margin:2px 0 2px 12px">• 値 0 の画素は位相が定義できない(<code style="color:#22d3bf">0 * exp(iφ) = 0</code>)。</p>
+<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>。振幅 = 像素值(以穿透率、孔徑來讀)，相位是 <b>與值成正比的分量</b>(作為相位物體的厚度)與 <b>x 方向的線性傾斜</b>(平面波的入射角)之和。是角頻譜法 <code style="color:#22d3bf">tb_angular_spectrum_propagate</code> 與 <code style="color:#22d3bf">tb_cx_*</code> 族所接受的複數影像的合成器。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 相位深度 <code style="color:#22d3bf">2π * a * img</code>(a=0 時為實場，a=0.5 時最大為 π)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 傾斜。在 x 方向乘上 <code style="color:#22d3bf">(b - 0.5) * 8</code> 個週期的線性相位(b=0.5 時傾斜為 0。8 是「128 px 內 8 條條紋」的參考值)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(H, W)</code> complex128。<code style="color:#22d3bf">|field| = img</code>，<code style="color:#22d3bf">arg</code> 如上式。</p>
+<p style="margin:2px 0 2px 12px">• 值為 0 的像素無法定義相位(<code style="color:#22d3bf">0 * exp(iφ) = 0</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

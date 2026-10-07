@@ -14,10 +14,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_smallest_circle.inputs.jpg">r2_smallest_circle: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最小包围圆作为掩码(Welzl);a 使半径膨胀(&gt;=0)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>領域の全前景画素(画素中心)を含む最小包含円をマスクとして描く。前景座標を凸包(Andrew の単調鎖、向き判定は <code style="color:#22d3bf">predicates.orient2d</code> の頑健版)に減らしてから Welzl の再帰アルゴリズムで厳密な最小円 <code style="color:#22d3bf">(cy, cx, r)</code> を求める。凸包頂点の順序は <code style="color:#22d3bf">numpy.random.default_rng(0)</code> で固定シャッフルするので結果は決定的。</p>
-<p>描く半径は <code style="color:#22d3bf">r_draw = (r + 0.75) * (1 + 0.4*a)</code>。<code style="color:#22d3bf">a=0</code> でも 0.75 画素余分に膨らませる(画素中心ベースの <code style="color:#22d3bf">r</code> では縁の画素が欠けるため、全前景画素を確実に含める設計)。<code style="color:#22d3bf">a=1</code> で 1.4 倍。<code style="color:#22d3bf">a</code> は [0,1] に clip。<code style="color:#22d3bf">b</code> は未使用。返り値は入力と同形の float64 0/1 マスク、前景が無ければ全零。</p>
-<p>注意: 出力は常に入力領域を含み、<code style="color:#22d3bf">a</code> を上げても縮む方向には動かない。複数の連結成分があれば全体を囲む 1 つの円。前景が 1 画素なら <code style="color:#22d3bf">r=0</code> で半径 0.75 の円板(1 画素)になる。Welzl の再帰は凸包頂点数ぶん深くなる。円の中心や半径の数値は返さない。内接円 <code style="color:#22d3bf">r2_inner_circle</code> との半径比が真円度の粗い指標になり、向きを持つ外接形は <code style="color:#22d3bf">r2_smallest_rectangle2</code>。</p>
+<p>将包含区域全部前景像素(像素中心)的最小包含圆绘制为掩模。先把前景坐标约简为凸包(Andrew 单调链，方向判定使用 <code style="color:#22d3bf">predicates.orient2d</code> 的鲁棒版)，再用 Welzl 递归算法求出精确的最小圆 <code style="color:#22d3bf">(cy, cx, r)</code>。凸包顶点的顺序用 <code style="color:#22d3bf">numpy.random.default_rng(0)</code> 做固定打乱，因此结果是确定性的。</p>
+<p>绘制的半径为 <code style="color:#22d3bf">r_draw = (r + 0.75) * (1 + 0.4*a)</code>。即使 <code style="color:#22d3bf">a=0</code> 也会多膨胀 0.75 像素(基于像素中心的 <code style="color:#22d3bf">r</code> 会缺掉边缘像素，因此这样设计以确保包含全部前景像素)。<code style="color:#22d3bf">a=1</code> 时为 1.4 倍。<code style="color:#22d3bf">a</code> 裁剪(clip)到 [0,1]。<code style="color:#22d3bf">b</code> 未使用。返回值是与输入同形的 float64 0/1 掩模，没有前景时全为零。</p>
+<p>注意：输出始终包含输入区域，增大 <code style="color:#22d3bf">a</code> 也不会朝收缩方向变化。若有多个连通分量，则是包围全体的 1 个圆。前景只有 1 个像素时，<code style="color:#22d3bf">r=0</code>，成为半径 0.75 的圆盘(1 个像素)。Welzl 递归的深度等于凸包顶点数。不返回圆心或半径的数值。与内切圆 <code style="color:#22d3bf">r2_inner_circle</code> 的半径比可作为圆度的粗略指标，带方向的外接形状是 <code style="color:#22d3bf">r2_smallest_rectangle2</code>。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

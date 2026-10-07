@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_region_polygon_xld.inputs.jpg">gen_region_polygon_xld: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt eine XLD-Kontur (Eckpunktfolge eines Polygons) in eine Region (Pixelmaske) um. Setzt die Konturpunkte auf die nächstgelegenen Pixel und verdickt und verbindet die Linien anschließend mit <code style="color:#22d3bf">1+2a</code> Durchgängen binärer Dilatation. b wird nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">gen_region_polygon_xld</code>（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
+<p>Anders als HALCONs <code style="color:#22d3bf">gen_region_polygon_xld</code> (Operation, die eine region erzeugt, indem das Innere eines XLD-Polygons gefüllt wird) füllt diese Implementierung nicht das Innere des Polygons, sondern ist eine Näherung, die lediglich die Konturlinie selbst durch Dilatation verdickt — bei nicht geschlossenen oder sich selbst schneidenden Konturen weicht das Ergebnis von der eigentlichen Innenfüllung ab.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

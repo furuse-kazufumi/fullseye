@@ -14,10 +14,9 @@
 <p><img src="fig/tb_occupancy_grid.gif" alt="tb_occupancy_grid: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>point cloud (N,3) → 3-D occupancy voxel grid bool (जिस voxel में point गिरता है वह occupied)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> が格子の張る体積、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float) を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>
-<p>Raises ValueError for res&lt;=0, non-(N,3) points, or degenerate bounds.</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">occupancy_grid</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> grid द्वारा घेरा गया volume है, और <code style="color:#22d3bf">res</code> हर axis की voxel संख्या है (scalar = cubic res³, या हर axis के लिए लंबाई 3)। voxel half-open interval [lo+i/res*span, lo+(i+1)/res*span) है, और ऊपरी सिरे (frac==1) का point अंतिम voxel में शामिल किया जाता है। <b>bounds से बाहर के point हटा दिए जाते हैं</b> (उन्हें किनारे की cell में clamp करने से सीमा पर नकली obstacle जमा हो जाते हैं)। match3d.points_to_voxel density (float) बनाता है, जबकि यह planning के लिए occupancy (bool) बनाता है; यही इसकी विशेषता है।</p>
+<p>res&lt;=0, (N,3) न होने वाले points, या degenerate bounds पर ValueError raise होता है।</p>
+<p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">occupancy_grid</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

@@ -12,16 +12,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_points_zyx_to_keypoints_uv.inputs.jpg">tb_points_zyx_to_keypoints_uv: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke <code style="color:#22d3bf">(N,3) = (z, y, x)</code> → Bildkoordinaten <code style="color:#22d3bf">(N,2) = (u, v)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">keypoints_uv_to_points</code> の逆向き。<b>不可逆</b> —— z が落ちる。</p>
-<p>落ちる量は測れる: 往復して戻ってこない値は z 列そのもので、<code style="color:#22d3bf">selftest</code> は「z の RMS = 落とした情報量」として数字で出す。</p>
+<p>Die Umkehrung von <code style="color:#22d3bf">keypoints_uv_to_points</code>. <b>Irreversibel</b> —— z fällt weg. Das Weggefallene ist messbar: Die Werte, die nach Hin- und Rückweg nicht zurückkommen, sind die z-Spalte selbst, und <code style="color:#22d3bf">selftest</code> gibt es als Zahl aus: &quot;RMS von z = weggefallene Informationsmenge&quot;.</p>
 <p>Args:</p>
-<p>points: (N, 3) の (z, y, x)。</p>
+<p>points: (N, 3) aus (z, y, x).</p>
 <p>Returns:</p>
-<p>(N, 2) float64 の (u, v) = (x, y)。</p>
+<p>(N, 2) float64 aus (u, v) = (x, y).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">points_zyx_to_keypoints_uv</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>ValueError: ungültige Form / nicht endlich.</p>
+<p>Die reprconv-Op <code style="color:#22d3bf">points_zyx_to_keypoints_uv</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

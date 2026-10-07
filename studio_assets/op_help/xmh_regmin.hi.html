@@ -12,8 +12,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Regional minima निकालना (<code style="color:#22d3bf">mahotas.regmin</code>)। Gaussian smoothing की गई image में स्थानीय रूप से सबसे अँधेरी घाटियों को region के रूप में चिह्नित करता है। Watershed segmentation के लिए marker बनाने की आम पूर्व-प्रक्रिया।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は平滑化の強さ(σ、0.15〜3.15)を振る —— 大きくするほど微小なノイズ谷が消え、大きな谷だけが残る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> smoothing की तीव्रता (σ, 0.15-3.15) को बदलता है — जितना बड़ा, उतनी ही सूक्ष्म noise घाटियाँ मिटती हैं और केवल बड़ी घाटियाँ बचती हैं। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

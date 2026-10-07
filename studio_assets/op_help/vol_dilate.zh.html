@@ -14,8 +14,7 @@
 <p><img src="fig/vol_dilate.gif" alt="vol_dilate: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 体数据的灰度膨胀。未指定对应的 HALCON op。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">_vol_erode</code> と同じ式 <code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code> を使うため、<code style="color:#22d3bf">a</code> はほぼ効かない（<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">[0,1)</code> の間は <code style="color:#22d3bf">int(a)</code> が常に 0 で実質サイズ <code style="color:#22d3bf">3</code> 固定、<code style="color:#22d3bf">a=1.0</code> のときだけ <code style="color:#22d3bf">5</code>）。<code style="color:#22d3bf">b</code> も未使用。半径を連続的に振りたい場合は球形構造要素版（<code style="color:#22d3bf">_vol_dilation_ball</code> 等、<code style="color:#22d3bf">int(a*3)</code> を使い <code style="color:#22d3bf">a</code> が実際に効く）を使うこと。</p>
+<p>使用与 <code style="color:#22d3bf">_vol_erode</code> 相同的公式 <code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code>，因此 <code style="color:#22d3bf">a</code> 几乎不起作用（<code style="color:#22d3bf">a</code> 在 <code style="color:#22d3bf">[0,1)</code> 之间时 <code style="color:#22d3bf">int(a)</code> 总是 0，实际尺寸固定为 <code style="color:#22d3bf">3</code>，只有 <code style="color:#22d3bf">a=1.0</code> 时为 <code style="color:#22d3bf">5</code>）。<code style="color:#22d3bf">b</code> 也未使用。若想连续地调节半径，请使用球形结构元素版（<code style="color:#22d3bf">_vol_dilation_ball</code> 等，使用 <code style="color:#22d3bf">int(a*3)</code>，<code style="color:#22d3bf">a</code> 真正起作用）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

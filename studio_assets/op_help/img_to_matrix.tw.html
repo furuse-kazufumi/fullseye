@@ -11,9 +11,8 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 (H,W) 影像直接當作 H×W 數值矩陣(sort <code style="color:#22d3bf">matrix</code>)—— 純粹的型別轉換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>値も形も変えない(<code style="color:#22d3bf">float64</code> へのコピーのみ)。線形代数の族(<code style="color:#22d3bf">tb_mat_cond</code> / <code style="color:#22d3bf">tb_mat_pinv</code> / <code style="color:#22d3bf">tb_stat_covariance</code> …)に画像を渡すための型の読み替えで、<b>a, b は未使用</b>。</p>
-<p>注意: 画像は一般に正則でも対称でもない。条件数は大きく(<code style="color:#22d3bf">tb_mat_cond</code>)、共分散(<code style="color:#22d3bf">tb_stat_covariance</code>)は「行 = 標本、列 = 変数」として読まれる —— つまり <b>各列(x 位置)を変数、各行を観測</b> とみなした統計になる。転置して渡したいなら前段に <code style="color:#22d3bf">transpose</code>(台帳)を置く。</p>
+<p>值和形狀都不改變(只是複製為 <code style="color:#22d3bf">float64</code>)。是把影像交給線性代數族(<code style="color:#22d3bf">tb_mat_cond</code> / <code style="color:#22d3bf">tb_mat_pinv</code> / <code style="color:#22d3bf">tb_stat_covariance</code> …) 所做的型別轉讀，<b>a, b 未使用</b>。</p>
+<p>注意: 影像一般既非正則也非對稱。條件數很大(<code style="color:#22d3bf">tb_mat_cond</code>)，共變異數(<code style="color:#22d3bf">tb_stat_covariance</code>)依「列 = 樣本、行 = 變數」來讀取 —— 也就是說，得到的是把 <b>各行(x 位置)視為變數、各列視為觀測</b> 的統計。若想轉置後傳入，在前級放置 <code style="color:#22d3bf">transpose</code>(台帳)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

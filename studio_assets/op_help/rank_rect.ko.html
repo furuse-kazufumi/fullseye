@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구현은 <code style="color:#22d3bf">rank_image</code>와 동일하다(<code style="color:#22d3bf">kind: &quot;rank&quot;</code>, 정사각형 창의 백분위수 필터). HALCON에서는 <code style="color:#22d3bf">rank_image</code>(임의 마스크)와 <code style="color:#22d3bf">rank_rect</code>(사각형 마스크 한정)가 별개의 연산자이지만, 이 대역에서는 둘 다 동일한 정사각형 창 구현을 가리킨다. HALCON의 <code style="color:#22d3bf">rank_rect</code>(Compute a rank filter with rectangular masks.)의 대역이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺、<code style="color:#22d3bf">b</code> がパーセンタイル(5〜95%)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code>가 창의 한 변의 길이, <code style="color:#22d3bf">b</code>가 퍼센타일(5~95%)을 바꾼다. 둘 다 사용된다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在高度方向與寬度方向擁有獨立倍率(<code style="color:#22d3bf">0.7+0.6*a</code>、<code style="color:#22d3bf">0.7+0.6*b</code>)的非等向縮放。以中心為基準透過仿射變換進行縮放,畫布尺寸保持不變(超出/剩餘部分以反射填補)。相當於HALCON的<code style="color:#22d3bf">zoom_image_factor</code>(Zoom an image by a given factor.),並與HALCON相同,採用<b>兩個倍率</b>(ScaleHeight/ScaleWidth)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が縦方向の倍率、<code style="color:#22d3bf">b</code> が横方向の倍率を振る。両方が使われる(2026-09-02 以前は <code style="color:#22d3bf">zoom_image_size</code> と実装が重複していたが、現在は別の <code style="color:#22d3bf">kind</code> に分離済み)。</p>
+<p><code style="color:#22d3bf">a</code> 調整縱向倍率,<code style="color:#22d3bf">b</code> 調整橫向倍率。兩者都會使用(2026-09-02 之前與 <code style="color:#22d3bf">zoom_image_size</code> 的實作重複,現在已拆分為不同的 <code style="color:#22d3bf">kind</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

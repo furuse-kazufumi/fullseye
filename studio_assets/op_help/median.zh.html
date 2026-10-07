@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中值滤波器。相当于 HALCON 的 <code style="color:#22d3bf">median_image</code>（Compute a median filter with various masks.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓サイズを <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に振る。<code style="color:#22d3bf">b</code> が<b>端の扱い</b>を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> で <code style="color:#22d3bf">reflect</code>(端画素を複製して折り返す。scipy の既定で、2026-09-17 までの挙動)、以降 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>(0 で埋める)/ <code style="color:#22d3bf">wrap</code>(反対側から巻き取る)。★<b>窓が 3 のときは <code style="color:#22d3bf">reflect</code> と <code style="color:#22d3bf">nearest</code> が原理的に一致する</b>(はみ出しが 1 画素なので複製先が同じ)—— 端の扱いを変えたのに結果が動かないときは、まず窓の大きさを疑うこと(窓 9 では 3 通りとも変わる)。塩胡椒ノイズなど外れ値に強く、ガウシアン平滑よりエッジを保ちやすい。</p>
+<p><code style="color:#22d3bf">a</code> 将窗口大小在 <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）之间调节。<code style="color:#22d3bf">b</code> 选择<b>边界处理</b>：<code style="color:#22d3bf">b &lt;= 0.5</code> 时为 <code style="color:#22d3bf">reflect</code>（复制边界像素并折返。scipy 的默认值，也是 2026-09-17 之前的行为），之后依次为 <code style="color:#22d3bf">nearest</code> / <code style="color:#22d3bf">constant</code>（用 0 填充）/ <code style="color:#22d3bf">wrap</code>（从另一侧卷绕过来）。★<b>窗口为 3 时 <code style="color:#22d3bf">reflect</code> 与 <code style="color:#22d3bf">nearest</code> 在原理上一致</b>（越界只有 1 个像素，复制来源相同）—— 改变了边界处理而结果却不变时，应先怀疑窗口大小（窗口为 9 时 3 种方式结果都不同）。对椒盐噪声等离群值鲁棒，比高斯平滑更容易保留边缘。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

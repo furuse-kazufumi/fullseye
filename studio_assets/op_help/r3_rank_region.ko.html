@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_rank_region.inputs.jpg">r3_rank_region: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역에 대한 형태학적 순위(rank) 연산자(HALCON의 진짜 <code style="color:#22d3bf">rank_region</code>: 순수한 침식도 팽창도 아닌 일반화 형태).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sz x sz</code>（<code style="color:#22d3bf">sz</code> は 3, 5, 7 のいずれかを <code style="color:#22d3bf">a</code> で選ぶ）の窓の中で、領域に属する画素が <code style="color:#22d3bf">number</code> 個以上あれば出力を立てる。<code style="color:#22d3bf">number</code> は<code style="color:#22d3bf">b</code>（0〜1）を窓面積に対する割合として決める（<code style="color:#22d3bf">number = sz*sz</code> で収縮相当、<code style="color:#22d3bf">number = 1</code> で膨張相当、中間ではランク/メディアンフィルタ相当の挙動になる）。</p>
+<p><code style="color:#22d3bf">sz x sz</code>(<code style="color:#22d3bf">sz</code>는 3, 5, 7 중 하나를 <code style="color:#22d3bf">a</code>로 선택) 창 안에서 영역에 속하는 화소가 <code style="color:#22d3bf">number</code>개 이상이면 출력을 세운다. <code style="color:#22d3bf">number</code>는 <code style="color:#22d3bf">b</code>(0~1)를 창 면적에 대한 비율로 하여 정한다(<code style="color:#22d3bf">number = sz*sz</code>이면 침식에 해당, <code style="color:#22d3bf">number = 1</code>이면 팽창에 해당, 중간에서는 랭크/메디안 필터에 해당하는 동작이 된다).</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

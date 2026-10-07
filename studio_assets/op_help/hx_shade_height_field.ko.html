@@ -15,11 +15,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이장 v 를 Lambert 음영으로 그립니다(법선×광원). 광원은 방위 a·앙각 b.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v</code> を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、<code style="color:#22d3bf">np.gradient</code> の <code style="color:#22d3bf">(gy, gx)</code> から法線 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code> を作り、方向 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code> の平行光との内積 <code style="color:#22d3bf">n·l</code> を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 光源の方位角 <code style="color:#22d3bf">az = a*2*pi</code>(<code style="color:#22d3bf">lx = cos(az)</code> が列方向、<code style="color:#22d3bf">ly = sin(az)</code> が行方向の成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 光源の仰角 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>(約 18°〜81°。1 で真上に近い)。</p>
-<p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は無く、入力が平坦だと全画素 0 になる。深度画像や <code style="color:#22d3bf">hx_fit_surface2</code> で推定した背景面の凹凸を目で確かめる用途向け。</p>
+<p><code style="color:#22d3bf">v</code>를 높이장(gray 값 = 높이, 화소 간격 1)으로 간주하고, <code style="color:#22d3bf">np.gradient</code>의 <code style="color:#22d3bf">(gy, gx)</code>로부터 법선 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code>을 만들어, 방향 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code>의평행광과의 내적 <code style="color:#22d3bf">n·l</code>을 0에서 아래로부터 clip하고, min-max로 [0,1]로 정규화하여 반환한다(Lambertian 음영).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 광원의 방위각 <code style="color:#22d3bf">az = a*2*pi</code>(<code style="color:#22d3bf">lx = cos(az)</code>가 열 방향, <code style="color:#22d3bf">ly = sin(az)</code>가 행 방향의 성분).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 광원의 앙각 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>(약 18°~81°. 1이면 바로 위에 가깝다).</p>
+<p>주의: 높이의 스케일 계수가 없고, [0,1]의 값을 수백 화소에 걸쳐 미분하므로 기울기는 아주 작다. 그대로는음영의 차가 거의 없지만, 마지막의 min-max 정규화로 보이게 하고 있다. 따라서 출력의 절대적인 밝기에는 의미가없으며, 입력이 평탄하면 모든 화소가 0이 된다. 깊이 영상이나 <code style="color:#22d3bf">hx_fit_surface2</code>로 추정한 배경면의 요철을 눈으로 확인하는 용도용.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把按阈值 a 二值化后区域的连通成分转成标签图(归一化)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景として <code style="color:#22d3bf">ndimage.label</code>(8 近傍)で連結成分にラベル付けし、ラベル番号 <code style="color:#22d3bf">1..n</code> を <code style="color:#22d3bf">n</code> で割った float 画像を返す。背景は 0、成分は <code style="color:#22d3bf">1/n, 2/n, ..., 1</code> の等間隔の値になる。成分が無ければ全 0。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(region を渡すときは 0.5 にする)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>ラベル番号は走査順(左上から)で振られるため、同じ成分でも画像内の他の成分数 <code style="color:#22d3bf">n</code> が変わると値が変わる。値で成分を識別する用途にのみ向き、値の大小に意味は無い。成分ごとの統計が欲しければ <code style="color:#22d3bf">hx_region_to_mean</code> (平均 gray 値で塗る)を使う。ラベル画像から 1 成分だけを取り出すには <code style="color:#22d3bf">threshold</code> 系で値域を切る。</p>
+<p>以 <code style="color:#22d3bf">v &gt; a</code> 为前景，用 <code style="color:#22d3bf">ndimage.label</code>（8 邻域）给连通分量加标签，返回把标签号 <code style="color:#22d3bf">1..n</code> 除以 <code style="color:#22d3bf">n</code> 的 float 图像。背景为 0，分量为 <code style="color:#22d3bf">1/n, 2/n, ..., 1</code> 的等间隔值。没有分量时全为 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化阈值（传入 region 时设为 0.5）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>标签号按扫描顺序（从左上起）分配，因此即使是同一分量，图像内其他分量数 <code style="color:#22d3bf">n</code> 一变，值也会变。只适用于按值识别分量的用途，值的大小没有意义。想要各分量的统计时用 <code style="color:#22d3bf">hx_region_to_mean</code> （以平均 gray 值填充）。要从标签图像中只取出 1 个分量，用 <code style="color:#22d3bf">threshold</code> 类截取值域。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

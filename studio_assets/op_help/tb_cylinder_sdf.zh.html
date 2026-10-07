@@ -14,17 +14,16 @@
 <p><img src="fig/tb_cylinder_sdf.gif" alt="tb_cylinder_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>有限长圆柱(两端为平盖)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: 円柱の<b>中心</b>(端面ではなく重心。要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>: 軸の向き(要素数 3、零ベクトル・NaN は拒否。長さは自動正規化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 半径 &gt; 0 相当のスカラ(<code style="color:#22d3bf">0</code> は軸線そのもの、負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>: 全長のスカラ(<code style="color:#22d3bf">center</code> から ±height/2。負は拒否)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <b>貫通穴は <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(<code style="color:#22d3bf">height</code> を部品より長くして端面の縁を残さない)。ボス・ピン・シャフトは <code style="color:#22d3bf">sdf_union</code>。無限長の円柱が要るなら <code style="color:#22d3bf">height</code> を十分大きく取る(端面が評価域の外に出れば側面だけが効く)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">cylinder_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>分解为轴向距离 <code style="color:#22d3bf">t</code> 和到轴的半径 <code style="color:#22d3bf">r</code>，令 <code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code>，则 <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。这是把与 <code style="color:#22d3bf">box_sdf</code> 相同的 Quilez 式构造应用于&quot;(半径，轴)的 2-D 截面&quot;，对侧面、端盖、角(边缘)都给出真正的欧氏距离。</p>
+<p>参数与校验(<code style="color:#22d3bf">ValueError</code>)：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>：最后一轴为 3 的 float 数组 <code style="color:#22d3bf">(..., 3)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>：圆柱的<b>中心</b>(不是端面而是质心。元素数 3)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">axis</code>：轴的方向(元素数 3，拒绝零向量和 NaN。长度自动归一化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>：相当于半径 &gt; 0 的标量(<code style="color:#22d3bf">0</code> 即轴线本身，负值拒绝)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">height</code>：全长的标量(从 <code style="color:#22d3bf">center</code> 起 ±height/2。负值拒绝)。</p>
+<p>返回值：<code style="color:#22d3bf">grid.shape[:-1]</code> 的 float64。</p>
+<p>用法：<b>通孔为 <code style="color:#22d3bf">sdf_subtract(part, cylinder_sdf(...))</code></b>(使 <code style="color:#22d3bf">height</code> 比零件更长，以免留下端面的边缘)。凸台、销、轴用 <code style="color:#22d3bf">sdf_union</code>。需要无限长圆柱时把 <code style="color:#22d3bf">height</code> 取得足够大(端面移出评估区域后只有侧面起作用)。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">cylinder_sdf</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

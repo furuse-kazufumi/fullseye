@@ -15,8 +15,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지에 가산성 잡음을 더한다. 구현은 가우스(정규분포) 잡음만 지원하며, <code style="color:#22d3bf">add_noise_white</code>와 동일한 <code style="color:#22d3bf">_sh_noise</code>의 <code style="color:#22d3bf">gaussian</code> 분기를 공유한다. 난수는 a로 정해지는 고정 시드(<code style="color:#22d3bf">int(a*997)+7</code>)로 생성되므로, 같은 a라면 매번 같은 잡음이 된다(결정적). b가 잡음의 표준편차를 0.02~0.22로 조정한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">add_noise_distribution</code>（任意の確率分布（ヒストグラム指定）に従うノイズを加える演算）とは異なり、この実装は常にガウス分布のノイズしか生成できない近似 —— 分布形状の指定は反映されない。</p>
+<p>HALCON의 <code style="color:#22d3bf">add_noise_distribution</code>(임의의 확률 분포(히스토그램 지정)를 따르는 잡음을 더하는 연산)와 달리, 이 구현은 항상 가우스 분포의 잡음만 생성할 수 있는 근사 — 분포 형상의 지정은 반영되지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回矩形窗口内最大值的灰度膨胀(<code style="color:#22d3bf">ndimage.maximum_filter</code>)。从明部一侧填补暗色细线、小孔并消除之,是与 <code style="color:#22d3bf">gray_erosion_rect</code> 成对的运算。相当于 HALCON 的 <code style="color:#22d3bf">gray_dilation_rect</code>(Determine the maximum gray value within a rectangle.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 在 <code style="color:#22d3bf">{3,5,7,9}</code> 中调节窗口边长。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

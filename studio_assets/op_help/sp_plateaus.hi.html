@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>एक ही (quantised) gray value से जुड़े समतल regions (plateaus) के centroids को sub-pixel positions के रूप में लौटाता है (HALCON <code style="color:#22d3bf">plateaus</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>隣接画素同士がしきい値 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 以内で等しければ同じ平坦領域とみなす（Union-Find で連結成分化）。<code style="color:#22d3bf">a</code> はこの許容量子化幅と最小面積（<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>、これ未満の領域は無視）の両方を振る。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR で、各プラトーにつき 1 点（その領域の画素座標の平均、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す（計算量ガード）。</p>
+<p>यदि पड़ोसी pixels threshold <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> के भीतर बराबर हों, तो उन्हें एक ही flat region माना जाता है (Union-Find से connected component बनाए जाते हैं)। <code style="color:#22d3bf">a</code> इस अनुमत quantization चौड़ाई और न्यूनतम क्षेत्रफल (<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>, इससे छोटे regions अनदेखे किए जाते हैं) दोनों को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value CONTOUR है, हर plateau के लिए 1 point (उस region के pixel coordinates का औसत, इकाई pixel)। input 200,000 pixels से अधिक हो तो सुरक्षा के लिए खाली set लौटाता है (computation guard)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

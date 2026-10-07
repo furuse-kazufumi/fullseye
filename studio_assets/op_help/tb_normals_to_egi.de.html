@@ -14,26 +14,24 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Normalen <code style="color:#22d3bf">(N,3)</code> → <code style="color:#22d3bf">image2d</code> des Extended Gaussian Image <code style="color:#22d3bf">(n_el, n_az)</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
-<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>Ein 2-D-Histogramm der Richtungen (Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984). Eine Karte, &quot;wie viel Fläche in welche Richtung zeigt&quot;; bei Objekten, in denen Ebenen dominieren, entsteht in 1 bin ein Gipfel. <b>Irreversibel</b> —— die Richtungsauflösung einer bin-Breite wird verworfen. Das Verworfene ist messbar: Der Winkel zwischen der Mittelrichtung der häufigsten bin und der mittleren Eingangsrichtung ist der Quantisierungsfehler; beim Standard (36, 18) gemessen 3.7 Grad bei einer bin-Breite von 10 Grad (gibt <code style="color:#22d3bf">selftest</code> aus).</p>
+<p>Die Elevations-bins teilen <code style="color:#22d3bf">sin(el)</code> gleichmäßig (gleicher Raumwinkel). Bei gleichmäßiger Teilung in Grad werden die Pole übermäßig fein, und es entsteht ein falscher Gipfel &quot;die Flächen konzentrieren sich am Nordpol&quot;.</p>
 <p>Args:</p>
-<p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>normals: (N, 3).</p>
+<p>n_az: Zahl der Azimut-bins (Standard 36 = 10-Grad-Schritte).</p>
+<p>n_el: Zahl der Elevations-bins (Standard 18).</p>
+<p>★<b>Auch eine Punktwolke von Positionen löst keine Ausnahme aus</b>. <code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> faltet <code style="color:#22d3bf">normals</code> in <code style="color:#22d3bf">points</code>, daher unterscheiden weder der Evolver noch das Register (Ledger) die beiden. Diese Op betrachtet nur Richtungen (die Länge wird verworfen); übergibt man <code style="color:#22d3bf">(N,3)</code>-Koordinaten, kommt <b>plausibel</b> ein Histogramm &quot;der Richtung vom Ursprung zu jedem Punkt&quot; zurück. Gemessen (2026-09-08, eine Kurve aus 200 Punkten vs. lauter senkrecht nach oben zeigende Normalen): Die von null verschiedenen bins ändern sich nur 1 → 12, die größte bin 200 → 44, <b>die Summe ist in beiden Fällen 200</b>. Mit &quot;die Summe stimmt mit der Punktzahl überein, also ist es richtig&quot; lässt sich das nicht unterscheiden. Mit <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> werden Vektoren, die von der Einheitslänge abweichen, <b>abgewiesen</b> (siehe Raises unten).</p>
 <p>Args:</p>
-<p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>normals: (N, 3).</p>
+<p>n_az: Zahl der Azimut-bins (Standard 36 = 10-Grad-Schritte).</p>
+<p>n_el: Zahl der Elevations-bins (Standard 18).</p>
 <p>Returns:</p>
-<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>(n_el, n_az) float64-Zählkarte (Zeile = Elevation, Spalte = Azimut).</p>
 <p>Raises:</p>
-<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
-<p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。★橋の op は計数を総数で割った<b>割合</b>(各 bin に入った法線の比率、和 1、値域 [0,1])を返す —— 宣言 sort <code style="color:#22d3bf">image</code> の [0,1] 契約に合わせるため(計数のままだと最大 48 などが出ていた、2026-10-07)。生の計数は <code style="color:#22d3bf">reprconv.normals_to_egi</code> / <code style="color:#22d3bf">fullseye.ledger.normals_to_egi</code> が返す。</p>
+<p>ValueError: bin-Zahl unter 1 / über der Obergrenze / ungültige Eingabe.</p>
+<p>ValueError: bei <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code>, wenn Vektoren enthalten sind, deren Länge um mehr als 1e-6 von 1</p>
+<p>abweicht (fängt den Unfall ab, eine Punktwolke von Positionen als Normalen zu übergeben).</p>
+<p>Die reprconv-Op <code style="color:#22d3bf">normals_to_egi</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">n_az</code> (Standard 36), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">n_el</code> (Standard 18). ★Die überbrückte Op gibt den <b>Anteil</b> zurück (den Anteil der Normalen je bin, Summe 1, Wertebereich [0,1]), also die Zählungen geteilt durch die Gesamtzahl —— um dem [0,1]-Vertrag der deklarierten sort <code style="color:#22d3bf">image</code> zu genügen (mit rohen Zählungen kamen Werte wie ein Maximum von 48 heraus, 2026-10-07). Die rohen Zählungen liefern <code style="color:#22d3bf">reprconv.normals_to_egi</code> / <code style="color:#22d3bf">fullseye.ledger.normals_to_egi</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

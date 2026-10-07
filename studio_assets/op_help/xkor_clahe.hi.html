@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>CLAHE (contrast-सीमित adaptive histogram equalisation)। <code style="color:#22d3bf">kornia.enhance.equalize_clahe</code> को call करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a がクリップ制限（<code style="color:#22d3bf">1.0 + 4.0 * a</code>、範囲 1.0〜5.0）を振る。値が大きいほどコントラストが強く持ち上がる代わりにノイズも強調されやすい。b は未使用。</p>
+<p>a clip limit (<code style="color:#22d3bf">1.0 + 4.0 * a</code>, range 1.0-5.0) को बदलता है। मान जितना बड़ा, contrast उतना तेज़ी से उठता है, पर noise भी उतनी आसानी से उभर जाता है। b उपयोग नहीं होता।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> को 0 से 1 तक बदलने पर भी <b>output नहीं बदलता</b> (मापा गया; 5 तरह के inputs पर जाँचा गया)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

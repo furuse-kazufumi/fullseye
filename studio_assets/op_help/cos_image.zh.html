@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于 <code style="color:#22d3bf">(cos(2πx) + 1) / 2</code> 的周期性 LUT。相对 <code style="color:#22d3bf">sin_image</code> 相位偏移了 π/2 的版本：在 x=0 处达到最大值（1），在 x=0.5 处达到最小值（0），之后再次上升。用作 HALCON <code style="color:#22d3bf">cos_image</code>（Calculate the cosine of an image.）的替代。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">sin_image</code> と同じく非単調・非可逆な周期写像なので、一般のコントラスト補正ではなく擬似的な等高線表現などに使う。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。与 <code style="color:#22d3bf">sin_image</code> 一样是非单调、不可逆的周期映射, 因此不用于一般的对比度校正,而用于伪等高线表现等。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

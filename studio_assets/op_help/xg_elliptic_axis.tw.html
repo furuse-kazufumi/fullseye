@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_elliptic_axis.chain.jpg">xg_elliptic_axis: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>點集的長軸/短軸比 sqrt(λ_max/λ_min)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全輪郭の点(閉輪郭の重複終点は除く)の (row, col) 共分散行列の固有値から、等価楕円の長軸/短軸比 <code style="color:#22d3bf">sqrt(λ_max/λ_min)</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code> で 1 以上。等方な点配置で 1、細長いほど大きい。<code style="color:#22d3bf">λ_min &lt;= 1e-12</code>(全点が一直線)では <code style="color:#22d3bf">λ_max &gt; 1e-12</code> なら 1e6、そうでなければ 1.0。それ以外でも上限 1e6 で打ち切る。点が 2 個未満なら 1.0。非有限になった場合も 1.0 に落とす。[0,1] に正規化されていない量なので、他の特徴量と並べる際はスケールに注意(1e6 の外れ値が出うる)。<code style="color:#22d3bf">xg_eccentricity</code> は同じ固有値を [0,1] に写した版で、こちらは比を直接見たいときに使う。軸ではなく外接矩形の縦横比なら <code style="color:#22d3bf">xg_height_width_ratio</code> (こちらは向きに依存する)。</p>
+<p>由全部輪廓點（不含閉合輪廓重複的終點）的 (row, col) 共變異數矩陣的特徵值，回傳等效橢圓的長軸/短軸比 <code style="color:#22d3bf">sqrt(λ_max/λ_min)</code>。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>回傳值為 <code style="color:#22d3bf">numpy.float64</code>，不小於 1。等向性的點分布為 1，越細長越大。<code style="color:#22d3bf">λ_min &lt;= 1e-12</code>（所有點在一直線上）時，若 <code style="color:#22d3bf">λ_max &gt; 1e-12</code> 則為 1e6，否則為 1.0。其他情況也以上限 1e6 截斷。點數少於 2 個時為 1.0。變成非有限值時也退回 1.0。由於這是未正規化到 [0,1] 的量，與其他特徵量並列時要注意尺度（可能出現 1e6 的離群值）。<code style="color:#22d3bf">xg_eccentricity</code> 是把相同特徵值映射到 [0,1] 的版本，本運算子用於想直接看比值的情況。若要的不是軸而是外接矩形的長寬比，用 <code style="color:#22d3bf">xg_height_width_ratio</code> （它依賴方向）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

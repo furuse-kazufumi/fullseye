@@ -9,9 +9,8 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>텍스처의 복잡도를 측정하는 Minkowski-Bouligand(박스 카운팅) 프랙탈 차원.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>閾値 <code style="color:#22d3bf">a</code>(既定 0.5)で二値化し、箱サイズ <code style="color:#22d3bf">s = 1, 2, 4, …</code> について「構造を含む s×s 箱」の数 <code style="color:#22d3bf">N(s)</code> を数え、<code style="color:#22d3bf">log N(s)</code> を <code style="color:#22d3bf">log(1/s)</code> に最小二乗回帰した傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己相似な縁は中間の非整数(Sierpinski 三角形なら <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)。表面粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
-<p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の過小評価)。<code style="color:#22d3bf">a</code> が二値化の閾値、<code style="color:#22d3bf">b</code> は未使用。構造が無い/1 スケールしか取れないときは 0 を返す。</p>
+<p>임계값 <code style="color:#22d3bf">a</code>(기본값 0.5)로 이진화하고, 상자 크기 <code style="color:#22d3bf">s = 1, 2, 4, …</code>에 대해 &quot;구조를포함하는 s×s 상자&quot;의 수 <code style="color:#22d3bf">N(s)</code>를 세어, <code style="color:#22d3bf">log N(s)</code>를 <code style="color:#22d3bf">log(1/s)</code>에 최소제곱 회귀한기울기를 반환한다(Mandelbrot 1982). 직선 모양의 구조는 ~1, 평면을 채우는 영역은 ~2, 자기유사한 가장자리는 중간의 비정수(Sierpinski 삼각형이면 <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>). 표면거칠기·조직 텍스처·지형·파단면 등의 저렴한 복잡도 특징에 쓸 수 있다.</p>
+<p>유한 해상도 때문에 채워진 영역은 2를 약간 밑돈다(거친 스케일에서 상자가 포화하는 알려진과소평가). <code style="color:#22d3bf">a</code>가 이진화의 임계값, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 구조가 없거나 1스케일밖에 얻을 수 없을때는 0을 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_region_polygon_xld.inputs.jpg">gen_region_polygon_xld: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 XLD 輪廓（多邊形的頂點序列）轉換為 region（像素遮罩）。將輪廓點標繪到最近的像素後，透過 <code style="color:#22d3bf">1+2a</code> 次二值膨脹（dilation）使線條變粗並連接起來。b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">gen_region_polygon_xld</code>（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
+<p>與 HALCON 的 <code style="color:#22d3bf">gen_region_polygon_xld</code>（產生填滿 XLD 多邊形內部之 region 的運算）不同，此實作並不填滿多邊形內部，而只是將輪廓線本身膨脹加粗的近似 —— 對於未封閉或自相交的輪廓，結果會與原本的內部填滿不一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

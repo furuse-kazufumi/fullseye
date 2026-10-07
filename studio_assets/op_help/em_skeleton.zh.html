@@ -12,15 +12,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/em_skeleton.inputs.jpg">em_skeleton: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Eckhardt–Maderlechner 型的不变细化(与 HALCON <code style="color:#22d3bf">skeleton</code> 同族)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93 定義に従うクリーンルーム実装。<b>同ノートが公表する EM93 の参照出力と突き合わせ済み</b>: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、形状 2/3 は画素数が公表値と一致(2434 / 3895)。tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
-<p>参照出力と一致している):</p>
-<p>interior = 4 近傍がすべて前景の画素</p>
-<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
-<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
-<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
-<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
-<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の <code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<p>出处：U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。实现规则是遵循 M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; 中 EM93 定义的净室实现。<b>已与该笔记公开的 EM93 参照输出核对</b>：形状 1 的骨架像素集合逐位一致(724/724)，形状 2/3 的像素数与公开值一致(2434 / 3895)。tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。(尚未与 HALCON 实机直接比对，但与 HALCON 所依据的同一公开算法的</p>
+<p>参照输出一致)：</p>
+<p>interior = 4 邻域全为前景的像素</p>
+<p>simple   = (8,4) 简单点(前景 8 连通分量 1 个 ∧ 相接的背景 4 连通分量 1 个)</p>
+<p>perfect  = 某个 4 方向的邻居为 interior，且其相反方向为背景</p>
+<p>将“同时删除所有既 simple 又 perfect 的像素”反复执行到不动点</p>
+<p>注：若按字面实现笔记的转录，即“只用强(4)连通分量来计算 simple”，并行删除会同时去掉斜向桥接，破坏拓扑(在反例上实测)。把 simple 设为标准 (8,4) 简单点的本实现与参照输出逐位一致，由此证实这才是 EM93 的正确解读。</p>
+<p>完全并行、对称(与 90 度旋转/镜像可交换)、保持拓扑、幂等。比 Zhang–Suen 系的 <code style="color:#22d3bf">sk_skeleton</code> 保留更多分支(实测像素数为 1.4~1.5 倍 = 与 Couprie 比较表中 EM 对称、分支多的特性一致)。用 <code style="color:#22d3bf">pruning</code> 后处理毛刺的做法也与 HALCON 相同。旋钮 a, b 未使用。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

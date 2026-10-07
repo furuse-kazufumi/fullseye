@@ -12,10 +12,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_landmark_asymmetry.inputs.jpg">tb_landmark_asymmetry: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每个左右对的<b>带符号</b>非对称量。→ <code style="color:#22d3bf">(M,)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各対について、片方を面で鏡映してもう片方と比べ、面の法線方向の差を返す。符号は「右が外側なら正」(<code style="color:#22d3bf">mirror_plane_from_pairs</code> が法線をその向きに揃えている)。<b>絶対値にまとめない</b> —— 左右どちらが張り出しているかは臨床でも検査でも意味が違う。</p>
-<p><code style="color:#22d3bf">pairs=None</code> / <code style="color:#22d3bf">plane=None</code> はどちらも <code style="color:#22d3bf">mirror_plane_from_pairs</code> と同じ既定(前半/後半の対、その対から出した正中面)。<b>面を省くと、面自体が同じ対から決まる</b>ので「面を決めた材料で面からのずれを測る」ことになる —— それでも左右差は測れる(中点は定義上どちらの側にも寄らない)が、別の情報源から面が決まるなら渡したほうが強い。</p>
-<p>2-D 進化レジストリへ橋渡しした shapestat の op <code style="color:#22d3bf">landmark_asymmetry</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>对每一对，将其中一点关于平面镜像后与另一点比较，返回沿平面法线方向的差。符号为“右侧在外则为正”(<code style="color:#22d3bf">mirror_plane_from_pairs</code> 已把法线统一到该方向)。<b>不要归并为绝对值</b> —— 左右哪一侧突出，在临床上和检测中意义都不同。</p>
+<p><code style="color:#22d3bf">pairs=None</code> / <code style="color:#22d3bf">plane=None</code> 都与 <code style="color:#22d3bf">mirror_plane_from_pairs</code> 使用相同的默认值(前半/后半成对，以及由这些对求出的正中面)。<b>省略平面时，平面本身也由同一组对决定</b>，于是变成“用决定平面的材料来测量偏离平面的程度” —— 即便如此仍能测出左右差(按定义，中点不偏向任何一侧)，但如果平面能由其他信息源决定，传入它会更有力。</p>
+<p>桥接到 2-D 进化注册表的 shapestat op <code style="color:#22d3bf">landmark_asymmetry</code>。实现相同，只是把调用约定改成了 <code style="color:#22d3bf">op(v, a, b)</code>。该 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

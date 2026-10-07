@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Histogram equalisation (linearisation)। HALCON के <code style="color:#22d3bf">equ_histo_image</code> (Histogram linearization of images) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">[0,1]</code> を 256 ビンに分けたヒストグラムの累積分布関数（CDF）を求め、各画素値をその CDF で置き換えることで、出力のヒストグラムがほぼ一様になるよう引き伸ばす。コントラストが低い（値域が狭い）画像を見やすくするのに使う。全画素が同一値だと CDF が定義できず <code style="color:#22d3bf">cdf[-1]</code> が 0 になり、変換は事実上恒等（変化なし）になる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। <code style="color:#22d3bf">[0,1]</code> को 256 bin में बाँटने वाले histogram का cumulative distribution function (CDF) निकालकर हर pixel value को उस CDF से बदला जाता है, जिससे image इस तरह खिंचती है कि output histogram लगभग uniform हो जाए। कम contrast (संकरे value range) वाली image को देखने में आसान बनाने के लिए उपयोग होता है। यदि सभी pixel का value एक ही हो, तो CDF परिभाषित नहीं हो पाता, <code style="color:#22d3bf">cdf[-1]</code> 0 हो जाता है, और transform व्यवहार में identity (कोई बदलाव नहीं) बन जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

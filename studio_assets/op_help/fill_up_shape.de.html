@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fill_up_shape.inputs.jpg">fill_up_shape: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Füllt kleine Löcher innerhalb der Region auf. Füllt nur Löcher mit einer Fläche von <code style="color:#22d3bf">area_threshold = 16+200a</code> Pixeln oder weniger (skimage <code style="color:#22d3bf">remove_small_holes</code>). b wird nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up_shape</code>（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。</p>
+<p>Anders als HALCONs <code style="color:#22d3bf">fill_up_shape</code> (Operation, die nur die nach Formmerkmalen wie Fläche oder Kreisförmigkeit ausgewählten Löcher füllt) ist diese Implementierung eine vereinfachte Näherung, die Löcher nur über eine Flächenobergrenze auswählt — eine Filterung nach anderen Formmerkmalen wie Kreisförmigkeit oder Konvexität ist nicht möglich.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

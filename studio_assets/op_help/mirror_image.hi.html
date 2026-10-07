@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">a</code> के मान से 3 तरह के mirror के बीच बदलता है (<code style="color:#22d3bf">a&lt;0.34</code>: ऊपर-नीचे उलटना, <code style="color:#22d3bf">a&lt;0.67</code>: बाएँ-दाएँ उलटना, अन्यथा: transpose)। ध्यान दें कि यह continuous mirror transform नहीं, बल्कि discrete mode चुनाव है। HALCON के <code style="color:#22d3bf">mirror_image</code> (Mirror an image.) के समकक्ष है (HALCON ऊपर-नीचे/बाएँ-दाएँ/diagonal को स्पष्ट mode argument से चुनता है, लेकिन यहाँ <code style="color:#22d3bf">a</code> की value range से नकली तौर पर चुनने वाला सन्निकटन है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が鏡映モードを 3 段階で選ぶ。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> mirror mode को 3 विकल्पों में से चुनता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

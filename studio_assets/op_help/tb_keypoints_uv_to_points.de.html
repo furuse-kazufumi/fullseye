@@ -12,17 +12,16 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_keypoints_uv_to_points.inputs.jpg">tb_keypoints_uv_to_points: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildkoordinaten <code style="color:#22d3bf">(N,2) = (u, v)</code> → Punktwolke <code style="color:#22d3bf">(N,3) = (z, y, x)</code>. Ein Ausgang von <code style="color:#22d3bf">keypoints</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><b>op 名に軸の約束が書いてある</b>のは、この repo で <code style="color:#22d3bf">keypoints</code> を産む <code style="color:#22d3bf">match3d.project_points</code> が <b>(u, v) = (列, 行)</b> を返し、<code style="color:#22d3bf">points</code> を産む <code style="color:#22d3bf">fuse3d.to_points(voxel)</code> が <b>(z, y, x)</b> を返すから —— 素直に「先頭 2 列」として繋ぐと<b>例外も NaN も出ないまま行と列が入れ替わる</b>。ここでは <code style="color:#22d3bf">y = v</code>、<code style="color:#22d3bf">x = u</code> と明示的に入れ替えて渡す。</p>
-<p><code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> と往復して <b>bit 一致</b>(z を渡した向き)。</p>
+<p><b>Die Achsenkonvention steht im Op-Namen</b>, weil in diesem repo <code style="color:#22d3bf">match3d.project_points</code>, das <code style="color:#22d3bf">keypoints</code> erzeugt, <b>(u, v) = (Spalte, Zeile)</b> zurückgibt, während <code style="color:#22d3bf">fuse3d.to_points(voxel)</code>, das <code style="color:#22d3bf">points</code> erzeugt, <b>(z, y, x)</b> zurückgibt —— verbindet man sie naiv als &quot;die ersten 2 Spalten&quot;, <b>werden Zeilen und Spalten vertauscht, ohne Ausnahme und ohne NaN</b>. Hier werden sie explizit als <code style="color:#22d3bf">y = v</code>, <code style="color:#22d3bf">x = u</code> vertauscht weitergegeben.</p>
+<p>Ein Hin- und Rückweg mit <code style="color:#22d3bf">points_zyx_to_keypoints_uv</code> ist <b>bit-identisch</b> (in der Richtung, in der z übergeben wird).</p>
 <p>Args:</p>
-<p>keypoints: (N, 2) の (u, v)。</p>
-<p>z: 載せる平面の z(スカラ、または (N,) の配列)。</p>
+<p>keypoints: (N, 2) aus (u, v).</p>
+<p>z: z der Ebene, auf die gesetzt wird (Skalar oder (N,)-Array).</p>
 <p>Returns:</p>
-<p>(N, 3) float64 の (z, y, x)。</p>
+<p>(N, 3) float64 aus (z, y, x).</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / z の長さ不一致。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_uv_to_points</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>ValueError: ungültige Form / nicht endlich / Längenabweichung von z.</p>
+<p>Die reprconv-Op <code style="color:#22d3bf">keypoints_uv_to_points</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

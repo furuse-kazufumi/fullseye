@@ -13,9 +13,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Demosaicing von einem Bayer-Muster (CFA: Color Filter Array) zu einem RGB-Bild. Näherung an HALCONs <code style="color:#22d3bf">cfa_to_rgb</code> (wandelt ein Einchip-Farbfilterarray-Bild in ein RGB-Bild um).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>Behandelt ein einkanaliges Graustufenbild als Bayer-Muster-Rohdaten und demosaikiert es mit OpenCVs <code style="color:#22d3bf">cv2.cvtColor</code> zu 3-Kanal-RGB. Brücken-op von <code style="color:#22d3bf">image</code> zu <code style="color:#22d3bf">color</code> (der einzige Eingang, über den die Evolution in die Farblinie gelangt).</p>
+<p>a wählt die Reihenfolge des Bayer-Musters aus 4 Varianten (Anordnungen BG/GB/RG/GR) (quantisiert auf 0-3 durch <code style="color:#22d3bf">min(3, int(a * 4))</code>). b wird nicht verwendet. Passt das Muster nicht zur tatsächlichen Eingabe, entstehen Farbsäume und Moiré (bei synthetischen Bildern, deren eigentliche Bayer- Anordnung unbekannt ist, ist jede Variante nur eine &quot;plausibel aussehende&quot; RGB-Umwandlung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

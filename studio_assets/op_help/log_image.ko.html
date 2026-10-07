@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">log1p(x) / log(2)</code>로 [0,1]을 [0,1]로 매핑하는 로그 압축(x=1에서 1이 되도록 정규화되어 있다). 밝은 부분을 압축하고 어두운 부분의 디테일을 끌어올리는, <code style="color:#22d3bf">exp_image</code>와 반대되는 톤 커브. HALCON의 <code style="color:#22d3bf">log_image</code>(Calculate the logarithm of an image.)의 대역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。ゲイン付き対数変換が欲しい場合は <code style="color:#22d3bf">lut</code> の <code style="color:#22d3bf">log_gain</code> 分岐(<code style="color:#22d3bf">a</code> でゲインを振れる、ただし SEED には未登録) に近い実装が別途ある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 게인이 있는 로그 변환이 필요하다면 <code style="color:#22d3bf">lut</code>의 <code style="color:#22d3bf">log_gain</code> 분기(<code style="color:#22d3bf">a</code>로 게인을 바꿀 수 있지만 SEED에는 미등록) 에 가까운 구현이 따로 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_mip.inputs.jpg">vol_mip: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Komprimiert ein 3D-Volumen mittels Maximum-Intensitätsprojektion (Maximum Intensity Projection, MIP) zu einem 2D-Bild. Es ist kein entsprechender HALCON-Operator angegeben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。先頭軸（<code style="color:#22d3bf">axis=0</code>、スライス/深さ方向）に沿った最大値を取り、<code style="color:#22d3bf">_norm</code> でそのスライスの最大絶対値を 1 に正規化する。CT/MRI の読影でよく使う投影法。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Es bildet das Maximum entlang der ersten Achse (<code style="color:#22d3bf">axis=0</code>, Schicht-/Tiefenrichtung) und normiert mit <code style="color:#22d3bf">_norm</code> so, dass der maximale Absolutwert dieser Schicht 1 wird. Ein bei der Befundung von CT/MRI häufig verwendetes Projektionsverfahren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

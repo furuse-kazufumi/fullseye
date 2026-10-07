@@ -14,12 +14,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직선적인 에지 조각을 검출: NMS 로 세선화 → 연결 성분 중 PCA 로 길쭉한(직선상) 것만 남김.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code> で細線化したエッジ(<code style="color:#22d3bf">&gt; 0</code>)を 8 近傍で連結成分に分け、各成分の画素座標の共分散固有値比 <code style="color:#22d3bf">λmax/λmin</code> が <code style="color:#22d3bf">min_ratio</code> 以上のもの(細長い=直線状)だけを 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 細線化段の弱エッジしきい値(<code style="color:#22d3bf">hx_nonmax_dir</code> の <code style="color:#22d3bf">a</code> と同じ。正規化振幅 <code style="color:#22d3bf">a*0.3</code> 未満を捨てる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 細長さのしきい値 <code style="color:#22d3bf">min_ratio = 3 + b*12</code>(3〜15)。大きいほど真っ直ぐな断片だけ残る。</p>
-<p style="margin:2px 0 2px 12px">• 画素数 5 未満の成分は無条件に捨てる。<code style="color:#22d3bf">λmin</code> がほぼ 0(完全な直線)なら比を無限大として採用する。</p>
-<p>注意: 直線性の判定は「点群の広がりが 1 軸に偏っているか」であり、曲線でも十分細長ければ通る。細線化段が斜めエッジをほとんど細線化しない(<code style="color:#22d3bf">hx_nonmax_dir</code> の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hough_line_trans</code>。</p>
+<p><code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code>로 세선화한 에지(<code style="color:#22d3bf">&gt; 0</code>)를 8근방으로 연결 성분으로 나누고, 각 성분의 화소 좌표의 공분산고윳값 비 <code style="color:#22d3bf">λmax/λmin</code>이 <code style="color:#22d3bf">min_ratio</code> 이상인 것(가늘고 긴 = 직선 모양)만을 1로 하는 0/1의 float region을 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 세선화 단계의 약한 에지 임계값(<code style="color:#22d3bf">hx_nonmax_dir</code>의 <code style="color:#22d3bf">a</code>와 같다. 정규화 진폭 <code style="color:#22d3bf">a*0.3</code> 미만을 버린다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 가늘고 긴 정도의 임계값 <code style="color:#22d3bf">min_ratio = 3 + b*12</code>(3~15). 클수록 곧은 단편만 남는다.</p>
+<p style="margin:2px 0 2px 12px">• 화소 수 5 미만의 성분은 무조건 버린다. <code style="color:#22d3bf">λmin</code>이 거의 0(완전한 직선)이면 비를 무한대로 하여 채택한다.</p>
+<p>주의: 직선성의 판정은 &quot;점군의 퍼짐이 1축으로 치우쳐 있는가&quot;이므로, 곡선이라도 충분히 가늘고 길면 통과한다. 세선화 단계가 대각선에지를 거의 세선화하지 않으므로(<code style="color:#22d3bf">hx_nonmax_dir</code>의 주기 참조), 대각선 에지는 폭을 가진 덩어리가 되어 고윳값 비가내려가 떨어지기 쉽다. 연결 성분 단위이므로, 교차한 선은 1개의 성분으로서 비가 내려간다. 후단에서 선분마다 다루려면 <code style="color:#22d3bf">hx_region_to_label</code>이나 <code style="color:#22d3bf">hough_line_trans</code>.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

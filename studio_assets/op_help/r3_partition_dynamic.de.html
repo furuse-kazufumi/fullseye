@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_partition_dynamic.inputs.jpg">r3_partition_dynamic: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Teilt die Region horizontal an Spalten, an denen sich die vertikale Ausdehnung verengt (eine &quot;Verengung&quot;) (entspricht HALCON <code style="color:#22d3bf">partition_dynamic</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各列の前景画素数（密度）を数え、<code style="color:#22d3bf">0 &lt; 密度 &lt;= a * 最大密度</code> を満たす列（くびれ）をゼロに潰して領域を分断する。<code style="color:#22d3bf">a</code>（0〜1）がくびれと判定するしきい値の割合。<code style="color:#22d3bf">b</code> は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。</p>
+<p>Zählt die Vordergrundpixel (Dichte) jeder Spalte und trennt die Region, indem Spalten (Engstellen) mit <code style="color:#22d3bf">0 &lt; Dichte &lt;= a * maximale Dichte</code> auf null gesetzt werden. <code style="color:#22d3bf">a</code> (0 bis 1) ist der Anteil, der als Schwellwert für eine Engstelle dient. <code style="color:#22d3bf">b</code> wird nicht verwendet. Eine Region gleichmäßiger Dichte hat keine zu trennenden Spalten und wird unverändert zurückgegeben.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

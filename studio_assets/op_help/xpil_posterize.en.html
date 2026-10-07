@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Posterization (reducing the number of tonal levels). Calls <code style="color:#22d3bf">PIL.ImageOps.posterize</code> to reduce the number of colors by cutting the effective bit depth of each channel.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>a が保持ビット数（<code style="color:#22d3bf">bits = 1 + int(a*6)</code>、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
+<p>a sweeps the number of bits kept (<code style="color:#22d3bf">bits = 1 + int(a*6)</code>, range 1-7). b is unused. With bits=1 each channel suffers an extreme loss of tones, close to binarisation into 2 values.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

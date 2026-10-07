@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_convex.inputs.jpg">get_region_convex: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region के convex hull को भरे हुए region के रूप में लौटाता है (<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>)। a, b इस्तेमाल नहीं होते। <code style="color:#22d3bf">shape_trans</code> (convex hull में shape बदलने वाला seed op) जैसा ही implementation।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">get_region_convex</code>（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。</p>
+<p>HALCON के <code style="color:#22d3bf">get_region_convex</code> (region का convex hull XLD contour के रूप में प्राप्त करने वाला operation) से भिन्न आउटपुट format वाला सन्निकटन — contour के coordinates का क्रम नहीं, बल्कि भरा हुआ region लौटाता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

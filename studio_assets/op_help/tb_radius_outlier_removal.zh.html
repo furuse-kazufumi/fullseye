@@ -12,23 +12,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.inputs.jpg">tb_radius_outlier_removal: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>去除在半径 radius 内邻居数小于 min_neighbors 的点（孤立点去除）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<p>以各点为中心张开半径 <code style="color:#22d3bf">radius</code> 的球,把球内其他点的数量不足 <code style="color:#22d3bf">min_neighbors</code> 的点作为“孤立的颗粒”去掉。比统计方法更局部、更直接, 已知传感器的实际尺度时容易决定阈值。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>输入点云。</p>
 <p>radius : float</p>
-<p>近傍とみなす球の半径(&gt; 0)。</p>
+<p>视为邻域的球的半径(&gt; 0)。</p>
 <p>min_neighbors : int</p>
-<p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
+<p>保留所需的邻域数(不计自身,默认 8)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>保留下来的点(保持原顺序)。</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。</p>
+<p>是否保留各输入点(True=保留)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">radius_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_neighbors</code>(既定 8)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">radius &lt;= 0</code> 时 ValueError。空输入返回空(graceful)。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">radius_outlier_removal</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">min_neighbors</code>(默认 8)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

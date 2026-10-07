@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回图像灰度的标准差(<code style="color:#22d3bf">x.std()</code>)。HALCON 的 <code style="color:#22d3bf">gray_histo_abs</code>(Calculate the gray value distribution.)本来是返回整个直方图(各灰度级的柱状计数)的算子,但这个代替实现并非直方图本身,而是概括为表示分布离散程度的标准差这一个标量(近似——这是因为该流水线中 <code style="color:#22d3bf">feature</code> 排序必须是单一标量这一契约上的限制)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

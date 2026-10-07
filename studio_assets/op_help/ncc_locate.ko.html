@@ -9,8 +9,7 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정규화 상호상관(NCC) 기반 템플릿 매칭으로 최적 위치를 찾는다. HALCON의 <code style="color:#22d3bf">find_ncc_model</code>(Find the best matches of an NCC model in an image.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用——テンプレートは引数ではなく <code style="color:#22d3bf">set_match_template</code> でスレッドローカルな <code style="color:#22d3bf">_MATCH_CTX</code> に事前登録しておく（マッチング系 op 共通の作法、<code style="color:#22d3bf">_MatchCtx</code> の docstring 参照）。<code style="color:#22d3bf">_ncc_map</code>（NCC 相関マップ、Lewis 1995 の定義で <code style="color:#22d3bf">[-1,1]</code>）を計算し、その最大値の位置を <code style="color:#22d3bf">[相関値, y, x]</code> で返す。テンプレート未設定、または入力が 2 次元画像でない場合は <code style="color:#22d3bf">[0,0,0]</code>（no-match）を返す——fail-closed。回転・スケール変化には非対応（<code style="color:#22d3bf">_shape_locate</code> は回転を扱う）。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다 —— 템플릿은 인수가 아니라 <code style="color:#22d3bf">set_match_template</code>로 스레드 로컬인 <code style="color:#22d3bf">_MATCH_CTX</code>에 미리 등록해 둔다(매칭 계열 op 공통의 작법, <code style="color:#22d3bf">_MatchCtx</code>의 docstring 참조). <code style="color:#22d3bf">_ncc_map</code>(NCC 상관 맵, Lewis 1995의 정의로 <code style="color:#22d3bf">[-1,1]</code>)을 계산하고, 그 최댓값의 위치를 <code style="color:#22d3bf">[상관값, y, x]</code>로 반환한다. 템플릿이 설정되지 않았거나 입력이 2차원 영상이 아닌 경우에는 <code style="color:#22d3bf">[0,0,0]</code>(no-match)을 반환한다 —— fail-closed. 회전·스케일 변화에는 대응하지 않는다(<code style="color:#22d3bf">_shape_locate</code>는 회전을 다룬다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

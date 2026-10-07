@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity_xld.chain.jpg">rectangularity_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Rectangularity का contour संस्करण। Contour को भरकर, <b>क्रम 1 और क्रम 2 के वही moments रखने वाले आयत</b> से अंतर वाले क्षेत्रफल को उस आयत के क्षेत्रफल से normalise करता है। आयत के लिए 1। HALCON के <code style="color:#22d3bf">rectangularity_xld</code> (Shape factor for the rectangularity of contours or polygons.) <b>वाली ही परिभाषा</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-26 まで<b>最小外接回転矩形</b>(<code style="color:#22d3bf">cv2.minAreaRect</code>)との比だった —— 似てはいるが別の測り方で、凹んだ形で系統的にずれる。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 तक यह <b>न्यूनतम घूमे हुए bounding rectangle</b> (<code style="color:#22d3bf">cv2.minAreaRect</code>) के साथ अनुपात था -- मिलता-जुलता लेकिन अलग माप, जो concave आकारों में व्यवस्थित रूप से भटकता है।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

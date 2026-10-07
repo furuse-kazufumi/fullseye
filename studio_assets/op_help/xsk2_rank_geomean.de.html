@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine Art Rangfilter, der geometrische Mittelwertfilter. Wendet <code style="color:#22d3bf">skimage.filters.rank.geometric_mean</code> mit einem kreisförmigen Strukturelement (<code style="color:#22d3bf">skimage.morphology.disk</code>) auf ein in 8-Bit konvertiertes Bild an.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a が構造要素の半径（<code style="color:#22d3bf">1 + int(a*3)</code>、範囲 1〜4）を振る。b は未使用。算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル状のノイズを抑えるのに向く。</p>
+<p>a variiert den Radius des Strukturelements (<code style="color:#22d3bf">1 + int(a*3)</code>, Bereich 1-4). b wird nicht verwendet. Da es stärker als das arithmetische Mittel zur dunkleren Seite (kleineren Werten) gezogen wird, eignet es sich zur Unterdrückung von hellem, Speckle-artigem Rauschen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

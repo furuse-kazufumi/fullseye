@@ -10,8 +10,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केंद्रीय horizontal profile पर edge जोड़े (चमकीली bar की उठती सीमा → गिरती सीमा) गिनता है (1D measurement)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>レベル閾値の交差で境界を 1 回ずつ取る(np.gradient はステップを 2 画素に滲ませ二重計上するため不可)。閾値 lvl は a で可変。返り値は対の数(/10 で正規化した feature)。</p>
+<p>level threshold के crossing पर हर boundary को 1 बार लिया जाता है (np.gradient उपयोग नहीं किया जा सकता, क्योंकि वह step को 2 pixel में फैलाकर दो बार गिनता है)। threshold lvl को a से बदला जा सकता है। return value pairs की संख्या है (/10 से normalized feature)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>사각형 창 내의 최댓값을 반환하는 그레이스케일 팽창(<code style="color:#22d3bf">ndimage.maximum_filter</code>). 어두운 가는 선·작은 구멍을 밝은 쪽에서 메워 없애는, <code style="color:#22d3bf">gray_erosion_rect</code>와 짝을 이루는 연산이다. HALCON의 <code style="color:#22d3bf">gray_dilation_rect</code>(Determine the maximum gray value within a rectangle.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>가 창의 한 변의 길이를 <code style="color:#22d3bf">{3,5,7,9}</code>로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

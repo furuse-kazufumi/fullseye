@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원형도 <code style="color:#22d3bf">min(1, 면적 /(π・max²))</code>. <code style="color:#22d3bf">max</code>는 <b>무게중심에서 윤곽 화소까지의 최대 거리</b>이며, 원이면 1이고 가늘고 길거나 큰 돌출·구멍이 있을수록 작아진다. 연결 성분이 여러 개면 면적이 가장 큰 것만 평가한다. HALCON의 <code style="color:#22d3bf">circularity</code>(Shape factor for the circularity (similarity to a circle) of a region.)와 <b>같은 식</b>이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という<b>別の量</b>を返していた。名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26까지 등주비 <code style="color:#22d3bf">4π·면적/둘레²</code>라는 <b>다른 양</b>을 반환하고 있었다. 이름은 HALCON에서 빌렸는데 수가 달라서, HALCON 레시피를 옮겨 온 사람이같은 임계값으로 다른 판정을 얻고 있었다(정사각형에서 0.826 대 0.670으로 <b>순서까지 바뀐다</b>). <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contour_point_num_xld.chain.jpg">contour_point_num_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>XLD contours में से सबसे ज़्यादा points वाला contour चुनकर उसके vertices की संख्या को 500 points से normalise करके [0,1] में लौटाता है (500 या ज़्यादा points पर 1.0 पर saturate)। a, b इस्तेमाल नहीं होते। Contour न हो तो 0 लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">contour_point_num_xld</code>（XLD 輪郭に含まれる点の実数をそのまま返す演算）とは異なり、この実装は点数そのものではなく 500 点でスケーリングした比率を返す近似（feature sort が [0,1] 想定の値を運ぶ契約のため）。</p>
+<p>HALCON के <code style="color:#22d3bf">contour_point_num_xld</code> (XLD contour में शामिल points की वास्तविक संख्या को सीधे लौटाने वाला operation) से अलग, यह implementation points की संख्या स्वयं नहीं, बल्कि 500 points से scale किया गया अनुपात लौटाने वाला सन्निकटन है (क्योंकि feature sort का contract [0,1] मानकर चलने वाले मान ले जाने का है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

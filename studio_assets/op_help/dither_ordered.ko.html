@@ -13,9 +13,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>순서 디더(Bayer 행렬)로 양자화한다. <code style="color:#22d3bf">a</code>는 비트 수 1~8, <code style="color:#22d3bf">b</code>는 행렬의 크기.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>量子化の<b>前に</b>、画素位置で決まる決まった量(Bayer 行列、<code style="color:#22d3bf">b</code> が 2x2 / 4x4 / 8x8 を振る)を足してから丸める。平坦部の誤差が画素ごとに散るので、段差が細かい市松に化けて <b>縞が見えなくなる</b>。誤差そのものは減らない —— 見え方を変えているだけで、平均二乗誤差はむしろ <code style="color:#22d3bf">_quantize_uniform</code> よりわずかに大きい。</p>
-<p><b>誤差拡散(<code style="color:#22d3bf">dither_floyd_steinberg</code>)との使い分け</b>: 順序ディザは <b>画素ごとに独立</b>なので、タイル分割しても継ぎ目が出ず、並列化も自由、同じ入力に必ず同じ出力を返す。誤差拡散のほうが見た目は滑らかだが、走査順に依存するので<b>切り出す位置を変えると結果が変わる</b>。</p>
+<p>양자화 <b>전에</b>, 화소 위치로 정해지는 고정된 양(Bayer 행렬, <code style="color:#22d3bf">b</code>가 2x2 / 4x4 / 8x8을바꾼다)을 더한 다음 반올림한다. 평탄부의 오차가 화소마다 흩어지므로, 계단이 촘촘한 체크무늬로 바뀌어 <b>줄무늬가 보이지 않게 된다</b>. 오차 자체는 줄지 않는다 —— 보이는 방식을 바꿀 뿐이며, 평균 제곱 오차는 오히려 <code style="color:#22d3bf">_quantize_uniform</code>보다 약간 크다.</p>
+<p><b>오차 확산(<code style="color:#22d3bf">dither_floyd_steinberg</code>)과의 구분</b>: 순서 디더는 <b>화소마다 독립</b>이므로 타일 분할해도 이음매가 생기지 않고, 병렬화도 자유로우며, 같은 입력에 반드시 같은 출력을 돌려준다. 오차 확산 쪽이 보기에는 매끄럽지만, 주사 순서에 의존하므로 <b>잘라내는 위치를 바꾸면 결과가 바뀐다</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

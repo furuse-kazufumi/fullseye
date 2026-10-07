@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/convex_fill.inputs.jpg">convex_fill: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구멍과 잘록한 부분을 메워 볼록 껍질(convex hull)에 가까운 형태로 만든다(클로징에 의한 근사). HALCON의 <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)의 볼록 껍질 변환에 대응하도록 의도되었지만, 실제 구현은 반복 횟수가 많은 클로징이며 엄밀한 볼록 껍질 계산은 아니다(근사).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">3〜6</code>（<code style="color:#22d3bf">_it(a)+2</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">border_value=1</code> の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。</p>
+<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">3〜6</code>(<code style="color:#22d3bf">_it(a)+2</code>)으로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. <code style="color:#22d3bf">border_value=1</code>의 이진 닫힘 연산을 적용할 뿐이므로, 반복 횟수를 넘는 크기의 잘록한 부분·구멍은 메워지지 않는다(진짜 볼록 껍질이라면 반드시 메워진다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

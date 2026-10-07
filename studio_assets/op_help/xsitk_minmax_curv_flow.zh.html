@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Min/Max曲率流平滑（SimpleITK <code style="color:#22d3bf">MinMaxCurvatureFlow</code>）。在与xsitk_curvature_flow相同的曲率流基础上，加入基于邻域最小值/最大值的判断，在平滑的同时填补小孔和斑点噪声的变体。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(1〜9 回)、<code style="color:#22d3bf">b</code> はステンシル半径(<code style="color:#22d3bf">1+int(b*2)</code> で 1〜3、判定に使う近傍の広さ)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 调节迭代次数(1~9 次)，<code style="color:#22d3bf">b</code> 调节模板(stencil)半径(由 <code style="color:#22d3bf">1+int(b*2)</code> 得到 1~3，即判定所用邻域的大小)。时间步长固定为 0.0625。输出裁剪(clip)到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

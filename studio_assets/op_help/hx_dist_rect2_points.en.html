@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_rect2_points.chain.jpg">hx_dist_rect2_points: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The mean normalised distance of the contour points from the centre of the minimum-area oriented rectangle (a feature).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>全 contour の点をまとめ、点の重心からの各点のユークリッド距離の平均を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0。</p>
-<p>注意: 名前は最小面積外接矩形の中心からの距離だが、現実装は矩形を求めず点群の重心を中心にしている。点が偏っている場合(弧が欠けた輪郭など)は矩形中心と重心がずれるため、名前どおりの値にはならない。実質は「重心からの平均半径」で、<code style="color:#22d3bf">hx_moments_any_xld</code>(二乗平均)の 1 乗版にあたる。矩形そのものは <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>。</p>
+<p>Pools the points of all contours and returns the mean Euclidean distance of each point from the point centroid, divided by <code style="color:#22d3bf">max(H, W)</code> and capped at 1, as <code style="color:#22d3bf">np.float64</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there are fewer than 3 points.</p>
+<p>Note: the name says distance from the centre of the minimum-area bounding rectangle, but the current implementation does not compute the rectangle and uses the point-set centroid as the centre. If the points are lopsided (e.g. an outline with a missing arc), the rectangle centre and the centroid differ, so the value does not match the name. In effect it is &quot;the mean radius from the centroid&quot;, the power-1 counterpart of <code style="color:#22d3bf">hx_moments_any_xld</code> (mean of squares). The rectangle itself is <code style="color:#22d3bf">hx_smallest_rect2_xld</code> / <code style="color:#22d3bf">hx_fit_rectangle2_contour</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

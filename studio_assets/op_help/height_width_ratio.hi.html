@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Axis-parallel bounding rectangle का aspect ratio <code style="color:#22d3bf">height / width</code>। ऊपरी सीमा नहीं है, खड़ा-लंबा हो तो 1 से ज़्यादा (160x4 हो तो 40.0)। HALCON के <code style="color:#22d3bf">height_width_ratio</code> (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) द्वारा लौटाए गए 3 मानों में से <b>Ratio वाली ही मात्रा</b> (Height और Width pixels की लंबाई हैं, इसलिए नहीं लौटाए जाते —— docs/KNOWN_ISSUES.md §51)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 तक इसे <code style="color:#22d3bf">min(1, height/width)</code> से काटा जाता था, इसलिए <b>सभी लंबवत वस्तुओं का मान 1.0</b> हो जाता था (60x20 पर 1.0, ground truth 3.0)। चौड़ी वस्तुएँ सही निकलती हैं, इसलिए <b>दिशा बदलते ही जानकारी गायब हो जाती है</b>। विवरण में saturation को &quot;नियम (specification)&quot; के रूप में लिखा गया था, लेकिन मान की सीमा [0,1] feature के contract का हिस्सा नहीं है, और दबाने का कोई कारण नहीं था -- <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

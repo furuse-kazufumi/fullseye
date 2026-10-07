@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis.chain.jpg">elliptic_axis: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 <code style="color:#22d3bf">match</code> 排序的 3 分量向量返回区域等价椭圆(惯性矩相同的椭圆)的 <code style="color:#22d3bf">(Ra, Rb, Phi)</code>—— <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> 是长半轴与短半轴(<b>像素</b>),<code style="color:#22d3bf">Phi</code> 是主轴的角度(弧度,从列轴逆时针)。与 HALCON 的 <code style="color:#22d3bf">elliptic_axis</code>(Calculate the parameters of the equivalent ellipse.)是同样的三个值。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">Ra/Rb</code>(= <b>別の演算子 <code style="color:#22d3bf">eccentricity</code> の出力</b> Anisometry)を 10 で割った 1 スカラーを返していた —— 名前が約束している量ではなかった。docs/hardening/halcon-named-shape-factors.md。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★直到 2026-09-26，它返回的是 <code style="color:#22d3bf">Ra/Rb</code>(= <b>另一个算子 <code style="color:#22d3bf">eccentricity</code> 的输出</b> Anisometry)除以 10 得到的 1 个标量 —— 并不是名称所承诺的量。docs/hardening/halcon-named-shape-factors.md。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

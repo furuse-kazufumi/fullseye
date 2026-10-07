@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_video.gif" alt="img_to_video: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Macht aus dem Bild ein T-Bilder-Video (T,H,W), das sich mit konstanter Geschwindigkeit verschiebt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>フレーム <code style="color:#22d3bf">t</code> は入力を <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> だけ動かしたもの(<code style="color:#22d3bf">scipy.ndimage.shift</code>、線形補間、縁は最近傍で延長)。<b>変位が閉形式で分かる</b>ので、動画の族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)の検算に使える。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1 フレームあたりの歩幅 <code style="color:#22d3bf">step = 4 * a</code> 画素(a=0.5 で 2 px/frame)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
-<p style="margin:2px 0 2px 12px">• フレーム数 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。フレーム 0 は入力そのもの。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、値域は入力と同じ([0,1] なら [0,1] のまま。線形補間は値域を広げない)。</p>
-<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<p>Frame <code style="color:#22d3bf">t</code> ist die um <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> verschobene Eingabe (<code style="color:#22d3bf">scipy.ndimage.shift</code>, lineare Interpolation, Ränder per nächstem Nachbarn fortgesetzt). <b>Die Verschiebung ist in geschlossener Form bekannt</b>, daher eignet es sich zur Gegenprobe der Video-Familie (<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Schrittweite pro 1 Frame <code style="color:#22d3bf">step = 4 * a</code> Pixel (2 px/frame bei a=0.5).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Bewegungsrichtung <code style="color:#22d3bf">θ = 2π * b</code> (+x bei b=0, +y (nach unten) bei b=0.25, −x bei b=0.5).</p>
+<p style="margin:2px 0 2px 12px">• Anzahl der Frames <code style="color:#22d3bf">T = VIDEO_FRAMES</code> (8). Frame 0 ist die Eingabe selbst.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(T, H, W)</code> float64, Wertebereich wie die Eingabe (bei [0,1] bleibt es [0,1]; lineare Interpolation erweitert den Wertebereich nicht).</p>
+<p>Hinweis: Es bewegt sich <b>das ganze Bild</b> (ein Kameraschwenk), nicht nur die Objekte. Die Familie der Hintergrundsubtraktion setzt &quot;einen unbewegten Hintergrund&quot; voraus, daher erscheint bei einem Gesamtschwenk der Vordergrund auf allen Pixeln.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

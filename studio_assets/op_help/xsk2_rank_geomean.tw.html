@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一種排序濾波器，即幾何平均濾波器。對轉換為 8 位元的影像使用圓形結構元素（<code style="color:#22d3bf">skimage.morphology.disk</code>）套用 <code style="color:#22d3bf">skimage.filters.rank.geometric_mean</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>a が構造要素の半径（<code style="color:#22d3bf">1 + int(a*3)</code>、範囲 1〜4）を振る。b は未使用。算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル状のノイズを抑えるのに向く。</p>
+<p>a 調整結構元素的半徑（<code style="color:#22d3bf">1 + int(a*3)</code>，範圍 1~4）。b 未使用。由於比算術平均更強地被拉向較暗一側（較小值），適合抑制明亮的散斑狀雜訊。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

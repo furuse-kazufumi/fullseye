@@ -14,11 +14,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>频域微分滤波器。<code style="color:#22d3bf">a</code> 为微分阶数,<code style="color:#22d3bf">b</code> 为方向。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">gen_derivative_filter</code> は Derivative(x / y / xx / yy / xy)と次数を取るが、ここは長らく <code style="color:#22d3bf">|f|</code> を正規化して返すだけで、<b>入力の中身もつまみも一切見ていなかった</b> —— 2026-09-02 実測で、同じ形なら <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> を変えても、別の絵を渡しても、返りが<b>バイト一致</b>だった(兄弟の <code style="color:#22d3bf">hx_gen_lowpass</code> / <code style="color:#22d3bf">hx_gen_highpass</code> / <code style="color:#22d3bf">hx_gen_bandfilter</code> はつまみで変わるので、この 1 件だけ浮いていた)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> : 階数 1〜2(<code style="color:#22d3bf">|f|</code> か <code style="color:#22d3bf">|f|^2</code>)。2 階はラプラシアンに対応する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> : 向き。0 で x 方向 <code style="color:#22d3bf">|f_x|</code>、1 で y 方向 <code style="color:#22d3bf">|f_y|</code>、間は等方 <code style="color:#22d3bf">|f|</code> へ滑らかに混ぜる(0.5 でちょうど等方)。</p>
-<p>返りは周波数領域の<b>フィルタそのもの</b>(HALCON の gen_* と同じ約束)なので、入力は形を決めるためだけに使う。ただし形だけでなく<b>つまみでちゃんと変わる</b> ようになったので、進化が階数と向きを選べる。</p>
+<p>HALCON 的 <code style="color:#22d3bf">gen_derivative_filter</code> 接受 Derivative（x / y / xx / yy / xy）和阶数，但这里长期以来只是把 <code style="color:#22d3bf">|f|</code> 归一化后返回，<b>既不看输入内容，也完全不看旋钮</b> —— 2026-09-02 实测：只要形状相同，改变 <code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 也好，传入别的图也好，返回结果都是<b>字节级一致</b> （兄弟 <code style="color:#22d3bf">hx_gen_lowpass</code> / <code style="color:#22d3bf">hx_gen_highpass</code> / <code style="color:#22d3bf">hx_gen_bandfilter</code> 会随旋钮变化，只有这 1 个显得格格不入）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> : 阶数 1〜2（<code style="color:#22d3bf">|f|</code> 或 <code style="color:#22d3bf">|f|^2</code>）。2 阶对应拉普拉斯。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> : 方向。0 为 x 方向 <code style="color:#22d3bf">|f_x|</code>，1 为 y 方向 <code style="color:#22d3bf">|f_y|</code>，中间则向各向同性的 <code style="color:#22d3bf">|f|</code> 平滑混合（0.5 时恰好各向同性）。</p>
+<p>返回的是频域中的<b>滤波器本身</b>（与 HALCON 的 gen_* 约定相同），因此输入只用于确定形状。不过现在不仅随形状，还会<b>随旋钮切实变化</b>，因此进化可以选择阶数和方向。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

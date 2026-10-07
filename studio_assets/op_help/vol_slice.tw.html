@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_slice.inputs.jpg">vol_slice: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從 3D 體資料中取出一張 2D 切片。未指定對應的 HALCON op。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が取り出すスライス番号を先頭軸（<code style="color:#22d3bf">axis=0</code>）に沿って <code style="color:#22d3bf">0</code> から <code style="color:#22d3bf">shape[0]-1</code> まで線形に振る（<code style="color:#22d3bf">int(a * shape[0])</code> を範囲内にクランプ）。<code style="color:#22d3bf">b</code> は未使用。値は <code style="color:#22d3bf">[0,1]</code> に clip して返す（3D フィルタ後に生じ得るオーバーシュートの後始末）。</p>
+<p><code style="color:#22d3bf">a</code> 沿首軸（<code style="color:#22d3bf">axis=0</code>）把要取出的切片編號從 <code style="color:#22d3bf">0</code> 到 <code style="color:#22d3bf">shape[0]-1</code> 線性調整（把 <code style="color:#22d3bf">int(a * shape[0])</code> 鉗制到範圍內）。<code style="color:#22d3bf">b</code> 未使用。值 clip 到 <code style="color:#22d3bf">[0,1]</code> 後回傳（處理 3D 濾波後可能產生的過衝）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

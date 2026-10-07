@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_circle_contour.chain.jpg">hx_fit_circle_contour: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Kåsa 代數法對 contour 點擬合圓,回傳擬合殘差(RMS)(越小越接近圓)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全 contour の点をまとめ、Kåsa の代数法(<code style="color:#22d3bf">[x, y, 1]·sol = x^2 + y^2</code> を最小二乗で解き、中心 <code style="color:#22d3bf">(sol0/2, sol1/2)</code>、半径 <code style="color:#22d3bf">sqrt(sol2 + cx^2 + cy^2)</code>)で円を当て、各点の中心からの距離と半径の差の RMS を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。円のパラメータ自体は返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0(完全な円と区別できない)。半径の根号の中が負になれば半径 0 として扱う。</p>
-<p>代数法は幾何学的な距離の最小化ではないので、円弧が短い(角度範囲が狭い)点群や外れ値では半径が偏る。ほぼ直線上の点群では最小ノルム解の半径が非常に大きくなり、残差は小さく出る(直線が「大きな円」に見える)。円らしさの判定には <code style="color:#22d3bf">hx_regress_contours</code> と併用して直線を除く。包含円の半径は <code style="color:#22d3bf">hx_smallest_circle_xld</code>。</p>
+<p>把全部 contour 的點合在一起,用 Kåsa 代數法(以最小平方求解 <code style="color:#22d3bf">[x, y, 1]·sol = x^2 + y^2</code>,中心 <code style="color:#22d3bf">(sol0/2, sol1/2)</code>,半徑 <code style="color:#22d3bf">sqrt(sol2 + cx^2 + cy^2)</code>)擬合圓,把各點到中心的距離與半徑之差的 RMS 除以 <code style="color:#22d3bf">max(H, W)</code>,以 1 飽和截頂後作為 <code style="color:#22d3bf">np.float64</code> 回傳。不回傳圓的參數本身。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 點少於 3 個時為 0.0(與完美的圓無法區分)。半徑根號內為負時按半徑 0 處理。</p>
+<p>代數法並不是最小化幾何距離,因此對圓弧短(角度範圍窄)的點集或離群值,半徑會有偏差。對幾乎共線的點集,最小範數解的半徑會非常大,殘差則偏小(直線看起來像「大圓」)。判斷是否像圓時,與 <code style="color:#22d3bf">hx_regress_contours</code> 併用以排除直線。包含圓的半徑見 <code style="color:#22d3bf">hx_smallest_circle_xld</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

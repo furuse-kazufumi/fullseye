@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_to_rgb.inputs.jpg">trans_to_rgb: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Die inverse Transformation von einem Farbraum zurück nach RGB. Soll HALCONs <code style="color:#22d3bf">trans_to_rgb</code> (Umwandlung von einem beliebigen Farbraum in den RGB-Farbraum) entsprechen, <b>die Implementierung unterstützt jedoch nur die eine Richtung HSV nach RGB</b>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">trans_from_rgb</code> は a で 4 色空間（HSV/Lab/YUV/XYZ）を選べるのに対し、この逆変換は常に入力を HSV とみなして <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> を掛ける。Lab/YUV/XYZ から呼んだ場合は色空間の解釈を誤ったまま変換するため、出力は破綻した色になる。a, b は未使用。</p>
+<p>Während <code style="color:#22d3bf">trans_from_rgb</code> mit a zwischen 4 Farbräumen (HSV/Lab/YUV/XYZ) wählen kann, behandelt diese Rücktransformation die Eingabe stets als HSV und wendet <code style="color:#22d3bf">cv2.COLOR_HSV2RGB</code> an. Wird sie auf Lab/YUV/XYZ aufgerufen, wandelt sie mit falscher Interpretation des Farbraums um, sodass die Ausgabe kaputte Farben hat. a, b werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

@@ -14,8 +14,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对图像施加仿射变换（旋转+剪切）。实现与 <code style="color:#22d3bf">affine_trans_image</code> 共享 <code style="color:#22d3bf">_sh_geom</code> 中的 <code style="color:#22d3bf">affine</code> 分支，由 a 将旋转角设为 -20°〜+20°，由 b 调节剪切量。超出边界的部分以镜像（reflect）方式填充。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_image_size</code>（アフィン変換を適用し、出力画像のキャンバスサイズを明示的に指定できる演算）とは異なり、この実装は出力サイズの指定を受け付けず、常に入力と同じキャンバスサイズを保つ近似（<code style="color:#22d3bf">affine_trans_image</code> と実質同一の実装）。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">affine_trans_image_size</code>（应用仿射变换、并可显式指定输出图像画布尺寸的运算）不同，该实现不接受输出尺寸的指定，是始终保持与输入相同画布尺寸的近似（实质上与 <code style="color:#22d3bf">affine_trans_image</code> 实现相同）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

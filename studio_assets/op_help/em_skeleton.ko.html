@@ -12,15 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/em_skeleton.inputs.jpg">em_skeleton: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Eckhardt–Maderlechner 형의 불변 세선화(HALCON <code style="color:#22d3bf">skeleton</code> 과 같은 계통).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>出典: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993)。実装規則は M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot; の EM93 定義に従うクリーンルーム実装。<b>同ノートが公表する EM93 の参照出力と突き合わせ済み</b>: 形状 1 は骨格の画素集合がビット単位で一致(724/724)、形状 2/3 は画素数が公表値と一致(2434 / 3895)。tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference。(HALCON 実機との直接照合は未実施だが、HALCON が拠る同じ公表アルゴリズムの</p>
-<p>参照出力と一致している):</p>
-<p>interior = 4 近傍がすべて前景の画素</p>
-<p>simple   = (8,4) 単純点(前景 8 連結成分 1 個 ∧ 接する背景 4 連結成分 1 個)</p>
-<p>perfect  = ある 4 方向の隣が interior で、その反対方向が背景</p>
-<p>「simple かつ perfect な画素を全部同時に消す」を不動点まで反復</p>
-<p>注: ノートの転記を字義どおり「強(4)連結成分のみで simple を数える」と実装すると並列削除が斜め橋を同時に落とし位相が壊れる(反例で実測)。simple を標準の (8,4) 単純点にした本実装が参照出力とビット単位で一致したので、これが EM93 の正しい読みだと裏付けられている。</p>
-<p>完全並列・対称(90 度回転/鏡映と可換)・位相保存・冪等。Zhang–Suen 系の <code style="color:#22d3bf">sk_skeleton</code> より枝を多く残す(実測 1.4〜1.5 倍の画素数 = Couprie の比較表で EM が対称・枝多である性格と整合)。ヒゲは <code style="color:#22d3bf">pruning</code> で後処理する流儀も HALCON と同じ。つまみ a, b は未使用。</p>
+<p>출전: U. Eckhardt, G. Maderlechner, &quot;Invariant Thinning&quot;, Int. J. Pattern Recognition and AI 7:1115-1144 (1993). 구현 규칙은 M. Couprie &quot;Note on fifteen 2D parallel thinning algorithms&quot;의 EM93 정의를 따르는 클린룸 구현. <b>같은 노트가 공표한 EM93의 참조 출력과대조 완료</b>: 형상 1은 골격의 화소 집합이 비트 단위로 일치(724/724), 형상 2/3은 화소 수가 공표값과 일치(2434 / 3895). tests/test_regions2.py::test_em_skeleton_matches_published_em93_reference. (HALCON 실기와의 직접 대조는 미실시이지만, HALCON이 근거로 하는 같은 공표 알고리즘의참조 출력과 일치한다):</p>
+<p>interior = 4 근방이 모두 전경인 화소</p>
+<p>simple   = (8,4) 단순점(전경 8연결 성분 1개 ∧ 접하는 배경 4연결 성분 1개)</p>
+<p>perfect  = 어느 4 방향의 이웃이 interior이고, 그 반대 방향이 배경</p>
+<p>&#x27;simple이면서 perfect인 화소를 모두 동시에 지운다&#x27;를 부동점까지 반복</p>
+<p>주: 노트의 전기를 글자 그대로 &#x27;강(4)연결 성분만으로 simple을 센다&#x27;로구현하면 병렬 삭제가 대각선 다리를 동시에 떨어뜨려 위상이 깨진다(반례로 실측). simple을 표준 (8,4) 단순점으로 한 본 구현이 참조 출력과 비트 단위로일치했으므로, 이것이 EM93의 올바른 해석이라는 것이 뒷받침되어 있다.</p>
+<p>완전 병렬·대칭(90도 회전/거울 반사와 가환)·위상 보존·멱등. Zhang–Suen 계열의 <code style="color:#22d3bf">sk_skeleton</code>보다 가지를 많이 남긴다(실측 1.4~1.5배의 화소 수 = Couprie의비교표에서 EM이 대칭·가지가 많은 성격과 정합). 수염은 <code style="color:#22d3bf">pruning</code>으로 후처리하는방식도 HALCON과 같다. 노브 a, b는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

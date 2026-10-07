@@ -13,11 +13,10 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>理想低通濾波影像(頻域中心圓盤遮罩,截止半徑 a)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力 <code style="color:#22d3bf">v</code> は形を決めるためだけに使い、<code style="color:#22d3bf">np.fft.fftfreq</code> で各軸の正規化周波数(-0.5〜0.5)を作って <code style="color:#22d3bf">fftshift</code> した半径 <code style="color:#22d3bf">r = sqrt(fy^2 + fx^2)</code>(中心=DC、四隅で約 0.707)に対し <code style="color:#22d3bf">r &lt;= cutoff</code> を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。画像そのものにフィルタを掛けるのではない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 遮断半径 <code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code>(0.05〜0.5。a=1 で軸方向のナイキスト周波数まで通す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>DC が中央に来る配置(<code style="color:#22d3bf">fftshift</code> 済)なので、<code style="color:#22d3bf">fft_generic</code> / <code style="color:#22d3bf">fft_image</code> のような「中心が低周波」のスペクトル画像と画素どうしで掛け合わせる用途に合う。自前で <code style="color:#22d3bf">np.fft.fft2</code> の結果に掛けるときは <code style="color:#22d3bf">ifftshift</code> で戻してから使う。兄弟 op に <code style="color:#22d3bf">hx_gen_highpass</code>(補集合)/ <code style="color:#22d3bf">hx_gen_bandpass</code> / <code style="color:#22d3bf">hx_gen_bandfilter</code>(円環)。</p>
+<p>輸入 <code style="color:#22d3bf">v</code> 只用於決定形狀，以 <code style="color:#22d3bf">np.fft.fftfreq</code> 產生各軸的正規化頻率（-0.5〜0.5），對經 <code style="color:#22d3bf">fftshift</code> 的半徑 <code style="color:#22d3bf">r = sqrt(fy^2 + fx^2)</code>（中心=DC，四角約 0.707），回傳把 <code style="color:#22d3bf">r &lt;= cutoff</code> 設為 1 的 0/1 float 影像（頻域遮罩）。並不是對影像本身套用濾波。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 截止半徑 <code style="color:#22d3bf">cutoff = 0.05 + 0.45*a</code>（0.05〜0.5。a=1 時一直通過到軸向的奈奎斯特頻率）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>由於是 DC 位於中央的配置（已 <code style="color:#22d3bf">fftshift</code>），適合與 <code style="color:#22d3bf">fft_generic</code> / <code style="color:#22d3bf">fft_image</code> 這類「中心為低頻」的頻譜影像逐像素相乘的用途。自行乘到 <code style="color:#22d3bf">np.fft.fft2</code> 的結果上時，要先以 <code style="color:#22d3bf">ifftshift</code> 移回再使用。兄弟 op 有 <code style="color:#22d3bf">hx_gen_highpass</code>（補集）/ <code style="color:#22d3bf">hx_gen_bandpass</code> / <code style="color:#22d3bf">hx_gen_bandfilter</code>（圓環）。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

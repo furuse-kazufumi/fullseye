@@ -14,11 +14,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원의 섹터 region(시작각 b*2pi, 스윕 a*2pi).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>・半径 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>(固定)の円板のうち、開始角から掃引角ぶんの扇形を 1 とする 0/1 の float region を返す。角度は <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> で測る(0 が +列方向。行が下向きに増える画像座標では画面上で時計回りに増える)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 掃引角 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>(約 5.7°〜360°。a=1 で完全な円板)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 開始角 <code style="color:#22d3bf">start = b*2*pi</code>。</p>
-<p>扇形の判定は <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code> なので 360° をまたいでも途切れない。半径は固定で、変えたいときは <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code> を重ねる。楕円版は <code style="color:#22d3bf">hx_gen_ellipse_sector</code>。入力画像の中身は見ない。</p>
+<p>영상 중심 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>·반지름 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>(고정)의 원판 중, 시작각에서 스윕각만큼의 부채꼴을 1로 하는 0/1의 float region을 반환한다. 각도는 <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code>로 잰다(0이 +열 방향. 행이 아래로증가하는 영상 좌표에서는 화면상에서 시계 방향으로 증가한다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 스윕각 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>(약 5.7°~360°. a=1이면 완전한 원판).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 시작각 <code style="color:#22d3bf">start = b*2*pi</code>.</p>
+<p>부채꼴 판정은 <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code>이므로 360°를 넘어가도 끊기지 않는다. 반지름은 고정이며, 바꾸고 싶을 때는 <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code>를 겹친다. 타원판은 <code style="color:#22d3bf">hx_gen_ellipse_sector</code>. 입력 영상의 내용은 보지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/convex_fill.inputs.jpg">convex_fill: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过填补孔洞和凹陷来逼近凸包形状（以闭运算实现的近似）。意图对应 HALCON 的 <code style="color:#22d3bf">shape_trans</code>（Transform the shape of a region.）中的凸包变换，但实现方式是迭代次数很多的闭运算，并非严格的凸包计算（近似）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">3〜6</code>（<code style="color:#22d3bf">_it(a)+2</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">border_value=1</code> の二値クロージングを掛けるだけなので、反復回数を超える大きさのくびれ・穴は埋まらない（真の凸包なら必ず埋まる）。</p>
+<p><code style="color:#22d3bf">a</code> 将迭代次数在 <code style="color:#22d3bf">3〜6</code>（<code style="color:#22d3bf">_it(a)+2</code>）之间调节。<code style="color:#22d3bf">b</code> 未使用。只是施加 <code style="color:#22d3bf">border_value=1</code> 的二值闭运算，因此超过迭代次数大小的缩颈和孔不会被填充（真正的凸包则一定会填充）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

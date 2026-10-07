@@ -14,8 +14,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Min/Max curvature flow smoothing (SimpleITK <code style="color:#22d3bf">MinMaxCurvatureFlow</code>). A variant of the same curvature flow as xsitk_curvature_flow that adds a decision based on the local minimum/maximum, smoothing while filling in small holes and speckle noise.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(1〜9 回)、<code style="color:#22d3bf">b</code> はステンシル半径(<code style="color:#22d3bf">1+int(b*2)</code> で 1〜3、判定に使う近傍の広さ)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the number of iterations (1-9), <code style="color:#22d3bf">b</code> the stencil radius (1-3 via <code style="color:#22d3bf">1+int(b*2)</code>, the size of the neighbourhood used for the decision). The time step is fixed at 0.0625. The output is clipped to [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

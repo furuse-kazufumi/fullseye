@@ -14,8 +14,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lokale Kontrastverstärkung nach Art einer Unscharfmaskierung. Indem die Differenz <code style="color:#22d3bf">x - sm</code> - wobei <code style="color:#22d3bf">sm</code> ein von <code style="color:#22d3bf">x</code> subtrahierter Gauß-Weichzeichner (Radius <code style="color:#22d3bf">3+12*a</code>) ist - zum Originalbild zurückaddiert wird, werden lokale Kanten und Texturen angehoben, während niederfrequente Beleuchtungsunterschiede erhalten bleiben. Ein Ersatz für HALCONs <code style="color:#22d3bf">illuminate</code> (Illuminate image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> はぼかしの強さ(構造とみなすスケール、シグマ 3〜15)を、<code style="color:#22d3bf">b</code> は強調の強さ(0.3〜1.0)を振る。両方が使われる。強すぎるとハローアーティファクトが出る。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Stärke des Weichzeichnens (die als Struktur betrachtete Skala, Sigma 3-15), <code style="color:#22d3bf">b</code> die Stärke der Verstärkung (0.3-1.0). Beide werden verwendet. Ist sie zu stark, entstehen Halo-Artefakte.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

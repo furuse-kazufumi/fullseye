@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_thresh.b.jpg">m1_measure_thresh: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केंद्र से गुज़रने वाली caliper line पर brightness profile ने दिए गए level को कितनी बार पार किया, यह गिनता है (HALCON <code style="color:#22d3bf">measure_thresh</code> के समकक्ष: आयत/चाप के साथ खास gray value वाले points निकालना)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）、<code style="color:#22d3bf">b</code> はグレー値のしきい値レベル（0〜1、そのまま）。生のプロファイル（平滑化なし）がこのレベルをまたぐ回数を feature（整数値）として返す。線が画像に掛からない場合は 0.0。</p>
+<p><code style="color:#22d3bf">a</code> line की दिशा (<code style="color:#22d3bf">theta = a*pi</code>) है, <code style="color:#22d3bf">b</code> gray value का threshold स्तर (0 से 1, जैसा का तैसा)। raw profile (बिना smoothing) इस स्तर को जितनी बार पार करता है, वह संख्या feature (integer मान) के रूप में लौटाता है। line image पर न पड़े तो 0.0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

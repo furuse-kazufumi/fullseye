@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>複數影像的相位角圖。將 <code style="color:#22d3bf">np.angle(F)</code>（-π〜π）透過 <code style="color:#22d3bf">(angle+π)/(2π)</code> 線性映射到 [0,1]。a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>名称は「度（degree）」を示唆するが、実装は phase_rad と同じ <code style="color:#22d3bf">_sh_freq</code> の <code style="color:#22d3bf">fft_phase</code> 分岐を共有しており、度数法への変換は行っていない —— 返るのは [0,1] に正規化された角度で、実際の度数（0-360°）ではない。HALCON の <code style="color:#22d3bf">phase_deg</code>（複素画像の位相を度単位で返す演算）の代役としては単位が違う近似である点に注意。</p>
+<p>名稱暗示「度（degree）」，但實作與 phase_rad 共用 <code style="color:#22d3bf">_sh_freq</code> 的 <code style="color:#22d3bf">fft_phase</code> 分支，並未轉換為角度制 —— 傳回的是正規化到 [0,1] 的角度，而非實際的度數（0-360°）。請注意，作為 HALCON 的 <code style="color:#22d3bf">phase_deg</code>（以度為單位傳回複數影像相位的運算）的替代，它是單位不同的近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

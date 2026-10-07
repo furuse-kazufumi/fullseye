@@ -14,16 +14,16 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Measures the <b>standard error</b> of the local standard deviation without assuming a distribution (bootstrap).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">local_std</code> が併記する誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> は<b>雑音が正規分布</b>という仮定の上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。ここでは窓の中の値を<b>そこから重複ありで取り直して</b>統計量を作り直し、その散らばりそのものを誤差とする —— 仮定が要らない代わりに計算で買う。</p>
-<p><code style="color:#22d3bf">a</code> が窓(3〜9 画素)、<code style="color:#22d3bf">b</code> が取り直しの回数(8〜64)。出力は窓内の標準偏差に対する<b>相対</b>標準誤差で、<code style="color:#22d3bf">1.0</code> が「100 % ぶれる」。</p>
-<p><b>読み方</b>: <b>絶対値ではなく、場所ごとの比で読む</b>。正規分布の白色雑音に当てると閉形式 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> より<b>低めに出る</b>(ブートストラップは小標本で標準偏差のばらつきを過小に言う)。実測(<code style="color:#22d3bf">b=1.0</code>、取り直し 64 回):</p>
-<p>窓 3x3 (n=9)  実測 0.216 / 閉形式 0.250 = 0.86</p>
-<p>窓 5x5 (n=25) 実測 0.133 / 閉形式 0.144 = 0.92</p>
-<p>窓 7x7 (n=49) 実測 0.096 / 閉形式 0.102 = 0.94</p>
-<p>窓 9x9 (n=81) 実測 0.076 / 閉形式 0.079 = 0.96</p>
-<p>つまり窓が大きくなるほど近づく。<b>読みどころは「どこが周りより高いか」</b>で、そこは分布が正規から外れている(傷・外れ値・二つの材質の境目)。外れ値を 2 % 混ぜた画像では中央値が閉形式の <b>1.8 倍</b>まで跳ね上がり、正規の場合(0.9 倍前後)とはっきり分かれる —— この差が使いどころ。<code style="color:#22d3bf">local_std</code> と並べて、「ばらつきの大きさ」と「その数字の信用できなさ」を同時に見る。</p>
-<p><b>適用条件</b>: (1) 窓が小さいとブートストラップ自体がぶれるうえ、上のとおり系統的に低く出る。(2) 取り直し回数(<code style="color:#22d3bf">b</code>)を増やすと地図は滑らかになるが、真の誤差が下がるわけではない。(3) 決定的にするため種は固定してある —— 同じ入力なら必ず同じ出力を返す。(4) <b>仮定を計算で買う op</b>なので遅い: 実測で 128x128 が 0.26 秒、256x256 が 1.27 秒(<code style="color:#22d3bf">b=1.0</code>、64 回)。閉形式で足りる場面では <code style="color:#22d3bf">local_std</code> の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を確かめたいときの道具。</p>
+<p>The error <code style="color:#22d3bf">1/sqrt(2(n-1))</code> that <code style="color:#22d3bf">local_std</code> reports alongside rests on the assumption that <b>the noise is normally distributed</b>. With outliers or bimodality, that formula understates the true spread. Here the values in the window are <b>resampled from themselves with replacement</b> to rebuild the statistic, and the scatter itself is taken as the error — no assumption is needed; instead it is paid for with computation.</p>
+<p><code style="color:#22d3bf">a</code> is the window (3-9 pixels), <code style="color:#22d3bf">b</code> the number of resamples (8-64). The output is the standard error relative to the standard deviation in the window (<b>relative</b>); <code style="color:#22d3bf">1.0</code> means &quot;it wobbles by 100 %&quot;.</p>
+<p><b>How to read it</b>: <b>read it as a ratio between locations, not as an absolute value</b>. Applied to normally distributed white noise it <b>comes out lower</b> than the closed form <code style="color:#22d3bf">1/sqrt(2(n-1))</code> (the bootstrap understates the spread of the standard deviation on small samples). Measured (<code style="color:#22d3bf">b=1.0</code>, 64 resamples):</p>
+<p>window 3x3 (n=9)  measured 0.216 / closed form 0.250 = 0.86</p>
+<p>window 5x5 (n=25) measured 0.133 / closed form 0.144 = 0.92</p>
+<p>window 7x7 (n=49) measured 0.096 / closed form 0.102 = 0.94</p>
+<p>window 9x9 (n=81) measured 0.076 / closed form 0.079 = 0.96</p>
+<p>So the larger the window, the closer it gets. <b>What to look for is &quot;where it is higher than its surroundings&quot;</b>:</p>
+<p>there the distribution departs from normal (scratches, outliers, the boundary between two materials). In an image with 2 % outliers mixed in, the median jumps to <b>1.8 times</b> the closed form, clearly separated from the normal case (around 0.9 times) — this difference is where it is useful. Put it next to <code style="color:#22d3bf">local_std</code> to see &quot;the size of the spread&quot; and &quot;how untrustworthy that number is&quot; at the same time.</p>
+<p><b>Conditions of use</b>: (1) With a small window the bootstrap itself wobbles and, as above, comes out systematically low. (2) Increasing the number of resamples (<code style="color:#22d3bf">b</code>) makes the map smoother, but does not lower the true error. (3) The seed is fixed to make it deterministic — the same input always returns the same output. (4) <b>It is an op that pays for an assumption with computation</b>, so it is slow: measured 128x128 takes 0.26 s and 256x256 takes 1.27 s (<code style="color:#22d3bf">b=1.0</code>, 64 times). Where the closed form suffices, use the error bound of <code style="color:#22d3bf">local_std</code> — this op is the tool for when you want to check &quot;whether that closed form can be trusted&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

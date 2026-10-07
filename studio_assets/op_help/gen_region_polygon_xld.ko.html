@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_region_polygon_xld.inputs.jpg">gen_region_polygon_xld: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>XLD 윤곽(다각형의 정점 열)을 region(픽셀 마스크)으로 변환한다. 윤곽점을 최근접 픽셀에 찍은 후, <code style="color:#22d3bf">1+2a</code> 회의 이진 팽창(dilation)으로 선을 굵게 만들어 연결한다. b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">gen_region_polygon_xld</code>（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
+<p>HALCON의 <code style="color:#22d3bf">gen_region_polygon_xld</code>(XLD 다각형의 내부를 채운 region을 생성하는 연산)와 달리, 이 구현은 다각형 내부를 채우는 것이 아니라 윤곽선 자체를 팽창시켜 두껍게 할 뿐인 근사 — 닫히지 않은 윤곽이나 자기 교차하는 윤곽에서는 본래의 내부 채우기와 결과가 어긋난다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

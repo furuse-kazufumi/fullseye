@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation1.inputs.jpg">hx_dilation1: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Disk structuring element से region का dilation करता है। HALCON के <code style="color:#22d3bf">dilation1</code> (region का dilation) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code> の円板構造要素で <code style="color:#22d3bf">scipy.ndimage.binary_dilation</code> を呼ぶ。<code style="color:#22d3bf">b</code> は未使用。隙間を埋めたり領域を太らせたりするのに使う。</p>
+<p>radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> के disc structuring element से <code style="color:#22d3bf">scipy.ndimage.binary_dilation</code> को call करता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। gaps भरने या regions को मोटा करने के लिए उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

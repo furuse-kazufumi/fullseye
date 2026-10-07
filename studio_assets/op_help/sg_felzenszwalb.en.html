@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the boundaries of Felzenszwalb&#x27;s graph-based region segmentation (<code style="color:#22d3bf">skimage.segmentation.felzenszwalb</code>; no corresponding HALCON operator).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> はクラスタの粗さを決める <code style="color:#22d3bf">scale</code> を 40〜540 に振り（大きいほど大きな塊にまとまる）、<code style="color:#22d3bf">b</code> は最小成分サイズを 15〜100 に振る（<code style="color:#22d3bf">min_size = round(15+b*85)</code>）。戻り値はラベル画像の外側境界（region）で、真の物体輪郭に沿いやすい。</p>
+<p><code style="color:#22d3bf">a</code> sweeps <code style="color:#22d3bf">scale</code>, which determines the coarseness of the clusters, over 40 to 540 (the larger, the bigger the clumps), and <code style="color:#22d3bf">b</code> sweeps the minimum component size over 15 to 100 (<code style="color:#22d3bf">min_size = round(15+b*85)</code>). Returns the outer boundaries of the label image (region), which tend to follow true object contours.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

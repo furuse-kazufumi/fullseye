@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/erosion_circle.inputs.jpg">erosion_circle: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원판형 구조 요소에 의한 이진 침식(<code style="color:#22d3bf">ndimage.binary_erosion</code>). 전경 영역을 외주에서부터 침식시켜 줄이는, 가장 기본적인 이진 형태학 연산이다. HALCON의 <code style="color:#22d3bf">erosion_circle</code>(Erode a region with a circular structuring element.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> はこのバックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の円形・矩形いずれも)に共通して<b>未使用</b>。</p>
+<p><code style="color:#22d3bf">a</code>가 구조 요소의 반경을 1~4 범위(<code style="color:#22d3bf">_rad(a)</code>)에서 바꾼다. <code style="color:#22d3bf">b</code>는 이백엔드의 이진 모폴로지 op(erosion/dilation/opening/closing의원형·사각형 모두)에서 공통으로 <b>미사용</b>이다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

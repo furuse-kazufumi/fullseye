@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_region_polygon_xld.inputs.jpg">gen_region_polygon_xld: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>XLD contour (polygon के vertices की sequence) को region (pixel mask) में बदलता है। Contour points को सबसे नज़दीकी pixel पर लगाकर, <code style="color:#22d3bf">1+2a</code> बार binary dilation से रेखा को मोटा करके जोड़ता है। b इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">gen_region_polygon_xld</code>（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
+<p>HALCON के <code style="color:#22d3bf">gen_region_polygon_xld</code> (XLD polygon के अंदर के हिस्से को भरकर region बनाने वाला operation) से अलग, यह implementation polygon के अंदर के हिस्से को नहीं भरता, बल्कि केवल contour रेखा को ही dilation से मोटा करने वाला सन्निकटन है — बंद न होने वाले या स्वयं को काटने वाले contours में परिणाम वास्तविक आंतरिक भराई से मेल नहीं खाता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

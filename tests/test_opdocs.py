@@ -876,7 +876,8 @@ def test_translated_pages_say_plainly_what_is_not_translated():
     rec = next(r for r in _RECS
                if OD.summary_and_rest(r.get("doc"))[1]          # 本文がある
                and OD.op_summary(r, "en")[1]                    # 要約は訳済み
-               and rec_is_japanese_body(r))
+               and rec_is_japanese_body(r)
+               and not any(OD.op_rest(r, x)[1] for x in _TARGET_LANGS))   # 本文の訳が無い
     d = root if rec["dim"] == "2d" else os.path.join(root, rec["dim"])
     for lang in _TARGET_LANGS:
         with open(os.path.join(d, "%s.%s.html" % (rec["name"], lang)), encoding="utf-8") as f:

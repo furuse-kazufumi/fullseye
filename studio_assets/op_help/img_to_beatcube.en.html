@@ -13,13 +13,12 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Read the bright spots of the image as FMCW radar targets (range = column, velocity = row) and synthesise the complex beat cube (A,C,S).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>平滑化(σ=2)した画像の局所極大を値の降順に <code style="color:#22d3bf">K</code> 個拾い、各点を標的にする:</p>
-<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>、<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>、振幅 = 画素値。前方モデルは台帳の <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) そのもので、<code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code>(素子間隔は既定の半波長、標的はすべて正面 = 到来角 0°)、その他は同関数の既定(標本化 10 MHz、掃引 20 THz/s、チャープ周期 50 µs、波長 3.89 mm)。この既定では <b>距離は 0〜37.5 m、速度は ±19.5 m/s が曖昧さの無い範囲</b> で、上の写像はその内側に収まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 複素白色雑音の σ <code style="color:#22d3bf">= 0.5 * a</code>(a=0 で無雑音)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 標的数 <code style="color:#22d3bf">K = 1 + int(b * 6)</code>(b=0.5 で 4。極大が足りなければその数)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(4, 32, 64)</code> complex128。<code style="color:#22d3bf">tb_range_doppler_map</code> で 2-D FFT すると標的ごとの峰が「列 → 距離ビン、行 → ドップラービン」に立ち、<code style="color:#22d3bf">tb_beamform_delay_sum</code> は 4 素子で到来角 0° の峰を返す。</p>
-<p style="margin:2px 0 2px 12px">• 乱数 seed は 0 固定(決定的)。速度の符号は <code style="color:#22d3bf">fmcw_beat_simulate</code> の規約(<b>正 = 遠ざかる</b>)。</p>
+<p>Picks <code style="color:#22d3bf">K</code> local maxima of the smoothed (σ=2) image in descending order of value and makes each a target:</p>
+<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>, <code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>, amplitude = pixel value. The forward model is the ledger&#x27;s <code style="color:#22d3bf">fmcw_beat_simulate</code> (<code style="color:#22d3bf">rangedoppler</code>) itself, with <code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code> (element spacing is the default half wavelength, all targets straight ahead = angle of arrival 0°), and otherwise that function&#x27;s defaults (sampling 10 MHz, sweep 20 THz/s, chirp period 50 µs, wavelength 3.89 mm). With these defaults <b>the unambiguous range is 0 to 37.5 m in distance and ±19.5 m/s in velocity</b>, and the mapping above stays inside it.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → σ of complex white noise <code style="color:#22d3bf">= 0.5 * a</code> (noise-free at a=0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → number of targets <code style="color:#22d3bf">K = 1 + int(b * 6)</code> (4 at b=0.5; if there are not enough maxima, that many).</p>
+<p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(4, 32, 64)</code> complex128. A 2-D FFT with <code style="color:#22d3bf">tb_range_doppler_map</code> gives a peak per target at &quot;column → range bin, row → Doppler bin&quot;, and <code style="color:#22d3bf">tb_beamform_delay_sum</code> returns the peak at angle of arrival 0° with 4 elements.</p>
+<p style="margin:2px 0 2px 12px">• The random seed is fixed at 0 (deterministic). The sign of velocity follows the convention of <code style="color:#22d3bf">fmcw_beat_simulate</code> (<b>positive = receding</b>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

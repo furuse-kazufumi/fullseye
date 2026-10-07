@@ -13,11 +13,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>밝은 배경에서 어두운 문자를 뽑습니다(region): thresh = mean − k*std(k 는 a)로 아래쪽 선택.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像全体の平均 <code style="color:#22d3bf">mean</code> と標準偏差 <code style="color:#22d3bf">std</code> から <code style="color:#22d3bf">thr = mean - k*std</code> を計算し、<code style="color:#22d3bf">v &lt; thr</code> の画素を 1 とする 0/1 の float region を返す。暗い文字が少数派で明るい背景が多数派、という前提の大域しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 係数 <code style="color:#22d3bf">k = 0.2 + 1.8*a</code>(0.2〜2.0)。大きいほど厳しく(より暗い画素だけ)、小さいほど多く拾う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>濃淡が一様な画像では <code style="color:#22d3bf">std = 0</code> となり <code style="color:#22d3bf">thr = mean</code> で「平均未満」だけが残る。照明ムラがあると 1 本のしきい値では片側が欠けるので、前に <code style="color:#22d3bf">hx_plane_deviation</code> で背景を引くか、局所版の <code style="color:#22d3bf">dyn_threshold</code> / <code style="color:#22d3bf">local_threshold</code> を使う。明るい文字を取りたい場合は先に画像を反転する(この op は下側しか選ばない)。</p>
+<p>영상 전체의 평균 <code style="color:#22d3bf">mean</code>과 표준편차 <code style="color:#22d3bf">std</code>로부터 <code style="color:#22d3bf">thr = mean - k*std</code>를 계산하고, <code style="color:#22d3bf">v &lt; thr</code>인 화소를 1로 하는 0/1의 float region을 반환한다. 어두운 문자가 소수이고 밝은 배경이 다수라는 전제의 대역 임계값.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 계수 <code style="color:#22d3bf">k = 0.2 + 1.8*a</code>(0.2~2.0). 클수록 엄격하고(더 어두운 화소만), 작을수록 많이 줍는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>농담이 균일한 영상에서는 <code style="color:#22d3bf">std = 0</code>이 되어 <code style="color:#22d3bf">thr = mean</code>으로 &quot;평균 미만&quot;만 남는다. 조명 불균일이 있으면 1개의임계값으로는 한쪽이 빠지므로, 미리 <code style="color:#22d3bf">hx_plane_deviation</code>으로 배경을 빼거나, 국소판인 <code style="color:#22d3bf">dyn_threshold</code> / <code style="color:#22d3bf">local_threshold</code>를 쓴다. 밝은 문자를 얻고 싶다면 먼저 영상을 반전한다(이 op는 아래쪽만 고른다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

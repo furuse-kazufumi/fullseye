@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감마 보정 <code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code>. <code style="color:#22d3bf">a</code>가 0에 가까울수록 지수는 0.3에 가까워져 어두운 부분을 끌어올리고, <code style="color:#22d3bf">a</code>가 1에 가까울수록 지수는 2.8에 가까워져 어두운 부분을 뭉개어 대비를 강화한다. HALCON의 <code style="color:#22d3bf">gamma_image</code>(Perform a gamma encoding or decoding of an image.)의 대역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> はガンマ指数を 0.3〜2.8 の範囲で<b>線形に</b>振る（既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.55 であって素通しではない。γ=1 が要るなら <code style="color:#22d3bf">a=0.28</code>）。<code style="color:#22d3bf">b</code> は未使用。HALCON の実装は Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは単純なべき乗写像 1 本に単純化している(近似)。</p>
+<p><code style="color:#22d3bf">a</code>는 감마 지수를 0.3~2.8 범위에서 <b>선형으로</b> 바꾼다(기본값 <code style="color:#22d3bf">a=0.5</code>는 γ=1.55이며 그대로 통과가 아니다. γ=1이 필요하면 <code style="color:#22d3bf">a=0.28</code>). <code style="color:#22d3bf">b</code>는 사용하지 않는다. HALCON의 구현은 Encode/Decode 전환이나 AmpFactor 등 여러 파라미터를 갖지만, 여기서는단순한 거듭제곱 사상 1개로 단순화했다(근사).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

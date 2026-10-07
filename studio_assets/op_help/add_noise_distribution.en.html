@@ -15,8 +15,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Adds additive noise to the image. The implementation supports only Gaussian (normal-distribution) noise, sharing the <code style="color:#22d3bf">gaussian</code> branch of <code style="color:#22d3bf">_sh_noise</code> with <code style="color:#22d3bf">add_noise_white</code>. The random numbers are generated with a fixed seed determined by a (<code style="color:#22d3bf">int(a*997)+7</code>), so the same a always produces the same noise (deterministic). b sets the noise standard deviation to 0.02-0.22.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">add_noise_distribution</code>（任意の確率分布（ヒストグラム指定）に従うノイズを加える演算）とは異なり、この実装は常にガウス分布のノイズしか生成できない近似 —— 分布形状の指定は反映されない。</p>
+<p>Unlike HALCON&#x27;s <code style="color:#22d3bf">add_noise_distribution</code> (an operation that adds noise following an arbitrary probability distribution (specified as a histogram)), this implementation is an approximation that can only ever generate Gaussian noise — a specified distribution shape is not reflected.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

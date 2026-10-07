@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>आयताकार window के अंदर अधिकतम मान लौटाने वाला grayscale dilation (<code style="color:#22d3bf">ndimage.maximum_filter</code>)। अँधेरी पतली रेखाओं और छोटे छेदों को चमकीली तरफ़ से भरकर मिटाता है; यह <code style="color:#22d3bf">gray_erosion_rect</code> का जोड़ीदार operation है। HALCON के <code style="color:#22d3bf">gray_dilation_rect</code> (Determine the maximum gray value within a rectangle.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> window की side length को <code style="color:#22d3bf">{3,5,7,9}</code> में बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

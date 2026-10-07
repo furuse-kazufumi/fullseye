@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pairs.b.jpg">m1_measure_pairs: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केंद्र से गुज़रने वाली caliper line पर उठते → गिरते edge जोड़ों (चमकीली वस्तु के दोनों सिरों) की संख्या गिनता है (HALCON <code style="color:#22d3bf">measure_pairs</code> के समकक्ष: आयत/चाप के लंबवत सीधे edges के जोड़े निकालना)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code>と同じ（勾配ピークのサブピクセル検出）で、<code style="color:#22d3bf">b</code>（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
+<p><code style="color:#22d3bf">a</code> line की दिशा (<code style="color:#22d3bf">theta = a*pi</code>) है। edge detection <code style="color:#22d3bf">m1_measure_pos</code> जैसा ही है (gradient peaks का sub-pixel detection), और <code style="color:#22d3bf">b</code> (0 से 1) अधिकतम amplitude के सापेक्ष threshold है। threshold से ऊपर के edges को क्रम से scan करके, जहाँ polarity rising → falling क्रम में हो उस जोड़ी को 1 pair गिनता है (feature, integer मान)। 2 से कम edges हों तो 0.0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成每條 contour 的平行(法向偏移)contour(距離由 (a−0.5) 帶符號給出)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 contour(点数 2 以上)の接線を <code style="color:#22d3bf">np.gradient(c, axis=0)</code> で求め、それを 90° 回した単位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> の方向に <code style="color:#22d3bf">dist</code> だけ全点をずらした contour を返す。元の contour は出力に含まれない(置き換わる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 符号つきオフセット <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 画素。a=0.5 で無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 接線長が 1e-9 未満の点(重複点)は法線 0 とし動かさない。点数 1 の contour はそのまま。</p>
-<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと自己交差する(<code style="color:#22d3bf">hx_test_self_intersect</code> で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から一定距離に置くのに使う。</p>
+<p>對每個 contour(點數 2 以上)用 <code style="color:#22d3bf">np.gradient(c, axis=0)</code> 求切線,將其旋轉 90° 得到單位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code>,回傳沿該方向把全部點平移 <code style="color:#22d3bf">dist</code> 後的 contour。原 contour 不包含在輸出中(被取代)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 帶正負號偏移 <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 像素。a=0.5 時無變化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 切線長小於 1e-9 的點(重複點)法線取 0,不移動。點數為 1 的 contour 原樣保留。</p>
+<p>法線方向由 contour 的行進方向決定(左右哪側為正取決於點列的方向)。偏移超過曲率半徑時會自相交(可用 <code style="color:#22d3bf">hx_test_self_intersect</code> 偵測)。用於比較輪廓加粗/變細後的形狀,或把量測線放在離邊界一定距離處。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

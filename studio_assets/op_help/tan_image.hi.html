@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Pixel मानों का tangent लेने वाला pointwise transform। HALCON के <code style="color:#22d3bf">tan_image</code> (image का tangent निकालना) के समकक्ष, लेकिन normalisation नियम अलग होने वाला सन्निकटन।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>実装は x を [0,1] にクリップし、(x-0.5) を ±0.45π の範囲へ写してから tan を掛け、結果を signed01（符号つき値を [0,1] に写す、0.5 が 0 に対応）で戻す。a, b は未使用。角度域を ±0.45π に抑えているため tan の発散（±90° 付近）には達しない。中間輝度付近で傾きが最大になり、コントラストを強めたい局所帯域を狙うのに使える。</p>
+<p>implementation x को [0,1] में clip करता है, (x-0.5) को ±0.45π की सीमा में map करके tan लगाता है, और परिणाम को signed01 (signed मानों को [0,1] में map करता है, जिसमें 0.5 का अर्थ 0 है) से वापस लाता है। a, b का उपयोग नहीं होता। कोण की सीमा ±0.45π तक रखी गई है, इसलिए tan का divergence (±90° के पास) कभी नहीं आता। मध्यम luminance के आसपास ढलान सबसे अधिक होती है, इसलिए इसका उपयोग उस local band को लक्ष्य करने में किया जा सकता है जहाँ contrast बढ़ाना हो।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

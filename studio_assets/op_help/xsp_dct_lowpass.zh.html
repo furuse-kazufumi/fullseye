@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一种低通滤波器，仅保留 DCT 系数中低频的正方形区块后再做逆变换。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は残す低周波係数ブロックの一辺の長さを決める（<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>、<code style="color:#22d3bf">a</code> が大きいほど高周波まで残りぼけが弱くなる）。<code style="color:#22d3bf">b</code> は未使用。ガウシアンぼかしと違い矩形の周波数マスクを掛けるので、強くかけるとリンギング（波打ち）が出やすい。</p>
+<p><code style="color:#22d3bf">a</code> 决定保留的低频系数块的边长（<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>，<code style="color:#22d3bf">a</code> 越大保留的高频越多，模糊越弱）。<code style="color:#22d3bf">b</code> 未使用。与高斯模糊不同，施加的是矩形的频率掩模，因此作用过强时容易出现振铃（波纹）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

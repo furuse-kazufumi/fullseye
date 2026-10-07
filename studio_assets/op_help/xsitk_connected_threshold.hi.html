@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Connected threshold region growing (SimpleITK <code style="color:#22d3bf">ConnectedThreshold</code>, region growing)। Image के केंद्र वाले pixel को seed बनाकर, उस pixel मान को केंद्र मानने वाले intensity अंतराल के अंदर और केंद्र से जुड़े pixels को ही region के रूप में फैलाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は下限マージン(<code style="color:#22d3bf">0.1+0.3*a</code>)、<code style="color:#22d3bf">b</code> は上限マージン(<code style="color:#22d3bf">0.1+0.3*b</code>)を振る —— 区間は [中心値-下限, 中心値+上限]。画像中心付近に対象があることを前提とした op。</p>
+<p><code style="color:#22d3bf">a</code> निचली margin (<code style="color:#22d3bf">0.1+0.3*a</code>) और <code style="color:#22d3bf">b</code> ऊपरी margin (<code style="color:#22d3bf">0.1+0.3*b</code>) को बदलता है — अंतराल [केंद्र मान - निचली, केंद्र मान + ऊपरी] है। यह op मानकर चलता है कि वस्तु image के केंद्र के पास है।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>

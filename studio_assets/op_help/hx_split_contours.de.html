@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_contours.inputs.jpg">hx_split_contours: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt jede Kontur an ihren dominanten Punkten in Segmente (RDP; die Toleranz eps kommt aus a).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各 contour(点数 3 以上)に Ramer-Douglas-Peucker を掛けて支配点の index を求め、隣り合う支配点の間の部分列 <code style="color:#22d3bf">c[s:e+1]</code> を新しい contour として並べる(隣り合う線分は端点を共有する)。点数 2 以下の contour はそのまま通す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">eps = 0.5 + a*5</code>(0.5〜5.5 画素)。この距離以内の折れは無視されるので、大きいほど線分が</p>
-<p>長く少なくなる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>出力は「線分ごとの contour」であって折れ線の頂点だけではない(元の点は全部残る)。閉じた contour(始点=終点)は始点から最も遠い点で最初に分割される。線分の本数が角の数の目安になり、<code style="color:#22d3bf">hx_regress_contours</code> を後段に置くと各線分の直線性が測れる。</p>
+<p>Wendet Ramer-Douglas-Peucker auf jede Kontur (3 oder mehr Punkte) an, um die Indizes der dominanten Punkte zu finden, und reiht jede Teilfolge zwischen benachbarten dominanten Punkten <code style="color:#22d3bf">c[s:e+1]</code> als neue Kontur auf (benachbarte Segmente teilen ihre Endpunkte). Konturen mit 2 oder weniger Punkten werden unverändert durchgereicht.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Toleranz <code style="color:#22d3bf">eps = 0.5 + a*5</code> (0.5 bis 5.5 Pixel). Knicke innerhalb dieses Abstands werden ignoriert, daher werden die Segmente bei größerem Wert</p>
+<p>länger und weniger.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Die Ausgabe ist &quot;eine Kontur pro Segment&quot;, nicht nur die Eckpunkte der Polylinie (alle ursprünglichen Punkte bleiben erhalten). Eine geschlossene Kontur (Start = Ende) wird zuerst am vom Start am weitesten entfernten Punkt geteilt. Die Zahl der Segmente ist ein Anhaltspunkt für die Zahl der Ecken; <code style="color:#22d3bf">hx_regress_contours</code> dahinter misst die Geradheit jedes Segments.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

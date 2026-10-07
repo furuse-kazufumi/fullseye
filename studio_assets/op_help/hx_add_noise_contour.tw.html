@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.inputs.jpg">hx_add_noise_contour: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>給 contour 點加白高斯雜訊(std 由 a 給出,固定 seed 因而確定)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 <code style="color:#22d3bf">std</code> のガウス雑音を独立に加えて返す。乱数は <code style="color:#22d3bf">np.random.default_rng(12345)</code> を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 標準偏差 <code style="color:#22d3bf">std = a*3</code>(0〜3 画素。a=0 なら無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ <code style="color:#22d3bf">a</code> でも雑音の当たり方が変わる。ロバスト性の検証(<code style="color:#22d3bf">hx_fit_circle_contour</code> の残差がどれだけ増えるか等)や、<code style="color:#22d3bf">smooth_contours_xld</code> の効果確認に使う。</p>
+<p>對各 contour 全部點的座標 (row, col) 獨立地加上平均 0、標準差 <code style="color:#22d3bf">std</code> 的高斯雜訊後回傳。亂數 <code style="color:#22d3bf">np.random.default_rng(12345)</code> 每次呼叫都重新建立,因此相同輸入總是產生相同的雜訊(確定性)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 標準差 <code style="color:#22d3bf">std = a*3</code>(0〜3 像素。a=0 時無變化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>雜訊序列依賴於 contour 的順序與點數,因此前級改變了點的順序或條數時,即使 <code style="color:#22d3bf">a</code> 相同雜訊的施加方式也會改變。用於穩健性驗證(<code style="color:#22d3bf">hx_fit_circle_contour</code> 的殘差增加多少等)或確認 <code style="color:#22d3bf">smooth_contours_xld</code> 的效果。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

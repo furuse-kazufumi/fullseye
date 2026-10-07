@@ -14,11 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.inputs.jpg">matrix_to_img: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把矩陣變成<b>供檢視的灰階</b>並轉回影像 —— 這不是型別轉換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>行き(<code style="color:#22d3bf">img_to_matrix</code>)は値も形も変えない<b>純粋なキャスト</b>だと明記してあるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>対数圧縮</b>の強さ。<code style="color:#22d3bf">k = 10**(3a) - 1</code> として <code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>(a=0 は線形、a=1 で 1000 倍の圧縮)。条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基準。<code style="color:#22d3bf">b &lt; 0.5</code> は<b>データの min–max を [0,1] に伸ばす</b>、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>0 を 0.5 に置いて <code style="color:#22d3bf">|x|</code> の最大で対称に</b>(符号つきの行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と<b>同じ形</b>の float64、値域 [0,1]。全要素が等しい行列は一様な 0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。</p>
+<p>去程(<code style="color:#22d3bf">img_to_matrix</code>)已明確寫明是值和形狀都不變的<b>純粹的型別轉換</b>，</p>
+<p>但若回程也同樣只做轉換就是在說謊: 矩陣的值不在 [0,1] 內，只把最小值拉到黑、最大值拉到白的話，<b>就不知道 0 在哪裡</b>。共變異數、相關、偽逆矩陣的正負號，讀不出這一點就沒有意義。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>對數壓縮</b>的強度。令 <code style="color:#22d3bf">k = 10**(3a) - 1</code>，<code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>(a=0 為線性，a=1 時壓縮 1000 倍)。對於像條件數那樣數量級跨度很大的矩陣，防止小分量全部被壓成黑色。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基準。<code style="color:#22d3bf">b &lt; 0.5</code> 為<b>把資料的 min–max 拉伸到 [0,1]</b>，<code style="color:#22d3bf">b &gt;= 0.5</code> 為<b>把 0 放在 0.5，依 <code style="color:#22d3bf">|x|</code> 的最大值對稱縮放</b>(適用於帶正負號的矩陣。0.5 為中性，亮 = 正，暗 = 負)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 與輸入<b>形狀相同</b>的 float64，值域 [0,1]。所有元素相等的矩陣為均勻的 0.5(為了在 min–max 一側也不發生除以 0，歸於中性)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

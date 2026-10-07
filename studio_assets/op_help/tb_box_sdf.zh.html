@@ -14,14 +14,13 @@
 <p><img src="fig/tb_box_sdf.gif" alt="tb_box_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴对齐长方体的<b>精确</b>有符号距离场(内部为负,外部为正)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Inigo Quilez の box SDF: <code style="color:#22d3bf">q = |p-center| - half_extents</code> とし、</p>
-<p><code style="color:#22d3bf">outside = |max(q,0)|</code> (角/辺/面の外はユークリッド距離),</p>
-<p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内側は最近面までの負値),</p>
+<p>Inigo Quilez 的 box SDF：令 <code style="color:#22d3bf">q = |p-center| - half_extents</code>，</p>
+<p><code style="color:#22d3bf">outside = |max(q,0)|</code> (角/棱/面之外为欧氏距离)，</p>
+<p><code style="color:#22d3bf">inside  = min(max(q_x,q_y,q_z), 0)</code> (内侧为到最近面的负值)，</p>
 <p><code style="color:#22d3bf">sdf = outside + inside</code>。</p>
-<p><code style="color:#22d3bf">half_extents</code> は各軸の<b>半辺長</b>(中心から面まで)。外側は厳密距離(角では対角、面前は垂直距離)、内側も最近面までの厳密負距離を与える。</p>
-<p>Raises ValueError for any half_extent&lt;0 or malformed grid/center/half_extents。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">box_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">half_extents</code> 为各轴的<b>半边长</b>(从中心到面)。外侧给出精确距离(角处为对角，面前为垂直距离)，内侧也给出到最近面的精确负距离。</p>
+<p>当任一 half_extent&lt;0 或 grid/center/half_extents 格式错误时抛出 ValueError。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">box_sdf</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

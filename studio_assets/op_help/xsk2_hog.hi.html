@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>HOG (Histogram of Oriented Gradients) feature की visualisation image। <code style="color:#22d3bf">skimage.feature.hog</code> को <code style="color:#22d3bf">visualize=True</code> के साथ call करके visualisation image वाला हिस्सा लौटाता है (feature vector खुद छोड़ दिया जाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a がセル 1 辺のピクセル数（<code style="color:#22d3bf">6 + 2*int(a*3)</code>、6/8/10/12 の 4 段階）を振る。方向数は 8、ブロックは 2x2 に固定。b は未使用。出力は最大値で正規化した勾配方向強度の可視化であり、HOG 特徴ベクトルそのものではない。</p>
+<p>a cell की 1 भुजा के pixels की संख्या (<code style="color:#22d3bf">6 + 2*int(a*3)</code>, 6/8/10/12 के 4 चरण) को बदलता है। दिशाओं की संख्या 8 और block 2x2 पर स्थिर है। b उपयोग नहीं होता। आउटपुट अधिकतम मान से normalise की गई gradient दिशा की तीव्रता का visualisation है, HOG feature vector स्वयं नहीं।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

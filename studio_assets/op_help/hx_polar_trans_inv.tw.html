@@ -13,11 +13,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_polar_trans_inv.inputs.jpg">hx_polar_trans_inv: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把 contour 點視為 (radius, angle) 並逆變換回直角座標(polar_trans 的逆)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 contour の点を <code style="color:#22d3bf">(row, col) = (半径 rad, 角度)</code> とみなし、<code style="color:#22d3bf">ang = col / W * 2*pi</code> として <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code>(<code style="color:#22d3bf">cy, cx = H/2, W/2</code>)の直交座標に戻した contour を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 半径は行の値をそのまま画素距離として使い、角度は列を画像幅で 0〜2π に写す。</p>
-<p>注意: 順変換 <code style="color:#22d3bf">polar_trans_contour_xld</code> は行を <code style="color:#22d3bf">r / max(H, W) * H</code>、列を <code style="color:#22d3bf">(θ + π) / 2π * W</code> として出力するため、この op はその厳密な逆にはなっていない。角度に π のずれ(点が中心対称の位置に写る)、非正方画像では半径に <code style="color:#22d3bf">max(H, W)/H</code> 倍のずれが出る(往復で半径の 2 倍の誤差が出る実測)。順変換との往復を期待するときはこの差を織り込むか、この op を「列=角度・行=半径の一般的な極座標表現から直交へ」の変換として単独で使う。</p>
+<p>把各 contour 的點視為 <code style="color:#22d3bf">(row, col) = (半徑 rad, 角度)</code>,令 <code style="color:#22d3bf">ang = col / W * 2*pi</code>,回傳轉換回 <code style="color:#22d3bf">(cy + rad*sin(ang), cx + rad*cos(ang))</code>(<code style="color:#22d3bf">cy, cx = H/2, W/2</code>)直角座標的 contour。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 半徑直接把列的值作為像素距離使用,角度把行按影像寬度映射到 0〜2π。</p>
+<p>注意: 正轉換 <code style="color:#22d3bf">polar_trans_contour_xld</code> 把列輸出為 <code style="color:#22d3bf">r / max(H, W) * H</code>、把行輸出為 <code style="color:#22d3bf">(θ + π) / 2π * W</code>, 因此本 op 並不是它的嚴格反轉換。角度有 π 的偏差(點映射到中心對稱的位置),非正方形影像中半徑有 <code style="color:#22d3bf">max(H, W)/H</code> 倍的偏差(實測往返產生半徑 2 倍的誤差)。期望與正轉換往返時, 要把這一差異考慮進去,或者把本 op 單獨作為「從行=角度、列=半徑的一般極座標表示到直角座標」的轉換使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

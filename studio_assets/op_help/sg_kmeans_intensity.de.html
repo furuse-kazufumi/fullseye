@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet k-Means-Clustering auf die Intensitätswerte an und gibt das hellste Cluster als Region zurück (eigenständige Implementierung des Lloyd-Algorithmus; kein entsprechender HALCON-Operator).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）からクラスタ数 <code style="color:#22d3bf">k = 2 + round(4*a)</code>（2〜6）を決める。初期値はパーセンタイルから決定論的に置くので乱数は使わない。<code style="color:#22d3bf">b</code> は未使用。重心が最も高いクラスタに属する画素を領域として返す。</p>
+<p>Bestimmt aus <code style="color:#22d3bf">a</code> (0 bis 1) die Clusterzahl <code style="color:#22d3bf">k = 2 + round(4*a)</code> (2 bis 6). Die Startwerte werden deterministisch aus Perzentilen gesetzt, daher werden keine Zufallszahlen verwendet. <code style="color:#22d3bf">b</code> wird nicht verwendet. Gibt die Pixel des Clusters mit dem höchsten Schwerpunkt als Region zurück.</p>
 <p><b>Leeres Bild (gemessen)</b>: Ein Bild gleichmäßiger Helligkeit liefert <b>unabhängig von der Helligkeit ein leeres Ergebnis (jedes Pixel ist Hintergrund 0)</b>. Reinweiß und Reinschwarz verhalten sich gleich; Helligkeit allein detektiert nichts.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">Leitfaden zur Familie gallery2d_segmentation</a></p>

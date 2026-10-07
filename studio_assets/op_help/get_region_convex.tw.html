@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_convex.inputs.jpg">get_region_convex: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將區域的凸包（convex hull）作為填滿的區域回傳（<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>）。a、b 未使用。與 <code style="color:#22d3bf">shape_trans</code>（轉換為凸包形狀的 seed op）實作相同。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">get_region_convex</code>（領域の凸包を XLD 輪郭として取得する演算）とは出力形式が異なる近似 —— 輪郭の座標列ではなく塗りつぶした region を返す。</p>
+<p>輸出格式與 HALCON 的 <code style="color:#22d3bf">get_region_convex</code>（以 XLD 輪廓形式取得區域凸包的運算）不同的近似 —— 傳回的是填滿後的 region，而非輪廓的座標序列。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

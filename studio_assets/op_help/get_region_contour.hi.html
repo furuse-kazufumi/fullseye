@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/get_region_contour.inputs.jpg">get_region_contour: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region का contour (सीमा रेखा, 1 pixel चौड़ी) निकालता है। Region में से उसका erode किया गया संस्करण (1 बार binary erosion) घटाकर contour छोड़ता है। <b>छेद वाले region में केवल बाहरी सीमा ही नहीं, छेद का contour भी लौटता है</b> (मापा गया 2026-09-16: 8x8 के frame में 4x4 का छेद वाले इनपुट में, छेद से सटे 20 foreground pixels में से 16 pixels contour के रूप में आते हैं)। &quot;Region − erode किया गया संस्करण&quot; परिभाषा से ही बाहर की तरफ़ और छेद की तरफ़ दोनों से 1 pixel छोड़ता है, इसलिए केवल बाहरी सीमा चाहिए तो पहले छेद भर दें। a, b इस्तेमाल नहीं होते। <code style="color:#22d3bf">boundary</code> seed op जैसा ही implementation।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">get_region_contour</code>（領域の輪郭を取得する演算、本来は XLD 輪郭として座標列を返す）とは出力形式が異なる近似 —— この backend は輪郭を region（画素マスク）として返し、XLD の座標点列にはしていない。</p>
+<p>HALCON के <code style="color:#22d3bf">get_region_contour</code> (region का contour प्राप्त करने वाला operation, जो मूलतः XLD contour के रूप में coordinates का क्रम लौटाता है) से भिन्न आउटपुट format वाला सन्निकटन — यह backend contour को region (pixel mask) के रूप में लौटाता है, XLD के coordinate points के क्रम के रूप में नहीं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

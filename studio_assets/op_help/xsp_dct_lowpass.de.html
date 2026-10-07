@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein Tiefpassfilter, der von den DCT-Koeffizienten nur einen quadratischen Niederfrequenzblock beibehält, bevor die Rücktransformation angewendet wird.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は残す低周波係数ブロックの一辺の長さを決める（<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>、<code style="color:#22d3bf">a</code> が大きいほど高周波まで残りぼけが弱くなる）。<code style="color:#22d3bf">b</code> は未使用。ガウシアンぼかしと違い矩形の周波数マスクを掛けるので、強くかけるとリンギング（波打ち）が出やすい。</p>
+<p><code style="color:#22d3bf">a</code> bestimmt die Seitenlänge des beibehaltenen Blocks niederfrequenter Koeffizienten (<code style="color:#22d3bf">keep = max(2, int((0.15 + 0.6*a) * min(H, W)))</code>; je größer <code style="color:#22d3bf">a</code>, desto höhere Frequenzen bleiben erhalten und desto schwächer die Unschärfe). <code style="color:#22d3bf">b</code> wird nicht verwendet. Anders als beim Gauß-Weichzeichnen wird eine rechteckige Frequenzmaske angewendet, daher entsteht bei starker Anwendung leicht Ringing (Welligkeit).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

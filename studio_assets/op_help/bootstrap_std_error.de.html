@@ -14,16 +14,16 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Misst den <b>Standardfehler</b> der lokalen Standardabweichung, ohne eine Verteilung anzunehmen (Bootstrap).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">local_std</code> が併記する誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> は<b>雑音が正規分布</b>という仮定の上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。ここでは窓の中の値を<b>そこから重複ありで取り直して</b>統計量を作り直し、その散らばりそのものを誤差とする —— 仮定が要らない代わりに計算で買う。</p>
-<p><code style="color:#22d3bf">a</code> が窓(3〜9 画素)、<code style="color:#22d3bf">b</code> が取り直しの回数(8〜64)。出力は窓内の標準偏差に対する<b>相対</b>標準誤差で、<code style="color:#22d3bf">1.0</code> が「100 % ぶれる」。</p>
-<p><b>読み方</b>: <b>絶対値ではなく、場所ごとの比で読む</b>。正規分布の白色雑音に当てると閉形式 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> より<b>低めに出る</b>(ブートストラップは小標本で標準偏差のばらつきを過小に言う)。実測(<code style="color:#22d3bf">b=1.0</code>、取り直し 64 回):</p>
-<p>窓 3x3 (n=9)  実測 0.216 / 閉形式 0.250 = 0.86</p>
-<p>窓 5x5 (n=25) 実測 0.133 / 閉形式 0.144 = 0.92</p>
-<p>窓 7x7 (n=49) 実測 0.096 / 閉形式 0.102 = 0.94</p>
-<p>窓 9x9 (n=81) 実測 0.076 / 閉形式 0.079 = 0.96</p>
-<p>つまり窓が大きくなるほど近づく。<b>読みどころは「どこが周りより高いか」</b>で、そこは分布が正規から外れている(傷・外れ値・二つの材質の境目)。外れ値を 2 % 混ぜた画像では中央値が閉形式の <b>1.8 倍</b>まで跳ね上がり、正規の場合(0.9 倍前後)とはっきり分かれる —— この差が使いどころ。<code style="color:#22d3bf">local_std</code> と並べて、「ばらつきの大きさ」と「その数字の信用できなさ」を同時に見る。</p>
-<p><b>適用条件</b>: (1) 窓が小さいとブートストラップ自体がぶれるうえ、上のとおり系統的に低く出る。(2) 取り直し回数(<code style="color:#22d3bf">b</code>)を増やすと地図は滑らかになるが、真の誤差が下がるわけではない。(3) 決定的にするため種は固定してある —— 同じ入力なら必ず同じ出力を返す。(4) <b>仮定を計算で買う op</b>なので遅い: 実測で 128x128 が 0.26 秒、256x256 が 1.27 秒(<code style="color:#22d3bf">b=1.0</code>、64 回)。閉形式で足りる場面では <code style="color:#22d3bf">local_std</code> の誤差限界を使うこと —— この op は「その閉形式が信用できるか」を確かめたいときの道具。</p>
+<p>Der Fehler <code style="color:#22d3bf">1/sqrt(2(n-1))</code>, den <code style="color:#22d3bf">local_std</code> mit angibt, beruht auf der Annahme, dass <b>das Rauschen normalverteilt ist</b>. Bei Ausreißern oder Bimodalität unterschätzt diese Formel die tatsächliche Streuung. Hier werden die Werte im Fenster <b>aus sich selbst mit Zurücklegen neu gezogen</b>, um die Statistik neu zu bilden, und deren Streuung selbst gilt als Fehler - es braucht keine Annahme, dafür bezahlt man mit Rechenaufwand.</p>
+<p><code style="color:#22d3bf">a</code> ist das Fenster (3-9 Pixel), <code style="color:#22d3bf">b</code> die Anzahl der Neuziehungen (8-64). Die Ausgabe ist der Standardfehler bezogen auf die Standardabweichung im Fenster (<b>relativ</b>); <code style="color:#22d3bf">1.0</code> bedeutet &quot;schwankt um 100 %&quot;.</p>
+<p><b>Lesart</b>: <b>Nicht als Absolutwert lesen, sondern als Verhältnis zwischen Orten</b>. Auf normalverteiltes weißes Rauschen angewendet <b>fällt es niedriger aus</b> als die geschlossene Form <code style="color:#22d3bf">1/sqrt(2(n-1))</code> (der Bootstrap unterschätzt bei kleinen Stichproben die Streuung der Standardabweichung). Gemessen (<code style="color:#22d3bf">b=1.0</code>, 64 Neuziehungen):</p>
+<p>Fenster 3x3 (n=9)  gemessen 0.216 / geschlossene Form 0.250 = 0.86</p>
+<p>Fenster 5x5 (n=25) gemessen 0.133 / geschlossene Form 0.144 = 0.92</p>
+<p>Fenster 7x7 (n=49) gemessen 0.096 / geschlossene Form 0.102 = 0.94</p>
+<p>Fenster 9x9 (n=81) gemessen 0.076 / geschlossene Form 0.079 = 0.96</p>
+<p>Je größer also das Fenster, desto näher kommt es heran. <b>Worauf es ankommt, ist &quot;wo es höher ist als die Umgebung&quot;</b>:</p>
+<p>Dort weicht die Verteilung von der Normalverteilung ab (Kratzer, Ausreißer, die Grenze zwischen zwei Materialien). In einem Bild mit 2 % beigemischten Ausreißern springt der Median auf das <b>1.8-fache</b> der geschlossenen Form und trennt sich klar vom Normalfall (um das 0.9-fache) — genau dieser Unterschied ist der Einsatzzweck. Neben <code style="color:#22d3bf">local_std</code> gestellt, sieht man gleichzeitig &quot;die Größe der Streuung&quot; und &quot;wie wenig man dieser Zahl trauen kann&quot;.</p>
+<p><b>Anwendungsbedingungen</b>: (1) Bei kleinem Fenster schwankt der Bootstrap selbst und fällt, wie oben, systematisch niedrig aus. (2) Mehr Neuziehungen (<code style="color:#22d3bf">b</code>) glätten die Karte, senken aber nicht den wahren Fehler. (3) Der Seed ist fest, damit es deterministisch ist - dieselbe Eingabe liefert immer dieselbe Ausgabe. (4) <b>Es ist ein Op, das eine Annahme mit Rechenaufwand erkauft</b>, daher langsam: gemessen 128x128 in 0.26 s, 256x256 in 1.27 s (<code style="color:#22d3bf">b=1.0</code>, 64 Mal). Wo die geschlossene Form genügt, die Fehlerschranke von <code style="color:#22d3bf">local_std</code> verwenden - dieses Op ist das Werkzeug, wenn man prüfen will, &quot;ob dieser geschlossenen Form zu trauen ist&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">Leitfaden zur Familie gallery2d_texture_freq</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

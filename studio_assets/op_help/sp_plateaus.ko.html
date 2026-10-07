@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>동일한(양자화된) 그레이 값이 연결되어 이루는 평탄 영역(플래토)의 무게중심을 서브픽셀 위치로 반환한다(HALCON <code style="color:#22d3bf">plateaus</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>隣接画素同士がしきい値 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 以内で等しければ同じ平坦領域とみなす（Union-Find で連結成分化）。<code style="color:#22d3bf">a</code> はこの許容量子化幅と最小面積（<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>、これ未満の領域は無視）の両方を振る。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR で、各プラトーにつき 1 点（その領域の画素座標の平均、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す（計算量ガード）。</p>
+<p>인접 화소끼리 임계값 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 이내에서 같으면 같은 평탄 영역으로 간주한다(Union-Find로 연결 성분화). <code style="color:#22d3bf">a</code>는 이 허용 양자화 폭과 최소 면적(<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>, 이보다 작은 영역은 무시)을 모두 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환값은 CONTOUR이며, 각 플래토마다 1점(그 영역 화소 좌표의 평균, 단위는 화소)이다. 입력이 200,000 화소를 넘으면 안전 측으로 공집합을 반환한다(계산량 가드).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

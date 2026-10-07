@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/shape_trans.inputs.jpg">shape_trans: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回区域的凸包(<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>)。HALCON 的 <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)本来是可以通过 <code style="color:#22d3bf">Type</code> 参数选择 convex/rectangle1/ellipse 等多种变形模式的算子,但这个代替实现固定为凸包这一种(近似的局限)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。在没有 skimage 的环境中无法调用此分支。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

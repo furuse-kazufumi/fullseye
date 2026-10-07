@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray value surface के minima को sub-pixel सटीकता से पहचानता है (HALCON <code style="color:#22d3bf">local_min_sub_pix</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>アルゴリズムは <code style="color:#22d3bf">sp_local_max_sub_pix</code> と対称（3x3 の 2 次曲面フィットで勾配 0 点へサブピクセル補正）。<code style="color:#22d3bf">a</code> は極小の顕著さ（周囲の最大値からの深さ）のしきい値を 0.01〜0.31 に振り（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>）、<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。暗いスポット・くぼみの検出に向く。</p>
+<p>algorithm <code style="color:#22d3bf">sp_local_max_sub_pix</code> के सममित है (3x3 पर 2 घात की सतह fit करके gradient 0 वाले बिंदु की ओर sub-pixel सुधार)। <code style="color:#22d3bf">a</code> minimum की प्रमुखता (आसपास के maximum से गहराई) की threshold को 0.01-0.31 में बदलता है (<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>), <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value (लौटाया गया मान) CONTOUR है, और coordinates की इकाई इनपुट image के pixels है। अंधेरे धब्बों और गड्ढों का पता लगाने के लिए उपयुक्त।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

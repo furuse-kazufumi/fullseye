@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fit_spline_curve.inputs.jpg">tb_fit_spline_curve: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 B 樣條對有序 3D 點列進行平滑並重新取樣。→ (M,3)。用於平滑含雜訊的軌跡/邊緣。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>scipy.interpolate.splprep/splev。smooth=0 は補間、&gt;0 で平滑。n=出力点数(既定=入力数)。</p>
-<p><code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> でパラメトリック B スプライン(パラメータ u∈[0,1]、scipy 既定の弦長パラメータ化)を当て、<code style="color:#22d3bf">u = linspace(0, 1, n)</code> で <code style="color:#22d3bf">splev</code> 評価した(n,3) float64 を返す。u 等間隔なので出力点は弧長で厳密に等間隔ではない(弧長等間隔が要るなら結果を <code style="color:#22d3bf">resample_uniform</code> に通す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>: scipy の平滑化条件 s。残差二乗和が s 以下になる最少ノットで当てる。0 なら全点を通る補間、大きいほど滑らか(単位は座標の二乗)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: スプライン次数(既定 3)。点数 N が k 以下だと <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。None で入力点数。</p>
-<p style="margin:2px 0 2px 12px">• 入力は index 順に並んだ (N,3) を前提とし、形状検証は点数以外に無い。</p>
-<p>ノイズのあるエッジ点列や軌跡を平滑してから <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> に渡す前段として使う。tck を持ち回りたい場合は <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">fit_spline_curve</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 3)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>scipy.interpolate.splprep/splev。smooth=0 為內插,&gt;0 為平滑。n=輸出點數(預設=輸入數)。</p>
+<p>用 <code style="color:#22d3bf">splprep([x, y, z], s=smooth, k=k)</code> 擬合參數化 B 樣條(參數 u∈[0,1], scipy 預設的弦長參數化),在 <code style="color:#22d3bf">u = linspace(0, 1, n)</code> 處用 <code style="color:#22d3bf">splev</code> 求值,回傳(n,3) float64。由於 u 是等間隔,輸出點在弧長上並不嚴格等間隔(需要弧長等間隔時把結果通過 <code style="color:#22d3bf">resample_uniform</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth</code>: scipy 的平滑條件 s。以使殘差平方和不超過 s 的最少節點擬合。0 為通過全部點的內插,越大越平滑(單位為座標的平方)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 樣條次數(預設 3)。點數 N 在 k 以下時 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 輸出點數。None 時為輸入點數。</p>
+<p style="margin:2px 0 2px 12px">• 輸入以按 index 順序排列的 (N,3) 為前提,除點數外沒有形狀驗證。</p>
+<p>用作把有雜訊的邊緣點列或軌跡平滑後再傳給 <code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> 的前級。想要傳遞 tck 時用 <code style="color:#22d3bf">fit_bspline_curve</code> / <code style="color:#22d3bf">eval_bspline_curve</code>。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">fit_spline_curve</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">k</code>(預設 3)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

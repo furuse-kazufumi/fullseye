@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Frequency domain में केवल दिए गए band को पास करने वाला band-pass filter (low और high band रोके जाते हैं), फिर inverse FFT से spatial domain में वापस लाता है। <code style="color:#22d3bf">highpass_image</code> की तरह response zero-mean और signed होता है, इसलिए <code style="color:#22d3bf">signed01</code> से [0,1] में map करता है। HALCON के <code style="color:#22d3bf">bandpass_image</code> (Edge extraction using bandpass filters.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が下限カットオフ、<code style="color:#22d3bf">b</code> が上限カットオフを振る。両方が使われる。帯域(<code style="color:#22d3bf">b</code> 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ 0.5(ゼロ)一色になる。</p>
+<p><code style="color:#22d3bf">a</code> निचली cutoff को और <code style="color:#22d3bf">b</code> ऊपरी cutoff को बदलता है। दोनों का उपयोग होता है। यदि band (<code style="color:#22d3bf">b</code> की ओर की ऊपरी सीमा) को निचली सीमा से नीचे रखा जाए, तो passband ख़ाली हो जाता है और output लगभग एक ही रंग 0.5 (शून्य) बन जाता है।</p>
 <p><b>Border handling</b>: दूसरी ओर wrap around होता है (periodic) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

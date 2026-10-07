@@ -14,10 +14,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_sensor_capture.inputs.jpg">tb_sensor_capture: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>輻射亮度 → 真實感測器輸出（散粒雜訊、讀出雜訊、飽和、量化）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>光子数 = radiance · exposure_ms · gain_e_per_unit / 1000 を平均とする Poisson。そこへ読み出し雑音(正規)を足し、<code style="color:#22d3bf">full_well_e</code> で<b>飽和</b>させ、<code style="color:#22d3bf">bit_depth</code> で量子化する。飽和は clip であって折り返さない(白飛びは白のまま)。</p>
-<p>返り値は 0..2^bit_depth−1 の整数配列。<code style="color:#22d3bf">seed</code> を固定すれば決定的。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">sensor_capture</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">exposure_ms</code>(既定 10)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">gain_e_per_unit</code>(既定 50000)を振る。</p>
+<p>以光子數 = radiance · exposure_ms · gain_e_per_unit / 1000 為平均的 Poisson。再加上讀出雜訊(常態)，以 <code style="color:#22d3bf">full_well_e</code> 使其<b>飽和</b>，依 <code style="color:#22d3bf">bit_depth</code> 量化。飽和是截斷(clip)而非回繞(過曝仍為白)。</p>
+<p>回傳值為 0..2^bit_depth−1 的整數陣列。固定 <code style="color:#22d3bf">seed</code> 則結果確定。</p>
+<p>橋接到 2-D 演化註冊表的 optics op <code style="color:#22d3bf">sensor_capture</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">exposure_ms</code>(預設 10)，<code style="color:#22d3bf">b</code> 調整 <code style="color:#22d3bf">gain_e_per_unit</code>(預設 50000)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

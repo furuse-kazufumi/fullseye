@@ -11,8 +11,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一種展平濾鏡，先分別去除影像整體在縱向與橫向的一次趨勢（傾斜），再進行正規化。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">scipy.signal.detrend</code> を列方向・行方向の順に適用し、各行/各列の線形回帰成分を差し引く。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。照明ムラなど画像全体に乗った緩やかな傾斜を除去し、局所コントラストを見やすくする用途。結果は符号付きなので<code style="color:#22d3bf">*0.5+0.5</code> で [0,1] に写像し直している。</p>
+<p>依行方向、列方向的順序套用 <code style="color:#22d3bf">scipy.signal.detrend</code>，減去每列/每行的線性迴歸分量。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。用於去除照明不均等疊加在整張影像上的緩慢傾斜，使局部對比度更易觀察。由於結果帶正負號，以 <code style="color:#22d3bf">*0.5+0.5</code> 重新映射到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

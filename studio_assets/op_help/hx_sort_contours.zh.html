@@ -13,11 +13,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_sort_contours.inputs.jpg">hx_sort_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按相对位置(重心 row→col)对 contour 排序。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>contour dict(<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [N×2 の (row, col) 配列, ...]}</code>)の <code style="color:#22d3bf">cs</code> を、各 contour の点の平均(重心)の行、次に列の昇順で並べ替えて返す。点列そのものは変えない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• dict 以外や <code style="color:#22d3bf">cs</code> が空なら空の contour 集合を返す(例外は出ない)。点数 0 の contour は出力から落ちる。</p>
-<p>上→下、同じ高さなら左→右の順になるので、文字列や部品列を読み順に並べるのに使う。重心は点の単純平均で、点の密度に偏りがあれば幾何学的な中心とずれる。<code style="color:#22d3bf">hx_union_adjacent</code> はリスト順に貪欲連結するため、前にこの op を置くと連結の結果が安定する。</p>
+<p>把 contour dict（<code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [N×2 的 (row, col) 数组, ...]}</code>）的 <code style="color:#22d3bf">cs</code>，按各 contour 点的平均（质心）的行、其次列的升序重新排列后返回。点列本身不变。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 非 dict 或 <code style="color:#22d3bf">cs</code> 为空时返回空的 contour 集合（不抛出异常）。点数为 0 的 contour 从输出中去掉。</p>
+<p>顺序为上→下、同一高度则左→右，因此用于把字符串或部件列按阅读顺序排列。质心是点的简单平均，点的密度有偏时会偏离几何中心。<code style="color:#22d3bf">hx_union_adjacent</code> 按列表顺序贪婪连接，因此在其前面放置此 op，可使连接结果稳定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

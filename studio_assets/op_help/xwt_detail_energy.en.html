@@ -8,8 +8,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Energy ratio of the wavelet detail components. Decomposes with <code style="color:#22d3bf">db2</code> over 3 levels and returns the sum of mean squares of all detail coefficients (horizontal/vertical/diagonal at each level) divided by the total energy -- that sum plus the mean square of the approximation component. A measure of how much of the image&#x27;s total energy is high-frequency (texture/noise/edges); the range is roughly [0,1).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が大きいほどざらついた/エッジの多い画像、小さいほど滑らかな画像であることを示す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. A larger value indicates a rougher image / one with more edges, a smaller value a smoother image.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

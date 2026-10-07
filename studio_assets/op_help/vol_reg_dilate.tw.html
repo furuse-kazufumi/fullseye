@@ -15,8 +15,7 @@
 <p><img src="fig/vol_reg_dilate.gif" alt="vol_reg_dilate: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 二值區域的膨脹（region 體資料的膨脹）。未指定對應的 HALCON op。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">max(1, 1+int(3a))</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。構造要素は 6 近傍（<code style="color:#22d3bf">generate_binary_structure(3,1)</code>、十字形）。反復回数を明示的に <code style="color:#22d3bf">1</code> 以上へクランプしているのは、scipy が <code style="color:#22d3bf">iterations&lt;1</code> を「収束するまで反復」と解釈し、<code style="color:#22d3bf">a</code> が小さい側で全充填・全消去に発散するのを防ぐため（敵対的レビューで見つかった不具合の修正、D3）。</p>
+<p><code style="color:#22d3bf">a</code> 將迭代次數在 <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">max(1, 1+int(3a))</code>）之間調整。<code style="color:#22d3bf">b</code> 未使用。結構元素為 6 鄰域（<code style="color:#22d3bf">generate_binary_structure(3,1)</code>，十字形）。把迭代次數明確鉗制在 <code style="color:#22d3bf">1</code> 以上，是因為 scipy 把 <code style="color:#22d3bf">iterations&lt;1</code> 解釋為「迭代直到收斂」，為了防止 <code style="color:#22d3bf">a</code> 較小時發散為全部填滿或全部消除（對在對抗性審查中發現的缺陷的修正，D3）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -10,8 +10,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_count.chain.jpg">vol_count: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A feature that returns the number of connected components (blobs) in a 3D volume. No corresponding HALCON op is specified.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値は <code style="color:#22d3bf">0.5</code> に固定（<code style="color:#22d3bf">v &gt; 0.5</code> で二値化してから <code style="color:#22d3bf">scipy.ndimage.label</code>）。連結性は scipy の既定構造要素（面で接する 6 近傍相当）で、稜・頂点だけで接する（26 近傍でしか繋がらない）ボクセルは別ブロブとして数えられる——2-D の <code style="color:#22d3bf">_blob_count</code> が HALCON パリティのため 8 連結を明示指定しているのとは対照的に、こちらは既定のまま連結性を明示していない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. The threshold is fixed at <code style="color:#22d3bf">0.5</code> (binarise with <code style="color:#22d3bf">v &gt; 0.5</code>, then <code style="color:#22d3bf">scipy.ndimage.label</code>). Connectivity is scipy&#x27;s default structuring element (equivalent to the 6-neighbourhood touching by faces), and voxels touching only by edges or vertices (connected only in the 26-neighbourhood) are counted as separate blobs — in contrast to the 2-D <code style="color:#22d3bf">_blob_count</code>, which explicitly specifies 8-connectivity for HALCON parity, this one leaves the default and does not specify connectivity explicitly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

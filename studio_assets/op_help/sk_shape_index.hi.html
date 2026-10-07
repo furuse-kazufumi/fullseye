@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Shape index। Hessian matrix के eigenvalues से local surface shape को -1 (गोलाकार गड्ढा) से 0 (saddle point) से +1 (गोलाकार उभार) तक के 1-dimensional scalar में दर्शाता है —— curvature की &quot;दिशा&quot; का सार देने वाला descriptor।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">feature.shape_index(v, sigma=0.5+2.0*a)</code> の NaN(平坦領域で未定義になる)を 0 に置き換えてから <code style="color:#22d3bf">signed01</code>(符号付き応答の 0 を 0.5 に写像し、±最大値を 0/1 に写像する)で <code style="color:#22d3bf">[0,1]</code> へ写した値 —— a は Hessian を計算する際のガウス微分の σ を 0.5〜2.5 に振る。b は未使用。</p>
+<p>HALCON में इसका कोई सीधा समकक्ष नहीं है। implementation <code style="color:#22d3bf">feature.shape_index(v, sigma=0.5+2.0*a)</code> के NaN (flat क्षेत्रों में अपरिभाषित) को 0 से बदलकर फिर <code style="color:#22d3bf">signed01</code> (signed response के 0 को 0.5 पर, और ±maximum को 0/1 पर map करता है) से <code style="color:#22d3bf">[0,1]</code> में map किया गया value है — a Hessian निकालते समय Gaussian derivative के σ को 0.5-2.5 पर बदलता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

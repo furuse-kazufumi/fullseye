@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness_xld.chain.jpg">compactness_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सबसे बड़े contour के लिए compactness <code style="color:#22d3bf">max(1, perimeter^2/(4pi * area))</code> की गणना करता है (<code style="color:#22d3bf">compactness</code> का contour संस्करण)। वृत्त के लिए 1, लंबा-पतला/दाँतेदार होने पर बड़ा, और <b>ऊपरी सीमा नहीं है</b>। HALCON के <code style="color:#22d3bf">compactness_xld</code> (Shape factor for the compactness of contours or polygons.) <b>वाला ही सूत्र</b>।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">/10</code> して 1 で頭打ちしていた —— <b>領域版と同じ欠陥が輪郭版にも在った</b>。直した op の双子を見落とすと穴が半分残る(<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>)。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 तक यह <code style="color:#22d3bf">/10</code> करके 1 पर रुक जाता था -- <b>region संस्करण वाला वही दोष contour संस्करण में भी था</b>। ठीक किए गए op के जुड़वाँ को अनदेखा करने पर आधा छेद बचा रह जाता है (<code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>)।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

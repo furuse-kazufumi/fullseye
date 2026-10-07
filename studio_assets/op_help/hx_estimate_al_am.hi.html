@@ -9,10 +9,9 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Albedo (परावर्तकता) और ambient (परिवेश प्रकाश) का अनुमान: albedo ~ brightness range; यहाँ albedo लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像の最大値と最小値の差 <code style="color:#22d3bf">max(v) - min(v)</code> を [0,1] に clip した <code style="color:#22d3bf">np.float64</code> を返す。「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。ambient(環境光)は計算せず返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で <code style="color:#22d3bf">hx_mean_shape</code> や <code style="color:#22d3bf">median_rect</code> を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。slant の推定 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
+<p>image के maximum और minimum का अंतर <code style="color:#22d3bf">max(v) - min(v)</code>, [0,1] पर clip करके, <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है। यह estimate &quot;reflectance (albedo) जितनी ऊँची, shading का light-dark अंतर उतना बड़ा&quot; वाले संबंध की जगह luminance की dynamic range इस्तेमाल करता है। ambient (आसपास की light) न गिनी जाती है, न लौटाई जाती है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p>यह केवल maximum और minimum, इन 2 pixels से तय होता है, इसलिए 1 भी saturated pixel या dark spot हो तो value 1 पर अटक जाती है। यह noise के प्रति कमज़ोर है, इसलिए पहले <code style="color:#22d3bf">hx_mean_shape</code> या <code style="color:#22d3bf">median_rect</code> लगाएँ। min-max normalized image पर यह हमेशा 1 होता है और इसका कोई अर्थ नहीं रहता। slant estimate <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> reflectance 1 मानता है; इस value से भाग देकर उसे correct करना इसका अपेक्षित उपयोग है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

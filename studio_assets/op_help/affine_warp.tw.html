@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對影像套用任意仿射變換（旋轉 + 剪切）。相當於 HALCON 的 <code style="color:#22d3bf">affine_trans_image</code>（Apply an arbitrary affine 2D transformation to images.）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が回転角を <code style="color:#22d3bf">-20°〜+20°</code> に、<code style="color:#22d3bf">b</code> がせん断量を <code style="color:#22d3bf">-0.2〜+0.2</code> に振る。回転中心は画像の中心、境界は <code style="color:#22d3bf">reflect</code>（鏡映）で埋め、結果を <code style="color:#22d3bf">[0,1]</code> に clip する。平行移動・拡大縮小は含まない（<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code> が別 op として存在）。</p>
+<p><code style="color:#22d3bf">a</code> 將旋轉角在 <code style="color:#22d3bf">-20°〜+20°</code> 之間調整，<code style="color:#22d3bf">b</code> 將剪切量在 <code style="color:#22d3bf">-0.2〜+0.2</code> 之間調整。旋轉中心為影像中心，邊界以 <code style="color:#22d3bf">reflect</code>（鏡像）填補，結果 clip 到 <code style="color:#22d3bf">[0,1]</code>。不包含平移和縮放（<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code> 作為單獨的 op 存在）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

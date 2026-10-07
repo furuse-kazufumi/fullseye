@@ -8,8 +8,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>模糊程度估计(1 个标量特征量)。有意地对图像再稍微模糊化,通过比较原图与再模糊化后边缘锐度的变化程度,返回一个 0(无模糊)〜1(最大程度模糊)的分数 —— 无需参考图像即可量化对焦/抖动情况。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">measure.blur_effect(v)</code>。a, b は未使用 —— 再ぼかしフィルタのサイズは既定値(11)のまま。</p>
+<p>HALCON 中没有直接对应的算子。实现为 <code style="color:#22d3bf">measure.blur_effect(v)</code>。a、b 未使用 —— 再模糊滤波器的大小保持默认值（11）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

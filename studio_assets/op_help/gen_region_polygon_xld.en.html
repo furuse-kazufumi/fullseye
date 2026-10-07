@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_region_polygon_xld.inputs.jpg">gen_region_polygon_xld: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Converts an XLD contour (a polygon&#x27;s vertex sequence) into a region (pixel mask). Plots contour points onto the nearest pixels, then thickens and connects the lines with <code style="color:#22d3bf">1+2a</code> rounds of binary dilation. b is unused.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">gen_region_polygon_xld</code>（XLD 多角形の内部を塗りつぶした region を生成する演算）とは異なり、この実装は多角形の内部を塗りつぶすのではなく、輪郭線そのものを膨張させて太らせるだけの近似 —— 閉じていない輪郭や自己交差する輪郭では本来の内部塗りつぶしと結果が食い違う。</p>
+<p>Unlike HALCON&#x27;s <code style="color:#22d3bf">gen_region_polygon_xld</code> (an operation that generates a region by filling the interior of an XLD polygon), this implementation does not fill the polygon&#x27;s interior but is an approximation that merely thickens the contour line itself by dilation — for contours that are not closed or that self-intersect, the result diverges from a proper interior fill.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

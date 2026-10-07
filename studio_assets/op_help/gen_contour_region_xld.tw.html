@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 region（像素遮罩）的外周作為保留追蹤順序（沿輪廓的順序）的 XLD 輪廓擷取出來。若有 skimage 則使用 <code style="color:#22d3bf">find_contours</code>（透過 marching squares 實現的次像素輪廓），否則回退到自行實作的 Moore 鄰域追蹤（8 鄰域，Jacob 停止條件）。a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>2026-08-30 の修正で、以前使っていた汎用の <code style="color:#22d3bf">edges_sub_pix</code> 経路は <code style="color:#22d3bf">np.where</code> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の <code style="color:#22d3bf">gen_contour_region_xld</code>（region から XLD 輪郭を生成する演算）に相当する。</p>
+<p>在 2026-08-30 的修正中，先前使用的通用 <code style="color:#22d3bf">edges_sub_pix</code> 路徑依 <code style="color:#22d3bf">np.where</code> 的光柵順序傳回點，破壞了依賴順序的後續處理（橢圓傅立葉描述子等）。相當於 HALCON 的 <code style="color:#22d3bf">gen_contour_region_xld</code>（由 region 產生 XLD 輪廓的運算）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

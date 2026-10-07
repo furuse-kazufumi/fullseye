@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fit_line_contours.inputs.jpg">fit_line_contours: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर XLD contour को 1 सीधी रेखा से approximate करता है। HALCON के <code style="color:#22d3bf">fit_line_contour_xld</code> (Approximate XLD contours by line segments.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। contour के point समूह के centroid से गुज़रने वाली, SVD (singular value decomposition) से निकाली गई पहली principal component दिशा को रेखा की दिशा माना जाता है (सभी point से दूरी के वर्गों का योग न्यूनतम करने वाली रेखा), और उसे मूल point समूह की projection range पर बराबर अंतराल से दोबारा रखे गए point sequence से बदल दिया जाता है। अंतर यह है कि HALCON version polyline (कई segment) में बाँट सकता है, जबकि यह implementation पूरे contour को 1 सीधी रेखा बना देता है। 2 से कम point वाले contour जैसे के तैसे लौटाए जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

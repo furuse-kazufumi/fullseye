@@ -5,8 +5,7 @@
 <p>*कोई figure नहीं: type तो पहुँचता है, पर सामान्य synthetic input इस op के domain में नहीं आता — 3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る)। उपयोग का तरीका नीचे &quot;चलाए जा सकने वाले उदाहरण&quot; में देखें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>CARLA का K (pixel के corners integer पर, principal point W/2) → Fullseye / render3d का K (pixel के centre integer पर, principal point (W−1)/2)। केवल principal point को 0.5 खिसकाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2-D 進化レジストリへ橋渡しした drive の op <code style="color:#22d3bf">intrinsics_to_fullseye</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>2-D evolution registry में bridge किया गया drive का op <code style="color:#22d3bf">intrinsics_to_fullseye</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। इस op में कोई tunable parameter नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

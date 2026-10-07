@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Local mean subtraction (skimage <code style="color:#22d3bf">filters.rank.subtract_mean</code>). Returns the difference obtained by subtracting the mean brightness of the disk neighborhood from each pixel. The skimage implementation scales the difference to 1/2 and shifts it to the middle of the range, to avoid underflow. It cancels global light/dark unevenness and enhances local contrast.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は円盤半径(<code style="color:#22d3bf">1+int(a*4)</code> で 1〜5)を振る。<code style="color:#22d3bf">b</code> は未使用。8bit 量子化を経由するため元の float64 精度は失われる。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the disc radius (1-5 via <code style="color:#22d3bf">1+int(a*4)</code>). <code style="color:#22d3bf">b</code> is unused. Because it goes through 8bit quantisation, the original float64 precision is lost.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

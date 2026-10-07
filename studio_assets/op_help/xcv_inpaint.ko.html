@@ -11,9 +11,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>결손 영역을 추정해 메우는 복원(inpainting).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>8bit 変換後、極端に明るい(&gt;235)/暗い(&lt;20)画素を「欠損」とみなして自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、<code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)で周囲から埋める。<code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 法)と同じ発想の別アルゴリズム版。</p>
-<p>半径 3 画素の近傍を使う(固定)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値が固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう場合がある。</p>
+<p>8bit 변환 후, 극단적으로 밝은(&gt;235)/어두운(&lt;20) 화소를 &#x27;결손&#x27;으로 간주하여자동으로 마스크하고, OpenCV의 Telea 법(고속 마칭법 기반, <code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)으로 주위로부터 메운다. <code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 법)와 같은 발상의 다른 알고리즘 버전.</p>
+<p>반경 3 화소의 근방을 사용한다(고정). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 임계값이고정이므로, 본래 의미 있는 하이라이트 날림/블랙 뭉개짐 화소까지 메워져 버리는경우가 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

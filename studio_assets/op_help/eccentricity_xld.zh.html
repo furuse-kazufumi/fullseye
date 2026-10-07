@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity_xld.chain.jpg">eccentricity_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">eccentricity</code> 的轮廓版。对最大的轮廓以 <code style="color:#22d3bf">match</code> 排序的 3 分量向量返回 <code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code>。与 HALCON 的 <code style="color:#22d3bf">eccentricity_xld</code>(Shape features derived from the ellipse parameters of contours or polygons.)<b>是同样的三个值、同样的公式</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★<code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> は<b>囲まれた面積の幾何モーメント</b>から導く。2026-09-26 まで <code style="color:#22d3bf">cv2.fitEllipse</code>(輪郭「点」への最小二乗当てはめ)を使っていて、細長い形で大きく外れていた —— 4x80 の棒で Anisometry 39.1 対 20.65。HALCON の定義はモーメント由来の方である。</p>
-<p>cv2 が無い、点数が足りない、面積が 0 のときは円の値 <code style="color:#22d3bf">(1, 1, 0)</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★<code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> 由<b>所围面积的几何矩</b>导出。2026-09-26 之前使用的是 <code style="color:#22d3bf">cv2.fitEllipse</code>(对轮廓“点”的最小二乘拟合),在细长形状上偏差很大 —— 4x80 的棒上 Anisometry 为 39.1 对 20.65。HALCON 的定义是由矩导出的那一种。</p>
+<p>没有 cv2、点数不足或面积为 0 时,返回圆的值 <code style="color:#22d3bf">(1, 1, 0)</code>。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

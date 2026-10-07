@@ -14,12 +14,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>理想带通(频域圆环掩码,内半径 a・带宽 b)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ正規化周波数半径 <code style="color:#22d3bf">r</code>(<code style="color:#22d3bf">fftshift</code> 済、中心=DC)に対し <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 内半径 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>(0.05〜0.35)。外半径は <code style="color:#22d3bf">r_lo + 幅</code> で最大 0.8 だが、半径が</p>
-<p>約 0.707 を超える周波数は存在しないので、大きな a, b では円環の外側が画像外に出て実質ハイパスになる。</p>
-<p><code style="color:#22d3bf">hx_gen_bandfilter</code> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルとの画素積で使う。</p>
+<p>对与 <code style="color:#22d3bf">hx_gen_lowpass</code> 相同的归一化频率半径 <code style="color:#22d3bf">r</code>（已 <code style="color:#22d3bf">fftshift</code>，中心=DC），返回把 <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> 的圆环设为 1 的 0/1 float 图像（频域掩模）。输入 <code style="color:#22d3bf">v</code> 只用于获取形状。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 内半径 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>（0.05〜0.45）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 带宽 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>（0.05〜0.35）。外半径为 <code style="color:#22d3bf">r_lo + 宽度</code>，最大 0.8，但由于半径</p>
+<p>超过约 0.707 的频率不存在，a、b 较大时圆环外侧会跑到图像外，实质上变为高通。</p>
+<p><code style="color:#22d3bf">hx_gen_bandfilter</code> 是用“中心半径和半宽”指定同一圆环的另一种参数化。用于与 <code style="color:#22d3bf">fft_generic</code> 等中心=DC 频谱的逐像素乘积。</p>
 <p><b>数值可比性（实测）</b>：输出按<b>该图自身的最大值归一化</b>（输出最大值恒为 1.0，输入整体缩放不改变输出）。因此<b>不能跨图比较数值</b>——同样强度的特征会因该图中最强特征的不同而取不同的值；在只有弱特征的图中，噪声会被抬升到 1.0。要跨图比较，请以统一基准重新缩放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Block के हिसाब से histogram equalisation। Image को <code style="color:#22d3bf">nb x nb</code> (<code style="color:#22d3bf">nb=2+4*a</code>) blocks में बाँटकर हर block में स्वतंत्र रूप से (64 bins वाला) histogram equalisation करता है ―― local असमान रोशनी के प्रति <code style="color:#22d3bf">equ_histo_image</code> (पूरी image को एक साथ process करने वाला) से ज़्यादा मज़बूत, लेकिन block की सीमाओं पर steps (block artifacts) आ सकते हैं। HALCON के <code style="color:#22d3bf">equ_histo_image_rect</code> (Histogram linearization within a rectangluar mask.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> がブロック分割数を 2〜6 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> blocks में बाँटने की संख्या को 2-6 की सीमा में बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75、0.99 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

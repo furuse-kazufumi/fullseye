@@ -13,11 +13,10 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>इनपुट जितने आकार की constant gray image (मान a) बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で全画素が <code style="color:#22d3bf">a</code> の float64 画像を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 定数値(そのまま。0 で真っ黒、1 で真っ白)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>算術 op の相手(オフセット・スケール)や、マスクの補集合を作る土台として使う。全面 1 の region が欲しければ <code style="color:#22d3bf">hx_full_domain</code> / <code style="color:#22d3bf">hx_get_domain</code>、全面 0 の region は <code style="color:#22d3bf">hx_gen_empty_region</code>。</p>
+<p>input <code style="color:#22d3bf">v</code> के समान shape की ऐसी float64 image लौटाता है जिसके सभी pixels <code style="color:#22d3bf">a</code> हों। input की सामग्री नहीं देखी जाती।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → स्थिर मान (जैसा का तैसा; 0 पर पूरा काला, 1 पर पूरा सफेद)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>arithmetic ops के operand (offset, scale) के रूप में, या mask का complement बनाने के आधार के रूप में उपयोग होता है। पूरी तरह 1 वाला region चाहिए तो <code style="color:#22d3bf">hx_full_domain</code> / <code style="color:#22d3bf">hx_get_domain</code>, पूरी तरह 0 वाला region <code style="color:#22d3bf">hx_gen_empty_region</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

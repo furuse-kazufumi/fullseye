@@ -9,11 +9,10 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Zheng-Chellappa:用归一化梯度的平均方向估计 tilt(与局部对比度无关)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">(Ex, Ey)</code> を各画素で振幅 <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> で割った単位ベクトルにしてから平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す(Zheng-Chellappa の tilt 推定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 角度の規約は <code style="color:#22d3bf">hx_estimate_tilt_lr</code> と同じ(0 が +列方向、0.25 が +行方向)。</p>
-<p>各画素の寄与が方向だけになるため、強いエッジや明るい部分に引きずられにくい。反面、勾配がほぼ 0 の平坦部でも(<code style="color:#22d3bf">1e-9</code> で割った)雑音の方向が等しく 1 票を持つので、平坦な背景が広い画像では推定がぼやける。前段で <code style="color:#22d3bf">gauss_filter</code> を掛けて雑音の勾配を減らすと安定する。</p>
+<p>把 Sobel 梯度 <code style="color:#22d3bf">(Ex, Ey)</code> 在各像素处除以幅值 <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> 化为单位向量后取平均,把 <code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code> 用 <code style="color:#22d3bf">(tilt / 2π) mod 1</code> 映射到 [0,1) 后以 <code style="color:#22d3bf">np.float64</code> 返回(Zheng-Chellappa 的 tilt 估计)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 角度约定与 <code style="color:#22d3bf">hx_estimate_tilt_lr</code> 相同(0 是 +列方向,0.25 是 +行方向)。</p>
+<p>由于每个像素的贡献只有方向,不容易被强边缘或明亮部分拉偏。反过来,即使在梯度几乎为 0 的平坦部, (除以 <code style="color:#22d3bf">1e-9</code> 的)噪声方向也同样拥有 1 票,因此平坦背景很大的图像估计会变得模糊。在前级施加 <code style="color:#22d3bf">gauss_filter</code> 减少噪声梯度即可稳定。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>로지스틱 함수(시그모이드)를 이용한 S자형 대비 강조. HALCON의 <code style="color:#22d3bf">scale_image_max</code>(Maximum gray value spreading in the value range 0 to 255.)에 대응되지만, 다이내믹 레인지를 최대로 늘리는 <code style="color:#22d3bf">scale_image_max</code>와는 처리 내용이 다르다(근사라기보다는 별개의 처리에 가깝다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が S字の傾き <code style="color:#22d3bf">k = 4 + 12a</code>（<code style="color:#22d3bf">4〜16</code>）を、<code style="color:#22d3bf">b</code> が中心（変曲点）の位置 <code style="color:#22d3bf">x0 = 0.2 + 0.6b</code>（<code style="color:#22d3bf">0.2〜0.8</code>）を振る（<code style="color:#22d3bf">1/(1+exp(-k*(v-x0)))</code>）。<code style="color:#22d3bf">x0</code> 付近の階調差を強調し、両端の階調差は圧縮する。</p>
+<p><code style="color:#22d3bf">a</code>가 S자의 기울기 <code style="color:#22d3bf">k = 4 + 12a</code>(<code style="color:#22d3bf">4〜16</code>)를, <code style="color:#22d3bf">b</code>가 중심(변곡점)의 위치 <code style="color:#22d3bf">x0 = 0.2 + 0.6b</code>(<code style="color:#22d3bf">0.2〜0.8</code>)를 바꾼다(<code style="color:#22d3bf">1/(1+exp(-k*(v-x0)))</code>). <code style="color:#22d3bf">x0</code> 부근의 계조 차를 강조하고 양 끝의 계조 차는 압축한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

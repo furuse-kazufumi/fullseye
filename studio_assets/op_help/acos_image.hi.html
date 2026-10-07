@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">arccos(x) / π</code> से [0,1] को [0,1] में map करने वाला inverse cosine LUT। यह <code style="color:#22d3bf">asin_image</code> का उलटा रूप (monotonic decreasing) है, जो x=0 पर अधिकतम (1) और x=1 पर न्यूनतम (0) होता है। HALCON के <code style="color:#22d3bf">acos_image</code> (Calculate the arccosine of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">asin_image</code> と同様に端点近傍で傾きが急峻になる(数値的に敏感)。単純な階調反転がしたいだけなら <code style="color:#22d3bf">invert_image</code> の方が挙動が読みやすい。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। <code style="color:#22d3bf">asin_image</code> की तरह अंत-बिंदुओं के पास ढलान तीखी हो जाती है (संख्यात्मक रूप से संवेदनशील)। अगर केवल सरल tone inversion चाहिए, तो <code style="color:#22d3bf">invert_image</code> का व्यवहार समझना आसान है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>상위 계조 절단(THRESH_TRUNC, OpenCV 구현). 지정한 값보다 밝은 화소는 모두 그 값으로 잘라내고, 그 이하의 화소는 그대로 둔다 —— 하이라이트만을 뭉개는 계조 조작(어두운 부분은 건드리지 않는다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は <code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code> —— a は切り詰めレベルを 0〜1 に振る。b は未使用。</p>
+<p>HALCON의 <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)에 상당(근사. 선형 스케일링이 아니라 한쪽 클립). 구현은 <code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code> —— a는 잘라내기 레벨을 0〜1로 바꾼다. b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

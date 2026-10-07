@@ -13,13 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_farthest_point_sampling.inputs.jpg">tb_farthest_point_sampling: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基于测地距离的最远点采样（均匀抽稀）。→ 所选索引数组 (n,) int。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">start</code> を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する貪欲法(FPS)。距離は <code style="color:#22d3bf">knn_graph(points, k)</code> の無向 kNN グラフ上の Dijkstra で測り、既選択集合への距離は各代表点の単源距離の要素ごと最小 <code style="color:#22d3bf">mind</code> として保持、代表点を 1 つ足すたびに <code style="color:#22d3bf">mind = min(mind, d_new)</code> で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の単源最短路。乱数は使わず決定的。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">n</code>: 欲しい点数。<code style="color:#22d3bf">N</code> を超えると <code style="color:#22d3bf">N</code> に、負なら 0 に丸める(0 なら空配列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN グラフの近傍数(既定 8)。<code style="color:#22d3bf">start</code>: 最初の代表点(<code style="color:#22d3bf">start % N</code> で範囲内に折り返す)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は選んだ順の添字列(先頭が <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> で代表点群になる。</p>
-<p>罠: グラフが複数の連結成分に分かれていると、不達の点は距離 <code style="color:#22d3bf">inf</code> なので未到達の成分が先に選ばれる(argmax が <code style="color:#22d3bf">inf</code> を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに均等に間引きたいなら <code style="color:#22d3bf">euclidean_cluster</code> 等で分けてから使う。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">farthest_point_sampling</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 8)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>以 <code style="color:#22d3bf">start</code> 为第一个代表点,每次追加 1 个“到已选点集合的测地距离最大的点”的贪心法(FPS)。距离用 <code style="color:#22d3bf">knn_graph(points, k)</code> 的无向 kNN 图上的 Dijkstra 测量,到已选集合的距离以各代表点单源距离的逐元素最小值 <code style="color:#22d3bf">mind</code> 保存,每增加 1 个代表点就用 <code style="color:#22d3bf">mind = min(mind, d_new)</code> 更新。每 1 个代表点运行 1 次 Dijkstra,因此计算量为 n 次的单源最短路。不使用随机数,是确定性的。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点云。<code style="color:#22d3bf">n</code>: 想要的点数。超过 <code style="color:#22d3bf">N</code> 时取为 <code style="color:#22d3bf">N</code>,为负时取为 0 (0 时为空数组)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN 图的邻域数(默认 8)。<code style="color:#22d3bf">start</code>: 第一个代表点(用 <code style="color:#22d3bf">start % N</code> 折回到范围内)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值是按选择顺序的下标列(开头为 <code style="color:#22d3bf">start</code>)。用 <code style="color:#22d3bf">points[idx]</code> 得到代表点群。</p>
+<p>陷阱: 图分成多个连通分量时,不可达的点距离为 <code style="color:#22d3bf">inf</code>,因此未到达的分量会被先选中(argmax 取到 <code style="color:#22d3bf">inf</code>)。会出现“先取远离的块”的行为,因此想对每个分量均匀抽稀时,先用 <code style="color:#22d3bf">euclidean_cluster</code> 等分开后再使用。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">farthest_point_sampling</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">k</code>(默认 8)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

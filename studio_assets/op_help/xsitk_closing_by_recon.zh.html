@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重建闭运算（SimpleITK <code style="color:#22d3bf">ClosingByReconstruction</code>，xsitk_opening_by_recon的对偶）。膨胀后的腐蚀改用带掩码的重建来进行，在保持轮廓的同时只填补小的暗色凹陷。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は構造要素の半径(1〜5)を振る。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 调节结构元素的半径(1~5)。<code style="color:#22d3bf">b</code> 未使用。输出裁剪(clip)到 [0,1]。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.49（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

@@ -14,12 +14,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 close_edges 之上,再去掉长度(像素数)低于阈值的短边缘碎片。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化 → 3×3(8 近傍)構造要素で 1 回 <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code>(既定の 4 近傍連結)で連結成分にし、画素数が <code style="color:#22d3bf">min_len</code> 未満の成分を落として 0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 残す最小画素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>(2〜22)。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければクロージング結果をそのまま返す。</p>
-<p>注意: クロージングの構造要素は固定 3×3 で、<code style="color:#22d3bf">hx_close_edges</code> のような幅の調整は無い。ラベリングが 4 近傍のため斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。<code style="color:#22d3bf">binary_closing</code> は画像外を 0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p>用 <code style="color:#22d3bf">v &gt; a</code> 二值化 → 以 3×3（8 邻域）结构元素做 1 次 <code style="color:#22d3bf">binary_closing</code> → 用 <code style="color:#22d3bf">ndimage.label</code>（默认 4 邻域连通）分为连通分量，去掉像素数少于 <code style="color:#22d3bf">min_len</code> 的分量，以 0/1 的 float 图像返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化阈值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 保留的最小像素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>（2〜22）。</p>
+<p style="margin:2px 0 2px 12px">• 连 1 个分量都没有时，原样返回闭运算结果。</p>
+<p>注意：闭运算的结构元素固定为 3×3，没有 <code style="color:#22d3bf">hx_close_edges</code> 那样的宽度调节。由于标记采用 4 邻域，斜向相连的 1 像素宽线会分成不同分量，“长度”被计得偏短而容易被删除。<code style="color:#22d3bf">binary_closing</code> 把图像外视为 0，因此边缘 1 像素的带总是 0。“长度”是分量的像素数，而不是几何线长（块状物也会被算作长）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

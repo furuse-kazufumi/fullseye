@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die zusammenhängende Komponente mit der größten Fläche (ausgewählt über <code style="color:#22d3bf">_largest_label</code>). HALCONs <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.) ist ein Operator, bei dem unter mehreren Standardkriterien einschließlich <code style="color:#22d3bf">max_area</code> gewählt werden kann, hier jedoch fest auf das eine Kriterium &#x27;größte Fläche&#x27; festgelegt ist (eine Approximation).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。複数領域が同面積の場合は <code style="color:#22d3bf">argmax</code> の実装依存でどれか 1 つが選ばれる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Haben mehrere Regionen dieselbe Fläche, wird 1 davon gewählt, abhängig von der Implementierung von <code style="color:#22d3bf">argmax</code>.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

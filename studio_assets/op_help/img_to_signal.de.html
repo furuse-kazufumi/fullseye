@@ -13,11 +13,10 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Nimmt das Intensitätsprofil einer Zeile (oder Spalte) des Bildes als 1-D-Signal.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位置。<code style="color:#22d3bf">b &lt; 0.5</code> なら行 <code style="color:#22d3bf">r = round(a * (H-1))</code> を横に読む(長さ W)、<code style="color:#22d3bf">b ≥ 0.5</code> なら列 <code style="color:#22d3bf">c = round(a * (W-1))</code> を縦に読む(長さ H)。a=0.5 は中央。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64、値はそのまま(正規化しない。画像が [0,1] なら [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• 補間はしない(画素の値をそのまま並べる)。斜めの線が要るなら <code style="color:#22d3bf">line_profile</code> (台帳)を使う。</p>
-<p>使いどころ: 1-D 関数の族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)を画像の断面で試す入口。周期構造(市松・縞)を横切る行を選ぶとスペクトル系 op の効果が見える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Position. Bei <code style="color:#22d3bf">b &lt; 0.5</code> wird Zeile <code style="color:#22d3bf">r = round(a * (H-1))</code> waagerecht gelesen (Länge W), bei <code style="color:#22d3bf">b ≥ 0.5</code> Spalte <code style="color:#22d3bf">c = round(a * (W-1))</code> senkrecht (Länge H). a=0.5 ist die Mitte.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: 1-D float64, Werte unverändert (nicht normiert. Ist das Bild [0,1], dann [0,1]).</p>
+<p style="margin:2px 0 2px 12px">• Keine Interpolation (die Pixelwerte werden unverändert aneinandergereiht). Für eine schräge Linie <code style="color:#22d3bf">line_profile</code> (Register) verwenden.</p>
+<p>Einsatz: der Eingang, um die Familie der 1-D-Funktionen (<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …) an einem Bildschnitt auszuprobieren. Wählt man eine Zeile, die eine periodische Struktur (Schachbrett, Streifen) quert, wird die Wirkung der Spektral-Ops sichtbar.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

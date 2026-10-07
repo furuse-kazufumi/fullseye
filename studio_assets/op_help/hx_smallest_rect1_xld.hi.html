@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect1_xld.chain.jpg">hx_smallest_rect1_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सभी contour points के axis-parallel bounding rectangle का क्षेत्रफल अनुपात लौटाता है (feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>contour dict の全点をまとめ、行方向・列方向それぞれの <code style="color:#22d3bf">max - min</code>(外接軸並行矩形の高さ・幅)の積を画像面積 <code style="color:#22d3bf">H*W</code> で割った値を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が無ければ 0.0。1 点だけ、または全点が同一行/列でも幅が 0 になり 0.0(<code style="color:#22d3bf">+1</code> の画素補正はしない)。</p>
-<p>全 contour をまとめた 1 つの矩形なので、離れた contour が 2 つあると間の空白も面積に入る。向きを持つ最小面積矩形は <code style="color:#22d3bf">hx_smallest_rect2_xld</code>、region に対する軸並行外接矩形は <code style="color:#22d3bf">smallest_rectangle1</code>。</p>
+<p>contour dict के सभी points को मिलाकर, row दिशा और column दिशा के अपने-अपने <code style="color:#22d3bf">max - min</code> (axis-parallel bounding rectangle की ऊँचाई और चौड़ाई) के गुणनफल को image area <code style="color:#22d3bf">H*W</code> से भाग देकर <code style="color:#22d3bf">np.float64</code> के रूप में लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• points न हों तो 0.0। केवल 1 point हो, या सभी points एक ही row/column में हों, तब भी चौड़ाई 0 होकर 0.0 (<code style="color:#22d3bf">+1</code> का pixel correction नहीं किया जाता)।</p>
+<p>सभी contours को मिलाकर 1 rectangle है, इसलिए 2 अलग-अलग contours हों तो बीच की खाली जगह भी area में गिनी जाती है। दिशा वाले minimum area rectangle के लिए <code style="color:#22d3bf">hx_smallest_rect2_xld</code>, और region के axis-parallel bounding rectangle के लिए <code style="color:#22d3bf">smallest_rectangle1</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

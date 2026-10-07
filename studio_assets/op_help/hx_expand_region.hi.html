@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_expand_region.inputs.jpg">hx_expand_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Regions के बीच के gaps भरता है (region -&gt; region): binary region को dilation से फैलाकर जुड़ाव को बढ़ावा देता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> を region とみなし、4 近傍の十字構造要素を <code style="color:#22d3bf">it</code> 回反復した菱形(マンハッタン距離 <code style="color:#22d3bf">it</code> 以内)で <code style="color:#22d3bf">binary_dilation</code> を 1 回掛け、0/1 の float 配列で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 膨張半径 <code style="color:#22d3bf">it = 1 + int(a*4)</code>(1〜5 画素)。互いの距離が <code style="color:#22d3bf">2*it</code> 画素以下の領域どうしがつながる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>隙間を埋めて連結を促す op で、領域は必ず太る(元の面積には戻らない)。元の大きさを保ちたいときは後段で <code style="color:#22d3bf">hx_erosion1</code> を同程度の半径で掛けるか、初めから <code style="color:#22d3bf">hx_closing</code> を使う。画像外は 0 扱い(膨張は端で止まる)。空の region は空のまま返る。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code> को region मानकर, 4-neighbourhood cross structuring element को <code style="color:#22d3bf">it</code> बार दोहराकर बने diamond (Manhattan दूरी <code style="color:#22d3bf">it</code> तक) से 1 बार <code style="color:#22d3bf">binary_dilation</code> करता है, और 0/1 float array लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → dilation radius <code style="color:#22d3bf">it = 1 + int(a*4)</code> (1 से 5 pixels)। आपसी दूरी <code style="color:#22d3bf">2*it</code> pixels या कम वाले regions जुड़ जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>यह gaps भरकर connectivity बढ़ाने वाला op है; regions हमेशा मोटे होते हैं (मूल क्षेत्रफल पर नहीं लौटते)। मूल आकार बनाए रखना हो तो बाद में <code style="color:#22d3bf">hx_erosion1</code> को लगभग उसी radius से लगाएँ, या शुरू से <code style="color:#22d3bf">hx_closing</code> का उपयोग करें। image के बाहर को 0 माना जाता है (dilation किनारे पर रुक जाता है)। खाली region खाली ही लौटता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

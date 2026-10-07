@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>返回基于 SLIC 方法的超像素过分割边界网格（<code style="color:#22d3bf">skimage.segmentation.slic</code>，HALCON 无对应算子）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>（0〜1）がセグメント数とコンパクトネスの両方を振る: 大きいほどセグメント数が少なく（<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>）、コンパクトネスが高くなる（<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>、形が四角く整う）。<code style="color:#22d3bf">b</code> は未使用。戻り値はスーパーピクセルの境界線（外側の輪郭）をなぞった region で、境界はコンパクトネスが低いほど輝度エッジにスナップしやすい。</p>
+<p><code style="color:#22d3bf">a</code>（0〜1）同时调节分段数和紧凑度：越大分段数越少（<code style="color:#22d3bf">n_seg = max(2, round(6+(1-a)*40))</code>），紧凑度越高（<code style="color:#22d3bf">compactness = 0.01 + a*0.2</code>，形状变得方正规整）。<code style="color:#22d3bf">b</code> 未使用。返回值是描出超像素边界线（外侧轮廓）的 region，紧凑度越低，边界越容易吸附到亮度边缘上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

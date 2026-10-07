@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Richardson-Lucy 反卷積。假設模糊為 3x3 平均核（box PSF），進行反覆銳化（直接呼叫 <code style="color:#22d3bf">skimage.restoration.richardson_lucy</code>）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜17 回の範囲で振る(回数が多いほど強く先鋭化するが、ノイズ増幅やリンギングも増える)。<code style="color:#22d3bf">b</code> は未使用。PSF は実際のぼけ量に関わらず固定の 3x3 box を仮定するため、真の劣化過程と一致しない画像では改善が限定的、または悪化することがある。</p>
+<p><code style="color:#22d3bf">a</code> 在 2~17 次範圍內調整迭代次數(次數越多銳化越強，但雜訊放大與振鈴也會增加)。<code style="color:#22d3bf">b</code> 未使用。無論實際模糊量如何，PSF 都假定為固定的 3x3 box，因此對於與真實劣化過程不一致的影像，改善有限，甚至可能變差。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

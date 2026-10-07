@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>產生棋盤格(checkerboard)圖案的 region。相當於 HALCON 的 <code style="color:#22d3bf">gen_checker_region</code>(產生棋盤格區域)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>セルサイズを <code style="color:#22d3bf">a</code> で <code style="color:#22d3bf">min(h, w)</code> の 5%〜25% の範囲に振り、<code style="color:#22d3bf">(row//cell + col//cell)</code> が偶数のセルを前景(1)とする。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 在 <code style="color:#22d3bf">min(h, w)</code> 的 5%〜25% 範圍內調整單元尺寸，<code style="color:#22d3bf">(row//cell + col//cell)</code> 為偶數的單元為前景（1）。<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.37、0.59、0.79、0.99（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

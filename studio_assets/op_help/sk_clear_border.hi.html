@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_clear_border.inputs.jpg">sk_clear_border: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के किनारे को छूने वाले components हटाता है। Foreground region में से image की बाहरी सीमा को छूने वाले सभी connected components को background बना देता है —— field of view के किनारे पर कटी हुई (पूरी न दिखने वाली) वस्तुओं को विश्लेषण से बाहर करने की मानक पूर्व-प्रक्रिया।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">segmentation.clear_border(binm(v))</code>。a, b は未使用 —— 除去判定に使う縁の幅(buffer_size)は既定の 0(画像端そのものに触れている成分のみ対象)。</p>
+<p>HALCON में इसका कोई सीधा समकक्ष नहीं है। implementation <code style="color:#22d3bf">segmentation.clear_border(binm(v))</code> है। a, b उपयोग नहीं होते — हटाने के निर्णय में उपयोग होने वाली किनारे की चौड़ाई (buffer_size) default 0 है (केवल वे component लक्ष्य हैं जो image के किनारे को ही छूते हैं)।</p>
 <p><b>Border handling</b>: किनारे के pixel की नकल की जाती है (nearest neighbour) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

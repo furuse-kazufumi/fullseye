@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>FFT를 이용한 저역 통과 필터(블러). 대응하는 단일 HALCON op는 지정되어 있지 않다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が遮断周波数 <code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code>（正規化周波数、0〜0.5 がナイキストまでの範囲）を振る。<code style="color:#22d3bf">b</code> は未使用。2-D FFT で <code style="color:#22d3bf">rad &lt;= cutoff</code> の低周波成分だけを残し、逆 FFT の実部を <code style="color:#22d3bf">[0,1]</code> に clip する。<code style="color:#22d3bf">a</code> が小さいほど強くぼける。境界は周期的（FFT の性質上、画像端は反対側と隣接するとみなされる）に扱われ、<code style="color:#22d3bf">ndimage</code> 系フィルタの <code style="color:#22d3bf">reflect</code>/<code style="color:#22d3bf">edge</code> とは境界処理が異なる点に注意。</p>
+<p><code style="color:#22d3bf">a</code>가 차단 주파수 <code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code>(정규화 주파수, 0〜0.5가 나이퀴스트까지의 범위)를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 2-D FFT로 <code style="color:#22d3bf">rad &lt;= cutoff</code>의 저주파 성분만 남기고, 역 FFT의 실수부를 <code style="color:#22d3bf">[0,1]</code>로 clip한다. <code style="color:#22d3bf">a</code>가 작을수록 강하게 흐려진다. 경계는 주기적으로(FFT의 성질상 영상 끝은 반대쪽과 이웃한다고 간주된다) 다뤄지므로, <code style="color:#22d3bf">ndimage</code> 계열 필터의 <code style="color:#22d3bf">reflect</code>/<code style="color:#22d3bf">edge</code>와는 경계 처리가 다르다는 점에 주의.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

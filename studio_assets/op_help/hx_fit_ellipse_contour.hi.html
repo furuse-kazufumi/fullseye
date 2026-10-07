@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>क्रम 2 वाले moments से ellipse fit करके axis अनुपात (minor/major = सही वृत्त पर 1, जितना लंबा-पतला उतना 0) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>全 contour の点をまとめて座標共分散行列の固有値 <code style="color:#22d3bf">λmin, λmax</code> を取り、<code style="color:#22d3bf">sqrt(λmin/λmax)</code>(主軸方向の標準偏差の比 = 慣性楕円の短軸/長軸)を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または <code style="color:#22d3bf">λmax &lt;= 1e-9</code>(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
-<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメントなので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(<code style="color:#22d3bf">orientation_xld</code> / <code style="color:#22d3bf">area_center_xld</code>)。<code style="color:#22d3bf">cv2.fitEllipse</code> 版は <code style="color:#22d3bf">elliptic_axis_xld</code>。楕円からの逸脱量は <code style="color:#22d3bf">hx_dist_ellipse_contour</code>。</p>
+<p>सभी contours के points को मिलाकर coordinate covariance matrix के eigenvalues <code style="color:#22d3bf">λmin, λmax</code> लिए जाते हैं, और <code style="color:#22d3bf">sqrt(λmin/λmax)</code> (principal axes की दिशा में standard deviations का अनुपात = inertia ellipse की minor/major axis) <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• 3 से कम points हों, या <code style="color:#22d3bf">λmax &lt;= 1e-9</code> (सभी points एक ही जगह) हो, तो 0.0। negative eigenvalues को 0 पर clip किया जाता है।</p>
+<p>1 के जितना पास, उतना isotropic (सच्चा circle); 0 के जितना पास, उतना लंबा-पतला। यह ellipse boundary का algebraic fit नहीं, बल्कि point set का 2nd-order moment है, इसलिए points की density असमान हो या arc का हिस्सा गायब हो तो axis ratio बदल जाता है। ellipse का tilt और centre नहीं लौटाए जाते (<code style="color:#22d3bf">orientation_xld</code> / <code style="color:#22d3bf">area_center_xld</code>)। <code style="color:#22d3bf">cv2.fitEllipse</code> वाला version <code style="color:#22d3bf">elliptic_axis_xld</code> है। ellipse से विचलन <code style="color:#22d3bf">hx_dist_ellipse_contour</code> देता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

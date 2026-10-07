@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rundheitsmaß <code style="color:#22d3bf">min(1, Fläche / (π · max²))</code>, wobei <code style="color:#22d3bf">max</code> der <b>größte Abstand vom Schwerpunkt zu einem Konturpixel</b> ist. Für einen Kreis ist es 1 und kleiner für längliche Formen oder solche mit großen Ausbuchtungen oder Löchern. Bei mehreren Zusammenhangskomponenten wird nur die größte bewertet. <b>Dieselbe Formel wie</b> HALCONs <code style="color:#22d3bf">circularity</code> (Shape factor for the circularity (similarity to a circle) of a region.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という<b>別の量</b>を返していた。名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Bis 2026-09-26 lieferte es das isoperimetrische Verhältnis <code style="color:#22d3bf">4π·Fläche/Umfang²</code>, also <b>eine andere Größe</b>. Der Name ist von HALCON entlehnt, die Zahl aber war eine andere, sodass wer ein HALCON-Rezept übertrug, mit demselben Schwellwert andere Entscheidungen erhielt (0.826 gegenüber 0.670 bei einem Quadrat, <b>sogar die Reihenfolge ändert sich</b>). <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -13,10 +13,9 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像的結構／卡通部分（TV-L2，Chambolle）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画像を「構造(cartoon)+テクスチャ」に分け、構造側を返す。ROF/TV-L2 モデル <code style="color:#22d3bf">min_u ||u - f||^2 / (2*weight) + TV(u)</code> を Chambolle(2004)の双対射影法で固定 120 反復(<code style="color:#22d3bf">tau=0.125</code>)解く。<code style="color:#22d3bf">weight = 0.02 + 0.28*a</code> で、<code style="color:#22d3bf">a</code> が大きいほど滑らか(平坦な区画が広がり、細かい模様が消える)、<code style="color:#22d3bf">a=0</code> でもごく弱い平滑が入る。<code style="color:#22d3bf">b</code> は未使用。</p>
-<p>入力は 2 次元 float64・[0,1] に揃える(3 次元はチャネル平均、NaN→0、±Inf→1/0)。返り値は入力と同形の float64、[0,1] に clip。飽和しない限り <code style="color:#22d3bf">dc_structure_texture + (dc_texture_residual - 0.5) == 入力</code> が成り立つ。1xN / Nx1 など 2 次元の発散が定義できない極小画像は入力をそのまま返す(構造=入力、テクスチャ=0.5)。例外時は fail-soft で入力のクリップ版が返り、backend_safe の台帳に記録される(strict モードでは再送出)。</p>
-<p>ガウスぼかしと違ってエッジ(段差)は保ち、模様・ノイズだけを落とす。反復数が固定なので大きな画像では収束しきらないことがある(残りはテクスチャ側に出る)。テクスチャ側だけが欲しければ <code style="color:#22d3bf">dc_texture_residual</code>。周期模様の除去や欠陥検出の前処理として使い、後段に <code style="color:#22d3bf">threshold</code> や <code style="color:#22d3bf">dyn_threshold</code>。背景が低ランク(縞・グラデーション)なら <code style="color:#22d3bf">dc_rpca_lowrank</code> も候補。</p>
+<p>把影像分成「結構(cartoon)+紋理」，回傳結構部分。以 Chambolle（2004）的對偶投影法對 ROF/TV-L2 模型 <code style="color:#22d3bf">min_u ||u - f||^2 / (2*weight) + TV(u)</code> 固定迭代 120 次（<code style="color:#22d3bf">tau=0.125</code>）求解。<code style="color:#22d3bf">weight = 0.02 + 0.28*a</code>，<code style="color:#22d3bf">a</code> 越大越平滑（平坦區塊擴大，細小花紋消失），<code style="color:#22d3bf">a=0</code> 時也會施加極弱的平滑。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>輸入整理為 2 維 float64·[0,1]（3 維取通道平均，NaN→0，±Inf→1/0）。回傳值為與輸入同形的 float64，截斷到 [0,1]。只要不飽和，<code style="color:#22d3bf">dc_structure_texture + (dc_texture_residual - 0.5) == 輸入</code> 成立。1xN / Nx1 等無法定義 2 維散度的極小影像原樣回傳輸入（結構=輸入，紋理=0.5）。例外時 fail-soft，回傳輸入的截斷版本，並記錄到 backend_safe 的台帳（strict 模式下重新拋出）。</p>
+<p>與高斯模糊不同，它保留邊緣（階躍），只去掉花紋與雜訊。由於迭代次數固定，大影像可能無法完全收斂（剩餘部分會出現在紋理側）。只要紋理部分時用 <code style="color:#22d3bf">dc_texture_residual</code>。可作為去除週期花紋或瑕疵偵測的前處理，後接 <code style="color:#22d3bf">threshold</code> 或 <code style="color:#22d3bf">dyn_threshold</code>。背景為低秩（條紋、漸層）時，<code style="color:#22d3bf">dc_rpca_lowrank</code> 也是候選。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

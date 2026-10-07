@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>감마 보정(거듭제곱 변환). HALCON의 <code style="color:#22d3bf">pow_image</code>(Raise an image to a power.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が指数 γ を <code style="color:#22d3bf">0.5〜2.0</code> に<b>線形に</b>振る（<code style="color:#22d3bf">γ = 0.5 + 1.5a</code>、<code style="color:#22d3bf">v**γ</code>、入力は先に <code style="color:#22d3bf">[0,1]</code> へ clip）。<b>既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.25 であって素通しではない</b> —— 何もしない設定（γ=1）が要るなら <code style="color:#22d3bf">a=1/3</code> を渡す。<code style="color:#22d3bf">b</code> は未使用。γ&lt;1 で暗部を持ち上げ（明るくする）、γ&gt;1 で暗部をさらに沈める（コントラストを付ける）。</p>
+<p><code style="color:#22d3bf">a</code>가 지수 γ를 <code style="color:#22d3bf">0.5〜2.0</code>으로 <b>선형으로</b> 바꾼다(<code style="color:#22d3bf">γ = 0.5 + 1.5a</code>, <code style="color:#22d3bf">v**γ</code>, 입력은 먼저 <code style="color:#22d3bf">[0,1]</code>로 clip). <b>기본값 <code style="color:#22d3bf">a=0.5</code>는 γ=1.25이며 그대로 통과가 아니다</b> —— 아무것도 하지 않는 설정(γ=1)이 필요하면 <code style="color:#22d3bf">a=1/3</code>을 넘긴다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. γ&lt;1이면 어두운 부분을 끌어올리고(밝게 한다), γ&gt;1이면 어두운 부분을 더 가라앉힌다(대비를 준다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

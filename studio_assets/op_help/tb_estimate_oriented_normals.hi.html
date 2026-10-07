@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_estimate_oriented_normals.inputs.jpg">tb_estimate_oriented_normals: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>PCA normal estimation + Hoppe global orientation का संयोजन। → (N,3) oriented unit normals।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">estimate_normals</code>(向き未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を <code style="color:#22d3bf">curvature3d.shape_index</code> に渡すと凹/凸符号が正しく出る。</p>
+<p><code style="color:#22d3bf">estimate_normals</code> (दिशा अनिश्चित) → <code style="color:#22d3bf">orient_normals</code> (MST propagation) से गुज़ारता है। closed surface पर सभी point बाहर की ओर, plane पर सभी point एक ही hemisphere में संरेखित होते हैं। मिले हुए normal को <code style="color:#22d3bf">curvature3d.shape_index</code> में देने पर concave/convex का sign सही निकलता है।</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>points: (N,3) point cloud।</p>
+<p>k: PCA neighbour संख्या और kNN graph neighbour संख्या (साझा)।</p>
+<p>seed_dir: global reference दिशा (3,)। None हो तो centroid से बाहर की ओर।</p>
 <p>Returns:</p>
-<p>(N,3) の大域一貫・向き付き単位法線。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">estimate_oriented_normals</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 20)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>(N,3) globally consistent, oriented unit normal।</p>
+<p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">estimate_oriented_normals</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">k</code> (default 20) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

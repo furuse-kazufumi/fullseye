@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>維納反摺積（使用已知點擴散函數的去模糊）。呼叫<code style="color:#22d3bf">skimage.restoration.wiener</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり（標準偏差 <code style="color:#22d3bf">0.5 + 1.5*a</code>、5x5 窓）を振る。b がバランス項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。ノイズ対信号比の逆数に相当し、大きいほどノイズ抑制寄りになる）を振る。<b>入力画像のボケが実際にこの想定ガウシアン PSF と一致している場合にのみ有効</b>で、PSF の形が違うとリンギングや復元失敗が出る。</p>
+<p>PSF 假定為高斯形狀並自行產生，a 調整 PSF 的擴展（標準差 <code style="color:#22d3bf">0.5 + 1.5*a</code>，5x5 視窗）。b 調整平衡項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。相當於雜訊對訊號比的倒數，越大越偏向雜訊抑制）。<b>只有當輸入影像的模糊實際上與這個假定的高斯 PSF 一致時才有效</b>，PSF 的形狀不同時會出現振鈴或復原失敗。</p>
 <p><b>邊界處理</b>：環繞到對側（週期）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

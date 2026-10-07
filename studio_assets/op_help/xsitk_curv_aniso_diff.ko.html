@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률 이방성 확산(SimpleITK <code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>). Perona-Malik형 이방성 확산의 일종으로, 엣지(그래디언트가 큰 곳)에서는 확산을 억제하고 평탄한 곳에서는 충분히 확산시켜 엣지를 보존하면서 평활화한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は伝導度パラメータ(conductance、<code style="color:#22d3bf">0.5+4.5*a</code> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、<code style="color:#22d3bf">b</code> は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code>는 전도도 파라미터(conductance, <code style="color:#22d3bf">0.5+4.5*a</code>로 0.5~5.0. 클수록 에지 판정이 느슨해져 강하게 확산된다), <code style="color:#22d3bf">b</code>는 반복 횟수(1~9회)를 바꾼다. 시간 스텝은 0.0625 고정. 출력은 [0,1]로 클립.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

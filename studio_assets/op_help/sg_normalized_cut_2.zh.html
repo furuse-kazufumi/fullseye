@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过对亮度图进行归一化割（Normalized Cut，谱聚类二分割，Shi &amp; Malik）将图像划分为明暗两个区域（HALCON 无对应算子）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>計算量を抑えるため画像を <code style="color:#22d3bf">sdim = round(10+b*14)</code> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 <code style="color:#22d3bf">(D-W)y = lambda*D*y</code> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。<code style="color:#22d3bf">a</code>（0〜1）は輝度方向の帯域幅<code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code> を振り、<code style="color:#22d3bf">b</code>（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>
+<p>为控制计算量，先把图像抽稀到约 <code style="color:#22d3bf">sdim = round(10+b*14)</code>，再构建由亮度差和距离决定权重的亲和图，把广义特征值问题 <code style="color:#22d3bf">(D-W)y = lambda*D*y</code> 的第 2 特征向量（Fiedler 向量）以中位数阈值化，分为 2 群。<code style="color:#22d3bf">a</code>（0〜1）调节亮度方向的带宽 <code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code>，<code style="color:#22d3bf">b</code>（0〜1）调节抽稀的分辨率。把较亮的一群以最近邻放大到原分辨率，作为 region 返回。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

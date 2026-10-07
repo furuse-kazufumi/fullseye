@@ -12,9 +12,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Error diffusion dither (Floyd–Steinberg)। <code style="color:#22d3bf">a</code> bit की संख्या 1 से 8 है, <code style="color:#22d3bf">b</code> इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。<b>平均は保たれる</b>(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。</p>
-<p><b>適用条件</b>: (1) 走査順に依存するので、<b>画像を切り出す位置を変えると結果が変わる</b> —— タイル処理や並列化には向かない(そちらは <code style="color:#22d3bf">dither_ordered</code>)。(2) 誤差を隣へ送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では <code style="color:#22d3bf">dither_ordered</code> よりずっと遅い。</p>
+<p>हर pixel को round करने के बाद, निकले error को दाईं ओर 7/16, नीचे-बाईं ओर 3/16, नीचे 5/16, नीचे-दाईं ओर 1/16 बाँटा जाता है। <b>mean बना रहता है</b> (स्थानीय रूप से जोड़-घटाव संतुलित होते हैं), इसलिए flat gradation धारियाँ नहीं बनती, बल्कि बिंदुओं के घनत्व से दिखाई जाती है। 1 bit तक घटाने पर भी तस्वीर पढ़ी जा सकती है, इसका कारण यही है।</p>
+<p><b>लागू होने की शर्तें</b>: (1) scan order पर निर्भर है, इसलिए <b>image को crop करने की position बदलने से result बदल जाता है</b> — tile processing या parallelisation के लिए उपयुक्त नहीं (उसके लिए <code style="color:#22d3bf">dither_ordered</code>)। (2) error पड़ोसी pixel को भेजा जाता है, इसलिए पतली रेखाओं के आसपास पूँछ बनती है। (3) यहाँ सीधा sequential implementation है, इसलिए बड़ी image पर यह <code style="color:#22d3bf">dither_ordered</code> से बहुत धीमा है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

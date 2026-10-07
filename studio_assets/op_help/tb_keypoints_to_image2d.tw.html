@@ -5,18 +5,17 @@
 <p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる。用法見下方可執行範例。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>影像座標 <code style="color:#22d3bf">(N,2) = (u, v)</code> → 計數影像 <code style="color:#22d3bf">(H, W)</code>。<code style="color:#22d3bf">keypoints</code> 的第二個出口。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">round(v)</code> を行、<code style="color:#22d3bf">round(u)</code> を列として 1 ずつ加算する。<b>画素格子への量子化が損失</b>で、<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px = 一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の 0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>
-<p>★ここも一度間違えた: 2-D 距離の実測を 1-D の理論値と並べて「0.29 のはずが 0.40 だ」と読みかけた —— 軸ごとの量と距離の量を混ぜると、正しい実装が誤っているように見える。近接した点は連結成分として融合するので、往復で点数も減りうる(実測: 60 点をランダムに置くと 54 点)。</p>
-<p>範囲外の点は<b>黙って捨てない</b> —— 捨てると「検出が減った」のか「画像が小さすぎた」のかが区別できなくなる。</p>
+<p>以 <code style="color:#22d3bf">round(v)</code> 為列、<code style="color:#22d3bf">round(u)</code> 為行各加 1。<b>向像素網格的量化即為損失</b>，與 <code style="color:#22d3bf">keypoints_from_image2d</code> 往返時位置會最多偏移 0.5 像素(在相隔充分的 225 個點上實測：<b>每軸</b> RMS 0.2835 px = 與均勻量化的理論值 1/sqrt(12) = 0.2887 一致。以 2-D 距離為 sqrt(2) 倍的 0.4009 px，理論 sqrt(2/12) = 0.4082)。</p>
+<p>★這裡也曾經弄錯過：差點把 2-D 距離的實測與 1-D 的理論值並列，讀成「本該 0.29 卻是 0.40」 —— 把每軸的量與距離的量混在一起，正確的實作看起來就像是錯的。相鄰的點會作為連通元件融合，因此往返後點數也可能減少(實測：隨機放置 60 個點得到 54 個點)。</p>
+<p>範圍外的點<b>不會默默丟棄</b> —— 丟棄的話就無法區分是「偵測減少了」還是「影像太小了」。</p>
 <p>Args:</p>
-<p>keypoints: (N, 2) の (u, v)。</p>
+<p>keypoints: (N, 2) 的 (u, v)。</p>
 <p>shape: (H, W)。</p>
 <p>Returns:</p>
-<p>(H, W) float64 の計数画像。</p>
+<p>(H, W) float64 的計數影像。</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / 範囲外の点がある / shape が上限超。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_to_image2d</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>ValueError: 形狀不正確 / 非有限 / 存在範圍外的點 / shape 超過上限。</p>
+<p>橋接到 2-D 演化註冊表的 reprconv op <code style="color:#22d3bf">keypoints_to_image2d</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

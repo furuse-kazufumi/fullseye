@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成空(全部像素为 0)的 region。相当于 HALCON 的 <code style="color:#22d3bf">gen_empty_region</code>(生成空 region)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>入力と同じ形状の全 0 配列を返すだけ。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。初期値やプレースホルダとして使う。</p>
+<p>只是返回与输入同形状的全 0 数组。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。用作初始值或占位符。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

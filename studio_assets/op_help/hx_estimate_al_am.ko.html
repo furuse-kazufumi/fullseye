@@ -9,10 +9,9 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>albedo(반사율)와 ambient(환경광) 추정: albedo ~ 휘도 범위. 여기서는 albedo 를 돌려줍니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像の最大値と最小値の差 <code style="color:#22d3bf">max(v) - min(v)</code> を [0,1] に clip した <code style="color:#22d3bf">np.float64</code> を返す。「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。ambient(環境光)は計算せず返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で <code style="color:#22d3bf">hx_mean_shape</code> や <code style="color:#22d3bf">median_rect</code> を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。slant の推定 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
+<p>영상의 최댓값과 최솟값의 차 <code style="color:#22d3bf">max(v) - min(v)</code>를 [0,1]로 clip한 <code style="color:#22d3bf">np.float64</code>를 반환한다. &quot;반사율(albedo)이 높을수록 음영의 명암차가 크다&quot;는 관계를 휘도의 다이내믹 레인지로 대용한 추정. ambient(환경광)는 계산하지 않고 반환하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>최대·최소 2개 화소만으로 정해지므로 포화 화소나 암점이 1개라도 있으면 1에 달라붙는다. 잡음에 약하므로 전단에서 <code style="color:#22d3bf">hx_mean_shape</code>나 <code style="color:#22d3bf">median_rect</code>를 건다. min-max 정규화된 영상에서는 항상 1이 되어 의미가 없다. slant 추정 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code>는 반사율 1을 가정하고 있어, 이 값으로 나누어 보정하는 용도가 상정된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

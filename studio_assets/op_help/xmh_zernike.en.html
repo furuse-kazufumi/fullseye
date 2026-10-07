@@ -9,8 +9,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sum of Zernike moments (<code style="color:#22d3bf">mahotas.features.zernike_moments</code>). Collapses the rotation-invariant shape/intensity-distribution features of the image mapped onto the unit circle into a single real number.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>半径は画像の短辺の半分に固定。<code style="color:#22d3bf">a</code> は次数(degree、6〜12 の整数)を振る —— 次数を上げるほど高次のモーメントまで加算され値が変わる。<code style="color:#22d3bf">b</code> は未使用。モーメント成分ごとの符号や大きさの分布は総和で相殺・情報が失われるため、形状の指紋として使うには弱い。個々の成分が要る場合は <code style="color:#22d3bf">mahotas.features.zernike_moments</code> を直接呼ぶこと。</p>
+<p>The radius is fixed to half of the image&#x27;s shorter side. <code style="color:#22d3bf">a</code> sweeps the degree (an integer 6-12) — the higher the degree, the higher the order of moments that are summed in, and the value changes. <code style="color:#22d3bf">b</code> is unused. Because the signs and magnitude distribution of the individual moment components cancel out / lose information in the sum, it is weak as a shape fingerprint. If you need the individual components, call <code style="color:#22d3bf">mahotas.features.zernike_moments</code> directly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -14,12 +14,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ideal band filter image (frequency ring, केंद्रीय radius a, चौड़ाई b)। gen_bandpass से अलग operator।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ <code style="color:#22d3bf">fftshift</code> 済の正規化周波数半径 <code style="color:#22d3bf">r</code>(中心=DC)に対し <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 円環の中心半径 <code style="color:#22d3bf">c = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 半幅 <code style="color:#22d3bf">half = 0.03 + 0.15*b</code>(0.03〜0.18)。内半径 <code style="color:#22d3bf">c - half</code> が負になる組み合わせ(小さい a と</p>
-<p>大きい b)では DC を含む円板になり、実質ローパスになる。</p>
-<p><code style="color:#22d3bf">hx_gen_bandpass</code> が「内半径と幅」なのに対し、こちらは「中心と半幅」で同じ円環を指定する。特定の空間周波数(縞の周期 <code style="color:#22d3bf">1/c</code> 画素)だけを抜き出すマスクを作り、<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルと画素積で使う。</p>
+<p><code style="color:#22d3bf">hx_gen_lowpass</code> जैसी ही <code style="color:#22d3bf">fftshift</code> की गई normalised frequency radius <code style="color:#22d3bf">r</code> (केंद्र = DC) पर <code style="color:#22d3bf">c - half &lt;= r &lt;= c + half</code> वाले annulus को 1 रखने वाली 0/1 float image (frequency domain mask) लौटाता है। input <code style="color:#22d3bf">v</code> का उपयोग केवल shape जानने के लिए होता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → annulus की केंद्र radius <code style="color:#22d3bf">c = 0.05 + 0.4*a</code> (0.05 से 0.45)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → आधी चौड़ाई <code style="color:#22d3bf">half = 0.03 + 0.15*b</code> (0.03 से 0.18)। जिन संयोजनों में भीतरी radius <code style="color:#22d3bf">c - half</code> ऋणात्मक हो जाता है (छोटा a और</p>
+<p>बड़ा b), उनमें DC वाली disc बनती है और यह व्यवहार में low-pass हो जाता है।</p>
+<p><code style="color:#22d3bf">hx_gen_bandpass</code> &quot;भीतरी radius और चौड़ाई&quot; से, जबकि यह &quot;केंद्र और आधी चौड़ाई&quot; से उसी annulus को निर्दिष्ट करता है। किसी विशेष spatial frequency (धारियों का period <code style="color:#22d3bf">1/c</code> pixels) को ही निकालने वाला mask बनाकर, <code style="color:#22d3bf">fft_generic</code> आदि केंद्र = DC spectra के साथ pixel-दर-pixel गुणनफल में उपयोग करें।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

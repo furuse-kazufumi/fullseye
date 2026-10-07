@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>泽尼克矩（Zernike moments、<code style="color:#22d3bf">mahotas.features.zernike_moments</code>）的总和。将映射到单位圆上的图像的旋转不变形状/灰度分布特征压缩为单个实数返回。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>半径は画像の短辺の半分に固定。<code style="color:#22d3bf">a</code> は次数(degree、6〜12 の整数)を振る —— 次数を上げるほど高次のモーメントまで加算され値が変わる。<code style="color:#22d3bf">b</code> は未使用。モーメント成分ごとの符号や大きさの分布は総和で相殺・情報が失われるため、形状の指紋として使うには弱い。個々の成分が要る場合は <code style="color:#22d3bf">mahotas.features.zernike_moments</code> を直接呼ぶこと。</p>
+<p>半径固定为图像短边的一半。<code style="color:#22d3bf">a</code> 调节阶数(degree，6~12 的整数) —— 阶数越高，累加的矩阶次越高，值也随之变化。<code style="color:#22d3bf">b</code> 未使用。各矩分量的符号和大小分布在求和中会相互抵消、信息丢失，因此作为形状指纹较弱。需要单个分量时，请直接调用 <code style="color:#22d3bf">mahotas.features.zernike_moments</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

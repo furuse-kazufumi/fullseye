@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning_golay.inputs.jpg">thinning_golay: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對區域進行細線化（thinning）。實作使用 skimage 的 <code style="color:#22d3bf">thin</code>（Guo–Hall 型的疊代細線化），反覆處理直到完全變為 1 像素寬，a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">thinning_golay</code>（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
+<p>在演算法和粒度上都與 HALCON 的 <code style="color:#22d3bf">thinning_golay</code>（使用 Golay 字母表的結構元素、以擊中-擊不中轉換只細化 1 步的運算，通常反覆使用）不同的近似 —— 不是單步，而是一直細化到收斂為止。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

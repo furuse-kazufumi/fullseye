@@ -13,13 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_estimate_normals.inputs.jpg">tb_estimate_normals: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>統一朝外（遠離鄰域重心）方向的點雲法線。→ (N,3)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>手順(各点、Python ループ): <code style="color:#22d3bf">cKDTree</code> で自身を含む k+1 近傍(k は N-1 に切り詰め)を取り、クエリ点を原点にした近傍座標の散布行列 <code style="color:#22d3bf">local.T @ local</code> の最小固有ベクトルを法線にする(単位長)。向きは「近傍重心との内積が正なら反転」= 近傍重心から離れる側に揃える。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は固定値 <code style="color:#22d3bf">(0, 0, 1)</code> を返す(推定していない)。</p>
-<p style="margin:2px 0 2px 12px">• 向き付けは局所ヒューリスティクスで、閉じた凸形状なら外向きだが、開いた面・薄板・凹部では隣接点どうしで向きが食い違い得る(大域一貫性は保証しない)。大域的に揃えるには <code style="color:#22d3bf">orient_normals</code> に通すか、最初から <code style="color:#22d3bf">estimate_oriented_normals</code> を使う。organized 深度画像なら <code style="color:#22d3bf">normals_from_depth</code> が視点向きで速い。</p>
-<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,3)。<code style="color:#22d3bf">k</code> 既定 25。決定論的。</p>
-<p style="margin:2px 0 2px 12px">• 内部は <code style="color:#22d3bf">principal_curvatures</code> と同じ計算を通る(法線推定にも二次曲面フィットまで走る)ので、点数が多いと遅い。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">estimate_normals</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 25)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>步驟(逐點,Python 迴圈): 用 <code style="color:#22d3bf">cKDTree</code> 取包含自身的 k+1 近鄰(k 截為 N-1),以查詢點為原點的鄰域座標的散布矩陣 <code style="color:#22d3bf">local.T @ local</code> 的最小特徵向量作為法線(單位長)。朝向為「與鄰域質心的內積為正則翻轉」= 統一到遠離鄰域質心的一側。</p>
+<p style="margin:2px 0 2px 12px">• 鄰域少於 5 點的點回傳固定值 <code style="color:#22d3bf">(0, 0, 1)</code>(未估計)。</p>
+<p style="margin:2px 0 2px 12px">• 朝向是局部啟發式,封閉凸形狀時朝外,但在開放面、薄板、凹部,相鄰點之間朝向可能不一致(不保證全域一致性)。要全域統一,透過 <code style="color:#22d3bf">orient_normals</code>,或從一開始就用 <code style="color:#22d3bf">estimate_oriented_normals</code>。若是 organized 深度影像,<code style="color:#22d3bf">normals_from_depth</code> 朝向視點且更快。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值為 float64 (N,3)。<code style="color:#22d3bf">k</code> 預設 25。確定性。</p>
+<p style="margin:2px 0 2px 12px">• 內部走與 <code style="color:#22d3bf">principal_curvatures</code> 相同的計算(法線估計也會一直執行到二次曲面擬合),因此點數多時很慢。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">estimate_normals</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">k</code>(預設 25)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

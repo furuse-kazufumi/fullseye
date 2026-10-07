@@ -14,8 +14,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Min/Max curvature flow smoothing (SimpleITK <code style="color:#22d3bf">MinMaxCurvatureFlow</code>)। xsitk_curvature_flow वाले ही curvature flow में पड़ोस के minimum/maximum पर आधारित निर्णय जोड़कर, छोटे छेद और speckle noise भरते हुए smooth करने वाला रूप।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(1〜9 回)、<code style="color:#22d3bf">b</code> はステンシル半径(<code style="color:#22d3bf">1+int(b*2)</code> で 1〜3、判定に使う近傍の広さ)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> number of iterations (1-9 बार) और <code style="color:#22d3bf">b</code> stencil radius (<code style="color:#22d3bf">1+int(b*2)</code> से 1-3, निर्णय में उपयोग होने वाले neighbourhood का आकार) को बदलता है। time step 0.0625 पर स्थिर है। आउटपुट [0,1] में clip किया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

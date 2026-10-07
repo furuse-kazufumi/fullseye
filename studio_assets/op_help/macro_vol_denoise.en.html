@@ -14,8 +14,7 @@
 <p><img src="fig/macro_vol_denoise.gif" alt="macro_vol_denoise: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A fixed pipeline discovered by evolutionary search (3-D volume version): <code style="color:#22d3bf">vol_threshold(a=0.52,b=0.76)</code> → <code style="color:#22d3bf">vol_gaussian(a=0.08,b=0.89)</code> (2 stages: apply 3-D thresholding, then Gaussian smoothing).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は凍結済みで未使用。in_sort/out_sort は volume。volume の denoise 課題（PSNR）でロック済みホールドアウト 25.74dB、手作りベースライン20.94dB を上回る。HALCON に対応する単一オペレータは無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are frozen and unused. in_sort/out_sort are volume. On the volume denoise task (PSNR) it reaches 25.74dB on the locked holdout, beating the hand-made baseline of 20.94dB. There is no single HALCON operator corresponding to it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

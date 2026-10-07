@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_height_width_ratio.chain.jpg">xg_height_width_ratio: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점군의 축 평행 외접 사각형의 높이/너비 비.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり <code style="color:#22d3bf">h = max(row) - min(row)</code> と列方向の広がり <code style="color:#22d3bf">w = max(col) - min(col)</code> の比 <code style="color:#22d3bf">h / w</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code>。点が無ければ 0.0。<code style="color:#22d3bf">w &lt; 1e-12</code>(全点が同じ列= 縦一直線)では <code style="color:#22d3bf">h &gt; 1e-12</code> なら 1e6、そうでなければ 0.0。上限は 1e6。軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。回転不変な細長さは <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code> を使う。<code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code> は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
+<p>모든 윤곽점(닫힌 윤곽의 중복 끝점은 제외)을 모아, 행 방향의 퍼짐 <code style="color:#22d3bf">h = max(row) - min(row)</code>과 열 방향의 퍼짐 <code style="color:#22d3bf">w = max(col) - min(col)</code>의 비 <code style="color:#22d3bf">h / w</code>를 반환한다. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>반환값은 <code style="color:#22d3bf">numpy.float64</code>. 점이 없으면 0.0. <code style="color:#22d3bf">w &lt; 1e-12</code>(모든 점이 같은 열= 세로 일직선)에서는 <code style="color:#22d3bf">h &gt; 1e-12</code>이면 1e6, 그렇지 않으면 0.0. 상한은 1e6. 축에 평행한 bbox이므로 회전에 불변이 아니다(45° 기운 가늘고 긴 윤곽은 1에 가까워진다). 회전 불변인 가늘고 긴 정도는 <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code>를 사용한다. <code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code>는 점 좌표의 범위(화소 중심 간 거리)로, 화소 수 기반의 폭보다 1 작다. 윤곽이 여럿이면 전체를 둘러싸는 1개의 bbox의 비가 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

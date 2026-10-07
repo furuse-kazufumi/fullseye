@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A periodic LUT that folds tones sinusoidally via <code style="color:#22d3bf">(sin(2*pi*x) + 1) / 2</code>. It returns to 0.5 at x=0 and x=1, and reaches 0/1 near x=0.25/0.75 - rather than being monotonically increasing, it is an irreversible transform in which multiple input tones share the same output. Stands in for HALCON&#x27;s <code style="color:#22d3bf">sin_image</code> (Calculate the sine of an image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。周期や位相を変える調整点は無い。等高線状の疑似カラー効果や階調の折返しを作る用途向けで、通常のコントラスト調整には向かない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. There is no parameter to change the period or phase. It is meant for contour-like pseudo-colour effects or for folding the tone scale, and is not suited to ordinary contrast adjustment.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

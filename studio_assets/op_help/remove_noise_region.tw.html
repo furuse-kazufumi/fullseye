@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/remove_noise_region.inputs.jpg">remove_noise_region: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用圓形結構元素（半徑 <code style="color:#22d3bf">_rad(a)</code>=1～4）進行二值斷開運算（opening，先侵蝕後膨脹），去除孤立的小點狀雜訊。b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">remove_noise_region</code>（小さな孤立領域=ノイズをフィルタ処理で除去する演算）に相当。円形構造要素のサイズだけがノイズ除去の強さを決める近似。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">remove_noise_region</code>（以濾波處理去除小的孤立區域=雜訊的運算）。僅由圓形結構元素的尺寸決定去雜訊強度的近似。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

@@ -15,12 +15,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dilation2.inputs.jpg">hx_dilation2: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Dilation with a reference point: after dilating, offset by the reference point (translated by b).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> を region とし、半径 <code style="color:#22d3bf">r</code> の円板構造要素で <code style="color:#22d3bf">binary_dilation</code> した後、結果を列方向に <code style="color:#22d3bf">sh</code> 画素 <code style="color:#22d3bf">np.roll</code> で平行移動して 0/1 の float 配列で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 円板半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code>(1〜5 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 列方向のずらし量 <code style="color:#22d3bf">sh = int((b-0.5)*6)</code>。値は -3〜3 で、小数点以下は 0 方向に切り捨てるため <code style="color:#22d3bf">b</code> が</p>
-<p>およそ 1/3〜2/3 の範囲では 0(ずらし無し)になる。負で左、正で右。</p>
-<p>行方向のずらしは無い(参照点を横にずらす形だけを再現)。<code style="color:#22d3bf">np.roll</code> なので端からはみ出た分は反対側に現れる(端に接する region を扱うときは注意)。単純な膨張だけなら <code style="color:#22d3bf">hx_dilation1</code>。</p>
+<p>Takes <code style="color:#22d3bf">v &gt; 0.5</code> as the region, applies <code style="color:#22d3bf">binary_dilation</code> with a disc structuring element of radius <code style="color:#22d3bf">r</code>, then translates the result by <code style="color:#22d3bf">sh</code> pixels in the column direction with <code style="color:#22d3bf">np.roll</code> and returns a 0/1 float array.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → disc radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> (1 to 5 pixels).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → column shift <code style="color:#22d3bf">sh = int((b-0.5)*6)</code>. Values are -3 to 3, and since the fraction is truncated toward 0, for <code style="color:#22d3bf">b</code></p>
+<p>roughly in 1/3 to 2/3 it is 0 (no shift). Negative shifts left, positive right.</p>
+<p>There is no row shift (it only reproduces shifting the reference point horizontally). Because of <code style="color:#22d3bf">np.roll</code>, whatever runs off one edge reappears on the opposite side (take care with regions touching the border). For plain dilation only, use <code style="color:#22d3bf">hx_dilation1</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

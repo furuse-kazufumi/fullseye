@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_contours_xld.inputs.jpg">smooth_contours_xld: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以移动平均(窗宽 <code style="color:#22d3bf">2*(1+3*a)+1</code>)平滑轮廓的坐标序列。使轮廓的锯齿(由像素边界产生的锯齿状)变得平滑。相当于 HALCON 的 <code style="color:#22d3bf">smooth_contours_xld</code>(Smooth an XLD contour.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が平滑化窓の幅を振る。<code style="color:#22d3bf">b</code> は未使用。点数が窓幅以下の短い輪郭は平滑化されずそのまま返る。</p>
+<p><code style="color:#22d3bf">a</code> 调节平滑窗口的宽度。<code style="color:#22d3bf">b</code> 未使用。点数不超过窗口宽度的短轮廓不做平滑,原样返回。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

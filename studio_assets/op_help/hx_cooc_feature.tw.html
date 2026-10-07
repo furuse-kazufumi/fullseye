@@ -11,12 +11,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_cooc_feature.b.jpg">hx_cooc_feature: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>量化後建構距離 d 的水平共生矩陣,回傳 Haralick 對比度(a=距離,b 選角度)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力 <code style="color:#22d3bf">v</code>([0,1] 画像)を <code style="color:#22d3bf">int(v*8)</code> で 8 階調に量子化し(clip で 0〜7)、距離 <code style="color:#22d3bf">d</code> だけ離れた画素対の出現回数を 8×8 の共起行列にして転置を足し(対称化)、総和で割って確率にする。返すのは Haralick の contrast <code style="color:#22d3bf">sum p(i,j)*(i-j)^2</code> を最大値 <code style="color:#22d3bf">(8-1)^2 = 49</code> で割った <code style="color:#22d3bf">np.float64</code>(値域 [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 距離 <code style="color:#22d3bf">d = 1 + int(a*3)</code>(1〜4 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 方向。<code style="color:#22d3bf">b &lt; 0.5</code> で水平(同じ行で <code style="color:#22d3bf">d</code> 列右)、<code style="color:#22d3bf">b &gt;= 0.5</code> で垂直(同じ列で <code style="color:#22d3bf">d</code> 行下)。斜め方向は無い。</p>
-<p style="margin:2px 0 2px 12px">• 画像の幅(または高さ)が <code style="color:#22d3bf">d</code> 以下で画素対が 1 つも作れないと総和 0 とみなして 0.0 を返す(例外は出さない)。</p>
-<p>値が大きいほど隣接画素の階調差が大きい(粗い/コントラストの高いテクスチャ)。8 階調のため微妙な濃淡差は同じ階調に潰れる。16 階調の <code style="color:#22d3bf">skimage</code> 実装 <code style="color:#22d3bf">cooc_feature_matrix</code> とは階調数・正規化が異なり数値は一致しない。前段に <code style="color:#22d3bf">hx_gabor</code> や <code style="color:#22d3bf">mean_image</code> など画像 op、後段は feature として比較・しきい値に使う。</p>
+<p>把輸入 <code style="color:#22d3bf">v</code>（[0,1] 影像）以 <code style="color:#22d3bf">int(v*8)</code> 量化為 8 個灰階（clip 到 0〜7），把相隔距離 <code style="color:#22d3bf">d</code> 的像素對的出現次數做成 8×8 共生矩陣並加上其轉置（對稱化），再除以總和得到機率。回傳 Haralick 的 contrast <code style="color:#22d3bf">sum p(i,j)*(i-j)^2</code> 除以最大值 <code style="color:#22d3bf">(8-1)^2 = 49</code> 所得的 <code style="color:#22d3bf">np.float64</code>（值域 [0,1]）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 距離 <code style="color:#22d3bf">d = 1 + int(a*3)</code>（1〜4 像素）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 方向。<code style="color:#22d3bf">b &lt; 0.5</code> 為水平（同一列向右 <code style="color:#22d3bf">d</code> 行），<code style="color:#22d3bf">b &gt;= 0.5</code> 為垂直（同一行向下 <code style="color:#22d3bf">d</code> 列）。沒有斜向。</p>
+<p style="margin:2px 0 2px 12px">• 影像寬度（或高度）不大於 <code style="color:#22d3bf">d</code>、連 1 個像素對都無法構成時，視總和為 0 並回傳 0.0（不拋出例外）。</p>
+<p>值越大，相鄰像素的灰階差越大（粗糙/對比度高的紋理）。由於只有 8 個灰階，細微的濃淡差會被壓到同一灰階。與 16 灰階的 <code style="color:#22d3bf">skimage</code> 實作 <code style="color:#22d3bf">cooc_feature_matrix</code> 在灰階數與正規化上不同，數值不一致。前接 <code style="color:#22d3bf">hx_gabor</code> 或 <code style="color:#22d3bf">mean_image</code> 等影像 op，後續作為 feature 用於比較或閾值判斷。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

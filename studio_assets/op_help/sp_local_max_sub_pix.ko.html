@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이 값 곡면의 극대점을 서브픽셀 정밀도로 검출한다(HALCON <code style="color:#22d3bf">local_max_sub_pix</code>의 대체 구현. <code style="color:#22d3bf">halcon=&quot;&quot;</code>: 동일 이름의 좌표를 기존 core op가 이미 다루고 있으므로 중복 신고하지 않는다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>3x3 近傍に 2 次曲面 <code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code> を最小二乗フィットし、勾配 0 の点へのオフセットを解いてサブピクセル位置を求める（ヘッセ行列が退化する場合は 1 次元放物線補間にフォールバック）。<code style="color:#22d3bf">a</code>は極大の顕著さ（周囲の最小値からの深さ）のしきい値を 0.01〜0.31 に振る（<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>）。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル（小数値＝サブピクセル）。検出点数は<code style="color:#22d3bf">count_contours</code> で数えられる。</p>
+<p>3x3 근방에 2차 곡면 <code style="color:#22d3bf">z = a0+a1 x+a2 y+a3 x^2+a4 y^2+a5 xy</code>를 최소제곱 피팅하고, 기울기 0인 점으로의 오프셋을 풀어 서브픽셀 위치를 구한다(헤세 행렬이 퇴화하는 경우에는 1차원 포물선 보간으로 폴백). <code style="color:#22d3bf">a</code>는 극대의 두드러짐(주위 최솟값으로부터의 깊이)의 임계값을 0.01~0.31로 바꾼다(<code style="color:#22d3bf">thr = 0.01 + 0.30*a</code>). <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환값은 CONTOUR, 좌표의 단위는 입력 영상의 픽셀(소수값=서브픽셀). 검출 점 수는 <code style="color:#22d3bf">count_contours</code>로 셀 수 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

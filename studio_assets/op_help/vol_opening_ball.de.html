@@ -15,8 +15,7 @@
 <p><img src="fig/vol_opening_ball.gif" alt="vol_opening_ball: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>3D-Binär-Opening mit einem kugelförmigen Strukturelement (Erosion, gefolgt von Dilatation mit derselben Kugel). Es ist kein entsprechender HALCON-Operator angegeben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が球の半径を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">1+int(3a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。侵食と膨張に同じ半径の球を使うため、球より小さい突起・細い連結だけを選択的に除去する。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Radius der Kugel über <code style="color:#22d3bf">1〜4</code> (<code style="color:#22d3bf">1+int(3a)</code>). <code style="color:#22d3bf">b</code> wird nicht verwendet. Da für Erosion und Dilatation Kugeln mit demselben Radius verwendet werden, entfernt es selektiv nur Vorsprünge und dünne Verbindungen, die kleiner als die Kugel sind.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

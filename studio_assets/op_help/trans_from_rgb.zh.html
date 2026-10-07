@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/trans_from_rgb.inputs.jpg">trans_from_rgb: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将 RGB 图像转换为其他色彩空间（HSV / Lab / YUV / XYZ）。相当于 HALCON 的 <code style="color:#22d3bf">trans_from_rgb</code>（从 RGB 色彩空间转换为任意色彩空间）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>内部は OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> を 8bit 経由で呼ぶだけで、変換先の色空間そのものの定義は OpenCV の実装に従う。</p>
-<p>a は変換先を 4 通り（HSV, Lab, YUV, XYZ の順）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code>）。b は未使用。8bit 量子化を経由するため、逆変換（<code style="color:#22d3bf">trans_to_rgb</code>）と組み合わせても厳密には可逆でない。</p>
+<p>内部只是经由 8bit 调用 OpenCV 的 <code style="color:#22d3bf">cv2.cvtColor</code>，目标颜色空间本身的定义遵循 OpenCV 的实现。</p>
+<p>a 从 4 种（按 HSV, Lab, YUV, XYZ 的顺序）中选择变换目标（<code style="color:#22d3bf">min(3, int(a * 4))</code>）。b 未使用。由于经过 8bit 量化，即使与逆变换（<code style="color:#22d3bf">trans_to_rgb</code>）组合也不是严格可逆的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

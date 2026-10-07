@@ -16,17 +16,16 @@
 <p><img src="fig/tb_region_growing.gif" alt="tb_region_growing: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Grows regions by normal similarity, assigning the same label to connected smooth regions (a variant without a curvature gate).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>Each point grows by BFS on the k-nearest-neighbour graph, and a neighbour q is added to the same region only when &quot;the angle between the normals n_p and n_q is less than <code style="color:#22d3bf">angle_thresh_deg</code>&quot;. Normals within a plane are nearly parallel, so they connect into one region; at the boundary between faces of different orientation the angle opens and the connection breaks → a separate region per face. Normals have no definite sign (they come from PCA), so the test uses <code style="color:#22d3bf">|n_p·n_q|</code> (front and back are treated as the same).</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
-<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
-<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>points: (N,3) point cloud.</p>
+<p>normals: (N,3) unit normals. If None, estimated by PCA with <code style="color:#22d3bf">pointcloud.estimate_normals</code>.</p>
+<p>angle_thresh_deg: upper limit of the angle between neighbouring normals [degrees]. In the range (0,180).</p>
+<p>k: number of neighbours (degree of the kNN graph).</p>
 <p>Returns:</p>
-<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
-<p>空入力は shape (0,) を返す。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">region_growing</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">angle_thresh_deg</code>(既定 15)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">k</code>(既定 20)を振る。</p>
+<p>labels: (N,) int. 0,1,2,... assigned to each connected smooth region. <b>Small regions below min_region_size (isolated points, misoriented debris) get -1 (noise / unassigned)</b>, following the common contract (-1 = noise).</p>
+<p>Empty input returns shape (0,).</p>
+<p>The 3d op <code style="color:#22d3bf">region_growing</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. <code style="color:#22d3bf">a</code> sweeps <code style="color:#22d3bf">angle_thresh_deg</code> (default 15) and <code style="color:#22d3bf">b</code> sweeps <code style="color:#22d3bf">k</code> (default 20).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

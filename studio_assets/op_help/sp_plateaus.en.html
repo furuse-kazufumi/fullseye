@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the centroid of connected flat regions (plateaus) of equal (quantised) gray value as a sub-pixel position (equivalent to HALCON <code style="color:#22d3bf">plateaus</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>隣接画素同士がしきい値 <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> 以内で等しければ同じ平坦領域とみなす（Union-Find で連結成分化）。<code style="color:#22d3bf">a</code> はこの許容量子化幅と最小面積（<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>、これ未満の領域は無視）の両方を振る。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR で、各プラトーにつき 1 点（その領域の画素座標の平均、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す（計算量ガード）。</p>
+<p>Neighbouring pixels are regarded as the same flat region if they are equal within the threshold <code style="color:#22d3bf">q = 1e-6 + 0.05*a</code> (connected components via Union-Find). <code style="color:#22d3bf">a</code> sweeps both this tolerated quantization width and the minimum area (<code style="color:#22d3bf">min_area = 2 + round(6*a)</code>; smaller regions are ignored). <code style="color:#22d3bf">b</code> is unused. Returns a CONTOUR with 1 point per plateau (the mean of that region&#x27;s pixel coordinates, in pixels). If the input exceeds 200,000 pixels, it errs on the safe side and returns the empty set (computational-cost guard).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

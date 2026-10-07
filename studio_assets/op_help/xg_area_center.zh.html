@@ -11,9 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_area_center.chain.jpg">xg_area_center: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用鞋带公式求 contour 的多边形面积(绝对值求和)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>輪郭辞書 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 の (row, col) 点列, ...]}</code> の各輪郭を多角形とみなし、靴ひも公式 <code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code> で面積を求めて全輪郭の合計を返す。点が 3 個未満の輪郭は 0 として無視。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code>(単位は画素²、正規化なし)。輪郭が無い・辞書でない・非有限値を含む輪郭は読み飛ばされ、合計に寄与しない(空なら 0.0)。開いた輪郭でも「最後の点と最初の点を結んで閉じた多角形」の面積になる点に注意(直線状の開輪郭では 0、折れ線の開輪郭でも非零になる)。絶対値を取るので点列の向き(時計回り/反時計回り)は結果に影響しない。自己交差する輪郭では交差で符号が打ち消しあい、真の面積より小さく出る。名前に反して重心は返さない(面積のみ)。同じ点集合の 2 次モーメントは <code style="color:#22d3bf">xg_moments</code>、bbox の縦横比は <code style="color:#22d3bf">xg_height_width_ratio</code>。</p>
+<p>把轮廓字典 <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [Nx2 的 (row, col) 点列, ...]}</code> 中的每个轮廓视为多边形，用鞋带公式 <code style="color:#22d3bf">0.5*|Σ(x_i*y_{i+1} - x_{i+1}*y_i)|</code> 求面积，并返回全部轮廓的合计。点数少于 3 个的轮廓按 0 忽略。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值为 <code style="color:#22d3bf">numpy.float64</code>（单位为像素²，不归一化）。无轮廓、不是字典、含非有限值的轮廓会被跳过，不计入合计（为空时为 0.0）。</p>
+<p>注意：即使是开放轮廓，得到的也是“把最后一点与第一点连起来闭合的多边形”的面积（直线状的开放轮廓为 0，折线状的开放轮廓则为非零）。由于取绝对值，点列的方向（顺时针/逆时针）不影响结果。对于自相交的轮廓，符号会在交叉处相互抵消，结果小于真实面积。与名称相反，它不返回质心（只返回面积）。同一点集的 2 阶矩用 <code style="color:#22d3bf">xg_moments</code>，bbox 的纵横比用 <code style="color:#22d3bf">xg_height_width_ratio</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

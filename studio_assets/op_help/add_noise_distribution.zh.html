@@ -15,8 +15,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>向图像添加加性噪声。实现仅支持高斯（正态分布）噪声，与 <code style="color:#22d3bf">add_noise_white</code> 共享 <code style="color:#22d3bf">_sh_noise</code> 中的 <code style="color:#22d3bf">gaussian</code> 分支。随机数使用由 a 决定的固定种子（<code style="color:#22d3bf">int(a*997)+7</code>）生成，因此相同的 a 每次都会产生相同的噪声（确定性）。b 将噪声标准差调整为 0.02〜0.22。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">add_noise_distribution</code>（任意の確率分布（ヒストグラム指定）に従うノイズを加える演算）とは異なり、この実装は常にガウス分布のノイズしか生成できない近似 —— 分布形状の指定は反映されない。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">add_noise_distribution</code>（添加服从任意概率分布（以直方图指定）的噪声的运算）不同，该实现是始终只能生成高斯分布噪声的近似 —— 分布形状的指定不会被反映。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

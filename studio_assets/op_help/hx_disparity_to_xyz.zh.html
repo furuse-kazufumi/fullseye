@@ -15,12 +15,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由视差图计算深度 Z = f*baseline/disparity(焦距/基线由 a,b 可变)。归一化 Z。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
-<p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p>把 <code style="color:#22d3bf">v</code>(0〜1)映射为相当于 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 像素的视差,计算 <code style="color:#22d3bf">Z = f * baseline / disp</code> 并以 min-max 归一化到 [0,1] 后返回图像。不计算 X, Y(只有 Z)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦距 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基线长 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
+<p style="margin:2px 0 2px 12px">• 视差下限设为 0.5,因此不会发生除零。</p>
+<p>注意: <code style="color:#22d3bf">f * baseline</code> 是全像素共同的常数倍,会被最后的 min-max 归一化抵消,因此即使改变 <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 输出也不变(实测完全一致)。输出实质上是“视差倒数的归一化”,视差最大(<code style="color:#22d3bf">v = 1</code>)为 0, 视差最小(<code style="color:#22d3bf">v = 0</code>)为 1(越近越暗)。不能用于需要绝对深度的用途。倒数变换使远处的量化变粗,因此 <code style="color:#22d3bf">v</code> 小的区域的值不稳定。</p>
 <p><b>旋钮（实测）</b>：将 <code style="color:#22d3bf">a</code> 从 0 扫到 1 <b>输出不变</b>（以 5 种输入实测）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

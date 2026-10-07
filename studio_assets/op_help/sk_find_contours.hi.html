@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contour line extraction (marching squares)। Grayscale image पर दिए गए level मान को काटने वाली curves का पीछा करता है और उन्हें sub-pixel सटीकता वाले contour coordinate sequences के समूह के रूप में लौटाता है —— binary image की केवल बाहरी सीमा ही नहीं, बल्कि continuous मानों की contour lines भी संभाल सकना इसे binary contour extraction से अलग बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い(空欄)。実装は <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(<code style="color:#22d3bf">contour</code> 型)。</p>
+<p>HALCON में इसका कोई सीधा समकक्ष नहीं है (खाली छोड़ा गया)। implementation <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code> है, जिसमें 3 से कम vertex वाले टुकड़े फेंक दिए जाते हैं — a contour level (threshold) को 0.2-0.7 पर बदलता है। b उपयोग नहीं होता। return value एक dictionary है जिसमें image का shape और contour coordinate array की list होती है (<code style="color:#22d3bf">contour</code> type)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

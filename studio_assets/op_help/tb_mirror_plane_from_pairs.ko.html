@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mirror_plane_from_pairs.inputs.jpg">tb_mirror_plane_from_pairs: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>좌우 대응 랜드마크로부터 정중면을 구한다. → <code style="color:#22d3bf">(2, 3)</code>(1행 = 점, 2행 = 법선).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
-<p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
-<p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>
-<p><code style="color:#22d3bf">pairs=None</code> は<b>前半と後半を対にする</b>規約(<code style="color:#22d3bf">i</code> と <code style="color:#22d3bf">i + N//2</code>)。左のランドマークを全部並べてから右を同じ順で並べる、という保存形式が形態計測では一般的なので、それに合わせてある。<b>点数が奇数なら拒否する</b> —— 半分に割れない並びを黙って切り詰めると、対が 1 つずつずれて全部の符号が入れ替わる。</p>
-<p>2-D 進化レジストリへ橋渡しした shapestat の op <code style="color:#22d3bf">mirror_plane_from_pairs</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>좌우 쌍 <code style="color:#22d3bf">(i, j)</code>의 <b>중점</b>은 모두 정중면 위에 놓인다. 그러므로 그 중점 집합에평면을 맞추면 된다 —— 변형의 양에 의존하지 않고 면이 정해지는 것이 요점이며, 잔차를 최소로하는 면(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)과는 별개의 것이다.</p>
+<p>★ 2026-09-06의 실측: 6.4 mm의 한쪽 변형을 넣으면 <b>잔차 최적면은 참 정중면에서 2.92 mm / 1.72도 어긋나, 비대칭량의 46 %를 지웠다</b>(이득 0.54). 이랜드마크 면이라면 이득 1.03. <b>찾을 때는 잔차 최적면, 양을 말할 때는 이쪽</b>.</p>
+<p>*midline*은 정중선 위에 있는(쌍이 되지 않는) 랜드마크의 첨자. 주면중점 집합에 더해 면의 맞춤을 안정시킨다.</p>
+<p><code style="color:#22d3bf">pairs=None</code>은 <b>앞 절반과 뒤 절반을 쌍으로 하는</b> 규약(<code style="color:#22d3bf">i</code>와 <code style="color:#22d3bf">i + N//2</code>). 왼쪽 랜드마크를 전부 늘어놓은 뒤 오른쪽을 같은 순서로 늘어놓는다는 저장 형식이형태 계측에서는 일반적이므로 그에 맞춰 두었다. <b>점 수가 홀수면 거부한다</b> —— 반으로 나눌 수 없는 배열을 조용히 잘라 내면 쌍이 1개씩 어긋나 전부의부호가 뒤바뀐다.</p>
+<p>2-D 진화 레지스트리로 연결한 shapestat의 op <code style="color:#22d3bf">mirror_plane_from_pairs</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_shape_std.inputs.jpg">select_shape_std: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Connected components में से केवल सबसे बड़े क्षेत्रफल वाले को रखता है (<code style="color:#22d3bf">_largest_label</code> से चुनाव)। HALCON का <code style="color:#22d3bf">select_shape_std</code> (Select regions of a given shape.) <code style="color:#22d3bf">max_area</code> सहित कई मानक मानदंड चुन सकने वाला operator है, लेकिन यहाँ केवल 1 प्रकार &quot;सबसे बड़ा क्षेत्रफल&quot; तय है (सन्निकटन)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。複数領域が同面積の場合は <code style="color:#22d3bf">argmax</code> の実装依存でどれか 1 つが選ばれる。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। यदि कई region का क्षेत्रफल समान हो, तो <code style="color:#22d3bf">argmax</code> के implementation के अनुसार उनमें से कोई 1 चुना जाता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

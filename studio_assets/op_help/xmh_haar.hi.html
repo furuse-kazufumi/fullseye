@@ -11,8 +11,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Haar wavelet transform (<code style="color:#22d3bf">mahotas.haar</code>)। Image को सम (even) आकार तक काटकर transform करता है, और परिणाम के coefficient array (approximation/horizontal/vertical/diagonal हर subband मूल image जितने बड़े array में भरे हुए, Matlab जैसा in-place layout) को सीधे min-max normalise करके image के रूप में दिखाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>分解レベルは 1 段固定。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値そのものは復元可能な画像ではなく係数の可視化であることに注意。</p>
+<p>decomposition level 1 पर स्थिर है। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। ध्यान दें कि मान स्वयं coefficients का visualisation हैं, पुनर्निर्माण योग्य image नहीं।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

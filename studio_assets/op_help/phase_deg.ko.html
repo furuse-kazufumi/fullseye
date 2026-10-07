@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>복소 이미지의 위상각 맵. <code style="color:#22d3bf">np.angle(F)</code>(-π~π)를 <code style="color:#22d3bf">(angle+π)/(2π)</code>로 [0,1]에 선형 매핑한다. a, b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>名称は「度（degree）」を示唆するが、実装は phase_rad と同じ <code style="color:#22d3bf">_sh_freq</code> の <code style="color:#22d3bf">fft_phase</code> 分岐を共有しており、度数法への変換は行っていない —— 返るのは [0,1] に正規化された角度で、実際の度数（0-360°）ではない。HALCON の <code style="color:#22d3bf">phase_deg</code>（複素画像の位相を度単位で返す演算）の代役としては単位が違う近似である点に注意。</p>
+<p>이름은 &#x27;도(degree)&#x27;를 암시하지만, 구현은 phase_rad와 같은 <code style="color:#22d3bf">_sh_freq</code>의 <code style="color:#22d3bf">fft_phase</code> 분기를 공유하며 도 단위로의 변환은 하지 않는다 — 반환되는 것은 [0,1]로 정규화된 각도이며 실제 도수(0-360°)가 아니다. HALCON의 <code style="color:#22d3bf">phase_deg</code>(복소 영상의 위상을 도 단위로 반환하는 연산)의 대체로서는 단위가 다른 근사라는 점에 주의.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -16,15 +16,14 @@
 <p><img src="fig/tb_background_subtraction_window.gif" alt="tb_background_subtraction_window: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>因果窗口中值背景 → 逐帧 0/1 前景掩膜 <code style="color:#22d3bf">(T, H, W)</code>（<code style="color:#22d3bf">video</code>）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>フレーム <code style="color:#22d3bf">t</code> ごとに、直近 <code style="color:#22d3bf">window</code> 枚(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>、<b>そのフレーム自身を含む</b>)の画素ごとの中央値を背景 <code style="color:#22d3bf">bg</code> とし、<code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> を 1、それ以外を 0 にする。未来のフレームは見ない(因果的)ので、先頭では枚数が足りないぶん窓が短い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> の配列、または同形・同 dtype の 2-D フレームの list。uint8/uint16 は dtype の最大値で <code style="color:#22d3bf">[0, 1]</code> に、float はそのまま <code style="color:#22d3bf">[0, 1]</code> にクリップ。カラー <code style="color:#22d3bf">(T, H, W, C)</code> は受けない。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>: 1〜4096 の int(bool 不可)。1 だと背景 = 自分なので全画素 0。偶数枚のときの中央値は中間 2 値の平均。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>: <code style="color:#22d3bf">[0, 1]</code> の強度単位(uint8 なら <code style="color:#22d3bf">/255</code> 換算)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64 の 0 / 1。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・範囲・非有限)。</p>
-<p>ゆっくり動く物体は <code style="color:#22d3bf">window</code> 枚以内に背景へ溶けるので、その場合は <code style="color:#22d3bf">running_gaussian_foreground</code>(選択的更新)か <code style="color:#22d3bf">exponential_foreground</code> を。背景そのものが要るなら <code style="color:#22d3bf">temporal_median_window</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした videostream の op <code style="color:#22d3bf">background_subtraction_window</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">window</code>(既定 5)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">threshold</code>(既定 0.1)を振る。</p>
+<p>对每一帧 <code style="color:#22d3bf">t</code>，取最近 <code style="color:#22d3bf">window</code> 帧(<code style="color:#22d3bf">max(0, t-window+1) .. t</code>，<b>包含该帧本身</b>)的逐像素中位数作为背景 <code style="color:#22d3bf">bg</code>，将 <code style="color:#22d3bf">|frame_t - bg| &gt; threshold</code> 设为 1，其余设为 0。不看未来的帧(因果)，因此在开头帧数不足，窗口相应变短。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>：<code style="color:#22d3bf">(T, H, W)</code> 的数组，或同形状、同 dtype 的 2-D 帧的 list。uint8/uint16 用 dtype 的最大值换算到 <code style="color:#22d3bf">[0, 1]</code>，float 直接裁剪到 <code style="color:#22d3bf">[0, 1]</code>。不接受彩色 <code style="color:#22d3bf">(T, H, W, C)</code>。NaN/Inf 为 <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">window</code>：1〜4096 的 int(不可为 bool)。为 1 时背景 = 自身，因此全部像素为 0。偶数帧时的中位数为中间 2 个值的平均。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold</code>：<code style="color:#22d3bf">[0, 1]</code> 的强度单位(uint8 时按 <code style="color:#22d3bf">/255</code> 换算)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值：<code style="color:#22d3bf">(T, H, W)</code> float64 的 0 / 1。</p>
+<p style="margin:2px 0 2px 12px">• 失败：<code style="color:#22d3bf">ValueError</code>(形状、dtype、范围、非有限)。</p>
+<p>缓慢移动的物体会在 <code style="color:#22d3bf">window</code> 帧以内融入背景，这种情况下请用 <code style="color:#22d3bf">running_gaussian_foreground</code>(选择性更新)或 <code style="color:#22d3bf">exponential_foreground</code>。需要背景本身时用 <code style="color:#22d3bf">temporal_median_window</code>。</p>
+<p>桥接到 2-D 进化注册表的 videostream op <code style="color:#22d3bf">background_subtraction_window</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">window</code>(默认 5)，<code style="color:#22d3bf">b</code> 调节 <code style="color:#22d3bf">threshold</code>(默认 0.1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

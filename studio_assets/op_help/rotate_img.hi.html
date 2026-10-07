@@ -13,12 +13,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के केंद्र के चारों ओर <code style="color:#22d3bf">-45° + 90°·a</code> से घुमाता है (a=0.5 → 0°)। <code style="color:#22d3bf">b</code> इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★呼び出し規約(2026-09-02 に明文化。実装は変えていない):</p>
-<p style="margin:2px 0 2px 12px">• <b>キャンバスを変えない</b> (<code style="color:#22d3bf">reshape=False</code>)。出力の shape は入力と同じで、回転で枠外へ出た画素は捨てられる。</p>
-<p style="margin:2px 0 2px 12px">• <b>枠外は鏡映で埋める</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)。つまり回すと <b>四隅に元画像が折り返して写り込む</b>(帳票を回すと隅に鏡文字が出る)。</p>
-<p>どちらが正典かは用途で割れる。<b>この op の正典は「連鎖しても常に同じ形・同じ値域の画像が出ること」</b> — 進化パイプラインは image を段間で無条件に繋ぐので、shape が変わる/枠外に定数が入ると後段の統計(平均・分散・ヒストグラム)が回転量に依存して動いてしまう。鏡映は「無から作った定数」ではなく画像自身の統計を保つので、この用途ではこちらを採る。</p>
-<p><b>deskew(帳票の傾き補正)には向かない</b>: 折り返した鏡文字が OCR / 二値化にそのまま乗る。背景色で埋めたい場合はこの op を使わず、<code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> を直接呼ぶこと(<code style="color:#22d3bf">fullseye.apply</code> の 2 つまみ界面では背景色を渡せない)。同じ規約が backends_auto の <code style="color:#22d3bf">rotate_image</code> (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;)にもそのまま当てはまる。</p>
+<p>★calling convention (2026-09-02 को लिखित रूप दिया गया; implementation नहीं बदला गया):</p>
+<p style="margin:2px 0 2px 12px">• <b>canvas नहीं बदलता</b> (<code style="color:#22d3bf">reshape=False</code>)। output का shape input के समान है, और rotation से frame के बाहर चले गए pixel फेंक दिए जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <b>frame के बाहर का हिस्सा mirror से भरा जाता है</b> (<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)। यानी घुमाने पर <b>चारों कोनों में मूल image मुड़कर दिखाई देती है</b> (form को घुमाने पर कोनों में उल्टे अक्षर आ जाते हैं)।</p>
+<p>कौन सा मानक है, यह उपयोग पर निर्भर करता है। <b>इस op का मानक है &quot;chain करने पर भी हमेशा समान आकार और समान value range की image निकलना&quot;</b> — evolution pipeline चरणों के बीच image को बिना शर्त जोड़ता है, इसलिए shape बदले या frame के बाहर constant भरे तो आगे के statistics (mean, variance, histogram) rotation की मात्रा के अनुसार हिलने लगते हैं। mirror &quot;शून्य से बनाया गया constant&quot; नहीं है बल्कि image के अपने statistics बनाए रखता है, इसलिए इस उपयोग में इसे ही अपनाया गया है।</p>
+<p><b>deskew (form के झुकाव का सुधार) के लिए उपयुक्त नहीं</b>: मुड़े हुए उल्टे अक्षर OCR / binarisation में जैसे के तैसे चले जाते हैं। background रंग से भरना हो तो यह op उपयोग न करें, बल्कि <code style="color:#22d3bf">scipy.ndimage.rotate(v, ang, reshape=True, mode=&quot;constant&quot;, cval=bg)</code> को सीधे call करें (<code style="color:#22d3bf">fullseye.apply</code> के 2-knob interface से background रंग नहीं दिया जा सकता)। यही convention backends_auto के <code style="color:#22d3bf">rotate_image</code> (<code style="color:#22d3bf">_sh_geom</code> kind=&quot;rotate&quot;) पर भी जैसी की तैसी लागू होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

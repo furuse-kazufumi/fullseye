@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_dist.inputs.jpg">cv_dist: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Distanztransformation (distance transform, OpenCV-Implementierung, L2-/euklidische Approximation). Berechnet für jeden Pixel im Vordergrundbereich den Abstand zum nächstgelegenen Hintergrundpixel und gibt ihn als Bild zurück - dient als Vorverarbeitung zur Extraktion der &quot;Dicke&quot; einer Region oder ihrer Mittellinie.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)に相当。実装は <code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code> を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">distance_transform</code> (Compute the distance transformation of a region.). Die Implementierung ist <code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code>, normiert (cv2 liefert float32, das passend zum Vertrag in float64 umgewandelt wird -- am 2026-09-03 gemessen und gebenchmarkt). maskSize=3 ist eine Näherungsberechnung über eine 3x3-Nachbarschaft (eine schnelle Näherung, nicht der exakte euklidische Abstand). a, b werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

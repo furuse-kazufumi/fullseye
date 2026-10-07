@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>该实现指向与 <code style="color:#22d3bf">gamma_image</code> 完全相同的函数（<code style="color:#22d3bf">_sh_lut</code> 中 <code style="color:#22d3bf">kind: &quot;gamma&quot;</code> 的分支）。也就是说，<code style="color:#22d3bf">pow_image</code> 与 <code style="color:#22d3bf">gamma_image</code> 在此后端上的计算结果是一致的 —— 在 HALCON 中它们是不同的算子（明确指定指数的 <code style="color:#22d3bf">pow_image</code> 与用于编码/解码的 <code style="color:#22d3bf">gamma_image</code>），但在此处这两个替代实现的实体是重复的（明确记为近似的局限）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がべき指数を 0.3〜2.8 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。HALCON の <code style="color:#22d3bf">pow_image</code>（Raise an image to a power.）の代役。</p>
+<p><code style="color:#22d3bf">a</code> 在 0.3～2.8 范围内调节幂指数。<code style="color:#22d3bf">b</code> 未使用。是 HALCON 的 <code style="color:#22d3bf">pow_image</code>（Raise an image to a power.）的替代。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

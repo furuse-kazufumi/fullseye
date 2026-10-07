@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>置信区间连通区域生长（SimpleITK <code style="color:#22d3bf">ConfidenceConnected</code>）。以图像中心为种子，根据当前区域内的均值与标准差构造「均值±multiplier*标准差」的区间，并在反复更新该区间的同时扩展连通区域（比xsitk_connected_threshold更统计化的阈值确定方式）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*5)</code> で 1〜6)、<code style="color:#22d3bf">b</code> は標準偏差の倍率(<code style="color:#22d3bf">1.0+3.0*b</code> で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。</p>
+<p><code style="color:#22d3bf">a</code> 调节迭代次数(由 <code style="color:#22d3bf">1+int(a*5)</code> 得到 1~6)，<code style="color:#22d3bf">b</code> 调节标准差的倍率(由 <code style="color:#22d3bf">1.0+3.0*b</code> 得到 1~4)。初始邻域半径固定为 2。这是以目标位于图像中心附近为前提的 op。</p>
 <p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>

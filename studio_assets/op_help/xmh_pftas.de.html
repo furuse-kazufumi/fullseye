@@ -8,8 +8,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Varianz des 54-dimensionalen PFTAS-Merkmalsvektors (parameter-free threshold adjacency statistics, <code style="color:#22d3bf">mahotas.features.pftas</code>). Ein Textur-Merkmal, das Histogramme zusammenfasst, die die Intensitätsbeziehungen benachbarter Pixel mit einem parameterfreien Schwellenwert zählen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。2026-09-02 実測: 54 次元の平均を使うと、正規化ヒストグラムの性質上ほぼ整数/54 の値しか取らず、12 通りの画像(4 サイズ x 3 内容)で相異なる値がわずか 2 個(事実上の定数)だった。分散にすると分布の広がりが残り画像ごとに変化するため、ここでは分散を採用している。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Gemessen am 2026-09-02: Mit dem Mittelwert der 54 Dimensionen nimmt der Wert wegen der Eigenschaft normierter Histogramme fast nur Werte der Form Ganzzahl/54 an, und über 12 Bilder (4 Größen x 3 Inhalte) gab es nur 2 verschiedene Werte (praktisch eine Konstante). Mit der Varianz bleibt die Streuung der Verteilung erhalten und ändert sich von Bild zu Bild, daher wird hier die Varianz verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

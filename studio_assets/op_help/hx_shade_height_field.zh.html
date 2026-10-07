@@ -15,11 +15,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用 Lambert 着色渲染高度场 v(法线×光源)。光源方位 a・仰角 b。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v</code> を高さ場(gray 値 = 高さ、画素間隔 1)とみなし、<code style="color:#22d3bf">np.gradient</code> の <code style="color:#22d3bf">(gy, gx)</code> から法線 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code> を作り、方向 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code> の平行光との内積 <code style="color:#22d3bf">n·l</code> を 0 で下から clip し、min-max で [0,1] に正規化して返す(Lambertian 陰影)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 光源の方位角 <code style="color:#22d3bf">az = a*2*pi</code>(<code style="color:#22d3bf">lx = cos(az)</code> が列方向、<code style="color:#22d3bf">ly = sin(az)</code> が行方向の成分)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 光源の仰角 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>(約 18°〜81°。1 で真上に近い)。</p>
-<p>注意: 高さのスケール係数が無く、[0,1] の値を数百画素にわたって微分するため勾配はごく小さい。そのままでは陰影の差がほとんど無いが、最後の min-max 正規化で見える化している。したがって出力の絶対的な明るさに意味は無く、入力が平坦だと全画素 0 になる。深度画像や <code style="color:#22d3bf">hx_fit_surface2</code> で推定した背景面の凹凸を目で確かめる用途向け。</p>
+<p>把 <code style="color:#22d3bf">v</code> 视为高度场（gray 值 = 高度，像素间距 1），由 <code style="color:#22d3bf">np.gradient</code> 的 <code style="color:#22d3bf">(gy, gx)</code> 构造法线 <code style="color:#22d3bf">n = (-gx, -gy, 1) / sqrt(gx^2 + gy^2 + 1)</code>，把它与方向为 <code style="color:#22d3bf">l = (cos(el)cos(az), cos(el)sin(az), sin(el))</code> 的平行光的内积 <code style="color:#22d3bf">n·l</code> 在 0 处从下方截断，再用 min-max 归一化到 [0,1] 后返回（Lambertian 阴影）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 光源方位角 <code style="color:#22d3bf">az = a*2*pi</code>（<code style="color:#22d3bf">lx = cos(az)</code> 是列方向分量，<code style="color:#22d3bf">ly = sin(az)</code> 是行方向分量）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 光源仰角 <code style="color:#22d3bf">el = (0.2 + 0.7*b) * pi/2</code>（约 18°〜81°。1 时接近正上方）。</p>
+<p>注意：没有高度的尺度系数，而且是对 [0,1] 的值在数百像素范围内求导，因此梯度极小。照原样的话阴影几乎没有差别，但最后的 min-max 归一化使其可见。因此输出的绝对亮度没有意义，输入平坦时全部像素为 0。适合用肉眼确认深度图像或用 <code style="color:#22d3bf">hx_fit_surface2</code> 估计的背景面的凹凸。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

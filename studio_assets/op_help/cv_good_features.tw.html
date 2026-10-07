@@ -9,8 +9,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於 Shi-Tomasi 方法的高品質角點偵測（單一純量特徵，OpenCV 實作）。以與 cv_min_eigen 相同的最小特徵值標準評估角點程度，並以非極大值抑制與最小距離過濾篩選出排名靠前的角點 —— 這裡只回傳偵測到的數量（若為 0 個則回傳 0）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
+<p>HALCON 中沒有直接對應的運算子。實作為 <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> —— a 在 10～50 之間調整偵測上限數,b 在 0.01～0.11 之間調整品質閾值(相對於最強角點的比例。越大篩選越嚴格,偵測數越少)。最小距離固定為 5 像素。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一种秩滤波器，即几何平均滤波器。对转换为 8 位的图像使用圆形结构元素（<code style="color:#22d3bf">skimage.morphology.disk</code>）套用 <code style="color:#22d3bf">skimage.filters.rank.geometric_mean</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>a が構造要素の半径（<code style="color:#22d3bf">1 + int(a*3)</code>、範囲 1〜4）を振る。b は未使用。算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル状のノイズを抑えるのに向く。</p>
+<p>a 调节结构元素的半径（<code style="color:#22d3bf">1 + int(a*3)</code>，范围 1~4）。b 未使用。由于比算术平均更强地被拉向较暗一侧（较小值），适合抑制明亮的散斑状噪声。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

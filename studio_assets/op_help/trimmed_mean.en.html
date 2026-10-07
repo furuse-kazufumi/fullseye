@@ -13,8 +13,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Approximates a trimmed mean by returning the average of the 20th- and 80th-percentile filter results. This yields a value close to an average with outlier influence (from the low and high extremes) removed, but note that it is an approximation whose computation differs from a true &quot;average the central 60%&quot; trimmed mean. A stand-in for HALCON&#x27;s <code style="color:#22d3bf">trimmed_mean</code> (Smooth an image with an arbitrary rank mask.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用(トリム比率は 20/80 に固定)。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the window side length over <code style="color:#22d3bf">{3,5,7,9}</code>. <code style="color:#22d3bf">b</code> is unused (the trim ratio is fixed at 20/80).</p>
 <p><b>Border handling</b>: mirror repeating the edge pixel (d c b a | a b c d — scipy&#x27;s default <code style="color:#22d3bf">reflect</code>) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Knobs (measured)</b>: <code style="color:#22d3bf">a</code> acts in <b>discrete steps</b>; it switches at a ≈ 0.25、0.49、0.75 (measured on a sweep of step 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

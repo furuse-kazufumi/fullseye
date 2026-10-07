@@ -15,12 +15,11 @@
 <p><img src="fig/img_to_volume.gif" alt="img_to_volume: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상을 높이장으로 밀어내어 (D,H,W) 볼륨(z 선두)으로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
-<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
+<p>복셀 <code style="color:#22d3bf">(z, y, x)</code>는 그 높이가 화소의 높이 이하이면 화소 값, 넘으면 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>. 즉 <b>높이장의 “속이 꽉 찬” 고체</b>(지형·계단·압출 부품)로, 체적 계열(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)을영상 1장에서 시험해 볼 수 있다. 축 순서는 3-D 대장의 규약대로 <b>(depth, row, col)</b>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 높이 배율 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5에서 1.125. 1을 넘은 분은최상단 <code style="color:#22d3bf">D-1</code>에서 포화).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 단 수 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5에서 36, b=0에서 8, b=1에서 64).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(D, H, W)</code> float64, 값 범위는 입력과 같다. <b>z=0의 바닥면은값 &gt; 0인 화소로 모두 채워진다</b>(높이 0이어도 바닥면에는 올라간다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

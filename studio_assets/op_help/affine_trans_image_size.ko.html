@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지에 아핀 변환(회전+전단)을 적용한다. 구현은 <code style="color:#22d3bf">affine_trans_image</code>와 동일한 <code style="color:#22d3bf">_sh_geom</code>의 <code style="color:#22d3bf">affine</code> 분기를 공유하며, a로 회전각을 -20°~+20°로, b로 전단량을 조정한다. 경계 밖은 반사(reflect)로 채운다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_image_size</code>（アフィン変換を適用し、出力画像のキャンバスサイズを明示的に指定できる演算）とは異なり、この実装は出力サイズの指定を受け付けず、常に入力と同じキャンバスサイズを保つ近似（<code style="color:#22d3bf">affine_trans_image</code> と実質同一の実装）。</p>
+<p>HALCON의 <code style="color:#22d3bf">affine_trans_image_size</code>(아핀 변환을 적용하고 출력 영상의 캔버스 크기를 명시적으로 지정할 수 있는 연산)와 달리, 이 구현은 출력 크기 지정을 받지 않으며 항상 입력과 같은 캔버스 크기를 유지하는 근사(<code style="color:#22d3bf">affine_trans_image</code>와 사실상 동일한 구현).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

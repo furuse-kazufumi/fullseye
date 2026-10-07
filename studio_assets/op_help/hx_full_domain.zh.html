@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将图像的定义域(domain)扩展到整个图像范围。相当于 HALCON 的 <code style="color:#22d3bf">full_domain</code>(将图像的定义域扩展到最大)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の op と対で使い、定義域をリセットするために使う。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>只是返回与输入同形状、全为 1 的 region（=整幅图像）的 op。与其他收窄 ROI 的 op 配对使用，用于重置定义域。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，全部像素都成为前景（1）</b>。过曝、被遮挡或没有被摄物的帧会被报为「<b>缺陷 100%</b>」，因此应在上游判定是否均匀并加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

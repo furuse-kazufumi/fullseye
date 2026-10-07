@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fill_up_shape.inputs.jpg">fill_up_shape: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>填補區域內的小孔洞。僅填補面積在 <code style="color:#22d3bf">area_threshold = 16+200a</code> 像素以下的孔洞（skimage 的 <code style="color:#22d3bf">remove_small_holes</code>）。b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up_shape</code>（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。</p>
+<p>與 HALCON 的 <code style="color:#22d3bf">fill_up_shape</code>（只填補依面積、圓形度等形狀特徵選出之孔洞的運算）不同，此實作是僅依面積上限篩選孔洞的簡化近似 —— 無法依圓形度、凸性等其他形狀特徵進行過濾。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

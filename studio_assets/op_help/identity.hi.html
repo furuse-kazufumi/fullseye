@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Identity mapping। इसे HALCON के <code style="color:#22d3bf">copy_image</code> (Copy an image and allocate new memory for it.) से जोड़ा गया है, लेकिन implementation नई memory allocate करके copy बनाने वाले <code style="color:#22d3bf">copy_image</code> से अलग है: यह इनपुट array को जैसा है वैसा ही लौटा देता है (copy नहीं बनाता)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。sort が <code style="color:#22d3bf">ANY</code>（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। sort का <code style="color:#22d3bf">ANY</code> होना (image/region/feature किसी भी input से match करता है) केवल इसी op की विशेष व्यवस्था है; इसका उपयोग pipeline के type बदले बिना &quot;कुछ न करने वाला&quot; slot रखने के लिए होता है (जैसे जब evolution केवल slot की संख्या भरना चाहता हो)। यह value को दोबारा बनाए बिना input को जैसा का तैसा लौटाता है, इसलिए ध्यान रखें कि caller की ओर से return value बदलने पर input array भी साथ में बदल जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

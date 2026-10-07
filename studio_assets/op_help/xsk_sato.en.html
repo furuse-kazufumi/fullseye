@@ -12,8 +12,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Sato tubeness filter. Applies <code style="color:#22d3bf">skimage.filters.sato</code> at three scales (sigma=1,2,3) to enhance tubular structures (such as blood vessels). Computing line/tube-likeness from the eigenvalue ratio of the Hessian matrix is the same family as <code style="color:#22d3bf">xsk_meijering</code>, but the response weighting differs, and it doesn&#x27;t respond as strongly at branch points as Meijering does.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用(sigma は固定)。出力は <code style="color:#22d3bf">_norm</code> で正規化した符号なし強度画像。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused (sigma is fixed). The output is normalised by <code style="color:#22d3bf">_norm</code>: an unsigned intensity image.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

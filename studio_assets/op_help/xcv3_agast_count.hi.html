@@ -9,8 +9,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>AGAST feature points की संख्या (OpenCV AGAST detector, FAST का adaptive tree संस्करण)। पहचाने गए keypoints की संख्या feature के रूप में लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は検出閾値(<code style="color:#22d3bf">int(5+40*a)</code> で 5〜45。高いほど検出数が減る)を振る。<code style="color:#22d3bf">b</code> は未使用。実装注記: cv2 5.0.0 で <code style="color:#22d3bf">AgastFeatureDetector_create</code> が <code style="color:#22d3bf">cv2.xfeatures2d</code> に移動したため、両方の場所を <code style="color:#22d3bf">getattr</code> で試す互換コードになっている(xcv3_brisk_count と同じ事情)。</p>
+<p><code style="color:#22d3bf">a</code> detection threshold (<code style="color:#22d3bf">int(5+40*a)</code> से 5-45; जितना ऊँचा, detections उतने कम) को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। implementation टिप्पणी: cv2 5.0.0 में <code style="color:#22d3bf">AgastFeatureDetector_create</code> के <code style="color:#22d3bf">cv2.xfeatures2d</code> में चले जाने के कारण, code दोनों स्थानों को <code style="color:#22d3bf">getattr</code> से आज़माने वाला compatibility code है (xcv3_brisk_count जैसी ही स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

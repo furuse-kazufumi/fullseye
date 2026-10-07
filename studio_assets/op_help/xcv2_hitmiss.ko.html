@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xcv2_hitmiss.inputs.jpg">xcv2_hitmiss: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>히트 오어 미스 변환(hit-or-miss transform)으로 &#x27;중심은 배경, 상하좌우는 전경&#x27;인 십자 패턴을 검출한다(<code style="color:#22d3bf">cv2.MORPH_HITMISS</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>固定カーネル <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code> を使う（1=前景必須、-1=背景必須、0=不問）。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。前景に囲まれた 1 画素の窪み（孤立した背景画素）を拾うので、細線化後の欠け検出や形状のノッチ検出に使える。入力はしきい値 0.5 で二値化してから判定する。</p>
+<p>고정 커널 <code style="color:#22d3bf">[[0,1,0],[1,-1,1],[0,1,0]]</code>을 사용한다(1=전경 필수, -1=배경 필수, 0=무관). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 전경에 둘러싸인 1 화소의 움푹 팬 곳(고립된 배경화소)을 잡아내므로, 세선화 후의 끊김 검출이나 형상의 노치 검출에 쓸 수 있다. 입력은임계값 0.5로 이진화한 뒤 판정한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

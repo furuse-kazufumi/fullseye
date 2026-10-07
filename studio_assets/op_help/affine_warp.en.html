@@ -14,8 +14,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Applies an arbitrary affine transformation (rotation + shear) to an image. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">affine_trans_image</code> (Apply an arbitrary affine 2D transformation to images.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が回転角を <code style="color:#22d3bf">-20°〜+20°</code> に、<code style="color:#22d3bf">b</code> がせん断量を <code style="color:#22d3bf">-0.2〜+0.2</code> に振る。回転中心は画像の中心、境界は <code style="color:#22d3bf">reflect</code>（鏡映）で埋め、結果を <code style="color:#22d3bf">[0,1]</code> に clip する。平行移動・拡大縮小は含まない（<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code> が別 op として存在）。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the rotation angle over <code style="color:#22d3bf">-20°〜+20°</code>, <code style="color:#22d3bf">b</code> sweeps the shear over <code style="color:#22d3bf">-0.2〜+0.2</code>. The centre of rotation is the image centre, the border is filled with <code style="color:#22d3bf">reflect</code> (mirroring), and the result is clipped to <code style="color:#22d3bf">[0,1]</code>. Translation and scaling are not included (<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code> exist as separate ops).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -13,10 +13,9 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Quantization that is <b>optimal</b> for the distribution of the input (Lloyd–Max, 1-D k-means).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が段数のビット数 1〜8、<code style="color:#22d3bf">b</code> は反復回数(1〜20)。一様量子化が刻みを等間隔に置くのに対し、こちらは<b>画素値が混んでいる所に刻みを細かく置く</b>。代表値は各区間の重心、区間の境は隣り合う代表値の中点 —— この 2 つを交互に当てるのが Lloyd の反復で、<b>二乗誤差は単調に減る</b>(増えることはない)。</p>
-<p><b>一様量子化との差が出る条件</b>: 入力のヒストグラムが偏っているとき。一様分布を入れると一様量子化と一致するので、<b>差が出ないこと自体が正しさの確認になる</b>。暗部に画素が集中した画像(影の多い検査画像、蛍光像)では同じビット数で誤差が下がる。</p>
-<p><b>適用条件</b>: (1) 出力は入力に依存した代表値の集合なので、<b>画像ごとに符号表が違う</b> —— 別の画像と画素値を直接比べられない(比べたいなら一様量子化)。(2) 空いた区間はそのまま残る(代表値が動かない)。(3) 反復は局所解に落ちうるが、1-D では初期値を分位点に取れば実用上安定する。</p>
+<p><code style="color:#22d3bf">a</code> is the number of bits for the level count, 1-8; <code style="color:#22d3bf">b</code> is the number of iterations (1-20). Whereas uniform quantization places the steps at equal intervals, this op <b>places the steps finely where pixel values are crowded</b>. Each representative value is the centroid of its interval, and each interval boundary is the midpoint of adjacent representative values — applying these 2 alternately is Lloyd&#x27;s iteration, and <b>the squared error decreases monotonically</b> (it never increases).</p>
+<p><b>Condition under which it differs from uniform quantization</b>: when the input histogram is skewed. With a uniformly distributed input it coincides with uniform quantization, so <b>the absence of a difference is itself a check of correctness</b>. For images whose pixels concentrate in the shadows (inspection images with many shadows, fluorescence images), the error drops at the same bit count.</p>
+<p><b>Conditions of use</b>: (1) The output is a set of representative values that depend on the input, so <b>the code table differs per image</b> — pixel values cannot be compared directly with another image (for that, use uniform quantization). (2) Empty intervals remain as they are (their representative values do not move). (3) The iteration can fall into a local optimum, but in 1-D, taking the initial values at quantiles makes it stable in practice.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

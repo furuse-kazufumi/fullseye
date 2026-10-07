@@ -15,8 +15,7 @@
 <p><img src="fig/vol_reg_erode.gif" alt="vol_reg_erode: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Erosion einer binären 3D-Region (Erosion eines Region-Volumens). Es ist kein entsprechender HALCON-Operator angegeben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">max(1, 1+int(3a))</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。構造要素は 6 近傍（十字形）。<code style="color:#22d3bf">_vol_reg_dilate</code> と同じ理由で反復回数を <code style="color:#22d3bf">1</code> 以上にクランプしている。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Anzahl der Iterationen über <code style="color:#22d3bf">1〜4</code> (<code style="color:#22d3bf">max(1, 1+int(3a))</code>). <code style="color:#22d3bf">b</code> wird nicht verwendet. Das Strukturelement ist die 6er-Nachbarschaft (kreuzförmig). Aus demselben Grund wie bei <code style="color:#22d3bf">_vol_reg_dilate</code> wird die Anzahl der Iterationen auf mindestens <code style="color:#22d3bf">1</code> geklemmt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">Leitfaden zur Familie gallery2d_physics_alife_3d</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

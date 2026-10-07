@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_medial.inputs.jpg">sk_medial: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>중심축 변환(medial axis transform). 거리 변환의 능선을 추출하는 방식으로 골격을 구하는, sk_skeleton과는 다른 알고리즘이다. 윤곽으로부터의 거리 정보를 유지한 골격이 되기 쉽다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">skeleton</code> に相当(近似)。実装は <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> —— <code style="color:#22d3bf">rng=0</code> はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(<code style="color:#22d3bf">return_distance</code>)は使っておらず、骨格の真偽値マスクのみを返す。</p>
+<p>HALCON의 <code style="color:#22d3bf">skeleton</code>에 상당(근사). 구현은 <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> —— <code style="color:#22d3bf">rng=0</code>은 타이(동점)를 깨는 방식을 정하는 난수 시드를 고정해, 매번 같은 결과가 되도록 하고 있다. a, b는 사용하지 않는다. distance 출력(<code style="color:#22d3bf">return_distance</code>)은 쓰지 않고, 골격의 참거짓값 마스크만 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

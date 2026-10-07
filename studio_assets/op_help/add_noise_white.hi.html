@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gaussian white noise जोड़ता है (<code style="color:#22d3bf">np.random.default_rng</code> से बना, standard deviation <code style="color:#22d3bf">0.02+0.2*b</code>)। Random seed <code style="color:#22d3bf">int(a*997)+7</code> से <code style="color:#22d3bf">a</code> से deterministic रूप से निकाला जाता है, इसलिए <b>वही <code style="color:#22d3bf">a</code> हो तो हमेशा वही noise pattern दोहराया जाता है</b> (ध्यान दें कि यह सचमुच random नहीं है, <code style="color:#22d3bf">a</code> को &quot;noise कैसा दिखे उसका प्रकार&quot; चुनने वाले नकली knob की तरह इस्तेमाल किया गया है)। HALCON के <code style="color:#22d3bf">add_noise_white</code> (Add noise to an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は乱数シード(=ノイズパターン)を、<code style="color:#22d3bf">b</code> はノイズの強さ(標準偏差) を振る。両方が使われるが、<code style="color:#22d3bf">a</code> の意味は「強さ」ではなく「パターン」である点が他の op と異なる。</p>
+<p><code style="color:#22d3bf">a</code> random seed (= noise का pattern) को, और <code style="color:#22d3bf">b</code> noise की ताकत (standard deviation) को बदलता है। दोनों का उपयोग होता है, लेकिन <code style="color:#22d3bf">a</code> का अर्थ &quot;ताकत&quot; नहीं बल्कि &quot;pattern&quot; है, यह बात इसे अन्य ops से अलग करती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

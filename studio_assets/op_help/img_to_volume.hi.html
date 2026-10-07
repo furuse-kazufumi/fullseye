@@ -15,12 +15,11 @@
 <p><img src="fig/img_to_volume.gif" alt="img_to_volume: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image को height field के रूप में extrude करके (D,H,W) volume (z पहले) बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
-<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
+<p>voxel <code style="color:#22d3bf">(z, y, x)</code> की ऊँचाई pixel की ऊँचाई के बराबर या कम हो तो pixel value, ज़्यादा हो तो 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>। यानी <b>height field का &quot;भरा हुआ&quot; solid</b> (terrain, step, extrude किए गए पुर्ज़े), जिससे volume family (<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …) को 1 image से आज़माया जा सकता है। axis का क्रम 3-D ledger के convention के अनुसार <b>(depth, row, col)</b> है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → ऊँचाई का गुणक <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code> (a=0.5 पर 1.125। 1 से ऊपर का हिस्सा सबसे ऊपरी स्तर <code style="color:#22d3bf">D-1</code> पर saturate हो जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → स्तरों की संख्या <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code> (b=0.5 पर 36, b=0 पर 8, b=1 पर 64)।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: <code style="color:#22d3bf">(D, H, W)</code> float64, range input जैसी ही। <b>z=0 का निचला तल value &gt; 0 वाले सभी pixel से भरा होता है</b> (ऊँचाई 0 होने पर भी निचले तल पर रहता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩形度。构造一个与区域具有<b>相同一阶、二阶矩</b>的矩形,把两者之差的面积用该矩形的面积归一化(<code style="color:#22d3bf">1 - |区域 XOR 矩形| / |矩形|</code>);矩形时为 1。与 HALCON 的 <code style="color:#22d3bf">rectangularity</code>(Shape factor for the rectangularity of a region.)<b>定义相同</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(<code style="color:#22d3bf">skimage</code> の <code style="color:#22d3bf">extent</code>)だった。向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b> (HALCON は 0.998 のまま)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大になる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前是与<b>轴平行</b>外接矩形之比(<code style="color:#22d3bf">skimage</code> 的 <code style="color:#22d3bf">extent</code>)。由于不看方向,<b>仅把同一个长方形旋转 30 度,1.000 就降到 0.359</b> (HALCON 仍为 0.998)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
+<p>★对于正方形或圆这类 2 阶矩无法确定方向的形状,“具有相同矩的矩形”随方向而有无数个,定义无法确定方向。这里选择重叠最大的方向 —— 若按任意方向套用,正方形会得到 0.651,与 HALCON 的 “矩形则为 1”相矛盾。HALCON 也明确写明对这类形状最多低估 10%。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

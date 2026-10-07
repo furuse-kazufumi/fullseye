@@ -9,8 +9,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt robust die Standardabweichung σ von additivem Rauschen (<code style="color:#22d3bf">_noise_sigma</code>: rechnet die MAD der Laplace-Antwort in eine Gauß-äquivalente Skala um und teilt dann durch den Rauschgewinn <code style="color:#22d3bf">sqrt(20)</code> des 5-Punkt-Laplace-Kernels). So ausgelegt, dass es unempfindlich gegenüber von Kanten stammenden Ausreißern ist und nur das Rauschen in flachen Bereichen erfasst (ein Fehler der alten Implementierung, bei dem &quot;σ keine richtige Einheit hatte und oberhalb von σ≈0,08 bei 1,0 sättigte&quot;, wurde am 02.09.2026 behoben — Details siehe Docstring von <code style="color:#22d3bf">_noise_sigma</code>). Entspricht HALCONs <code style="color:#22d3bf">estimate_noise</code> (Estimate the image noise from a single image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

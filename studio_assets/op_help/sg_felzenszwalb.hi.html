@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Felzenszwalb के graph-based region segmentation की सीमाएँ लौटाता है (<code style="color:#22d3bf">skimage.segmentation.felzenszwalb</code>, HALCON में इसके समकक्ष कोई operator नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> はクラスタの粗さを決める <code style="color:#22d3bf">scale</code> を 40〜540 に振り（大きいほど大きな塊にまとまる）、<code style="color:#22d3bf">b</code> は最小成分サイズを 15〜100 に振る（<code style="color:#22d3bf">min_size = round(15+b*85)</code>）。戻り値はラベル画像の外側境界（region）で、真の物体輪郭に沿いやすい。</p>
+<p><code style="color:#22d3bf">a</code> clusters के मोटेपन को तय करने वाले <code style="color:#22d3bf">scale</code> को 40 से 540 तक बदलता है (जितना बड़ा, उतने बड़े गुच्छों में जुड़ते हैं), और <code style="color:#22d3bf">b</code> न्यूनतम component आकार को 15 से 100 तक बदलता है (<code style="color:#22d3bf">min_size = round(15+b*85)</code>)। return value label image की बाहरी boundaries (region) है, जो वास्तविक object contours के साथ चलने की प्रवृत्ति रखती हैं।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>

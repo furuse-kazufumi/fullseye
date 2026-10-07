@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以與解析度無關的正規化 3 分量向量(面積比 = 面積/影像像素數、正規化重心列、正規化重心欄)回傳區域的面積與重心。由於單一純量無法表示 (Area, Row, Column),因此與其他區域特徵 op 不同,以 <code style="color:#22d3bf">match</code> 排序(一維向量,與 <code style="color:#22d3bf">ncc_locate</code> 相同形式)回傳。區域為空時回傳 (0, 0.5, 0.5)(面積為零、中心=影像中心)的 fail-soft 規格。相當於 HALCON 的 <code style="color:#22d3bf">area_center</code>(Area and center of regions.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -14,9 +14,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_partition_rectangle.inputs.jpg">r2_partition_rectangle: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역의 외접 사각형을 NxN 격자로 나누고, 영역과 겹치는 셀만 남깁니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>領域の外接軸並行矩形を <code style="color:#22d3bf">N x N</code> の格子に等分し、領域と 1 画素でも重なるセルを丸ごと 1.0 で塗ったマスクを返す。<code style="color:#22d3bf">N = 2 + int(a*4)</code> で <code style="color:#22d3bf">a=0</code> → 2、<code style="color:#22d3bf">a=1</code> → 6 分割(<code style="color:#22d3bf">a</code> は [0,1] に clip)。セル境界は <code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code> を整数化したもので、bbox がセル数より小さいと幅 0 のセルが生じ、そのセルはスキップされる。<code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は「領域を覆うセルの和」なので入力領域を必ず含み、bbox の外は塗られない。中身が凸で bbox いっぱいに詰まった領域では全セルが該当し、<code style="color:#22d3bf">a</code> を変えても出力は bbox そのものになる。孔や凹みが大きい領域で初めて格子の粗さが見える。用途は粗いタイル分割(局所処理の窓決め)や占有パターンの粗視化。隣接セルはつながって 1 つの塊になるため、セル単位で分けて扱う用途には向かない。</p>
+<p>영역의 외접 축 평행 직사각형을 <code style="color:#22d3bf">N x N</code>의 격자로 등분하고, 영역과 1 화소라도 겹치는셀을 통째로 1.0으로 칠한 마스크를 반환한다. <code style="color:#22d3bf">N = 2 + int(a*4)</code>로 <code style="color:#22d3bf">a=0</code> → 2, <code style="color:#22d3bf">a=1</code> → 6 분할(<code style="color:#22d3bf">a</code>는 [0,1]로 clip). 셀 경계는 <code style="color:#22d3bf">numpy.linspace(top, bottom+1, N+1)</code>를 정수화한 것으로, bbox가 셀 수보다작으면 폭 0의 셀이 생기며, 그 셀은 건너뛴다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>반환값은 입력과 같은 형태의 float64 0/1 마스크. 전경이 없으면 전부 0. 출력은 &#x27;영역을덮는 셀의 합&#x27;이므로 입력 영역을 반드시 포함하며, bbox 밖은 칠해지지 않는다. 내용이 볼록하고 bbox에 가득 찬 영역에서는 모든 셀이 해당되어, <code style="color:#22d3bf">a</code>를 바꿔도 출력은 bbox 그 자체가 된다. 구멍이나 오목함이 큰 영역에서 비로소 격자의 거칠기가 보인다. 용도는거친 타일 분할(국소 처리의 창 결정)이나 점유 패턴의 조립화. 인접 셀은이어져 1개의 덩어리가 되므로, 셀 단위로 나눠 다루는 용도에는 적합하지 않다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

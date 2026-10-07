@@ -14,12 +14,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>close_edges के अलावा, threshold से कम लंबाई (pixels की संख्या) वाले छोटे edge टुकड़े भी हटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化 → 3×3(8 近傍)構造要素で 1 回 <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code>(既定の 4 近傍連結)で連結成分にし、画素数が <code style="color:#22d3bf">min_len</code> 未満の成分を落として 0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 残す最小画素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>(2〜22)。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければクロージング結果をそのまま返す。</p>
-<p>注意: クロージングの構造要素は固定 3×3 で、<code style="color:#22d3bf">hx_close_edges</code> のような幅の調整は無い。ラベリングが 4 近傍のため斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。<code style="color:#22d3bf">binary_closing</code> は画像外を 0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p><code style="color:#22d3bf">v &gt; a</code> से binarise → 3×3 (8-neighbourhood) structuring element से 1 बार <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code> (default 4-neighbourhood connectivity) से connected components बनाकर, <code style="color:#22d3bf">min_len</code> से कम pixels वाले components हटाता है और 0/1 float image लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → binarisation threshold।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → रखे जाने वाले न्यूनतम pixels <code style="color:#22d3bf">min_len = 2 + int(b*20)</code> (2 से 22)।</p>
+<p style="margin:2px 0 2px 12px">• 1 भी component न हो तो closing का परिणाम जैसा का तैसा लौटता है।</p>
+<p>सावधानी: closing का structuring element 3×3 पर स्थिर है, <code style="color:#22d3bf">hx_close_edges</code> जैसी चौड़ाई की adjustment नहीं है। labelling 4-neighbourhood है, इसलिए तिरछे जुड़ी 1 pixel चौड़ी lines अलग components में बँट जाती हैं, उनकी &quot;लंबाई&quot; कम गिनी जाती है और वे आसानी से हट जाती हैं। <code style="color:#22d3bf">binary_closing</code> image के बाहर को 0 मानता है, इसलिए किनारे की 1 pixel पट्टी हमेशा 0 होती है। &quot;लंबाई&quot; component के pixels की संख्या है, geometric line लंबाई नहीं (गुच्छे भी लंबे गिने जाते हैं)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

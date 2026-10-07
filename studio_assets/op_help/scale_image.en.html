@@ -14,8 +14,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Linear tone scaling <code style="color:#22d3bf">clip((0.5 + 1.5*a) * x + (b - 0.5), 0, 1)</code>. A linear LUT that moves slope (contrast) and offset (brightness) simultaneously; out-of-range values are clipped to [0,1]. Equivalent to HALCON&#x27;s <code style="color:#22d3bf">scale_image</code> (Scale the gray values of an image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は傾き(Mult 相当)を 0.5〜2.0 の範囲で、<code style="color:#22d3bf">b</code> はオフセット(Add 相当)を -0.5〜+0.5 の範囲で振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the slope (corresponding to Mult) over the range 0.5-2.0, and <code style="color:#22d3bf">b</code> sweeps the offset (corresponding to Add) over -0.5 to +0.5. Both are used.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

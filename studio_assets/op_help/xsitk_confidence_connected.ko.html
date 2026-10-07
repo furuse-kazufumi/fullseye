@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>신뢰구간 연결 영역 확장(SimpleITK <code style="color:#22d3bf">ConfidenceConnected</code>). 이미지 중심을 씨앗으로 삼아, 현재 영역 내의 평균・표준편차로부터 &#x27;평균±multiplier*표준편차&#x27; 구간을 만들고, 이를 반복적으로 갱신하며 연결 영역을 넓혀 간다(xsitk_connected_threshold보다 통계적인 임계값 결정 방식).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*5)</code> で 1〜6)、<code style="color:#22d3bf">b</code> は標準偏差の倍率(<code style="color:#22d3bf">1.0+3.0*b</code> で 1〜4)を振る。初期近傍半径は 2 固定。画像中心付近に対象があることを前提とした op。</p>
+<p><code style="color:#22d3bf">a</code>는 반복 횟수(<code style="color:#22d3bf">1+int(a*5)</code>로 1~6), <code style="color:#22d3bf">b</code>는 표준편차의 배율(<code style="color:#22d3bf">1.0+3.0*b</code>로 1~4)을 바꾼다. 초기 근방 반경은 2 고정. 영상 중심 부근에 대상이 있다는 것을 전제로 한 op.</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

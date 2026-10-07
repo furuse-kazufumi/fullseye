@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/connect_and_holes.chain.jpg">connect_and_holes: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>計算區域的連通元件數（8 連通，與 <code style="color:#22d3bf">count_obj</code> 相同的 <code style="color:#22d3bf">_sh_region_feat</code> 的 <code style="color:#22d3bf">count</code> 分支）。a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">connect_and_holes</code>（連結成分数と穴の数の 2 つを同時に返す演算）のうち<b>連結成分数だけ</b>を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（<code style="color:#22d3bf">area_holes</code> が穴の面積比を別途計算する）。</p>
+<p>HALCON 的 <code style="color:#22d3bf">connect_and_holes</code>（同時傳回連通元件數與孔洞數這 2 個值的運算）中<b>只傳回連通元件數</b>的近似 —— 由於 feature sort 只能承載 1 個純量，因此不包含孔洞數（<code style="color:#22d3bf">area_holes</code> 另行計算孔洞的面積比）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

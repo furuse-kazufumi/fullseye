@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>밝기값에 대해 2-클래스 가우시안 혼합 모델(EM 알고리즘)을 적합시켜 더 밝은 클러스터를 영역으로 반환한다(<code style="color:#22d3bf">skimage</code>에 의존하지 않는 자체 EM 구현, 대응하는 HALCON 연산자 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。<code style="color:#22d3bf">a</code>（0〜1）は事後確率のしきい値 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。<code style="color:#22d3bf">b</code> は未使用。乱数を使わないので再現性がある。</p>
+<p>25/75 백분위수로 초기화한 결정론적 EM으로 1차원 2성분 가우스 혼합을 피팅하고, 평균이 높은 쪽을 &quot;밝은 클래스&quot;로 한다. <code style="color:#22d3bf">a</code>(0~1)는 사후확률 임계값 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code>를 바꾸며, 클수록 &quot;확실히 밝다&quot;고 판정된 화소만 줍게 된다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 난수를 쓰지 않으므로 재현성이 있다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

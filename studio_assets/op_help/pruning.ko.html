@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/pruning.inputs.jpg">pruning: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>골격화(<code style="color:#22d3bf">skeletonize</code>, 없으면 입력을 그대로 사용) 후, 이웃 수가 1 이하인 끝점 화소(스퍼=잔가지)를 <code style="color:#22d3bf">1+4*a</code>번 반복해서 깎아내어 골격에서 짧은 가지를 제거한다. HALCON의 <code style="color:#22d3bf">pruning</code>(Prune the branches of a region.)에 해당(HALCON은 가지 길이를 지정할 수 있지만, 여기서는 반복 횟수로 근사한다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が削り取る反復回数を 1〜5 回の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。回数が多いほど主要な骨格まで削れてしまうことがある。</p>
+<p><code style="color:#22d3bf">a</code>가 깎아 내는 반복 횟수를 1~5회 범위에서 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 횟수가많을수록 주요 골격까지 깎여 버리는 경우가 있다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

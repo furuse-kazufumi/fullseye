@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Translate a region (dy = a, dx = b, taken as offsets around zero).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる — 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
+<p>Because of np.roll, <b>the edges wrap around</b> (a region running off one side reappears from the opposite side). HALCON&#x27;s move_region drops what leaves the edge (clipping), so the behaviour differs for moves that touch the edge -- for the feature use of evolution ops, the design that keeps uniformity by wrapping is retained, and the difference is disclosed here.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

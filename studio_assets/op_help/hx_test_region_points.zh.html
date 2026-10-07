@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_points.chain.jpg">hx_test_region_points: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>网格状多点中落在 region 内的比例(test_region_points)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region を <code style="color:#22d3bf">step</code> 画素おきの格子(<code style="color:#22d3bf">reg[::step, ::step]</code>、原点は (0,0))でサンプリングし、格子点のうち region に入っている割合を <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 格子間隔 <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code>(短辺の 10%〜40%、最小 2 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 格子点が 0 個なら 0.0。</p>
-<p>格子が細かければ region の面積率の近似になり、粗ければ「代表点がどれだけ region に落ちるか」の粗い指標になる。格子の原点は固定なので、region を少しずらすだけで値が飛ぶ。面積率そのものが欲しいなら region の平均値を取る方が正確。1 点の判定は <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p>用每 <code style="color:#22d3bf">step</code> 像素的网格（<code style="color:#22d3bf">reg[::step, ::step]</code>，原点为 (0,0)）对 <code style="color:#22d3bf">v &gt; 0.5</code> 的 region 采样，以 <code style="color:#22d3bf">np.float64</code>（0〜1）返回网格点中落在 region 内的比例。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 网格间距 <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code>（短边的 10%〜40%，最小 2 像素）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 网格点为 0 个时为 0.0。</p>
+<p>网格细时为 region 面积率的近似，粗时是“代表点有多少落在 region 中”的粗略指标。网格原点固定，因此 region 稍一平移值就会跳变。想要面积率本身时，取 region 的平均值更准确。1 个点的判定用 <code style="color:#22d3bf">hx_test_region_point</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

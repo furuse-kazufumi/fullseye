@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过基于归一化互相关（NCC）的模板匹配寻找最佳位置。相当于 HALCON 的 <code style="color:#22d3bf">find_ncc_model</code>（Find the best matches of an NCC model in an image.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用——テンプレートは引数ではなく <code style="color:#22d3bf">set_match_template</code> でスレッドローカルな <code style="color:#22d3bf">_MATCH_CTX</code> に事前登録しておく（マッチング系 op 共通の作法、<code style="color:#22d3bf">_MatchCtx</code> の docstring 参照）。<code style="color:#22d3bf">_ncc_map</code>（NCC 相関マップ、Lewis 1995 の定義で <code style="color:#22d3bf">[-1,1]</code>）を計算し、その最大値の位置を <code style="color:#22d3bf">[相関値, y, x]</code> で返す。テンプレート未設定、または入力が 2 次元画像でない場合は <code style="color:#22d3bf">[0,0,0]</code>（no-match）を返す——fail-closed。回転・スケール変化には非対応（<code style="color:#22d3bf">_shape_locate</code> は回転を扱う）。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用——模板不是参数，而是用 <code style="color:#22d3bf">set_match_template</code> 预先登记到线程局部的 <code style="color:#22d3bf">_MATCH_CTX</code> 中（匹配类 op 共同的做法，参见 <code style="color:#22d3bf">_MatchCtx</code> 的 docstring）。计算 <code style="color:#22d3bf">_ncc_map</code>（NCC 相关图，按 Lewis 1995 的定义取值 <code style="color:#22d3bf">[-1,1]</code>），并以 <code style="color:#22d3bf">[相关值, y, x]</code> 返回其最大值的位置。未设置模板或输入不是 2 维图像时返回 <code style="color:#22d3bf">[0,0,0]</code>（no-match）——fail-closed。不支持旋转和尺度变化（<code style="color:#22d3bf">_shape_locate</code> 处理旋转）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

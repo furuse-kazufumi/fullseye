@@ -13,11 +13,10 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Paint each connected region with its mean grey value (image -&gt; image). Foreground/background split at threshold a, then labelled.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> を前景とし <code style="color:#22d3bf">ndimage.label</code>(4 近傍)で連結成分に分け、各成分の画素を <code style="color:#22d3bf">ndimage.mean</code> で求めた成分内の平均 gray 値で塗りつぶす。背景(<code style="color:#22d3bf">v &lt;= a</code>)は背景画素全体の平均 1 値で塗る(背景が無ければ 0.0)。出力は入力と同形の float 画像で、値域は入力の範囲内(正規化しない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景/背景を分けるしきい値。a=0 なら 0 より大きい画素がすべて前景。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>結果は成分ごとに一定値になるので、後段の <code style="color:#22d3bf">threshold</code> で「平均が明るい部品だけ」を選ぶような使い方ができる。4 近傍ラベルなので斜め接触する塊は別々の平均になる。入力の検証は無い。</p>
+<p>Takes <code style="color:#22d3bf">v &gt; a</code> as foreground, splits it into connected components with <code style="color:#22d3bf">ndimage.label</code> (4-neighbourhood), and fills the pixels of each component with the mean gray value within the component obtained by <code style="color:#22d3bf">ndimage.mean</code>. The background (<code style="color:#22d3bf">v &lt;= a</code>) is filled with the 1 mean value of all background pixels (0.0 if there is no background). The output is a float image of the same shape as the input, with values within the input&#x27;s range (not normalised).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → threshold separating foreground/background. At a=0, every pixel greater than 0 is foreground.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>Since the result is constant per component, it can be used, for example, with a downstream <code style="color:#22d3bf">threshold</code> to select &quot;only parts whose mean is bright&quot;. With 4-neighbourhood labels, blobs touching diagonally get separate means. There is no input validation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

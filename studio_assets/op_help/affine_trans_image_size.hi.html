@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image पर affine transform (rotation + shear) लगाता है। Implementation <code style="color:#22d3bf">affine_trans_image</code> वाली ही <code style="color:#22d3bf">_sh_geom</code> की <code style="color:#22d3bf">affine</code> branch साझा करता है; a rotation कोण को -20° से +20° में और b shear की मात्रा को बदलता है। Frame के बाहर का हिस्सा mirror (reflect) से भरता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_image_size</code>（アフィン変換を適用し、出力画像のキャンバスサイズを明示的に指定できる演算）とは異なり、この実装は出力サイズの指定を受け付けず、常に入力と同じキャンバスサイズを保つ近似（<code style="color:#22d3bf">affine_trans_image</code> と実質同一の実装）。</p>
+<p>HALCON के <code style="color:#22d3bf">affine_trans_image_size</code> (affine transform लागू करने वाला और आउटपुट image का canvas size स्पष्ट रूप से निर्दिष्ट करने देने वाला operation) से अलग, यह implementation आउटपुट size का निर्धारण स्वीकार नहीं करता और हमेशा इनपुट जैसा ही canvas size रखने वाला सन्निकटन है (व्यवहार में <code style="color:#22d3bf">affine_trans_image</code> जैसा ही implementation)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

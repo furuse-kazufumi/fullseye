@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过返回 20 百分位与 80 百分位滤波结果的平均值来近似修剪均值。得到的值接近于排除了(最小、最大侧)离群值影响的平均值,但需注意,这与真正&quot;对中间 60% 取平均&quot;的修剪均值在计算方法上是不同的近似。是 HALCON 的 <code style="color:#22d3bf">trimmed_mean</code>(Smooth an image with an arbitrary rank mask.)的替代实现。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用(トリム比率は 20/80 に固定)。</p>
+<p><code style="color:#22d3bf">a</code> 在 <code style="color:#22d3bf">{3,5,7,9}</code> 中调节窗口边长。<code style="color:#22d3bf">b</code> 未使用(修剪比例固定为 20/80)。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

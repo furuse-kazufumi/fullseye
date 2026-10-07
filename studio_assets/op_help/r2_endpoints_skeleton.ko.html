@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_endpoints_skeleton.inputs.jpg">r2_endpoints_skeleton: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>골격의 끝점(8 이웃에 골격 화소가 정확히 1 개인 점)을 뽑습니다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">junctions_skeleton</code> は EndPoints と JuncPoints の両方を返すが、fullseye の <code style="color:#22d3bf">junctions_skeleton</code> は分岐点のみなので、端点側をこの op が担う。入力が骨格でない場合は em_skeleton で細線化してから端点を取る。孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。</p>
+<p>HALCON의 <code style="color:#22d3bf">junctions_skeleton</code>은 EndPoints와 JuncPoints를 모두 반환하지만, fullseye의 <code style="color:#22d3bf">junctions_skeleton</code>은 분기점만이므로, 끝점 쪽을 이 op가 담당한다. 입력이 골격이 아닌 경우에는 em_skeleton으로 세선화한 뒤 끝점을 취한다. 고립된 1 화소(근방 0)도 끝점으로 센다. 노브 a, b는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

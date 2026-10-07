@@ -13,12 +13,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.chain.jpg">hx_distance_pc: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Query point (normalised a,b) से contour तक की न्यूनतम दूरी लौटाता है (feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">q = (a*H, b*W)</code> から、全 contour の頂点までのユークリッド距離の最小値を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1)。</p>
-<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(点が contour 上にある場合と区別できない)。</p>
-<p>距離は頂点までであって線分までではないので、点の間隔が粗い contour では真の距離より最大で「点間隔の半分」程度大きく出る。細かい contour(<code style="color:#22d3bf">edges_sub_pix</code> の 1 画素刻み)ではほぼ一致する。region までの距離は <code style="color:#22d3bf">hx_distance_pr</code>、水平線からの距離は <code style="color:#22d3bf">hx_distance_sc</code>、点を含む contour の選択は <code style="color:#22d3bf">hx_select_xld_point</code>。</p>
+<p>normalized coordinates <code style="color:#22d3bf">(a, b)</code> वाले query point <code style="color:#22d3bf">q = (a*H, b*W)</code> से सभी contours के vertices तक की Euclidean distance का minimum, <code style="color:#22d3bf">max(H, W)</code> से भाग देकर 1 पर cap करके <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → query point की row (0 से 1)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → query point का column (0 से 1)।</p>
+<p style="margin:2px 0 2px 12px">• contours में कोई point न हो तो 0.0 (point के contour पर होने वाली स्थिति से अलग नहीं पहचाना जा सकता)।</p>
+<p>distance vertices तक है, segments तक नहीं, इसलिए जिन contours में points के बीच की दूरी ज़्यादा है उनमें यह सच्ची distance से अधिकतम लगभग &quot;points की दूरी का आधा&quot; बड़ी आती है। बारीक contours (<code style="color:#22d3bf">edges_sub_pix</code> के 1 pixel step) में यह लगभग मेल खाती है। region तक की distance <code style="color:#22d3bf">hx_distance_pr</code>, horizontal line से distance <code style="color:#22d3bf">hx_distance_sc</code>, और point वाले contours का चयन <code style="color:#22d3bf">hx_select_xld_point</code> करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

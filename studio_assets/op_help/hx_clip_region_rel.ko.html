@@ -14,13 +14,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.inputs.jpg">hx_clip_region_rel: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>region 을 그 외접 사각형에 대해 상대적으로 자릅니다(각 변에서 a 비율만큼 깎음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region の外接矩形 <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code> を求め、その高さ・幅の <code style="color:#22d3bf">0.5*a</code> ずつを上下左右から削った内側の矩形に含まれる画素だけを残して 0/1 の float 配列で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 各辺から削る割合 <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>、<code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>。a=0 で無変化、a=1 で</p>
-<p>外接矩形の中心線付近(1 行・1 列程度)しか残らない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• region が空なら空のまま返す。</p>
-<p>削るのは外接矩形に対する相対量なので、region の大きさが違っても「周辺 x% を落とす」意味が保たれる。外接矩形は region 全体で 1 つ(成分ごとではない)ため、離れた小成分が並ぶ場合は端の成分がまるごと消えることがある。画像基準の中央矩形で切るなら <code style="color:#22d3bf">hx_rectangle1_domain</code> との論理積を使う。</p>
+<p><code style="color:#22d3bf">v &gt; 0.5</code>인 region의 외접 사각형 <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code>을 구하고, 그 높이·폭의 <code style="color:#22d3bf">0.5*a</code>씩을 상하좌우에서깎은 안쪽 사각형에 포함되는 화소만 남겨 0/1의 float 배열로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 각 변에서 깎는 비율 <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>, <code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>. a=0이면 변화 없음, a=1이면</p>
+<p>외접 사각형의 중심선 부근(1행·1열 정도)밖에 남지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• region이 비어 있으면 빈 채로 반환한다.</p>
+<p>깎는 것은 외접 사각형에 대한 상대량이므로, region의 크기가 달라도 &quot;주변 x%를 떨어뜨린다&quot;는 의미가 유지된다. 외접 사각형은 region 전체에서 1개(성분마다가 아님)이므로, 떨어진 작은 성분이 늘어선 경우에는 끝의 성분이 통째로 사라질 수 있다. 영상 기준의 중앙 사각형으로 자르려면 <code style="color:#22d3bf">hx_rectangle1_domain</code>과의 논리곱을 쓴다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_erosion1.inputs.jpg">hx_erosion1: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Erodes a region with a disk structuring element. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">erosion1</code> (erodes a region).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code> の円板を構造要素として <code style="color:#22d3bf">scipy.ndimage.binary_erosion</code> を呼ぶ。<code style="color:#22d3bf">b</code> は未使用。境界の外側画素を削り、細い突起やノイズ画素を消す。</p>
+<p>Calls <code style="color:#22d3bf">scipy.ndimage.binary_erosion</code> with a disc of radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> as the structuring element. <code style="color:#22d3bf">b</code> is unused. It shaves off the outer pixels of the boundary, removing thin protrusions and noise pixels.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_endpoints_skeleton.inputs.jpg">r2_endpoints_skeleton: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert die Endpunkte eines Skeletts (die Punkte mit genau einem Skelettpixel in ihrer 8er-Nachbarschaft).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">junctions_skeleton</code> は EndPoints と JuncPoints の両方を返すが、fullseye の <code style="color:#22d3bf">junctions_skeleton</code> は分岐点のみなので、端点側をこの op が担う。入力が骨格でない場合は em_skeleton で細線化してから端点を取る。孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。</p>
+<p>HALCONs <code style="color:#22d3bf">junctions_skeleton</code> gibt sowohl EndPoints als auch JuncPoints zurück, das <code style="color:#22d3bf">junctions_skeleton</code> von fullseye jedoch nur Verzweigungspunkte, daher übernimmt dieses op die Endpunkte. Ist die Eingabe kein Skelett, wird sie vor der Endpunktbestimmung mit em_skeleton ausgedünnt. Ein isoliertes einzelnes Pixel (1 Pixel, 0 Nachbarn) zählt ebenfalls als Endpunkt. Die Regler a, b werden nicht verwendet.</p>
 <p><b>Randbehandlung</b>: alles außerhalb des Bildes als Hintergrund (0) behandeln (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>

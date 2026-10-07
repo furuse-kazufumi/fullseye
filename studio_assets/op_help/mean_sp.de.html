@@ -13,8 +13,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein robuster Glättungsfilter. Gibt den Mittelwert des 20.- und 80.-Perzentils innerhalb des Fensters zurück (getrimmter Mittelwert, trimmed mean) und unterdrückt so den Einfluss extremer heller/dunkler Ausreißer (etwa Salt-and-Pepper-Rauschen). a stellt die Fenstergröße auf 3/5/7/9 ein (<code style="color:#22d3bf">_k(a)</code>). b wird nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">mean_sp</code>（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p>Eine Näherung, die HALCONs <code style="color:#22d3bf">mean_sp</code> (eine Mittelungsoperation zur Unterdrückung von Salz-und-Pfeffer-Rauschen) entspricht -- dass der Mittelpunkt des Bereichs ohne die oberen und unteren 20% genommen wird, macht sie robuster gegen Rauschen als ein einfacher Mittelwert, die Implementierung unterscheidet sich jedoch vom HALCON-eigenen Algorithmus.</p>
 <p><b>Randbehandlung</b>: mit Wiederholung des Randpixels spiegeln (d c b a | a b c d — scipys Standard <code style="color:#22d3bf">reflect</code>) (gemessen; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>Regler (gemessen)</b>: <code style="color:#22d3bf">a</code> wirkt <b>stufenweise</b>; die Umschaltpunkte liegen bei a ≈ 0.25、0.49、0.75 (gemessen mit Schrittweite 0.02).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_find_boundaries.inputs.jpg">sk_find_boundaries: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extraktion von Regionsgrenzen. Gibt in einem Label-Bild (hier eine boolesche Region) eine Grenzmaske zurück, die nur an Pixeln True ist, an denen zwei unterschiedliche Label (Vordergrund/Hintergrund) aneinandergrenzen.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.)に相当。実装は <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>。a, b は未使用 —— connectivity は既定の 1、mode は既定の &#x27;thick&#x27;(境界の両側 1 画素ずつを含む太めの境界)。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.). Die Implementierung ist <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>. a, b werden nicht verwendet - connectivity ist der Standard 1, mode der Standard &#x27;thick&#x27; (eine dicke Grenze, die auf jeder Seite der Grenze 1 Pixel umfasst).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

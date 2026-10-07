@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴平行外接矩形的纵横比 <code style="color:#22d3bf">高 / 宽</code>。没有上限,纵长的区域会超过 1(160x4 为 40.0)。它与 HALCON 的 <code style="color:#22d3bf">height_width_ratio</code>(Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.)所返回的三个值中的 <b>Ratio 是同一个量</b>(Height 与 Width 是像素长度,未返回 —— 见 docs/KNOWN_ISSUES.md §51)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前用 <code style="color:#22d3bf">min(1, 高度/宽度)</code> 截断,所以<b>纵长的对象全部变成 1.0</b>(60x20 时为 1.0,真值 3.0)。横长的能正确输出,因此 <b>方向一变信息就消失</b>。饱和在说明文中被写成了“规格”, 但值域 [0,1] 并不是 feature 的约定,没有压缩的理由 —— <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

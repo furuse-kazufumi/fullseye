@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_contour.chain.jpg">hx_dist_ellipse_contour: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>contour 點到擬合橢圓邊界的平均距離(越小越接近橢圓;feature)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>全 contour の点をまとめ、重心と座標共分散の固有分解から主軸系に移し、半軸を <code style="color:#22d3bf">2*sqrt(λ)</code>(各主軸の 2σ)とする楕円を当てて、各点の正規化半径 <code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code> と 1 との差 <code style="color:#22d3bf">|rad - 1|</code> の平均を 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。固有値は <code style="color:#22d3bf">1e-9</code> で下から clip。</p>
-<p>注意: 値は画素距離ではなく楕円の正規化座標での差(無次元)。また半軸 2σ は「一様に塗られた楕円」に合う値で、境界だけの点群では <code style="color:#22d3bf">σ = 半軸/sqrt(2)</code> になるため、完全な楕円輪郭でも 0 にならず約 0.29 の下駄が乗る(実測 0.2938)。比較用の相対指標として使い、絶対値で「楕円かどうか」を切らない。最大値版は <code style="color:#22d3bf">hx_dist_ellipse_points</code>、軸比は <code style="color:#22d3bf">hx_fit_ellipse_contour</code>。</p>
+<p>把全部 contour 的點合在一起,由質心與座標共變異數的特徵分解變換到主軸系,擬合半軸為 <code style="color:#22d3bf">2*sqrt(λ)</code>(各主軸的 2σ)的橢圓,求各點的正規化半徑 <code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code> 與 1 之差 <code style="color:#22d3bf">|rad - 1|</code> 的平均,以 1 飽和截頂後作為 <code style="color:#22d3bf">np.float64</code> 回傳。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 點少於 4 個時為 0.0。特徵值以 <code style="color:#22d3bf">1e-9</code> 從下方 clip。</p>
+<p>注意: 值不是像素距離,而是在橢圓正規化座標中的差(無因次)。另外半軸 2σ 是適合「均勻填滿的橢圓」的值, 對只有邊界的點集 <code style="color:#22d3bf">σ = 半軸/sqrt(2)</code>,因此即使是完美的橢圓輪廓也不為 0,會帶有約 0.29 的偏置(實測 0.2938)。作為比較用的相對指標使用,不要用絕對值來判定「是否為橢圓」。最大值版是 <code style="color:#22d3bf">hx_dist_ellipse_points</code>, 軸比見 <code style="color:#22d3bf">hx_fit_ellipse_contour</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_split_contours.inputs.jpg">hx_split_contours: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर contour को dominant points (RDP) पर line segments में बाँटता है (सहनशीलता eps, a है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各 contour(点数 3 以上)に Ramer-Douglas-Peucker を掛けて支配点の index を求め、隣り合う支配点の間の部分列 <code style="color:#22d3bf">c[s:e+1]</code> を新しい contour として並べる(隣り合う線分は端点を共有する)。点数 2 以下の contour はそのまま通す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">eps = 0.5 + a*5</code>(0.5〜5.5 画素)。この距離以内の折れは無視されるので、大きいほど線分が</p>
-<p>長く少なくなる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>出力は「線分ごとの contour」であって折れ線の頂点だけではない(元の点は全部残る)。閉じた contour(始点=終点)は始点から最も遠い点で最初に分割される。線分の本数が角の数の目安になり、<code style="color:#22d3bf">hx_regress_contours</code> を後段に置くと各線分の直線性が測れる。</p>
+<p>हर contour (3 या अधिक points) पर Ramer-Douglas-Peucker लगाकर dominant points के index निकाले जाते हैं, और पड़ोसी dominant points के बीच का हर sub-sequence <code style="color:#22d3bf">c[s:e+1]</code> नए contour के रूप में रखा जाता है (पड़ोसी segments अपने end points साझा करते हैं)। 2 या कम points वाले contour बिना बदलाव के आगे जाते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → tolerance <code style="color:#22d3bf">eps = 0.5 + a*5</code> (0.5 से 5.5 pixel)। इस distance के भीतर के मोड़ ignore होते हैं, इसलिए value जितनी बड़ी, segments उतने</p>
+<p>लंबे और कम।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>output &quot;हर segment के लिए एक contour&quot; है, केवल polyline के vertices नहीं (सभी मूल points बने रहते हैं)। closed contour (start = end) को पहले start से सबसे दूर वाले point पर split किया जाता है। segments की संख्या corners की संख्या का अंदाज़ा देती है, और <code style="color:#22d3bf">hx_regress_contours</code> को बाद में रखने पर हर segment की straightness मापी जा सकती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contour_point_num_xld.chain.jpg">contour_point_num_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从一组 XLD 轮廓中选出点数最多的轮廓，将其顶点数以 500 点为基准归一化后以 [0,1] 返回（500 点以上饱和为 1.0）。a、b 未使用。若没有轮廓则返回 0。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">contour_point_num_xld</code>（XLD 輪郭に含まれる点の実数をそのまま返す演算）とは異なり、この実装は点数そのものではなく 500 点でスケーリングした比率を返す近似（feature sort が [0,1] 想定の値を運ぶ契約のため）。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">contour_point_num_xld</code>（直接返回 XLD 轮廓所含点的实际数量的运算）不同，该实现返回的不是点数本身，而是以 500 点缩放后的比率的近似（因为 feature sort 的约定是承载假定在 [0,1] 内的值）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

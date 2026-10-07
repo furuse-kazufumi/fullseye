@@ -12,9 +12,8 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將量化損失的量 <code style="color:#22d3bf">|x - Q(x)|</code> 除以 <code style="color:#22d3bf">Δ/2</code> 後轉換到 <code style="color:#22d3bf">[0,1]</code> 的圖。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> がビット数 1〜8(<code style="color:#22d3bf">_quantize_uniform</code> と同じ振り方)、<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">1.0</code> が「その画素で取りうる最大の誤差(<code style="color:#22d3bf">Δ/2</code>)」にあたる。</p>
-<p><b>何のために見るのか</b>: 誤差が一様に散っていれば量子化雑音として扱ってよい。<b>特定の等高線に沿って揃っていたら、そこがバンディングの出る場所</b>。数字で言うと、正しく振る舞っているとき地図の平均は <code style="color:#22d3bf">0.5</code> 付近(一様分布の平均)に来る。</p>
+<p><code style="color:#22d3bf">a</code> 是位元數 1〜8（調整方式與 <code style="color:#22d3bf">_quantize_uniform</code> 相同），<code style="color:#22d3bf">b</code> 未使用。<code style="color:#22d3bf">1.0</code> 對應「該像素可能取到的最大誤差（<code style="color:#22d3bf">Δ/2</code>）」。</p>
+<p><b>看它是為了什麼</b>：若誤差均勻散布，就可以當作量化雜訊處理。<b>若沿特定等高線排列整齊，那裡就是出現色帶的地方</b>。以數字來說，行為正確時該圖的平均值落在 <code style="color:#22d3bf">0.5</code> 附近（均勻分布的平均值）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

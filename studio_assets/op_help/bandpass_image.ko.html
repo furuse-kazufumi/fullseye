@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>주파수 영역에서 지정한 대역만 통과시키는 밴드패스 필터(저주파와 고주파를 차단), 역FFT로 실공간으로 되돌린다. <code style="color:#22d3bf">highpass_image</code>와 마찬가지로 평균이 0인 부호 있는 응답이므로 <code style="color:#22d3bf">signed01</code>로 [0,1]에 매핑한다. HALCON의 <code style="color:#22d3bf">bandpass_image</code>(Edge extraction using bandpass filters.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が下限カットオフ、<code style="color:#22d3bf">b</code> が上限カットオフを振る。両方が使われる。帯域(<code style="color:#22d3bf">b</code> 側の上限)を下限より下に設定すると通過域が空になり出力はほぼ 0.5(ゼロ)一色になる。</p>
+<p><code style="color:#22d3bf">a</code>가 하한 컷오프, <code style="color:#22d3bf">b</code>가 상한 컷오프를 바꾼다. 둘 다 사용된다. 대역(<code style="color:#22d3bf">b</code> 쪽 상한)을 하한보다 아래로 설정하면 통과 대역이 비어 출력은 거의 0.5(제로) 한 색이 된다.</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_label_to_region.inputs.jpg">r3_label_to_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Label image से केवल 1 gray value (label) वाले pixels निकालता है (HALCON <code style="color:#22d3bf">label_to_region</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた<code style="color:#22d3bf">round(a * (ラベル数-1))</code> 番目のラベルを選んで、その値を持つ画素を領域として返す。<code style="color:#22d3bf">b</code> は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
+<p>input को 3 अंकों तक round करके 0 से बड़े मानों को labels मानता है, बढ़ते क्रम में लगाए गए <code style="color:#22d3bf">round(a * (labels की संख्या-1))</code> वें label को चुनता है, और उस मान वाले pixels को region के रूप में लौटाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। साधारण 0/1 mask में केवल 1 label होता है, इसलिए हमेशा उसका foreground लौटता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

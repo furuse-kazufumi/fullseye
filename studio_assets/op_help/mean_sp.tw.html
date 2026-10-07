@@ -13,8 +13,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>穩健平滑濾波器。回傳視窗內 20 百分位與 80 百分位的平均值（截尾平均，trimmed mean），藉此抑制極端明暗離群值（如胡椒鹽雜訊）的影響。a 將視窗大小分為 3/5/7/9（<code style="color:#22d3bf">_k(a)</code>）。b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">mean_sp</code>（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">mean_sp</code>(抑制椒鹽雜訊的平均化運算)的近似 —— 取去掉上下 20% 後範圍的中點,這一點比簡單平均更抗雜訊,但實作與 HALCON 特有的演算法不同。</p>
 <p><b>邊界處理</b>：含端點的鏡像折返 (d c b a | a b c d，scipy 預設的 <code style="color:#22d3bf">reflect</code>)（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋鈕（實測）</b>：<code style="color:#22d3bf">a</code> 以<b>離散檔位</b>生效，切換點在 a ≈ 0.25、0.49、0.75（以步長 0.02 掃描實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

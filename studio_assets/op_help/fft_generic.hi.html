@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के Fourier transform के amplitude spectrum को log compress करके लौटाता है (<code style="color:#22d3bf">log1p(|F|)</code> को अधिकतम मान से normalise)। केंद्र low-frequency और किनारे high-frequency components के अनुरूप हैं (<code style="color:#22d3bf">fftshift</code> किया गया)। a, b इस्तेमाल नहीं होते।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">fft_generic</code>（順変換・逆変換・実数/複素数など多数のモードを持つ汎用 FFT 演算）のうち、順方向の振幅スペクトル表示だけを実装した近似 —— 逆変換や位相成分などの他モードは別 op（<code style="color:#22d3bf">fft_image_inv</code>、<code style="color:#22d3bf">phase_deg</code> など）が個別に担う。</p>
+<p>HALCON के <code style="color:#22d3bf">fft_generic</code> (forward/inverse transform और real/complex जैसे कई modes वाला सामान्य-उद्देश्य FFT operation) में से केवल forward दिशा के amplitude spectrum को दिखाने वाला भाग लागू करने वाला सन्निकटन है -- inverse transform और phase component जैसे अन्य modes अलग-अलग ops (<code style="color:#22d3bf">fft_image_inv</code>, <code style="color:#22d3bf">phase_deg</code> आदि) संभालते हैं।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

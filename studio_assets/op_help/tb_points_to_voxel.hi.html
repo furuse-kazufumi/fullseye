@@ -14,19 +14,18 @@
 <p><img src="fig/tb_points_to_voxel.gif" alt="tb_points_to_voxel: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Point cloud (N,3) → density voxel (size³)। scatter_add से splat, और वैकल्पिक (optional) Gaussian smoothing।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
-<p>手順: 各点を <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> で整数格子に落とし、その voxel に 1 を加算する(値 = その voxel に落ちた点の個数)。<code style="color:#22d3bf">smooth &gt; 0</code> なら σ=<code style="color:#22d3bf">smooth</code>(voxel 単位) の gaussian を 3 軸分離 conv で掛ける(半径 <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>、端は replicate)。出力の軸順は <b>点の列の順そのまま</b>(<code style="color:#22d3bf">points[:, 0]</code> → 軸 0)で、(depth,row,col) への並べ替えはしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
-<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・ <code style="color:#22d3bf">hi &lt;= lo</code> の軸があると ValueError(tsdf 系の <code style="color:#22d3bf">((xmin,xmax),...)</code> 流儀は長さ 2 として拒否)。</p>
-<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
-<p>なら事前に点群側で除く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: 一辺の voxel 数。<code style="color:#22d3bf">hi − lo</code> が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
-<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
-<p>(平滑後は個数の重み分布)で正規化はしない。</p>
-<p>後段: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> の入力に。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">points_to_voxel</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>bounds=(lo,hi) देने पर कई clouds को एक ही grid पर रखा जा सकता है (= matching की पूर्व-शर्त)।</p>
+<p>प्रक्रिया: हर point को <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> से integer grid पर डाला जाता है, और उस voxel में 1 जोड़ा जाता है (value = उस voxel में गिरे points की संख्या)। <code style="color:#22d3bf">smooth &gt; 0</code> हो तो σ=<code style="color:#22d3bf">smooth</code> (voxel units में) वाला gaussian 3 axes पर separable conv के रूप में लगाया जाता है (radius <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>, किनारे replicate)। output का axis order <b>points के columns का क्रम ही है</b> (<code style="color:#22d3bf">points[:, 0]</code> → axis 0), और (depth,row,col) में क्रम बदला नहीं जाता।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> के 2 vectors, हर एक 3 dimensions का। None हो तो point cloud का अपना min/max (हर cloud के लिए</p>
+<p>grid बदल जाता है, इसलिए 2 clouds की तुलना करते समय हमेशा वही bounds दें)। length 3 न हो, non-finite हो, या किसी axis पर <code style="color:#22d3bf">hi &lt;= lo</code> हो तो ValueError (tsdf वाला <code style="color:#22d3bf">((xmin,xmax),...)</code> तरीका length 2 मानकर reject होता है)।</p>
+<p style="margin:2px 0 2px 12px">• range से बाहर के points हटाए नहीं जाते, बल्कि <b>किनारे के voxel पर clip होते हैं</b> (किनारों पर झूठी density जमा होती है)। उन्हें काटना हो</p>
+<p>तो पहले ही point cloud की तरफ़ से हटा दें।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: हर side में voxels की संख्या। जिस axis पर <code style="color:#22d3bf">hi − lo</code> 0 हो, उसे बस 1e-9 से बदल दिया जाता है, कोई warning नहीं।</p>
+<p style="margin:2px 0 2px 12px">• खाली point cloud और bounds=None पर numpy का min exception देता है।</p>
+<p style="margin:2px 0 2px 12px">• return value: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy (device पर compute हो तब भी CPU पर लौटाया जाता है)। values counts हैं</p>
+<p>(smoothing के बाद counts का weighted distribution), normalize नहीं की जातीं।</p>
+<p>आगे: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> के input के रूप में।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">points_to_voxel</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

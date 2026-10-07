@@ -5,8 +5,7 @@
 <p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — 同上(主点を 0.5 画素戻す橋). See the runnable examples below for usage.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Inverse of <code style="color:#22d3bf">intrinsics_to_fullseye</code> (shifts the principal point back by 0.5).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>2-D 進化レジストリへ橋渡しした drive の op <code style="color:#22d3bf">intrinsics_to_carla</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>The drive op <code style="color:#22d3bf">intrinsics_to_carla</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. This op has no tunable parameters; neither <code style="color:#22d3bf">a</code> nor <code style="color:#22d3bf">b</code> is used.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

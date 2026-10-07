@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>강건한 평활화 필터. 창 내 20 백분위수와 80 백분위수의 평균을 반환(절사평균, trimmed mean)하여, 극단적으로 밝거나 어두운 이상값(소금-후추 잡음 등)의 영향을 억제한다. a가 창 크기를 3/5/7/9로 나눈다(<code style="color:#22d3bf">_k(a)</code>). b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">mean_sp</code>（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p>HALCON의 <code style="color:#22d3bf">mean_sp</code>(솔트 앤 페퍼 잡음을 억제하는 평균화 연산)에 해당하는 근사 —— 상하 20%를 제외한 범위의 중점을 취한다는 점에서 단순 평균보다 잡음에 강하지만, HALCON 고유의 알고리즘과는 구현이 다르다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Base colour of a wet surface. <b>Diffuse darkens</b> (and specular increases).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
+<p>base_rgb: colour in the dry state, (H,W,3) or (3,). wet: degree of wetness (0–1).</p>
+<p>ior: refractive index of the water film.</p>
+<p>Return value: diffuse colour in the wet state (same shape).</p>
+<p>Why it darkens: total internal reflection occurs inside the water film, so diffuse light is sent back to the surface again and again and absorbed each time. As an approximation, for the dry reflectance ρ a re-absorption equivalent to the internal reflectance Ri = 1 − (1 − Ri0)/n² is applied ―― exactly the phenomenon of wet sand looking dark (the increase in specular reflection is expressed by layering <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> on top).</p>
+<p>The optics op <code style="color:#22d3bf">wetness</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. <code style="color:#22d3bf">a</code> sweeps <code style="color:#22d3bf">wet</code> (default 1) and <code style="color:#22d3bf">b</code> sweeps <code style="color:#22d3bf">ior</code> (default 1.33).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

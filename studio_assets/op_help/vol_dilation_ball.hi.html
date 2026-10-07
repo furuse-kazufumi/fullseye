@@ -15,8 +15,7 @@
 <p><img src="fig/vol_dilation_ball.gif" alt="vol_dilation_ball: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>गोलाकार structuring element से 3D binary dilation। इसके समकक्ष कोई HALCON op निर्धारित नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が球の半径を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">1+int(3a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。球は <code style="color:#22d3bf">x²+y²+z² &lt;= r²</code> で作る（<code style="color:#22d3bf">skimage.morphology.ball</code> と同じ定義）。<code style="color:#22d3bf">_vol_reg_dilate</code>（6近傍固定）より広い近傍を扱え、<code style="color:#22d3bf">a</code> で半径そのものを直接変えられる。</p>
+<p><code style="color:#22d3bf">a</code> sphere की radius को <code style="color:#22d3bf">1〜4</code> (<code style="color:#22d3bf">1+int(3a)</code>) पर बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। sphere <code style="color:#22d3bf">x²+y²+z² &lt;= r²</code> से बनाया जाता है (<code style="color:#22d3bf">skimage.morphology.ball</code> जैसी ही परिभाषा)। यह <code style="color:#22d3bf">_vol_reg_dilate</code> (fixed 6-neighbourhood) से बड़ा neighbourhood संभालता है, और <code style="color:#22d3bf">a</code> से radius को सीधे बदला जा सकता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

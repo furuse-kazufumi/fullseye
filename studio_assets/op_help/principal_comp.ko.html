@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/principal_comp.inputs.jpg">principal_comp: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>3채널에 대해 주성분 분석(PCA)을 수행하여 분산이 큰 순서로 색 공간을 재정렬한다. HALCON의 <code style="color:#22d3bf">principal_comp</code>(다채널 이미지의 주성분을 계산)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解（<code style="color:#22d3bf">np.linalg.eigh</code>）で固有ベクトルを求め、固有値の降順に射影する。各成分は画像内で min-max により個別に [0,1] へ正規化するため、出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。a, b は未使用。</p>
+<p>화소를 (H*W, 3) 행렬로 간주하여 평균을 빼고, 공분산 행렬의 고윳값 분해(<code style="color:#22d3bf">np.linalg.eigh</code>)로 고유벡터를 구해, 고윳값의 내림차순으로 사영한다. 각 성분은 영상 내에서 min-max로 개별적으로 [0,1]로 정규화하므로, 출력의 밝기는 원본 영상의 스케일과 무관해진다(정규화 후에는 매번 풀 레인지). a, b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

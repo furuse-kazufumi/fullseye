@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_ellipse_contour.chain.jpg">hx_fit_ellipse_contour: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Passt aus den zweiten Momenten eine Ellipse an und liefert das Achsenverhältnis (klein/groß: 1 beim Kreis, gegen 0 je länglicher).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>全 contour の点をまとめて座標共分散行列の固有値 <code style="color:#22d3bf">λmin, λmax</code> を取り、<code style="color:#22d3bf">sqrt(λmin/λmax)</code>(主軸方向の標準偏差の比 = 慣性楕円の短軸/長軸)を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満、または <code style="color:#22d3bf">λmax &lt;= 1e-9</code>(全点一致)なら 0.0。負の固有値は 0 に clip する。</p>
-<p>1 に近いほど等方(真円)、0 に近いほど細長い。楕円境界を当てはめる代数的フィットではなく点群の 2 次モーメントなので、点の密度の偏りや欠けた弧では軸比が変わる。楕円の傾き・中心は返さない(<code style="color:#22d3bf">orientation_xld</code> / <code style="color:#22d3bf">area_center_xld</code>)。<code style="color:#22d3bf">cv2.fitEllipse</code> 版は <code style="color:#22d3bf">elliptic_axis_xld</code>。楕円からの逸脱量は <code style="color:#22d3bf">hx_dist_ellipse_contour</code>。</p>
+<p>Fasst die Punkte aller Konturen zusammen, nimmt die Eigenwerte <code style="color:#22d3bf">λmin, λmax</code> der Koordinaten-Kovarianzmatrix und gibt <code style="color:#22d3bf">sqrt(λmin/λmax)</code> (das Verhältnis der Standardabweichungen entlang der Hauptachsen = Neben-/Hauptachse der Trägheitsellipse) als <code style="color:#22d3bf">np.float64</code> zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 bei weniger als 3 Punkten oder <code style="color:#22d3bf">λmax &lt;= 1e-9</code> (alle Punkte fallen zusammen). Negative Eigenwerte werden auf 0 geclippt.</p>
+<p>Nahe 1 heißt isotrop (echter Kreis), nahe 0 heißt langgestreckt. Es ist das Moment 2. Ordnung der Punktmenge, kein algebraischer Fit einer Ellipsengrenze, daher ändert sich das Achsverhältnis bei ungleichmäßiger Punktdichte oder fehlenden Bögen. Neigung und Mittelpunkt der Ellipse werden nicht zurückgegeben (<code style="color:#22d3bf">orientation_xld</code> / <code style="color:#22d3bf">area_center_xld</code>). Die <code style="color:#22d3bf">cv2.fitEllipse</code>-Version ist <code style="color:#22d3bf">elliptic_axis_xld</code>. Die Abweichung von einer Ellipse liefert <code style="color:#22d3bf">hx_dist_ellipse_contour</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Felzenszwalb의 그래프 기반 영역 분할 경계를 반환한다(<code style="color:#22d3bf">skimage.segmentation.felzenszwalb</code>, 대응하는 HALCON 연산자 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> はクラスタの粗さを決める <code style="color:#22d3bf">scale</code> を 40〜540 に振り（大きいほど大きな塊にまとまる）、<code style="color:#22d3bf">b</code> は最小成分サイズを 15〜100 に振る（<code style="color:#22d3bf">min_size = round(15+b*85)</code>）。戻り値はラベル画像の外側境界（region）で、真の物体輪郭に沿いやすい。</p>
+<p><code style="color:#22d3bf">a</code>는 클러스터의 거칠기를 정하는 <code style="color:#22d3bf">scale</code>을 40~540 범위에서 바꾸고(클수록 큰 덩어리로 뭉친다), <code style="color:#22d3bf">b</code>는 최소 성분 크기를 15~100 범위에서 바꾼다(<code style="color:#22d3bf">min_size = round(15+b*85)</code>). 반환값은 라벨 영상의 바깥쪽 경계(region)이며, 실제 물체 윤곽을 따르기 쉽다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

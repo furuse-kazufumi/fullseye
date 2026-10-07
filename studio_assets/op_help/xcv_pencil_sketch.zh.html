@@ -13,9 +13,8 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>OpenCV 的 pencilSketch（铅笔画风格渲染）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>エッジ保存平滑化とドッジ合成で鉛筆デッサン風の白黒スケッチを作る(返り値のうちグレースケール版のみ使用し、カラー版は捨てている)。</p>
-<p><code style="color:#22d3bf">a</code> が平滑化の空間範囲 <code style="color:#22d3bf">sigma_s</code> を 20〜100 で振る。<code style="color:#22d3bf">b</code> は色差許容 <code style="color:#22d3bf">sigma_r</code>(0.05〜0.2)と陰影の濃さ <code style="color:#22d3bf">shade_factor</code> (0.02〜0.08)の両方を同時に振る(2 つのパラメータを 1 つのノブにまとめている)。</p>
+<p>用保边平滑和减淡(dodge)合成生成铅笔素描风格的黑白草图(返回值中只使用灰度版，彩色版被丢弃)。</p>
+<p><code style="color:#22d3bf">a</code> 将平滑的空间范围 <code style="color:#22d3bf">sigma_s</code> 在 20~100 之间调节。<code style="color:#22d3bf">b</code> 同时调节色差容许 <code style="color:#22d3bf">sigma_r</code>(0.05~0.2)和阴影浓度 <code style="color:#22d3bf">shade_factor</code> (0.02~0.08)两者(把 2 个参数合并到 1 个旋钮上)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -10,8 +10,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Line (line-segment) detection via the probabilistic Hough transform (a single scalar feature, OpenCV implementation). First creates an edge image with Canny, then uses a voting scheme to find sets of edge pixels arranged in a line and detects them as segments - here, only the number of detected segments is returned (0 if none).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)に相当(近似。線のパラメータではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a は投票数のしきい値(直線と認める最低票数)を 20〜60 に、b は最小線分長を 10〜30 に振る。Canny の内部しきい値(50, 150)と maxLineGap(5)は固定。</p>
+<p>Corresponds to HALCON&#x27;s <code style="color:#22d3bf">hough_lines</code> (Detect lines in edge images with the help of the Hough transform and returns it in HNF.) (approximation: only the number of lines, not the line parameters). The implementation is <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> -- a sweeps the vote threshold (minimum number of votes to accept a straight line) over 20-60, and b sweeps the minimum segment length over 10-30. Canny&#x27;s internal thresholds (50, 150) and maxLineGap (5) are fixed.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

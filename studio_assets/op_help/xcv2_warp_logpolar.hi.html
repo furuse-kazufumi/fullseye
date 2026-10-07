@@ -11,8 +11,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Log-polar transform से image को (radius, कोण) plane में map करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">cv2.warpPolar</code> の <code style="color:#22d3bf">WARP_POLAR_LOG</code> モードを使う。中心は画像中心、最大半径は <code style="color:#22d3bf">min(H, W)/2</code>。出力の行方向が対数半径、列方向が角度に対応する。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。拡大縮小・回転を新しい画像上の平行移動に変換できるため、テンプレートマッチングの前処理（Fourier-Mellin 変換の要素技術）として使われる。HALCON に対応する単一オペレータは無い。</p>
+<p><code style="color:#22d3bf">cv2.warpPolar</code> के <code style="color:#22d3bf">WARP_POLAR_LOG</code> mode का उपयोग करता है। केंद्र image का केंद्र है, और अधिकतम radius <code style="color:#22d3bf">min(H, W)/2</code> है। आउटपुट की row दिशा log radius से, और column दिशा कोण से मेल खाती है। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। चूँकि यह scaling और rotation को नई image पर translation में बदल सकता है, इसलिए इसे template matching की preprocessing (Fourier-Mellin transform की एक मूल तकनीक) के रूप में उपयोग किया जाता है। HALCON में इसके समकक्ष कोई एक operator नहीं है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

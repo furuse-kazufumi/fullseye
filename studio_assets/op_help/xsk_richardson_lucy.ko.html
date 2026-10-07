@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Richardson-Lucy 디컨볼루션. 흐림을 3x3 평균 커널(box PSF)로 가정하여 반복적으로 선명화한다(<code style="color:#22d3bf">skimage.restoration.richardson_lucy</code>를 그대로 호출).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を 2〜17 回の範囲で振る(回数が多いほど強く先鋭化するが、ノイズ増幅やリンギングも増える)。<code style="color:#22d3bf">b</code> は未使用。PSF は実際のぼけ量に関わらず固定の 3x3 box を仮定するため、真の劣化過程と一致しない画像では改善が限定的、または悪化することがある。</p>
+<p><code style="color:#22d3bf">a</code>가 반복 횟수를 2~17회 범위에서 바꾼다(횟수가 많을수록 강하게 선명화하지만, 잡음 증폭이나 링잉도 늘어난다). <code style="color:#22d3bf">b</code>는 사용하지 않는다. PSF는 실제 흐림 정도와 관계없이고정된 3x3 box를 가정하므로, 실제 열화 과정과 일치하지 않는 영상에서는 개선이 제한적이거나, 오히려 악화될 수 있다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

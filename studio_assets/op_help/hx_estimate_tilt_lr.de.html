@@ -9,12 +9,11 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lee-Rosenfeld: der Azimut-Tilt der Lichtquelle = atan2(&lt;Ey&gt;, &lt;Ex&gt;) (die mittlere Gradientenrichtung). Auf [0,1] normiert.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">Ex</code>(列方向)・<code style="color:#22d3bf">Ey</code>(行方向)を画像全体で平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に現れるという Lee-Rosenfeld の推定。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと <code style="color:#22d3bf">arctan2(0, 0) = 0</code> で</p>
-<p>0 に落ちる。</p>
-<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
+<p>Mittelt die Sobel-Gradienten <code style="color:#22d3bf">Ex</code> (Spaltenrichtung) und <code style="color:#22d3bf">Ey</code> (Zeilenrichtung) über das ganze Bild und gibt <code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code>, per <code style="color:#22d3bf">(tilt / 2π) mod 1</code> auf [0,1) abgebildet, als <code style="color:#22d3bf">np.float64</code> zurück. Die Schätzung nach Lee-Rosenfeld: Bei einer Lambert-Fläche erscheint das Azimut der Lichtquelle (tilt) in der Richtung des mittleren Gradienten.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0 ist die +Spaltenrichtung, 0.25 die +Zeilenrichtung (im Bild nach unten), und so weiter in diesem Drehsinn. Ist der mittlere Gradient nahezu 0, fällt der Wert über <code style="color:#22d3bf">arctan2(0, 0) = 0</code> auf</p>
+<p>0.</p>
+<p>Da der rohe Mittelwert des Gradienten verwendet wird, zieht es zur Richtung kontrastreicher Bereiche. Vorausgesetzt wird, dass Reflexionsgrad und Form der Oberfläche zufällig sind und nur die Neigung der Beleuchtung die Gesamtverzerrung des Gradienten erzeugt. Die Version, die den Einfluss des lokalen Kontrasts dämpft, ist <code style="color:#22d3bf">hx_estimate_tilt_zc</code>. Der Winkelwert ist periodisch, Werte nahe 0 und 1 bezeichnen also dieselbe Richtung (Vorsicht bei Differenzen).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -11,8 +11,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>진화 탐색이 발견한 고정 파이프라인: <code style="color:#22d3bf">bilateral(a=0.06,b=0.89)</code> → <code style="color:#22d3bf">unsharp(a=0.51,b=0.34)</code> → <code style="color:#22d3bf">bilateral(a=0.04,b=0.24)</code> → <code style="color:#22d3bf">lowpass(a=0.75,b=0.59)</code> → <code style="color:#22d3bf">gopen(a=0.38,b=1.00)</code> → <code style="color:#22d3bf">unsharp(a=0.78,b=0.68)</code>(평활화와 언샤프 마스크를 번갈아 겹치고, 로우패스와 그레이스케일 열림 연산으로 정리한 뒤 다시 샤프닝하는 6단계).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は凍結済みで未使用。binarize 課題（IoU）でロック済みホールドアウト 0.75、手作りベースライン 0.62 を上回るが、train 0.91 / holdout0.95 に対し locked_holdout は 0.75 まで落ちる —— 分割ごとの差を隠さず書く（feedback_benchmark_honest_disclosure）。HALCON に対応する単一オペレータは無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 동결되어 사용하지 않는다. binarize 과제(IoU)에서 잠긴 홀드아웃 0.75로 수작업 베이스라인 0.62를 웃돌지만, train 0.91 / holdout 0.95에 비해 locked_holdout은 0.75까지 떨어진다 —— 분할마다의 차이를 숨기지 않고 적는다(feedback_benchmark_honest_disclosure). HALCON에 대응하는 단일 오퍼레이터는 없다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>를 0에서 1까지 변화시켜도 <b>출력이 바뀌지 않는다</b>(5가지 입력으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 패밀리 가이드</a></p>

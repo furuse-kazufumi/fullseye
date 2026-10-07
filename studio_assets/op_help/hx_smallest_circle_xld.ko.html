@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모든 contour 점의 최소 포함원(근사=무게중심을 중심으로)의 반지름을 정규화 feature 로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 <code style="color:#22d3bf">r</code> を求め、<code style="color:#22d3bf">r / max(H, W)</code> を <code style="color:#22d3bf">np.float64</code> で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の近似で、半径は真値以上になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 1 つも無ければ 0.0(有効な値 0 と区別できない)。</p>
-<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが変わると値が変わる。円らしさを測りたいなら <code style="color:#22d3bf">hx_fit_circle_contour</code>(残差)や <code style="color:#22d3bf">circularity_xld</code>。region 版の厳密解は <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
+<p>contour dict의 모든 contour의 점을 모아, 점의 평균(무게중심)을 중심으로 하여 가장 먼 점까지의 거리 <code style="color:#22d3bf">r</code>을 구하고, <code style="color:#22d3bf">r / max(H, W)</code>를 <code style="color:#22d3bf">np.float64</code>로 반환한다. 진짜 최소 포함원(중심도 최적화)이 아니라 &quot;무게중심을 중심으로 하는 포함원&quot;의근사이며, 반지름은 참값 이상이 된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 점이 1개도 없으면 0.0(유효한 값 0과 구별할 수 없다).</p>
+<p>contour가 여럿이어도 1개의 원으로 감싼다(contour마다가 아님). 정규화는 영상의 긴 변이므로, 같은 형태라도 영상 크기가바뀌면 값이 바뀐다. 원다움을 재고 싶다면 <code style="color:#22d3bf">hx_fit_circle_contour</code>(잔차)나 <code style="color:#22d3bf">circularity_xld</code>. region판의 엄밀해는 <code style="color:#22d3bf">r2_smallest_circle</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

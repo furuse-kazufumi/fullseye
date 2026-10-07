@@ -12,23 +12,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_radius_outlier_removal.inputs.jpg">tb_radius_outlier_removal: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반경 radius 이내의 이웃 수가 min_neighbors 미만인 점을 제거한다(고립점 제거).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各点を中心に半径 <code style="color:#22d3bf">radius</code> の球を張り、その中に居る他点の数が <code style="color:#22d3bf">min_neighbors</code> に満たない点を「孤立した粒」として落とす。統計的手法より局所的・直接的で、センサの実スケールが分かっているときにしきい値を決めやすい。</p>
+<p>각 점을 중심으로 반지름 <code style="color:#22d3bf">radius</code>의 구를 펼치고, 그 안에 있는 다른 점의 수가 <code style="color:#22d3bf">min_neighbors</code> 에 미치지 못하는 점을 &quot;고립된 알갱이&quot;로 보고 떨어뜨린다. 통계적 방법보다 국소적·직접적이어서, 센서의 실제 스케일을 알고 있을 때 임계값을 정하기 쉽다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>radius : float</p>
-<p>近傍とみなす球の半径(&gt; 0)。</p>
+<p>근방으로 보는 구의 반지름(&gt; 0).</p>
 <p>min_neighbors : int</p>
-<p>残すのに必要な近傍数(自分自身は数えない、既定 8)。</p>
+<p>남기는 데 필요한 근방 수(자기 자신은 세지 않음, 기본값 8).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>살아남은 점(원래 순서를 유지).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。</p>
+<p>각 입력 점을 남길지(True=남김).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p><code style="color:#22d3bf">radius &lt;= 0</code> は ValueError。空入力は空を返す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">radius_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">min_neighbors</code>(既定 8)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">radius &lt;= 0</code>은 ValueError. 빈 입력은 빈 것을 반환한다(graceful).</p>
+<p>2-D 진화 레지스트리에 연결한 3d op <code style="color:#22d3bf">radius_outlier_removal</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞춰 두었다. <code style="color:#22d3bf">a</code>가 <code style="color:#22d3bf">min_neighbors</code>(기본값 8)를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

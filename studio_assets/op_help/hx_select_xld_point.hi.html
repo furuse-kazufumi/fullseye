@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.inputs.jpg">hx_select_xld_point: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>केवल उन contours को चुनता है जिनके bounding rectangle में query point (normalised a,b) है (filter)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> が、contour の外接軸並行矩形 <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> に入る contour だけを残して返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1 を高さに写す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1 を幅に写す)。</p>
-<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の点でも選ばれる。厳密な内外判定が要るなら <code style="color:#22d3bf">contours_to_region</code> で region 化して <code style="color:#22d3bf">hx_test_region_point</code>。点に最も近い contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>。該当が無ければ空の contour 集合。</p>
+<p>normalized coordinates <code style="color:#22d3bf">(a, b)</code> वाला query point <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> जिन contours के axis-parallel bounding rectangle <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> के अंदर आता है, केवल उन्हें रखकर लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → query point की row (0 से 1 को height पर map किया जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → query point का column (0 से 1 को width पर map किया जाता है)।</p>
+<p>test bounding rectangle पर होता है, contour के अंदर (polygon के अंदर/बाहर) पर नहीं, इसलिए L-आकार या ring-आकार के contour में contour के बाहर का point भी उसे select कर सकता है। exact अंदर/बाहर test चाहिए तो <code style="color:#22d3bf">contours_to_region</code> से region बनाकर <code style="color:#22d3bf">hx_test_region_point</code> लगाएँ। point के सबसे पास वाले contour तक की distance <code style="color:#22d3bf">hx_distance_pc</code> देता है। कुछ match न हो तो खाली contour set।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>等高线提取(marching squares)。在灰度图像上追踪与指定阶层值相交的曲线,并以子像素精度的轮廓坐标序列集合的形式返回 —— 与二值轮廓提取不同之处在于,它不仅能处理二值图像的外周,还能处理连续值的等高线。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON に直接対応するものは無い(空欄)。実装は <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(<code style="color:#22d3bf">contour</code> 型)。</p>
+<p>HALCON 中没有直接对应的算子（空栏）。实现为 <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code> 并丢弃顶点数少于 3 的碎片 —— a 把等高线的水平（阈值）在 0.2〜0.7 之间调节。b 未使用。返回值是包含图像形状和轮廓坐标数组列表的字典（<code style="color:#22d3bf">contour</code> 型）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

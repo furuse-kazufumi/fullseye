@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_projection.b.jpg">m1_measure_projection: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측정용 캘리퍼 선(직선)을 이미지에 대고, 수직 방향으로 평균한 밝기 프로파일의 평균값을 반환한다(HALCON <code style="color:#22d3bf">measure_projection</code>에 해당: 사각형/원호에 수직인 1차원 투영을 추출).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>キャリパー線は画像の端から端まで引かれ、<code style="color:#22d3bf">a</code> で向きを <code style="color:#22d3bf">theta = a*pi</code>に振る（0＝横方向、0.5＝斜め45度、1＝横方向の逆向き）。<code style="color:#22d3bf">b</code> は線を法線方向にずらす垂直オフセット（0〜1、0.5 が画像中心を通る）。線に沿って幅 1px 分の帯を平均サンプリングし（真の「射影」）、その平均輝度（[0,1]）を feature として返す。線が画像に掛からない/画像が小さすぎる場合は 0.0 を返す。</p>
+<p>캘리퍼 선은 영상의 끝에서 끝까지 그어지며, <code style="color:#22d3bf">a</code>로 방향을 <code style="color:#22d3bf">theta = a*pi</code>로 바꾼다(0 = 가로 방향, 0.5 = 대각 45도, 1 = 가로 방향의 역방향). <code style="color:#22d3bf">b</code>는 선을 법선 방향으로 옮기는 수직 오프셋(0~1, 0.5가 영상 중심을 지난다). 선을 따라 폭 1px만큼의 띠를 평균 샘플링하고(진정한 &quot;사영&quot;), 그 평균 휘도([0,1])를 feature로 반환한다. 선이 영상에 걸치지 않거나 영상이 너무 작으면 0.0을 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

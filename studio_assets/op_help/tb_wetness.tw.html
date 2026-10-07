@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_wetness.inputs.jpg">tb_wetness: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>潮濕表面的基底色。<b>漫反射變暗</b>（同時鏡面反射增加）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>base_rgb: 乾いた状態の色 (H,W,3) または (3,)。wet: 濡れ具合(0–1)。</p>
-<p>ior: 水膜の屈折率。</p>
-<p>返り値: 濡れた状態の拡散色(同形)。</p>
-<p>なぜ暗くなるか: 水膜の内側で全反射が起き、拡散光が何度も表面へ戻されてそのたびに吸収される。近似として、乾いた反射率 ρ に対し内部反射率 Ri = 1 − (1 − Ri0)/n² 相当の再吸収を掛ける ―― 濡れた砂が黒く見える現象そのもの(鏡面が増えるのは <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> を重ねて表す)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">wetness</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">wet</code>(既定 1)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">ior</code>(既定 1.33)を振る。</p>
+<p>base_rgb：乾燥狀態的顏色 (H,W,3) 或 (3,)。wet：濕潤程度(0–1)。</p>
+<p>ior：水膜的折射率。</p>
+<p>回傳值：濕潤狀態的漫射色(同形狀)。</p>
+<p>為什麼會變暗：水膜內側發生全反射，漫射光一次次被送回表面，每次都被吸收。作為近似，對乾燥反射率 ρ 乘上相當於內部反射率 Ri = 1 − (1 − Ri0)/n² 的再吸收 ―― 正是濕沙看起來發黑的現象(鏡面反射增加則以疊加 <code style="color:#22d3bf">clearcoat_shade(coat=wet)</code> 表示)。</p>
+<p>橋接到 2-D 演化註冊表的 optics op <code style="color:#22d3bf">wetness</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">wet</code>(預設 1)，<code style="color:#22d3bf">b</code> 調整 <code style="color:#22d3bf">ior</code>(預設 1.33)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

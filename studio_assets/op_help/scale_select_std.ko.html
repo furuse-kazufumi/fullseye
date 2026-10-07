@@ -14,11 +14,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화소마다 <b>창의 크기를 고르는</b> 국소 표준편차(Lepski / ICI 규칙).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>窓を広げるほど推定は安定するが(相対標準誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code>)、縁がにじんで分解能が落ちる —— <b>大きさを 1 つ選ぶ限りこの矛盾は解けない</b>。解き方は「時間でも場所でもなく<b>場所ごとに別の答えを持つ</b>」こと: 小さい窓から順に、推定値の信頼区間が交わり続ける間だけ窓を広げ、交わらなくなった 1 つ手前で止める。平坦な所では大きな窓(安定)、縁の近くでは小さな窓(にじまない)が自動で選ばれる。</p>
-<p><code style="color:#22d3bf">a</code> が試す窓の上限(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> のどこまでか)、<code style="color:#22d3bf">b</code> が信頼区間の倍率 <code style="color:#22d3bf">gamma</code>(1.0〜3.0)。<code style="color:#22d3bf">gamma</code> を大きくすると窓が伸びやすくなる(安定寄り)。</p>
-<p><b><code style="color:#22d3bf">local_std</code> との関係</b>: <code style="color:#22d3bf">local_std</code> は窓を固定する。平坦部の推定を締めたくて窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。<b>縁の鋭さを保ったまま平坦部の誤差だけ下げられる</b>のが取り柄で、代わりに計算量が窓の数だけ増える。</p>
-<p><b>適用条件</b>: (1) 「交わるか」の判定は誤差限界が正しいことに依存する —— 白色雑音でない(空間相関のある)雑音では窓が伸びすぎる。(2) <code style="color:#22d3bf">gamma</code> が小さすぎると常に最小窓が選ばれ、<code style="color:#22d3bf">local_std</code> の 3x3 と同じになる(効いていないときの見分け方)。</p>
+<p>창을 넓힐수록 추정은 안정되지만(상대 표준오차 <code style="color:#22d3bf">1/sqrt(2(n-1))</code>), 가장자리가 번져서분해능이 떨어진다 —— <b>크기를 1개 고르는 한 이 모순은 풀리지 않는다</b>. 푸는 방법은 &quot;시간도장소도 아니라 <b>장소마다 다른 답을 가지는</b>&quot; 것: 작은 창부터 차례로, 추정값의 신뢰구간이계속 겹치는 동안만 창을 넓히고, 겹치지 않게 된 것의 1개 앞에서 멈춘다. 평탄한 곳에서는 큰 창(안정), 가장자리 근처에서는 작은 창(번지지 않음)이 자동으로 선택된다.</p>
+<p><code style="color:#22d3bf">a</code>가 시험할 창의 상한(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> 중 어디까지인가), <code style="color:#22d3bf">b</code>가 신뢰구간의 배율 <code style="color:#22d3bf">gamma</code>(1.0〜3.0). <code style="color:#22d3bf">gamma</code>를 크게 하면 창이 늘어나기 쉬워진다(안정 쪽).</p>
+<p><b><code style="color:#22d3bf">local_std</code>와의 관계</b>: <code style="color:#22d3bf">local_std</code>는 창을 고정한다. 평탄부의 추정을 조이고 싶어창을 넓히면 가장자리가 번진다는 거래를 이쪽은 장소마다 푼다. <b>가장자리의 날카로움을 유지한 채평탄부의 오차만 낮출 수 있는</b> 것이 장점이며, 대신 계산량이 창의 수만큼 늘어난다.</p>
+<p><b>적용 조건</b>: (1) &quot;겹치는가&quot;의 판정은 오차 한계가 올바른지에 의존한다 —— 백색 잡음이 아닌(공간 상관이 있는) 잡음에서는 창이 너무 늘어난다. (2) <code style="color:#22d3bf">gamma</code>가 너무 작으면 항상최소 창이 선택되어 <code style="color:#22d3bf">local_std</code>의 3x3과 같아진다(효과가 없을 때 알아보는 법).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

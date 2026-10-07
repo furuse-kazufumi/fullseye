@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_points.chain.jpg">hx_dist_ellipse_points: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The maximum distance of the contour points from the fitted ellipse boundary (the per-point distances aggregated by max; a feature).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">hx_dist_ellipse_contour</code> と同じ手順(全点をまとめ、重心と共分散の固有分解から半軸 <code style="color:#22d3bf">2*sqrt(λ)</code> の楕円を当て、各点の正規化半径 <code style="color:#22d3bf">rad</code> を計算)で、<code style="color:#22d3bf">|rad - 1|</code> の平均ではなく最大値を 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。</p>
-<p>最大値なので外れ点 1 つで決まる(雑音に敏感)。値は楕円の正規化座標での差で画素距離ではない。半軸 2σ の取り方は境界だけの点群に対して sqrt(2) 倍大きいため、完全な楕円輪郭でも約 0.29 の下駄が乗る点は平均版と同じ。平均版は <code style="color:#22d3bf">hx_dist_ellipse_contour</code>、外れ点を減らすなら前段に <code style="color:#22d3bf">smooth_contours_xld</code>。</p>
+<p>Follows the same procedure as <code style="color:#22d3bf">hx_dist_ellipse_contour</code> (pool all points, fit an ellipse with semi-axes <code style="color:#22d3bf">2*sqrt(λ)</code> from the centroid and the eigendecomposition of the covariance, compute each point&#x27;s normalised radius <code style="color:#22d3bf">rad</code>), but returns the maximum of <code style="color:#22d3bf">|rad - 1|</code> instead of the mean, capped at 1, as <code style="color:#22d3bf">np.float64</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there are fewer than 4 points.</p>
+<p>Being a maximum, 1 outlier decides it (sensitive to noise). The value is a difference in the ellipse&#x27;s normalised coordinates, not a pixel distance. As with the mean version, the 2σ semi-axes are sqrt(2) times too large for a boundary-only point set, so even a perfect ellipse outline carries an offset of about 0.29. The mean version is <code style="color:#22d3bf">hx_dist_ellipse_contour</code>; to reduce outliers, put <code style="color:#22d3bf">smooth_contours_xld</code> in front.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

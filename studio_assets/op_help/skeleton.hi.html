@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/skeleton.inputs.jpg">skeleton: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Topology बनाए रखते हुए region को 1 pixel चौड़ी skeleton line में पतला करता है (<code style="color:#22d3bf">skimage.morphology.skeletonize</code>)। शाखाओं और सिरों की positions बची रहती हैं, इसलिए शाखाओं वाले shapes के विश्लेषण (उँगलियों की संख्या गिनना आदि) में अक्सर इस्तेमाल होता है। HALCON के <code style="color:#22d3bf">skeleton</code> (Compute the skeleton of a region.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। जिस environment में skimage नहीं है, वहाँ यह branch call नहीं की जा सकती।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

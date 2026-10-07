@@ -16,17 +16,16 @@
 <p><img src="fig/tb_region_growing.gif" alt="tb_region_growing: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>normal similarity से region growing करता है और जुड़े हुए smooth regions को समान label देता है (curvature gate के बिना variant)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>हर point को k-nearest-neighbour graph पर BFS से बढ़ाया जाता है, और पड़ोसी q को उसी region में तभी जोड़ा जाता है जब &quot;normal n_p और n_q के बीच का कोण <code style="color:#22d3bf">angle_thresh_deg</code> से कम&quot; हो। plane के अंदर के normal लगभग समानांतर होते हैं, इसलिए वे एक region में जुड़ते हैं; अलग दिशा वाले faces की सीमा पर कोण खुल जाता है और जुड़ाव टूटता है → हर face का अलग region। normal का sign तय नहीं होता (PCA से आता है), इसलिए जाँच <code style="color:#22d3bf">|n_p·n_q|</code> से होती है (आगे और पीछे को समान माना जाता है)।</p>
 <p>Args:</p>
-<p>points: (N,3) 点群。</p>
-<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
-<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
-<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>points: (N,3) point cloud।</p>
+<p>normals: (N,3) unit normal। None हो तो <code style="color:#22d3bf">pointcloud.estimate_normals</code> से PCA estimate।</p>
+<p>angle_thresh_deg: पड़ोसी normal के कोण की अनुमत ऊपरी सीमा [degree]। (0,180) की range में।</p>
+<p>k: neighbour की संख्या (kNN graph की degree)।</p>
 <p>Returns:</p>
-<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
-<p>空入力は shape (0,) を返す。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">region_growing</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">angle_thresh_deg</code>(既定 15)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">k</code>(既定 20)を振る。</p>
+<p>labels: (N,) int। हर connected smooth region को 0,1,2,... दिया जाता है। <b>min_region_size से छोटे region (isolated point, गलत दिशा वाला कचरा) को -1 (noise / unassigned)</b> = साझा contract (-1=noise) के अनुसार।</p>
+<p>खाली input पर shape (0,) लौटता है।</p>
+<p>2-D evolution registry में bridge किया गया 3d का op <code style="color:#22d3bf">region_growing</code>। implementation वही है; केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुरूप किया गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">angle_thresh_deg</code> (default 15) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">k</code> (default 20) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

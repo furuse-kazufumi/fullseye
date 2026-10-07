@@ -13,12 +13,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pc.chain.jpg">hx_distance_pc: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從查詢點(正規化 a,b)到 contour 的最小距離(feature)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">q = (a*H, b*W)</code> から、全 contour の頂点までのユークリッド距離の最小値を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1)。</p>
-<p style="margin:2px 0 2px 12px">• contour の点が無ければ 0.0(点が contour 上にある場合と区別できない)。</p>
-<p>距離は頂点までであって線分までではないので、点の間隔が粗い contour では真の距離より最大で「点間隔の半分」程度大きく出る。細かい contour(<code style="color:#22d3bf">edges_sub_pix</code> の 1 画素刻み)ではほぼ一致する。region までの距離は <code style="color:#22d3bf">hx_distance_pr</code>、水平線からの距離は <code style="color:#22d3bf">hx_distance_sc</code>、点を含む contour の選択は <code style="color:#22d3bf">hx_select_xld_point</code>。</p>
+<p>回傳從正規化座標 <code style="color:#22d3bf">(a, b)</code> 的查詢點 <code style="color:#22d3bf">q = (a*H, b*W)</code> 到全部 contour 頂點的歐氏距離的最小值, 除以 <code style="color:#22d3bf">max(H, W)</code> 並以 1 飽和截頂後的 <code style="color:#22d3bf">np.float64</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 查詢點的列(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 查詢點的行(0〜1)。</p>
+<p style="margin:2px 0 2px 12px">• contour 沒有點時為 0.0(與點在 contour 上的情況無法區分)。</p>
+<p>距離是到頂點而不是到線段,因此對點間隔粗的 contour,會比真實距離最多大約「點間隔的一半」左右。對細密的 contour(<code style="color:#22d3bf">edges_sub_pix</code> 的 1 像素步長)則幾乎一致。到 region 的距離見 <code style="color:#22d3bf">hx_distance_pr</code>,到水平線的距離見 <code style="color:#22d3bf">hx_distance_sc</code>,選擇包含點的 contour 見 <code style="color:#22d3bf">hx_select_xld_point</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

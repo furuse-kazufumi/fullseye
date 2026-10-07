@@ -11,14 +11,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity.chain.jpg">eccentricity: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 <code style="color:#22d3bf">match</code> 排序的 3 分量向量返回三个由椭圆参数导出的形状特征 <code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code>(单个标量无法表示三个值,与 <code style="color:#22d3bf">area_center</code> 形式相同)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> を同じモーメントを持つ楕円の半径、<code style="color:#22d3bf">A</code> を面積として</p>
-<p><code style="color:#22d3bf">Anisometry = Ra/Rb</code>(細長さ。円で 1、下限 1)</p>
-<p><code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>(楕円をどれだけ埋めていないか。円で 1)</p>
-<p><code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>(円で 0)</p>
-<p>HALCON の <code style="color:#22d3bf">eccentricity</code>（Shape features derived from the ellipse parameters.）<b>と同じ 3 値・同じ式</b>。3 つとも無次元なので正規化していない。</p>
-<p>★2026-09-26 まで skimage の離心率 <code style="color:#22d3bf">sqrt(1-(b/a)²)</code> という<b>3 つのどれでもない量</b>を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対 20.65)。1 スカラーでは 3 値を表せないため、<code style="color:#22d3bf">area_center</code> と同じ <code style="color:#22d3bf">match</code> ソートに変えた。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p>領域が空のときは円の値 <code style="color:#22d3bf">(1, 1, 0)</code> を返す fail-soft 仕様(成分数は入力で変わらない)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>设 <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> 为具有相同矩的椭圆的半径,<code style="color:#22d3bf">A</code> 为面积:</p>
+<p><code style="color:#22d3bf">Anisometry = Ra/Rb</code>(细长程度。圆为 1,下限 1)</p>
+<p><code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>(椭圆有多少没有被填满。圆为 1)</p>
+<p><code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>(圆为 0)</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">eccentricity</code>（Shape features derived from the ellipse parameters.）<b>是相同的 3 个值、相同的公式</b>。3 个都是无量纲量,因此未做归一化。</p>
+<p>★2026-09-26 之前以 1 个标量返回 skimage 的离心率 <code style="color:#22d3bf">sqrt(1-(b/a)²)</code>,这是<b>3 个中哪一个都不是的量</b>(圆上 0.0 对 HALCON 的 1.0,4x80 的棒上 0.999 对 20.65)。由于 1 个标量无法表示 3 个值,已改为与 <code style="color:#22d3bf">area_center</code> 相同的 <code style="color:#22d3bf">match</code> sort。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
+<p>区域为空时按 fail-soft 规格返回圆的值 <code style="color:#22d3bf">(1, 1, 0)</code>(分量数不随输入而变)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

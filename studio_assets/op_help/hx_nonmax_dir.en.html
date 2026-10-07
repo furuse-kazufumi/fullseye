@@ -13,16 +13,15 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Non-maximum suppression along the gradient direction (Canny&#x27;s NMS stage). Thins edges to one pixel.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Sobel で <code style="color:#22d3bf">gx</code>(列方向)・<code style="color:#22d3bf">gy</code>(行方向)を取り、振幅 <code style="color:#22d3bf">hypot(gx, gy)</code> と方向 <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code> を求める。方向を 45° 刻みの 4 区分に量子化し、各画素をその区分に対応する 2 つの隣接画素と比べて <code style="color:#22d3bf">mag &gt;= 両隣</code> の画素だけ残す(それ以外は 0)。残った振幅を min-max で [0,1] に正規化し、<code style="color:#22d3bf">a*0.3</code> 未満を 0 に落とす。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 弱エッジのしきい値 <code style="color:#22d3bf">a*0.3</code>(正規化後の値に対して。a=0 でしきい値なし)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>注意点:</p>
-<p style="margin:2px 0 2px 12px">• 隣接比較は <code style="color:#22d3bf">np.roll</code> なので画像端では反対側の画素と比較される(端 1 画素は信用しない)。</p>
-<p style="margin:2px 0 2px 12px">• 比較が <code style="color:#22d3bf">&gt;=</code> のため、同じ振幅が並ぶ理想的なステップエッジは 2 画素幅で残る(1 画素にはならない)。</p>
-<p style="margin:2px 0 2px 12px">• 現状の実装では 45° と 135° の区分で比較する隣接画素の対が入れ替わっており、斜めのエッジは勾配方向でなく</p>
-<p>エッジに沿った方向で比較される。そのため水平・垂直エッジは細線化されるが、斜めエッジはほとんど細線化されない(ぼかした対角ステップエッジで 1400 画素前後がそのまま残る実測)。斜めエッジの細線化が要る場合は <code style="color:#22d3bf">canny</code> や <code style="color:#22d3bf">skeleton</code> を検討する。</p>
-<p><code style="color:#22d3bf">sobel_amp</code> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>。</p>
+<p>Takes <code style="color:#22d3bf">gx</code> (column direction) and <code style="color:#22d3bf">gy</code> (row direction) with Sobel and computes the amplitude <code style="color:#22d3bf">hypot(gx, gy)</code> and the direction <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code>. The direction is quantized into 4 sectors in 45° steps, each pixel is compared with the 2 neighbouring pixels corresponding to its sector, and only pixels with <code style="color:#22d3bf">mag &gt;= both neighbours</code> are kept (others become 0). The remaining amplitude is normalised to [0,1] by min-max, and values below <code style="color:#22d3bf">a*0.3</code> are set to 0.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → weak-edge threshold <code style="color:#22d3bf">a*0.3</code> (applied to the normalised value; no threshold at a=0).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>Points to note:</p>
+<p style="margin:2px 0 2px 12px">• Neighbour comparison uses <code style="color:#22d3bf">np.roll</code>, so at the image border pixels are compared with those on the opposite side (do not trust the 1-pixel border).</p>
+<p style="margin:2px 0 2px 12px">• Because the comparison is <code style="color:#22d3bf">&gt;=</code>, an ideal step edge with equal amplitudes side by side remains 2 pixels wide (it does not become 1 pixel).</p>
+<p style="margin:2px 0 2px 12px">• In the current implementation, the pairs of neighbouring pixels compared for the 45° and 135° sectors are swapped, so diagonal edges are compared not along the gradient direction but</p>
+<p>along the edge. Hence horizontal and vertical edges are thinned, but diagonal edges are hardly thinned at all (measured: around 1400 pixels remain as-is on a blurred diagonal step edge). If diagonal edges need thinning, consider <code style="color:#22d3bf">canny</code> or <code style="color:#22d3bf">skeleton</code>.</p>
+<p>Pass the original gray image, not an amplitude image like <code style="color:#22d3bf">sobel_amp</code> (it differentiates internally). Downstream: <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/transpose_region.inputs.jpg">transpose_region: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역(이진 마스크)을 전치한다(<code style="color:#22d3bf">x.T</code>, 대각선에 대한 반사=행과 열의 교환). 카테고리는 geometry이지만 in/out은 <code style="color:#22d3bf">region</code>이다. 기하 변환의 일종으로 <code style="color:#22d3bf">_sh_geom</code>으로 구현되어 있지만, 전치는 보간을 수반하지 않으므로 <code style="color:#22d3bf">build()</code>의 <code style="color:#22d3bf">_rebinarise</code>를 거쳐도 값은 변하지 않는다(이미 {0,1}인 상태 그대로이다). HALCON의 <code style="color:#22d3bf">transpose_region</code>(Reflect a region about a point.)에 해당한다(HALCON의 &quot;점에 대한 반전&quot;과는 엄밀히 다른 변환으로, 행렬의 전치=대각선에 대한 반전이라는 근사이다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

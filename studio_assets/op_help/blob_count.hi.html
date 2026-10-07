@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/blob_count.chain.jpg">blob_count: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region में connected components की संख्या (HALCON <code style="color:#22d3bf">count_obj</code>)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>2026-08-30: 8 連結既定に修正(HALCON パリティ — <code style="color:#22d3bf">connection</code>/計数の既定は 8 連結。従来は scipy.ndimage.label の既定 = 4 連結で、対角接触した 2 画素を 2 個と数えていた: KNOWN_ISSUES #1)。旧 4 連結は connectivity=4 で。</p>
+<p>2026-08-30: default को 8-connectivity में ठीक किया गया (HALCON parity — <code style="color:#22d3bf">connection</code>/गिनती का default 8-connectivity है। पहले scipy.ndimage.label का default = 4-connectivity था, और तिरछे छूते 2 pixel को 2 गिना जाता था: KNOWN_ISSUES #1)। पुराना 4-connectivity connectivity=4 से मिलता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -16,17 +16,16 @@
 <p><img src="fig/tb_running_gaussian_background.gif" alt="tb_running_gaussian_background: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>프레임별 적응형 단일 가우시안 배경(이동 평균, running mean) → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画素ごとに平均 <code style="color:#22d3bf">mean</code> と分散 <code style="color:#22d3bf">var</code> を持つ単一ガウス背景(Wren の Pfinder)を回し、各フレーム後の <code style="color:#22d3bf">mean</code> を返す。前景判定は <code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code>。<code style="color:#22d3bf">selective=True</code>(既定)では前景と判定した画素の <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">var</code> を<b>更新しない</b>ので、ゆっくり動く物体が背景に溶けない。更新式は <code style="color:#22d3bf">mean += α diff</code>、<code style="color:#22d3bf">var += α (diff^2 - var)</code>、<code style="color:#22d3bf">var</code> の下限は 1e-4。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float はクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code> の学習率。既定 0.02(時定数およそ 50 枚)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: <code style="color:#22d3bf">[0, 100]</code>。前景とみなす標準偏差の倍数。既定 2.5。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_init</code>: <code style="color:#22d3bf">[1e-9, 1]</code>。先頭フレームでの分散の初期値(<code style="color:#22d3bf">[0, 1]</code> 強度の 2 乗)。小さすぎると 2 枚目から全画素が前景になり、<code style="color:#22d3bf">selective</code> で更新が止まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">selective</code>: 前景画素の更新を止めるか。<code style="color:#22d3bf">False</code> なら全画素を常に更新。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64。<code style="color:#22d3bf">t = 0</code> は先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・各範囲)。</p>
-<p>同じモデルの前景マスクは <code style="color:#22d3bf">running_gaussian_foreground</code>(同じ引数で対にするとフレームごとに整合する)。</p>
-<p>2-D 進化レジストリへ橋渡しした videostream の op <code style="color:#22d3bf">running_gaussian_background</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">alpha</code>(既定 0.02)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">k</code>(既定 2.5)を振る。</p>
+<p>화소마다 평균 <code style="color:#22d3bf">mean</code>과 분산 <code style="color:#22d3bf">var</code>를 갖는 단일 가우스 배경(Wren의 Pfinder)을돌리고, 각 프레임 후의 <code style="color:#22d3bf">mean</code>을 반환한다. 전경 판정은 <code style="color:#22d3bf">(frame - mean)^2 &gt; k^2 var</code>. <code style="color:#22d3bf">selective=True</code>(기본값)에서는 전경으로 판정한 화소의 <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">var</code>를 <b>갱신하지 않으므로</b> 천천히 움직이는 물체가 배경에 녹아들지 않는다. 갱신식은 <code style="color:#22d3bf">mean += α diff</code>, <code style="color:#22d3bf">var += α (diff^2 - var)</code>, <code style="color:#22d3bf">var</code>의 하한은 1e-4.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 배열이나 2-D 프레임의 list. 정수는 최댓값으로 <code style="color:#22d3bf">[0, 1]</code> 로 정규화, float는 클립. NaN/Inf는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>의 학습률. 기본값 0.02(시정수 약 50장).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: <code style="color:#22d3bf">[0, 100]</code>. 전경으로 보는 표준편차의 배수. 기본값 2.5.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">var_init</code>: <code style="color:#22d3bf">[1e-9, 1]</code>. 첫 프레임에서의 분산 초기값(<code style="color:#22d3bf">[0, 1]</code> 강도의 2제곱). 너무 작으면 2장째부터 모든 화소가 전경이 되어 <code style="color:#22d3bf">selective</code>로 갱신이 멈춘다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">selective</code>: 전경 화소의 갱신을 멈출지 여부. <code style="color:#22d3bf">False</code>면 모든 화소를 항상 갱신.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64. <code style="color:#22d3bf">t = 0</code>은 첫 프레임 그 자체.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형상·dtype·각 범위).</p>
+<p>같은 모델의 전경 마스크는 <code style="color:#22d3bf">running_gaussian_foreground</code>(같은 인수로 짝을 지으면프레임마다 정합한다).</p>
+<p>2-D 진화 레지스트리로 연결한 videostream의 op <code style="color:#22d3bf">running_gaussian_background</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">alpha</code>(기본값 0.02), <code style="color:#22d3bf">b</code>는 <code style="color:#22d3bf">k</code>(기본값 2.5)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

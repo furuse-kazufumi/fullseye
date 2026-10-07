@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對穿過中心的卡尺線上的邊緣按模糊隸屬度分數篩選後傳回(相當於 HALCON <code style="color:#22d3bf">fuzzy_measure_pos</code>:以模糊判定偵測垂直於矩形/圓弧的直線邊緣)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code> と同じ。各エッジの振幅を<code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code>（<code style="color:#22d3bf">lo = 0.05*gmax</code>）で [0,1] のファジィスコアに写像し、<code style="color:#22d3bf">b</code>（0〜1）以上のものだけを残す（0/1 のハードしきい値ではなく振幅に応じた連続的な信頼度で選別する点が <code style="color:#22d3bf">measure_pos</code> と違う）。<code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。戻り値は CONTOUR、座標単位はピクセル。</p>
+<p>邊緣偵測與 <code style="color:#22d3bf">m1_measure_pos</code> 相同。以 <code style="color:#22d3bf">(amp - lo) / (gmax - lo)</code>（<code style="color:#22d3bf">lo = 0.05*gmax</code>）把各邊緣的振幅映射為 [0,1] 的模糊分數，只保留不小於 <code style="color:#22d3bf">b</code>（0〜1）者（它不是依 0/1 的硬閾值，而是依與振幅相應的連續信賴度篩選，這點與 <code style="color:#22d3bf">measure_pos</code> 不同）。<code style="color:#22d3bf">a</code> 是線的方向（<code style="color:#22d3bf">theta = a*pi</code>）。回傳值為 CONTOUR，座標單位為像素。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>依<code style="color:#22d3bf">a</code>的值切换3种镜像方式(<code style="color:#22d3bf">a&lt;0.34</code>:上下翻转、<code style="color:#22d3bf">a&lt;0.67</code>:左右翻转、其余:转置)。请注意这是离散的模式选择,而非连续的镜像变换。相当于HALCON的<code style="color:#22d3bf">mirror_image</code>(Mirror an image.)(HALCON以明确的模式参数选择上下/左右/对角,此处则是以<code style="color:#22d3bf">a</code>的值域伪选择的近似)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が鏡映モードを 3 段階で選ぶ。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 从 3 档中选择镜像模式。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -8,8 +8,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰階影像的第 1 個 Hu 不變矩(OpenCV <code style="color:#22d3bf">cv2.HuMoments(cv2.moments(...))[0,0]</code>)。將灰階值本身(而非二值形狀)視為質量分布時，表示旋轉、縮放、平移不變之分布廣度的特徵量(基於二階中心矩)。以 1.0 封頂。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。二値領域の形状記述に使う通常の Hu モーメントとは異なり、濃淡値をそのまま重みとして使う点に注意。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。請注意，與用於描述二值區域形狀的一般 Hu 矩不同，它直接把灰階值用作權重。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

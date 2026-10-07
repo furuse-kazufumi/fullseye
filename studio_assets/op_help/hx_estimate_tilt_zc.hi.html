@@ -9,11 +9,10 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Zheng-Chellappa: normalised gradients की औसत दिशा से tilt का अनुमान लगाता है (local contrast पर निर्भर नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">(Ex, Ey)</code> を各画素で振幅 <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> で割った単位ベクトルにしてから平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す(Zheng-Chellappa の tilt 推定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 角度の規約は <code style="color:#22d3bf">hx_estimate_tilt_lr</code> と同じ(0 が +列方向、0.25 が +行方向)。</p>
-<p>各画素の寄与が方向だけになるため、強いエッジや明るい部分に引きずられにくい。反面、勾配がほぼ 0 の平坦部でも(<code style="color:#22d3bf">1e-9</code> で割った)雑音の方向が等しく 1 票を持つので、平坦な背景が広い画像では推定がぼやける。前段で <code style="color:#22d3bf">gauss_filter</code> を掛けて雑音の勾配を減らすと安定する。</p>
+<p>हर pixel पर Sobel gradient <code style="color:#22d3bf">(Ex, Ey)</code> को उसके magnitude <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> से भाग देकर unit vectors बनाए जाते हैं, उनका औसत लिया जाता है, और <code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code> को <code style="color:#22d3bf">(tilt / 2π) mod 1</code> से [0,1) में map करके <code style="color:#22d3bf">np.float64</code> लौटाया जाता है (Zheng-Chellappa का tilt estimate)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• angle की convention <code style="color:#22d3bf">hx_estimate_tilt_lr</code> जैसी ही है (0 +column direction, 0.25 +row direction)।</p>
+<p>हर pixel का योगदान केवल दिशा होता है, इसलिए यह strong edges या चमकीले हिस्सों की ओर कम खिंचता है। दूसरी ओर, जहाँ gradient लगभग 0 है उन flat हिस्सों में भी (<code style="color:#22d3bf">1e-9</code> से भाग दिए गए) noise की दिशा को बराबर 1 vote मिलता है, इसलिए बड़े flat background वाली image में estimate धुंधला हो जाता है। पहले <code style="color:#22d3bf">gauss_filter</code> लगाकर noise का gradient घटाने से यह stable होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

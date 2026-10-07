@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/moments_region_2nd_invar.chain.jpg">moments_region_2nd_invar: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Hu के invariant moment नंबर 1 (<code style="color:#22d3bf">skimage.measure.moments_hu</code> का <code style="color:#22d3bf">hu[0]</code>) का absolute value। Rotation, scale और translation के प्रति invariant shape descriptor। HALCON के <code style="color:#22d3bf">moments_region_2nd_invar</code> (Geometric moments of regions.) के समकक्ष सन्निकटन (HALCON की अपनी relative invariant moment परिभाषा से सख्ती से अलग है; classic Hu moments से काम चलाया गया है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★<b><code style="color:#22d3bf">moments_region_2nd</code> と同じ数を返す。</b> 向こうが計算している<code style="color:#22d3bf">|μ20+μ02|</code> は定義上 Hu の第 1 不変モーメントそのもので、名前は 2 つでも量は 1 つである。docs/KNOWN_ISSUES.md §52。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★<b>यह <code style="color:#22d3bf">moments_region_2nd</code> जैसी ही संख्या लौटाता है।</b> वह op जो <code style="color:#22d3bf">|μ20+μ02|</code> गणना करता है, वह परिभाषा के अनुसार ठीक Hu का पहला (1) invariant moment है, इसलिए नाम 2 हैं पर मात्रा 1 ही है। docs/KNOWN_ISSUES.md §52।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

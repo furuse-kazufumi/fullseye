@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center.chain.jpg">area_center: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역의 면적과 무게중심을 해상도에 무관한 정규화된 3성분 벡터(면적비 = 면적/이미지 픽셀 수, 정규화된 무게중심 행, 정규화된 무게중심 열)로 반환한다. 스칼라 하나로는 (Area, Row, Column)을 표현할 수 없으므로, <code style="color:#22d3bf">match</code> 정렬(1차원 벡터, <code style="color:#22d3bf">ncc_locate</code>와 같은 형태)로 반환한다는 점이 다른 영역 특징 op와 다르다. 영역이 비어 있을 때는 (0, 0.5, 0.5)(면적 0, 중심=이미지 중심)를 반환하는 fail-soft 사양이다. HALCON의 <code style="color:#22d3bf">area_center</code>(Area and center of regions.)에 해당.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

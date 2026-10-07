@@ -14,23 +14,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_statistical_outlier_removal.inputs.jpg">tb_statistical_outlier_removal: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>जिन points की k-nearest neighbours तक की औसत दूरी global रूप से असामान्य है उन्हें हटाता है (statistical outlier removal)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
+<p>हर point के लिए &quot;उसके k सबसे पास वाले points (खुद को छोड़कर) तक की औसत distance&quot; मापी जाती है, और सभी points के उस distribution के <code style="color:#22d3bf">mean + std_ratio*std</code> से ज़्यादा वाले points को stray points मानकर हटा दिया जाता है। बिखरे हुए stray points साफ़ करने में असरदार है, dense surfaces पर के points बने रहते हैं।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>input point cloud।</p>
 <p>k : int</p>
-<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
+<p>neighbours की संख्या (default 16)। points कम हों तो अंदर <code style="color:#22d3bf">n-1</code> तक घटा दी जाती है।</p>
 <p>std_ratio : float</p>
-<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>threshold कितना ढीला है। जितना बड़ा, points उतनी आसानी से बचते हैं (removal ढीला)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>बचे हुए points (मूल क्रम बना रहता है)।</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
+<p>हर input point रखना है या नहीं (True = रखें)। <code style="color:#22d3bf">points[keep_mask]</code>, <code style="color:#22d3bf">filtered</code> के बराबर है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">statistical_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 16)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">std_ratio</code>(既定 2)を振る。</p>
+<p>points की संख्या &lt; 3 हो तो statistics नहीं बनतीं, इसलिए सभी points रखे जाते हैं (graceful)।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">statistical_outlier_removal</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">k</code> (default 16) और <code style="color:#22d3bf">b</code> से <code style="color:#22d3bf">std_ratio</code> (default 2) बदला जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

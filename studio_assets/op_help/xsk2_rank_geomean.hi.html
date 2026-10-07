@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Rank filter का एक प्रकार, geometric mean filter। <code style="color:#22d3bf">skimage.filters.rank.geometric_mean</code> को 8bit बनाई गई image पर वृत्ताकार structuring element (<code style="color:#22d3bf">skimage.morphology.disk</code>) से लगाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a が構造要素の半径（<code style="color:#22d3bf">1 + int(a*3)</code>、範囲 1〜4）を振る。b は未使用。算術平均より暗い側（小さい値）に強く引っ張られるため、明るいスペックル状のノイズを抑えるのに向く。</p>
+<p>a structuring element की radius (<code style="color:#22d3bf">1 + int(a*3)</code>, range 1-4) को बदलता है। b उपयोग नहीं होता। यह arithmetic mean की तुलना में अंधेरे पक्ष (छोटे मानों) की ओर ज़्यादा खिंचता है, इसलिए चमकीले speckle जैसे noise को दबाने के लिए उपयुक्त है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

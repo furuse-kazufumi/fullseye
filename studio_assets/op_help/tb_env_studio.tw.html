@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_env_studio.inputs.jpg">tb_env_studio: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>攝影棚環境的輻射亮度（方向 -&gt; 亮度）。<b>無彩色</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>ソフトボックス 2 枚 + 天空の勾配 + 細い水平の帯。色を付けないのは、金属の色が環境ではなく <b>Fresnel(n, k) から出ている</b>ことを絵の中で保証するため。<code style="color:#22d3bf">directions</code> は (..., 3) の単位ベクトル(z 上向き)。返り値はその形の (...,)。</p>
-<p>2-D 進化レジストリへ橋渡しした optics の op <code style="color:#22d3bf">env_studio</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">key</code>(既定 12)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">fill</code>(既定 3.2)を振る。</p>
+<p>2 片柔光箱 + 天空漸層 + 細的水平帶。不加顏色是為了在畫面中保證金屬的顏色 <b>來自 Fresnel(n, k)</b>而非環境。<code style="color:#22d3bf">directions</code> 為 (..., 3) 的單位向量(z 向上)。回傳值為該形狀的 (...,)。</p>
+<p>橋接到 2-D 演化註冊表的 optics op <code style="color:#22d3bf">env_studio</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">key</code>(預設 12)，<code style="color:#22d3bf">b</code> 調整 <code style="color:#22d3bf">fill</code>(預設 3.2)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

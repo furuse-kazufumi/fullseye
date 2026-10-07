@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_skeleton.inputs.jpg">morph_skeleton: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擷取區域的骨架線（skeleton）。實作使用 skimage 的 <code style="color:#22d3bf">skeletonize</code>（Zhang–Suen 型的疊代細線化演算法），a、b 未使用。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">morph_skeleton</code>（構造要素による反復収縮とその差分から求める形態学的スケルトン）とはアルゴリズムが異なる近似 —— 同じ「1 画素幅の骨格」という結果を目指すが、生成過程・端点の扱いなどが morph_skeleton の定義と一致するとは限らない。</p>
+<p>演算法與 HALCON 的 <code style="color:#22d3bf">morph_skeleton</code>（由結構元素的反覆侵蝕及其差分求得的形態學骨架）不同的近似 —— 目標是相同的「1 像素寬的骨架」結果，但產生過程、端點處理等不一定與 morph_skeleton 的定義一致。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

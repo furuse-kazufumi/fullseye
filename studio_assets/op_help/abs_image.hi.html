@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Pixel मानों का absolute value लेता है (<code style="color:#22d3bf">np.abs</code>)। fullseye की <code style="color:#22d3bf">image</code> पहले से ही [0,1] contract (non-negative) में है, इसलिए सामान्य image पर यह कुछ नहीं बदलता और <b>identity mapping</b> की तरह काम करता है। इसका अर्थ केवल तब है जब difference image जैसे signed intermediate परिणाम सीधे दिए जाएँ। HALCON के <code style="color:#22d3bf">abs_image</code> (Calculate the absolute value (modulus) of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。clip 前の生値 <code style="color:#22d3bf">v</code> にそのまま <code style="color:#22d3bf">abs</code> を掛けている点に注意(他の pointwise 分岐は <code style="color:#22d3bf">x = clip(v,0,1)</code> を使うが、この分岐だけ <code style="color:#22d3bf">v</code> を直接見る)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। ध्यान दें कि clip से पहले के कच्चे मान <code style="color:#22d3bf">v</code> पर सीधे <code style="color:#22d3bf">abs</code> लगाया जाता है (बाकी pointwise branches <code style="color:#22d3bf">x = clip(v,0,1)</code> का उपयोग करती हैं, लेकिन केवल यही branch <code style="color:#22d3bf">v</code> को सीधे देखती है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

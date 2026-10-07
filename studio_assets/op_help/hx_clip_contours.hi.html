@@ -15,11 +15,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_contours.inputs.jpg">hx_clip_contours: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contour को image domain (केंद्र में margin a/b छोड़ने वाला आयत) तक clip करता है (range से बाहर के points हटाता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>contour dict の各 contour について、画像の内側に取った矩形 <code style="color:#22d3bf">my &lt;= row &lt;= H-1-my</code>、<code style="color:#22d3bf">mx &lt;= col &lt;= W-1-mx</code> に入る点だけを残し、1 点も残らない contour は捨てて返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 上下の余白 <code style="color:#22d3bf">my = a*0.4*H</code>(0〜高さの 40%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 左右の余白 <code style="color:#22d3bf">mx = b*0.4*W</code>(0〜幅の 40%)。a=b=0 なら画像範囲 <code style="color:#22d3bf">[0, H-1] × [0, W-1]</code> でのクリップ。</p>
-<p>点を間引くだけで contour は分割しないため、矩形外を通って戻ってくる contour は残った点どうしが直接つながった形(ジャンプ)になる。分割が要るなら後段で <code style="color:#22d3bf">hx_split_contours</code>。中心からの割合で切る類似 op に <code style="color:#22d3bf">hx_crop_contours</code>(中心基準の幅・高さ指定)。線長で足切りする <code style="color:#22d3bf">xg_clip_contours</code> とは別物。</p>
+<p>contour dict के हर contour के लिए, image के भीतर लिए गए rectangle <code style="color:#22d3bf">my &lt;= row &lt;= H-1-my</code>, <code style="color:#22d3bf">mx &lt;= col &lt;= W-1-mx</code> में आने वाले points ही रखता है, और जिनमें 1 भी point न बचे उन contours को हटाकर लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → ऊपर-नीचे का margin <code style="color:#22d3bf">my = a*0.4*H</code> (0 से ऊँचाई का 40%)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → बाएँ-दाएँ का margin <code style="color:#22d3bf">mx = b*0.4*W</code> (0 से चौड़ाई का 40%)। a=b=0 पर image range <code style="color:#22d3bf">[0, H-1] × [0, W-1]</code> से clip।</p>
+<p>यह केवल points हटाता है, contour को विभाजित नहीं करता, इसलिए rectangle के बाहर से होकर लौटने वाला contour ऐसा आकार लेता है जिसमें बचे points सीधे जुड़ जाते हैं (jump)। विभाजन चाहिए तो बाद में <code style="color:#22d3bf">hx_split_contours</code>। केंद्र से अनुपात के आधार पर काटने वाला मिलता-जुलता op <code style="color:#22d3bf">hx_crop_contours</code> है (केंद्र के आधार पर चौड़ाई-ऊँचाई निर्दिष्ट)। line लंबाई से छाँटने वाले <code style="color:#22d3bf">xg_clip_contours</code> से यह अलग है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -9,10 +9,9 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>估计 albedo(反射率)与 ambient(环境光):albedo ~ 亮度范围,这里返回 albedo。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像の最大値と最小値の差 <code style="color:#22d3bf">max(v) - min(v)</code> を [0,1] に clip した <code style="color:#22d3bf">np.float64</code> を返す。「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。ambient(環境光)は計算せず返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で <code style="color:#22d3bf">hx_mean_shape</code> や <code style="color:#22d3bf">median_rect</code> を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。slant の推定 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
+<p>返回图像最大值与最小值之差 <code style="color:#22d3bf">max(v) - min(v)</code> clip 到 [0,1] 后的 <code style="color:#22d3bf">np.float64</code>。这是用亮度的动态范围代替“反射率(albedo)越高阴影的明暗差越大”这一关系的估计。ambient(环境光)不计算也不返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>只由最大、最小 2 个像素决定,因此只要有 1 个饱和像素或暗点就会贴在 1。对噪声很弱,所以在前级施加 <code style="color:#22d3bf">hx_mean_shape</code> 或 <code style="color:#22d3bf">median_rect</code>。对已做 min-max 归一化的图像总是 1,没有意义。slant 的估计 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> 假定反射率为 1,预期用途是用此值相除来修正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

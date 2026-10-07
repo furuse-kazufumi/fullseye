@@ -9,8 +9,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Summe der Zernike-Momente (<code style="color:#22d3bf">mahotas.features.zernike_moments</code>). Komprimiert die rotationsinvarianten Form-/Intensitätsverteilungsmerkmale des auf den Einheitskreis abgebildeten Bildes zu einer einzigen reellen Zahl.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>半径は画像の短辺の半分に固定。<code style="color:#22d3bf">a</code> は次数(degree、6〜12 の整数)を振る —— 次数を上げるほど高次のモーメントまで加算され値が変わる。<code style="color:#22d3bf">b</code> は未使用。モーメント成分ごとの符号や大きさの分布は総和で相殺・情報が失われるため、形状の指紋として使うには弱い。個々の成分が要る場合は <code style="color:#22d3bf">mahotas.features.zernike_moments</code> を直接呼ぶこと。</p>
+<p>Der Radius ist auf die Hälfte der kürzeren Bildseite festgelegt. <code style="color:#22d3bf">a</code> variiert den Grad (degree, eine ganze Zahl 6-12) — je höher der Grad, desto höhere Momente werden aufsummiert, und der Wert ändert sich. <code style="color:#22d3bf">b</code> wird nicht verwendet. Da sich Vorzeichen und Betragsverteilung der einzelnen Momentkomponenten in der Summe aufheben bzw. Information verloren geht, ist es als Formfingerabdruck schwach. Werden einzelne Komponenten benötigt, <code style="color:#22d3bf">mahotas.features.zernike_moments</code> direkt aufrufen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

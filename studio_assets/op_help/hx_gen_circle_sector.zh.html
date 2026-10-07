@@ -14,11 +14,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆扇形 region(起始角 b*2pi,扫过 a*2pi)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>・半径 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>(固定)の円板のうち、開始角から掃引角ぶんの扇形を 1 とする 0/1 の float region を返す。角度は <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> で測る(0 が +列方向。行が下向きに増える画像座標では画面上で時計回りに増える)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 掃引角 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>(約 5.7°〜360°。a=1 で完全な円板)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 開始角 <code style="color:#22d3bf">start = b*2*pi</code>。</p>
-<p>扇形の判定は <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code> なので 360° をまたいでも途切れない。半径は固定で、変えたいときは <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code> を重ねる。楕円版は <code style="color:#22d3bf">hx_gen_ellipse_sector</code>。入力画像の中身は見ない。</p>
+<p>在以图像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>、半径 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>（固定）的圆盘中，返回把从起始角起扫掠角范围内的扇形设为 1 的 0/1 float region。角度用 <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> 测量（0 为 +列方向。在行向下增大的图像坐标中，在屏幕上按顺时针增大）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 扫掠角 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>（约 5.7°〜360°。a=1 时为完整圆盘）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 起始角 <code style="color:#22d3bf">start = b*2*pi</code>。</p>
+<p>扇形判定为 <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code>，因此跨越 360° 也不会中断。半径固定，想改变时叠加 <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code>。椭圆版为 <code style="color:#22d3bf">hx_gen_ellipse_sector</code>。不查看输入图像的内容。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

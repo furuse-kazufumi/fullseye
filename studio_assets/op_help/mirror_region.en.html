@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mirror_region.inputs.jpg">mirror_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Flips (mirrors) the region. The axis is chosen by a: a&lt;0.34 flips vertically (<code style="color:#22d3bf">flipud</code>), 0.34&lt;=a&lt;0.67 flips horizontally (<code style="color:#22d3bf">fliplr</code>), otherwise it transposes (diagonal flip, <code style="color:#22d3bf">x.T</code>). b is unused. Since flipping doesn&#x27;t change values, <code style="color:#22d3bf">_rebinarise</code> is effectively a no-op.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">mirror_region</code>（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。</p>
+<p>Corresponds to HALCON&#x27;s <code style="color:#22d3bf">mirror_region</code> (an operation that reflects a region about a specified axis). HALCON lets the axis position be specified freely, but this implementation is an approximation fixed to 3 kinds of axes (vertical/horizontal/diagonal) passing through the image centre.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

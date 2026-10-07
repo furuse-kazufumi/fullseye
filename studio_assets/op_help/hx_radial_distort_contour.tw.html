@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 contour 施加徑向畸變 r&#x27; = r(1 + k r^2)(k 由 (a−0.5) 給出:桶形/枕形)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>各 contour の点を画像中心 <code style="color:#22d3bf">(H/2, W/2)</code> からの相対座標 <code style="color:#22d3bf">d</code> にし、正規化半径 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> に対して <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 歪み係数 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75〜+0.75)。<code style="color:#22d3bf">k &lt; 0</code> で点が中心に寄る(樽型)、<code style="color:#22d3bf">k &gt; 0</code> で</p>
-<p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>半径は画像長辺の半分で正規化しているので、画像の隅で <code style="color:#22d3bf">r</code> が 1 前後になり、<code style="color:#22d3bf">k = ±0.75</code> なら隅の点は 1.75 倍/0.25 倍まで動く。逆変換は無い(<code style="color:#22d3bf">k</code> の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour 計測(<code style="color:#22d3bf">hx_fit_circle_contour</code> 等)で試す、あるいは合成的にデータを増やす用途。</p>
+<p>把各 contour 的點變為相對於影像中心 <code style="color:#22d3bf">(H/2, W/2)</code> 的座標 <code style="color:#22d3bf">d</code>,對正規化半徑 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> 按 <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> 伸縮後回傳 contour(徑向畸變模型的 1 次項)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 畸變係數 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75〜+0.75)。<code style="color:#22d3bf">k &lt; 0</code> 時點向中心靠攏(桶形),<code style="color:#22d3bf">k &gt; 0</code> 時</p>
+<p>向外擴展(枕形),a=0.5 時無變化。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>半徑以影像長邊的一半正規化,因此在影像角落 <code style="color:#22d3bf">r</code> 約為 1,<code style="color:#22d3bf">k = ±0.75</code> 時角落的點會移動到 1.75 倍/0.25 倍。沒有反轉換(反轉 <code style="color:#22d3bf">k</code> 的正負號也不能嚴格還原)。用於在 contour 量測(<code style="color:#22d3bf">hx_fit_circle_contour</code> 等)中試驗鏡頭畸變的影響,或合成地擴充資料。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -9,8 +9,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>BRISK 特征点数(OpenCV BRISK 检测器)。将基于二值描述符的高速特征点检测器所检测到的关键点数量作为 feature 返回。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は検出閾値 <code style="color:#22d3bf">thresh</code>(<code style="color:#22d3bf">int(10+60*a)</code> で 10〜70。高いほど検出数が減る)を振る。<code style="color:#22d3bf">b</code> は未使用。実装注記: cv2 5.0.0 で <code style="color:#22d3bf">BRISK_create</code> が <code style="color:#22d3bf">cv2.xfeatures2d</code> に移動したため、両方の場所を <code style="color:#22d3bf">getattr</code> で試す互換コードになっている。</p>
+<p><code style="color:#22d3bf">a</code> 调节检测阈值 <code style="color:#22d3bf">thresh</code>(由 <code style="color:#22d3bf">int(10+60*a)</code> 得到 10~70。越高检测数越少)。<code style="color:#22d3bf">b</code> 未使用。实现注记：由于 cv2 5.0.0 中 <code style="color:#22d3bf">BRISK_create</code> 移到了 <code style="color:#22d3bf">cv2.xfeatures2d</code>，因此代码是用 <code style="color:#22d3bf">getattr</code> 尝试两个位置的兼容代码。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

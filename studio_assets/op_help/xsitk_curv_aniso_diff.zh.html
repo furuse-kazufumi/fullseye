@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>曲率各向异性扩散（SimpleITK <code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>）。属于Perona-Malik型各向异性扩散的一种，在边缘（梯度大的位置）抑制扩散，在平坦处充分扩散，从而在保留边缘的同时进行平滑。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> は伝導度パラメータ(conductance、<code style="color:#22d3bf">0.5+4.5*a</code> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、<code style="color:#22d3bf">b</code> は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 调节传导系数参数(conductance，由 <code style="color:#22d3bf">0.5+4.5*a</code> 得到 0.5~5.0。越大边缘判定越宽松，扩散越强)，<code style="color:#22d3bf">b</code> 调节迭代次数(1~9 次)。时间步长固定为 0.0625。输出裁剪(clip)到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

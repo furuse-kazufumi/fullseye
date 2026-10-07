@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_add_noise_contour.inputs.jpg">hx_add_noise_contour: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contour points में white Gaussian noise जोड़ता है (std, a है; fixed seed से deterministic)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各 contour の全点座標 (row, col) に、平均 0・標準偏差 <code style="color:#22d3bf">std</code> のガウス雑音を独立に加えて返す。乱数は <code style="color:#22d3bf">np.random.default_rng(12345)</code> を呼ぶたびに作り直すので、同じ入力なら常に同じ雑音が出る(決定的)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 標準偏差 <code style="color:#22d3bf">std = a*3</code>(0〜3 画素。a=0 なら無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>雑音列は contour の順番と点数に依存するため、前段で点の順序や本数が変わると同じ <code style="color:#22d3bf">a</code> でも雑音の当たり方が変わる。ロバスト性の検証(<code style="color:#22d3bf">hx_fit_circle_contour</code> の残差がどれだけ増えるか等)や、<code style="color:#22d3bf">smooth_contours_xld</code> の効果確認に使う。</p>
+<p>हर contour के सभी points के coordinates (row, col) में mean 0 और standard deviation <code style="color:#22d3bf">std</code> वाला Gaussian noise स्वतंत्र रूप से जोड़कर लौटाया जाता है। random generator <code style="color:#22d3bf">np.random.default_rng(12345)</code> हर call पर नया बनाया जाता है, इसलिए एक ही input पर हमेशा वही noise आता है (deterministic)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → standard deviation <code style="color:#22d3bf">std = a*3</code> (0 से 3 pixel; a=0 पर कोई बदलाव नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>noise sequence contours के क्रम और points की संख्या पर निर्भर है, इसलिए पिछले step में points का क्रम या contours की संख्या बदल जाए तो वही <code style="color:#22d3bf">a</code> होने पर भी noise अलग तरह से लगता है। robustness जाँचने (<code style="color:#22d3bf">hx_fit_circle_contour</code> का residual कितना बढ़ता है, आदि) या <code style="color:#22d3bf">smooth_contours_xld</code> का असर देखने में उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

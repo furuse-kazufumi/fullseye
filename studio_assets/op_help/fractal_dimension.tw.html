@@ -9,9 +9,8 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>測量紋理複雜度的 Minkowski-Bouligand(盒計數)碎形維度。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>閾値 <code style="color:#22d3bf">a</code>(既定 0.5)で二値化し、箱サイズ <code style="color:#22d3bf">s = 1, 2, 4, …</code> について「構造を含む s×s 箱」の数 <code style="color:#22d3bf">N(s)</code> を数え、<code style="color:#22d3bf">log N(s)</code> を <code style="color:#22d3bf">log(1/s)</code> に最小二乗回帰した傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己相似な縁は中間の非整数(Sierpinski 三角形なら <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)。表面粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
-<p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の過小評価)。<code style="color:#22d3bf">a</code> が二値化の閾値、<code style="color:#22d3bf">b</code> は未使用。構造が無い/1 スケールしか取れないときは 0 を返す。</p>
+<p>以閾值 <code style="color:#22d3bf">a</code>（預設 0.5）二值化，對箱子尺寸 <code style="color:#22d3bf">s = 1, 2, 4, …</code> 統計「含有結構的 s×s 箱子」的個數 <code style="color:#22d3bf">N(s)</code>，回傳 <code style="color:#22d3bf">log N(s)</code> 對 <code style="color:#22d3bf">log(1/s)</code> 做最小平方迴歸所得的斜率（Mandelbrot 1982）。直線狀結構約為 ~1，填滿平面的區域約為 ~2，自相似的邊緣為介於其間的非整數（Sierpinski 三角形為 <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>）。可作為表面粗糙度、組織紋理、地形、斷面等的低成本複雜度特徵。</p>
+<p>由於解析度有限，填滿的區域會略低於 2（粗尺度下箱子飽和所導致的已知低估）。<code style="color:#22d3bf">a</code> 是二值化的閾值，<code style="color:#22d3bf">b</code> 未使用。沒有結構/只能取得 1 個尺度時回傳 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

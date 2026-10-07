@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fill_holes.inputs.jpg">fill_holes: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Füllt Löcher innerhalb einer Region. Entspricht HALCONs <code style="color:#22d3bf">fill_up</code> (Fill up holes in regions.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。前景に完全に囲まれた背景画素（穴）をすべて前景に変える（<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code>）。画像端に接する背景は穴とみなされないため埋まらない。</p>
-<p><b>連結性</b>: 穴の判定に使う<b>背景は 4 連結</b>(<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code> の既定)。斜めだけで繋がった背景は繋がっているとみなさないので、市松模様では内側の背景画素がすべて穴として埋まる(8x8 で 32 -&gt; 50 画素。実測して scipy の 4 連結参照と位置まで一致、8 連結とは不一致)。第 2 実装がここで別の連結性を選び、差分検査で露見した。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Wandelt jedes vollständig von Vordergrund umschlossene Hintergrundpixel (ein Loch) in Vordergrund um (<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code>). Hintergrund, der den Bildrand berührt, gilt nicht als Loch und wird nicht gefüllt.</p>
+<p><b>Zusammenhang</b>: Der <b>zur Lochbestimmung verwendete Hintergrund ist 4-zusammenhängend</b> (Standard von <code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code>). Nur diagonal verbundener Hintergrund gilt nicht als verbunden, daher werden in einem Schachbrettmuster alle inneren Hintergrundpixel als Löcher gefüllt (8x8: 32 -&gt; 50 Pixel; gemessen stimmt es bis auf die Positionen mit der 4-zusammenhängenden Referenz von scipy überein, nicht aber mit 8-Zusammenhang). Die 2. Implementierung wählte hier einen anderen Zusammenhang, was in einer Differenzprüfung aufflog.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

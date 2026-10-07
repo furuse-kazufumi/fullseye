@@ -9,12 +9,11 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Lee-Rosenfeld:光源方位角 tilt = atan2(&lt;Ey&gt;, &lt;Ex&gt;)(平均梯度方向)。归一化到 [0,1]。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">Ex</code>(列方向)・<code style="color:#22d3bf">Ey</code>(行方向)を画像全体で平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す。Lambertian 面で光源方位(tilt)が平均勾配の方向に現れるという Lee-Rosenfeld の推定。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 0 が +列方向、0.25 が +行方向(画像では下)、以下その向きに回る。平均勾配がほぼ 0 だと <code style="color:#22d3bf">arctan2(0, 0) = 0</code> で</p>
-<p>0 に落ちる。</p>
-<p>勾配の生の平均を使うので、コントラストの強い部分の方向に引きずられる。表面の反射率や形状がランダムで、照明の傾きだけが全体の勾配の偏りを作る、という前提が要る。局所コントラストの影響を抑えた版は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。角度値は周期量なので 0 と 1 付近は同じ方向(差を取るときは注意)。</p>
+<p>把 Sobel 梯度 <code style="color:#22d3bf">Ex</code>(列方向)、<code style="color:#22d3bf">Ey</code>(行方向)在整幅图像上取平均,把 <code style="color:#22d3bf">tilt = arctan2(&lt;Ey&gt;, &lt;Ex&gt;)</code> 用 <code style="color:#22d3bf">(tilt / 2π) mod 1</code> 映射到 [0,1) 后以 <code style="color:#22d3bf">np.float64</code> 返回。这是 Lee-Rosenfeld 的估计:Lambertian 面上光源方位(tilt)出现在平均梯度的方向上。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 0 是 +列方向,0.25 是 +行方向(图像中向下),以下按此方向旋转。平均梯度几乎为 0 时 <code style="color:#22d3bf">arctan2(0, 0) = 0</code>,</p>
+<p>落到 0。</p>
+<p>由于使用梯度的原始平均,会被对比度强的部分的方向拉偏。需要的前提是:表面的反射率和形状是随机的,只有照明的倾斜造成整体梯度的偏差。抑制局部对比度影响的版本是 <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。角度值是周期量,因此 0 和 1 附近是同一方向(取差时要注意)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

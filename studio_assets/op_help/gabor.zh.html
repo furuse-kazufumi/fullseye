@@ -15,10 +15,9 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gabor 能量 |v * g| —— 具方向性的带通纹理响应。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> — <b>向き</b> <code style="color:#22d3bf">θ = π·a</code> [rad]。カーネルの余弦は回転後の x 方向に走るので、<code style="color:#22d3bf">a=0</code> (θ=0) は <b>縦縞</b>(列方向に明暗が変わる模様)に最も強く応答し、<code style="color:#22d3bf">a=0.5</code> (θ=90°) は <b>横縞</b>に応答する。<code style="color:#22d3bf">a=1</code> は θ=180° で a=0 と同じ向き。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> — 空間周波数 <code style="color:#22d3bf">0.1 + 0.3·b</code> [cycles/px]。</p>
-<p>★正規化(2026-09-02 の修正): <b>カーネルの L1 ノルムで割る固定スケール</b>。以前は <code style="color:#22d3bf">_norm</code> = その画像での最大絶対値で割っていたため、<b>応答の大小そのものが消えていた</b>。実測(96×96 の横縞、周波数 0.25): 生の畳み込みの平均振幅は θ=0° が 0.0165、θ=90° が 0.9077 で <b>54.9 倍</b>の差があるのに、<code style="color:#22d3bf">_norm</code> を通すと平均は 0.3554 対 0.4790 = <b>1.35 倍</b>まで潰れていた —— 向きを見分けるための特徴量なのに識別力が消えていた(向きごとに別の除数で割っていたのだから当然)。<code style="color:#22d3bf">|v| &lt;= 1</code> なら <code style="color:#22d3bf">|v * g| &lt;= sum|g|</code> なので L1 で割れば値域 [0,1] を保ったまま <b>op を跨いで比較できる絶対スケール</b>になる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> — <b>方向</b> <code style="color:#22d3bf">θ = π·a</code> [rad]。核的余弦沿旋转后的 x 方向延伸，因此 <code style="color:#22d3bf">a=0</code> (θ=0) 对<b>竖条纹</b>（明暗沿列方向变化的图案）响应最强，<code style="color:#22d3bf">a=0.5</code> (θ=90°) 对<b>横条纹</b>响应。<code style="color:#22d3bf">a=1</code> 为 θ=180°，与 a=0 方向相同。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> — 空间频率 <code style="color:#22d3bf">0.1 + 0.3·b</code> [cycles/px]。</p>
+<p>★归一化（2026-09-02 的修正）：<b>除以核的 L1 范数的固定尺度</b>。以前用 <code style="color:#22d3bf">_norm</code> = 该图像中的最大绝对值来除，因此<b>响应大小本身消失了</b>。实测（96×96 的横条纹，频率 0.25）：原始卷积的平均振幅 θ=0° 为 0.0165，θ=90° 为 0.9077，相差 <b>54.9 倍</b>，而经过 <code style="color:#22d3bf">_norm</code> 后平均值被压缩到 0.3554 对 0.4790 = <b>1.35 倍</b> —— 明明是用来区分方向的特征量，却失去了区分能力（各方向用不同的除数去除，当然如此）。由于 <code style="color:#22d3bf">|v| &lt;= 1</code> 时 <code style="color:#22d3bf">|v * g| &lt;= sum|g|</code>，除以 L1 就能在保持值域 [0,1] 的同时成为<b>可跨 op 比较的绝对尺度</b>。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

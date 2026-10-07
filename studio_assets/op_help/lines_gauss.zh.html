@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线状结构(脊线)检测。将 <code style="color:#22d3bf">skimage.filters.frangi</code>(类血管脊线增强滤波器)的响应用阈值(<code style="color:#22d3bf">0.1+0.4*a</code>)二值化,并将连通成分作为轮廓点集返回。这是简化为对脊线增强图像做阈值化,而非 HALCON 的 <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)本来所做的&quot;线的中心线+宽度估计&quot;(不返回线宽信息的近似)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がリッジ検出のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> 调节脊线检测的阈值。<code style="color:#22d3bf">b</code> 未使用。在没有 skimage 的环境中无法调用此分支。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

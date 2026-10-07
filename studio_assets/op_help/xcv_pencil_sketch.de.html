@@ -13,9 +13,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>OpenCVs pencilSketch (Rendering im Bleistiftzeichnungsstil).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>エッジ保存平滑化とドッジ合成で鉛筆デッサン風の白黒スケッチを作る(返り値のうちグレースケール版のみ使用し、カラー版は捨てている)。</p>
-<p><code style="color:#22d3bf">a</code> が平滑化の空間範囲 <code style="color:#22d3bf">sigma_s</code> を 20〜100 で振る。<code style="color:#22d3bf">b</code> は色差許容 <code style="color:#22d3bf">sigma_r</code>(0.05〜0.2)と陰影の濃さ <code style="color:#22d3bf">shade_factor</code> (0.02〜0.08)の両方を同時に振る(2 つのパラメータを 1 つのノブにまとめている)。</p>
+<p>Erzeugt mit kantenerhaltender Glättung und Dodge-Überblendung eine Schwarzweißskizze im Stil einer Bleistiftzeichnung (von den Rückgabewerten wird nur die Graustufenversion verwendet, die Farbversion wird verworfen).</p>
+<p><code style="color:#22d3bf">a</code> variiert den räumlichen Glättungsbereich <code style="color:#22d3bf">sigma_s</code> über 20-100. <code style="color:#22d3bf">b</code> variiert gleichzeitig sowohl die Farbdifferenztoleranz <code style="color:#22d3bf">sigma_r</code> (0.05-0.2) als auch die Schattierungsstärke <code style="color:#22d3bf">shade_factor</code> (0.02-0.08) (2 Parameter sind in 1 Regler zusammengefasst).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

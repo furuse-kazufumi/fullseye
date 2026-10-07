@@ -14,16 +14,15 @@
 <p><img src="fig/tb_plane_sdf.gif" alt="tb_plane_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>반공간(평면으로 자른 쪽)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法線 <code style="color:#22d3bf">n̂</code> の<b>指す側が外側(正)</b>で、反対側が内側。面取り(chamfer)・切断・「基板から上だけ」のような<b>片側だけを残す</b>演算に使う。<code style="color:#22d3bf">sdf_intersect</code> を重ねれば任意の凸多面体が作れる。ただし <b>max による交差は角の外側で厳密ではない</b>: 6 枚で直方体を作ると占有(<code style="color:#22d3bf">&lt;= 0</code>)と内側の値は <code style="color:#22d3bf">box_sdf</code> に完全一致するが、外側は角の近くで最大 2.1(半辺 2 の箱・格子 0.25 で実測)だけ<b>過小評価</b>する —— CSG の標準的な性質で、距離そのものが要るなら <code style="color:#22d3bf">box_sdf</code> を使う。</p>
-<p>厳密性: 平面は全空間で勾配ノルム 1 なので、この値は<b>どこでも真の符号付き距離</b> (<code style="color:#22d3bf">box_sdf</code> のように角で切り替わる場合分けが要らない)。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>(<code style="color:#22d3bf">grid_coords</code> の出力または点列)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>: 平面上の 1 点(要素数 3)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 平面の法線(要素数 3、<b>零ベクトル・NaN は拒否</b>)。長さは自動で 1 に正規化するので、大きさは結果に影響しない(向きだけが意味を持つ)。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。法線側で正、反対側で負、平面上で 0。</p>
-<p>使いどころ: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code> で「その平面より法線側を削る」。向きを逆にしたいときは <code style="color:#22d3bf">normal</code> の符号を反転する(<code style="color:#22d3bf">-sdf</code> でも同じ)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">plane_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>. 법선 <code style="color:#22d3bf">n̂</code>이 <b>가리키는 쪽이 바깥(양)</b>이고, 반대쪽이 안쪽. 모따기(chamfer)·절단·&quot;기판에서 위쪽만&quot; 같은 <b>한쪽만 남기는</b> 연산에 쓴다. <code style="color:#22d3bf">sdf_intersect</code>를 겹치면 임의의 볼록 다면체를 만들 수 있다. 다만 <b>max에 의한 교차는 모서리 바깥에서엄밀하지 않다</b>: 6장으로 직육면체를 만들면 점유(<code style="color:#22d3bf">&lt;= 0</code>)와 안쪽의 값은 <code style="color:#22d3bf">box_sdf</code>와 완전히 일치하지만, 바깥은 모서리 근처에서 최대 2.1(반변 2의 박스·격자 0.25로 실측)만큼 <b>과소평가</b>한다 —— CSG의 표준적인 성질이며, 거리 그 자체가 필요하면 <code style="color:#22d3bf">box_sdf</code>를 쓴다.</p>
+<p>엄밀성: 평면은 전 공간에서 기울기 노름 1이므로 이 값은 <b>어디서나 참된 부호 있는 거리</b> (<code style="color:#22d3bf">box_sdf</code>처럼 모서리에서 바뀌는 경우 나눔이 필요 없다).</p>
+<p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 마지막 축이 3인 float 배열 <code style="color:#22d3bf">(..., 3)</code>(<code style="color:#22d3bf">grid_coords</code>의 출력 또는 점열).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">point</code>: 평면 위의 1점(요소 수 3).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normal</code>: 평면의 법선(요소 수 3, <b>영벡터·NaN은 거부</b>). 길이는 자동으로 1로정규화하므로 크기는 결과에 영향을 주지 않는다(방향만 의미를 가진다).</p>
+<p>반환값: <code style="color:#22d3bf">grid.shape[:-1]</code>의 float64. 법선 쪽에서 양, 반대쪽에서 음, 평면 위에서 0.</p>
+<p>쓰임새: <code style="color:#22d3bf">sdf_subtract(part, plane_sdf(g, p, n))</code>로 &quot;그 평면보다 법선 쪽을 깎는다&quot;. 방향을 뒤집고 싶을 때는 <code style="color:#22d3bf">normal</code>의 부호를 반전한다(<code style="color:#22d3bf">-sdf</code>로도 같다).</p>
+<p>2-D 진화 레지스트리로 연결한 3d의 op <code style="color:#22d3bf">plane_sdf</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

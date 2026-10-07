@@ -13,16 +13,16 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿梯度方向的非極大值抑制(Canny 的 NMS 階段)。把邊緣細化到 1 像素。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Sobel で <code style="color:#22d3bf">gx</code>(列方向)・<code style="color:#22d3bf">gy</code>(行方向)を取り、振幅 <code style="color:#22d3bf">hypot(gx, gy)</code> と方向 <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code> を求める。方向を 45° 刻みの 4 区分に量子化し、各画素をその区分に対応する 2 つの隣接画素と比べて <code style="color:#22d3bf">mag &gt;= 両隣</code> の画素だけ残す(それ以外は 0)。残った振幅を min-max で [0,1] に正規化し、<code style="color:#22d3bf">a*0.3</code> 未満を 0 に落とす。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 弱エッジのしきい値 <code style="color:#22d3bf">a*0.3</code>(正規化後の値に対して。a=0 でしきい値なし)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>注意点:</p>
-<p style="margin:2px 0 2px 12px">• 隣接比較は <code style="color:#22d3bf">np.roll</code> なので画像端では反対側の画素と比較される(端 1 画素は信用しない)。</p>
-<p style="margin:2px 0 2px 12px">• 比較が <code style="color:#22d3bf">&gt;=</code> のため、同じ振幅が並ぶ理想的なステップエッジは 2 画素幅で残る(1 画素にはならない)。</p>
-<p style="margin:2px 0 2px 12px">• 現状の実装では 45° と 135° の区分で比較する隣接画素の対が入れ替わっており、斜めのエッジは勾配方向でなく</p>
-<p>エッジに沿った方向で比較される。そのため水平・垂直エッジは細線化されるが、斜めエッジはほとんど細線化されない(ぼかした対角ステップエッジで 1400 画素前後がそのまま残る実測)。斜めエッジの細線化が要る場合は <code style="color:#22d3bf">canny</code> や <code style="color:#22d3bf">skeleton</code> を検討する。</p>
-<p><code style="color:#22d3bf">sobel_amp</code> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>。</p>
+<p>以 Sobel 求 <code style="color:#22d3bf">gx</code>（行方向）、<code style="color:#22d3bf">gy</code>（列方向），求出振幅 <code style="color:#22d3bf">hypot(gx, gy)</code> 與方向 <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code>。把方向以 45° 步長量化為 4 個區段，把各像素與其區段對應的 2 個相鄰像素比較，只保留 <code style="color:#22d3bf">mag &gt;= 兩側鄰居</code> 的像素（其餘為 0）。把剩下的振幅以 min-max 正規化到 [0,1]，把小於 <code style="color:#22d3bf">a*0.3</code> 者設為 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 弱邊緣閾值 <code style="color:#22d3bf">a*0.3</code>（針對正規化後的值。a=0 時無閾值）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>注意事項：</p>
+<p style="margin:2px 0 2px 12px">• 相鄰比較使用 <code style="color:#22d3bf">np.roll</code>，因此在影像邊界會與對側的像素比較（邊界 1 像素不可信）。</p>
+<p style="margin:2px 0 2px 12px">• 由於比較是 <code style="color:#22d3bf">&gt;=</code>，相同振幅並排的理想階躍邊緣會以 2 像素寬保留（不會變成 1 像素）。</p>
+<p style="margin:2px 0 2px 12px">• 目前的實作中，45° 與 135° 區段所比較的相鄰像素對互換了，斜向邊緣不是沿梯度方向而是</p>
+<p>沿邊緣方向進行比較。因此水平、垂直邊緣會被細化，但斜向邊緣幾乎不會被細化</p>
+<p>（實測：模糊後的對角階躍邊緣上約 1400 像素原樣保留）。需要細化斜向邊緣時，請考慮 <code style="color:#22d3bf">canny</code> 或 <code style="color:#22d3bf">skeleton</code>。</p>
+<p>傳入原始 gray 影像，而非 <code style="color:#22d3bf">sobel_amp</code> 那樣的振幅影像（內部會求導）。後續為 <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

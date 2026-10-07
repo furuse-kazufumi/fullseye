@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Wiener deconvolution (deblurring using a known point spread function). Calls <code style="color:#22d3bf">skimage.restoration.wiener</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり（標準偏差 <code style="color:#22d3bf">0.5 + 1.5*a</code>、5x5 窓）を振る。b がバランス項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。ノイズ対信号比の逆数に相当し、大きいほどノイズ抑制寄りになる）を振る。<b>入力画像のボケが実際にこの想定ガウシアン PSF と一致している場合にのみ有効</b>で、PSF の形が違うとリンギングや復元失敗が出る。</p>
+<p>The PSF is generated in-house assuming a Gaussian shape, and a sweeps the spread of the PSF (standard deviation <code style="color:#22d3bf">0.5 + 1.5*a</code>, 5x5 window). b sweeps the balance term (<code style="color:#22d3bf">0.05 + 0.5*b</code>; it corresponds to the reciprocal of the noise-to-signal ratio, and the larger it is, the more it leans toward noise suppression). <b>Effective only if the blur of the input image actually matches this assumed Gaussian PSF</b>; if the PSF shape differs, ringing or restoration failure occurs.</p>
 <p><b>Border handling</b>: wrap around to the opposite side (periodic) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

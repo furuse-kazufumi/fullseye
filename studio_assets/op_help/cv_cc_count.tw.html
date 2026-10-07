@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_cc_count.chain.jpg">cv_cc_count: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>連通元件數量計數（單一純量特徵，OpenCV 實作）。統計二值區域中連通元件（前景團塊）的個數 —— 會先減去背景標籤所占的 1，再回傳結果。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)(近似。只回傳個數,不回傳分割結果)。實作為 <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>。a, b 未使用。connectivity 維持 OpenCV 的預設值(8 連通)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gammakorrektur <code style="color:#22d3bf">x ** (0.3 + 2.5*a)</code>. Je näher <code style="color:#22d3bf">a</code> bei 0 liegt, desto näher liegt der Exponent bei 0,3, was die Schatten anhebt; je näher <code style="color:#22d3bf">a</code> bei 1 liegt, desto näher liegt der Exponent bei 2,8, was die Schatten staucht und den Kontrast verstärkt. Ersatz für HALCONs <code style="color:#22d3bf">gamma_image</code> (Perform a gamma encoding or decoding of an image.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> はガンマ指数を 0.3〜2.8 の範囲で<b>線形に</b>振る（既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.55 であって素通しではない。γ=1 が要るなら <code style="color:#22d3bf">a=0.28</code>）。<code style="color:#22d3bf">b</code> は未使用。HALCON の実装は Encode/Decode の切替や AmpFactor など複数パラメータを持つが、ここでは単純なべき乗写像 1 本に単純化している(近似)。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Gamma-Exponenten <b>linear</b> im Bereich 0.3-2.8 (der Standard <code style="color:#22d3bf">a=0.5</code> ist γ=1.55, kein Durchreichen; wer γ=1 braucht, nimmt <code style="color:#22d3bf">a=0.28</code>). <code style="color:#22d3bf">b</code> wird nicht verwendet. HALCONs Implementierung hat mehrere Parameter wie einen Encode/Decode-Schalter und AmpFactor, hier ist sie jedoch auf 1 einfache Potenzabbildung vereinfacht (Näherung).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -14,12 +14,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>闭合边缘幅值图中的缺口:按阈值 a 二值化 → 形态学闭运算(半径 b)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化した後、<code style="color:#22d3bf">scipy.ndimage.binary_closing</code> を 3×3 全結合(8 近傍)構造要素の <code style="color:#22d3bf">it</code> 回反復 = <code style="color:#22d3bf">(2*it+1)</code> 角の正方形で 1 回クロージング(膨張→収縮)し、0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 構造要素の反復回数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね</p>
-<p><code style="color:#22d3bf">2*it</code> 画素以下。</p>
-<p>注意: <code style="color:#22d3bf">binary_closing</code> は画像外を 0 として収縮するため、画像端から <code style="color:#22d3bf">it</code> 画素の帯は必ず 0 になる(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。<code style="color:#22d3bf">hx_nonmax_dir</code> や <code style="color:#22d3bf">sobel_amp</code> の後に置き、つながったエッジは <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hx_detect_edge_segments</code> へ渡す。</p>
+<p>用 <code style="color:#22d3bf">v &gt; a</code> 二值化后，以 3×3 全连接（8 邻域）结构元素迭代 <code style="color:#22d3bf">it</code> 次调用 <code style="color:#22d3bf">scipy.ndimage.binary_closing</code> = 用 <code style="color:#22d3bf">(2*it+1)</code> 见方的正方形做 1 次闭运算（膨胀→腐蚀），以 0/1 的 float 图像返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二值化阈值（假定为边缘振幅图像。a=0 时大于 0 的像素全部为前景）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 结构元素的迭代次数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>（1〜4，正方形边长 3〜9 像素）。能闭合的缝隙大致在</p>
+<p><code style="color:#22d3bf">2*it</code> 像素以下。</p>
+<p>注意：<code style="color:#22d3bf">binary_closing</code> 把图像外视为 0 进行腐蚀，因此距图像边缘 <code style="color:#22d3bf">it</code> 像素的带一定变为 0 （对全为 1 的 20×20 施加 it=1，剩下的是 18×18）。处理接触边缘的边缘时，要事先加边距，或对结果重新膨胀。输入是 image（边缘振幅），输出也是 image sort，但内容是二值。放在 <code style="color:#22d3bf">hx_nonmax_dir</code> 或 <code style="color:#22d3bf">sobel_amp</code> 的后面，连通后的边缘交给 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hx_detect_edge_segments</code>。</p>
 <p><b>空帧（实测）</b>：输入亮度均匀的图像时，<b>无论亮度如何，结果都为空（全部像素为背景 0）</b>。纯白与纯黑表现相同；仅凭亮度检测不到任何东西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

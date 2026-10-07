@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect1_xld.chain.jpg">hx_smallest_rect1_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全部 contour 点轴对齐外接矩形的面积比(feature)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>contour dict の全点をまとめ、行方向・列方向それぞれの <code style="color:#22d3bf">max - min</code>(外接軸並行矩形の高さ・幅)の積を画像面積 <code style="color:#22d3bf">H*W</code> で割った値を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が無ければ 0.0。1 点だけ、または全点が同一行/列でも幅が 0 になり 0.0(<code style="color:#22d3bf">+1</code> の画素補正はしない)。</p>
-<p>全 contour をまとめた 1 つの矩形なので、離れた contour が 2 つあると間の空白も面積に入る。向きを持つ最小面積矩形は <code style="color:#22d3bf">hx_smallest_rect2_xld</code>、region に対する軸並行外接矩形は <code style="color:#22d3bf">smallest_rectangle1</code>。</p>
+<p>合并 contour dict 的全部点，把行方向、列方向各自的 <code style="color:#22d3bf">max - min</code>（外接轴平行矩形的高、宽）之积除以图像面积 <code style="color:#22d3bf">H*W</code>，以 <code style="color:#22d3bf">np.float64</code> 返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 没有点时为 0.0。只有 1 个点，或全部点在同一行/列时宽度也为 0，结果为 0.0（不做 <code style="color:#22d3bf">+1</code> 的像素修正）。</p>
+<p>是把全部 contour 合起来的 1 个矩形，因此若有 2 个分离的 contour，中间的空白也计入面积。带方向的最小面积矩形用 <code style="color:#22d3bf">hx_smallest_rect2_xld</code>，针对 region 的轴平行外接矩形用 <code style="color:#22d3bf">smallest_rectangle1</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

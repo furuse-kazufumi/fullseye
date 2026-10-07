@@ -15,12 +15,11 @@
 <p><img src="fig/img_to_volume.gif" alt="img_to_volume: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把图像当作高度场挤出为 (D,H,W) 体数据(z 在前)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
-<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
+<p>体素 <code style="color:#22d3bf">(z, y, x)</code> 的高度在像素高度以下时取像素值，超过时为 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。也就是 <b>高度场的“实心”固体</b>(地形、阶跃、挤出零件)，可以从 1 张图像试用体积族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)。轴序按 3-D 台账的约定为 <b>(depth, row, col)</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高度倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 时为 1.125。超过 1 的部分在最上层 <code style="color:#22d3bf">D-1</code> 饱和)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 层数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 时为 36，b=0 时为 8，b=1 时为 64)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(D, H, W)</code> float64，值域与输入相同。<b>z=0 的底面由所有值 &gt; 0 的像素填满</b>(高度为 0 也会落在底面上)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

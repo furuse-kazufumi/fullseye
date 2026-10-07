@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>亚像素精度的边缘点提取。求出梯度及其法线方向(<code style="color:#22d3bf">gradient_normals</code>),将超过阈值(<code style="color:#22d3bf">0.15+0.5*a</code>)的像素连通成分化,然后通过抛物线拟合将各点精细化到亚像素位置(<code style="color:#22d3bf">subpixel_refine_edges</code>,与 <code style="color:#22d3bf">ops</code> 侧同名 op 共享的实现——经 2026-09-02 的修复才成为真正意义上的亚像素;旧实现只是原样返回整数像素坐标)。相当于 HALCON 的 <code style="color:#22d3bf">edges_sub_pix</code>(Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> がエッジ強度のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 调节边缘强度的阈值。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

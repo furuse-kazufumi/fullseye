@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_points.chain.jpg">hx_dist_ellipse_points: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Maximaler Abstand der Konturpunkte vom angepassten Ellipsenrand (punktweise Abstände per max aggregiert; ein Merkmal).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">hx_dist_ellipse_contour</code> と同じ手順(全点をまとめ、重心と共分散の固有分解から半軸 <code style="color:#22d3bf">2*sqrt(λ)</code> の楕円を当て、各点の正規化半径 <code style="color:#22d3bf">rad</code> を計算)で、<code style="color:#22d3bf">|rad - 1|</code> の平均ではなく最大値を 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。</p>
-<p>最大値なので外れ点 1 つで決まる(雑音に敏感)。値は楕円の正規化座標での差で画素距離ではない。半軸 2σ の取り方は境界だけの点群に対して sqrt(2) 倍大きいため、完全な楕円輪郭でも約 0.29 の下駄が乗る点は平均版と同じ。平均版は <code style="color:#22d3bf">hx_dist_ellipse_contour</code>、外れ点を減らすなら前段に <code style="color:#22d3bf">smooth_contours_xld</code>。</p>
+<p>Folgt demselben Verfahren wie <code style="color:#22d3bf">hx_dist_ellipse_contour</code> (alle Punkte zusammenfassen, aus Schwerpunkt und Eigenzerlegung der Kovarianz eine Ellipse mit Halbachsen <code style="color:#22d3bf">2*sqrt(λ)</code> anpassen, den normierten Radius <code style="color:#22d3bf">rad</code> jedes Punktes berechnen), gibt aber statt des Mittelwerts das Maximum von <code style="color:#22d3bf">|rad - 1|</code>, bei 1 gekappt, als <code style="color:#22d3bf">np.float64</code> zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 bei weniger als 4 Punkten.</p>
+<p>Als Maximum entscheidet 1 Ausreißer allein (rauschempfindlich). Der Wert ist eine Differenz in den normierten Koordinaten der Ellipse, kein Pixelabstand. Wie bei der Mittelwert-Version sind die Halbachsen von 2σ für eine reine Randpunktmenge um sqrt(2) zu groß, daher trägt selbst ein perfekter Ellipsenumriss einen Sockel von etwa 0.29. Die Mittelwert-Version ist <code style="color:#22d3bf">hx_dist_ellipse_contour</code>; um Ausreißer zu verringern, <code style="color:#22d3bf">smooth_contours_xld</code> vorschalten.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

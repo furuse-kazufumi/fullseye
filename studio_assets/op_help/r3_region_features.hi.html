@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_region_features.chain.jpg">r3_region_features: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region का 1 shape feature लौटाता है (HALCON <code style="color:#22d3bf">region_features</code> का एक हिस्सा implement करता है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a &lt; 0.5</code> なら正規化面積（前景画素数/全画素数）、<code style="color:#22d3bf">a &gt;= 0.5</code> なら真円度の逆数にあたるコンパクトネス <code style="color:#22d3bf">P^2 / (4*pi*A)</code>（<code style="color:#22d3bf">P</code> は 4 連結境界の周囲長。円で 1、正方形で約 1.27、細長いほど大きくなる）を返す。<code style="color:#22d3bf">b</code> は未使用。領域が空なら 0.0。</p>
+<p><code style="color:#22d3bf">a &lt; 0.5</code> हो तो normalise किया गया क्षेत्रफल (foreground pixels की संख्या/कुल pixels), <code style="color:#22d3bf">a &gt;= 0.5</code> हो तो roundness के व्युत्क्रम के समकक्ष compactness <code style="color:#22d3bf">P^2 / (4*pi*A)</code> लौटाता है (<code style="color:#22d3bf">P</code> 4-connected boundary की परिधि है; वृत्त में 1, वर्ग में लगभग 1.27, जितना लंबा-पतला उतना बड़ा)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। region खाली हो तो 0.0।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

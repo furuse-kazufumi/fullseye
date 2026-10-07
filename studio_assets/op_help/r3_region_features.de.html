@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_region_features.chain.jpg">r3_region_features: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Gibt ein Formmerkmal der Region zurück (implementiert einen Teil von HALCON <code style="color:#22d3bf">region_features</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a &lt; 0.5</code> なら正規化面積（前景画素数/全画素数）、<code style="color:#22d3bf">a &gt;= 0.5</code> なら真円度の逆数にあたるコンパクトネス <code style="color:#22d3bf">P^2 / (4*pi*A)</code>（<code style="color:#22d3bf">P</code> は 4 連結境界の周囲長。円で 1、正方形で約 1.27、細長いほど大きくなる）を返す。<code style="color:#22d3bf">b</code> は未使用。領域が空なら 0.0。</p>
+<p>Gibt für <code style="color:#22d3bf">a &lt; 0.5</code> die normierte Fläche (Anzahl Vordergrundpixel / Gesamtpixelzahl) zurück, für <code style="color:#22d3bf">a &gt;= 0.5</code> die Kompaktheit <code style="color:#22d3bf">P^2 / (4*pi*A)</code>, den Kehrwert der Rundheit (<code style="color:#22d3bf">P</code> ist der Umfang des 4-zusammenhängenden Rands; 1 für einen Kreis, etwa 1.27 für ein Quadrat, umso größer, je länglicher). <code style="color:#22d3bf">b</code> wird nicht verwendet. 0.0, wenn die Region leer ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

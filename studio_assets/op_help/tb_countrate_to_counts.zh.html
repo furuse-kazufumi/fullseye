@@ -13,18 +13,17 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_countrate_to_counts.inputs.jpg">tb_countrate_to_counts: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>计数率 <code style="color:#22d3bf">[Hz]</code> → 计数 <code style="color:#22d3bf">counts</code>。<code style="color:#22d3bf">countrate</code> 的出口（<b>可逆</b>）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><b>単位が変換の全内容</b>: <code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> は積算窓の秒数で、既定 1 ms。<code style="color:#22d3bf">counts</code> は「時間 bin ごとの光子数」の型なので、レート列をそのまま counts と名乗らせると<b>桁が 7 つずれたまま黙って通る</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> はどちらも「非負の 1-D」としか見ていない)。</p>
-<p><code style="color:#22d3bf">counts_to_countrate</code> と往復して実測 max|Δ| = 9.3e-10(値域が 1e3-1e7 Hz なので <b>相対</b> 1e-16 = 倍精度の丸め 1 単位ぶん。絶対値だけ見ると大きく見えるので、レートのように桁が広い量は相対で言う)。</p>
-<p>★<b>2 度掛けても例外は出ない</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> が <code style="color:#22d3bf">countrate</code> を <code style="color:#22d3bf">counts</code> に畳んでいるので、出口が入口にそのまま繋がる。実測(2026-09-08、1,200 Hz を gate 1 ms で): 1 回で 1.2000 counts、もう 1 回通すと 0.0012 counts —— <b>1,000 倍の取り違えが、負の値も NaN も出さずに通る</b>。値だけを見て「レートか計数か」を判定する方法は無いので、この 1 件は検査でなく <b>呼ぶ側の規律</b>で守るしかない(繋いだ経路を書き残すこと)。</p>
+<p><b>单位就是转换的全部内容</b>：<code style="color:#22d3bf">[1/s] * [s] = [1]</code>。<code style="color:#22d3bf">gate_s</code> 为积分窗口的秒数，默认 1 ms。<code style="color:#22d3bf">counts</code> 是&quot;每个时间 bin 的光子数&quot;类型，因此若让速率序列直接冒充 counts，<b>会在数量级偏差 7 位的情况下默默通过</b> (<code style="color:#22d3bf">TYPE_CHECKS</code> 对两者都只检查&quot;非负的 1-D&quot;)。</p>
+<p>与 <code style="color:#22d3bf">counts_to_countrate</code> 往返实测 max|Δ| = 9.3e-10(值域为 1e3-1e7 Hz，因此 <b>相对</b>为 1e-16 = 双精度舍入 1 个单位。只看绝对值会显得很大，因此像速率这样跨数量级大的量要用相对值来说)。</p>
+<p>★<b>用 2 次也不会报异常</b>。<code style="color:#22d3bf">TYPE_TO_SORT</code> 把 <code style="color:#22d3bf">countrate</code> 折叠进 <code style="color:#22d3bf">counts</code>，所以出口直接接到入口。实测(2026-09-08，1,200 Hz 以 gate 1 ms)：1 次得到 1.2000 counts，再通过 1 次得到 0.0012 counts —— <b>1,000 倍的混淆在不产生负值也不产生 NaN 的情况下通过</b>。仅凭值无法判定 &quot;是速率还是计数&quot;，因此这 1 件只能不靠检查而靠 <b>调用方的纪律</b>来守护(把所连接的路径记录下来)。</p>
 <p>Args:</p>
-<p>countrate: (N,) の非負レート [Hz]。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>countrate: (N,) 的非负速率 [Hz]。</p>
+<p>gate_s: 积分窗口 [s]。&gt; 0。</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負計数。</p>
+<p>(N,) float64 的非负计数。</p>
 <p>Raises:</p>
-<p>ValueError: 負のレート / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">countrate_to_counts</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gate_s</code>(既定 0.001)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>ValueError: 负的速率 / gate_s &lt;= 0 / 形状不正确 / 非有限。</p>
+<p>桥接到 2-D 进化注册表的 reprconv op <code style="color:#22d3bf">countrate_to_counts</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">gate_s</code>(默认 0.001)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

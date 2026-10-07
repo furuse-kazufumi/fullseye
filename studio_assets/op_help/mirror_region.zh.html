@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mirror_region.inputs.jpg">mirror_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>翻转（镜像）区域。根据 a 的值切换轴：a&lt;0.34 时上下翻转（<code style="color:#22d3bf">flipud</code>），0.34≤a&lt;0.67 时左右翻转（<code style="color:#22d3bf">fliplr</code>），其他情况下转置（对角线翻转，<code style="color:#22d3bf">x.T</code>）。b 未使用。由于翻转不改变数值，<code style="color:#22d3bf">_rebinarise</code> 实际上什么都不做。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">mirror_region</code>（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">mirror_region</code>（指定轴对区域进行镜像的运算）。HALCON 可以任意指定轴的位置，但该实现是固定为经过图像中心的 3 种轴（纵/横/对角）的近似。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

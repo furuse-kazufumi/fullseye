@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2-dimensional FFT के power spectrum को <code style="color:#22d3bf">log1p(|F|)</code> से compress करके normalise की गई image। Low-frequency (DC) component केंद्र में आए, इसके लिए <code style="color:#22d3bf">fftshift</code> किया गया है। Periodic noise या texture की spatial frequency दिखाने के लिए इस्तेमाल होता है। HALCON के <code style="color:#22d3bf">fft_image</code> (Compute the fast Fourier transform of an image.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や帯域選択のような調整点は無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता -- यह पूरी image पर global FFT है, इसमें window function या band चुनने जैसे कोई समायोजन बिंदु नहीं हैं।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>

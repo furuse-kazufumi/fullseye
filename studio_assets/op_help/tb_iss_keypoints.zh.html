@@ -14,16 +14,15 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_iss_keypoints.inputs.jpg">tb_iss_keypoints: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ISS（Intrinsic Shape Signatures，相当于 3D 版 Harris）关键点检测。以局部协方差的最小特征值 λ3 作为 saliency，仅将特征值 distinct（方向 well-defined）的点作为候选，再用 NMS 稀疏地选取。旋转不变。返回值 = 点的索引数组。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>引数:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)。<code style="color:#22d3bf">radius</code>: saliency 用の近傍球半径(点群と同じ単位)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: 非最大抑制の距離。None なら <code style="color:#22d3bf">0.6*radius</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>・<code style="color:#22d3bf">gamma32</code>: 固有値比 λ2/λ1、λ3/λ2 の上限(既定 0.99)。両方ともこれ</p>
-<p>未満の点だけが候補(比が 1 に近い=等方で向きが決まらない点を除く)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 返す上限。<code style="color:#22d3bf">min_neighbors</code>: 近傍がこれ未満の点は候補にしない(既定 8)。</p>
-<p>手順: 各点で <code style="color:#22d3bf">radius</code> 内の近傍を集め、注目点を原点とした 2 次モーメント行列 <code style="color:#22d3bf">(qᵀq)/n</code> の固有値 λ1≥λ2≥λ3 を求める(λ1 が 1e-12 以下なら除外)。λ3 を saliency として降順に走査し、採用済みの点から <code style="color:#22d3bf">nms_radius</code> 未満にあるものを捨てる貪欲 NMS。返り値は int64 の点インデックス配列(saliency 降順)。候補が無ければ長さ 0。</p>
-<p>注意: 近傍は注目点で中心化する(重心ではない)ため、平面上の点でも λ3 は厳密には 0 にならない。全点で近傍探索する Python ループなので、数万点を超える雲は <code style="color:#22d3bf">voxel_grid_downsample</code> で間引いてから使う。<code style="color:#22d3bf">shot_descriptor</code> のキーポイント入力に直結し、<code style="color:#22d3bf">register_shot</code> は内部で <code style="color:#22d3bf">radius</code> の 0.6 倍・NMS 0.3 倍で呼ぶ。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">iss_keypoints</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gamma21</code>(既定 0.99)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">gamma32</code>(既定 0.99)を振る。</p>
+<p>参数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code> (N,3)。<code style="color:#22d3bf">radius</code>: saliency 用的邻域球半径(与点云相同单位)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms_radius</code>: 非极大值抑制的距离。为 None 时取 <code style="color:#22d3bf">0.6*radius</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gamma21</code>、<code style="color:#22d3bf">gamma32</code>: 特征值比 λ2/λ1、λ3/λ2 的上限(默认 0.99)。只有两者都</p>
+<p>低于此值的点才是候选(排除比值接近 1 = 各向同性、朝向无法确定的点)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_kp</code>: 返回的上限。<code style="color:#22d3bf">min_neighbors</code>: 邻域少于此值的点不作为候选(默认 8)。</p>
+<p>步骤: 在各点收集 <code style="color:#22d3bf">radius</code> 内的邻域,求以关注点为原点的 2 阶矩矩阵 <code style="color:#22d3bf">(qᵀq)/n</code> 的特征值 λ1≥λ2≥λ3(λ1 在 1e-12 以下则排除)。以 λ3 作为 saliency 降序扫描,丢弃距已采用点小于 <code style="color:#22d3bf">nms_radius</code> 的点的贪心 NMS。返回值是 int64 的点索引数组(saliency 降序)。没有候选时长度为 0。</p>
+<p>注意: 邻域以关注点为中心(而非质心),因此即使是平面上的点 λ3 也不严格为 0。这是对全部点做邻域搜索的 Python 循环,因此超过数万点的点云请先用 <code style="color:#22d3bf">voxel_grid_downsample</code> 抽稀后再使用。直接接入 <code style="color:#22d3bf">shot_descriptor</code> 的关键点输入, <code style="color:#22d3bf">register_shot</code> 在内部以 <code style="color:#22d3bf">radius</code> 的 0.6 倍、NMS 0.3 倍调用它。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">iss_keypoints</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">gamma21</code>(默认 0.99),<code style="color:#22d3bf">b</code> 调节 <code style="color:#22d3bf">gamma32</code>(默认 0.99)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

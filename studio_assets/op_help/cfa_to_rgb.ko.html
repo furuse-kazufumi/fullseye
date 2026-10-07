@@ -13,9 +13,8 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>베이어 배열(CFA: Color Filter Array)에서 RGB 이미지로의 디모자이크(demosaic) 처리. HALCON의 <code style="color:#22d3bf">cfa_to_rgb</code>(단판 컬러 필터 어레이 이미지를 RGB 이미지로 변환)에 근사한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>단일 채널 그레이스케일 영상을 Bayer 패턴의 원시 데이터로 간주하고, OpenCV의 <code style="color:#22d3bf">cv2.cvtColor</code>로 디모자이크하여 3 채널 RGB로 복원한다. <code style="color:#22d3bf">image</code>에서 <code style="color:#22d3bf">color</code>로의 가교 op(진화가 컬러 계통으로 들어가는 유일한 입구).</p>
+<p>a는 Bayer 패턴의 배열 순서를 4가지(BG/GB/RG/GR 배열) 중에서 고른다(<code style="color:#22d3bf">min(3, int(a * 4))</code>로 0~3으로 양자화). b는 사용하지 않는다. 패턴이 실제 입력과 맞지 않으면 색 어긋남·모아레가 생긴다(본래의 Bayer 배치를 알 수 없는 합성 영상에 대해서는 어느 것이든 &#x27;그럴듯한&#x27; RGB화에 불과하다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

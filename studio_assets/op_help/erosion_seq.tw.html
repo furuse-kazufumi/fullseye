@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/erosion_seq.inputs.jpg">erosion_seq: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用固定十字形結構元素（4 鄰域），依 a 重複 1〜4 次侵蝕（erosion）的循序侵蝕。b 未使用。反覆次數越多，侵蝕量越大（每次約相當於半徑 1 像素）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">erosion_seq</code>（構造要素を繰り返し適用して逐次的に収縮する演算）に相当する近似。円形やユーザー定義の構造要素ではなく scipy 既定の十字形要素を使う点が簡略化されている。</p>
+<p>近似於 HALCON 的 <code style="color:#22d3bf">erosion_seq</code>（反覆套用結構元素逐次侵蝕的運算）。簡化之處在於使用 scipy 預設的十字形元素，而非圓形或使用者自訂的結構元素。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

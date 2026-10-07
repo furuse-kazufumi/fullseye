@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_skeleton.inputs.jpg">morph_skeleton: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region की skeleton line निकालता है। Implementation skimage का <code style="color:#22d3bf">skeletonize</code> (Zhang–Suen प्रकार का iterative thinning algorithm) है, a, b इस्तेमाल नहीं होते।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">morph_skeleton</code>（構造要素による反復収縮とその差分から求める形態学的スケルトン）とはアルゴリズムが異なる近似 —— 同じ「1 画素幅の骨格」という結果を目指すが、生成過程・端点の扱いなどが morph_skeleton の定義と一致するとは限らない。</p>
+<p>HALCON के <code style="color:#22d3bf">morph_skeleton</code> (structuring element से बार-बार erosion और उनके अंतर से प्राप्त morphological skeleton) से भिन्न algorithm वाला सन्निकटन — लक्ष्य वही &quot;1 pixel चौड़ा skeleton&quot; परिणाम है, पर बनने की प्रक्रिया, end points का व्यवहार आदि morph_skeleton की परिभाषा से मेल खाएँ, यह ज़रूरी नहीं।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

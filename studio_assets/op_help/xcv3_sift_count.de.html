@@ -8,8 +8,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>SIFT-Merkmalspunktanzahl (OpenCV <code style="color:#22d3bf">cv2.SIFT_create().detect</code>). Gibt als Feature die Anzahl der im Bild erkannten skaleninvarianten Merkmalspunkte (SIFT-Keypoints) zurück — ein Indikator für die Texturkomplexität / den Reichtum an für das Matching nutzbaren Merkmalspunkten.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は検出上限数 <code style="color:#22d3bf">nfeatures</code>(<code style="color:#22d3bf">int(50+450*a)</code> で 50〜500)を振る —— 上限に達するまでは実際の検出数がそのまま返るので、上限に張り付いていないか確認が要る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Obergrenze der Detektionen <code style="color:#22d3bf">nfeatures</code> (50-500 über <code style="color:#22d3bf">int(50+450*a)</code>) — bis die Grenze erreicht ist, wird die tatsächliche Anzahl unverändert zurückgegeben; daher ist zu prüfen, ob der Wert nicht an der Grenze klebt. <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_moments_any_xld.chain.jpg">hx_moments_any_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全部 contour 点的二阶中心矩(展布),归一化 feature。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>contour dict の全点をまとめ、重心からの二乗距離の平均 <code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code> (2 次中心モーメント <code style="color:#22d3bf">mu20 + mu02</code> を点数で割ったもの)を <code style="color:#22d3bf">max(H, W)^2</code> で割り、1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 2 個未満なら 0.0。</p>
-<p>「点群が重心からどれだけ広がっているか」の等方的な指標で、向きや縦横比は含まない。輪郭の点密度に依存するので、同じ図形でも点の刻みが不均一だと値が変わる。向き付きの慣性(長軸・短軸)は <code style="color:#22d3bf">hx_fit_ellipse_contour</code> / <code style="color:#22d3bf">elliptic_axis_xld</code>、region の 2 次モーメントは <code style="color:#22d3bf">moments_region_2nd</code>。</p>
+<p>把 contour dict 的全部点合在一起,求到质心的平方距离的平均 <code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code> (即 2 阶中心矩 <code style="color:#22d3bf">mu20 + mu02</code> 除以点数),再除以 <code style="color:#22d3bf">max(H, W)^2</code>,以 1 饱和截顶后作为 <code style="color:#22d3bf">np.float64</code> 返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 点少于 2 个时为 0.0。</p>
+<p>这是“点集从质心扩散多远”的各向同性指标,不包含方向和纵横比。它依赖轮廓的点密度,因此即使是同一图形,点的步长不均匀时值也会变。带方向的惯性(长轴、短轴)见 <code style="color:#22d3bf">hx_fit_ellipse_contour</code> / <code style="color:#22d3bf">elliptic_axis_xld</code>,region 的 2 阶矩见 <code style="color:#22d3bf">moments_region_2nd</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

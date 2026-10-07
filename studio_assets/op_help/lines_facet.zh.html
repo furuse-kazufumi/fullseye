@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测线状结构（脊线）并作为轮廓（XLD contour）返回。实现通过 Frangi 滤波器（<code style="color:#22d3bf">skimage.filters.frangi</code>，多尺度 σ=1..3 的脊线增强）求出线状程度，将超过阈值 <code style="color:#22d3bf">0.1+0.4a</code> 的连通分量的像素坐标直接作为轮廓点序列输出。b 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">lines_facet</code>（局所多項式近似=ファセットモデルで線を検出する演算）とは検出原理が異なる近似 —— facet モデルによるサブピクセル位置推定は行わず、Frangi 応答の二値化領域を輪郭化しているだけなので、座標はサブピクセル精度を持たない。</p>
+<p>检测原理与 HALCON 的 <code style="color:#22d3bf">lines_facet</code>（用局部多项式近似=facet 模型检测线条的运算）不同的近似 —— 不使用 facet 模型进行亚像素位置估计，只是把 Frangi 响应的二值化区域提取为轮廓，因此坐标不具有亚像素精度。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

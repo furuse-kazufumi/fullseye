@@ -10,8 +10,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/classify_shape.chain.jpg">classify_shape: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>計算最大連通區域圓形度（circularity）的形狀分類基礎特徵量。未指定對應的單一 HALCON op。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。最大面積の連結成分について <code style="color:#22d3bf">4π×面積 / 周長²</code> を計算し、理想円で 1 になるよう <code style="color:#22d3bf">min(1.0, ...)</code> で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（<code style="color:#22d3bf">_region_boundary</code> と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。對面積最大的連通元件計算 <code style="color:#22d3bf">4π×面積 / 周長²</code>，並以 <code style="color:#22d3bf">min(1.0, ...)</code> 截頂，使理想圓為 1（防止數值誤差使其略超過 1）。周長以從區域中減去其侵蝕結果得到的邊界像素數來近似（與 <code style="color:#22d3bf">_region_boundary</code> 相同的思路），因此比基於輪廓的周長粗糙。沒有前景時回傳 0。正如程式碼中的註解所說，設想用作 OCR、良否判定等「依形狀分類」處理的基礎。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

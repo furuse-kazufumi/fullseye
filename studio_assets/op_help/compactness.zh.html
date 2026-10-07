@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/compactness.chain.jpg">compactness: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>紧凑度 <code style="color:#22d3bf">周长² / (4π・面积)</code>。圆为 1,越细长/越粗糙/孔洞越多则越大,<b>没有上限</b>。与 HALCON 的 <code style="color:#22d3bf">compactness</code>(Shape factor for the compactness of a region.)是同一个量。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">/10</code> して <code style="color:#22d3bf">min(1.0, ...)</code> で切っていた —— 値を [0,1] に収めるための便宜だったが、<code style="color:#22d3bf">周囲長²/(4π・面積)</code> が 10 を超える形(幅 2 px なら長さ 80 以上の傷)を<b>全部 1.0 に潰していた</b>。傷や割れという、いちばん見たい領域で「形が違うのに同じ数」が返っていたことになる。値域 [0,1] はそもそも feature の契約ではない(<code style="color:#22d3bf">elliptic_axis</code> は 6.35、<code style="color:#22d3bf">r3_region_features</code> は 18.1 を返す)ので、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>。</p>
-<p>HALCON は <code style="color:#22d3bf">max(1, C)</code> と<b>下で</b>切る(画素近似で 1 を下回りうるため)が、ここでは切らない。1 を下回る値は「領域が小さすぎて近似が効いていない」という情報そのもので、必要なら呼ぶ側で切れる。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前先 <code style="color:#22d3bf">/10</code> 再用 <code style="color:#22d3bf">min(1.0, ...)</code> 截断 —— 这是为了把值收在 [0,1] 内的权宜之计,但 <code style="color:#22d3bf">周长²/(4π·面积)</code> 超过 10 的形状(宽 2 px 时即长度 80 以上的划痕)<b>全部被压成 1.0</b>。在划痕、裂纹这类最想看的区域,返回的却是“形状不同、数值相同”。值域 [0,1] 本来就不是 feature 的约定(<code style="color:#22d3bf">elliptic_axis</code> 返回 6.35,<code style="color:#22d3bf">r3_region_features</code> 返回 18.1),所以没有压缩的理由 —— <code style="color:#22d3bf">docs/hardening/compactness-saturated-at-one.md</code>。</p>
+<p>HALCON 用 <code style="color:#22d3bf">max(1, C)</code> <b>从下方</b>截断(因为像素近似可能低于 1), 这里不截断。低于 1 的值本身就是“区域太小、近似不起作用” 这一信息,如有需要可由调用方截断。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

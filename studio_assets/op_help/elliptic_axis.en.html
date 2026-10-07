@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/elliptic_axis.chain.jpg">elliptic_axis: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns <code style="color:#22d3bf">(Ra, Rb, Phi)</code> of the equivalent ellipse of the region (the ellipse with the same moments of inertia) as a 3-component vector of <code style="color:#22d3bf">match</code> sort — <code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> are the major and minor semi-axes in <b>pixels</b>, <code style="color:#22d3bf">Phi</code> is the angle of the major axis (radians, counter-clockwise from the column axis). The same three values as HALCON&#x27;s <code style="color:#22d3bf">elliptic_axis</code> (Calculate the parameters of the equivalent ellipse.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">Ra/Rb</code>(= <b>別の演算子 <code style="color:#22d3bf">eccentricity</code> の出力</b> Anisometry)を 10 で割った 1 スカラーを返していた —— 名前が約束している量ではなかった。docs/hardening/halcon-named-shape-factors.md。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Until 2026-09-26 it returned 1 scalar: <code style="color:#22d3bf">Ra/Rb</code> (= <b>the output of a different operator, <code style="color:#22d3bf">eccentricity</code></b>, Anisometry) divided by 10 — not the quantity the name promises. docs/hardening/halcon-named-shape-factors.md.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

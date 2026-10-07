@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_union_adjacent.inputs.jpg">hx_union_adjacent: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Verbindet Konturen mit nahe beieinanderliegenden Endpunkten gierig (Schwelle a).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>contour のリストを走査し、<code style="color:#22d3bf">cs[i]</code> の終点と <code style="color:#22d3bf">cs[j]</code>(<code style="color:#22d3bf">j &gt; i</code>)の始点の距離が <code style="color:#22d3bf">tol</code> 以下なら <code style="color:#22d3bf">cs[j]</code> を <code style="color:#22d3bf">cs[i]</code> の後ろにつないで 1 本にする。1 回つなぐたびに先頭から走査をやり直し、つなげる対が無くなるまで繰り返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*8</code>(1〜9 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>判定は「終点→始点」の向きだけで、始点どうし・終点どうしが近い場合に反転してつなぐことはしない(向きの揃った contour 列を想定)。貪欲法なので 3 本以上が候補になるときはリスト順で先に見つかった相手とつながる(<code style="color:#22d3bf">hx_sort_contours</code> で順序を整えると結果が安定する)。つなぎ目の点は重複せず、隙間は直線で飛ぶ。計算量は本数の 2 乗×連結回数。つないだ後の閉じ具合は <code style="color:#22d3bf">hx_test_closed_xld</code> で確認する。</p>
+<p>Durchläuft die Konturliste und hängt <code style="color:#22d3bf">cs[j]</code> an das Ende von <code style="color:#22d3bf">cs[i]</code> zu 1 Kontur an, wenn der Abstand zwischen dem Endpunkt von <code style="color:#22d3bf">cs[i]</code> und dem Startpunkt von <code style="color:#22d3bf">cs[j]</code> (<code style="color:#22d3bf">j &gt; i</code>) höchstens <code style="color:#22d3bf">tol</code> beträgt; nach jeder 1 Verbindung beginnt der Durchlauf von vorn, bis kein verbindbares Paar mehr übrig ist.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Toleranz <code style="color:#22d3bf">tol = 1 + a*8</code> (1 bis 9 Pixel).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p>Geprüft wird nur die Richtung &quot;Ende → Start&quot;; liegen zwei Starts oder zwei Enden nahe beieinander, wird nicht umgedreht und verbunden (vorausgesetzt wird eine Liste gleich orientierter Konturen). Als Greedy-Verfahren verbindet es bei 3 oder mehr Kandidaten mit dem Partner, der in Listenreihenfolge zuerst gefunden wird (Ordnen mit <code style="color:#22d3bf">hx_sort_contours</code> stabilisiert das Ergebnis). Verbindungspunkte werden nicht dupliziert, die Lücke wird geradlinig übersprungen. Der Aufwand ist die 2. Potenz der Konturzahl × die Zahl der Verbindungen. Wie geschlossen das Ergebnis ist, mit <code style="color:#22d3bf">hx_test_closed_xld</code> prüfen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

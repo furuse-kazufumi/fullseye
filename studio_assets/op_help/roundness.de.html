@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rundheit <code style="color:#22d3bf">1 - sigma/mu</code>, wobei <code style="color:#22d3bf">mu</code> und <code style="color:#22d3bf">sigma</code> Mittelwert und Standardabweichung der <b>Abstände vom Schwerpunkt zu den Konturpixeln</b> sind; je gleichmäßiger diese Abstände (je runder die Form), desto näher an 1. <b>Dieselbe Formel wie</b> HALCONs <code style="color:#22d3bf">roundness</code> (Shape factors from contour.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">4・面積/(π・長軸長²)</code> という別の量を返していた(16x64 の矩形で 0.239 対 0.577)。<code style="color:#22d3bf">circularity</code> が「面積が最大距離の円をどれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Bis 2026-09-26 lieferte es eine andere Größe, <code style="color:#22d3bf">4·Fläche/(π·Hauptachsenlänge²)</code> (0.239 gegenüber 0.577 bei einem 16x64-Rechteck). Während <code style="color:#22d3bf">circularity</code> betrachtet, „wie sehr die Fläche den Kreis mit dem maximalen Abstand ausfüllt“, betrachtet dieses op <b>die Unebenheit des Randes</b>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

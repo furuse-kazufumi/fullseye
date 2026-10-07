@@ -13,11 +13,10 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>चमकीले background से अँधेरे अक्षर निकालता है (region): thresh = mean - k*std (k, a है) से नीचे वाला हिस्सा चुनता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像全体の平均 <code style="color:#22d3bf">mean</code> と標準偏差 <code style="color:#22d3bf">std</code> から <code style="color:#22d3bf">thr = mean - k*std</code> を計算し、<code style="color:#22d3bf">v &lt; thr</code> の画素を 1 とする 0/1 の float region を返す。暗い文字が少数派で明るい背景が多数派、という前提の大域しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 係数 <code style="color:#22d3bf">k = 0.2 + 1.8*a</code>(0.2〜2.0)。大きいほど厳しく(より暗い画素だけ)、小さいほど多く拾う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>濃淡が一様な画像では <code style="color:#22d3bf">std = 0</code> となり <code style="color:#22d3bf">thr = mean</code> で「平均未満」だけが残る。照明ムラがあると 1 本のしきい値では片側が欠けるので、前に <code style="color:#22d3bf">hx_plane_deviation</code> で背景を引くか、局所版の <code style="color:#22d3bf">dyn_threshold</code> / <code style="color:#22d3bf">local_threshold</code> を使う。明るい文字を取りたい場合は先に画像を反転する(この op は下側しか選ばない)。</p>
+<p>पूरी image के औसत <code style="color:#22d3bf">mean</code> और standard deviation <code style="color:#22d3bf">std</code> से <code style="color:#22d3bf">thr = mean - k*std</code> निकालकर, <code style="color:#22d3bf">v &lt; thr</code> वाले pixels को 1 रखने वाला 0/1 float region लौटाता है। यह global threshold इस धारणा पर है कि गहरे अक्षर अल्पसंख्यक और चमकीला background बहुसंख्यक हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → गुणांक <code style="color:#22d3bf">k = 0.2 + 1.8*a</code> (0.2 से 2.0)। जितना बड़ा उतना सख्त (केवल अधिक गहरे pixels), जितना छोटा उतना अधिक चुनता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>एकसमान shade वाली image में <code style="color:#22d3bf">std = 0</code> होकर <code style="color:#22d3bf">thr = mean</code> बनता है और केवल &quot;औसत से कम&quot; बचता है। uneven illumination हो तो 1 अकेले threshold से एक ओर छूट जाती है, इसलिए पहले <code style="color:#22d3bf">hx_plane_deviation</code> से background घटाएँ, या local संस्करण <code style="color:#22d3bf">dyn_threshold</code> / <code style="color:#22d3bf">local_threshold</code> का उपयोग करें। चमकीले अक्षर चाहिए तो पहले image को invert करें (यह op केवल निचली ओर चुनता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

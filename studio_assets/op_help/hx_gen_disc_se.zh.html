@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成圆盘结构元素作为 region(半径 a)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>入力 <code style="color:#22d3bf">v</code> は画布の形状のためだけに使い、画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code> から半径 <code style="color:#22d3bf">r</code> 以内の画素を 1 とする円板を 0/1 の float 配列(region)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = (0.05 + 0.35*a) * min(h, w)</code>(短辺の 5%〜40%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>名前は「構造要素」だが、この op が返すのは画像と同じ大きさの region であり、<code style="color:#22d3bf">hx_erosion1</code> などが内部で使う小さなカーネルではない。中心固定の円 region が欲しいときの生成器として、<code style="color:#22d3bf">hx_gen_circle</code>(半径 10%〜50%)の小径版にあたる。他の region と重ねて ROI を作るのに使う。</p>
+<p>输入 <code style="color:#22d3bf">v</code> 只用于画布形状，以 0/1 的 float 数组（region）返回把距图像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code> 半径 <code style="color:#22d3bf">r</code> 以内的像素设为 1 的圆盘。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = (0.05 + 0.35*a) * min(h, w)</code>（短边的 5%〜40%）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>名称虽是“结构元素”，但此 op 返回的是与图像同样大小的 region，而不是 <code style="color:#22d3bf">hx_erosion1</code> 等内部使用的小核。作为想要中心固定的圆形 region 时的生成器，相当于 <code style="color:#22d3bf">hx_gen_circle</code>（半径 10%〜50%）的小径版。用于与其他 region 叠加来构造 ROI。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

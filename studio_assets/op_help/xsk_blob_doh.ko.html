@@ -8,9 +8,8 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>검출된 블롭(반점 모양 구조)의 수(LoG/DoG/DoH 중 하나로 검출).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>skimage.feature の Laplacian of Gaussian(LoG)/ Difference of Gaussian(DoG)/ Determinant of Hessian(DoH)のいずれか(このコードは 3 種を共通実装しており、どれを使うかは呼び出し元がどの op 名で登録したか —— <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> —— で決まる)を用いてブロブを検出し、その個数をそのまま返す(feature 出力)。</p>
-<p><code style="color:#22d3bf">a</code> が探索する最大スケール <code style="color:#22d3bf">max_sigma</code> を 5〜25 の範囲で振る(大きいほど大きなブロブまで拾う)。<code style="color:#22d3bf">b</code> が検出しきい値 <code style="color:#22d3bf">threshold</code> を 0.02〜0.17 で振る(小さいほど弱いブロブまで拾い、検出数が増えやすい)。3 手法は速度・精度が異なる(LoG が最も正確だが遅く、DoH はエッジに強い一方、小さいブロブを苦手とする、等)。</p>
+<p>skimage.feature의 Laplacian of Gaussian(LoG)/ Difference of Gaussian(DoG)/ Determinant of Hessian(DoH) 중 하나(이 코드는 3종을 공통 구현하고 있으며, 어느 것을 쓸지는 호출 측이 어느 op 이름으로등록했는지 — <code style="color:#22d3bf">xsk_blob_log</code> / <code style="color:#22d3bf">xsk_blob_dog</code> / <code style="color:#22d3bf">xsk_blob_doh</code> — 로 정해진다)를 사용하여 블롭을 검출하고, 그 개수를 그대로 반환한다(feature 출력).</p>
+<p><code style="color:#22d3bf">a</code>가 탐색하는 최대 스케일 <code style="color:#22d3bf">max_sigma</code>를 5~25 범위에서 바꾼다(클수록 큰 블롭까지 잡는다). <code style="color:#22d3bf">b</code>가 검출 임계값 <code style="color:#22d3bf">threshold</code>를 0.02~0.17로 바꾼다(작을수록 약한 블롭까지 잡아, 검출 수가 늘어나기 쉽다). 3가지 기법은 속도·정확도가 다르다(LoG가 가장 정확하지만느리고, DoH는 에지에 강한 반면 작은 블롭에 약하다 등).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

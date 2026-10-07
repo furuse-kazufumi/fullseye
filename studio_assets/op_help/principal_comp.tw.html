@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/principal_comp.inputs.jpg">principal_comp: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對 3 通道執行主成分分析（PCA），依變異數由大到小重新排列色彩空間。相當於 HALCON 的 <code style="color:#22d3bf">principal_comp</code>（計算多通道影像的主成分）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解（<code style="color:#22d3bf">np.linalg.eigh</code>）で固有ベクトルを求め、固有値の降順に射影する。各成分は画像内で min-max により個別に [0,1] へ正規化するため、出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。a, b は未使用。</p>
+<p>將像素視為 (H*W, 3) 的矩陣並減去平均，透過共變異數矩陣的特徵值分解（<code style="color:#22d3bf">np.linalg.eigh</code>）求得特徵向量，依特徵值降序投影。每個分量在影像內以 min-max 個別正規化到 [0,1]，因此輸出亮度與原影像的尺度無關（正規化後每次都是滿量程）。a, b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning_golay.inputs.jpg">thinning_golay: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역을 세선화한다. 구현은 skimage의 <code style="color:#22d3bf">thin</code>(Guo–Hall 유형의 반복 세선화)으로, 완전히 1화소 폭이 될 때까지 반복하며, a, b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">thinning_golay</code>（Golay アルファベットの構造要素を使ったヒット・オア・ミス変換で 1 ステップぶんだけ細線化する演算、通常は反復して使う）とはアルゴリズムも粒度も異なる近似 —— 単一ステップではなく収束するまで細線化してしまう。</p>
+<p>HALCON의 <code style="color:#22d3bf">thinning_golay</code>(Golay 알파벳의 구조 요소를 사용한 히트 오어 미스 변환으로 1 스텝만큼만 세선화하는 연산, 보통은 반복해서 사용)와 알고리즘도 입도도 다른 근사 — 단일 스텝이 아니라 수렴할 때까지 세선화해 버린다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

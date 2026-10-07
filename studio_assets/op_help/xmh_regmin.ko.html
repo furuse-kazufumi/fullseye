@@ -12,8 +12,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역 극소점 추출(<code style="color:#22d3bf">mahotas.regmin</code>). 가우시안으로 평활화한 이미지에서 국소적으로 가장 어두운 골짜기를 영역으로 표시한다. 워터셰드(watershed) 분할의 마커 생성에 쓰이는 전형적인 전처리다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は平滑化の強さ(σ、0.15〜3.15)を振る —— 大きくするほど微小なノイズ谷が消え、大きな谷だけが残る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>는 평활화 강도(σ, 0.15~3.15)를 바꾼다 — 크게 할수록 미세한 잡음 골이 사라지고 큰 골만 남는다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>

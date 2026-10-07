@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>全部 contour 點最小包圍圓(近似=以重心為心)的半徑,正規化 feature。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 <code style="color:#22d3bf">r</code> を求め、<code style="color:#22d3bf">r / max(H, W)</code> を <code style="color:#22d3bf">np.float64</code> で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の近似で、半径は真値以上になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 1 つも無ければ 0.0(有効な値 0 と区別できない)。</p>
-<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが変わると値が変わる。円らしさを測りたいなら <code style="color:#22d3bf">hx_fit_circle_contour</code>(残差)や <code style="color:#22d3bf">circularity_xld</code>。region 版の厳密解は <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
+<p>把 contour dict 中全部 contour 的點合併，以點的平均（質心）為中心求到最遠點的距離 <code style="color:#22d3bf">r</code>，以 <code style="color:#22d3bf">np.float64</code> 回傳 <code style="color:#22d3bf">r / max(H, W)</code>。這不是真正的最小包圍圓（中心也被最佳化），而是「以質心為中心的包圍圓」的近似，半徑不小於真值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 連 1 個點都沒有時為 0.0（與有效值 0 無法區分）。</p>
+<p>即使有多個 contour，也以 1 個圓包住（不是依 contour）。正規化用的是影像的長邊，因此即使形狀相同，影像尺寸一變值也會變。想量測圓度時用 <code style="color:#22d3bf">hx_fit_circle_contour</code>（殘差）或 <code style="color:#22d3bf">circularity_xld</code>。region 版的精確解是 <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

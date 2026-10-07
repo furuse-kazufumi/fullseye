@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/polar_trans_region_inv.inputs.jpg">polar_trans_region_inv: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>극좌표 표현을 일반적인 직교 좌표(데카르트 좌표)로 역변환한다(<code style="color:#22d3bf">cv2.warpPolar</code>의 역매핑 모드). 중심에서 반지름 <code style="color:#22d3bf">min(h,w)/2</code>인 원판 바깥은 0으로 채우고, <code style="color:#22d3bf">_rebinarise</code>로 0.5 임계값을 통해 이진 영역으로 되돌린다. a, b는 사용되지 않는다(<code style="color:#22d3bf">polar_trans_image_inv</code>와 동일한 <code style="color:#22d3bf">_sh_geom</code>의 <code style="color:#22d3bf">polar_inv</code> 분기를 공유한다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_region_inv</code>（極座標領域を元のデカルト座標系の領域に戻す演算）に相当。実装上、円盤境界付近 1 画素程度は補間の丸めで非決定的になりうるため外側を明示的に 0 で塗って安全側に倒している（2026-09-02 修正済み、詳細は <code style="color:#22d3bf">_sh_geom</code> の <code style="color:#22d3bf">polar_inv</code> 分岐のコメント参照）。</p>
+<p>HALCON의 <code style="color:#22d3bf">polar_trans_region_inv</code>(극좌표 영역을 원래의 데카르트 좌표계 영역으로 되돌리는 연산)에 해당. 구현상 원판 경계 부근 1 화소 정도는 보간의 반올림으로 비결정적이 될 수 있으므로, 바깥쪽을 명시적으로 0으로 칠해 안전한 쪽으로 처리하고 있다(2026-09-02 수정 완료, 자세한 내용은 <code style="color:#22d3bf">_sh_geom</code>의 <code style="color:#22d3bf">polar_inv</code> 분기 주석 참조).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

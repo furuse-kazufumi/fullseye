@@ -5,18 +5,16 @@
 <p>*Keine Abbildung: der Typ ist erreichbar, aber die generische synthetische Eingabe liegt außerhalb des Definitionsbereichs dieses Ops — 橋渡しで束縛した raster が 64×64 固定で、128×128 の点は外に落ちる. Zur Verwendung siehe die lauffähigen Beispiele unten.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Bildkoordinaten <code style="color:#22d3bf">(N,2) = (u, v)</code> → Zählbild <code style="color:#22d3bf">(H, W)</code>. Der zweite Ausgang von <code style="color:#22d3bf">keypoints</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">round(v)</code> を行、<code style="color:#22d3bf">round(u)</code> を列として 1 ずつ加算する。<b>画素格子への量子化が損失</b>で、<code style="color:#22d3bf">keypoints_from_image2d</code> と往復すると位置が最大 0.5 画素ずれる(よく離れた 225 点での実測: <b>軸あたり</b> RMS 0.2835 px = 一様量子化の理論値 1/sqrt(12) = 0.2887 と一致。2-D 距離では sqrt(2) 倍の 0.4009 px で、理論 sqrt(2/12) = 0.4082)。</p>
-<p>★ここも一度間違えた: 2-D 距離の実測を 1-D の理論値と並べて「0.29 のはずが 0.40 だ」と読みかけた —— 軸ごとの量と距離の量を混ぜると、正しい実装が誤っているように見える。近接した点は連結成分として融合するので、往復で点数も減りうる(実測: 60 点をランダムに置くと 54 点)。</p>
-<p>範囲外の点は<b>黙って捨てない</b> —— 捨てると「検出が減った」のか「画像が小さすぎた」のかが区別できなくなる。</p>
+<p>Addiert jeweils 1 in Zeile <code style="color:#22d3bf">round(v)</code>, Spalte <code style="color:#22d3bf">round(u)</code>. <b>Die Quantisierung auf das Pixelgitter ist der Verlust</b>: Ein Hin- und Rückweg mit <code style="color:#22d3bf">keypoints_from_image2d</code> verschiebt Positionen um bis zu 0.5 Pixel (gemessen an 225 gut getrennten Punkten: <b>pro Achse</b> RMS 0.2835 px = übereinstimmend mit dem theoretischen Wert gleichmäßiger Quantisierung 1/sqrt(12) = 0.2887. Als 2-D-Abstand das sqrt(2)-Fache, 0.4009 px, gegenüber theoretisch sqrt(2/12) = 0.4082). ★Auch hier lagen wir einmal falsch: Wir hätten den gemessenen 2-D-Abstand beinahe neben den 1-D-Theoriewert gestellt und gelesen &quot;sollte 0.29 sein, ist aber 0.40&quot; —— vermischt man Größen pro Achse mit Abstandsgrößen, sieht eine korrekte Implementierung fehlerhaft aus. Benachbarte Punkte verschmelzen als Zusammenhangskomponente, daher kann beim Hin- und Rückweg auch die Punktzahl sinken (gemessen: 60 zufällig platzierte Punkte ergeben 54 Punkte).</p>
+<p>Punkte außerhalb des Bereichs werden <b>nicht stillschweigend verworfen</b> —— sonst ließe sich nicht unterscheiden, ob &quot;die Detektionen weniger wurden&quot; oder &quot;das Bild zu klein war&quot;.</p>
 <p>Args:</p>
-<p>keypoints: (N, 2) の (u, v)。</p>
-<p>shape: (H, W)。</p>
+<p>keypoints: (N, 2) aus (u, v).</p>
+<p>shape: (H, W).</p>
 <p>Returns:</p>
-<p>(H, W) float64 の計数画像。</p>
+<p>(H, W) float64-Zählbild.</p>
 <p>Raises:</p>
-<p>ValueError: 形状不正 / 非有限 / 範囲外の点がある / shape が上限超。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">keypoints_to_image2d</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>ValueError: ungültige Form / nicht endlich / Punkte außerhalb des Bereichs / shape über der Obergrenze.</p>
+<p>Die reprconv-Op <code style="color:#22d3bf">keypoints_to_image2d</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

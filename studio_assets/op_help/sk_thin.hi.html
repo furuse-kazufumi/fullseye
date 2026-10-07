@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_thin.inputs.jpg">sk_thin: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Morphological thinning। sk_skeleton जैसा ही 1 pixel चौड़ाई तक पतला करना, लेकिन algorithm अलग है: hit-or-miss transform पर आधारित, और skeleton की शाखाएँ (spurs) कम निकलने की प्रवृत्ति रखता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">thinning</code>(Remove the result of a hit-or-miss operation from a region.)に相当。実装は <code style="color:#22d3bf">morphology.thin(binm(v))</code>。a, b は未使用。sk_skeleton / sk_medial と 3 通りの細線化を並べ、対象形状に合うものを選べるようにしてある。</p>
+<p>HALCON के <code style="color:#22d3bf">thinning</code>(Remove the result of a hit-or-miss operation from a region.) के बराबर। implementation <code style="color:#22d3bf">morphology.thin(binm(v))</code> है। a, b उपयोग नहीं होते। sk_skeleton / sk_medial के साथ 3 प्रकार की thinning साथ रखी गई है, ताकि लक्ष्य आकार के अनुकूल वाली चुनी जा सके।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

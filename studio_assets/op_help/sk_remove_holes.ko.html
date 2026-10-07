@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_remove_holes.inputs.jpg">sk_remove_holes: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>작은 구멍 메우기. 전경 영역 내부에 있는 배경 구멍(홀) 중 면적이 임계값 미만인 것만 채운다 —— 큰 구멍(의도된 개구부)은 남겨둔다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)に相当(近似。HALCON 版は全ての孔を埋めるが、こちらは面積フィルタ付き)。実装は <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a は埋める孔の面積上限を 8〜68 画素に振る。b は未使用。</p>
+<p>HALCON의 <code style="color:#22d3bf">fill_up</code>(Fill up holes in regions.)에 상당(근사. HALCON 판은 모든 구멍을 메우지만, 이쪽은 면적 필터가 붙어 있다). 구현은 <code style="color:#22d3bf">morphology.remove_small_holes(binm(v), area_threshold=int(8+a*60))</code> —— a는 메울 구멍의 면적 상한을 8〜68 화소로 바꾼다. b는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

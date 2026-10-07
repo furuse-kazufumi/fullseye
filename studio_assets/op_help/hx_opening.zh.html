@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_opening.inputs.jpg">hx_opening: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用圆盘结构元素对 region 做开运算(opening,先腐蚀后膨胀)。相当于 HALCON 的 <code style="color:#22d3bf">opening</code>(对 region 做开运算)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code> の円板で <code style="color:#22d3bf">scipy.ndimage.binary_opening</code> を呼ぶ。<code style="color:#22d3bf">b</code> は未使用。細い突起や小さな孤立点を除去しつつ全体形状を保つ。</p>
+<p>用半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code> 的圆盘调用 <code style="color:#22d3bf">scipy.ndimage.binary_opening</code>。<code style="color:#22d3bf">b</code> 未使用。在保持整体形状的同时去除细小突起和小的孤立点。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

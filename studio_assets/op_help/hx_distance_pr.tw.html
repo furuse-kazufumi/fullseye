@@ -13,12 +13,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pr.chain.jpg">hx_distance_pr: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從查詢點(正規化 a,b)到 region 的最小距離(feature),用距離變換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region の補集合にユークリッド距離変換(<code style="color:#22d3bf">distance_transform_edt</code>)を掛け、正規化座標 <code style="color:#22d3bf">(a, b)</code> の画素での値(その画素から最も近い region 画素までの距離)を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行 <code style="color:#22d3bf">min(int(a*H), H-1)</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 列 <code style="color:#22d3bf">min(int(b*W), W-1)</code>。</p>
-<p style="margin:2px 0 2px 12px">• region が空なら 1.0(「最大距離」の意味。<code style="color:#22d3bf">hx_distance_pc</code> の空=0 とは逆なので注意)。</p>
-<p>クエリ点が region の内側なら 0。距離変換は画像全体に対して計算するので 1 点の問い合わせとしては重いが、値は厳密な画素間距離(<code style="color:#22d3bf">hx_distance_pc</code> のような頂点近似ではない)。含むかどうかだけなら <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p>對 <code style="color:#22d3bf">v &gt; 0.5</code> 的 region 的補集施加歐氏距離轉換(<code style="color:#22d3bf">distance_transform_edt</code>),把正規化座標 <code style="color:#22d3bf">(a, b)</code> 處像素的值(該像素到最近 region 像素的距離)除以 <code style="color:#22d3bf">max(H, W)</code> 並以 1 飽和截頂後作為 <code style="color:#22d3bf">np.float64</code> 回傳。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 列 <code style="color:#22d3bf">min(int(a*H), H-1)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 行 <code style="color:#22d3bf">min(int(b*W), W-1)</code>。</p>
+<p style="margin:2px 0 2px 12px">• region 為空時為 1.0(意為「最大距離」。與 <code style="color:#22d3bf">hx_distance_pc</code> 的空=0 相反,需注意)。</p>
+<p>查詢點在 region 內側時為 0。距離轉換對整幅影像計算,作為 1 個點的查詢較重, 但值是嚴格的像素間距離(不是 <code style="color:#22d3bf">hx_distance_pc</code> 那樣的頂點近似)。只需判斷是否包含時用 <code style="color:#22d3bf">hx_test_region_point</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

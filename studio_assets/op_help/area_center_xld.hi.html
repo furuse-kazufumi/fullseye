@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/area_center_xld.chain.jpg">area_center_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सबसे ज़्यादा points वाले 1 contour के लिए shoelace formula से polygon का क्षेत्रफल निकालता है और image के कुल pixels से normalise करके लौटाता है। HALCON का <code style="color:#22d3bf">area_center_xld</code> (Area and center of gravity (centroid) of contours and polygons.) क्षेत्रफल के साथ centroid भी लौटाने वाला operator है, लेकिन यह विकल्प केवल क्षेत्रफल लौटाता है (centroid की जानकारी खोने वाला सन्निकटन ―― <code style="color:#22d3bf">feature</code> sort 1 scalar है, इस contract की सीमा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭が無ければ 0 を返す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। contour न होने पर 0 लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

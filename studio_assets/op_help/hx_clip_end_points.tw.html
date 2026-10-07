@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_end_points.inputs.jpg">hx_clip_end_points: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把每條 contour 的兩端各切掉 k 個點(k 由 a)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>contour dict の各 contour から先頭と末尾の <code style="color:#22d3bf">k</code> 点ずつを落とし <code style="color:#22d3bf">c[k:len-k]</code> を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 切り落とす点数 <code style="color:#22d3bf">k = 1 + int(a*5)</code>(1〜6 点)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点数が <code style="color:#22d3bf">2k+1</code> 以下の contour は短くするのではなく丸ごと捨てる。短い contour が多いと出力が空になりうる。</p>
-<p>エッジ抽出の端に出るかぎ状の乱れや、閉じた contour の始点重複を落とすのに使う。単位は「点数」であって画素距離ではないので、点の密度(<code style="color:#22d3bf">edges_sub_pix</code> は 1 画素刻み)を意識する。閉じた contour に掛けると閉じなくなる(<code style="color:#22d3bf">hx_test_closed_xld</code> の判定が変わる)。</p>
+<p>從 contour dict 的每個 contour 的首尾各去掉 <code style="color:#22d3bf">k</code> 個點，回傳 <code style="color:#22d3bf">c[k:len-k]</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 切掉的點數 <code style="color:#22d3bf">k = 1 + int(a*5)</code>（1〜6 點）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• 點數不超過 <code style="color:#22d3bf">2k+1</code> 的 contour 不是縮短而是整條捨棄。短 contour 多時輸出可能為空。</p>
+<p>用於去掉邊緣擷取端部出現的鉤狀紊亂，或閉合 contour 的起點重複。單位是「點數」而非像素距離，因此要留意點的密度（<code style="color:#22d3bf">edges_sub_pix</code> 為 1 像素步長）。套用到閉合 contour 上會使其不再閉合（<code style="color:#22d3bf">hx_test_closed_xld</code> 的判定會改變）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

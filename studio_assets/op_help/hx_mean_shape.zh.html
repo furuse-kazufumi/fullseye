@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用任意掩码(圆盘)做均值平滑。半径 r 由 a 可变(与矩形均值是不同算子)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>半径 <code style="color:#22d3bf">r</code> の円板(<code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> を満たす画素を 1、総和で割って正規化)を <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code> で畳み込む。出力は入力と同形の float 配列で、値域は入力の範囲を出ない(重みの和が 1)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code>(1〜5 画素、5 になるのは a=1 のときだけ)。カーネルは <code style="color:#22d3bf">(2r+1)</code> 角の中の円板。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>矩形窓の <code style="color:#22d3bf">mean_image</code> と違い方向による重みの偏りが少なく、円板半径以下の構造を等方的にぼかす。境界は鏡映で延長するので端の暗落ちは起きない。入力検証は無く、NaN が含まれるとそのまま伝播する。</p>
+<p>用半径 <code style="color:#22d3bf">r</code> 的圆盘（满足 <code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> 的像素为 1，除以总和归一化）通过 <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code> 做卷积。输出是与输入同形的 float 数组，值域不超出输入的范围（权重和为 1）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code>（1〜5 像素，只有 a=1 时才为 5）。核是 <code style="color:#22d3bf">(2r+1)</code> 见方中的圆盘。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p>与矩形窗口的 <code style="color:#22d3bf">mean_image</code> 不同，方向上的权重偏差较小，能各向同性地模糊不大于圆盘半径的结构。边界以镜像方式延拓，因此边缘不会变暗。没有输入校验，含有 NaN 时会原样传播。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

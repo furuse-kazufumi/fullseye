@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Posterisierung (Reduzierung der Tonstufenzahl). Ruft <code style="color:#22d3bf">PIL.ImageOps.posterize</code> auf, um durch Verringerung der effektiven Bitanzahl jedes Kanals die Anzahl der Farben zu reduzieren.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>a が保持ビット数（<code style="color:#22d3bf">bits = 1 + int(a*6)</code>、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
+<p>a variiert die Anzahl der beibehaltenen Bits (<code style="color:#22d3bf">bits = 1 + int(a*6)</code>, Bereich 1-7). b wird nicht verwendet. Bei bits=1 erleidet jeder Kanal einen extremen Tonwertverlust, nahe an einer Binarisierung auf 2 Werte.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

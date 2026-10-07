@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.inputs.jpg">hx_select_xld_point: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>只保留外接矩形包含查询点(归一化 a,b)的 contour(filter)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> が、contour の外接軸並行矩形 <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> に入る contour だけを残して返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1 を高さに写す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1 を幅に写す)。</p>
-<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の点でも選ばれる。厳密な内外判定が要るなら <code style="color:#22d3bf">contours_to_region</code> で region 化して <code style="color:#22d3bf">hx_test_region_point</code>。点に最も近い contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>。該当が無ければ空の contour 集合。</p>
+<p>只保留正规化坐标 <code style="color:#22d3bf">(a, b)</code> 给出的查询点 <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> 落在其外接轴平行矩形 <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> 内的 contour 并返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 查询点的行(把 0〜1 映射到高度)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 查询点的列(把 0〜1 映射到宽度)。</p>
+<p>判定用的是外接矩形,而不是 contour 的内侧(多边形内外),因此对 L 字形或环形 contour,在 contour 外的点也会被选中。需要严格的内外判定时,用 <code style="color:#22d3bf">contours_to_region</code> 转为 region 后用 <code style="color:#22d3bf">hx_test_region_point</code>。到离点最近的 contour 的距离见 <code style="color:#22d3bf">hx_distance_pc</code>。没有符合项时为空的 contour 集合。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

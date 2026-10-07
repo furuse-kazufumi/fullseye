@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_rect1_xld.chain.jpg">hx_smallest_rect1_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The area ratio of the axis-aligned bounding box of all contour points (a feature).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>contour dict の全点をまとめ、行方向・列方向それぞれの <code style="color:#22d3bf">max - min</code>(外接軸並行矩形の高さ・幅)の積を画像面積 <code style="color:#22d3bf">H*W</code> で割った値を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が無ければ 0.0。1 点だけ、または全点が同一行/列でも幅が 0 になり 0.0(<code style="color:#22d3bf">+1</code> の画素補正はしない)。</p>
-<p>全 contour をまとめた 1 つの矩形なので、離れた contour が 2 つあると間の空白も面積に入る。向きを持つ最小面積矩形は <code style="color:#22d3bf">hx_smallest_rect2_xld</code>、region に対する軸並行外接矩形は <code style="color:#22d3bf">smallest_rectangle1</code>。</p>
+<p>Merges all points of a contour dict and returns as <code style="color:#22d3bf">np.float64</code> the product of <code style="color:#22d3bf">max - min</code> in the row and column directions (height and width of the axis-parallel bounding rectangle) divided by the image area <code style="color:#22d3bf">H*W</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there are no points. With only 1 point, or all points in the same row/column, the width is 0 and the result is 0.0 (no <code style="color:#22d3bf">+1</code> pixel correction is applied).</p>
+<p>Since it is 1 rectangle around all contours together, with 2 separated contours the empty space between them also counts toward the area. For the oriented minimum-area rectangle, use <code style="color:#22d3bf">hx_smallest_rect2_xld</code>; for the axis-parallel bounding rectangle of a region, <code style="color:#22d3bf">smallest_rectangle1</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

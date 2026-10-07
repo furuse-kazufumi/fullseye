@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过 FFT 实现的低通滤波器（模糊）。未指定对应的 HALCON 单一算子。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が遮断周波数 <code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code>（正規化周波数、0〜0.5 がナイキストまでの範囲）を振る。<code style="color:#22d3bf">b</code> は未使用。2-D FFT で <code style="color:#22d3bf">rad &lt;= cutoff</code> の低周波成分だけを残し、逆 FFT の実部を <code style="color:#22d3bf">[0,1]</code> に clip する。<code style="color:#22d3bf">a</code> が小さいほど強くぼける。境界は周期的（FFT の性質上、画像端は反対側と隣接するとみなされる）に扱われ、<code style="color:#22d3bf">ndimage</code> 系フィルタの <code style="color:#22d3bf">reflect</code>/<code style="color:#22d3bf">edge</code> とは境界処理が異なる点に注意。</p>
+<p><code style="color:#22d3bf">a</code> 调节截止频率 <code style="color:#22d3bf">cutoff = 0.05 + 0.4a</code>（归一化频率，0〜0.5 为到奈奎斯特为止的范围）。<code style="color:#22d3bf">b</code> 未使用。用 2-D FFT 只保留 <code style="color:#22d3bf">rad &lt;= cutoff</code> 的低频成分，把逆 FFT 的实部 clip 到 <code style="color:#22d3bf">[0,1]</code>。<code style="color:#22d3bf">a</code> 越小模糊越强。边界按周期处理（由于 FFT 的性质，图像边缘被视为与另一侧相邻），请注意其边界处理与 <code style="color:#22d3bf">ndimage</code> 系滤波器的 <code style="color:#22d3bf">reflect</code>/<code style="color:#22d3bf">edge</code> 不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,12 +14,11 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>close_edges, and additionally drop short edge fragments below a length (in pixels) threshold.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化 → 3×3(8 近傍)構造要素で 1 回 <code style="color:#22d3bf">binary_closing</code> → <code style="color:#22d3bf">ndimage.label</code>(既定の 4 近傍連結)で連結成分にし、画素数が <code style="color:#22d3bf">min_len</code> 未満の成分を落として 0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 残す最小画素数 <code style="color:#22d3bf">min_len = 2 + int(b*20)</code>(2〜22)。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければクロージング結果をそのまま返す。</p>
-<p>注意: クロージングの構造要素は固定 3×3 で、<code style="color:#22d3bf">hx_close_edges</code> のような幅の調整は無い。ラベリングが 4 近傍のため斜めにつながる 1 画素幅の線は別成分に分かれ、「長さ」が短く数えられて消えやすい。<code style="color:#22d3bf">binary_closing</code> は画像外を 0 と扱うので端 1 画素の帯は常に 0 になる。「長さ」は成分の画素数であり幾何学的な線長ではない(塊も長いと数える)。</p>
+<p>Binarise with <code style="color:#22d3bf">v &gt; a</code> → 1 <code style="color:#22d3bf">binary_closing</code> with a 3×3 (8-neighbourhood) structuring element → <code style="color:#22d3bf">ndimage.label</code> (default 4-neighbourhood connectivity) into connected components; components with fewer than <code style="color:#22d3bf">min_len</code> pixels are dropped, and a 0/1 float image is returned.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → binarisation threshold.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → minimum pixel count to keep <code style="color:#22d3bf">min_len = 2 + int(b*20)</code> (2 to 22).</p>
+<p style="margin:2px 0 2px 12px">• If there is not even 1 component, the closing result is returned as-is.</p>
+<p>Caution: the closing structuring element is fixed at 3×3; there is no width adjustment as in <code style="color:#22d3bf">hx_close_edges</code>. Because labelling uses the 4-neighbourhood, 1-pixel-wide lines connected diagonally split into separate components, their &quot;length&quot; is counted short, and they tend to vanish. <code style="color:#22d3bf">binary_closing</code> treats outside the image as 0, so a 1-pixel band at the border is always 0. &quot;Length&quot; is the pixel count of a component, not a geometric line length (blobs also count as long).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

@@ -10,8 +10,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>统计中央扫描线上明暗切换次数的简易条码风格特征量。它与 HALCON 的 <code style="color:#22d3bf">find_bar_code</code>（Detect and read bar code symbols in an image.）貌似而实不同，完全不进行符号体系判定或数据解码(只是数条码的「数量」)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が「暗い」とみなすしきい値を <code style="color:#22d3bf">0.3〜0.7</code> に振る。<code style="color:#22d3bf">b</code> は未使用。画像中央の行（<code style="color:#22d3bf">v.shape[0]//2</code>）だけを見て、<code style="color:#22d3bf">v &lt; しきい値</code> の画素を 1 とした列に対し、0→1 に立ち上がる回数（暗いバーの本数）を数える。実際のバーコードのデータ（数字・文字列）は得られない。</p>
+<p><code style="color:#22d3bf">a</code> 将视为“暗”的阈值在 <code style="color:#22d3bf">0.3〜0.7</code> 之间调节。<code style="color:#22d3bf">b</code> 未使用。只看图像中央的一行（<code style="color:#22d3bf">v.shape[0]//2</code>），对把 <code style="color:#22d3bf">v &lt; 阈值</code> 的像素设为 1 的序列，计数 0→1 上升的次数（暗条的条数）。得不到实际条码的数据（数字、字符串）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

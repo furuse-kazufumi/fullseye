@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/connect_and_holes.chain.jpg">connect_and_holes: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zählt die Anzahl der zusammenhängenden Komponenten der Region (8er-Nachbarschaft, derselbe <code style="color:#22d3bf">count</code>-Zweig von <code style="color:#22d3bf">_sh_region_feat</code> wie bei <code style="color:#22d3bf">count_obj</code>). a und b werden nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">connect_and_holes</code>（連結成分数と穴の数の 2 つを同時に返す演算）のうち<b>連結成分数だけ</b>を返す近似 —— feature sort は 1 スカラーしか運べないため、穴の数は含まれない（<code style="color:#22d3bf">area_holes</code> が穴の面積比を別途計算する）。</p>
+<p>Näherung, die von HALCONs <code style="color:#22d3bf">connect_and_holes</code> (Operation, die 2 Werte gleichzeitig zurückgibt: Anzahl der Zusammenhangskomponenten und Anzahl der Löcher) <b>nur die Anzahl der Zusammenhangskomponenten</b> zurückgibt — da die Sorte feature sort nur 1 Skalar transportieren kann, ist die Anzahl der Löcher nicht enthalten (<code style="color:#22d3bf">area_holes</code> berechnet das Flächenverhältnis der Löcher separat).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

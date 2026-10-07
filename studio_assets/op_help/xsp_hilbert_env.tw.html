@@ -11,8 +11,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>沿列方向擷取解析訊號（希爾伯特轉換）的振幅包絡。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画素値を [-0.5, 0.5] に平行移動してから各行に 1 次元ヒルベルト変換（<code style="color:#22d3bf">scipy.signal.hilbert</code>）を掛け、複素解析信号の絶対値（瞬時振幅）を正規化して返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。周期的な縞模様やテクスチャの「包絡線」を強調するのに向き、位相情報は捨てて振幅だけを残す。列方向には掛からないため、結果は水平方向の変化にのみ反応する。</p>
+<p>將像素值平移到 [-0.5, 0.5] 後，對每一列套用 1 維希爾伯特轉換（<code style="color:#22d3bf">scipy.signal.hilbert</code>），將複數解析訊號的絕對值（瞬時振幅）正規化後傳回。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。適合強調週期性條紋或紋理的「包絡線」，捨棄相位資訊而只保留振幅。由於不在行方向上套用，結果只對水平方向的變化有反應。</p>
 <p><b>邊界處理</b>：環繞到對側（週期）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 族使用指南</a></p>

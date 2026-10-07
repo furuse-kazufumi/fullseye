@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/morph_skeleton.inputs.jpg">morph_skeleton: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역의 골격선(skeleton)을 추출한다. 구현은 skimage의 <code style="color:#22d3bf">skeletonize</code>(Zhang–Suen 유형의 반복 세선화 알고리즘)이며, a, b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">morph_skeleton</code>（構造要素による反復収縮とその差分から求める形態学的スケルトン）とはアルゴリズムが異なる近似 —— 同じ「1 画素幅の骨格」という結果を目指すが、生成過程・端点の扱いなどが morph_skeleton の定義と一致するとは限らない。</p>
+<p>HALCON의 <code style="color:#22d3bf">morph_skeleton</code>(구조 요소에 의한 반복 침식과 그 차분으로 구하는 형태학적 스켈레톤)과 알고리즘이 다른 근사 — 같은 &#x27;1 화소 폭의 골격&#x27;이라는 결과를 목표로 하지만, 생성 과정·끝점 처리 등이 morph_skeleton의 정의와 일치한다고는 할 수 없다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

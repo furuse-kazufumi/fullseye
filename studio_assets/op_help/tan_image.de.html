@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Eine punktweise (pointwise) Transformation, die den Tangens der Pixelwerte bildet. Entspricht HALCONs <code style="color:#22d3bf">tan_image</code> (berechnet den Tangens eines Bildes), ist jedoch eine Näherung mit einer abweichenden Normierungskonvention.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>実装は x を [0,1] にクリップし、(x-0.5) を ±0.45π の範囲へ写してから tan を掛け、結果を signed01（符号つき値を [0,1] に写す、0.5 が 0 に対応）で戻す。a, b は未使用。角度域を ±0.45π に抑えているため tan の発散（±90° 付近）には達しない。中間輝度付近で傾きが最大になり、コントラストを強めたい局所帯域を狙うのに使える。</p>
+<p>Die Implementierung begrenzt x auf [0,1], bildet (x-0.5) auf den Bereich ±0.45π ab, wendet tan an und bildet das Ergebnis mit signed01 zurück (bildet vorzeichenbehaftete Werte auf [0,1] ab, 0.5 entspricht 0). a, b werden nicht verwendet. Da der Winkelbereich auf ±0.45π beschränkt ist, wird die Divergenz von tan (nahe ±90°) nie erreicht. Die Steigung ist um mittlere Leuchtdichten am größten, sodass sich damit ein lokales Band gezielt ansteuern lässt, in dem man den Kontrast verstärken will.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">Leitfaden zur Familie gallery2d_gray_arith</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -8,8 +8,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The first Hu invariant moment of a grayscale image (OpenCV <code style="color:#22d3bf">cv2.HuMoments(cv2.moments(...))[0,0]</code>). A feature representing the rotation-, scale-, and translation-invariant spread, based on the second-order central moment, when the grayscale values themselves - rather than a binary shape - are treated as a mass distribution. Capped at 1.0.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。二値領域の形状記述に使う通常の Hu モーメントとは異なり、濃淡値をそのまま重みとして使う点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Note that, unlike the usual Hu moments used to describe the shape of binary regions, it uses the grey values directly as weights.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

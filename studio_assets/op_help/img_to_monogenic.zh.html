@@ -13,11 +13,10 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>生成图像的单尺度单演信号(四元数场 (H,W,4)，sort <code style="color:#22d3bf">qimage</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>台帳の <code style="color:#22d3bf">monogenic_signal</code>(Felsberg &amp; Sommer 2001)そのもの: 対数放射状の raised-cosine 帯域通過を掛け、その Riesz 対と組にして四元数 <code style="color:#22d3bf">(帯域通過像, R1, R2, 0)</code> に詰める。<code style="color:#22d3bf">tb_monogenic_amplitude</code> / <code style="color:#22d3bf">tb_monogenic_phase</code> / <code style="color:#22d3bf">tb_monogenic_orientation</code> は <b>この形の qimage だけ</b> を受け付ける(色の四元数 <code style="color:#22d3bf">tb_rgb_to_quaternion</code> を渡すと「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 中心波長 <code style="color:#22d3bf">wavelength_px = 3 + 12 * a</code> 画素(3〜15 px、a=0.5 で 9 px。小さいほど細かい構造に応答)。★2026-10-07 まで <code style="color:#22d3bf">8 * (0.25 + 1.75 * a)</code> で、a=0 が 2 px(ナイキスト)に写り <code style="color:#22d3bf">monogenic_signal</code> が必ず拒否していた —— 下端を 3 px に上げ、a=0.5 の 9 px は据え置いた。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)</code> オクターブ(b=0.5 で 1.125)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W, 4)</code> float64。値域は入力に依存し [0,1] に収まらない(Riesz 対は符号つき)。</p>
+<p>就是台账中的 <code style="color:#22d3bf">monogenic_signal</code>(Felsberg &amp; Sommer 2001): 施加对数径向的 raised-cosine 带通，与其 Riesz 对组合，装入四元数 <code style="color:#22d3bf">(带通图像, R1, R2, 0)</code>。<code style="color:#22d3bf">tb_monogenic_amplitude</code> / <code style="color:#22d3bf">tb_monogenic_phase</code> / <code style="color:#22d3bf">tb_monogenic_orientation</code> <b>只接受这种形式的 qimage</b>(传入颜色四元数 <code style="color:#22d3bf">tb_rgb_to_quaternion</code> 时会以 “不是单演信号”为由拒绝)，所以那一族的入口是这里。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 中心波长 <code style="color:#22d3bf">wavelength_px = 3 + 12 * a</code> 像素(3〜15 px，a=0.5 时为 9 px。越小越响应细小结构)。★2026-10-07 之前是 <code style="color:#22d3bf">8 * (0.25 + 1.75 * a)</code>，a=0 映射到 2 px(奈奎斯特)，<code style="color:#22d3bf">monogenic_signal</code> 必定拒绝 —— 把下限提高到 3 px，a=0.5 的 9 px 保持不变。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 带宽 <code style="color:#22d3bf">bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)</code> 倍频程(b=0.5 时为 1.125)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(H, W, 4)</code> float64。值域取决于输入，不在 [0,1] 内(Riesz 对带符号)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

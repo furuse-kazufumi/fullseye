@@ -10,8 +10,7 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>확률적 허프 변환에 의한 직선(선분) 검출(단일 스칼라 특징량, OpenCV 구현). 먼저 Canny로 에지 이미지를 만들고, 거기서 직선 형태로 늘어선 에지 화소 집합을 투표 방식으로 찾아 선분으로 검출한다 —— 여기서는 검출된 선분의 개수만을 반환한다(0개면 0).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)に相当(近似。線のパラメータではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a は投票数のしきい値(直線と認める最低票数)を 20〜60 に、b は最小線分長を 10〜30 に振る。Canny の内部しきい値(50, 150)と maxLineGap(5)は固定。</p>
+<p>HALCON의 <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)에 해당한다(근사. 직선 파라미터가 아니라 개수만). 구현은 <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a는 투표 수 임계값(직선으로 인정하는 최소 득표 수)을 20~60으로, b는 최소 선분 길이를 10~30으로 바꾼다. Canny의 내부 임계값(50, 150)과 maxLineGap(5)은 고정이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -13,13 +13,12 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的一列(或一欄)當作光子期望值，產生 Poisson 取樣的一維計數序列。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">expected = profile * n_max</code> を期待値とする Poisson 乱数(固定 seed 20260907)。光子計数の族(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)が受ける <b>非負整数の 1-D 列</b> の合成器で、<code style="color:#22d3bf">tcspc_simulate</code> と同じく「期待値が既知」なのが検算の根拠になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行/列の位置(<code style="color:#22d3bf">img_to_signal</code> と同じ規則。<code style="color:#22d3bf">b</code> が向きも決める)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> で行、<code style="color:#22d3bf">b ≥ 0.5</code> で列。加えて <b>1 画素あたりの最大光子数</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0 で 10、b=0.5 で 100、b=1 で 1,000)。少ないほど散布雑音が目立つ。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D <code style="color:#22d3bf">int64</code>、非負。長さは行なら W、列なら H。</p>
-<p style="margin:2px 0 2px 12px">• 決定的(seed 固定)。同じ入力・同じノブなら同じ列。</p>
-<p>注意: 期待値 0 の画素はカウント 0 になる(Poisson(0) は常に 0)。</p>
+<p>以 <code style="color:#22d3bf">expected = profile * n_max</code> 為期望值的 Poisson 亂數(固定 seed 20260907)。是光子計數族(<code style="color:#22d3bf">tb_counts_to_countrate</code> / <code style="color:#22d3bf">tb_spad_deadtime_apply</code> / <code style="color:#22d3bf">tb_tcspc_background_subtract</code> …)所接受的 <b>非負整數 1-D 序列</b> 的合成器，與 <code style="color:#22d3bf">tcspc_simulate</code> 一樣，「期望值已知」是驗算的依據。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 列/行的位置(與 <code style="color:#22d3bf">img_to_signal</code> 規則相同。<code style="color:#22d3bf">b</code> 也決定方向)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → <code style="color:#22d3bf">b &lt; 0.5</code> 為列，<code style="color:#22d3bf">b ≥ 0.5</code> 為行。此外還決定 <b>每 1 個像素的最大光子數</b> <code style="color:#22d3bf">n_max = 10 ** (1 + 2 * b)</code>(b=0 時為 10，b=0.5 時為 100，b=1 時為 1,000)。越少，散粒雜訊越明顯。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 1-D <code style="color:#22d3bf">int64</code>，非負。長度在列時為 W，行時為 H。</p>
+<p style="margin:2px 0 2px 12px">• 確定性(seed 固定)。輸入相同、旋鈕相同則序列相同。</p>
+<p>注意: 期望值為 0 的像素計數為 0(Poisson(0) 恆為 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

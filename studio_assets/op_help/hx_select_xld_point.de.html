@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_select_xld_point.inputs.jpg">hx_select_xld_point: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Behält nur die Konturen, deren Bounding Box den Abfragepunkt (normiert a, b) enthält — ein Filter.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>正規化座標 <code style="color:#22d3bf">(a, b)</code> のクエリ点 <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> が、contour の外接軸並行矩形 <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> に入る contour だけを残して返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → クエリ点の行(0〜1 を高さに写す)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → クエリ点の列(0〜1 を幅に写す)。</p>
-<p>判定は外接矩形であって contour の内側(多角形の内外)ではないので、L 字や環状の contour では contour の外の点でも選ばれる。厳密な内外判定が要るなら <code style="color:#22d3bf">contours_to_region</code> で region 化して <code style="color:#22d3bf">hx_test_region_point</code>。点に最も近い contour までの距離は <code style="color:#22d3bf">hx_distance_pc</code>。該当が無ければ空の contour 集合。</p>
+<p>Behält nur die Konturen, deren achsparalleles umschreibendes Rechteck <code style="color:#22d3bf">[min row, max row] × [min col, max col]</code> den Abfragepunkt <code style="color:#22d3bf">(qy, qx) = (a*H, b*W)</code> in normierten Koordinaten <code style="color:#22d3bf">(a, b)</code> enthält, und gibt sie zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Zeile des Abfragepunkts (0 bis 1 auf die Höhe abgebildet).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Spalte des Abfragepunkts (0 bis 1 auf die Breite abgebildet).</p>
+<p>Geprüft wird das umschreibende Rechteck, nicht das Innere der Kontur (Polygon innen/außen), daher wird bei L-förmigen oder ringförmigen Konturen auch ein Punkt außerhalb der Kontur ausgewählt. Für einen exakten Innen/Außen-Test mit <code style="color:#22d3bf">contours_to_region</code> in eine Region umwandeln und <code style="color:#22d3bf">hx_test_region_point</code> verwenden. Der Abstand zur dem Punkt nächstgelegenen Kontur ist <code style="color:#22d3bf">hx_distance_pc</code>. Wenn nichts zutrifft, eine leere Konturmenge.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

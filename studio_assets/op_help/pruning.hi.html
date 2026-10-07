@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/pruning.inputs.jpg">pruning: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Skeletonization (<code style="color:#22d3bf">skeletonize</code>, न हो तो इनपुट वैसे ही इस्तेमाल) के बाद, 1 या कम पड़ोसियों वाले सिरे के pixels (spurs) को बार-बार <code style="color:#22d3bf">1+4*a</code> बार काटकर skeleton से छोटी शाखाएँ हटाता है। HALCON के <code style="color:#22d3bf">pruning</code> (Prune the branches of a region.) के समकक्ष है (HALCON शाखा की लंबाई दे सकता है, लेकिन यहाँ iterations की संख्या वाला सन्निकटन है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が削り取る反復回数を 1〜5 回の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。回数が多いほど主要な骨格まで削れてしまうことがある。</p>
+<p><code style="color:#22d3bf">a</code> काटकर हटाने की iterations की संख्या को 1-5 की सीमा में बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। iterations जितनी अधिक होंगी, कभी-कभी मुख्य skeleton तक कट सकता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

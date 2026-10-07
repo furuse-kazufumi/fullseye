@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/feature_to_img.inputs.jpg">feature_to_img: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>스칼라 feature를 <b>눈금이 있는 띠</b>로 만들어 영상으로 되돌린다 — 2-D 대장에서 <b>125개의 op가 만드는데도 영상으로 떨어뜨릴 수 있는 op가 1개도 없었던</b> sort.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>★<b>数字そのものは描かない。</b> 文字を焼くと絵が<b>環境に入っている書体</b>で変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の<b>位置</b>で、目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)に渡すこと。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → スケールの上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 で 0.01、a=0.5 で <b>1.0</b>、a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目盛りの張り方。<code style="color:#22d3bf">b &lt; 0.5</code> は <b>片側</b> <code style="color:#22d3bf">[0, hi]</code>(左端が 0)、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>両側</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央が 0</b>。相関・歪度など符号のある量向け)。</p>
-<p style="margin:2px 0 2px 12px">• 上限を超える値は<b>端で止める</b>(帯が振り切れた状態 = 「スケールが小さい」の合図)。★NaN / Inf は<b>白紙</b>を返す(振り切れと区別する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64、白地([0,1])。</p>
+<p>★<b>숫자 자체는 그리지 않는다.</b> 문자를 새겨 넣으면 그림이 <b>환경에 설치된 글꼴</b>에 따라달라져, 같은 입력이면 같은 화소라는 계약이 깨진다. 그리는 것은 값의 <b>위치</b>이며, 눈금(0·1/4·1/2·3/4·1)이 읽기의 실마리가 된다. 수치가 필요하면 <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 계열)에 넘길 것.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 스케일의 상한 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0에서 0.01, a=0.5에서 <b>1.0</b>, a=1에서 100). 특징량은 자릿수가 제각각이므로, 보고 싶은 자릿수를 여기서 고른다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 눈금을 펼치는 방식. <code style="color:#22d3bf">b &lt; 0.5</code>는 <b>한쪽</b> <code style="color:#22d3bf">[0, hi]</code>(왼쪽 끝이 0), <code style="color:#22d3bf">b &gt;= 0.5</code>는 <b>양쪽</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>가운데가 0</b>. 상관·왜도 등 부호가있는 양용).</p>
+<p style="margin:2px 0 2px 12px">• 상한을 넘는 값은 <b>끝에서 멈춘다</b>(띠가 끝까지 찬 상태 = “스케일이 작다”는신호). ★NaN / Inf는 <b>백지</b>를 반환한다(끝까지 찬 것과 구별한다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(128, 128)</code> float64, 흰 바탕([0,1]).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Min-max normalization that stretches the image&#x27;s minimum-to-maximum range to fill the full [0,1] span (<code style="color:#22d3bf">(x - min) / (max - min)</code>; a constant image is left unchanged). Equivalent to HALCON&#x27;s <code style="color:#22d3bf">scale_image_max</code> (Maximum gray value spreading in the value range 0 to 255.) (the value range here follows the [0,1] contract rather than 0-255).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。画像全体の統計から自動的に決まるため調整の余地がない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Since it is determined automatically from statistics of the whole image, there is no room for adjustment.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>

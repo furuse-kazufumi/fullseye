@@ -12,12 +12,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Histogram की घाटी से threshold तय करके binarise करता है (Otsu का variance मानदंड नहीं, बल्कि घाटी detection = अलग op)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v</code> の 64 bin ヒストグラム(範囲 [0,1])を σ=1.5 のガウスで平滑化し、最も高い bin <code style="color:#22d3bf">p1</code> と、<code style="color:#22d3bf">p1</code> から 5 bin 以上離れた中で次に高い bin <code style="color:#22d3bf">p2</code> を取り、その間で最小の bin(谷)の左端の値をしきい値 <code style="color:#22d3bf">thr</code> にして <code style="color:#22d3bf">v &gt; thr</code> を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用(しきい値は完全に自動)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p2</code> が見つからない(5 bin 以上離れた bin が無い)ときは <code style="color:#22d3bf">lo == hi</code> となり谷を bin 32、つまり <code style="color:#22d3bf">thr = 0.5</code></p>
-<p>に固定する。</p>
-<p>注意: <code style="color:#22d3bf">p2</code> は「2 番目のモード」ではなく「p1 から 5 bin 以上離れた 2 番目に高い bin」なので、単峰の裾でも選ばれる。その場合の谷はピークと裾の間の最小値になり、意図と違う位置で切れる(単峰のガウス雑音画像で大半が前景になる実測あり)。双峰性がはっきりした画像向け。分散基準で決めたいときは <code style="color:#22d3bf">otsu</code>、局所的なら <code style="color:#22d3bf">dyn_threshold</code>。</p>
+<p><code style="color:#22d3bf">v</code> के 64 bin histogram (range [0,1]) को σ=1.5 के Gaussian से smooth करके, सबसे ऊँचा bin <code style="color:#22d3bf">p1</code> और <code style="color:#22d3bf">p1</code> से 5 bin या अधिक दूर वालों में अगला सबसे ऊँचा bin <code style="color:#22d3bf">p2</code> लेता है; उनके बीच के न्यूनतम bin (valley) के बाएँ सिरे के मान को threshold <code style="color:#22d3bf">thr</code> बनाकर <code style="color:#22d3bf">v &gt; thr</code> को 1 रखने वाला 0/1 float region लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते (threshold पूरी तरह स्वचालित है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p2</code> न मिले (5 bin या अधिक दूर कोई bin न हो) तो <code style="color:#22d3bf">lo == hi</code> होकर valley को bin 32, यानी <code style="color:#22d3bf">thr = 0.5</code></p>
+<p>पर स्थिर कर दिया जाता है।</p>
+<p>सावधानी: <code style="color:#22d3bf">p2</code> &quot;2nd mode&quot; नहीं, बल्कि &quot;p1 से 5 bin या अधिक दूर 2nd सबसे ऊँचा bin&quot; है, इसलिए unimodal के tail में भी चुना जाता है। तब valley peak और tail के बीच का न्यूनतम बनता है, और कटाव इरादे से अलग जगह पर होता है (unimodal Gaussian noise image में अधिकांश भाग foreground बन जाने का माप मौजूद है)। स्पष्ट bimodality वाली images के लिए। variance मानदंड से तय करना हो तो <code style="color:#22d3bf">otsu</code>, local के लिए <code style="color:#22d3bf">dyn_threshold</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

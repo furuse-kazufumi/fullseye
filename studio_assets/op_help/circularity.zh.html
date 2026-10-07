@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity.chain.jpg">circularity: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>圆形度 <code style="color:#22d3bf">min(1, 面积 /(π・max²))</code>,<code style="color:#22d3bf">max</code> 是<b>从重心到轮廓像素的最大距离</b>。圆为 1,越细长或有大的凸起/孔洞则越小。存在多个连通分量时只评估面积最大的一个。与 HALCON 的 <code style="color:#22d3bf">circularity</code>(Shape factor for the circularity (similarity to a circle) of a region.)<b>是同一个公式</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という<b>別の量</b>を返していた。名前は HALCON から借りているのに数が違うので、HALCON のレシピを移してきた人が同じしきい値で違う判定を得ていた(正方形で 0.826 対 0.670 と<b>順序まで変わる</b>)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前返回的是等周比 <code style="color:#22d3bf">4π·面积/周长²</code> 这个<b>不同的量</b>。名字借自 HALCON 但数值不同,因此移植 HALCON 配方的人用同一阈值得到了不同的判定(正方形上 0.826 对 0.670,<b>连顺序都会改变</b>)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

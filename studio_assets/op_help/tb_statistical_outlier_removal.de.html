@@ -14,23 +14,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_statistical_outlier_removal.inputs.jpg">tb_statistical_outlier_removal: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Entfernt Punkte, deren mittlerer Abstand zu den k nächsten Nachbarn global als Ausreißer auffällt (statistische Ausreißerentfernung).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
+<p>Misst für jeden Punkt &quot;den mittleren Abstand zu seinen k nächsten Nachbarn (ohne sich selbst)&quot; und verwirft Punkte, die <code style="color:#22d3bf">mean + std_ratio*std</code> dieser Verteilung über alle Punkte überschreiten, als Ausreißerpunkte. Wirksam zum Bereinigen spärlicher Ausreißer; Punkte auf dichten Flächen bleiben erhalten.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>Eingabe-Punktwolke.</p>
 <p>k : int</p>
-<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
+<p>Zahl der Nachbarn (Standard 16). Bei wenigen Punkten intern auf <code style="color:#22d3bf">n-1</code> reduziert.</p>
 <p>std_ratio : float</p>
-<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>Großzügigkeit der Schwelle. Je größer, desto eher bleiben Punkte erhalten (lockereres Entfernen).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>Überlebende Punkte (ursprüngliche Reihenfolge erhalten).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
+<p>Ob jeder Eingabepunkt behalten wird (True = behalten). <code style="color:#22d3bf">points[keep_mask]</code> ist gleich <code style="color:#22d3bf">filtered</code>.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">statistical_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 16)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">std_ratio</code>(既定 2)を振る。</p>
+<p>Bei Punktzahl &lt; 3 lässt sich keine Statistik bilden, daher werden alle Punkte behalten (graceful).</p>
+<p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">statistical_outlier_removal</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">k</code> (Standard 16), <code style="color:#22d3bf">b</code> variiert <code style="color:#22d3bf">std_ratio</code> (Standard 2).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

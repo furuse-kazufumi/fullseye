@@ -14,10 +14,9 @@
 <p><img src="fig/tb_occupancy_grid.gif" alt="tb_occupancy_grid: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke (N,3) → 3-D-Belegungsvoxelgitter, bool (ein Voxel, in das ein Punkt fällt, gilt als belegt).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> が格子の張る体積、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float) を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>
-<p>Raises ValueError for res&lt;=0, non-(N,3) points, or degenerate bounds.</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">occupancy_grid</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> ist das vom Gitter aufgespannte Volumen, <code style="color:#22d3bf">res</code> die Voxelzahl je Achse (Skalar = kubisch res³, oder Länge 3 je Achse). Ein Voxel ist das halboffene Intervall [lo+i/res*span, lo+(i+1)/res*span), ein Punkt am oberen Ende (frac==1) kommt ins letzte Voxel. <b>Punkte außerhalb von bounds werden verworfen</b> (würde man sie in Randzellen clampen, häuften sich am Rand Phantomhindernisse). Während match3d.points_to_voxel eine Dichte (float) erzeugt, erzeugt dies eine Belegung (bool) für die planning; das ist das Besondere daran.</p>
+<p>Wirft ValueError bei res&lt;=0, points nicht (N,3) oder degenerierten bounds.</p>
+<p>Die 3d-Op <code style="color:#22d3bf">occupancy_grid</code>, in die 2-D-Evolutionsregistry überbrückt. Die Implementierung ist dieselbe; nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese Op hat keine Stellgrößen; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

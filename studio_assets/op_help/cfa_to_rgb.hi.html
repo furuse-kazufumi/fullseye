@@ -13,9 +13,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Bayer array (CFA: Color Filter Array) से RGB image में demosaicing। HALCON के <code style="color:#22d3bf">cfa_to_rgb</code> (single-chip color filter array image को RGB image में बदलना) का सन्निकटन।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>single-channel grayscale image को Bayer pattern का raw data मानकर, OpenCV के <code style="color:#22d3bf">cv2.cvtColor</code> से demosaic करके 3-channel RGB में पुनर्स्थापित करता है। <code style="color:#22d3bf">image</code> से <code style="color:#22d3bf">color</code> तक का पुल (bridge) op (evolution के colour वंश में प्रवेश का एकमात्र रास्ता)।</p>
+<p>a, Bayer pattern के क्रम को 4 विकल्पों (BG/GB/RG/GR क्रम) में से चुनता है (<code style="color:#22d3bf">min(3, int(a * 4))</code> से 0-3 में quantise)। b उपयोग नहीं होता। यदि pattern वास्तविक इनपुट से मेल नहीं खाता, तो रंग खिसकना और moiré दिखते हैं (जिन synthetic images का मूल Bayer विन्यास ज्ञात नहीं, उनके लिए हर विकल्प केवल एक &quot;विश्वसनीय दिखने वाला&quot; RGB रूपांतरण है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code> exponential mapping से [0,1] को [0,1] में map करता है (x=1 पर ठीक 1 होने के लिए normalise किया गया)। निचले tones को compress करके चमकीले हिस्सों पर ज़ोर देने वाला contrast enhancement, जिसकी curve <code style="color:#22d3bf">log_image</code> से उलटी दिशा की है। HALCON के <code style="color:#22d3bf">exp_image</code> (Calculate the exponentiation of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。底(<code style="color:#22d3bf">e</code>)や倍率を変える調整点は無い —— 曲率を変えたい場合は <code style="color:#22d3bf">gamma_image</code>(<code style="color:#22d3bf">a</code> でべき指数を振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। आधार (<code style="color:#22d3bf">e</code>) या गुणक बदलने का कोई समायोजन बिंदु नहीं है -- curvature बदलना हो तो <code style="color:#22d3bf">gamma_image</code> (<code style="color:#22d3bf">a</code> से exponent बदला जा सकता है) का उपयोग करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

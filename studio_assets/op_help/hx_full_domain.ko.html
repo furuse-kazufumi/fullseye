@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지의 정의역(domain)을 전체 이미지 영역으로 확장한다. HALCON 의 <code style="color:#22d3bf">full_domain</code>(이미지의 정의역을 최대로 확장한다)에 상응한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の op と対で使い、定義域をリセットするために使う。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>입력과 같은 형상의 전부 1인 region(=영상 전면)을 반환하기만 하는 op. ROI를 좁히는 다른 op와 짝으로 쓰며, 정의역을 리셋하기 위해 쓴다. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 모든 화소가 전경(1)</b>이 된다. 조명이 날아갔거나 가려졌거나 피사체가 없는 프레임이 “<b>결함 100%</b>”로 돌아오므로, 상류에서 균일한지 판정해 걸러낼 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

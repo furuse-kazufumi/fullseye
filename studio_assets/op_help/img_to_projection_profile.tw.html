@@ -13,15 +13,14 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把沿 1 個方向壓縮影像得到的<b>投影輪廓</b>變成1-D signal —— 版面分析的基本量。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">img_to_signal</code> が「1 本の行/列をそのまま読む」のに対し、こちらは<b>全行(全列)を束ねて 1 本にまとめる</b>。文字列の切れ目・罫線・帯の境目は、1 本の走査線では雑音に埋もれるが、潰すと谷として立ち上がる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 向き。<code style="color:#22d3bf">b &lt; 0.5</code> で<b>縦に潰して長さ W</b>(列ごとの代表値。横に並んだ字の切れ目が谷になる)、<code style="color:#22d3bf">b &gt;= 0.5</code> で<b>横に潰して長さ H</b>(行ごと。行間が谷になる)。<code style="color:#22d3bf">img_to_signal</code> と同じく <code style="color:#22d3bf">b</code> が向きを決めるが、<code style="color:#22d3bf">a</code> の意味は違う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>上側トリム率</b>。潰す軸の値を大きい順に並べ、上位 <code style="color:#22d3bf">m = max(1, round((1-a) * N))</code> 個だけを平均する。<code style="color:#22d3bf">a=0</code> は<b>ただの平均射影</b> (古典的な projection profile そのもの)、<code style="color:#22d3bf">a=1</code> は<b>最大値射影</b>(MIP)、その間は「外れ値だけを残して均す」連続的な折衷になる。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64。<b>正規化しない</b>(値域は入力のまま。[0,1] の画像なら [0,1])。長さは向きで決まる(W または H)。空フレームは一定値の列になる。</p>
-<p><b>なぜノブがトリム率なのか</b>: 平均射影は雑音に強いが、細い線 1 本が背景に薄められて消える。最大値射影は細い線を残すが、輝点 1 個で列全体が持ち上がる。どちらを選んでも失うものがあるので、<b>どれだけ捨てるかをノブにして取引を明示した</b>。<code style="color:#22d3bf">a</code> を上げると細い構造が残り、下げると雑音が均される ―― 単調で、両端が古典的な 2 つの射影に一致する。</p>
-<p><b>暗い字には前段で反転を</b>。この op は<b>大きい方</b>を残すので、白地に黒字のまま渡すとトリムが<b>背景</b>を拾う。<code style="color:#22d3bf">invert</code>(台帳)を挟めば、<code style="color:#22d3bf">a</code> が「濃い字のところ」を残す。</p>
-<p><b>先行と対応</b>: 平均射影は文書解析の古典そのもの(Postl 1986 / Baird 1987 が傾き推定に使った量)で、HALCON では <code style="color:#22d3bf">gray_projections</code>(水平・垂直の濃淡射影)にあたる —— 対応表で <b><code style="color:#22d3bf">covered: false</code></b> だった op を、これが埋める。上位トリムで最大値射影へ連続に寄せる族は、蛍光顕微鏡の時間フレーム融合で使われる <b>分位点射影</b>(上側 75 % 点を取る)と同じ発想だが、こちらは<b>上位 m 個の平均</b> なので <b>両端が厳密に平均射影と最大値射影に一致し、その間が単調</b>になる。</p>
-<p>使いどころ: 行の切り出し(横に潰して谷を探す)、字の切り出し(縦に潰す)、罫線検出、帯の境目、<code style="color:#22d3bf">deskew</code> が内部で使っている判定量の可視化。下流は 1-D 関数の族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_local_min_funct_1d</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code>)。</p>
+<p><code style="color:#22d3bf">img_to_signal</code> 是「把 1 列/行原樣讀出」，而本 op 則是<b>把全部列(全部行) 匯總成 1 條</b>。字串的間隙、格線、帶狀區的邊界，在 1 條掃描線上會淹沒在雜訊中，但壓縮之後就會以谷的形式浮現。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 方向。<code style="color:#22d3bf">b &lt; 0.5</code> 時<b>沿縱向壓縮，長度 W</b>(每行的代表值。橫向排列的字之間的間隙成為谷)，<code style="color:#22d3bf">b &gt;= 0.5</code> 時<b>沿橫向壓縮，長度 H</b>(每列。列間成為谷)。與 <code style="color:#22d3bf">img_to_signal</code> 一樣由 <code style="color:#22d3bf">b</code> 決定方向，但 <code style="color:#22d3bf">a</code> 的意義不同。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>上側修剪率</b>。把被壓縮軸上的值由大到小排列，只對前 <code style="color:#22d3bf">m = max(1, round((1-a) * N))</code> 個取平均。<code style="color:#22d3bf">a=0</code> 是<b>單純的平均投影</b> (即經典的 projection profile 本身)，<code style="color:#22d3bf">a=1</code> 是<b>最大值投影</b>(MIP)，其間是「只保留離群值、其餘抹平」的連續折衷。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: 1-D float64。<b>不正規化</b>(值域保持輸入不變。[0,1] 的影像則為 [0,1])。長度由方向決定(W 或 H)。空影格得到常數值序列。</p>
+<p><b>為什麼旋鈕是修剪率</b>: 平均投影抗雜訊，但 1 條細線會被背景稀釋而消失。最大值投影能保留細線，但 1 個亮點就會把整行抬高。無論選哪個都會有所損失，所以<b>把丟棄多少做成旋鈕，明確了取捨</b>。提高 <code style="color:#22d3bf">a</code> 細結構得以保留，降低則雜訊被抹平 ―― 單調，且兩端與經典的 2 種投影一致。</p>
+<p><b>深色字要先在前級反轉</b>。本 op 保留<b>較大的一方</b>，所以白底黑字直接傳入時，修剪會撿到<b>背景</b>。插入 <code style="color:#22d3bf">invert</code>(台帳)後，<code style="color:#22d3bf">a</code> 保留的就是「字色深的地方」。</p>
+<p><b>先行研究與對應</b>: 平均投影本就是文件分析的經典(Postl 1986 / Baird 1987 用於傾斜估計的量)，在 HALCON 中對應 <code style="color:#22d3bf">gray_projections</code>(水平、垂直的濃淡投影) —— 由它來填補對應表中 <b><code style="color:#22d3bf">covered: false</code></b> 的 op。透過上位修剪連續地靠向最大值投影的這一族，與螢光顯微鏡時間影格融合中使用的 <b>分位數投影</b>(取上側 75 % 點)想法相同，但本 op 是<b>前 m 個的平均</b>，所以<b>兩端嚴格地與平均投影和最大值投影一致，其間單調</b>。</p>
+<p>用途: 列切分(橫向壓縮找谷)、字切分(縱向壓縮)、格線偵測、帶狀區邊界、<code style="color:#22d3bf">deskew</code> 內部所用判定量的視覺化。下游是 1-D 函數族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_local_min_funct_1d</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

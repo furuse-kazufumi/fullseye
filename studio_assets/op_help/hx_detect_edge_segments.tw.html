@@ -14,12 +14,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測直線狀邊緣碎片:用 NMS 細化 → 在連通成分中保留 PCA 判定為細長(直線狀)的。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code> で細線化したエッジ(<code style="color:#22d3bf">&gt; 0</code>)を 8 近傍で連結成分に分け、各成分の画素座標の共分散固有値比 <code style="color:#22d3bf">λmax/λmin</code> が <code style="color:#22d3bf">min_ratio</code> 以上のもの(細長い=直線状)だけを 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 細線化段の弱エッジしきい値(<code style="color:#22d3bf">hx_nonmax_dir</code> の <code style="color:#22d3bf">a</code> と同じ。正規化振幅 <code style="color:#22d3bf">a*0.3</code> 未満を捨てる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 細長さのしきい値 <code style="color:#22d3bf">min_ratio = 3 + b*12</code>(3〜15)。大きいほど真っ直ぐな断片だけ残る。</p>
-<p style="margin:2px 0 2px 12px">• 画素数 5 未満の成分は無条件に捨てる。<code style="color:#22d3bf">λmin</code> がほぼ 0(完全な直線)なら比を無限大として採用する。</p>
-<p>注意: 直線性の判定は「点群の広がりが 1 軸に偏っているか」であり、曲線でも十分細長ければ通る。細線化段が斜めエッジをほとんど細線化しない(<code style="color:#22d3bf">hx_nonmax_dir</code> の注記参照)ため、斜めのエッジは幅を持った塊になり固有値比が下がって落とされやすい。連結成分単位なので、交差した線は 1 つの成分として比が下がる。後段で線分ごとに扱うなら <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hough_line_trans</code>。</p>
+<p>把經 <code style="color:#22d3bf">hx_nonmax_dir(v, a, 0)</code> 細化的邊緣（<code style="color:#22d3bf">&gt; 0</code>）依 8 鄰域分為連通元件，回傳只把各元件像素座標的共變異數特徵值比 <code style="color:#22d3bf">λmax/λmin</code> 不小於 <code style="color:#22d3bf">min_ratio</code> 者（細長=直線狀）設為 1 的 0/1 float region。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 細化階段的弱邊緣閾值（與 <code style="color:#22d3bf">hx_nonmax_dir</code> 的 <code style="color:#22d3bf">a</code> 相同。捨棄正規化振幅小於 <code style="color:#22d3bf">a*0.3</code> 者）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 細長度閾值 <code style="color:#22d3bf">min_ratio = 3 + b*12</code>（3〜15）。越大越只剩筆直的片段。</p>
+<p style="margin:2px 0 2px 12px">• 像素數少於 5 的元件無條件捨棄。<code style="color:#22d3bf">λmin</code> 幾乎為 0（完美直線）時把比值視為無窮大而採用。</p>
+<p>注意：直線性的判定是「點雲的擴展是否偏向 1 個軸」，因此曲線只要夠細長也會通過。由於細化階段幾乎不細化斜向邊緣（參見 <code style="color:#22d3bf">hx_nonmax_dir</code> 的註記），斜向邊緣會成為有寬度的塊，特徵值比下降而容易被刪掉。由於以連通元件為單位，交叉的線會作為 1 個元件而比值下降。若要在後續依線段處理，用 <code style="color:#22d3bf">hx_region_to_label</code> 或 <code style="color:#22d3bf">hough_line_trans</code>。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

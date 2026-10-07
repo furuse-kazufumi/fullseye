@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_convex.inputs.jpg">sk_convex: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Convex hull से region का रूपांतरण। Foreground region को घेरने वाला सबसे छोटा convex polygon खोजकर, उसके अंदर भरा हुआ region लौटाता है —— सभी सँकरे और धँसे हिस्से भर दिए जाते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.)に相当(近似。<code style="color:#22d3bf">shape_trans</code> は他の変形モードも持つ汎用命令だが、ここでは凸包のみ)。実装は <code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code>。a, b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">shape_trans</code>(Transform the shape of a region.) के बराबर (approximation; <code style="color:#22d3bf">shape_trans</code> दूसरे transformation mode वाला सामान्य उद्देश्य का command है, लेकिन यहाँ केवल convex hull)। implementation <code style="color:#22d3bf">morphology.convex_hull_image(binm(v))</code> है। a, b उपयोग नहीं होते।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

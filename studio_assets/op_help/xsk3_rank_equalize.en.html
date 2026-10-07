@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Local histogram equalization (skimage <code style="color:#22d3bf">filters.rank.equalize</code>). An adaptive contrast enhancement that performs histogram equalization within each disk neighborhood, more robust to local light/dark unevenness than the global <code style="color:#22d3bf">equalize</code> op.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は円盤半径(<code style="color:#22d3bf">2+int(a*8)</code> で 2〜10)を振る —— 大きいほど大域的な均等化に近づく。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the disc radius (2-10 via <code style="color:#22d3bf">2+int(a*8)</code>) — the larger, the closer to global equalisation. <code style="color:#22d3bf">b</code> is unused.</p>
 <p><b>Precision (measured)</b>: internally quantised to <b>8 bit (256 levels)</b> — the output lands exactly on the k/255 grid. Passing float64 <b>does not preserve that precision</b>: a 16-bit camera&#x27;s step (about 1.5e-5) is rounded to 1/255 = about 3.9e-3, and two images that differ by less than 1/255 return the same answer. Where faint intensity differences are being measured, or the output is fed on to differentiation or regression, the quantisation steps become visible — choose an op that does not pass through 8 bit.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness makes <b>every pixel foreground (1), regardless of the brightness</b>. A frame that is blown out, occluded, or simply has no subject comes back as “<b>100 % defective</b>”, so test for uniformity upstream and reject such frames.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

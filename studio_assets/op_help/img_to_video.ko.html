@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_video.gif" alt="img_to_video: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상을 일정 속도로 평행이동시킨 T 프레임 동영상 (T,H,W)으로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>フレーム <code style="color:#22d3bf">t</code> は入力を <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> だけ動かしたもの(<code style="color:#22d3bf">scipy.ndimage.shift</code>、線形補間、縁は最近傍で延長)。<b>変位が閉形式で分かる</b>ので、動画の族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)の検算に使える。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1 フレームあたりの歩幅 <code style="color:#22d3bf">step = 4 * a</code> 画素(a=0.5 で 2 px/frame)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
-<p style="margin:2px 0 2px 12px">• フレーム数 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。フレーム 0 は入力そのもの。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、値域は入力と同じ([0,1] なら [0,1] のまま。線形補間は値域を広げない)。</p>
-<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<p>프레임 <code style="color:#22d3bf">t</code>는 입력을 <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code>만큼 옮긴 것(<code style="color:#22d3bf">scipy.ndimage.shift</code>, 선형 보간, 가장자리는 최근접으로 연장). <b>변위를 닫힌 식으로알 수 있으므로</b>, 동영상 계열(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)의 검산에 쓸 수 있다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1프레임당 보폭 <code style="color:#22d3bf">step = 4 * a</code> 화소(a=0.5에서 2 px/frame).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 이동 방향 <code style="color:#22d3bf">θ = 2π * b</code>(b=0에서 +x, b=0.25에서 +y(아래), b=0.5에서 −x).</p>
+<p style="margin:2px 0 2px 12px">• 프레임 수 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8). 프레임 0은 입력 그 자체.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64, 값 범위는 입력과 같다([0,1]이면 [0,1] 그대로. 선형 보간은 값 범위를 넓히지 않는다).</p>
+<p>주의: 움직이는 것은 <b>화면 전체</b>(카메라 팬)이며, 물체만이 아니다. 배경 차분 계열은 “움직이지 않는 배경”을 가정하므로, 전체 팬에서는 전경이 모든 화소에 나타난다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

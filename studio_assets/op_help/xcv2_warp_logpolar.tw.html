@@ -11,8 +11,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用對數極座標變換（log-polar transform）將影像映射到（半徑, 角度）平面。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">cv2.warpPolar</code> の <code style="color:#22d3bf">WARP_POLAR_LOG</code> モードを使う。中心は画像中心、最大半径は <code style="color:#22d3bf">min(H, W)/2</code>。出力の行方向が対数半径、列方向が角度に対応する。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。拡大縮小・回転を新しい画像上の平行移動に変換できるため、テンプレートマッチングの前処理（Fourier-Mellin 変換の要素技術）として使われる。HALCON に対応する単一オペレータは無い。</p>
+<p>使用 <code style="color:#22d3bf">cv2.warpPolar</code> 的 <code style="color:#22d3bf">WARP_POLAR_LOG</code> 模式。中心為影像中心，最大半徑為 <code style="color:#22d3bf">min(H, W)/2</code>。輸出的列方向對應對數半徑，行方向對應角度。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。由於能將縮放與旋轉轉換為新影像上的平移，因此被用作模板比對的前處理（Fourier-Mellin 轉換的基礎技術）。HALCON 中沒有與之對應的單一運算子。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

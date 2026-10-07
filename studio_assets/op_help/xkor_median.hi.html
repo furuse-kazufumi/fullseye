@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Median filter। <code style="color:#22d3bf">kornia.filters.median_blur</code> को call करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a でカーネルサイズを 3/5/7/9 の 4 段階から選ぶ（<code style="color:#22d3bf">(3,5,7,9)[min(3, int(a*4))]</code>）。b は未使用。ごま塩ノイズなど外れ値ノイズに強く、ガウシアンぼかしよりエッジを保ちやすい。</p>
+<p>a से kernel size को 3/5/7/9 के 4 चरणों में से चुना जाता है (<code style="color:#22d3bf">(3,5,7,9)[min(3, int(a*4))]</code>)। b उपयोग नहीं होता। salt-and-pepper noise जैसे outlier noise के प्रति robust है, और Gaussian blur की तुलना में edges को बेहतर बचाता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

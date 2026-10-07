@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/principal_comp.inputs.jpg">principal_comp: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Führt eine Hauptkomponentenanalyse (PCA) über 3 Kanäle durch und ordnet den Farbraum nach absteigender Varianz neu. Entspricht HALCONs <code style="color:#22d3bf">principal_comp</code> (berechnet die Hauptkomponenten eines mehrkanaligen Bildes).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画素を (H*W, 3) の行列とみなして平均を引き、共分散行列の固有値分解（<code style="color:#22d3bf">np.linalg.eigh</code>）で固有ベクトルを求め、固有値の降順に射影する。各成分は画像内で min-max により個別に [0,1] へ正規化するため、出力の明るさは元画像のスケールと無関係になる（正規化後は毎回フルレンジ）。a, b は未使用。</p>
+<p>Behandelt die Pixel als (H*W, 3)-Matrix, zieht den Mittelwert ab, bestimmt per Eigenwertzerlegung der Kovarianzmatrix (<code style="color:#22d3bf">np.linalg.eigh</code>) die Eigenvektoren und projiziert in absteigender Reihenfolge der Eigenwerte. Jede Komponente wird innerhalb des Bildes per min-max einzeln auf [0,1] normiert, daher ist die Helligkeit der Ausgabe unabhängig von der Skala des Originalbildes (nach der Normierung jedes Mal voller Bereich). a, b werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

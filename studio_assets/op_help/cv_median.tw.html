@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中值濾波器(OpenCV 實作)。以正方形鄰域內的中位數取代的經典去雜訊方法(尤其對胡椒鹽雜訊效果佳,邊緣也相對能保留)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">median_image</code> に相当。実装は <code style="color:#22d3bf">cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))</code> —— a はカーネルサイズを 3, 5, 7, 9(奇数)に振る。b は未使用。8 bit に量子化してから処理するため、元画像の微妙な階調は失われる。sk_median_disk と違い正方形カーネル。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">median_image</code>。實作為 <code style="color:#22d3bf">cv2.medianBlur(_u8(v), ksize=3+2*int(a*3))</code> —— a 把核大小在 3, 5, 7, 9（奇數）之間調整。b 未使用。處理前先量化為 8 bit，因此原影像細微的灰階會遺失。與 sk_median_disk 不同，核是正方形。</p>
 <p><b>邊界處理</b>：複製邊緣像素（最近鄰）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

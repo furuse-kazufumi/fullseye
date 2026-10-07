@@ -14,8 +14,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>An image obtained by normalizing the grayscale Shannon entropy within a circular window (<code style="color:#22d3bf">skimage.filters.rank.entropy</code>, 8-bit quantized). A texture measure of the &quot;spread&quot; of gray levels within the window: low in uniform regions and high in regions where diverse gray levels mix. Corresponds to HALCON&#x27;s <code style="color:#22d3bf">entropy_image</code> (Calculate the entropy of gray values within a rectangular window) -- an approximation using a circular window here versus HALCON&#x27;s rectangular window.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が窓の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the window radius over the range 1-4 (<code style="color:#22d3bf">_rad(a)</code>). <code style="color:#22d3bf">b</code> is unused. In environments without skimage this branch cannot be called.</p>
 <p><b>Knobs (measured)</b>: <code style="color:#22d3bf">a</code> acts in <b>discrete steps</b>; it switches at a ≈ 0.33、0.67、0.99 (measured on a sweep of step 0.02).</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

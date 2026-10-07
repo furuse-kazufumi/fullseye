@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert den Außenrand einer Region (Pixelmaske) als XLD-Kontur unter Beibehaltung der Verfolgungsreihenfolge (Reihenfolge entlang der Kontur). Verwendet <code style="color:#22d3bf">find_contours</code> (Subpixel-Konturen mittels Marching Squares), falls skimage verfügbar ist, andernfalls Fallback auf eine eigene Moore-Nachbarschaftsverfolgung (8er-Nachbarschaft, Jacobs Abbruchkriterium). a und b werden nicht verwendet.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>2026-08-30 の修正で、以前使っていた汎用の <code style="color:#22d3bf">edges_sub_pix</code> 経路は <code style="color:#22d3bf">np.where</code> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の <code style="color:#22d3bf">gen_contour_region_xld</code>（region から XLD 輪郭を生成する演算）に相当する。</p>
+<p>Mit der Korrektur vom 2026-08-30: Der zuvor verwendete generische Pfad <code style="color:#22d3bf">edges_sub_pix</code> lieferte Punkte in der Rasterreihenfolge von <code style="color:#22d3bf">np.where</code> und zerstörte damit reihenfolgeabhängige nachgelagerte Verarbeitung (elliptische Fourier-Deskriptoren usw.). Entspricht HALCONs <code style="color:#22d3bf">gen_contour_region_xld</code> (Operation, die aus einer region eine XLD-Kontur erzeugt).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

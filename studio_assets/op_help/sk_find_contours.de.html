@@ -12,8 +12,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Konturextraktion (marching squares). Verfolgt Kurven, die einen angegebenen Pegelwert in einem Graustufenbild kreuzen, und gibt sie als Menge subpixelgenauer Konturkoordinatenfolgen zurück -- im Unterschied zur binären Konturextraktion können hiermit auch kontinuierliche Konturen behandelt werden, nicht nur der Umriss eines Binärbildes.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON に直接対応するものは無い(空欄)。実装は <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code> のうち頂点数 3 未満の断片を捨てたもの —— a は等高線のレベル(しきい値)を 0.2〜0.7 に振る。b は未使用。戻り値は画像形状と輪郭座標配列のリストを持つ辞書(<code style="color:#22d3bf">contour</code> 型)。</p>
+<p>HALCON hat keine direkte Entsprechung (leer gelassen). Die Implementierung ist <code style="color:#22d3bf">measure.find_contours(v, level=0.2+0.5*a)</code>, wobei Fragmente mit weniger als 3 Eckpunkten verworfen werden - a variiert den Höhenlinienpegel (Schwelle) über 0.2-0.7. b wird nicht verwendet. Der Rückgabewert ist ein Wörterbuch mit der Bildform und einer Liste von Konturkoordinaten-Arrays (Typ <code style="color:#22d3bf">contour</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

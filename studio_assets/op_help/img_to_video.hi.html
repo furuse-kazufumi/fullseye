@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_video.gif" alt="img_to_video: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image को constant speed से translate करके T frames का video (T,H,W) बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>フレーム <code style="color:#22d3bf">t</code> は入力を <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> だけ動かしたもの(<code style="color:#22d3bf">scipy.ndimage.shift</code>、線形補間、縁は最近傍で延長)。<b>変位が閉形式で分かる</b>ので、動画の族(<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …)の検算に使える。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 1 フレームあたりの歩幅 <code style="color:#22d3bf">step = 4 * a</code> 画素(a=0.5 で 2 px/frame)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 移動方向 <code style="color:#22d3bf">θ = 2π * b</code>(b=0 で +x、b=0.25 で +y(下)、b=0.5 で −x)。</p>
-<p style="margin:2px 0 2px 12px">• フレーム数 <code style="color:#22d3bf">T = VIDEO_FRAMES</code>(8)。フレーム 0 は入力そのもの。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、値域は入力と同じ([0,1] なら [0,1] のまま。線形補間は値域を広げない)。</p>
-<p>注意: 動くのは<b>画面全体</b>(カメラのパン)であって、物体だけではない。背景差分の族は「動かない背景」を仮定するので、全体パンでは前景が全画素に出る。</p>
+<p>frame <code style="color:#22d3bf">t</code> input को <code style="color:#22d3bf">(dy, dx) = t * step * (sin θ, cos θ)</code> जितना खिसकाकर बनता है (<code style="color:#22d3bf">scipy.ndimage.shift</code>, linear interpolation, किनारा nearest neighbour से बढ़ाया जाता है)। <b>displacement closed form में ज्ञात है</b>, इसलिए इसे video family (<code style="color:#22d3bf">tb_frame_difference_causal</code> / <code style="color:#22d3bf">tb_motion_energy_image</code> / <code style="color:#22d3bf">tb_background_subtraction_window</code> …) के cross-check के लिए इस्तेमाल कर सकते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → प्रति 1 frame step <code style="color:#22d3bf">step = 4 * a</code> pixel (a=0.5 पर 2 px/frame)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → चलने की दिशा <code style="color:#22d3bf">θ = 2π * b</code> (b=0 पर +x, b=0.25 पर +y (नीचे), b=0.5 पर −x)।</p>
+<p style="margin:2px 0 2px 12px">• frames की संख्या <code style="color:#22d3bf">T = VIDEO_FRAMES</code> (8)। frame 0 स्वयं input है।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: <code style="color:#22d3bf">(T, H, W)</code> float64, range input जैसी ही ([0,1] हो तो [0,1] ही रहती है। linear interpolation range को नहीं फैलाता)।</p>
+<p>ध्यान दें: जो चलता है वह <b>पूरा frame</b> (camera pan) है, सिर्फ़ object नहीं। background subtraction family &quot;न हिलने वाला background&quot; मानकर चलती है, इसलिए पूरे pan में foreground हर pixel पर दिखता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

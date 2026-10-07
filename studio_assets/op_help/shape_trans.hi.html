@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/shape_trans.inputs.jpg">shape_trans: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region का convex hull (<code style="color:#22d3bf">skimage.morphology.convex_hull_image</code>) लौटाता है। HALCON का <code style="color:#22d3bf">shape_trans</code> (Transform the shape of a region.) मूल रूप से convex/rectangle1/ellipse जैसे कई transform modes <code style="color:#22d3bf">Type</code> argument से चुन सकने वाला operator है, लेकिन यह विकल्प केवल 1 प्रकार, convex hull, पर तय है (सन्निकटन की सीमा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। जिस environment में skimage नहीं है, वहाँ यह branch call नहीं की जा सकती।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

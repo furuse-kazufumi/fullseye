@@ -14,8 +14,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임의 백분위수(percentile)의 순위 필터(rank filter). HALCON의 <code style="color:#22d3bf">rank_image</code>(Compute a rank filter with arbitrary masks.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓サイズを <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k(a)</code>）に、<code style="color:#22d3bf">b</code> が抽出するパーセンタイルを <code style="color:#22d3bf">5〜95%</code>（<code style="color:#22d3bf">int(5+90b)</code>）に振る。<code style="color:#22d3bf">b</code> が 0 に近いほど <code style="color:#22d3bf">_min_filter</code>、1 に近いほど <code style="color:#22d3bf">_max_filter</code>、中間で <code style="color:#22d3bf">_median</code> に近づく——3 op を 1 つに統合した一般形。</p>
+<p><code style="color:#22d3bf">a</code>가 창 크기를 <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)로, <code style="color:#22d3bf">b</code>가 추출할 백분위수를 <code style="color:#22d3bf">5〜95%</code>(<code style="color:#22d3bf">int(5+90b)</code>)로 바꾼다. <code style="color:#22d3bf">b</code>가 0에 가까울수록 <code style="color:#22d3bf">_min_filter</code>, 1에 가까울수록 <code style="color:#22d3bf">_max_filter</code>, 중간이면 <code style="color:#22d3bf">_median</code>에 가까워진다 —— 3개의 op를 1개로 통합한 일반형.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

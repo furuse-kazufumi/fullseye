@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>곡률 흐름 평활화(SimpleITK <code style="color:#22d3bf">CurvatureFlow</code>). 등고선의 곡률에 비례한 속도로 이미지를 흐리게 하는 비선형 확산으로, 직선적인 엣지는 잘 보존되고 둥근 세부는 먼저 사라진다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> は反復回数(<code style="color:#22d3bf">1+int(a*8)</code> で 1〜9 回)を振る —— 増やすほど強く平滑化される。時間刻みは 0.0625 固定。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code>는 반복 횟수(<code style="color:#22d3bf">1+int(a*8)</code>로 1~9회)를 바꾼다 — 늘릴수록 강하게 평활화된다. 시간 스텝은 0.0625 고정. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 출력은 [0,1]로 클립.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 패밀리 가이드</a></p>

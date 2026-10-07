@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_region_points.chain.jpg">hx_test_region_points: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Der Anteil eines Punktrasters, der innerhalb der Region liegt (test_region_points).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region を <code style="color:#22d3bf">step</code> 画素おきの格子(<code style="color:#22d3bf">reg[::step, ::step]</code>、原点は (0,0))でサンプリングし、格子点のうち region に入っている割合を <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 格子間隔 <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code>(短辺の 10%〜40%、最小 2 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 格子点が 0 個なら 0.0。</p>
-<p>格子が細かければ region の面積率の近似になり、粗ければ「代表点がどれだけ region に落ちるか」の粗い指標になる。格子の原点は固定なので、region を少しずらすだけで値が飛ぶ。面積率そのものが欲しいなら region の平均値を取る方が正確。1 点の判定は <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p>Tastet die Region <code style="color:#22d3bf">v &gt; 0.5</code> auf einem Gitter im Abstand von <code style="color:#22d3bf">step</code> Pixeln ab (<code style="color:#22d3bf">reg[::step, ::step]</code>, Ursprung bei (0,0)) und gibt den Anteil der Gitterpunkte innerhalb der Region als <code style="color:#22d3bf">np.float64</code> (0 bis 1) zurück.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Gitterabstand <code style="color:#22d3bf">step = max(2, int((0.1 + 0.3*a) * min(h, w)))</code> (10% bis 40% der kürzeren Seite, mindestens 2 Pixel).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• 0.0, wenn es 0 Gitterpunkte gibt.</p>
+<p>Ein feines Gitter nähert den Flächenanteil der Region an; ein grobes liefert einen groben Indikator dafür, &quot;wie viele Repräsentativpunkte in die Region fallen&quot;. Der Gitterursprung ist fest, daher springt der Wert schon bei einer kleinen Verschiebung der Region. Wird der Flächenanteil selbst gebraucht, ist der Mittelwert der Region genauer. Die Prüfung von 1 Punkt übernimmt <code style="color:#22d3bf">hx_test_region_point</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

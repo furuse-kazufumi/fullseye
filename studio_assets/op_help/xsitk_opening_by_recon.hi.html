@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Reconstruction द्वारा opening (SimpleITK <code style="color:#22d3bf">OpeningByReconstruction</code>)। सामान्य grayscale opening (erosion → dilation) के विपरीत, erosion के बाद का dilation mask वाले reconstruction से करता है, इसलिए बचे हुए regions के contour को बिगाड़े बिना केवल छोटे चमकीले उभार हटा सकता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> は構造要素の半径(<code style="color:#22d3bf">1+int(a*4)</code> で両軸とも 1〜5)を振る。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> structuring element की radius (<code style="color:#22d3bf">1+int(a*4)</code> से दोनों axes पर 1-5) को बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। आउटपुट [0,1] में clip किया जाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

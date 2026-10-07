@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/zoom_region.inputs.jpg">zoom_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को isotropic (खड़ी और आड़ी दिशा में समान गुणक) zoom करता है। गुणक <code style="color:#22d3bf">s = 0.7+0.6a</code> (0.7 से 1.3 गुना) से केंद्र को आधार मानकर बड़ा-छोटा करता है, सीमा के बाहर को mirror (reflect) से भरता है, फिर <code style="color:#22d3bf">_rebinarise</code> से 0.5 threshold द्वारा वापस binary region बनाता है। b इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">zoom_region</code>（領域を指定倍率でズームする演算）に相当する近似。縦横独立の倍率を持つ <code style="color:#22d3bf">zoom_image_factor</code> とは異なり単一倍率のみ。</p>
+<p>HALCON के <code style="color:#22d3bf">zoom_region</code> (region को निर्दिष्ट गुणक से zoom करने वाला operation) के समकक्ष सन्निकटन। ऊर्ध्वाधर और क्षैतिज के स्वतंत्र गुणक वाले <code style="color:#22d3bf">zoom_image_factor</code> से अलग, इसमें केवल एक ही गुणक है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

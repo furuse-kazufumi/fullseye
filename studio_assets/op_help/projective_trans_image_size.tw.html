@@ -14,8 +14,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>實作與 <code style="color:#22d3bf">projective_trans_image</code> 完全相同（<code style="color:#22d3bf">kind: &quot;projective&quot;</code>）。名稱暗示可以指定輸出尺寸，但此後端並不會改變輸出畫布大小，回傳的梯形變形與 <code style="color:#22d3bf">projective_trans_image</code> 完全一致（近似的侷限，尺寸變更功能並未重現）。用作 HALCON <code style="color:#22d3bf">projective_trans_image_size</code>（Apply a projective transformation to an image and specify the output image size.）的替代。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が歪みの強さ、<code style="color:#22d3bf">b</code> が非対称さを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 調整畸變強度,<code style="color:#22d3bf">b</code> 調整不對稱程度。兩者都會使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -14,8 +14,7 @@
 <p>*No colour (H,W,3) input is shown: this op treats the colour channel as a third spatial axis (it crosses channels). Call it per channel.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Curvature anisotropic diffusion (SimpleITK <code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>). A type of Perona-Malik-style anisotropic diffusion that suppresses diffusion at edges (locations with large gradients) and diffuses freely in flat areas, smoothing while preserving edges.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は伝導度パラメータ(conductance、<code style="color:#22d3bf">0.5+4.5*a</code> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、<code style="color:#22d3bf">b</code> は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the conductance parameter (conductance, 0.5-5.0 via <code style="color:#22d3bf">0.5+4.5*a</code>; the larger, the looser the edge decision and the stronger the diffusion), <code style="color:#22d3bf">b</code> the number of iterations (1-9). The time step is fixed at 0.0625. The output is clipped to [0,1].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

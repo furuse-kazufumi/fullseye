@@ -14,13 +14,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_region_rel.inputs.jpg">hx_clip_region_rel: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相对区域外接矩形裁剪(每边削去比例 a)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region の外接矩形 <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code> を求め、その高さ・幅の <code style="color:#22d3bf">0.5*a</code> ずつを上下左右から削った内側の矩形に含まれる画素だけを残して 0/1 の float 配列で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 各辺から削る割合 <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>、<code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>。a=0 で無変化、a=1 で</p>
-<p>外接矩形の中心線付近(1 行・1 列程度)しか残らない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• region が空なら空のまま返す。</p>
-<p>削るのは外接矩形に対する相対量なので、region の大きさが違っても「周辺 x% を落とす」意味が保たれる。外接矩形は region 全体で 1 つ(成分ごとではない)ため、離れた小成分が並ぶ場合は端の成分がまるごと消えることがある。画像基準の中央矩形で切るなら <code style="color:#22d3bf">hx_rectangle1_domain</code> との論理積を使う。</p>
+<p>求 <code style="color:#22d3bf">v &gt; 0.5</code> 的 region 的外接矩形 <code style="color:#22d3bf">[y0, y1] × [x0, x1]</code>，从上下左右各削去其高度、宽度的 <code style="color:#22d3bf">0.5*a</code>，只保留包含在内侧矩形中的像素，以 0/1 的 float 数组返回。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 从各边削去的比例 <code style="color:#22d3bf">my = int((y1-y0)*0.5*a)</code>、<code style="color:#22d3bf">mx = int((x1-x0)*0.5*a)</code>。a=0 时不变，a=1 时</p>
+<p>只剩外接矩形中心线附近（约 1 行、1 列）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> 未使用。</p>
+<p style="margin:2px 0 2px 12px">• region 为空时原样返回空。</p>
+<p>削去的是相对外接矩形的量，因此即使 region 大小不同，“去掉周边 x%”的含义也保持不变。外接矩形对整个 region 只有 1 个（不是按分量），因此离散的小分量排列时，端部的分量可能整个消失。若要用以图像为基准的中央矩形裁切，请使用与 <code style="color:#22d3bf">hx_rectangle1_domain</code> 的逻辑与。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

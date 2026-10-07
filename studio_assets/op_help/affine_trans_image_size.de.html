@@ -14,8 +14,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wendet eine affine Transformation (Rotation + Scherung) auf das Bild an. Die Implementierung teilt sich den <code style="color:#22d3bf">affine</code>-Zweig von <code style="color:#22d3bf">_sh_geom</code> mit <code style="color:#22d3bf">affine_trans_image</code>; a stellt den Rotationswinkel auf -20 bis +20 Grad ein, b den Scherbetrag. Bereiche außerhalb des Bildrandes werden durch Spiegelung (reflect) aufgefüllt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_image_size</code>（アフィン変換を適用し、出力画像のキャンバスサイズを明示的に指定できる演算）とは異なり、この実装は出力サイズの指定を受け付けず、常に入力と同じキャンバスサイズを保つ近似（<code style="color:#22d3bf">affine_trans_image</code> と実質同一の実装）。</p>
+<p>Anders als HALCONs <code style="color:#22d3bf">affine_trans_image_size</code> (Operation, die eine affine Transformation anwendet und die Leinwandgröße des Ausgabebildes explizit festlegen lässt) akzeptiert diese Implementierung keine Angabe der Ausgabegröße und ist eine Näherung, die stets dieselbe Leinwandgröße wie die Eingabe beibehält (praktisch dieselbe Implementierung wie <code style="color:#22d3bf">affine_trans_image</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -13,12 +13,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상을 진폭으로, 화소값과 기울기로 위상을 주어 복소장 (H,W) complex128을 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>。振幅 = 画素値(透過率・開口として読む)、位相は <b>値に比例する成分</b>(位相物体としての厚み)と <b>x 方向の線形な傾き</b>(平面波の入射角)の和。角スペクトル法 <code style="color:#22d3bf">tb_angular_spectrum_propagate</code> や <code style="color:#22d3bf">tb_cx_*</code> の族が受ける複素画像の合成器。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位相の深さ <code style="color:#22d3bf">2π * a * img</code>(a=0 で実場、a=0.5 で最大 π)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 傾き。<code style="color:#22d3bf">(b - 0.5) * 8</code> 周期ぶんの線形位相を x 方向に掛ける(b=0.5 で傾き 0。8 は「128 px で 8 縞」の目安)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> complex128。<code style="color:#22d3bf">|field| = img</code>、<code style="color:#22d3bf">arg</code> は上式。</p>
-<p style="margin:2px 0 2px 12px">• 値 0 の画素は位相が定義できない(<code style="color:#22d3bf">0 * exp(iφ) = 0</code>)。</p>
+<p><code style="color:#22d3bf">field = img * exp(i * (2π * a * img + 2π * (b - 0.5) * 8 * x / W))</code>. 진폭 = 화소 값(투과율·개구로 읽는다), 위상은 <b>값에 비례하는 성분</b>(위상 물체로서의 두께)과 <b>x 방향의 선형 기울기</b>(평면파의 입사각)의 합. 각 스펙트럼법 <code style="color:#22d3bf">tb_angular_spectrum_propagate</code>나 <code style="color:#22d3bf">tb_cx_*</code> 계열이 받는 복소 영상의 합성기.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 위상의 깊이 <code style="color:#22d3bf">2π * a * img</code>(a=0에서 실수장, a=0.5에서 최대 π).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 기울기. <code style="color:#22d3bf">(b - 0.5) * 8</code> 주기만큼의 선형 위상을 x 방향으로 곱한다(b=0.5에서 기울기 0. 8은 “128 px에서 8줄 무늬”의 기준).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(H, W)</code> complex128. <code style="color:#22d3bf">|field| = img</code>, <code style="color:#22d3bf">arg</code>는 위 식.</p>
+<p style="margin:2px 0 2px 12px">• 값 0인 화소는 위상을 정의할 수 없다(<code style="color:#22d3bf">0 * exp(iφ) = 0</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -13,9 +13,8 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從拜爾陣列（CFA：Color Filter Array）到 RGB 影像的去馬賽克（demosaic）處理。近似於 HALCON 的 <code style="color:#22d3bf">cfa_to_rgb</code>（將單板彩色濾鏡陣列影像轉換為 RGB 影像）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>単一チャンネルのグレースケール画像を Bayer パターンの生データとみなし、OpenCV の <code style="color:#22d3bf">cv2.cvtColor</code> でデモザイクして 3 チャンネル RGB に復元する。<code style="color:#22d3bf">image</code> から <code style="color:#22d3bf">color</code> への橋渡し op（進化がカラー系統に入る唯一の入口）。</p>
-<p>a は Bayer パターンの並び順を 4 通り（BG/GB/RG/GR の並び）から選ぶ（<code style="color:#22d3bf">min(3, int(a * 4))</code> で 0〜3 に量子化）。b は未使用。パターンが実際の入力と合わない場合、色ズレ・モアレが出る（本来の Bayer 配置が分からない合成画像に対してはどれも「それらしい」RGB化でしかない）。</p>
+<p>將單通道灰階影像視為 Bayer 圖樣的原始資料，以 OpenCV 的 <code style="color:#22d3bf">cv2.cvtColor</code> 解馬賽克，還原為 3 通道 RGB。從 <code style="color:#22d3bf">image</code> 到 <code style="color:#22d3bf">color</code> 的橋接 op（演化進入彩色系譜的唯一入口）。</p>
+<p>a 從 4 種（BG/GB/RG/GR 排列）中選擇 Bayer 圖樣的排列順序（以 <code style="color:#22d3bf">min(3, int(a * 4))</code> 量化為 0~3）。b 未使用。若圖樣與實際輸入不符，會出現色偏與疊紋（對於不知道原本 Bayer 配置的合成影像，無論哪種都只是「看起來像樣」的 RGB 化）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

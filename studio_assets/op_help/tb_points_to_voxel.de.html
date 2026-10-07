@@ -14,19 +14,18 @@
 <p><img src="fig/tb_points_to_voxel.gif" alt="tb_points_to_voxel: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Punktwolke (N,3) → Dichte-Voxel (size³). Splatting per scatter_add, optional mit Gauß-Glättung.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
-<p>手順: 各点を <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> で整数格子に落とし、その voxel に 1 を加算する(値 = その voxel に落ちた点の個数)。<code style="color:#22d3bf">smooth &gt; 0</code> なら σ=<code style="color:#22d3bf">smooth</code>(voxel 単位) の gaussian を 3 軸分離 conv で掛ける(半径 <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>、端は replicate)。出力の軸順は <b>点の列の順そのまま</b>(<code style="color:#22d3bf">points[:, 0]</code> → 軸 0)で、(depth,row,col) への並べ替えはしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
-<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・ <code style="color:#22d3bf">hi &lt;= lo</code> の軸があると ValueError(tsdf 系の <code style="color:#22d3bf">((xmin,xmax),...)</code> 流儀は長さ 2 として拒否)。</p>
-<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
-<p>なら事前に点群側で除く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: 一辺の voxel 数。<code style="color:#22d3bf">hi − lo</code> が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
-<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
-<p>(平滑後は個数の重み分布)で正規化はしない。</p>
-<p>後段: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> の入力に。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">points_to_voxel</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>Mit bounds=(lo,hi) lassen sich mehrere Wolken auf dasselbe Gitter legen (= Voraussetzung für das Matching).</p>
+<p>Ablauf: Jeder Punkt wird mit <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> auf das ganzzahlige Gitter gelegt, und zu diesem voxel wird 1 addiert (Wert = Zahl der in diesen voxel gefallenen Punkte). Bei <code style="color:#22d3bf">smooth &gt; 0</code> wird ein gaussian mit σ=<code style="color:#22d3bf">smooth</code> (in voxel-Einheiten) als separierbare conv über 3 Achsen angewendet (Radius <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>, Ränder replicate). Die Achsenreihenfolge der Ausgabe ist <b>genau die Spaltenreihenfolge der Punkte</b> (<code style="color:#22d3bf">points[:, 0]</code> → Achse 0); eine Umordnung nach (depth,row,col) erfolgt nicht.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: 2 Vektoren <code style="color:#22d3bf">(lo, hi)</code> mit je 3 Dimensionen. Bei None min/max der Punktwolke selbst (das Gitter ändert sich</p>
+<p>je Wolke, daher beim Vergleich von 2 Wolken immer dieselben bounds übergeben). Länge ungleich 3, nicht endlich oder eine Achse mit <code style="color:#22d3bf">hi &lt;= lo</code> führt zu ValueError (die tsdf-Konvention <code style="color:#22d3bf">((xmin,xmax),...)</code> wird als Länge 2 abgewiesen).</p>
+<p style="margin:2px 0 2px 12px">• Punkte außerhalb des Bereichs werden nicht verworfen, sondern <b>auf den Rand-voxel geclippt</b> (am Rand sammelt sich falsche Dichte). Wer sie abschneiden will,</p>
+<p>entfernt sie vorher auf Seiten der Punktwolke.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: Zahl der voxel je Seite. Eine Achse mit <code style="color:#22d3bf">hi − lo</code> gleich 0 wird nur durch 1e-9 ersetzt, ohne Warnung.</p>
+<p style="margin:2px 0 2px 12px">• Bei leerer Punktwolke und bounds=None wirft numpys min eine Ausnahme.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy (auch bei Berechnung auf einem device zurück auf die CPU). Die Werte sind Anzahlen</p>
+<p>(nach dem Glätten eine gewichtete Verteilung der Anzahlen) und werden nicht normiert.</p>
+<p>Nachgelagert: als Eingabe für <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code>.</p>
+<p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">points_to_voxel</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. Diese op hat keine Stellpunkte; weder <code style="color:#22d3bf">a</code> noch <code style="color:#22d3bf">b</code> wird verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

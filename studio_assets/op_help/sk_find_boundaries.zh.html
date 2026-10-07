@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_find_boundaries.inputs.jpg">sk_find_boundaries: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>区域边界提取。在标签图像(此处为布尔值区域)中,只将不同标签(前景/背景)相接触的像素设为 True,返回这样一个边界掩膜。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.)に相当。実装は <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>。a, b は未使用 —— connectivity は既定の 1、mode は既定の &#x27;thick&#x27;(境界の両側 1 画素ずつを含む太めの境界)。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.)。实现为 <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>。a、b 未使用 —— connectivity 为默认的 1，mode 为默认的 &#x27;thick&#x27;（包含边界两侧各 1 像素的较粗边界）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

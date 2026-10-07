@@ -13,8 +13,7 @@
 <p>*Colour (H,W,3) input नहीं दिखाया गया: यह op colour channel को तीसरे spatial axis की तरह लेता है (channels को पार करता है)। इसे हर channel के लिए अलग से call करें।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Robust smoothing filter। Window के 20 percentile और 80 percentile का औसत (trimmed mean) लौटाकर बहुत चमकीले/अँधेरे outliers (salt-and-pepper noise आदि) का असर दबाता है। a window के आकार को 3/5/7/9 में बदलता है (<code style="color:#22d3bf">_k(a)</code>)। b इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">mean_sp</code>（ソルト&amp;ペッパーノイズを抑制する平均化演算）に相当する近似 —— 上下 20% を除いた範囲の中点をとる点で単純平均よりノイズに強いが、HALCON 固有のアルゴリズムとは実装が異なる。</p>
+<p>HALCON के <code style="color:#22d3bf">mean_sp</code> (salt-and-pepper noise को दबाने वाला averaging operation) के समकक्ष सन्निकटन है -- ऊपर और नीचे के 20% को छोड़कर बची सीमा का मध्य-बिंदु लेने के कारण यह साधारण औसत से अधिक noise-प्रतिरोधी है, लेकिन इसका implementation HALCON के अपने algorithm से अलग है।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>Knobs (मापा गया)</b>: <code style="color:#22d3bf">a</code> <b>चरणों में</b> असर करता है, और बदलाव a ≈ 0.25、0.49、0.75 पर होता है (मापा गया; 0.02 के step वाले sweep से मापी गई स्थिति)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

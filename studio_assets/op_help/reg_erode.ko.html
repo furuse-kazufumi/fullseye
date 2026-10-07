@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/reg_erode.inputs.jpg">reg_erode: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영역(region)의 이진 침식. HALCON의 <code style="color:#22d3bf">erosion_circle</code>(Erode a region with a circular structuring element.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が反復回数を <code style="color:#22d3bf">1〜4</code>（<code style="color:#22d3bf">_it(a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。構造要素は <code style="color:#22d3bf">scipy.ndimage.binary_erosion</code> の既定（十字形、4近傍相当）で、HALCON の円形構造要素とは形が異なる（近似）。入力は <code style="color:#22d3bf">v &gt; 0.5</code> で二値化してから処理する。</p>
+<p><code style="color:#22d3bf">a</code>가 반복 횟수를 <code style="color:#22d3bf">1〜4</code>(<code style="color:#22d3bf">_it(a)</code>)로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 구조 요소는 <code style="color:#22d3bf">scipy.ndimage.binary_erosion</code>의 기본값(십자형, 4근방 상당)으로, HALCON의 원형 구조 요소와는 모양이 다르다(근사). 입력은 <code style="color:#22d3bf">v &gt; 0.5</code>로 이진화한 다음 처리한다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

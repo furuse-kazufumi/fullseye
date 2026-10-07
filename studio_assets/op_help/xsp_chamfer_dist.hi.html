@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xsp_chamfer_dist.inputs.jpg">xsp_chamfer_dist: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सबसे नज़दीकी background pixel तक की city-block (chamfer) दूरी, [0,1] में normalise की गई।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-02: 縮退入力での <b>符号つきセンチネル</b> を潰す。<code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code> は「背景画素が 1 つも無い」入力に対して距離ではなく <b>-1 を全画素に</b>書く(実測: <code style="color:#22d3bf">np.ones((8,8), bool)</code> -&gt; min=max=-1)。旧実装はそれをそのまま <code style="color:#22d3bf">_norm</code> に通していたので、<b>塗り潰された領域の距離マップが一様 -1 の「画像」</b>になっていた —— 例外も警告も出ないまま値域 [0,1] の image 契約を破り、保存・表示では全面が黒に潰れる。</p>
-<p>背景が無い = どの画素も「無限に遠い」ので、正規化後の正直な答えは <b>一様 1.0</b>。前景が無いときは距離 0 の一様 0.0。どちらも符号つきの値を返さない。</p>
+<p>★2026-09-02: degenerate इनपुट पर <b>signed sentinel</b> को समाप्त करना। <code style="color:#22d3bf">scipy.ndimage.distance_transform_cdt</code> उस इनपुट के लिए, जिसमें &quot;1 भी background pixel नहीं&quot; है, दूरी के बजाय <b>हर pixel में -1</b> लिखता है (मापा गया: <code style="color:#22d3bf">np.ones((8,8), bool)</code> -&gt; min=max=-1)। पुराना implementation इसे सीधे <code style="color:#22d3bf">_norm</code> से गुज़ार देता था, इसलिए <b>भरे हुए region का distance map समान -1 वाली &quot;image&quot; बन जाता था</b> — बिना किसी exception या चेतावनी के मान-सीमा [0,1] वाला image contract टूट जाता था, और save या display करने पर पूरी image काली हो जाती थी।</p>
+<p>background नहीं = हर pixel &quot;अनंत दूरी पर&quot; है, इसलिए normalise के बाद ईमानदार उत्तर <b>समान 1.0</b> है। foreground न होने पर दूरी 0 वाला समान 0.0 होता है। दोनों में से कोई भी signed मान नहीं लौटाता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

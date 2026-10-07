@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detects the sub-pixel positions of maxima, minima, and saddle points together (equivalent to HALCON <code style="color:#22d3bf">critical_points_sub_pix</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> の 3 つを同じしきい値 <code style="color:#22d3bf">a</code> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。<code style="color:#22d3bf">b</code> は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
+<p>Runs <code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> with the same threshold <code style="color:#22d3bf">a</code> (3 ops) and concatenates the detected points into 1 CONTOUR in the order maxima → minima → saddle points. <code style="color:#22d3bf">b</code> is unused. Returned coordinates are in pixels of the input image (sub-pixel fractional values). Use it when you only want to know &quot;where the critical points are&quot; without distinguishing the individual kinds.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

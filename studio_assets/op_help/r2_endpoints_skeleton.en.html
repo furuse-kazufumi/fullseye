@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_endpoints_skeleton.inputs.jpg">r2_endpoints_skeleton: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extract the end points of a skeleton (the points with exactly one skeleton pixel in their 8-neighbourhood).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">junctions_skeleton</code> は EndPoints と JuncPoints の両方を返すが、fullseye の <code style="color:#22d3bf">junctions_skeleton</code> は分岐点のみなので、端点側をこの op が担う。入力が骨格でない場合は em_skeleton で細線化してから端点を取る。孤立 1 画素(近傍 0)も端点に数える。つまみ a, b は未使用。</p>
+<p>HALCON&#x27;s <code style="color:#22d3bf">junctions_skeleton</code> returns both EndPoints and JuncPoints, but fullseye&#x27;s <code style="color:#22d3bf">junctions_skeleton</code> returns only branch points, so this op takes care of the end points. If the input is not a skeleton, it is thinned with em_skeleton before the end points are taken. An isolated single pixel (1 pixel, 0 neighbours) is also counted as an end point. Knobs a, b are unused.</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

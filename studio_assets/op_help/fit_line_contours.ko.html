@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fit_line_contours.inputs.jpg">fit_line_contours: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 XLD 윤곽을 하나의 직선으로 근사한다. HALCON의 <code style="color:#22d3bf">fit_line_contour_xld</code>(Approximate XLD contours by line segments.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 윤곽 점군의 무게중심을 지나며 SVD(특이값 분해)로 구한 제1 주성분 방향을 직선의 방향으로 채택하고(모든 점과의 거리 제곱합을 최소화하는 직선), 원래 점군의 사영 범위에 등간격으로 다시 찍은 점열로 바꾼다. HALCON 판은 꺾은선(여러 선분)으로 분할할 수 있지만, 이 구현은 윤곽 전체를 1개의 직선으로 만든다는 점이 다르다. 점이 2개 미만인 윤곽은 그대로 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

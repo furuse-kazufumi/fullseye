@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3x3 mixing matrix से channels के बीच linear transform (affine colour transform)। HALCON के <code style="color:#22d3bf">linear_trans_color</code> (multi-channel image के colour मानों का affine transform निकालना) के समकक्ष है (यह implementation offset term के बिना शुद्ध linear transform है)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 <code style="color:#22d3bf">theta = pi * a</code> を振って対角成分の一部を <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> で回転的に変化させた行列を作り、各行を合計 1 に正規化してから <code style="color:#22d3bf">c @ M.T</code> を掛ける。a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
+<p>विकर्ण घटक 0.6 + गैर-विकर्ण 0.2 को आधार रूप मानकर, a से phase <code style="color:#22d3bf">theta = pi * a</code> बदली जाती है, और विकर्ण घटकों के एक हिस्से को <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> से घूर्णी रूप से बदलकर matrix बनाई जाती है, हर row को कुल 1 पर normalise करने के बाद <code style="color:#22d3bf">c @ M.T</code> लागू किया जाता है। a के 0→1 होने पर R/G की ओर झुका weighting आवधिक रूप से अदला-बदली होता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

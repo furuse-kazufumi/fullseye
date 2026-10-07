@@ -11,9 +11,8 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过估计并填补缺失区域进行修复（inpainting）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>極端に明るい(&gt;0.92)/暗い(&lt;0.08)画素を「欠損」とみなして自動マスクし、skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲から滑らかに埋める。</p>
-<p>マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。全画素が欠損扱いになる画像(定数の白・黒、黒地に輝点 1 つなど)も、埋める手掛かりになる画素が 1 つも無いので入力をそのまま返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値が固定なので、本来ハイライト/シャドウとして意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。</p>
+<p>将极亮(&gt;0.92)/极暗(&lt;0.08)的像素视为“缺失”并自动生成掩模，用 skimage 的 biharmonic inpainting(基于调和方程的插值)从周围平滑地填补。</p>
+<p>若没有掩模(未发现缺失)，则原样返回输入。所有像素都被视为缺失的图像(常数白、黑，黑底上 1 个亮点等)，也因为连 1 个可作为填补线索的像素都没有，所以原样返回输入。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> 未使用。由于阈值固定，原本作为高光/阴影有意义的像素也可能被视为“缺失”而被填补。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋钮（实测）</b>：将 <code style="color:#22d3bf">a</code> 从 0 扫到 1 <b>输出不变</b>（以 5 种输入实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

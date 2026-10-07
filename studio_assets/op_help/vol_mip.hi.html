@@ -12,8 +12,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_mip.inputs.jpg">vol_mip: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Maximum Intensity Projection (MIP) से 3D volume को 2D image में समेटता है। इसके समकक्ष कोई HALCON op निर्धारित नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。先頭軸（<code style="color:#22d3bf">axis=0</code>、スライス/深さ方向）に沿った最大値を取り、<code style="color:#22d3bf">_norm</code> でそのスライスの最大絶対値を 1 に正規化する。CT/MRI の読影でよく使う投影法。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। पहले axis (<code style="color:#22d3bf">axis=0</code>, slice/depth दिशा) के साथ maximum लिया जाता है, और <code style="color:#22d3bf">_norm</code> से उस slice के maximum absolute value को 1 पर normalise किया जाता है। यह CT/MRI पढ़ने में अक्सर उपयोग होने वाली projection विधि है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/roundness.chain.jpg">roundness: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Roundness <code style="color:#22d3bf">1 - σ/μ</code>। <code style="color:#22d3bf">μ</code> और <code style="color:#22d3bf">σ</code> <b>centroid से contour pixels तक की दूरी</b> का mean और standard deviation हैं; दूरी जितनी एकसमान (= सही वृत्त के जितना करीब), मान 1 के उतना करीब। HALCON के <code style="color:#22d3bf">roundness</code> (Shape factors from contour.) <b>वाला ही सूत्र</b> है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">4・面積/(π・長軸長²)</code> という別の量を返していた(16x64 の矩形で 0.239 対 0.577)。<code style="color:#22d3bf">circularity</code> が「面積が最大距離の円をどれだけ埋めるか」を見るのに対し、こちらは<b>縁の凸凹</b>を見る。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 तक यह <code style="color:#22d3bf">4·area/(π·major_axis_length²)</code> नाम की एक अलग मात्रा लौटाता था (16x64 के rectangle पर 0.239 बनाम 0.577)। जहाँ <code style="color:#22d3bf">circularity</code> यह देखता है कि &quot;क्षेत्रफल अधिकतम दूरी वाले circle को कितना भरता है&quot;, वहीं यह <b>किनारे के उतार-चढ़ाव</b> को देखता है।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

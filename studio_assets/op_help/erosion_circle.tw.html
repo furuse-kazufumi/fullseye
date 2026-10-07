@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/erosion_circle.inputs.jpg">erosion_circle: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用圓盤形結構元素的二值侵蝕(<code style="color:#22d3bf">ndimage.binary_erosion</code>)。從外周侵蝕前景區域使其縮小,是最基本的二值形態學運算。相當於HALCON的<code style="color:#22d3bf">erosion_circle</code>(Erode a region with a circular structuring element.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が構造要素の半径を 1〜4 の範囲(<code style="color:#22d3bf">_rad(a)</code>)で振る。<code style="color:#22d3bf">b</code> はこのバックエンドの二値モルフォロジー op(erosion/dilation/opening/closing の円形・矩形いずれも)に共通して<b>未使用</b>。</p>
+<p><code style="color:#22d3bf">a</code> 在 1～4 的範圍內(<code style="color:#22d3bf">_rad(a)</code>)調整結構元素的半徑。<code style="color:#22d3bf">b</code> 對此後端的所有二值形態學 op(erosion/dilation/opening/closing 的圓形、矩形皆然)都共同<b>未使用</b>。</p>
 <p><b>邊界處理</b>：將影像外部視為背景（0）（實測。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

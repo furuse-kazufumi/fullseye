@@ -14,12 +14,11 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>理想帶通(頻域圓環遮罩,內半徑 a・頻寬 b)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ正規化周波数半径 <code style="color:#22d3bf">r</code>(<code style="color:#22d3bf">fftshift</code> 済、中心=DC)に対し <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 内半径 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>(0.05〜0.35)。外半径は <code style="color:#22d3bf">r_lo + 幅</code> で最大 0.8 だが、半径が</p>
-<p>約 0.707 を超える周波数は存在しないので、大きな a, b では円環の外側が画像外に出て実質ハイパスになる。</p>
-<p><code style="color:#22d3bf">hx_gen_bandfilter</code> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルとの画素積で使う。</p>
+<p>對與 <code style="color:#22d3bf">hx_gen_lowpass</code> 相同的正規化頻率半徑 <code style="color:#22d3bf">r</code>（已 <code style="color:#22d3bf">fftshift</code>，中心=DC），回傳把 <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> 的圓環設為 1 的 0/1 float 影像（頻域遮罩）。輸入 <code style="color:#22d3bf">v</code> 只用於取得形狀。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 內半徑 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>（0.05〜0.45）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 頻寬 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>（0.05〜0.35）。外半徑為 <code style="color:#22d3bf">r_lo + 寬度</code>，最大 0.8，但由於半徑</p>
+<p>超過約 0.707 的頻率不存在，a、b 較大時圓環外側會跑到影像外，實質上變成高通。</p>
+<p><code style="color:#22d3bf">hx_gen_bandfilter</code> 是以「中心半徑與半寬」指定同一圓環的另一種參數化。用於與 <code style="color:#22d3bf">fft_generic</code> 等中心=DC 頻譜的逐像素乘積。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

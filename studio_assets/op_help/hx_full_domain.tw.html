@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將影像的定義域(domain)擴展到整個影像範圍。相當於 HALCON 的 <code style="color:#22d3bf">full_domain</code>(將影像的定義域擴展到最大)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力と同じ形状の全 1 の region(=画像全面)を返すだけの op。ROI を絞る他の op と対で使い、定義域をリセットするために使う。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>只是回傳與輸入同形狀、全為 1 的 region（=整張影像）的 op。與其他縮小 ROI 的 op 配對使用，用於重設定義域。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

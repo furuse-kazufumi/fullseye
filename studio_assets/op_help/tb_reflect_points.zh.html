@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_reflect_points.inputs.jpg">tb_reflect_points: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将点云沿平面(点 <code style="color:#22d3bf">plane_point</code>、法向量 <code style="color:#22d3bf">plane_normal</code>)镜像。→ (N,3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各点 p の平面からの符号付き距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n は正規化した法線)を取り、<code style="color:#22d3bf">p&#x27; = p - 2 d n</code> を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。点の並び順は保たれるので <code style="color:#22d3bf">p&#x27;[i]</code> は <code style="color:#22d3bf">p[i]</code> の鏡像。座標の単位はそのまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の配列(float に変換)。形状検証はしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 平面上の 1 点 (3,)。<code style="color:#22d3bf">plane_normal</code>: 法線 (3,)(長さは任意、内部で正規化。符号は結果に影響しない)。</p>
-<p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼそのまま返る(fail-closed ではない)。<code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の点群に連結する)形状補完にも使える。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">reflect_points</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>对每个点 p 取其到平面的有符号距离 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n 为归一化后的法线)，返回 <code style="color:#22d3bf">p&#x27; = p - 2 d n</code>(Householder 镜像)。平面上的点不动，平面两侧的点互换。点的排列顺序保持不变，因此 <code style="color:#22d3bf">p&#x27;[i]</code> 是 <code style="color:#22d3bf">p[i]</code> 的镜像。坐标单位不变。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>：(N,3) 的数组(转换为 float)。不校验形状。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>：平面上的 1 个点 (3,)。<code style="color:#22d3bf">plane_normal</code>：法线 (3,)(长度任意，内部归一化。符号不影响结果)。</p>
+<p>注意：法线是除以其范数加 1e-12，因此即使传入零向量也不会报异常，点云几乎原样返回(并非 fail-closed(失败即拒绝))。除在 <code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> 内部使用外，也可用于以检测到的对称面补全缺失侧(把镜像拼接到原点云上)的形状补全。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">reflect_points</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -13,14 +13,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_gaussian_curvature.inputs.jpg">tb_gaussian_curvature: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gaussian curvature K=k1·k2 (normal के उलटने पर invariant)। → (N,)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_curvatures</code> と同じ局所二次曲面フィットで <code style="color:#22d3bf">k1 * k2</code> を返す。符号は法線の向きに依らないため <code style="color:#22d3bf">normals</code> 引数を持たない(向き付けは常に近傍重心ヒューリスティクス)。</p>
-<p style="margin:2px 0 2px 12px">• 単位は 1/長さ²。半径 R の球なら <code style="color:#22d3bf">1/R²</code>、円柱・平面は 0、鞍点は負(k1 と k2 が異符号)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25、N-1 に切り詰め)。近傍が 5 点未満の点は 0。</p>
-<p style="margin:2px 0 2px 12px">• 楕円点(K&gt;0)/放物点(K=0)/双曲点(K&lt;0)の分類に使う。凸凹の区別は <code style="color:#22d3bf">mean_curvature</code> か <code style="color:#22d3bf">shape_index</code> に <code style="color:#22d3bf">normals</code> を渡して行う。</p>
-<p style="margin:2px 0 2px 12px">• 入力は (N,3) の点群。決定論的。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">gaussian_curvature</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 25)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>अतिरिक्त:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">principal_curvatures</code> वाले ही local quadric fit से <code style="color:#22d3bf">k1 * k2</code> लौटाता है। sign normal की orientation पर निर्भर नहीं, इसलिए <code style="color:#22d3bf">normals</code> argument नहीं है (orientation हमेशा neighbourhood centroid heuristic से)।</p>
+<p style="margin:2px 0 2px 12px">• unit 1/length²। radius R के sphere पर <code style="color:#22d3bf">1/R²</code>, cylinder और plane पर 0, saddle point पर negative (k1 और k2 के sign उलटे)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> neighbour points की संख्या है (default 25, N-1 तक सीमित)। 5 से कम neighbours वाले points पर 0।</p>
+<p style="margin:2px 0 2px 12px">• elliptic points (K&gt;0) / parabolic points (K=0) / hyperbolic points (K&lt;0) के classification में उपयोग होता है। convex और concave में फ़र्क करने के लिए <code style="color:#22d3bf">mean_curvature</code> या <code style="color:#22d3bf">shape_index</code> को <code style="color:#22d3bf">normals</code> दें।</p>
+<p style="margin:2px 0 2px 12px">• input (N,3) point cloud है। deterministic।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">gaussian_curvature</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। <code style="color:#22d3bf">a</code> से <code style="color:#22d3bf">k</code> (default 25) बदला जाता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

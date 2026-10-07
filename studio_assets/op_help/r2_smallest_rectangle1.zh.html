@@ -12,9 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_smallest_rectangle1.inputs.jpg">r2_smallest_rectangle1: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轴对齐的外接矩形(smallest_rectangle1)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>領域の外接軸並行矩形(bounding box)をマスクとして描く。前景マスク(<code style="color:#22d3bf">&gt; 0.5</code>) の前景画素について行・列の最小/最大 <code style="color:#22d3bf">ys.min()..ys.max()</code>、<code style="color:#22d3bf">xs.min()..xs.max()</code> を取り、その範囲を 1.0 で塗る。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。出力は必ず入力領域を含む。複数の連結成分があれば全成分をまとめて囲む 1 つの矩形になる(成分ごとの bbox が欲しければ先に <code style="color:#22d3bf">r2_sort_region</code> や <code style="color:#22d3bf">select_largest</code> で 1 成分に絞る)。矩形の 4 隅の座標そのものは返さない(マスク表現)。孤立ノイズが 1 画素あるだけで矩形が大きく広がるので、前段で <code style="color:#22d3bf">remove_small</code> や <code style="color:#22d3bf">opening_circle</code> を掛けておく。回転を許した最小面積矩形は <code style="color:#22d3bf">r2_smallest_rectangle2</code>、内接側は <code style="color:#22d3bf">r2_inner_rectangle1</code>。</p>
+<p>将区域的外接轴平行矩形(bounding box)绘制为掩模。对前景掩模(<code style="color:#22d3bf">&gt; 0.5</code>) 的前景像素取行、列的最小/最大 <code style="color:#22d3bf">ys.min()..ys.max()</code>、<code style="color:#22d3bf">xs.min()..xs.max()</code>，并将该范围涂为 1.0。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值是与输入同形的 float64 0/1 掩模。没有前景时全为零。输出必定包含输入区域。若有多个连通分量，结果是把所有分量一起围住的 1 个矩形(若想要每个分量的 bbox，请先用 <code style="color:#22d3bf">r2_sort_region</code> 或 <code style="color:#22d3bf">select_largest</code> 缩小到 1 个分量)。不返回矩形 4 个角的坐标本身(掩模表示)。只要有 1 个像素的孤立噪声，矩形就会大幅扩张，因此应在前级施加 <code style="color:#22d3bf">remove_small</code> 或 <code style="color:#22d3bf">opening_circle</code>。允许旋转的最小面积矩形是 <code style="color:#22d3bf">r2_smallest_rectangle2</code>，内切侧是 <code style="color:#22d3bf">r2_inner_rectangle1</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>使用 3x3 混合矩阵在通道之间进行线性变换（仿射色彩变换）。相当于 HALCON 的 <code style="color:#22d3bf">linear_trans_color</code>（计算多通道图像色值的仿射变换）（本实现是不含偏移项的纯线性变换）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 <code style="color:#22d3bf">theta = pi * a</code> を振って対角成分の一部を <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> で回転的に変化させた行列を作り、各行を合計 1 に正規化してから <code style="color:#22d3bf">c @ M.T</code> を掛ける。a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
+<p>以对角分量 0.6 + 非对角 0.2 为基本形式，用 a 调节相位 <code style="color:#22d3bf">theta = pi * a</code>，通过 <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> 使部分对角分量旋转式变化，构造出矩阵，将各行归一化为总和 1 后再应用 <code style="color:#22d3bf">c @ M.T</code>。a 从 0→1 时，偏向 R/G 的权重会周期性地交替。b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知识指南(该算子背后的物理与约定)</h3>

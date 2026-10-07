@@ -14,13 +14,12 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">s = 0.7 + 0.6·a</code> से isotropic, केंद्र को बनाए रखने वाला rescale; canvas वही रहता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">b</code> = <b>補間の次数</b> — <code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code>(0 = 最近傍、1 = 双一次、3 = 三次スプライン)。<code style="color:#22d3bf">b=0.5</code> は 3 次で、<code style="color:#22d3bf">b</code> が死んでいた頃の既定(<code style="color:#22d3bf">ndimage</code> の order=3)と <b>ビット一致</b>する。</p>
-<p>★2026-09-02: それまで <code style="color:#22d3bf">rescale_img</code> / <code style="color:#22d3bf">zoom_image_factor</code> / <code style="color:#22d3bf">zoom_image_size</code> は <b>3 つとも同じ実装</b>(実測: 相互の最大差 0.0 と 4.9e-14)で、3 つとも <code style="color:#22d3bf">b</code> を使っていなかった。3 つの役割を分けた:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rescale_img</code>      — 等方倍率 1 つ + <b>補間次数</b>(この関数)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_factor</code>— 縦横 <b>2 つの倍率</b>(HALCON の ScaleHeight/ScaleWidth)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_size</code>  — <b>目標サイズ</b>指定(出力 shape が変わる)</p>
-<p>HALCON 名も実態に合わせて <code style="color:#22d3bf">zoom_image_size</code> → <code style="color:#22d3bf">zoom_image_factor</code> へ付け替えた(この op はサイズではなく倍率で駆動するため)。</p>
+<p><code style="color:#22d3bf">b</code> = <b>interpolation का order</b> — <code style="color:#22d3bf">(0, 1, 3, 3)[min(3, int(4b))]</code> (0 = nearest neighbour, 1 = bilinear, 3 = cubic spline)। <code style="color:#22d3bf">b=0.5</code> order 3 है, और जब <code style="color:#22d3bf">b</code> निष्क्रिय था उस समय के default (<code style="color:#22d3bf">ndimage</code> का order=3) से <b>bit-identical</b> है।</p>
+<p>★2026-09-02: तब तक <code style="color:#22d3bf">rescale_img</code> / <code style="color:#22d3bf">zoom_image_factor</code> / <code style="color:#22d3bf">zoom_image_size</code> <b>सभी 3 एक ही implementation थे</b> (मापा गया: आपसी maximum अंतर 0.0 और 4.9e-14), और 3 में से कोई भी <code style="color:#22d3bf">b</code> का उपयोग नहीं करता था। 3 की भूमिकाएँ अलग की गईं:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rescale_img</code>      — 1 isotropic factor + <b>interpolation order</b> (यह function)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_factor</code>— लंबाई-चौड़ाई के <b>2 factor</b> (HALCON का ScaleHeight/ScaleWidth)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">zoom_image_size</code>  — <b>target size</b> देना (output shape बदलता है)</p>
+<p>HALCON नाम को भी वास्तविकता के अनुसार <code style="color:#22d3bf">zoom_image_size</code> → <code style="color:#22d3bf">zoom_image_factor</code> पर बदला गया (क्योंकि यह op size से नहीं बल्कि factor से चलता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

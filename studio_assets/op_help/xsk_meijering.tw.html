@@ -11,8 +11,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Meijering neuriteness 濾波器。以 sigma=1,2,3 三個尺度套用 <code style="color:#22d3bf">skimage.filters.meijering</code>，強化細長曲線狀結構（如血管、神經突起等）（與 Frangi 系相同，皆從 Hessian 矩陣的特徵值計算脊線似然度，但 Meijering 對分支點也有強烈的反應）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用(sigma は固定)。出力は <code style="color:#22d3bf">_norm</code> で最大絶対値を 1 に正規化した符号なし強度画像。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用(sigma 固定)。輸出是以 <code style="color:#22d3bf">_norm</code> 將最大絕對值正規化為 1 的無正負號強度影像。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

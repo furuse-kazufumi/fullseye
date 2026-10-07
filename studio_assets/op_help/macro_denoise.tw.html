@@ -11,8 +11,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由進化搜尋（<code style="color:#22d3bf">evolve.py</code> / <code style="color:#22d3bf">robust.py</code>）發現的固定管線：<code style="color:#22d3bf">bilateral(a=0.10,b=0.76)</code> → <code style="color:#22d3bf">bilateral(a=0.12,b=0.27)</code> → <code style="color:#22d3bf">bilateral(a=0.73,b=0.11)</code>（將既有 op 的雙邊濾波器以不同強度參數串接 3 段）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は凍結済みで未使用 —— このパイプライン自体が進化で選ばれた1 つの固定構成である。denoise 課題（PSNR）でロック済みホールドアウト26.28dB、手作りベースライン 22.83dB を上回る（train/holdout/locked_holdoutのどれで測っても手作りベースラインに勝っている）。HALCON に対応する単一オペレータは無い（<code style="color:#22d3bf">halcon=&quot;&quot;</code>）。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 已凍結且未使用 —— 這條管線本身就是由演化選出的 1 個固定配置。在 denoise 任務(PSNR)中鎖定的保留集為 26.28dB,超過手工基準線 22.83dB(無論在 train/holdout/locked_holdout 哪一個上量測都勝過手工基準線)。沒有對應的單一 HALCON 運算子(<code style="color:#22d3bf">halcon=&quot;&quot;</code>)。</p>
 <p><b>旋鈕（實測）</b>：將 <code style="color:#22d3bf">a</code> 從 0 掃到 1 <b>輸出不變</b>（以 5 種輸入實測）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>

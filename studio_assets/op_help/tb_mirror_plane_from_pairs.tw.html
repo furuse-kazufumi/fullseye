@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mirror_plane_from_pairs.inputs.jpg">tb_mirror_plane_from_pairs: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由左右對應的特徵點求出正中面。→ <code style="color:#22d3bf">(2, 3)</code>(第 1 列 = 點，第 2 列 = 法線)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
-<p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
-<p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>
-<p><code style="color:#22d3bf">pairs=None</code> は<b>前半と後半を対にする</b>規約(<code style="color:#22d3bf">i</code> と <code style="color:#22d3bf">i + N//2</code>)。左のランドマークを全部並べてから右を同じ順で並べる、という保存形式が形態計測では一般的なので、それに合わせてある。<b>点数が奇数なら拒否する</b> —— 半分に割れない並びを黙って切り詰めると、対が 1 つずつずれて全部の符号が入れ替わる。</p>
-<p>2-D 進化レジストリへ橋渡しした shapestat の op <code style="color:#22d3bf">mirror_plane_from_pairs</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>左右對 <code style="color:#22d3bf">(i, j)</code> 的<b>中點</b>全部落在正中面上。因此只需對該中點集合擬合平面即可 —— 要點在於平面與變形量無關地被決定，這與使殘差最小的面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)是兩回事。</p>
+<p>★ 2026-09-06 的實測：加入 6.4 mm 的單側變形後，<b>殘差最佳面偏離真正的正中面 2.92 mm / 1.72 度，抹掉了不對稱量的 46 %</b>(增益 0.54)。用這個特徵點面則增益為 1.03。<b>尋找時用殘差最佳面，陳述量時用這個</b>。</p>
+<p>*midline* 是位於正中線上(不成對)的特徵點的索引。給定時會加入中點集合，使平面擬合更穩定。</p>
+<p><code style="color:#22d3bf">pairs=None</code> 是<b>前半與後半配對</b>的約定(<code style="color:#22d3bf">i</code> 與 <code style="color:#22d3bf">i + N//2</code>)。先排完所有左側特徵點再依相同順序排右側，這種儲存格式在形態測量中很常見，因此與之對齊。<b>點數為奇數時拒絕</b> —— 若把無法對半分的排列默默截斷，對會逐個錯開 1 位，全部的符號都會互換。</p>
+<p>橋接到 2-D 演化註冊表的 shapestat op <code style="color:#22d3bf">mirror_plane_from_pairs</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調參數，<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

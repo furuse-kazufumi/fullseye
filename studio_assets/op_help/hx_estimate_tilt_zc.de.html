@@ -9,11 +9,10 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zheng-Chellappa: schätzt den Tilt aus der mittleren Richtung des normierten Gradienten (unabhängig vom lokalen Kontrast).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Sobel 勾配 <code style="color:#22d3bf">(Ex, Ey)</code> を各画素で振幅 <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> で割った単位ベクトルにしてから平均し、<code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code> を <code style="color:#22d3bf">(tilt / 2π) mod 1</code> で [0,1) に写した <code style="color:#22d3bf">np.float64</code> を返す(Zheng-Chellappa の tilt 推定)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 角度の規約は <code style="color:#22d3bf">hx_estimate_tilt_lr</code> と同じ(0 が +列方向、0.25 が +行方向)。</p>
-<p>各画素の寄与が方向だけになるため、強いエッジや明るい部分に引きずられにくい。反面、勾配がほぼ 0 の平坦部でも(<code style="color:#22d3bf">1e-9</code> で割った)雑音の方向が等しく 1 票を持つので、平坦な背景が広い画像では推定がぼやける。前段で <code style="color:#22d3bf">gauss_filter</code> を掛けて雑音の勾配を減らすと安定する。</p>
+<p>Teilt den Sobel-Gradienten <code style="color:#22d3bf">(Ex, Ey)</code> in jedem Pixel durch seinen Betrag <code style="color:#22d3bf">hypot(Ex, Ey) + 1e-9</code> zu Einheitsvektoren, mittelt diese und gibt <code style="color:#22d3bf">tilt = arctan2(&lt;Ey/|E|&gt;, &lt;Ex/|E|&gt;)</code>, per <code style="color:#22d3bf">(tilt / 2π) mod 1</code> auf [0,1) abgebildet, als <code style="color:#22d3bf">np.float64</code> zurück (die tilt-Schätzung nach Zheng-Chellappa).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p style="margin:2px 0 2px 12px">• Dieselbe Winkelkonvention wie <code style="color:#22d3bf">hx_estimate_tilt_lr</code> (0 ist die +Spaltenrichtung, 0.25 die +Zeilenrichtung).</p>
+<p>Da jedes Pixel nur mit seiner Richtung beiträgt, wird es weniger von starken Kanten oder hellen Bereichen gezogen. Andererseits hat auch in ebenen Bereichen mit nahezu 0 Gradient die Richtung des Rauschens (durch <code style="color:#22d3bf">1e-9</code> geteilt) gleichermaßen 1 Stimme, daher verschwimmt die Schätzung bei Bildern mit großem ebenem Hintergrund. Ein vorgeschaltetes <code style="color:#22d3bf">gauss_filter</code>, das die Rauschgradienten verringert, stabilisiert sie.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

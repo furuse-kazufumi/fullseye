@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>सभी contour points के minimum enclosing circle (सन्निकटन = centroid केंद्र) की radius लौटाता है (normalised feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 <code style="color:#22d3bf">r</code> を求め、<code style="color:#22d3bf">r / max(H, W)</code> を <code style="color:#22d3bf">np.float64</code> で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の近似で、半径は真値以上になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 1 つも無ければ 0.0(有効な値 0 と区別できない)。</p>
-<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが変わると値が変わる。円らしさを測りたいなら <code style="color:#22d3bf">hx_fit_circle_contour</code>(残差)や <code style="color:#22d3bf">circularity_xld</code>。region 版の厳密解は <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
+<p>contour dict के सभी contours के points को मिलाकर, points के औसत (centroid) को केंद्र मानकर सबसे दूर के point तक की दूरी <code style="color:#22d3bf">r</code> निकालता है, और <code style="color:#22d3bf">r / max(H, W)</code> को <code style="color:#22d3bf">np.float64</code> के रूप में लौटाता है। यह असली minimum enclosing circle (जिसमें केंद्र भी optimise होता है) नहीं, बल्कि &quot;centroid को केंद्र मानने वाले enclosing circle&quot; का approximation है, और radius वास्तविक मान के बराबर या उससे बड़ा होता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• 1 भी point न हो तो 0.0 (वैध मान 0 से भेद नहीं किया जा सकता)।</p>
+<p>कई contours हों तब भी उन्हें 1 circle से घेरा जाता है (हर contour के लिए अलग नहीं)। normalisation image की लंबी भुजा से होता है, इसलिए समान आकार पर भी image का आकार बदलने से मान बदल जाता है। गोलाई मापनी हो तो <code style="color:#22d3bf">hx_fit_circle_contour</code> (residual) या <code style="color:#22d3bf">circularity_xld</code>। region संस्करण का सटीक हल <code style="color:#22d3bf">r2_smallest_circle</code> है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

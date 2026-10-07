@@ -9,10 +9,9 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt Albedo (Reflexionsgrad) und Umgebungslicht: Albedo ~ der Luminanzumfang; dieser Operator liefert die Albedo.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>画像の最大値と最小値の差 <code style="color:#22d3bf">max(v) - min(v)</code> を [0,1] に clip した <code style="color:#22d3bf">np.float64</code> を返す。「反射率(albedo)が高いほど陰影の明暗差が大きい」という関係を、輝度のダイナミックレンジで代用した推定。ambient(環境光)は計算せず返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>最大・最小の 2 画素だけで決まるため、飽和画素や暗点が 1 つでもあれば 1 に張り付く。雑音に弱いので前段で <code style="color:#22d3bf">hx_mean_shape</code> や <code style="color:#22d3bf">median_rect</code> を掛ける。min-max 正規化済みの画像では常に 1 になり意味を持たない。slant の推定 <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> は反射率 1 を仮定しており、この値で割って補正する用途が想定される。</p>
+<p>Gibt die Differenz zwischen Bildmaximum und -minimum <code style="color:#22d3bf">max(v) - min(v)</code>, auf [0,1] geclippt, als <code style="color:#22d3bf">np.float64</code> zurück. Eine Schätzung, die die Beziehung &quot;je höher der Reflexionsgrad (albedo), desto größer der Hell-Dunkel-Unterschied der Schattierung&quot; durch den Dynamikumfang der Leuchtdichte ersetzt. Ambient (Umgebungslicht) wird weder berechnet noch zurückgegeben.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p>Bestimmt wird es nur von 2 Pixeln, Maximum und Minimum, daher klebt es schon bei 1 gesättigten Pixel oder dunklen Punkt an 1. Es ist rauschempfindlich, daher vorher <code style="color:#22d3bf">hx_mean_shape</code> oder <code style="color:#22d3bf">median_rect</code> anwenden. Bei einem min-max-normierten Bild ist es immer 1 und bedeutungslos. Die slant-Schätzung <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> nimmt Reflexionsgrad 1 an; vorgesehen ist, sie durch Division durch diesen Wert zu korrigieren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

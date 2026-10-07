@@ -9,9 +9,8 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ORB（Oriented FAST and Rotated BRIEF）关键点检测数量。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>skimage.feature.ORB で検出・記述を行い、実際に検出できたキーポイント数を返す(feature 出力)。</p>
-<p><code style="color:#22d3bf">a</code> が要求する最大キーポイント数 <code style="color:#22d3bf">n_keypoints</code> を 50〜450 の範囲で振る(上限であり、画像のコントラストや構造が乏しいと実際の検出数はそれより少なくなる)。<code style="color:#22d3bf">b</code> は未使用。テクスチャの豊富さ・特徴点密度の目安として使える。</p>
+<p>用 skimage.feature.ORB 进行检测和描述，返回实际检测到的关键点数(feature 输出)。</p>
+<p><code style="color:#22d3bf">a</code> 在 50~450 的范围内调节所请求的最大关键点数 <code style="color:#22d3bf">n_keypoints</code> (这是上限，若图像的对比度或结构贫乏，实际检测数会少于它)。<code style="color:#22d3bf">b</code> 未使用。可用作纹理丰富程度、特征点密度的参考。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

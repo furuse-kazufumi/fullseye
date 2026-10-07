@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>用指數映射 <code style="color:#22d3bf">(exp(x) - 1) / (e - 1)</code> 將 [0,1] 映射到 [0,1]（已正規化，使 x=1 時恰好等於 1）。這是一種壓縮低階調、強調高光的對比度強化，曲線方向與 <code style="color:#22d3bf">log_image</code> 相反。用作 HALCON <code style="color:#22d3bf">exp_image</code>（Calculate the exponentiation of an image.）的替代。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。底(<code style="color:#22d3bf">e</code>)や倍率を変える調整点は無い —— 曲率を変えたい場合は <code style="color:#22d3bf">gamma_image</code>(<code style="color:#22d3bf">a</code> でべき指数を振れる)を使う。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。沒有改變底數(<code style="color:#22d3bf">e</code>)或倍率的可調參數 —— 若要改變曲率, 請使用 <code style="color:#22d3bf">gamma_image</code>(可由 <code style="color:#22d3bf">a</code> 調整冪指數)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

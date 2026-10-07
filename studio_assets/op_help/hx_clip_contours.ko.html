@@ -15,11 +15,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_clip_contours.inputs.jpg">hx_clip_contours: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>contour 를 이미지 도메인(중앙 margin a/b 를 남긴 사각형)으로 자릅니다(범위 밖 점 제거).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>contour dict の各 contour について、画像の内側に取った矩形 <code style="color:#22d3bf">my &lt;= row &lt;= H-1-my</code>、<code style="color:#22d3bf">mx &lt;= col &lt;= W-1-mx</code> に入る点だけを残し、1 点も残らない contour は捨てて返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 上下の余白 <code style="color:#22d3bf">my = a*0.4*H</code>(0〜高さの 40%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 左右の余白 <code style="color:#22d3bf">mx = b*0.4*W</code>(0〜幅の 40%)。a=b=0 なら画像範囲 <code style="color:#22d3bf">[0, H-1] × [0, W-1]</code> でのクリップ。</p>
-<p>点を間引くだけで contour は分割しないため、矩形外を通って戻ってくる contour は残った点どうしが直接つながった形(ジャンプ)になる。分割が要るなら後段で <code style="color:#22d3bf">hx_split_contours</code>。中心からの割合で切る類似 op に <code style="color:#22d3bf">hx_crop_contours</code>(中心基準の幅・高さ指定)。線長で足切りする <code style="color:#22d3bf">xg_clip_contours</code> とは別物。</p>
+<p>contour dict의 각 contour에 대해, 영상 안쪽에 잡은 사각형 <code style="color:#22d3bf">my &lt;= row &lt;= H-1-my</code>, <code style="color:#22d3bf">mx &lt;= col &lt;= W-1-mx</code> 에 들어가는 점만 남기고, 1점도 남지 않는 contour는 버리고 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 위아래 여백 <code style="color:#22d3bf">my = a*0.4*H</code>(0~높이의 40%).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 좌우 여백 <code style="color:#22d3bf">mx = b*0.4*W</code>(0~폭의 40%). a=b=0이면 영상 범위 <code style="color:#22d3bf">[0, H-1] × [0, W-1]</code>에서의 클립.</p>
+<p>점을 솎아낼 뿐 contour는 분할하지 않으므로, 사각형 밖을 지나 돌아오는 contour는 남은 점끼리 직접 이어진형태(점프)가 된다. 분할이 필요하면 후단에서 <code style="color:#22d3bf">hx_split_contours</code>. 중심으로부터의 비율로 자르는 유사 op로 <code style="color:#22d3bf">hx_crop_contours</code>(중심 기준의 폭·높이 지정). 선 길이로 걸러내는 <code style="color:#22d3bf">xg_clip_contours</code>와는 별개다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

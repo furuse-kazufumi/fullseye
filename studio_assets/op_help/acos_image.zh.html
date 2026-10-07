@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>通过 <code style="color:#22d3bf">arccos(x) / π</code> 将 [0,1] 映射到 [0,1] 的反余弦 LUT。是 <code style="color:#22d3bf">asin_image</code> 的反转形式（单调递减），在 x=0 处为最大值（1），在 x=1 处为最小值（0）。用作 HALCON <code style="color:#22d3bf">acos_image</code>（Calculate the arccosine of an image.）的替代。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">asin_image</code> と同様に端点近傍で傾きが急峻になる(数値的に敏感)。単純な階調反転がしたいだけなら <code style="color:#22d3bf">invert_image</code> の方が挙動が読みやすい。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。与 <code style="color:#22d3bf">asin_image</code> 一样,在端点附近斜率变得陡峭(数值上敏感)。如果只想做简单的灰阶反转,<code style="color:#22d3bf">invert_image</code> 的行为更容易把握。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

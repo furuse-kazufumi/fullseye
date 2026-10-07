@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/select_contours.inputs.jpg">select_contours: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按点数（长度）过滤以筛选 XLD 轮廓。相当于 HALCON 的 <code style="color:#22d3bf">select_contours_xld</code>（Select XLD contours according to several features.）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が残す最小点数のしきい値を <code style="color:#22d3bf">3〜43</code>（<code style="color:#22d3bf">3 + int(40a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。輪郭を構成する点の数（≒長さ）がしきい値未満のものを丸ごと捨てる。HALCON 版は点数以外にも円形度・凸性などの特徴で選べるが、この実装は点数のみ。</p>
+<p><code style="color:#22d3bf">a</code> 将保留所需的最小点数阈值在 <code style="color:#22d3bf">3〜43</code>（<code style="color:#22d3bf">3 + int(40a)</code>）之间调节。<code style="color:#22d3bf">b</code> 未使用。构成轮廓的点数（≒长度）低于阈值的轮廓整条丢弃。HALCON 版除点数外还可按圆形度、凸性等特征选择，但本实现只看点数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

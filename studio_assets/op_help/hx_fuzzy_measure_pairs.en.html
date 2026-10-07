@@ -10,8 +10,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Count edge pairs along the central horizontal profile (the rising boundary of a bright bar to its falling boundary) — 1-D metrology.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>レベル閾値の交差で境界を 1 回ずつ取る(np.gradient はステップを 2 画素に滲ませ二重計上するため不可)。閾値 lvl は a で可変。返り値は対の数(/10 で正規化した feature)。</p>
+<p>Takes each boundary 1 time at the crossing of a level threshold (np.gradient is not usable because it smears a step over 2 pixels and double- counts it). The threshold lvl is variable via a. The return value is the number of pairs (a feature normalised by /10).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

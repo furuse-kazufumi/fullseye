@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_label_to_region.inputs.jpg">r3_label_to_region: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>從標籤影像中僅擷取具有某一個灰階值(標籤)的像素(相當於 HALCON <code style="color:#22d3bf">label_to_region</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた<code style="color:#22d3bf">round(a * (ラベル数-1))</code> 番目のラベルを選んで、その値を持つ画素を領域として返す。<code style="color:#22d3bf">b</code> は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
+<p>把輸入四捨五入到小數 3 位後，把大於 0 的值視為標籤，在遞增排序中選出第 <code style="color:#22d3bf">round(a * (標籤數-1))</code> 個標籤，並把具有該值的像素作為區域回傳。<code style="color:#22d3bf">b</code> 未使用。單純的 0/1 遮罩只有 1 個標籤，因此總是回傳其前景。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

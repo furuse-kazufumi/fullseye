@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>恆等映射。對應到 HALCON 的 <code style="color:#22d3bf">copy_image</code>（Copy an image and allocate new memory for it.），但與配置新記憶體並複製影像的 <code style="color:#22d3bf">copy_image</code> 不同，本實作只是原樣傳回輸入陣列（不進行複製）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。sort が <code style="color:#22d3bf">ANY</code>（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。sort 為 <code style="color:#22d3bf">ANY</code>（與 image/region/feature 中任一輸入皆相符）是僅此 op 才有的特殊處理，用於在不改變管線型別的前提下放置一個「什麼都不做」的槽位（例如演化只想填滿槽位數時）。由於不重新產生值而是原樣回傳輸入，請注意：呼叫端若改寫回傳值，輸入陣列也會隨之改變。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

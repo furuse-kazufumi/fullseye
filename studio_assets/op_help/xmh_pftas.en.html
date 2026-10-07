@@ -8,8 +8,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Variance of the 54-dimensional PFTAS (parameter-free threshold adjacency statistics, <code style="color:#22d3bf">mahotas.features.pftas</code>) feature vector. A texture feature that aggregates histograms counting adjacent-pixel intensity relationships using a parameter-free threshold.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。2026-09-02 実測: 54 次元の平均を使うと、正規化ヒストグラムの性質上ほぼ整数/54 の値しか取らず、12 通りの画像(4 サイズ x 3 内容)で相異なる値がわずか 2 個(事実上の定数)だった。分散にすると分布の広がりが残り画像ごとに変化するため、ここでは分散を採用している。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Measured on 2026-09-02: using the mean of the 54 dimensions, owing to the nature of normalised histograms it takes almost only values of integer/54, and across 12 images (4 sizes x 3 contents) there were only 2 distinct values (effectively a constant). With the variance, the spread of the distribution remains and changes from image to image, so the variance is adopted here.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

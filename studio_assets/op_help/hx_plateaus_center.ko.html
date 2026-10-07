@@ -13,12 +13,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이값 평탄역(기울기≈0)의 중심을 검출: 평탄 연결 성분의 무게중심 화소를 marker region 으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>Sobel 勾配振幅 <code style="color:#22d3bf">gmag</code> を求め、<code style="color:#22d3bf">gmag &lt; (0.01 + 0.1*a) * max(gmag)</code> の画素を「平坦」として 8 近傍で連結成分に分け、各成分の重心(<code style="color:#22d3bf">center_of_mass</code>)を四捨五入した 1 画素だけを 1 とするマーカー region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 平坦とみなす勾配の上限(最大勾配の 1%〜11%)。大きいほど平坦域が広がりつながる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければ全 0。</p>
-<p>注意: 出力は成分 1 つにつき 1 画素で、成分の面積や形は失われる。重心は非凸な平坦域(環状など)では域外に落ちることがある。しきい値が最大勾配に対する相対値なので、強いエッジが 1 本あるだけで他の緩い勾配が「平坦」側に入る。ウォーターシェッドのマーカーや、成分数を数える用途向け。面としての平坦域が欲しいなら <code style="color:#22d3bf">hx_lowlands</code>。</p>
+<p>Sobel 기울기 진폭 <code style="color:#22d3bf">gmag</code>를 구하고, <code style="color:#22d3bf">gmag &lt; (0.01 + 0.1*a) * max(gmag)</code>인 화소를 &quot;평탄&quot;으로 하여 8근방으로 연결 성분으로나누고, 각 성분의 무게중심(<code style="color:#22d3bf">center_of_mass</code>)을 반올림한 1화소만을 1로 하는 마커 region을 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 평탄으로 간주하는 기울기의 상한(최대 기울기의 1%~11%). 클수록 평탄역이 넓어지고 이어진다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 성분이 1개도 없으면 전부 0.</p>
+<p>주의: 출력은 성분 1개당 1화소로, 성분의 면적이나 형태는 잃는다. 무게중심은 비볼록한 평탄역(고리 모양 등)에서는 영역 밖으로 떨어지는경우가 있다. 임계값이 최대 기울기에 대한 상대값이므로, 강한 에지가 1개 있는 것만으로 다른 완만한 기울기가 &quot;평탄&quot; 쪽에 들어간다. 워터셰드의 마커나, 성분 수를 세는 용도용. 면으로서의 평탄역이 필요하면 <code style="color:#22d3bf">hx_lowlands</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

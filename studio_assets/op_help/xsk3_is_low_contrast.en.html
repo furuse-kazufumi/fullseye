@@ -8,8 +8,7 @@
 <p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Low-contrast image determination (skimage <code style="color:#22d3bf">exposure.is_low_contrast</code>). Returns as a 0.0/1.0 feature the boolean judging whether the image&#x27;s brightness range uses less than <code style="color:#22d3bf">fraction_threshold</code> of the full possible range.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は判定基準の割合(<code style="color:#22d3bf">0.05+0.4*a</code> で 0.05〜0.45)を振る —— 大きくするほど低コントラストと判定されやすくなる。<code style="color:#22d3bf">b</code> は未使用。露出不足/白飛びの自動検知に使える。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the ratio used as the decision criterion (0.05-0.45 via <code style="color:#22d3bf">0.05+0.4*a</code>) — the larger, the more readily it is judged low-contrast. <code style="color:#22d3bf">b</code> is unused. Usable for automatic detection of underexposure / blown-out highlights.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

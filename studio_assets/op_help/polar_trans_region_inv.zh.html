@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/polar_trans_region_inv.inputs.jpg">polar_trans_region_inv: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将极坐标表示逆变换为普通的直角坐标（笛卡尔坐标）（<code style="color:#22d3bf">cv2.warpPolar</code> 的逆映射模式）。以中心为基准，半径 <code style="color:#22d3bf">min(h,w)/2</code> 的圆盘外部用 0 填充，然后通过 <code style="color:#22d3bf">_rebinarise</code> 以 0.5 阈值恢复为二值区域。a、b 未使用（与 <code style="color:#22d3bf">polar_trans_image_inv</code> 共享 <code style="color:#22d3bf">_sh_geom</code> 的 <code style="color:#22d3bf">polar_inv</code> 分支）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_region_inv</code>（極座標領域を元のデカルト座標系の領域に戻す演算）に相当。実装上、円盤境界付近 1 画素程度は補間の丸めで非決定的になりうるため外側を明示的に 0 で塗って安全側に倒している（2026-09-02 修正済み、詳細は <code style="color:#22d3bf">_sh_geom</code> の <code style="color:#22d3bf">polar_inv</code> 分岐のコメント参照）。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">polar_trans_region_inv</code>（将极坐标区域还原为原笛卡尔坐标系区域的运算）。在实现上，圆盘边界附近约 1 像素可能因插值舍入而变得不确定，因此显式地将外侧填为 0，以偏向安全一侧（2026-09-02 已修正，详见 <code style="color:#22d3bf">_sh_geom</code> 中 <code style="color:#22d3bf">polar_inv</code> 分支的注释）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

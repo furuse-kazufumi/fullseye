@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.inputs.jpg">matrix_to_img: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>matrix को <b>देखने के लिए gray levels</b> में बदलकर वापस image बनाता है —— यह cast नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>行き(<code style="color:#22d3bf">img_to_matrix</code>)は値も形も変えない<b>純粋なキャスト</b>だと明記してあるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>対数圧縮</b>の強さ。<code style="color:#22d3bf">k = 10**(3a) - 1</code> として <code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>(a=0 は線形、a=1 で 1000 倍の圧縮)。条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基準。<code style="color:#22d3bf">b &lt; 0.5</code> は<b>データの min–max を [0,1] に伸ばす</b>、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>0 を 0.5 に置いて <code style="color:#22d3bf">|x|</code> の最大で対称に</b>(符号つきの行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 入力と<b>同じ形</b>の float64、値域 [0,1]。全要素が等しい行列は一様な 0.5(min–max 側でも 0 除算にならないよう中立へ倒す)。</p>
+<p>जाने वाले रास्ते (<code style="color:#22d3bf">img_to_matrix</code>) के बारे में साफ़ लिखा है कि यह value और shape को न बदलने वाला <b>शुद्ध cast</b> है, लेकिन लौटने वाले रास्ते को भी वैसा ही cast बनाना झूठ होगा: matrix की value [0,1] में नहीं समातीं, और अगर सिर्फ़ minimum को काले और maximum को सफ़ेद तक खींचा जाए, तो <b>पता नहीं चलता कि 0 कहाँ है</b>। covariance, correlation और pseudo-inverse के sign का कोई अर्थ नहीं रहता अगर वह पढ़ा न जा सके।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>log compression</b> की तीव्रता। <code style="color:#22d3bf">k = 10**(3a) - 1</code> लेकर <code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code> (a=0 पर linear, a=1 पर 1000 गुना compression)। condition number की तरह कई orders में फैली matrix में छोटे घटकों के पूरी तरह काले में दब जाने से बचाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → आधार। <code style="color:#22d3bf">b &lt; 0.5</code> <b>data के min–max को [0,1] तक खींचता है</b>, <code style="color:#22d3bf">b &gt;= 0.5</code> <b>0 को 0.5 पर रखकर <code style="color:#22d3bf">|x|</code> के maximum से symmetric करता है</b> (signed matrix के लिए। 0.5 neutral है, चमकीला = धनात्मक, गहरा = ऋणात्मक)।</p>
+<p style="margin:2px 0 2px 12px">• लौटाता है: input जैसी ही <b>shape</b> का float64, range [0,1]। सभी element बराबर हों तो एकसमान 0.5 (min–max वाले पक्ष में भी 0 से भाग न हो, इसलिए neutral पर रखा जाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

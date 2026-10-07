@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_estimate_oriented_normals.inputs.jpg">tb_estimate_oriented_normals: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>PCA 法线估计与 Hoppe 全局定向传播的组合。→ (N,3) 的定向单位法线。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">estimate_normals</code>(向き未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 伝播)を通す。閉曲面なら全点外向き、平面なら全点同一半球にそろう。得た法線を <code style="color:#22d3bf">curvature3d.shape_index</code> に渡すと凹/凸符号が正しく出る。</p>
+<p>依次通过 <code style="color:#22d3bf">estimate_normals</code>(方向未定)→ <code style="color:#22d3bf">orient_normals</code>(MST 传播)。闭曲面时所有点朝外，平面时所有点统一到同一半球。把得到的法线传给 <code style="color:#22d3bf">curvature3d.shape_index</code> 可得到正确的凹/凸符号。</p>
 <p>Args:</p>
-<p>points: (N,3) の点群。</p>
-<p>k: PCA 近傍数と kNN グラフ近傍数(共通)。</p>
-<p>seed_dir: 大域基準向き (3,)。None なら重心から外向き。</p>
+<p>points: (N,3) 的点云。</p>
+<p>k: PCA 邻域点数与 kNN 图邻域点数(共用)。</p>
+<p>seed_dir: 全局参考方向 (3,)。None 时为从质心朝外。</p>
 <p>Returns:</p>
-<p>(N,3) の大域一貫・向き付き単位法線。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">estimate_oriented_normals</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 20)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>(N,3) 的全局一致、带方向的单位法线。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">estimate_oriented_normals</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 调节 <code style="color:#22d3bf">k</code>(默认 20)。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

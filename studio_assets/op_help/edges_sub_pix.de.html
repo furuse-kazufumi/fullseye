@@ -13,8 +13,7 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kantenpunkt-Extraktion mit Subpixel-Genauigkeit. Berechnet den Gradienten und seine Normalenrichtung (<code style="color:#22d3bf">gradient_normals</code>), bildet aus Pixeln, die einen Schwellenwert (<code style="color:#22d3bf">0.15+0.5*a</code>) überschreiten, zusammenhängende Komponenten und verfeinert dann jeden Punkt durch Parabelanpassung auf eine Subpixel-Position (<code style="color:#22d3bf">subpixel_refine_edges</code>, eine Implementierung, die sich mit der gleichnamigen Op auf der <code style="color:#22d3bf">ops</code>-Seite teilt -- eine Korrektur vom 2026-09-02 machte dies erst zu echtem Subpixel; die alte Implementierung gab einfach ganzzahlige Pixelkoordinaten zurück). Entspricht HALCONs <code style="color:#22d3bf">edges_sub_pix</code> (Extract sub-pixel precise edges using Deriche, Lanser, Shen, or Canny filters.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> がエッジ強度のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Schwellwert der Kantenstärke. <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

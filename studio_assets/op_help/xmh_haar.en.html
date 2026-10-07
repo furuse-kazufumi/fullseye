@@ -11,8 +11,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Haar wavelet transform (<code style="color:#22d3bf">mahotas.haar</code>). Truncates the image to an even size before transforming, then displays the resulting coefficient array -- a Matlab-style in-place layout where the approximation/horizontal/vertical/diagonal subbands are packed into an array the same size as the original image -- directly as an image after min-max normalization.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>分解レベルは 1 段固定。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値そのものは復元可能な画像ではなく係数の可視化であることに注意。</p>
+<p>The decomposition level is fixed at 1. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Note that the values themselves are a visualisation of coefficients, not a reconstructable image.</p>
 <p><b>Value comparability (measured)</b>: the output is <b>normalised by that image&#x27;s own maximum</b> (the output maximum is always 1.0, and scaling the input leaves the output unchanged). Values therefore <b>cannot be compared across images</b> — a feature of the same strength takes a different value depending on what the strongest feature in that image happens to be, and in an image holding only weak features the noise is lifted to 1.0. To compare across images, rescale by a common reference.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

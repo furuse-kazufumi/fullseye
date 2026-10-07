@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>위너 역컨볼루션(알려진 점 확산 함수를 사용한 디블러). <code style="color:#22d3bf">skimage.restoration.wiener</code>를 호출한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり（標準偏差 <code style="color:#22d3bf">0.5 + 1.5*a</code>、5x5 窓）を振る。b がバランス項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。ノイズ対信号比の逆数に相当し、大きいほどノイズ抑制寄りになる）を振る。<b>入力画像のボケが実際にこの想定ガウシアン PSF と一致している場合にのみ有効</b>で、PSF の形が違うとリンギングや復元失敗が出る。</p>
+<p>PSF는 가우시안 형상을 가정하여 자체 생성하며, a가 PSF의 퍼짐(표준편차 <code style="color:#22d3bf">0.5 + 1.5*a</code>, 5x5 창)을 바꾼다. b가 균형 항(<code style="color:#22d3bf">0.05 + 0.5*b</code>. 잡음 대 신호비의 역수에 해당하며, 클수록 잡음억제 쪽이 된다)을 바꾼다. <b>입력 영상의 흐림이 실제로 이 상정한 가우시안 PSF와 일치하는 경우에만 유효</b>하며, PSF의 형태가 다르면 링잉이나복원 실패가 생긴다.</p>
 <p><b>가장자리 처리</b>: 반대쪽으로 감싼다(주기적)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 패밀리 가이드</a></p>

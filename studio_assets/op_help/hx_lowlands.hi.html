@@ -13,11 +13,10 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray मानों के गड्ढे (local minimum वाले समतल हिस्से) पहचानता है: पड़ोस के minimum से मेल खाने वाले pixels का region।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">ndimage.minimum_filter</code>(<code style="color:#22d3bf">size</code> 角の正方形窓、鏡映境界)で局所最小 <code style="color:#22d3bf">mn</code> を取り、<code style="color:#22d3bf">v &lt;= mn + 1e-6</code> かつ <code style="color:#22d3bf">v &lt; 画像平均</code> の画素を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窓の一辺 <code style="color:#22d3bf">size = 3 + int(a*6)</code>(3〜9 画素)。大きいほど広い範囲で最小である必要があり、点が減る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平坦な窪みは窓内の全画素が最小値に等しいため、領域ごと(1 点ではなく面で)拾われる。逆に画像全体が平坦だと <code style="color:#22d3bf">v &lt; mean</code> を満たす画素が無く空になる。「平均より暗い」条件のため、明るい面の中の浅い窪みは拾えない。雑音があると小さな極小が大量に出るので、前段に <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> を置く。反対の隆起は画像を反転して同じ op を掛ける。</p>
+<p><code style="color:#22d3bf">ndimage.minimum_filter</code> (भुजा <code style="color:#22d3bf">size</code> वाली square window, mirror boundary) से local minimum <code style="color:#22d3bf">mn</code> लेता है, और <code style="color:#22d3bf">v &lt;= mn + 1e-6</code> तथा <code style="color:#22d3bf">v &lt; image mean</code> वाले pixels को 1 रखने वाला 0/1 float region लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → window की भुजा <code style="color:#22d3bf">size = 3 + int(a*6)</code> (3 से 9 pixels)। जितना बड़ा, उतने बड़े क्षेत्र में न्यूनतम होना आवश्यक है, और points उतने कम होते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>flat गड्ढे में window के सभी pixels न्यूनतम मान के बराबर होते हैं, इसलिए वह पूरे क्षेत्र के रूप में (1 point नहीं, सतह के रूप में) चुना जाता है। उलटे, पूरी image flat हो तो <code style="color:#22d3bf">v &lt; mean</code> पूरा करने वाला कोई pixel नहीं होता और परिणाम खाली होता है। &quot;औसत से गहरा&quot; शर्त के कारण चमकीली सतह के भीतर के उथले गड्ढे नहीं चुने जाते। noise हो तो बहुत से छोटे minima निकलते हैं, इसलिए पहले <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> रखें। उलटे उभारों के लिए image को invert करके वही op लगाएँ।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A Cartesian-to-polar coordinate transform (<code style="color:#22d3bf">cv2.warpPolar</code>). Using the image center as the pole and <code style="color:#22d3bf">min(H,W)/2</code> as the maximum radius, it converts ring-shaped content into a wide, unrolled representation. Unmapped pixels are filled with 0 (<code style="color:#22d3bf">dst</code> is zero-cleared beforehand, and the return value from cv2 is read -- an implementation note detailed in the code comments explains that reading the <code style="color:#22d3bf">dst</code> buffer itself can sometimes come back empty). Corresponds to HALCON&#x27;s <code style="color:#22d3bf">polar_trans_image</code> (Transform an image to polar coordinates).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 ―― 中心と半径は画像サイズから自動的に決まり、調整点は無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused -- the centre and radius are determined automatically from the image size, and there is no adjustable parameter.</p>
 <p><b>Blank frame (measured)</b>: feeding an image of uniform brightness gives <b>an empty result — every pixel is background (0) — regardless of the brightness</b>. Pure white and pure black behave alike; brightness by itself detects nothing.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gamma correction (power transform)। HALCON के <code style="color:#22d3bf">pow_image</code> (Raise an image to a power.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が指数 γ を <code style="color:#22d3bf">0.5〜2.0</code> に<b>線形に</b>振る（<code style="color:#22d3bf">γ = 0.5 + 1.5a</code>、<code style="color:#22d3bf">v**γ</code>、入力は先に <code style="color:#22d3bf">[0,1]</code> へ clip）。<b>既定の <code style="color:#22d3bf">a=0.5</code> は γ=1.25 であって素通しではない</b> —— 何もしない設定（γ=1）が要るなら <code style="color:#22d3bf">a=1/3</code> を渡す。<code style="color:#22d3bf">b</code> は未使用。γ&lt;1 で暗部を持ち上げ（明るくする）、γ&gt;1 で暗部をさらに沈める（コントラストを付ける）。</p>
+<p><code style="color:#22d3bf">a</code> exponent γ को <code style="color:#22d3bf">0.5〜2.0</code> पर <b>linear रूप से</b> बदलता है (<code style="color:#22d3bf">γ = 0.5 + 1.5a</code>, <code style="color:#22d3bf">v**γ</code>; input को पहले <code style="color:#22d3bf">[0,1]</code> में clip किया जाता है)। <b>default <code style="color:#22d3bf">a=0.5</code> पर γ=1.25 होता है, यह pass-through नहीं है</b> — यदि कुछ न करने वाली setting (γ=1) चाहिए तो <code style="color:#22d3bf">a=1/3</code> दें। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। γ&lt;1 अंधेरे हिस्सों को ऊपर उठाता है (चमकीला करता है), γ&gt;1 अंधेरे हिस्सों को और नीचे दबाता है (contrast बढ़ाता है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

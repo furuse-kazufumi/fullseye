@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_find_boundaries.inputs.jpg">sk_find_boundaries: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region की सीमाएँ निकालता है। Label image (यहाँ bool region) में केवल उन pixels को True करके boundary mask लौटाता है जहाँ अलग-अलग labels (foreground/background) मिलते हैं।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.)に相当。実装は <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code>。a, b は未使用 —— connectivity は既定の 1、mode は既定の &#x27;thick&#x27;(境界の両側 1 画素ずつを含む太めの境界)。</p>
+<p>HALCON के <code style="color:#22d3bf">boundary</code>(Reduce a region to its boundary.) के बराबर। implementation <code style="color:#22d3bf">segmentation.find_boundaries(binm(v))</code> है। a, b उपयोग नहीं होते — connectivity default 1 है, mode default &#x27;thick&#x27; है (सीमा के दोनों ओर 1-1 pixel वाली मोटी सीमा)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,13 +13,12 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的亮點當作 FMCW 雷達目標(距離 = 欄，速度 = 列)，合成複數拍頻立方體 (A,C,S)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>平滑化(σ=2)した画像の局所極大を値の降順に <code style="color:#22d3bf">K</code> 個拾い、各点を標的にする:</p>
-<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>、<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>、振幅 = 画素値。前方モデルは台帳の <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) そのもので、<code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code>(素子間隔は既定の半波長、標的はすべて正面 = 到来角 0°)、その他は同関数の既定(標本化 10 MHz、掃引 20 THz/s、チャープ周期 50 µs、波長 3.89 mm)。この既定では <b>距離は 0〜37.5 m、速度は ±19.5 m/s が曖昧さの無い範囲</b> で、上の写像はその内側に収まる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 複素白色雑音の σ <code style="color:#22d3bf">= 0.5 * a</code>(a=0 で無雑音)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 標的数 <code style="color:#22d3bf">K = 1 + int(b * 6)</code>(b=0.5 で 4。極大が足りなければその数)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(4, 32, 64)</code> complex128。<code style="color:#22d3bf">tb_range_doppler_map</code> で 2-D FFT すると標的ごとの峰が「列 → 距離ビン、行 → ドップラービン」に立ち、<code style="color:#22d3bf">tb_beamform_delay_sum</code> は 4 素子で到来角 0° の峰を返す。</p>
-<p style="margin:2px 0 2px 12px">• 乱数 seed は 0 固定(決定的)。速度の符号は <code style="color:#22d3bf">fmcw_beat_simulate</code> の規約(<b>正 = 遠ざかる</b>)。</p>
+<p>取平滑(σ=2)後影像的局部極大值，依值降冪取 <code style="color:#22d3bf">K</code> 個，把每個點作為目標:</p>
+<p><code style="color:#22d3bf">range_m = 2 + 30 * col / W</code>，<code style="color:#22d3bf">velocity_ms = 15 * (2 * row / H - 1)</code>，振幅 = 像素值。前向模型就是台帳中的 <code style="color:#22d3bf">fmcw_beat_simulate</code>(<code style="color:#22d3bf">rangedoppler</code>) 本身，<code style="color:#22d3bf">n_samples = 64、n_chirps = 32、n_antennas = 4</code>(陣元間距為預設的半波長，目標全部在正前方 = 到達角 0°)，其餘為該函式的預設(取樣 10 MHz，掃掠 20 THz/s，啁啾週期 50 µs，波長 3.89 mm)。在這些預設下，<b>距離 0〜37.5 m、速度 ±19.5 m/s 是無模糊範圍</b>，上面的映射落在其內部。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 複數白雜訊的 σ <code style="color:#22d3bf">= 0.5 * a</code>(a=0 時無雜訊)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目標數 <code style="color:#22d3bf">K = 1 + int(b * 6)</code>(b=0.5 時為 4。極大值不夠時取實際數量)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值: <code style="color:#22d3bf">(4, 32, 64)</code> complex128。以 <code style="color:#22d3bf">tb_range_doppler_map</code> 做 2-D FFT 後，每個目標的峰出現在「行 → 距離 bin，列 → 都卜勒 bin」處，<code style="color:#22d3bf">tb_beamform_delay_sum</code> 以 4 個陣元回傳到達角 0° 的峰。</p>
+<p style="margin:2px 0 2px 12px">• 亂數 seed 固定為 0(確定性)。速度的正負號遵循 <code style="color:#22d3bf">fmcw_beat_simulate</code> 的約定(<b>正 = 遠離</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

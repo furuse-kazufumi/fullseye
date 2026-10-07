@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contour_point_num_xld.chain.jpg">contour_point_num_xld: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wählt aus einer Gruppe von XLD-Konturen diejenige mit den meisten Punkten aus und gibt ihre Eckpunktanzahl normiert auf 500 Punkte im Bereich [0,1] zurück (Sättigung bei 1,0 ab 500 oder mehr Punkten). a und b werden nicht verwendet. Gibt 0 zurück, wenn keine Kontur vorhanden ist.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">contour_point_num_xld</code>（XLD 輪郭に含まれる点の実数をそのまま返す演算）とは異なり、この実装は点数そのものではなく 500 点でスケーリングした比率を返す近似（feature sort が [0,1] 想定の値を運ぶ契約のため）。</p>
+<p>Anders als HALCONs <code style="color:#22d3bf">contour_point_num_xld</code> (Operation, die die tatsächliche Anzahl der Punkte einer XLD-Kontur unverändert zurückgibt) ist diese Implementierung eine Näherung, die nicht die Punktzahl selbst, sondern ein mit 500 Punkten skaliertes Verhältnis zurückgibt (wegen des Vertrags, dass die Sorte feature sort Werte im angenommenen Bereich [0,1] transportiert).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

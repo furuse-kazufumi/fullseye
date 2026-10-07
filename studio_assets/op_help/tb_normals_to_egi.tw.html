@@ -14,26 +14,25 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_normals_to_egi.inputs.jpg">tb_normals_to_egi: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>法向量 <code style="color:#22d3bf">(N,3)</code> → 擴展高斯影像 <code style="color:#22d3bf">(n_el, n_az)</code> 的 <code style="color:#22d3bf">image2d</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>方向の 2-D ヒストグラム(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。「どの向きの面がどれだけあるか」の地図で、平面が支配的な物体では 1 つの bin に山が立つ。<b>不可逆</b> —— bin 幅ぶんの方向解像度を捨てる。</p>
-<p>捨てた量は測れる: 最頻 bin の中心方向と入力の平均方向の角度差が量子化誤差で、既定 (36, 18) では bin 幅 10 度に対し実測 3.7 度(<code style="color:#22d3bf">selftest</code> が出す)。</p>
-<p>仰角の bin は <code style="color:#22d3bf">sin(el)</code> で等分する(等立体角)。度で等分すると極が過剰に細かくなり、「北極に面が集中している」という嘘の山が立つ。</p>
+<p>方向的 2-D 直方圖(Horn, *Extended Gaussian Images*, Proc. IEEE 72(12) 1984)。是「哪個朝向的面有多少」的地圖，平面佔主導的物體會在 1 個 bin 上出現峰。<b>不可逆</b> —— 捨棄 bin 寬度那麼多的方向解析度。</p>
+<p>捨棄的量可以量測：最頻 bin 的中心方向與輸入平均方向的角度差即量化誤差，預設 (36, 18) 時相對 bin 寬 10 度實測為 3.7 度(由 <code style="color:#22d3bf">selftest</code> 輸出)。</p>
+<p>仰角的 bin 依 <code style="color:#22d3bf">sin(el)</code> 等分(等立體角)。若依度等分，極區會過於細密，出現「面集中在北極」這種虛假的峰。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
-<p>★<b>位置の点群を渡しても例外は出ない</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> が <code style="color:#22d3bf">normals</code> を <code style="color:#22d3bf">points</code> に畳んでいるので、進化器も台帳も両者を区別しない。この op は方向しか見ない(長さは捨てる)ので、<code style="color:#22d3bf">(N,3)</code> の座標を渡すと「原点から各点を見た向き」のヒストグラムが<b>もっともらしく</b>返る。実測(2026-09-08、200 点の曲線 vs 全部真上の法線): 非零 bin が 1 → 12、最大 bin が 200 → 44 に変わるだけで、<b>総和はどちらも 200</b>。「総和が点数と合うから正しい」では区別がつかない。<code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> にすると、単位長から外れたベクトルを<b>拒否</b>する(下の Raises)。</p>
+<p>n_az: 方位的 bin 數(預設 36 = 10 度步長)。</p>
+<p>n_el: 仰角的 bin 數(預設 18)。</p>
+<p>★<b>傳入位置點雲也不會拋出例外</b>。<code style="color:#22d3bf">backends_typed.TYPE_TO_SORT</code> 把 <code style="color:#22d3bf">normals</code> 摺疊進 <code style="color:#22d3bf">points</code>，因此演化器與台帳都不區分兩者。此 op 只看方向(捨棄長度)，所以傳入 <code style="color:#22d3bf">(N,3)</code> 的座標時，會<b>似是而非地</b>回傳「從原點看各點的方向」的直方圖。實測(2026-09-08，200 點的曲線 vs 全部朝正上方的法線)：非零 bin 僅從 1 → 12、最大 bin 從 200 → 44 變化，<b>總和兩者都是 200</b>。靠「總和與點數一致所以正確」無法區分。設為 <code style="color:#22d3bf">fullseye.set_system(&quot;extra_checks&quot;, &quot;on&quot;)</code> 時，偏離單位長度的向量會被<b>拒絕</b>(見下方 Raises)。</p>
 <p>Args:</p>
 <p>normals: (N, 3)。</p>
-<p>n_az: 方位の bin 数(既定 36 = 10 度刻み)。</p>
-<p>n_el: 仰角の bin 数(既定 18)。</p>
+<p>n_az: 方位的 bin 數(預設 36 = 10 度步長)。</p>
+<p>n_el: 仰角的 bin 數(預設 18)。</p>
 <p>Returns:</p>
-<p>(n_el, n_az) float64 の計数マップ(行 = 仰角、列 = 方位)。</p>
+<p>(n_el, n_az) float64 的計數圖(列 = 仰角，行 = 方位)。</p>
 <p>Raises:</p>
-<p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
-<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
-<p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。★橋の op は計数を総数で割った<b>割合</b>(各 bin に入った法線の比率、和 1、値域 [0,1])を返す —— 宣言 sort <code style="color:#22d3bf">image</code> の [0,1] 契約に合わせるため(計数のままだと最大 48 などが出ていた、2026-10-07)。生の計数は <code style="color:#22d3bf">reprconv.normals_to_egi</code> / <code style="color:#22d3bf">fullseye.ledger.normals_to_egi</code> が返す。</p>
+<p>ValueError: bin 數小於 1 / 超過上限 / 輸入不正確。</p>
+<p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> 時，含有長度偏離 1 超過 1e-6 的</p>
+<p>向量時(捕捉把位置點雲當作法線傳入的事故)。</p>
+<p>橋接到 2-D 演化註冊表的 reprconv op <code style="color:#22d3bf">normals_to_egi</code>。實作相同，只是呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。<code style="color:#22d3bf">a</code> 調整 <code style="color:#22d3bf">n_az</code>(預設 36)，<code style="color:#22d3bf">b</code> 調整 <code style="color:#22d3bf">n_el</code>(預設 18)。★橋接 op 回傳計數除以總數得到的<b>比例</b>(落入各 bin 的法線所佔比率，和為 1，值域 [0,1]) —— 為了符合宣告 sort <code style="color:#22d3bf">image</code> 的 [0,1] 約定(若保持計數，會出現最大 48 之類的值，2026-10-07)。原始計數由 <code style="color:#22d3bf">reprconv.normals_to_egi</code> / <code style="color:#22d3bf">fullseye.ledger.normals_to_egi</code> 回傳。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

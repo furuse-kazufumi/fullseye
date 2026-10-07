@@ -9,8 +9,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>FAST角點偵測器偵測到的關鍵點數量（<code style="color:#22d3bf">cv2.FastFeatureDetector</code>）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は検出しきい値を 5〜45 に振る（<code style="color:#22d3bf">threshold = int(5 + 40*a)</code>、大きいほど検出されにくくなり数が減る）。<code style="color:#22d3bf">b</code> は未使用。テクスチャの豊富さ・コーナーの多さを表す特徴量で、値が大きいほど局所的な輝度変化に富む画像であることを示す。</p>
+<p><code style="color:#22d3bf">a</code> 將偵測閾值在 5~45 之間調整（<code style="color:#22d3bf">threshold = int(5 + 40*a)</code>，越大越難被偵測到，數量越少）。<code style="color:#22d3bf">b</code> 未使用。表示紋理豐富程度、角點多寡的特徵量，值越大表示影像的局部輝度變化越豐富。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

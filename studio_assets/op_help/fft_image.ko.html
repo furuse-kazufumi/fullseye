@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2차원 FFT의 파워 스펙트럼을 <code style="color:#22d3bf">log1p(|F|)</code>로 압축하고 정규화한 이미지. 저주파(직류) 성분이 중심에 오도록 <code style="color:#22d3bf">fftshift</code>가 적용되어 있다. 주기적인 노이즈나 텍스처의 공간 주파수를 시각화하는 데 사용한다. HALCON의 <code style="color:#22d3bf">fft_image</code>(Compute the fast Fourier transform of an image.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 ―― 画像全体に対するグローバルな FFT で、窓関数や帯域選択のような調整点は無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다 —— 영상 전체에 대한 전역 FFT로, 창 함수나대역 선택 같은 조정점은 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq 패밀리 가이드</a></p>

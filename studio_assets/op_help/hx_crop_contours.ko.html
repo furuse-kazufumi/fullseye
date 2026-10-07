@@ -15,11 +15,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_crop_contours.inputs.jpg">hx_crop_contours: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>contour 를 중앙 a×b 비율의 사각형으로 crop 합니다(범위 안의 점만 남김).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各 contour の点のうち、画像中心 <code style="color:#22d3bf">(H/2, W/2)</code> からの距離が行方向 <code style="color:#22d3bf">hh</code> 以内かつ列方向 <code style="color:#22d3bf">ww</code> 以内のものだけを残し、1 点も残らない contour は捨てて返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 残す高さの半分 <code style="color:#22d3bf">hh = (0.3 + 0.6*a) * H/2</code>(全体の 30%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 残す幅の半分 <code style="color:#22d3bf">ww = (0.3 + 0.6*b) * W/2</code>(全体の 30%〜90%)。a=b=1 でも周辺 5% は落ちる。</p>
-<p>点を間引くだけで分割しないので、矩形の外を回って戻る contour は残った点どうしがつながる(ジャンプ)。矩形外を完全に無視したい場合は後段で <code style="color:#22d3bf">hx_split_contours</code>。余白を画像端から指定する版は <code style="color:#22d3bf">hx_clip_contours</code>、1 つのノブで正方形窓にする版は <code style="color:#22d3bf">xg_crop_contours</code>。</p>
+<p>각 contour의 점 중 영상 중심 <code style="color:#22d3bf">(H/2, W/2)</code>로부터의 거리가 행 방향 <code style="color:#22d3bf">hh</code> 이내이고 열 방향 <code style="color:#22d3bf">ww</code> 이내인 것만남기고, 점이 1개도 남지 않은 contour는 버리고 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 남길 높이의 절반 <code style="color:#22d3bf">hh = (0.3 + 0.6*a) * H/2</code>(전체의 30%~90%).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 남길 폭의 절반 <code style="color:#22d3bf">ww = (0.3 + 0.6*b) * W/2</code>(전체의 30%~90%). a=b=1이어도 주변 5%는 떨어진다.</p>
+<p>점을 솎아낼 뿐 분할하지 않으므로, 사각형 밖을 돌아 다시 들어오는 contour는 남은 점끼리 이어진다(점프). 사각형 밖을 완전히 무시하고 싶으면 후단에서 <code style="color:#22d3bf">hx_split_contours</code>. 여백을 영상 끝에서 지정하는 버전은 <code style="color:#22d3bf">hx_clip_contours</code>, 노브 1개로 정사각형 창으로 만드는 버전은 <code style="color:#22d3bf">xg_crop_contours</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

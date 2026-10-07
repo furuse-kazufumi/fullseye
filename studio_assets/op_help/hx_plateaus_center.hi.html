@@ -13,12 +13,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray मानों के समतल हिस्सों (gradient~0) के केंद्र पहचानता है: समतल connected components के centroid pixels को marker region में डालता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Sobel 勾配振幅 <code style="color:#22d3bf">gmag</code> を求め、<code style="color:#22d3bf">gmag &lt; (0.01 + 0.1*a) * max(gmag)</code> の画素を「平坦」として 8 近傍で連結成分に分け、各成分の重心(<code style="color:#22d3bf">center_of_mass</code>)を四捨五入した 1 画素だけを 1 とするマーカー region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 平坦とみなす勾配の上限(最大勾配の 1%〜11%)。大きいほど平坦域が広がりつながる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 成分が 1 つも無ければ全 0。</p>
-<p>注意: 出力は成分 1 つにつき 1 画素で、成分の面積や形は失われる。重心は非凸な平坦域(環状など)では域外に落ちることがある。しきい値が最大勾配に対する相対値なので、強いエッジが 1 本あるだけで他の緩い勾配が「平坦」側に入る。ウォーターシェッドのマーカーや、成分数を数える用途向け。面としての平坦域が欲しいなら <code style="color:#22d3bf">hx_lowlands</code>。</p>
+<p>Sobel gradient amplitude <code style="color:#22d3bf">gmag</code> निकालकर, <code style="color:#22d3bf">gmag &lt; (0.01 + 0.1*a) * max(gmag)</code> वाले pixels को &quot;flat&quot; मानता है, उन्हें 8-neighbourhood से connected components में बाँटता है, और हर component के centroid (<code style="color:#22d3bf">center_of_mass</code>) को round करके मिले केवल 1 pixel को 1 रखने वाला marker region लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → flat माने जाने वाले gradient की ऊपरी सीमा (अधिकतम gradient का 1% से 11%)। जितना बड़ा, flat क्षेत्र उतने फैलते और जुड़ते हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p style="margin:2px 0 2px 12px">• 1 भी component न हो तो सब 0।</p>
+<p>सावधानी: output हर 1 component के लिए 1 pixel है, और components का क्षेत्रफल और आकार खो जाते हैं। non-convex flat क्षेत्रों (ring जैसे आदि) में centroid क्षेत्र के बाहर पड़ सकता है। threshold अधिकतम gradient के सापेक्ष है, इसलिए केवल 1 मजबूत edge होने से ही दूसरे हल्के gradients &quot;flat&quot; ओर चले जाते हैं। watershed markers या components गिनने के लिए। सतह के रूप में flat क्षेत्र चाहिए तो <code style="color:#22d3bf">hx_lowlands</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

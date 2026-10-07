@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/gen_contour_region_xld.inputs.jpg">gen_contour_region_xld: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>region(픽셀 마스크)의 외곽을 추적 순서(윤곽을 따라가는 순서)를 유지한 XLD 윤곽으로 추출한다. skimage가 있으면 <code style="color:#22d3bf">find_contours</code>(marching squares에 의한 서브픽셀 윤곽), 없으면 자체 구현한 Moore 근방 추적(8-근방, Jacob의 정지 조건)으로 폴백한다. a, b는 사용되지 않는다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>2026-08-30 の修正で、以前使っていた汎用の <code style="color:#22d3bf">edges_sub_pix</code> 経路は <code style="color:#22d3bf">np.where</code> のラスタ順で点を返しており、順序に依存する後段処理（楕円フーリエ記述子など）を壊していた。HALCON の <code style="color:#22d3bf">gen_contour_region_xld</code>（region から XLD 輪郭を生成する演算）に相当する。</p>
+<p>2026-08-30 수정에서, 이전에 사용하던 범용 <code style="color:#22d3bf">edges_sub_pix</code> 경로는 <code style="color:#22d3bf">np.where</code>의 래스터 순서로 점을 반환하고 있어, 순서에 의존하는 후단 처리(타원 푸리에 기술자 등)를 망가뜨리고 있었다. HALCON의 <code style="color:#22d3bf">gen_contour_region_xld</code>(region에서 XLD 윤곽을 생성하는 연산)에 해당한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

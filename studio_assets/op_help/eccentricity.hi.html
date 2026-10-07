@@ -11,14 +11,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/eccentricity.chain.jpg">eccentricity: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Ellipse parameters से निकले 3 shape संकेतक <code style="color:#22d3bf">(Anisometry, Bulkiness, StructureFactor)</code> को <code style="color:#22d3bf">match</code> sort के 3-component vector के रूप में लौटाता है (1 scalar से 3 मान नहीं दर्शाए जा सकते, इसलिए <code style="color:#22d3bf">area_center</code> जैसा ही रूप)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> を同じモーメントを持つ楕円の半径、<code style="color:#22d3bf">A</code> を面積として</p>
-<p><code style="color:#22d3bf">Anisometry = Ra/Rb</code>(細長さ。円で 1、下限 1)</p>
-<p><code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code>(楕円をどれだけ埋めていないか。円で 1)</p>
-<p><code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code>(円で 0)</p>
-<p>HALCON の <code style="color:#22d3bf">eccentricity</code>（Shape features derived from the ellipse parameters.）<b>と同じ 3 値・同じ式</b>。3 つとも無次元なので正規化していない。</p>
-<p>★2026-09-26 まで skimage の離心率 <code style="color:#22d3bf">sqrt(1-(b/a)²)</code> という<b>3 つのどれでもない量</b>を 1 スカラーで返していた(円で 0.0 対 HALCON の 1.0、4x80 の棒で 0.999 対 20.65)。1 スカラーでは 3 値を表せないため、<code style="color:#22d3bf">area_center</code> と同じ <code style="color:#22d3bf">match</code> ソートに変えた。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p>領域が空のときは円の値 <code style="color:#22d3bf">(1, 1, 0)</code> を返す fail-soft 仕様(成分数は入力で変わらない)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">Ra</code>/<code style="color:#22d3bf">Rb</code> को समान moments वाले ellipse की radii और <code style="color:#22d3bf">A</code> को क्षेत्रफल मानें तो</p>
+<p><code style="color:#22d3bf">Anisometry = Ra/Rb</code> (लंबापन; circle के लिए 1, निचली सीमा 1)</p>
+<p><code style="color:#22d3bf">Bulkiness = π·Ra·Rb / A</code> (ellipse का कितना भाग नहीं भरा है; circle के लिए 1)</p>
+<p><code style="color:#22d3bf">StructureFactor = Anisometry·Bulkiness - 1</code> (circle के लिए 0)</p>
+<p>HALCON के <code style="color:#22d3bf">eccentricity</code> (Shape features derived from the ellipse parameters.) के साथ <b>वही 3 मान, वही सूत्र</b> हैं। सभी 3 dimensionless हैं, इसलिए normalise नहीं किए गए।</p>
+<p>★2026-09-26 तक यह skimage की eccentricity <code style="color:#22d3bf">sqrt(1-(b/a)²)</code> लौटाता था, जो <b>इन 3 में से कोई भी नहीं है</b>, और वह भी 1 scalar के रूप में (circle पर 0.0 बनाम HALCON का 1.0, 4x80 की छड़ पर 0.999 बनाम 20.65)। 1 scalar से 3 मान व्यक्त नहीं हो सकते, इसलिए इसे <code style="color:#22d3bf">area_center</code> की तरह <code style="color:#22d3bf">match</code> sort में बदला गया। <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>।</p>
+<p>region ख़ाली होने पर यह fail-soft नियम के अनुसार circle के मान <code style="color:#22d3bf">(1, 1, 0)</code> लौटाता है (components की संख्या input के साथ नहीं बदलती)। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

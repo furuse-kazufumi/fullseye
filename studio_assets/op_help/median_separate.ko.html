@@ -13,8 +13,7 @@
 <p>*컬러 (H,W,3) 입력은 싣지 않았다: 이 op는 색 채널을 세 번째 공간축으로 다룬다(채널을 넘나듦). 채널별로 나눠 호출할 것.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>구현은 <code style="color:#22d3bf">median_image</code>와 동일하다(<code style="color:#22d3bf">kind: &quot;median&quot;</code>, 정사각형 창의 2차원 미디언). HALCON의 <code style="color:#22d3bf">median_separate</code>(Separated median filtering with rectangle masks.)는 행 방향·열 방향으로 분리한 1차원 미디언을 2패스로 적용하는 고속 근사 연산자이지만, 이 대역에서는 구분하지 않고 통상의 2차원 미디언을 반환한다(결과는 비슷한 경우가 많지만 엄밀히는 다른 알고리즘이다 -- 근사의 한계).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">{3,5,7,9}</code> で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>가 창의 한 변의 길이를 <code style="color:#22d3bf">{3,5,7,9}</code>로 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>가장자리 처리</b>: 가장자리 화소를 중복해 접는다 (d c b a | a b c d, scipy 기본값 <code style="color:#22d3bf">reflect</code>)(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.25、0.49、0.75(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以中心為軸將影像旋轉-45°〜+45°(由<code style="color:#22d3bf">a</code>決定)(<code style="color:#22d3bf">scipy.ndimage.rotate</code>,以<code style="color:#22d3bf">reshape=False</code>保持畫布尺寸不變)。超出邊框的部分以反射(<code style="color:#22d3bf">mode=&quot;reflect&quot;</code>)方式填補,因此四個角落會出現原圖折返映入的現象(這是已知的設計限制,像表單傾斜校正那種想以背景色填補邊框外的用途並不適合直接使用)。相當於HALCON的<code style="color:#22d3bf">rotate_image</code>(Rotate an image about its center.)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> が回転角を -45°〜+45° の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code> 在 -45°～+45° 範圍內調整旋轉角。<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>극소 &quot;분지&quot;(주변보다 낮은 평탄 영역)의 무게중심을 반환한다(HALCON <code style="color:#22d3bf">lowlands_center</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sp_plateaus</code> と同じ量子化による平坦領域抽出を行った上で、外周の画素がすべて厳密に高い（領域極小である）ものだけを残し、さらに深さ（外周の最小値との差）が <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 以上のものだけを採用する。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、各盆地につき 1 点（重心座標、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す。</p>
+<p><code style="color:#22d3bf">sp_plateaus</code>와 같은 양자화로 평탄 영역을 추출한 뒤, 외곽 화소가 모두 엄밀히 높은(영역 극소인) 것만 남기고, 다시 깊이(외곽 최솟값과의 차)가 <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 이상인 것만 채택한다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환값은 CONTOUR이며, 각 분지마다 1점(무게중심 좌표, 단위는 화소)이다. 입력이 200,000 화소를 넘으면 안전 측으로 공집합을 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

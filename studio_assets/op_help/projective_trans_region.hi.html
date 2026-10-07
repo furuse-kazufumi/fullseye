@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/projective_trans_region.inputs.jpg">projective_trans_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">projective_trans_image</code> जैसी ही trapezoid विकृति region (2-मान mask) पर लागू करता है। <code style="color:#22d3bf">out_sort</code> <code style="color:#22d3bf">region</code> है, इसलिए <code style="color:#22d3bf">build()</code> इसे <code style="color:#22d3bf">_rebinarise</code> में लपेटता है और interpolation से बने दशमलव मानों को <code style="color:#22d3bf">&gt;0.5</code> से वापस binary बनाकर लौटाता है (region के {0,1} contract को न तोड़ने के लिए post-processing)। HALCON के <code style="color:#22d3bf">projective_trans_region</code> (Apply a projective transformation to a region.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が歪みの強さ、<code style="color:#22d3bf">b</code> が非対称さを振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> विरूपण की ताकत को और <code style="color:#22d3bf">b</code> असममिति को बदलता है। दोनों का उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning_seq.inputs.jpg">thinning_seq: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对区域进行细化（thinning）。实现与 thinning_golay 完全相同（skimage 的 <code style="color:#22d3bf">thin</code>，反复迭代至收敛的 Guo–Hall 型细化），a、b 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">thinning_seq</code>（構造要素を逐次適用して細線化していく演算）に相当する近似だが、この backend では thinning_golay と実装上の区別がない。</p>
+<p>近似于 HALCON 的 <code style="color:#22d3bf">thinning_seq</code>（逐次应用结构元素进行细化的运算），但在此 backend 中，它与 thinning_golay 在实现上没有区别。</p>
 <p><b>边界处理</b>：将图像外部视为背景（0）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>

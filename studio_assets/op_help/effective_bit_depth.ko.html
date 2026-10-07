@@ -8,12 +8,11 @@
 <p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상이 <b>실제로</b> 사용하는 비트 수를 추정하여 <code style="color:#22d3bf">[0,1]</code>로 사상해 반환한다(feature).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">8</code> ビットの器に入っていても、中身が <code style="color:#22d3bf">6</code> ビット相当しかないことはよくある —— 低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
-<p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み <code style="color:#22d3bf">Δ</code> とみて <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>。返り値は <code style="color:#22d3bf">bits / 16</code> (<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は未使用)。</p>
-<p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数のまま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、推定は <code style="color:#22d3bf">log2(N)</code> 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測 <b>13.7 bit</b>。16 に飽和するわけではないので、<b>「これ以上は測れない」線を画素数から先に引いておくこと</b>(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>
-<p style="margin:2px 0 2px 12px">(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は<b>高く</b>出る ——</p>
-<p>それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。</p>
+<p><code style="color:#22d3bf">8</code> 비트 그릇에 들어 있어도 내용은 <code style="color:#22d3bf">6</code> 비트 상당밖에 안 되는 일은 흔하다 —— 저비트 센서를 늘렸거나, JPEG를 한 번 거쳤거나, 감마를 걸었거나 등. 여기서는 점유하고 있는 계조의 <b>실제 간격</b>으로부터 실효 비트 수를 추정한다:</p>
+<p>나타난 화소값을 정렬하고, 이웃한 값의 차의 <b>최빈값</b>을 스텝 <code style="color:#22d3bf">Δ</code>로 보고 <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>. 반환값은 <code style="color:#22d3bf">bits / 16</code>(<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code>는 사용하지 않는다).</p>
+<p><b>적용 조건과 빗나가는 방식</b>: (1) ★<b>화소 수가 상한을 정한다</b>. 계조가 거의 연속일 때(부동소수점그대로 처리한 영상) 최소 스텝은 &quot;값이 N개 있을 때의 평균 간격 ~1/N&quot;이므로추정은 <code style="color:#22d3bf">log2(N)</code> 부근에서 포화한다 —— 128x128(N=16384)의 연속 영상에서 실측 <b>13.7 bit</b>. 16에서 포화하는 것이 아니므로 <b>&quot;이 이상은 측정할 수 없다&quot;는 선을화소 수로부터 먼저 그어 둘 것</b>(작은 잘라낸 영역으로 측정하면 낮게 나온다). (2) 비선형 변환(감마, 로그)을 거친 뒤에는스텝이 위치에 따라 다르므로, 최빈값은 &quot;대표적인 스텝&quot;이지 균일한 스텝이 아니다.</p>
+<p style="margin:2px 0 2px 12px">(3) 디더가 걸린 영상에서는 계조가 메워지므로 실효 비트 수는 <b>높게</b> 나온다 ——</p>
+<p>그것은 &quot;정보로서 몇 비트분이 있는가&quot;가 아니라 &quot;몇 단계를 쓰고 있는가&quot;의 답이다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

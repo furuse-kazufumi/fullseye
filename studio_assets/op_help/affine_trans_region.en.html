@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/affine_trans_region.inputs.jpg">affine_trans_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Applies an affine transform (rotation + shear) to a region. Transforms it as a continuous value using the same <code style="color:#22d3bf">affine</code> branch of <code style="color:#22d3bf">_sh_geom</code> as <code style="color:#22d3bf">affine_trans_image</code>, then re-binarizes it at 0.5 via <code style="color:#22d3bf">_rebinarise</code> and returns it as a {0,1} region (to remove intermediate values produced by geometric-transform interpolation). a sets the rotation angle (-20 to +20 degrees), and b sets the shear amount.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>HALCON の <code style="color:#22d3bf">affine_trans_region</code>（領域に任意のアフィン 2D 変換を適用する演算）に相当する近似。</p>
+<p>Approximation corresponding to HALCON&#x27;s <code style="color:#22d3bf">affine_trans_region</code> (an operation that applies an arbitrary affine 2D transformation to a region).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

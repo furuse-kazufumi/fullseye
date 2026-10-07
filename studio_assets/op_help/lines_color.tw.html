@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_color.inputs.jpg">lines_color: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>偵測彩色影像中的線（脊線）。號稱相當於 HALCON 的 <code style="color:#22d3bf">lines_color</code>（偵測彩色線及其寬度），但<b>不估計線寬</b>——只是將亮度影像上的高斯拉普拉斯響應以閾值二值化，並將連通元件作為輪廓回傳，沒有相當於 HALCON 回傳值中線寬的輸出。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">_rgb_to_gray</code> で輝度化した後、<code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> をシグマ <code style="color:#22d3bf">0.5 + 2.5 * a</code> でかけて絶対値を最大値正規化し、<code style="color:#22d3bf">0.2 + 0.4 * b</code> でしきい値二値化して 8 連結ラベリングする。a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。3 画素未満の成分は捨てる。</p>
+<p>以 <code style="color:#22d3bf">_rgb_to_gray</code> 轉為輝度後，將 <code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> 以 sigma <code style="color:#22d3bf">0.5 + 2.5 * a</code> 套用，並將絕對值依最大值正規化，以 <code style="color:#22d3bf">0.2 + 0.4 * b</code> 進行閾值二值化，並做 8 連通標記。a 調整脊線粗細（LoG 的尺度），b 調整偵測閾值。少於 3 像素的分量會被捨棄。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

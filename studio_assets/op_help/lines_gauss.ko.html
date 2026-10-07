@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 구조(리지) 검출. <code style="color:#22d3bf">skimage.filters.frangi</code>(혈관 유사 리지 강조 필터)의 응답을 임계값(<code style="color:#22d3bf">0.1+0.4*a</code>)으로 이진화하고, 연결 성분을 윤곽 점군으로 반환한다. HALCON의 <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)가 본래 수행하는 &#x27;선의 중심선+폭 추정&#x27;이 아니라, 리지 강조 이미지의 임계값화로 단순화한 것이다(선 폭 정보는 반환되지 않는 근사).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> がリッジ検出のしきい値を振る。<code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>가 리지 검출의 임계값을 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. skimage가 없는 환경에서는 이 분기를 호출할 수 없다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

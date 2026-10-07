@@ -13,13 +13,12 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_render_point_depth.inputs.jpg">tb_render_point_depth: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Point cloud → depth image (z-buffer, हर pixel में सबसे नज़दीकी point की depth)। Observation synthesis/visual inspection का sample।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">project_points(points, K, R, t)</code> で <code style="color:#22d3bf">(u, v, z)</code> を取り、<code style="color:#22d3bf">round</code> した画素 <code style="color:#22d3bf">(row=v, col=u)</code> が <code style="color:#22d3bf">size=(H, W)</code> 内かつ <code style="color:#22d3bf">z &gt; 0</code> の点だけを、遠い順に書いて近い点で上書きする(同一画素は最小 z が残る)。点が無い画素は <b>0</b>(<code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> が無効値として扱う規約)。返り値 <code style="color:#22d3bf">(H, W)</code> float64、単位は点の座標の単位。</p>
-<p style="margin:2px 0 2px 12px">• 1 点 = 1 画素なので疎な点群は穴だらけになる(<code style="color:#22d3bf">mesh_to_points</code> で密にしてから)。splat</p>
-<p>半径は無い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> は numpy (3,3)、<code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> は省略可。</p>
-<p>後段: <code style="color:#22d3bf">depth_to_points</code> で戻す、<code style="color:#22d3bf">normals_from_depth</code> で法線、<code style="color:#22d3bf">tsdf_from_depth</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">render_point_depth</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">project_points(points, K, R, t)</code> से <code style="color:#22d3bf">(u, v, z)</code> लेकर, केवल उन points को जिनका <code style="color:#22d3bf">round</code> किया गया pixel <code style="color:#22d3bf">(row=v, col=u)</code> <code style="color:#22d3bf">size=(H, W)</code> के अंदर हो और <code style="color:#22d3bf">z &gt; 0</code> हो, दूर से पास के क्रम में लिखा जाता है ताकि पास वाले points overwrite करें (एक pixel पर सबसे छोटा z बचता है)। जिन pixels पर कोई point नहीं, वे <b>0</b> हैं (यह convention <code style="color:#22d3bf">tsdf_from_depth</code> / <code style="color:#22d3bf">depth_to_points</code> invalid value मानते हैं)। return value <code style="color:#22d3bf">(H, W)</code> float64, unit वही जो points के coordinates की है।</p>
+<p style="margin:2px 0 2px 12px">• 1 point = 1 pixel, इसलिए sparse point clouds में बहुत छेद रह जाते हैं (पहले <code style="color:#22d3bf">mesh_to_points</code> से dense करें)। splat</p>
+<p>radius नहीं है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K</code> numpy (3,3) है, <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code> छोड़े जा सकते हैं।</p>
+<p>आगे: <code style="color:#22d3bf">depth_to_points</code> से वापस, <code style="color:#22d3bf">normals_from_depth</code> से normals, <code style="color:#22d3bf">tsdf_from_depth</code>।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">render_point_depth</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

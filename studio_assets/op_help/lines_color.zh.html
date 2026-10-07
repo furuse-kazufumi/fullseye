@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_color.inputs.jpg">lines_color: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>检测彩色图像中的线（脊线）。据称相当于 HALCON 的 <code style="color:#22d3bf">lines_color</code>（检测彩色线及其宽度），但<b>不估计线宽</b>——只是将亮度图像上的高斯拉普拉斯响应阈值化为二值图像，并将连通分量作为轮廓返回，没有相当于 HALCON 返回值中线宽的输出。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">_rgb_to_gray</code> で輝度化した後、<code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> をシグマ <code style="color:#22d3bf">0.5 + 2.5 * a</code> でかけて絶対値を最大値正規化し、<code style="color:#22d3bf">0.2 + 0.4 * b</code> でしきい値二値化して 8 連結ラベリングする。a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。3 画素未満の成分は捨てる。</p>
+<p>用 <code style="color:#22d3bf">_rgb_to_gray</code> 转为亮度后，将 <code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> 以 sigma <code style="color:#22d3bf">0.5 + 2.5 * a</code> 作用，并将绝对值按最大值归一化，以 <code style="color:#22d3bf">0.2 + 0.4 * b</code> 进行阈值二值化，并做 8 连通标记。a 调节脊线粗细（LoG 的尺度），b 调节检测阈值。少于 3 像素的分量被丢弃。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

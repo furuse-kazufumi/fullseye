@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/height_width_ratio.chain.jpg">height_width_ratio: Stufen</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Seitenverhältnis <code style="color:#22d3bf">Höhe / Breite</code> des achsparallelen umschließenden Rechtecks. Es gibt keine obere Schranke — eine hohe Region überschreitet 1 (160x4 ergibt 40.0). Es ist <b>dieselbe Größe wie das Ratio</b> unter den drei Werten, die HALCONs <code style="color:#22d3bf">height_width_ratio</code> (Compute the width, height, and aspect ratio of the surrounding rectangle parallel to the coordinate axes.) liefert (Höhe und Breite sind Pixellängen und werden nicht geliefert — siehe docs/KNOWN_ISSUES.md §51).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>★2026-09-26 まで <code style="color:#22d3bf">min(1, 高さ/幅)</code> で切っていたので、<b>縦長の対象が全部 1.0</b> になっていた(60x20 で 1.0、真値 3.0)。横長は正しく出るので、<b>向きが変わった瞬間に情報が消える</b>。飽和は説明文に「仕様」として書かれていたが、値域 [0,1] は feature の契約ではなく、潰す理由が無かった ―― <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Bis 2026-09-26 wurde mit <code style="color:#22d3bf">min(1, Höhe/Breite)</code> abgeschnitten, daher <b>wurden alle hochformatigen Objekte zu 1.0</b> (1.0 bei 60x20, Ground Truth 3.0). Querformatige kommen korrekt heraus, daher <b>verschwindet die Information in dem Moment, in dem sich die Orientierung ändert</b>. Die Sättigung stand in der Beschreibung als „Spezifikation“, aber der Wertebereich [0,1] ist nicht Teil des feature-Vertrags, und es gab keinen Grund, ihn zu stauchen -- <code style="color:#22d3bf">docs/hardening/features-saturated-at-one.md</code>.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

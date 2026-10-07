@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Brightness graph के normalised cut (spectral 2-भाग विभाजन, Shi &amp; Malik) से image को उजले-अँधेरे 2 regions में बाँटता है (HALCON में इसके समकक्ष कोई operator नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>計算量を抑えるため画像を <code style="color:#22d3bf">sdim = round(10+b*14)</code> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 <code style="color:#22d3bf">(D-W)y = lambda*D*y</code> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。<code style="color:#22d3bf">a</code>（0〜1）は輝度方向の帯域幅<code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code> を振り、<code style="color:#22d3bf">b</code>（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>
+<p>computation कम रखने के लिए image को लगभग <code style="color:#22d3bf">sdim = round(10+b*14)</code> तक subsample करके, luminance अंतर और दूरी से weights तय करने वाला affinity graph बनाता है, और generalised eigenvalue problem <code style="color:#22d3bf">(D-W)y = lambda*D*y</code> के 2nd eigenvector (Fiedler vector) को median पर threshold करके 2 समूहों में बाँटता है। <code style="color:#22d3bf">a</code> (0 से 1) luminance दिशा की bandwidth <code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code> बदलता है, और <code style="color:#22d3bf">b</code> (0 से 1) subsampling का resolution बदलता है। चमकीले समूह को nearest neighbour से मूल resolution तक बड़ा करके region के रूप में लौटाता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

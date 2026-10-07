@@ -12,8 +12,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>重建開運算（SimpleITK <code style="color:#22d3bf">OpeningByReconstruction</code>）。與一般灰階開運算（侵蝕→膨脹）不同，侵蝕後的膨脹改以帶遮罩的重建來進行，因此能只去除小的明亮突起，而不扭曲保留區域的輪廓。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code> は構造要素の半径(<code style="color:#22d3bf">1+int(a*4)</code> で両軸とも 1〜5)を振る。<code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> 調整結構元素的半徑(由 <code style="color:#22d3bf">1+int(a*4)</code> 得到，兩軸皆為 1~5)。<code style="color:#22d3bf">b</code> 未使用。輸出截斷(clip)到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

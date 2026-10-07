@@ -12,9 +12,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Quantisation में खोई हुई मात्रा <code style="color:#22d3bf">|x - Q(x)|</code> को <code style="color:#22d3bf">Δ/2</code> से भाग देकर <code style="color:#22d3bf">[0,1]</code> में लाया गया map।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> がビット数 1〜8(<code style="color:#22d3bf">_quantize_uniform</code> と同じ振り方)、<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">1.0</code> が「その画素で取りうる最大の誤差(<code style="color:#22d3bf">Δ/2</code>)」にあたる。</p>
-<p><b>何のために見るのか</b>: 誤差が一様に散っていれば量子化雑音として扱ってよい。<b>特定の等高線に沿って揃っていたら、そこがバンディングの出る場所</b>。数字で言うと、正しく振る舞っているとき地図の平均は <code style="color:#22d3bf">0.5</code> 付近(一様分布の平均)に来る。</p>
+<p><code style="color:#22d3bf">a</code> bit संख्या 1-8 है (<code style="color:#22d3bf">_quantize_uniform</code> की तरह ही बदला जाता है), <code style="color:#22d3bf">b</code> उपयोग नहीं होता। <code style="color:#22d3bf">1.0</code> &quot;उस pixel में संभव सबसे बड़े error (<code style="color:#22d3bf">Δ/2</code>)&quot; के बराबर है।</p>
+<p><b>इसे किस लिए देखते हैं</b>: यदि error समान रूप से बिखरा हो तो उसे quantization noise माना जा सकता है। <b>यदि वह किसी खास contour line के साथ कतार में हो, तो वही जगह है जहाँ banding आती है</b>। संख्या में कहें तो, सही व्यवहार होने पर map का mean <code style="color:#22d3bf">0.5</code> के आसपास (uniform distribution का mean) आता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

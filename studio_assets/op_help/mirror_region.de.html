@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mirror_region.inputs.jpg">mirror_region: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Spiegelt (flippt) die Region. Die Achse wird über a gewählt: a&lt;0.34 spiegelt vertikal (<code style="color:#22d3bf">flipud</code>), 0.34&lt;=a&lt;0.67 spiegelt horizontal (<code style="color:#22d3bf">fliplr</code>), andernfalls wird transponiert (Diagonalspiegelung, <code style="color:#22d3bf">x.T</code>). b wird nicht verwendet. Da das Spiegeln die Werte nicht ändert, tut <code style="color:#22d3bf">_rebinarise</code> faktisch nichts.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>HALCON の <code style="color:#22d3bf">mirror_region</code>（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。</p>
+<p>Entspricht HALCONs <code style="color:#22d3bf">mirror_region</code> (Operation, die eine Region an einer angegebenen Achse spiegelt). HALCON erlaubt eine beliebige Achsenposition, diese Implementierung ist jedoch eine Näherung, die auf 3 Achsentypen (vertikal/horizontal/diagonal) durch die Bildmitte festgelegt ist.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">Leitfaden zur Familie gallery2d_geometry</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

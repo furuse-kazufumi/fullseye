@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/m1_measure_pairs.b.jpg">m1_measure_pairs: knob b sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts rising-to-falling edge pairs (the two ends of a bright object) along a caliper line through the centre (equivalent to HALCON <code style="color:#22d3bf">measure_pairs</code>: extracts pairs of straight edges perpendicular to a rectangle/arc).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> は線の向き（<code style="color:#22d3bf">theta = a*pi</code>）。エッジ検出は <code style="color:#22d3bf">m1_measure_pos</code>と同じ（勾配ピークのサブピクセル検出）で、<code style="color:#22d3bf">b</code>（0〜1）は最大振幅に対する相対しきい値。しきい値を超えたエッジを順に走査し、極性がrising→falling と並ぶ組を 1 対として数える（feature、整数値）。エッジが 2 本未満なら 0.0。</p>
+<p><code style="color:#22d3bf">a</code> is the line orientation (<code style="color:#22d3bf">theta = a*pi</code>). Edge detection is the same as <code style="color:#22d3bf">m1_measure_pos</code> (sub-pixel detection of gradient peaks), and <code style="color:#22d3bf">b</code> (0 to 1) is a threshold relative to the maximum amplitude. The edges exceeding the threshold are scanned in order, and each rising → falling polarity sequence is counted as 1 pair (feature, integer value). 0.0 if there are fewer than 2 edges.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

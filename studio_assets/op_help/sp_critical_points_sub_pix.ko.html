@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>극대점, 극소점, 안장점의 서브픽셀 위치를 한꺼번에 검출한다(HALCON <code style="color:#22d3bf">critical_points_sub_pix</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> の 3 つを同じしきい値 <code style="color:#22d3bf">a</code> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。<code style="color:#22d3bf">b</code> は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
+<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> 3개를 같은 임계값 <code style="color:#22d3bf">a</code>로 실행하고, 검출점을 극대→극소→안장점 순으로 1개의 CONTOUR로 연결한다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 반환 좌표의 단위는 입력 영상의 화소(서브픽셀 소수값)이다. 개별 종류를 구별하지 않고 &quot;임계점이 어디에 있는가&quot;만 알고 싶을 때 사용한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">배경 지식 가이드(이 연산자 앞에 있는 물리·규약)</h3>

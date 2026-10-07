@@ -14,12 +14,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Edge amplitude image के gaps बंद करता है: threshold a से binarise → morphological closing (radius b)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">v &gt; a</code> で二値化した後、<code style="color:#22d3bf">scipy.ndimage.binary_closing</code> を 3×3 全結合(8 近傍)構造要素の <code style="color:#22d3bf">it</code> 回反復 = <code style="color:#22d3bf">(2*it+1)</code> 角の正方形で 1 回クロージング(膨張→収縮)し、0/1 の float 画像で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 二値化しきい値(エッジ振幅画像を想定。a=0 では 0 より大きい画素がすべて前景)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 構造要素の反復回数 <code style="color:#22d3bf">it = 1 + int(b*3)</code>(1〜4、正方形の辺は 3〜9 画素)。閉じられる隙間はおおむね</p>
-<p><code style="color:#22d3bf">2*it</code> 画素以下。</p>
-<p>注意: <code style="color:#22d3bf">binary_closing</code> は画像外を 0 として収縮するため、画像端から <code style="color:#22d3bf">it</code> 画素の帯は必ず 0 になる(全面 1 の 20×20 に it=1 を掛けると残るのは 18×18)。端に接するエッジを扱うときは前に余白を付けるか、結果を膨張し直す。入力は image(エッジ振幅)で出力も image sort だが中身は二値。<code style="color:#22d3bf">hx_nonmax_dir</code> や <code style="color:#22d3bf">sobel_amp</code> の後に置き、つながったエッジは <code style="color:#22d3bf">hx_region_to_label</code> や <code style="color:#22d3bf">hx_detect_edge_segments</code> へ渡す。</p>
+<p><code style="color:#22d3bf">v &gt; a</code> से binarise करने के बाद, <code style="color:#22d3bf">scipy.ndimage.binary_closing</code> को 3×3 fully connected (8-neighbourhood) structuring element के <code style="color:#22d3bf">it</code> iterations के साथ = <code style="color:#22d3bf">(2*it+1)</code> वर्ग से 1 बार closing (dilation→erosion) करता है, और 0/1 float image लौटाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → binarisation threshold (edge amplitude image मानकर; a=0 पर 0 से बड़े सभी pixels foreground)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → structuring element के iterations की संख्या <code style="color:#22d3bf">it = 1 + int(b*3)</code> (1 से 4, वर्ग की भुजा 3 से 9 pixels)। बंद किए जा सकने वाले gaps लगभग</p>
+<p><code style="color:#22d3bf">2*it</code> pixels या कम।</p>
+<p>सावधानी: <code style="color:#22d3bf">binary_closing</code> image के बाहर को 0 मानकर erosion करता है, इसलिए image के किनारे से <code style="color:#22d3bf">it</code> pixels की पट्टी हमेशा 0 हो जाती है (पूरे 1 वाले 20×20 पर it=1 लगाने से 18×18 ही बचता है)। किनारे को छूने वाली edges संभालनी हों तो पहले margin जोड़ें, या परिणाम पर फिर से dilation करें। input image (edge amplitude) है और output भी image sort है, पर उसकी सामग्री binary है। इसे <code style="color:#22d3bf">hx_nonmax_dir</code> या <code style="color:#22d3bf">sobel_amp</code> के बाद रखें, और जुड़ी हुई edges को <code style="color:#22d3bf">hx_region_to_label</code> या <code style="color:#22d3bf">hx_detect_edge_segments</code> को दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

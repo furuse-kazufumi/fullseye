@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Brightness मानों पर 2-class Gaussian mixture model (EM विधि) से चमकीले cluster को region के रूप में लौटाता है (<code style="color:#22d3bf">skimage</code> पर निर्भर न रहने वाला अपना EM implementation, HALCON में इसके समकक्ष कोई operator नहीं)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>25/75 パーセンタイルで初期化した決定論的 EM で 1 次元 2 成分ガウス混合をフィットし、平均が高い方を「明るいクラス」とする。<code style="color:#22d3bf">a</code>（0〜1）は事後確率のしきい値 <code style="color:#22d3bf">t = 0.25 + 0.5*a</code> を振り、大きいほど「確実に明るい」と判定された画素だけを拾うようになる。<code style="color:#22d3bf">b</code> は未使用。乱数を使わないので再現性がある。</p>
+<p>25/75 percentiles से initialise किए गए deterministic EM से 1-D 2-component Gaussian mixture fit करता है, और अधिक mean वाले component को &quot;चमकीली class&quot; मानता है। <code style="color:#22d3bf">a</code> (0 से 1) posterior probability के threshold <code style="color:#22d3bf">t = 0.25 + 0.5*a</code> को बदलता है; जितना बड़ा, उतना केवल वे pixels चुने जाते हैं जिन्हें &quot;निश्चित रूप से चमकीला&quot; आँका गया हो। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। random numbers का उपयोग नहीं होता, इसलिए परिणाम reproducible है।</p>
 <p><b>Border handling</b>: किनारे के pixel को दोहराकर mirror होता है (d c b a | a b c d, scipy का default <code style="color:#22d3bf">reflect</code>) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

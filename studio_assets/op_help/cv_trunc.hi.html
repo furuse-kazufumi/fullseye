@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Tone की ऊपरी truncation (THRESH_TRUNC, OpenCV implementation)। दिए गए मान से ज़्यादा चमकीले सभी pixels को उसी मान पर ले आता है, उससे नीचे के pixels वैसे ही रहते हैं —— केवल highlights को दबाने वाला tone operation (अँधेरे हिस्सों को नहीं छूता)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.)に相当(近似。線形スケーリングではなく片側クリップ)。実装は <code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code> —— a は切り詰めレベルを 0〜1 に振る。b は未使用。</p>
+<p>HALCON के <code style="color:#22d3bf">scale_image</code>(Scale the gray values of an image.) के बराबर (approximation; linear scaling नहीं, बल्कि एक ओर का clipping)। implementation <code style="color:#22d3bf">cv2.threshold(v, thresh=a, maxval=1.0, THRESH_TRUNC)</code> है — a truncation level को 0-1 पर बदलता है। b उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

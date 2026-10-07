@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_fit_circle_contour.chain.jpg">hx_fit_circle_contour: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Fit a circle to the contour points by the algebraic (Kåsa) method and return the fit residual (RMS) — small = close to a circle.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>全 contour の点をまとめ、Kåsa の代数法(<code style="color:#22d3bf">[x, y, 1]·sol = x^2 + y^2</code> を最小二乗で解き、中心 <code style="color:#22d3bf">(sol0/2, sol1/2)</code>、半径 <code style="color:#22d3bf">sqrt(sol2 + cx^2 + cy^2)</code>)で円を当て、各点の中心からの距離と半径の差の RMS を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。円のパラメータ自体は返さない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 3 個未満なら 0.0(完全な円と区別できない)。半径の根号の中が負になれば半径 0 として扱う。</p>
-<p>代数法は幾何学的な距離の最小化ではないので、円弧が短い(角度範囲が狭い)点群や外れ値では半径が偏る。ほぼ直線上の点群では最小ノルム解の半径が非常に大きくなり、残差は小さく出る(直線が「大きな円」に見える)。円らしさの判定には <code style="color:#22d3bf">hx_regress_contours</code> と併用して直線を除く。包含円の半径は <code style="color:#22d3bf">hx_smallest_circle_xld</code>。</p>
+<p>Pools the points of all contours, fits a circle with Kåsa&#x27;s algebraic method (solve <code style="color:#22d3bf">[x, y, 1]·sol = x^2 + y^2</code> by least squares; centre <code style="color:#22d3bf">(sol0/2, sol1/2)</code>, radius <code style="color:#22d3bf">sqrt(sol2 + cx^2 + cy^2)</code>), and returns the RMS of the difference between each point&#x27;s distance from the centre and the radius, divided by <code style="color:#22d3bf">max(H, W)</code> and capped at 1, as <code style="color:#22d3bf">np.float64</code>. The circle parameters themselves are not returned.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there are fewer than 3 points (indistinguishable from a perfect circle). If the value under the radius square root is negative, the radius is treated as 0.</p>
+<p>The algebraic method does not minimise geometric distance, so the radius is biased for short arcs (narrow angular range) and for outliers. For nearly collinear points the minimum-norm solution gives a very large radius and a small residual (a line looks like &quot;a large circle&quot;). To judge circularity, combine with <code style="color:#22d3bf">hx_regress_contours</code> to exclude lines. The radius of the enclosing circle is <code style="color:#22d3bf">hx_smallest_circle_xld</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

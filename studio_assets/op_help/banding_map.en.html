@@ -12,14 +12,13 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns <b>where tonal steps (banding) are visible</b>. <code style="color:#22d3bf">a</code> is the bit count; <code style="color:#22d3bf">b</code> is the window.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
-<p style="margin:2px 0 2px 12px">1. <b>刻みの上に乗っている</b> —— 値が <code style="color:#22d3bf">k*Δ</code> の格子にある。量子化していない画像にバンディングは無い(浮動小数の雑音はここで落ちる)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が <code style="color:#22d3bf">Δ</code> の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>
-<p style="margin:2px 0 2px 12px">3. <b>まばらな線である</b> —— 段差は等高線に沿った細い線として出る。広い範囲が一斉に反応しているなら、それは段差ではなく<b>ディザや細かい模様</b>。</p>
-<p><code style="color:#22d3bf">a</code> は量子化のビット数 1〜8(入力が既に量子化済みなら、その段数を指定する)。<code style="color:#22d3bf">b</code> は窓の広さ(3〜9 画素)。</p>
-<p><b>この 3 段にした理由(実測)</b>: peak-to-peak だけで判定したところ、白色雑音で画素の <b>41.7 %</b>、順序ディザ済みの画像で <b>97.7 %</b> が「段差」と出た —— 局所の ptp がたまたま <code style="color:#22d3bf">Δ</code> になるだけで条件を満たしてしまうため。条件 1 が雑音を、条件 3 がディザを落とす。3-bit に量子化した傾斜では <b>7.0 %</b>(段差の線そのもの) が残る。</p>
-<p><b>適用条件</b>: (1) 入力のビット数を間違えると全く効かない —— 分からないときは <code style="color:#22d3bf">effective_bit_depth</code> で先に測る。(2) 入力が一度でも滑らかに補間・再標本化されていると条件 1 が崩れる(格子から外れる)。段差を測るなら<b>量子化した直後の画像に当てる</b>こと。</p>
+<p>A step becomes &quot;visible&quot; when 3 conditions hold together, and this op multiplies those 3 in turn.</p>
+<p style="margin:2px 0 2px 12px">1. <b>It sits on the step grid</b> — the value lies on the grid <code style="color:#22d3bf">k*Δ</code>. An image that has not been quantized has no banding (floating-point noise is dropped here).</p>
+<p style="margin:2px 0 2px 12px">2. <b>The window moves by exactly 1 step</b> — the difference between maximum and minimum in the window (peak-to-peak) is 1 times <code style="color:#22d3bf">Δ</code>. Neither 0 times (flat) nor 2 times or more (a real contour).</p>
+<p style="margin:2px 0 2px 12px">3. <b>It is a sparse line</b> — steps appear as thin lines along contour lines. If a wide area responds all at once, it is not a step but <b>dithering or a fine pattern</b>.</p>
+<p><code style="color:#22d3bf">a</code> is the quantization bit count 1-8 (if the input is already quantized, give its level count). <code style="color:#22d3bf">b</code> is the window size (3-9 pixels).</p>
+<p><b>Why these 3 stages (measured)</b>: judging by peak-to-peak alone, white noise flagged <b>41.7 %</b> of pixels and an ordered-dithered image <b>97.7 %</b> as &quot;steps&quot; — because the local ptp merely happening to equal <code style="color:#22d3bf">Δ</code> satisfies the condition. Condition 1 drops the noise and condition 3 drops the dithering. On a gradient quantized to 3-bit, <b>7.0 %</b> (the step lines themselves) remains.</p>
+<p><b>Conditions of use</b>: (1) If the input bit count is wrong it has no effect at all — when unsure, measure it first with <code style="color:#22d3bf">effective_bit_depth</code>. (2) If the input has ever been smoothly interpolated or resampled, condition 1 breaks (it leaves the grid). To measure steps, <b>apply it to the image right after quantization</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

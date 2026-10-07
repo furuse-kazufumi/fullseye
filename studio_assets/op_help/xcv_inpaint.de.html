@@ -11,9 +11,8 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Inpainting, das fehlende Bereiche schätzt und ausfüllt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>8bit 変換後、極端に明るい(&gt;235)/暗い(&lt;20)画素を「欠損」とみなして自動マスクし、OpenCV の Telea 法(高速マーチング法ベース、<code style="color:#22d3bf">cv2.INPAINT_TELEA</code>)で周囲から埋める。<code style="color:#22d3bf">xsk_inpaint</code> (biharmonic 法)と同じ発想の別アルゴリズム版。</p>
-<p>半径 3 画素の近傍を使う(固定)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値が固定のため、本来意味のある白飛び/黒つぶれ画素まで埋められてしまう場合がある。</p>
+<p>Nach der Umwandlung in 8bit werden extrem helle (&gt;235) / dunkle (&lt;20) Pixel als &quot;fehlend&quot; betrachtet, automatisch maskiert und mit dem Telea-Verfahren von OpenCV (basierend auf der Fast-Marching-Methode, <code style="color:#22d3bf">cv2.INPAINT_TELEA</code>) aus der Umgebung aufgefüllt. Eine Variante mit anderem Algorithmus nach derselben Idee wie <code style="color:#22d3bf">xsk_inpaint</code> (biharmonisches Verfahren).</p>
+<p>Verwendet eine Nachbarschaft mit Radius 3 Pixel (fest). <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Da die Schwellwerte fest sind, können auch eigentlich bedeutsame ausgefressene/abgesoffene Pixel aufgefüllt werden.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -12,18 +12,17 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_synthesize_silhouette.inputs.jpg">tb_synthesize_silhouette: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>3-D point cloud को (K,R,t) camera पर project करके occupied pixels True वाली silhouette (H,W bool) लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>GT 生成用。<code style="color:#22d3bf">points</code> (N,3) を <code style="color:#22d3bf">X_cam = R X + t</code> で射影し、depth&gt;0 かつ画像内に落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。さらに <code style="color:#22d3bf">dilate</code> 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。</p>
+<p>GT बनाने के लिए। <code style="color:#22d3bf">points</code> (N,3) को <code style="color:#22d3bf">X_cam = R X + t</code> से project करके, जहाँ depth&gt;0 हो और point image के अंदर गिरे, उन pixels को True किया जाता है। sparse point cloud में projected image में छेद रह जाते हैं, इसलिए default रूप से उन्हें भरा जाता है (<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes), ताकि अंदर से भरा foreground mask बने। फिर <code style="color:#22d3bf">dilate</code> pixels तक dilation करके &quot;pixel object को ज़रा भी छुए तो foreground&quot; वाले coverage अर्थ की silhouette बनाई जाती है -- यह conservative rounding है जो visual hull का recall (object voxels न छूटें) discretisation error के बावजूद सुनिश्चित करता है।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
-<p>points : (N, 3) array_like  ワールド座標の点群(物体表面/内部のサンプル)。</p>
-<p>K : (3, 3)  内部パラメータ。</p>
-<p>R, t : (3, 3), (3,)  ワールド-&gt;カメラの回転・並進。</p>
-<p>size : (H, W)  出力画像サイズ。</p>
-<p>fill : bool  射影像の穴を埋めて solid にする(既定 True)。</p>
-<p>dilate : int  被覆マージンとして膨張させる画素数(既定 1、0 で無効)。</p>
+<p>points : (N, 3) array_like  world coordinates में point cloud (object की surface/अंदर के samples)।</p>
+<p>K : (3, 3)  intrinsic parameters।</p>
+<p>R, t : (3, 3), (3,)  world-&gt;camera rotation और translation।</p>
+<p>size : (H, W)  output image का size।</p>
+<p>fill : bool  projected image के छेद भरकर उसे solid बनाता है (default True)।</p>
+<p>dilate : int  coverage margin के रूप में dilation के pixels (default 1, 0 पर बंद)।</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
-<p>(H, W) bool ndarray  前景 True のシルエット。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">synthesize_silhouette</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>(H, W) bool ndarray  foreground True वाली silhouette।</p>
+<p>2-D evolution registry में bridge किया गया 3d op <code style="color:#22d3bf">synthesize_silhouette</code>। implementation वही है, केवल calling convention को <code style="color:#22d3bf">op(v, a, b)</code> के अनुसार ढाला गया है। इस op में कोई tuning point नहीं है; न <code style="color:#22d3bf">a</code> उपयोग होता है, न <code style="color:#22d3bf">b</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
 <p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
 <p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>

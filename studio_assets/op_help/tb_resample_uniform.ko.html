@@ -12,14 +12,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_resample_uniform.inputs.jpg">tb_resample_uniform: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>호 길이 기준으로 등간격으로 n개 점으로 재샘플링(선형 보간). → (n,3).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず折れ線を細かく刻むだけ。</p>
-<p style="margin:2px 0 2px 12px">• 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。</p>
-<p style="margin:2px 0 2px 12px">• 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が捨てられる。形状検証は無い。</p>
-<p style="margin:2px 0 2px 12px">• 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても <code style="color:#22d3bf">np.interp</code> は通るが、その区間は長さ 0 として扱われる。</p>
-<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> は index パラメータの差分なので、間隔が不均一な点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は <code style="color:#22d3bf">fit_spline_curve</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">resample_uniform</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">arc_length</code>의 누적 호장을 파라미터로 하여 <code style="color:#22d3bf">np.linspace(0, total, n)</code>의 위치를취하고, x·y·z를 독립적으로 <code style="color:#22d3bf">np.interp</code>로 선형 보간한다. 출력은 float64의 (n,3). 시작점과 끝점은 입력의 처음·끝과 일치하고, 중간점은 꺾은선 위에 놓인다(원래 점을 지난다고는 할 수 없다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 출력 점 수. 1이면 시작점 1점, 0이면 빈 (0,3). 입력보다 많게 해도 정보는 늘지 않고꺾은선을 잘게 나눌 뿐.</p>
+<p style="margin:2px 0 2px 12px">• 전체 길이가 1e-12 미만(모든 점 일치)일 때는 첫 점을 n번 복제해 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• 출력 열 수는 3으로 고정되어 있어, 입력이 (N,3) 이외이면 열 수 부족으로 실패하거나 남는 열이버려진다. 형상 검증은 없다.</p>
+<p style="margin:2px 0 2px 12px">• 닫힌 곡선은 닫히지 않는다(끝점→시작점 구간은 보간 대상 밖). 중복점이 있어도 <code style="color:#22d3bf">np.interp</code>는통과하지만, 그 구간은 길이 0으로 취급된다.</p>
+<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code>은 index 파라미터의 차분이므로, 간격이 불균일한점열은 이 op로 등간격화한 뒤 넘기면 수치 미분이 안정된다. 매끄럽게 보간하고 싶으면 <code style="color:#22d3bf">fit_spline_curve</code>.</p>
+<p>2-D 진화 레지스트리에 연결한 3d op <code style="color:#22d3bf">resample_uniform</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞춰 두었다. 이 op에는 조정점이 없으며, <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -11,8 +11,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度填洞（SimpleITK <code style="color:#22d3bf">GrayscaleFillhole</code>）。通过形态学重建，将图像中的暗孔（比周围暗的局部凹陷）填补至周围亮度水平。是二值填洞的灰度版本，用于去斑或缺损补全等前处理。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>パラメータは無く、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。出力は [0,1] にクリップ。</p>
+<p>没有参数，<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。输出裁剪(clip)到 [0,1]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">gallery2d_color_artistic 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

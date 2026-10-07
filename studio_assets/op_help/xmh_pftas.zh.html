@@ -8,8 +8,7 @@
 <p>*旋钮 b 不改变输出(实测: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>PFTAS（parameter-free threshold adjacency statistics、<code style="color:#22d3bf">mahotas.features.pftas</code>）54维特征向量的方差。这是一种纹理特征，汇总了以无参数阈值统计相邻像素灰度关系所得的多组直方图。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。2026-09-02 実測: 54 次元の平均を使うと、正規化ヒストグラムの性質上ほぼ整数/54 の値しか取らず、12 通りの画像(4 サイズ x 3 内容)で相異なる値がわずか 2 個(事実上の定数)だった。分散にすると分布の広がりが残り画像ごとに変化するため、ここでは分散を採用している。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。2026-09-02 实测：若使用 54 维的均值，由于归一化直方图的性质，几乎只取 整数/54 的值，在 12 种图像(4 种尺寸 x 3 种内容)上不同的值仅有 2 个(实质上是常数)。改用方差后，分布的离散程度得以保留并随图像变化，因此这里采用方差。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

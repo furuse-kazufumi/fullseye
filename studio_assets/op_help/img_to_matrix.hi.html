@@ -11,9 +11,8 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image (H,W) को सीधे H×W numeric matrix (sort <code style="color:#22d3bf">matrix</code>) के रूप में लेता है —— शुद्ध cast।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>値も形も変えない(<code style="color:#22d3bf">float64</code> へのコピーのみ)。線形代数の族(<code style="color:#22d3bf">tb_mat_cond</code> / <code style="color:#22d3bf">tb_mat_pinv</code> / <code style="color:#22d3bf">tb_stat_covariance</code> …)に画像を渡すための型の読み替えで、<b>a, b は未使用</b>。</p>
-<p>注意: 画像は一般に正則でも対称でもない。条件数は大きく(<code style="color:#22d3bf">tb_mat_cond</code>)、共分散(<code style="color:#22d3bf">tb_stat_covariance</code>)は「行 = 標本、列 = 変数」として読まれる —— つまり <b>各列(x 位置)を変数、各行を観測</b> とみなした統計になる。転置して渡したいなら前段に <code style="color:#22d3bf">transpose</code>(台帳)を置く。</p>
+<p>न value बदलता है न shape (सिर्फ़ <code style="color:#22d3bf">float64</code> में copy)। image को linear algebra की family (<code style="color:#22d3bf">tb_mat_cond</code> / <code style="color:#22d3bf">tb_mat_pinv</code> / <code style="color:#22d3bf">tb_stat_covariance</code> …) को देने के लिए type को दूसरे रूप में पढ़ना है, <b>a, b का उपयोग नहीं होता</b>।</p>
+<p>ध्यान दें: image सामान्यतः न regular होती है न symmetric। condition number बड़ा होता है (<code style="color:#22d3bf">tb_mat_cond</code>), और covariance (<code style="color:#22d3bf">tb_stat_covariance</code>) को &quot;row = sample, column = variable&quot; के रूप में पढ़ा जाता है —— यानी यह <b>हर column (x स्थिति) को variable, हर row को observation</b> मानकर निकाला गया statistic होता है। transpose करके देना हो तो पहले <code style="color:#22d3bf">transpose</code> (ledger) रखें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

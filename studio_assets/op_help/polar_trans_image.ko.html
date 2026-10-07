@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>직교좌표→극좌표 변환(<code style="color:#22d3bf">cv2.warpPolar</code>). 이미지 중심을 극(pole)으로, <code style="color:#22d3bf">min(H,W)/2</code>를 최대 반지름으로 하여, 고리 모양의 내용을 가로로 긴 전개도로 변환한다. 매핑되지 않은 화소는 0으로 채운다(<code style="color:#22d3bf">dst</code>를 미리 0으로 클리어한 뒤 cv2가 반환하는 값을 읽는다 —— <code style="color:#22d3bf">dst</code> 버퍼 자체를 읽으면 비어 있을 수 있다는 구현상의 주의점이 코드 주석에 자세히 설명되어 있다). HALCON의 <code style="color:#22d3bf">polar_trans_image</code>(Transform an image to polar coordinates)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用 ―― 中心と半径は画像サイズから自動的に決まり、調整点は無い。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다 —— 중심과 반경은 영상 크기로부터 자동으로 정해지며, 조정점은 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>

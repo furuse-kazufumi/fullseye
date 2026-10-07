@@ -10,8 +10,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zählt Kantenpaare entlang des mittleren horizontalen Profils (steigende zu fallender Flanke eines hellen Balkens) — 1-D-Messtechnik.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>レベル閾値の交差で境界を 1 回ずつ取る(np.gradient はステップを 2 画素に滲ませ二重計上するため不可)。閾値 lvl は a で可変。返り値は対の数(/10 で正規化した feature)。</p>
+<p>Erfasst jede Grenze genau 1-mal am Kreuzungspunkt einer Pegelschwelle (np.gradient ist ungeeignet, da es eine Stufe auf 2 Pixel verschmiert und doppelt zählt). Die Schwelle lvl ist über a variabel. Der Rückgabewert ist die Zahl der Paare (ein mit /10 normiertes feature).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

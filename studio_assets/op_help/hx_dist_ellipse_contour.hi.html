@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_dist_ellipse_contour.chain.jpg">hx_dist_ellipse_contour: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Contour points की fit किए गए ellipse की सीमा से औसत दूरी लौटाता है (छोटा = ellipse के करीब, feature)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>全 contour の点をまとめ、重心と座標共分散の固有分解から主軸系に移し、半軸を <code style="color:#22d3bf">2*sqrt(λ)</code>(各主軸の 2σ)とする楕円を当てて、各点の正規化半径 <code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code> と 1 との差 <code style="color:#22d3bf">|rad - 1|</code> の平均を 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 4 個未満なら 0.0。固有値は <code style="color:#22d3bf">1e-9</code> で下から clip。</p>
-<p>注意: 値は画素距離ではなく楕円の正規化座標での差(無次元)。また半軸 2σ は「一様に塗られた楕円」に合う値で、境界だけの点群では <code style="color:#22d3bf">σ = 半軸/sqrt(2)</code> になるため、完全な楕円輪郭でも 0 にならず約 0.29 の下駄が乗る(実測 0.2938)。比較用の相対指標として使い、絶対値で「楕円かどうか」を切らない。最大値版は <code style="color:#22d3bf">hx_dist_ellipse_points</code>、軸比は <code style="color:#22d3bf">hx_fit_ellipse_contour</code>。</p>
+<p>सभी contours के points को मिलाकर centroid और coordinate covariance के eigendecomposition से principal-axis frame में ले जाया जाता है, <code style="color:#22d3bf">2*sqrt(λ)</code> (हर principal axis का 2σ) semi-axes वाला ellipse fit किया जाता है, और हर point के normalized radius <code style="color:#22d3bf">rad = sqrt((u/ax0)^2 + (v/ax1)^2)</code> और 1 के अंतर <code style="color:#22d3bf">|rad - 1|</code> का औसत 1 पर cap करके <code style="color:#22d3bf">np.float64</code> के रूप में लौटाया जाता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• 4 से कम points हों तो 0.0। eigenvalues को नीचे से <code style="color:#22d3bf">1e-9</code> पर clip किया जाता है।</p>
+<p>ध्यान दें: value pixel distance नहीं, बल्कि ellipse के normalized coordinates में अंतर (dimensionless) है। साथ ही 2σ semi-axes &quot;समान रूप से भरे ellipse&quot; के लिए सही हैं; केवल boundary वाले point set में <code style="color:#22d3bf">σ = semi-axis/sqrt(2)</code> होता है, इसलिए perfect ellipse outline पर भी value 0 नहीं होती, लगभग 0.29 का offset जुड़ा रहता है (measured 0.2938)। इसे तुलना के लिए relative measure की तरह इस्तेमाल करें; absolute value से &quot;ellipse है या नहीं&quot; तय न करें। maximum वाला version <code style="color:#22d3bf">hx_dist_ellipse_points</code> है, axis ratio <code style="color:#22d3bf">hx_fit_ellipse_contour</code> देता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,10 +11,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/rectangularity.chain.jpg">rectangularity: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Rectangularity। <b>क्रम 1 और क्रम 2 के वही moments रखने वाला आयत</b> बनाता है, और region से उसके अंतर वाले क्षेत्रफल को उस आयत के क्षेत्रफल से normalise करता है (<code style="color:#22d3bf">1 - |region XOR rectangle| / |rectangle|</code>)। आयत के लिए 1। HALCON के <code style="color:#22d3bf">rectangularity</code> (Shape factor for the rectangularity of a region.) <b>वाली ही परिभाषा</b> है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>★2026-09-26 まで<b>軸平行の</b>外接矩形との比(<code style="color:#22d3bf">skimage</code> の <code style="color:#22d3bf">extent</code>)だった。向きを見ないので、<b>同じ長方形を 30 度回しただけで 1.000 が 0.359 に落ちていた</b> (HALCON は 0.998 のまま)。<code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>。</p>
-<p>★正方形や円のように 2 次モーメントで向きが決まらない形では、「同じモーメントを持つ矩形」が向きの数だけ在って定義が向きを決めない。ここでは重なりが最大になる向きを選ぶ —— そのまま任意の向きで当てると正方形が 0.651 になり、HALCON の「矩形なら 1」と食い違う。HALCON もこの形では最大 10% 過小評価すると明記する。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 तक यह <b>axis-parallel</b> bounding rectangle के साथ अनुपात (<code style="color:#22d3bf">skimage</code> का <code style="color:#22d3bf">extent</code>) था। यह दिशा को नहीं देखता था, इसलिए <b>उसी rectangle को केवल 30 degree घुमाने पर 1.000 गिरकर 0.359 हो जाता था</b> (HALCON 0.998 पर ही रहता है)। <code style="color:#22d3bf">docs/hardening/halcon-named-shape-factors.md</code>।</p>
+<p>★square या circle जैसे आकारों में, जिनकी दिशा 2nd-order moments से तय नहीं होती, &quot;समान moments वाले rectangle&quot; उतने ही होते हैं जितनी दिशाएँ, और परिभाषा दिशा तय नहीं करती। यहाँ वह दिशा चुनी जाती है जिसमें overlap अधिकतम हो -- किसी भी मनमानी दिशा में लागू करने पर square का मान 0.651 आता है, जो HALCON के &quot;rectangle के लिए 1&quot; से मेल नहीं खाता। HALCON भी स्पष्ट लिखता है कि ऐसे आकारों में यह अधिकतम 10% कम आँकता है।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_height_width_ratio.chain.jpg">xg_height_width_ratio: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点集轴对齐外接矩形的 高/宽 比。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>全輪郭の点(閉輪郭の重複終点は除く)をまとめ、行方向の広がり <code style="color:#22d3bf">h = max(row) - min(row)</code> と列方向の広がり <code style="color:#22d3bf">w = max(col) - min(col)</code> の比 <code style="color:#22d3bf">h / w</code> を返す。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は <code style="color:#22d3bf">numpy.float64</code>。点が無ければ 0.0。<code style="color:#22d3bf">w &lt; 1e-12</code>(全点が同じ列= 縦一直線)では <code style="color:#22d3bf">h &gt; 1e-12</code> なら 1e6、そうでなければ 0.0。上限は 1e6。軸並行の bbox なので回転に不変ではない(45° 傾いた細長い輪郭は 1 に近づく)。回転不変な細長さは <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code> を使う。<code style="color:#22d3bf">h</code>, <code style="color:#22d3bf">w</code> は点座標の範囲(画素中心間の距離)で、画素数ベースの幅より 1 小さい。複数輪郭があれば全体を囲む 1 つの bbox の比になる。</p>
+<p>合并全部轮廓点（不含闭合轮廓重复的终点），返回行方向的扩展 <code style="color:#22d3bf">h = max(row) - min(row)</code> 与列方向的扩展 <code style="color:#22d3bf">w = max(col) - min(col)</code> 之比 <code style="color:#22d3bf">h / w</code>。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值为 <code style="color:#22d3bf">numpy.float64</code>。没有点时为 0.0。<code style="color:#22d3bf">w &lt; 1e-12</code>（所有点在同一列= 竖直一直线）时，若 <code style="color:#22d3bf">h &gt; 1e-12</code> 则为 1e6，否则为 0.0。上限为 1e6。由于是轴平行的 bbox，因此不具有旋转不变性（倾斜 45° 的细长轮廓会接近 1）。旋转不变的细长度请用 <code style="color:#22d3bf">xg_elliptic_axis</code> / <code style="color:#22d3bf">xg_eccentricity</code>。<code style="color:#22d3bf">h</code>、<code style="color:#22d3bf">w</code> 是点坐标的范围（像素中心之间的距离），比按像素数计的宽度小 1。若有多个轮廓，则为包围全体的 1 个 bbox 的比值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

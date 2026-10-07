@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>A periodic LUT based on <code style="color:#22d3bf">(cos(2*pi*x) + 1) / 2</code>. A version phase-shifted by pi/2 relative to <code style="color:#22d3bf">sin_image</code>: it reaches its maximum (1) at x=0, its minimum (0) at x=0.5, and then rises again. Stands in for HALCON&#x27;s <code style="color:#22d3bf">cos_image</code> (Calculate the cosine of an image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">sin_image</code> と同じく非単調・非可逆な周期写像なので、一般のコントラスト補正ではなく擬似的な等高線表現などに使う。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. Like <code style="color:#22d3bf">sin_image</code> it is a non-monotonic, non-invertible periodic mapping, so use it for pseudo-contour rendering and the like rather than general contrast correction.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

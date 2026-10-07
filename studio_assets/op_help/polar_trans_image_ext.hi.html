@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>पूरी image को polar coordinates (radius, कोण) रूप में बदलता है (<code style="color:#22d3bf">cv2.warpPolar</code>, forward दिशा, linear interpolation)। केंद्र image के केंद्र पर तय है, radius का अधिकतम मान <code style="color:#22d3bf">min(h,w)/2</code> है। a, b इस्तेमाल नहीं होते (वही <code style="color:#22d3bf">_sh_geom</code> की <code style="color:#22d3bf">polar</code> branch <code style="color:#22d3bf">polar_trans_image</code> के साथ साझा)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_image_ext</code>（中心・半径範囲・角度範囲などを個別指定できる、環状の一部だけを切り出して極座標変換する拡張版演算）とは異なり、この実装は画像全体を固定パラメータで変換する簡略近似 —— 環状領域や角度範囲の指定はできない。</p>
+<p>HALCON के <code style="color:#22d3bf">polar_trans_image_ext</code> (केंद्र, radius range, angle range आदि अलग-अलग निर्दिष्ट करने देने वाला और वलय (annulus) के केवल एक हिस्से को काटकर polar coordinates में बदलने वाला विस्तारित operation) से अलग, यह implementation पूरी image को स्थिर parameters से बदलने वाला सरलीकृत सन्निकटन है — वलयाकार region या angle range निर्दिष्ट नहीं की जा सकती।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>

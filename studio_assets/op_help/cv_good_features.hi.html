@@ -9,8 +9,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Shi-Tomasi विधि से उच्च गुणवत्ता corner detection (1 scalar feature, OpenCV implementation)। cv_min_eigen जैसे ही minimum eigenvalue मानदंड से corner होने का मूल्यांकन करता है, और non-maximum suppression तथा minimum distance filter से छाँटकर ऊपर के corners पहचानता है —— यहाँ केवल पहचानी गई संख्या लौटाता है (0 हों तो 0)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON に直接対応するものは無い。実装は <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> —— a は検出上限数を 10〜50 に、b は品質しきい値(最強コーナーに対する相対比。大きいほど厳しく絞り込まれ検出数が減る)を 0.01〜0.11 に振る。最小距離は 5 画素に固定。</p>
+<p>HALCON में इसका कोई सीधा समकक्ष नहीं है। implementation <code style="color:#22d3bf">cv2.goodFeaturesToTrack(v, maxCorners=int(10+40*a), qualityLevel=0.01+0.1*b, minDistance=5)</code> है -- a detection की ऊपरी सीमा को 10-50 में, और b quality threshold (सबसे मज़बूत corner के सापेक्ष अनुपात; जितना बड़ा, उतना सख़्त चयन और उतने कम detection) को 0.01-0.11 में बदलता है। न्यूनतम दूरी 5 pixel पर स्थिर है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

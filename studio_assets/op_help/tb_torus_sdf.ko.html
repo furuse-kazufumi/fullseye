@@ -14,15 +14,14 @@
 <p><img src="fig/tb_torus_sdf.gif" alt="tb_torus_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>토러스(도넛)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code>(<code style="color:#22d3bf">r</code> は軸からの半径、<code style="color:#22d3bf">t</code> は軸方向の距離)。芯線が半径 <code style="color:#22d3bf">major_radius</code> の円で、その周りに半径 <code style="color:#22d3bf">minor_radius</code> の管が付いた形なので、<b>フィレット(隅の丸み)の解析形</b>としてそのまま使える。</p>
-<p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>: <code style="color:#22d3bf">cylinder_sdf</code> と同じ(軸はドーナツの穴の向き)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major_radius</code>: 芯線の半径(負は拒否)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>: 管の半径(負は拒否)。<code style="color:#22d3bf">minor_radius &gt;= major_radius</code> だと穴が潰れた形になるが、距離場としては正しいので<b>拒否しない</b>。</p>
-<p>返り値: <code style="color:#22d3bf">grid.shape[:-1]</code> の float64。</p>
-<p>使いどころ: <code style="color:#22d3bf">sdf_subtract</code> で内隅にフィレットを削り出す / <code style="color:#22d3bf">sdf_union</code> で O リング溝の形を作る。角を丸めるだけなら <code style="color:#22d3bf">sdf_smooth_union</code> のほうが手軽だが、あちらは丸みの半径が形状に依存する —— <b>半径を設計値として持ちたいときはこちら</b>。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">torus_sdf</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code>(<code style="color:#22d3bf">r</code>은 축으로부터의 반경, <code style="color:#22d3bf">t</code>는축 방향 거리). 심선이 반지름 <code style="color:#22d3bf">major_radius</code>의 원이고 그 둘레에 반지름 <code style="color:#22d3bf">minor_radius</code> 의 관이 붙은 형태이므로, <b>필렛(모서리의 둥글림)의 해석형</b>으로 그대로 쓸 수 있다.</p>
+<p>인수와 검증(<code style="color:#22d3bf">ValueError</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>: <code style="color:#22d3bf">cylinder_sdf</code>와 같다(축은 도넛 구멍의 방향).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">major_radius</code>: 심선의 반지름(음은 거부).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">minor_radius</code>: 관의 반지름(음은 거부). <code style="color:#22d3bf">minor_radius &gt;= major_radius</code>이면 구멍이찌그러진 형태가 되지만 거리장으로서는 올바르므로 <b>거부하지 않는다</b>.</p>
+<p>반환값: <code style="color:#22d3bf">grid.shape[:-1]</code>의 float64.</p>
+<p>쓰임새: <code style="color:#22d3bf">sdf_subtract</code>로 안쪽 모서리에 필렛을 깎아 낸다 / <code style="color:#22d3bf">sdf_union</code>으로 O링 홈의형상을 만든다. 모서리를 둥글리기만 한다면 <code style="color:#22d3bf">sdf_smooth_union</code>이 간편하지만, 그쪽은 둥글림의반지름이 형상에 의존한다 —— <b>반지름을 설계값으로 갖고 싶을 때는 이쪽</b>.</p>
+<p>2-D 진화 레지스트리로 연결한 3d의 op <code style="color:#22d3bf">torus_sdf</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

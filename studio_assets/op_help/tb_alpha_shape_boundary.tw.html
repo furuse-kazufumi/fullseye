@@ -12,16 +12,15 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_alpha_shape_boundary.inputs.jpg">tb_alpha_shape_boundary: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>透過 alpha shapes 回傳<b>邊界點索引</b>（點雲 → 邊界點）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>Delaunay 四面体分割の外接球半径 &lt; 1/alpha の四面体の表面三角形(境界面)を集め、その頂点集合を境界点とする。中実(表面+内部)の点群から表面殻の点だけを抜き出す用途に向く。alpha を大きくすると許す半径 1/alpha が小さくなり、より密着した(細部を拾う)境界になる。</p>
+<p>收集 Delaunay 四面體剖分中外接球半徑 &lt; 1/alpha 的四面體的表面三角形(邊界面),以其頂點集合為邊界點。適合從實心(表面+內部)點雲中只抽取表面殼的點。增大 alpha 會使允許的半徑 1/alpha 變小,得到更貼合(能捕捉細節)的邊界。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
 <p>alpha : float</p>
-<p>正の実数。半径しきい値は 1/alpha。<code style="color:#22d3bf">estimate_alpha</code> で目安を得られる。</p>
+<p>正實數。半徑閾值為 1/alpha。可用 <code style="color:#22d3bf">estimate_alpha</code> 得到參考值。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>boundary_point_indices : numpy.ndarray (K,) int64</p>
-<p>points に対する境界点の index(昇順・重複なし)。境界が無ければ空配列。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">alpha_shape_boundary</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>相對於 points 的邊界點 index(升冪、無重複)。沒有邊界時為空陣列。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">alpha_shape_boundary</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

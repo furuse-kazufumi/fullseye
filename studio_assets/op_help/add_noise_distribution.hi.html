@@ -15,8 +15,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image में additive noise जोड़ता है। Implementation केवल Gaussian (normal distribution) noise है, और <code style="color:#22d3bf">add_noise_white</code> वाली ही <code style="color:#22d3bf">_sh_noise</code> की <code style="color:#22d3bf">gaussian</code> branch साझा करता है। Random numbers a से तय fixed seed (<code style="color:#22d3bf">int(a*997)+7</code>) से बनते हैं, इसलिए वही a हो तो हर बार वही noise आता है (deterministic)। b noise के standard deviation को 0.02 से 0.22 में बदलता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">add_noise_distribution</code>（任意の確率分布（ヒストグラム指定）に従うノイズを加える演算）とは異なり、この実装は常にガウス分布のノイズしか生成できない近似 —— 分布形状の指定は反映されない。</p>
+<p>HALCON के <code style="color:#22d3bf">add_noise_distribution</code> (किसी भी probability distribution (histogram द्वारा निर्दिष्ट) के अनुसार noise जोड़ने वाला operation) से अलग, यह implementation हमेशा केवल Gaussian distribution वाला noise ही बना सकने वाला सन्निकटन है — distribution के आकार का निर्धारण प्रतिबिंबित नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -14,8 +14,7 @@
 <p><img src="fig/vol_erode.gif" alt="vol_erode: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>3D 體資料的灰階侵蝕。未指定對應的 HALCON op。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>構造要素の一辺は <code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code>。<code style="color:#22d3bf">a</code> は <code style="color:#22d3bf">[0,1)</code> の範囲では <code style="color:#22d3bf">int(a)</code> が常に 0 になるため実質サイズ <code style="color:#22d3bf">3</code> 固定で、<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">1.0</code>（<code style="color:#22d3bf">decode</code> の <code style="color:#22d3bf">np.clip</code> で上限に張り付いたとき）になったときだけ <code style="color:#22d3bf">5</code> に切り替わる、実質 2 値スイッチにしかなっていない（<code style="color:#22d3bf">_vol_dilate</code> も同じ式で同じ性質）。<code style="color:#22d3bf">b</code> も未使用。</p>
+<p>結構元素的邊長為 <code style="color:#22d3bf">size = 1 + 2*(1 + int(a))</code>。<code style="color:#22d3bf">a</code> 在 <code style="color:#22d3bf">[0,1)</code> 範圍內時 <code style="color:#22d3bf">int(a)</code> 總是 0，因此實際尺寸固定為 <code style="color:#22d3bf">3</code>，只有當 <code style="color:#22d3bf">a</code> 變為 <code style="color:#22d3bf">1.0</code>（被 <code style="color:#22d3bf">decode</code> 的 <code style="color:#22d3bf">np.clip</code> 貼在上限時）才切換為 <code style="color:#22d3bf">5</code>，實際上只是一個 2 值開關（<code style="color:#22d3bf">_vol_dilate</code> 也用同樣的公式，具有同樣的性質）。<code style="color:#22d3bf">b</code> 也未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_physics_alife_3d">gallery2d_physics_alife_3d 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

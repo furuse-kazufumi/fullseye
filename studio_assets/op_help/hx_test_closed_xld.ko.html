@@ -12,12 +12,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_test_closed_xld.chain.jpg">hx_test_closed_xld: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>닫힌 contour 의 비율(끝점 사이 거리가 임계 미만 = 닫힘. feature).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>contour dict の各 contour について、点数が 3 以上かつ始点と終点のユークリッド距離が <code style="color:#22d3bf">tol</code> 以下なら「閉じている」と数え、閉じた contour の本数を全 contour 数で割った割合を <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 許容距離 <code style="color:#22d3bf">tol = 1 + a*4</code>(1〜5 画素)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• contour が無ければ 0.0。</p>
-<p>始点=終点を重複させて閉じる <code style="color:#22d3bf">close_contours_xld</code> の出力は距離 0 なので必ず閉と判定される。<code style="color:#22d3bf">hx_clip_end_points</code> や <code style="color:#22d3bf">hx_clip_contours</code> で端を落とした後は開いた扱いになる。個々の contour がどれかは返さない(割合のみ)。</p>
+<p>contour dict의 각 contour에 대해 점 수가 3 이상이고 시작점과 끝점의 유클리드 거리가 <code style="color:#22d3bf">tol</code> 이하이면 &quot;닫혀 있다&quot;고 세고, 닫힌 contour 개수를 전체 contour 수로 나눈 비율을 <code style="color:#22d3bf">np.float64</code>로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 허용 거리 <code style="color:#22d3bf">tol = 1 + a*4</code>(1~5 화소).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• contour가 없으면 0.0.</p>
+<p>시작점=끝점을 중복시켜 닫는 <code style="color:#22d3bf">close_contours_xld</code>의 출력은 거리 0이므로 반드시 닫힘으로 판정된다. <code style="color:#22d3bf">hx_clip_end_points</code>나 <code style="color:#22d3bf">hx_clip_contours</code>로 끝을 잘라낸 뒤에는 열린 것으로 취급된다. 개별 contour가 어느 것인지는반환하지 않는다(비율만).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gray value surface के saddle points को sub-pixel सटीकता से पहचानता है (HALCON <code style="color:#22d3bf">saddle_points_sub_pix</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>3x3 の 2 次曲面フィットのヘッセ行列が不定符号（<code style="color:#22d3bf">det H &lt; 0</code>、両主曲率の符号が逆）になる画素を鞍点候補とし、勾配 0 点がセル内（<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>）に収まるものだけを残す。<code style="color:#22d3bf">a</code> は鞍点の強さ（より小さい方の主曲率の絶対値）のしきい値を 1e-4〜0.0201 に振る（<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>）。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、座標の単位は入力画像のピクセル。</p>
+<p>जिन pixels पर 3x3 2nd-order surface fit का Hessian matrix indefinite होता है (<code style="color:#22d3bf">det H &lt; 0</code>, दोनों principal curvatures के चिह्न विपरीत), उन्हें saddle point के उम्मीदवार माना जाता है, और केवल वे रखे जाते हैं जिनका gradient 0 वाला point cell के अंदर (<code style="color:#22d3bf">|dx|,|dy| &lt;= 0.5</code>) आता है। <code style="color:#22d3bf">a</code> saddle की शक्ति (छोटे principal curvature का निरपेक्ष मान) के threshold को 1e-4 से 0.0201 तक बदलता है (<code style="color:#22d3bf">thr = 1e-4 + 0.02*a</code>)। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। return value CONTOUR है, coordinates की इकाई input image के pixels है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>

@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Wiener deconvolution (ज्ञात point spread function से deblur)। <code style="color:#22d3bf">skimage.restoration.wiener</code> को call करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり（標準偏差 <code style="color:#22d3bf">0.5 + 1.5*a</code>、5x5 窓）を振る。b がバランス項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。ノイズ対信号比の逆数に相当し、大きいほどノイズ抑制寄りになる）を振る。<b>入力画像のボケが実際にこの想定ガウシアン PSF と一致している場合にのみ有効</b>で、PSF の形が違うとリンギングや復元失敗が出る。</p>
+<p>PSF को Gaussian आकार मानकर स्वयं बनाया जाता है, और a PSF के फैलाव (standard deviation <code style="color:#22d3bf">0.5 + 1.5*a</code>, 5x5 window) को बदलता है। b balance term (<code style="color:#22d3bf">0.05 + 0.5*b</code>; यह noise-to-signal अनुपात के व्युत्क्रम के समकक्ष है, और जितना बड़ा, उतना noise दबाने की ओर झुकता है) को बदलता है। <b>केवल तभी प्रभावी जब इनपुट image का blur वास्तव में इस मान्य Gaussian PSF से मेल खाता हो</b>, PSF का आकार अलग होने पर ringing या restoration विफलता होती है।</p>
 <p><b>Border handling</b>: दूसरी ओर wrap around होता है (periodic) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank family guide</a></p>

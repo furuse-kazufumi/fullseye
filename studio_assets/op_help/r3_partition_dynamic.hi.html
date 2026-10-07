@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_partition_dynamic.inputs.jpg">r3_partition_dynamic: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को उन columns (सँकरे हिस्सों) पर horizontal रूप से बाँटता है जहाँ vertical फैलाव कम है (HALCON <code style="color:#22d3bf">partition_dynamic</code> के समकक्ष)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各列の前景画素数（密度）を数え、<code style="color:#22d3bf">0 &lt; 密度 &lt;= a * 最大密度</code> を満たす列（くびれ）をゼロに潰して領域を分断する。<code style="color:#22d3bf">a</code>（0〜1）がくびれと判定するしきい値の割合。<code style="color:#22d3bf">b</code> は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。</p>
+<p>हर column के foreground pixels (घनत्व) गिनकर, <code style="color:#22d3bf">0 &lt; घनत्व &lt;= a * अधिकतम घनत्व</code> पूरा करने वाले columns (पतले हिस्से) को शून्य करके region को विभाजित करता है। <code style="color:#22d3bf">a</code> (0 से 1) पतला हिस्सा मानने के threshold का अनुपात है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। समान घनत्व वाले region में विभाजित करने योग्य column नहीं होता, इसलिए वह जैसा का तैसा लौटता है।</p>
 <p><b>Border handling</b>: image के बाहर की हर चीज़ को background (0) माना जाता है (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

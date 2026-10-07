@@ -12,11 +12,10 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>2 video half-images को interpolate करता है (विषम rows को पड़ोसी सम rows के mean से बदलना = deinterlace)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>1 枚の画像を奇数行・偶数行の 2 フィールドとみなし、奇数行(<code style="color:#22d3bf">1::2</code>)を上下の隣接行の平均 <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code> で置き換える。偶数行はそのまま。出力は入力と同形の float 画像。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 上下の行は <code style="color:#22d3bf">np.roll</code> で取るため、高さが偶数のとき最終行(奇数行)の「下」は先頭行になる(端 1 行だけ循環)。</p>
-<p>インターレース映像の櫛状ずれを消す最も単純な線形補間で、奇数フィールドの情報は捨てられる(縦の解像度は半分に落ちる)。どちらのフィールドを残すかは選べない(常に偶数行が生き残る)。行方向の縞が疑われるときの前処理として、<code style="color:#22d3bf">hx_nonmax_dir</code> など微分系 op の前に置く。</p>
+<p>1 image को odd और even rows के 2 fields मानकर, odd rows (<code style="color:#22d3bf">1::2</code>) को ऊपर-नीचे की पड़ोसी rows के औसत <code style="color:#22d3bf">0.5*(v[i-1] + v[i+1])</code> से बदलता है। even rows जैसी की तैसी रहती हैं। output input के समान shape की float image है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• ऊपर-नीचे की rows <code style="color:#22d3bf">np.roll</code> से ली जाती हैं, इसलिए ऊँचाई सम हो तो अंतिम row (odd row) के &quot;नीचे&quot; पहली row आती है (केवल किनारे की 1 row चक्रीय होती है)।</p>
+<p>interlaced video की comb जैसी गड़बड़ी हटाने का यह सबसे सरल linear interpolation है, और odd field की जानकारी छोड़ दी जाती है (vertical resolution आधी रह जाती है)। कौन-सा field रखा जाए यह चुना नहीं जा सकता (हमेशा even rows बचती हैं)। row दिशा की धारियों का संदेह हो तब preprocessing के रूप में, <code style="color:#22d3bf">hx_nonmax_dir</code> जैसे derivative ops से पहले रखें।</p>
 <p><b>Border handling</b>: दूसरी ओर wrap around होता है (periodic) (मापा गया; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>

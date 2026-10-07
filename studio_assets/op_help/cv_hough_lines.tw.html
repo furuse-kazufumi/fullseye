@@ -10,8 +10,7 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>基於機率霍夫變換的直線（線段）偵測（單一純量特徵，OpenCV 實作）。先用 Canny 產生邊緣影像，再以投票方式在其中尋找排成直線的邊緣像素集合，將其偵測為線段 —— 這裡只回傳偵測到的線段數量（若為 0 條則回傳 0）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)に相当(近似。線のパラメータではなく本数のみ)。実装は <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a は投票数のしきい値(直線と認める最低票数)を 20〜60 に、b は最小線分長を 10〜30 に振る。Canny の内部しきい値(50, 150)と maxLineGap(5)は固定。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">hough_lines</code>(Detect lines in edge images with the help of the Hough transform and returns it in HNF.)(近似。只回傳條數,不回傳直線參數)。實作為 <code style="color:#22d3bf">cv2.HoughLinesP(Canny(_u8(v),50,150), 1, pi/180, threshold=int(20+40*a), minLineLength=int(10+20*b), maxLineGap=5)</code> —— a 在 20～60 之間調整投票數閾值(認定為直線所需的最低票數),b 在 10～30 之間調整最小線段長度。Canny 的內部閾值(50, 150)與 maxLineGap(5)是固定的。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

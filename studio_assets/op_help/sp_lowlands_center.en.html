@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Returns the centroid of minimum &#x27;basins&#x27; (flat regions lower than their surroundings) (equivalent to HALCON <code style="color:#22d3bf">lowlands_center</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">sp_plateaus</code> と同じ量子化による平坦領域抽出を行った上で、外周の画素がすべて厳密に高い（領域極小である）ものだけを残し、さらに深さ（外周の最小値との差）が <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code> 以上のものだけを採用する。<code style="color:#22d3bf">b</code> は未使用。戻り値は CONTOUR、各盆地につき 1 点（重心座標、単位はピクセル）。入力が 200,000 画素を超える場合は安全側で空集合を返す。</p>
+<p>After extracting flat regions with the same quantization as <code style="color:#22d3bf">sp_plateaus</code>, it keeps only those whose outer-border pixels are all strictly higher (regional minima), and further adopts only those whose depth (difference to the minimum of the outer border) is at least <code style="color:#22d3bf">min_depth = 0.01 + 0.40*a</code>. <code style="color:#22d3bf">b</code> is unused. Returns a CONTOUR with 1 point per basin (centroid coordinates, in pixels). If the input exceeds 200,000 pixels, it errs on the safe side and returns the empty set.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Background guides (the physics and conventions behind this op)</h3>

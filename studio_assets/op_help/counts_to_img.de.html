@@ -14,11 +14,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.inputs.jpg">counts_to_img: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Macht aus einer 1-D-Folge nichtnegativer ganzzahliger Zählwerte ein <b>Balkendiagramm</b> und wandelt sie zurück in ein Bild.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">counts</code> を画像に落とせる op は <b>1 本も無かった</b>(作る op は 13 本ある)。既定を棒にしてあるのは、カウントが<b>整数の度数</b>だからで、折れ線で結ぶと「間の値」が在るように見えてしまう。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 縦軸の余白(<code style="color:#22d3bf">signal_to_img</code> と同じ式)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 描き方。<code style="color:#22d3bf">b &lt; 1/3</code> で<b>折れ線</b>、<code style="color:#22d3bf">&lt; 2/3</code> で<b>棒</b>(既定)、それ以上で <b>点</b>。<code style="color:#22d3bf">signal_to_img</code> と<b>並びが違う</b>のは、既定のノブ 0.5 でその型に素直な描き方になるようにしているから —— カウントは棒が素直。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64。</p>
+<p>Es gab <b>nicht 1 einzige Op</b>, die <code style="color:#22d3bf">counts</code> in ein Bild bringen kann (Ops, die es erzeugen, gibt es 13). Standard sind Balken, weil Zählungen <b>ganzzahlige Häufigkeiten</b> sind; verbindet man sie mit einer Polylinie, sieht es so aus, als gäbe es &quot;Werte dazwischen&quot;.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Rand der senkrechten Achse (gleiche Formel wie <code style="color:#22d3bf">signal_to_img</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Darstellungsart. <b>Polylinie</b> bei <code style="color:#22d3bf">b &lt; 1/3</code>, <b>Balken</b> (Standard) bei <code style="color:#22d3bf">&lt; 2/3</code>, darüber <b>Punkte</b>. Die <b>Reihenfolge weicht</b> von <code style="color:#22d3bf">signal_to_img</code> ab, weil der Standard-Stellknopf 0.5 die für diesen Typ natürliche Darstellung ergeben soll —— für Zählungen sind Balken natürlich.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(128, 128)</code> float64.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">Leitfaden zur Familie gallery2d_bridge</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

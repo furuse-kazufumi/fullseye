@@ -13,11 +13,10 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Take the intensity profile of one row (or column) of the image as a 1-D signal.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位置。<code style="color:#22d3bf">b &lt; 0.5</code> なら行 <code style="color:#22d3bf">r = round(a * (H-1))</code> を横に読む(長さ W)、<code style="color:#22d3bf">b ≥ 0.5</code> なら列 <code style="color:#22d3bf">c = round(a * (W-1))</code> を縦に読む(長さ H)。a=0.5 は中央。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64、値はそのまま(正規化しない。画像が [0,1] なら [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• 補間はしない(画素の値をそのまま並べる)。斜めの線が要るなら <code style="color:#22d3bf">line_profile</code> (台帳)を使う。</p>
-<p>使いどころ: 1-D 関数の族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)を画像の断面で試す入口。周期構造(市松・縞)を横切る行を選ぶとスペクトル系 op の効果が見える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → position. If <code style="color:#22d3bf">b &lt; 0.5</code>, row <code style="color:#22d3bf">r = round(a * (H-1))</code> is read horizontally (length W); if <code style="color:#22d3bf">b ≥ 0.5</code>, column <code style="color:#22d3bf">c = round(a * (W-1))</code> is read vertically (length H). a=0.5 is the centre.</p>
+<p style="margin:2px 0 2px 12px">• Returns: 1-D float64, values as they are (not normalised. If the image is [0,1], then [0,1]).</p>
+<p style="margin:2px 0 2px 12px">• No interpolation (pixel values are lined up as they are). For a diagonal line use <code style="color:#22d3bf">line_profile</code> (ledger).</p>
+<p>Where to use: the entry for trying the family of 1-D functions (<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …) on a cross-section of an image. Pick a row that cuts across a periodic structure (checkerboard, stripes) and the effect of the spectral ops becomes visible.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -9,11 +9,10 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Lee-Rosenfeld: light source के slant का अनुमान लगाता है (zenith कोण, 0=सामने से pi/2=ठीक बगल तक)। [0,1] में normalised।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画像の平均輝度 <code style="color:#22d3bf">&lt;I&gt;</code> を反射率 1 の Lambertian 面の関係 <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code> に当てはめ、<code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> を <code style="color:#22d3bf">pi/2</code> で割った <code style="color:#22d3bf">np.float64</code>(0〜1)で返す。0 が正面光(平均 1.0)、1 が真横(平均 0)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 平均は [0,1] に clip してから <code style="color:#22d3bf">arccos</code> に渡すので範囲外にはならない。</p>
-<p>実質「平均輝度が低いほど slant が大きい」という 1 対 1 の写像で、反射率は 1 と仮定している(暗い素材も斜光と区別できない)。勾配で補正する版は <code style="color:#22d3bf">hx_estimate_sl_al_zc</code>、反射率の代理値は <code style="color:#22d3bf">hx_estimate_al_am</code>。<code style="color:#22d3bf">hx_shade_height_field</code> の仰角 <code style="color:#22d3bf">b</code> と組み合わせて陰影を再現する際の目安に使う。</p>
+<p>image की mean luminance <code style="color:#22d3bf">&lt;I&gt;</code> को reflectance 1 वाली Lambertian surface के संबंध <code style="color:#22d3bf">&lt;I&gt; = albedo * cos(slant)</code> में fit करके, <code style="color:#22d3bf">slant = arccos(&lt;I&gt;)</code> को <code style="color:#22d3bf">pi/2</code> से भाग देकर <code style="color:#22d3bf">np.float64</code> (0 से 1) के रूप में लौटाया जाता है। 0 सामने से light (mean 1.0) है, 1 बिल्कुल बगल से (mean 0)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते।</p>
+<p style="margin:2px 0 2px 12px">• mean को <code style="color:#22d3bf">arccos</code> में देने से पहले [0,1] पर clip किया जाता है, इसलिए value range से बाहर नहीं जाती।</p>
+<p>असल में यह &quot;mean luminance जितनी कम, slant उतना बड़ा&quot; वाला 1-to-1 mapping है, और reflectance को 1 माना जाता है (गहरे रंग की material को भी तिरछी light से अलग नहीं पहचाना जा सकता)। gradient से correct करने वाला version <code style="color:#22d3bf">hx_estimate_sl_al_zc</code> है, reflectance का proxy value <code style="color:#22d3bf">hx_estimate_al_am</code> है। <code style="color:#22d3bf">hx_shade_height_field</code> के elevation <code style="color:#22d3bf">b</code> के साथ मिलाकर shading दोबारा बनाते समय इसे अंदाज़े के रूप में इस्तेमाल करें।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -14,10 +14,9 @@
 <p><img src="fig/tb_occupancy_grid.gif" alt="tb_occupancy_grid: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点云 (N,3) → 三维占据体素栅格,bool(点落入的体素记为占据)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> が格子の張る体積、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ = 立方 res³、または長さ 3 の軸ごと)。ボクセルは半開区間 [lo+i/res*span, lo+(i+1)/res*span) で、上端 (frac==1) の点は最終ボクセルに含める。<b>bounds 外の点は落とす</b>(端セルへ clamp すると境界に幻の障害物が積もるため)。match3d.points_to_voxel が密度(float) を作るのに対し、これは planning 用の占有(bool)を作る点が固有。</p>
-<p>Raises ValueError for res&lt;=0, non-(N,3) points, or degenerate bounds.</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">occupancy_grid</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> 为网格所张成的体积，<code style="color:#22d3bf">res</code> 为各轴的体素数(标量 = 立方 res³，或长度 3 的逐轴值)。体素为半开区间 [lo+i/res*span, lo+(i+1)/res*span)，上端 (frac==1) 的点归入最后一个体素。<b>bounds 外的点被丢弃</b>(若 clamp 到端格，边界上会堆积虚假障碍物)。match3d.points_to_voxel 生成密度(float)，而这里生成用于 planning 的占据(bool)，这是其特有之处。</p>
+<p>当 res&lt;=0、points 不是 (N,3) 或 bounds 退化时抛出 ValueError。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">occupancy_grid</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

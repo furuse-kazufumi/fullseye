@@ -15,13 +15,12 @@
 <p><img src="fig/img_to_lightfield.gif" alt="img_to_lightfield: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>image को foreground/background की 2 layers में बाँटकर parallax वाला 4-D light field (V,U,H,W) बनाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">lf_synthesize</code> と同じ前方モデルの 2 層版: 視点 <code style="color:#22d3bf">(v, u)</code> は層ごとに <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> だけ画像をずらして見る(線形補間、縁は最近傍)。背景層は傾き 0(無限遠)、前景層(しきい値以上の画素)は傾き <code style="color:#22d3bf">slope</code> で、前景が背景を<b>遮蔽</b>する(視点ごとにマスクもずらす)。変位が角度インデックスに線形なので、EPI の傾き・リフォーカスの最良スロープ・両端視点の視差 <code style="color:#22d3bf">slope * (U - 1)</code> がすべて閉形式で分かる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 前景の傾き <code style="color:#22d3bf">slope = 1.5 * a</code> 画素/視点(a=0.5 で 0.75。5×5 なら両端で 3 px)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 前景のしきい値 <code style="color:#22d3bf">thr = b</code>(<code style="color:#22d3bf">img &gt;= thr</code> が前景。b=0.5 で明るい部分)。</p>
-<p style="margin:2px 0 2px 12px">• 角度サンプルは <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code>。返り値 <code style="color:#22d3bf">(5, 5, H, W)</code> float64。</p>
-<p style="margin:2px 0 2px 12px">• 中央視点 <code style="color:#22d3bf">(2, 2)</code> は入力そのもの(ずれ 0)。</p>
-<p>使いどころ: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> の入口。深度推定の答えは「前景 = slope、背景 = 0」の 2 値。</p>
+<p><code style="color:#22d3bf">lf_synthesize</code> वाले ही forward model का 2-layer संस्करण: viewpoint <code style="color:#22d3bf">(v, u)</code> हर layer के लिए image को <code style="color:#22d3bf">(slope * (v - v_c), slope * (u - u_c))</code> जितना खिसकाकर देखता है (linear interpolation, किनारे पर nearest neighbour)। background layer का slope 0 (अनंत दूरी) है, foreground layer (threshold या उससे ऊपर के pixel) का slope <code style="color:#22d3bf">slope</code> है, और foreground background को <b>occlude</b> करता है (हर viewpoint के लिए mask भी खिसकाया जाता है)। displacement angular index में linear है, इसलिए EPI का slope, refocus का सबसे अच्छा slope और दोनों छोर के viewpoint का disparity <code style="color:#22d3bf">slope * (U - 1)</code> सब closed form में ज्ञात हैं।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → foreground का slope <code style="color:#22d3bf">slope = 1.5 * a</code> pixel/viewpoint (a=0.5 पर 0.75। 5×5 में दोनों छोरों के बीच 3 px)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → foreground का threshold <code style="color:#22d3bf">thr = b</code> (<code style="color:#22d3bf">img &gt;= thr</code> foreground है। b=0.5 पर चमकीले हिस्से)।</p>
+<p style="margin:2px 0 2px 12px">• angular samples <code style="color:#22d3bf">LF_ANGULAR = (5, 5)</code> हैं। लौटाता है <code style="color:#22d3bf">(5, 5, H, W)</code> float64।</p>
+<p style="margin:2px 0 2px 12px">• बीच का viewpoint <code style="color:#22d3bf">(2, 2)</code> स्वयं input है (खिसकाव 0)।</p>
+<p>कहाँ उपयोग करें: <code style="color:#22d3bf">tb_lf_epi</code> / <code style="color:#22d3bf">tb_lf_refocus</code> / <code style="color:#22d3bf">tb_lf_depth_from_focus</code> का entry। depth estimation का उत्तर &quot;foreground = slope, background = 0&quot; वाले 2 मान हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

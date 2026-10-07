@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity_xld.chain.jpg">circularity_xld: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>对最大的轮廓,用鞋带公式的面积 <code style="color:#22d3bf">F</code> 和从<b>所围面积的重心</b>到轮廓点的最大距离 <code style="color:#22d3bf">max</code> 计算 <code style="color:#22d3bf">min(1, F/(π・max²))</code>(区域版 <code style="color:#22d3bf">circularity</code> 的轮廓版)。与 HALCON 的 <code style="color:#22d3bf">circularity_xld</code>(Shape factor for the circularity (similarity to a circle) of contours or polygons.)<b>是同一个公式</b>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という別の量だった。重心は点の平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★2026-09-26 之前是等周比 <code style="color:#22d3bf">4π·面积/周长²</code> 这个不同的量。质心使用面积的质心,而不是点的平均 —— 因为后者会偏向点密集的一侧。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

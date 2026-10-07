@@ -8,8 +8,7 @@
 <p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Wavelet packet की energy का बिखराव (Shannon entropy)। <code style="color:#22d3bf">db1</code> से depth 2 का wavelet packet decomposition करता है, 16 leaf subbands में से हर एक की energy (coefficients के वर्गों का योग) को normalised distribution मानकर उसकी Shannon entropy को <code style="color:#22d3bf">log2(16)</code> से भाग देकर [0,1] में normalise करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。値が 1 に近いほどエネルギーが全周波数帯に均等に分散(テクスチャが複雑)、0 に近いほど特定の帯域に集中(単純なパターンや平坦な領域)していることを示す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। मान 1 के जितना निकट, energy उतनी समान रूप से सभी frequency bands में फैली होती है (जटिल texture); 0 के जितना निकट, उतनी किसी विशेष band में केंद्रित होती है (सरल pattern या समतल क्षेत्र)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

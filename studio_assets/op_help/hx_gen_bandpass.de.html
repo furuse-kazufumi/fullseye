@@ -14,12 +14,11 @@
 <p>*Die 4. Spalte ist eine Farb-Eingabe (H,W,3). Dieser Op verarbeitet Farbe, ohne Kanäle zu vermischen (er faltet den Farbkanal nicht als dritte Raumachse).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Ein idealer Bandpass (eine Ringmaske im Frequenzbereich, Innenradius a und Bandbreite b).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">hx_gen_lowpass</code> と同じ正規化周波数半径 <code style="color:#22d3bf">r</code>(<code style="color:#22d3bf">fftshift</code> 済、中心=DC)に対し <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> の円環を 1 とする 0/1 の float 画像(周波数領域マスク)を返す。入力 <code style="color:#22d3bf">v</code> は形状の取得にのみ使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 内半径 <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code>(0.05〜0.45)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 帯域幅 <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code>(0.05〜0.35)。外半径は <code style="color:#22d3bf">r_lo + 幅</code> で最大 0.8 だが、半径が</p>
-<p>約 0.707 を超える周波数は存在しないので、大きな a, b では円環の外側が画像外に出て実質ハイパスになる。</p>
-<p><code style="color:#22d3bf">hx_gen_bandfilter</code> は「中心半径と半幅」で同じ円環を指定する別パラメータ化。<code style="color:#22d3bf">fft_generic</code> などの中心=DC スペクトルとの画素積で使う。</p>
+<p>Gibt für denselben normierten Frequenzradius <code style="color:#22d3bf">r</code> wie <code style="color:#22d3bf">hx_gen_lowpass</code> (bereits <code style="color:#22d3bf">fftshift</code>-verschoben, Mitte = DC) ein 0/1-float-Bild (Frequenzbereichsmaske) zurück, in dem der Kreisring <code style="color:#22d3bf">r_lo &lt;= r &lt;= r_hi</code> 1 ist. Die Eingabe <code style="color:#22d3bf">v</code> dient nur zur Bestimmung der Form.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → Innenradius <code style="color:#22d3bf">r_lo = 0.05 + 0.4*a</code> (0.05 bis 0.45).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → Bandbreite <code style="color:#22d3bf">r_hi - r_lo = 0.05 + 0.3*b</code> (0.05 bis 0.35). Der Außenradius ist <code style="color:#22d3bf">r_lo + width</code>, höchstens 0.8; da es aber keine Frequenzen mit einem Radius über</p>
+<p>etwa 0.707 gibt, liegt bei großen a, b die Außenseite des Rings außerhalb des Bildes, und es wird faktisch ein Hochpass.</p>
+<p><code style="color:#22d3bf">hx_gen_bandfilter</code> ist eine andere Parametrisierung, die denselben Ring über &quot;Mittelradius und halbe Breite&quot; angibt. Verwendet als pixelweises Produkt mit Spektren mit Mitte = DC wie <code style="color:#22d3bf">fft_generic</code>.</p>
 <p><b>Vergleichbarkeit der Werte (gemessen)</b>: Die Ausgabe wird <b>auf das Maximum des jeweiligen Bildes normiert</b> (das Ausgabemaximum ist stets 1.0, und eine Skalierung der Eingabe lässt die Ausgabe unverändert). Werte sind daher <b>nicht bildübergreifend vergleichbar</b> — ein Merkmal gleicher Stärke erhält je nach dem stärksten Merkmal im Bild einen anderen Wert, und in einem Bild mit nur schwachen Merkmalen wird das Rauschen auf 1.0 angehoben. Für einen Vergleich über Bilder hinweg auf eine gemeinsame Referenz umskalieren.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>

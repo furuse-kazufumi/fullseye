@@ -13,8 +13,7 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>一併偵測極大值、極小值與鞍點的子像素位置(相當於 HALCON <code style="color:#22d3bf">critical_points_sub_pix</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> の 3 つを同じしきい値 <code style="color:#22d3bf">a</code> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。<code style="color:#22d3bf">b</code> は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
+<p>以同一閾值 <code style="color:#22d3bf">a</code> 執行 <code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> 這 3 個運算子，並依極大→極小→鞍點的順序把偵測點串接成 1 個 CONTOUR。<code style="color:#22d3bf">b</code> 未使用。回傳座標的單位為輸入影像的像素（次像素小數值）。用於不區分個別種類、只想知道「臨界點在哪裡」的情況。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">背景知識指南(該運算子背後的物理與規範)</h3>

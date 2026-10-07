@@ -14,8 +14,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>लक्ष्य आकार (ऊँचाई <code style="color:#22d3bf">H*(0.5+a)</code>, चौड़ाई <code style="color:#22d3bf">W*(0.5+b)</code>) पर resample करने वाला zoom। <code style="color:#22d3bf">zoom_image_factor</code> जहाँ 2 गुणक लेता है, वहीं यह <b>आकार</b> को ही खड़ी और आड़ी दिशा में स्वतंत्र रूप से देता है ―― HALCON के अर्थ में ये अलग चीज़ें हैं। लेकिन इस pipeline की <code style="color:#22d3bf">image</code> का contract &quot;इनपुट जैसे ही canvas आकार में लौटना&quot; है, इसलिए resample परिणाम को मूल resolution वाले canvas के ऊपर-बाएँ रखा जाता है, खाली जगह 0 होती है और बाहर जाने वाला हिस्सा काट दिया जाता है (image का वास्तव में छोटा/बड़ा होना देखकर समझ आता है, लेकिन array का shape खुद नहीं बदलता)। HALCON के <code style="color:#22d3bf">zoom_image_size</code> (Zoom an image to a given size.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が目標高さの比率、<code style="color:#22d3bf">b</code> が目標幅の比率を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> लक्ष्य ऊँचाई का अनुपात और <code style="color:#22d3bf">b</code> लक्ष्य चौड़ाई का अनुपात बदलता है। दोनों का उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>이미지 전체를 극좌표(반지름·각도) 표현으로 변환한다(<code style="color:#22d3bf">cv2.warpPolar</code>, 순방향·선형 보간). 중심은 이미지 중심으로 고정, 반지름 최댓값은 <code style="color:#22d3bf">min(h,w)/2</code>. a, b는 사용되지 않는다(<code style="color:#22d3bf">polar_trans_image</code>와 동일한 <code style="color:#22d3bf">_sh_geom</code>의 <code style="color:#22d3bf">polar</code> 분기를 공유).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>HALCON の <code style="color:#22d3bf">polar_trans_image_ext</code>（中心・半径範囲・角度範囲などを個別指定できる、環状の一部だけを切り出して極座標変換する拡張版演算）とは異なり、この実装は画像全体を固定パラメータで変換する簡略近似 —— 環状領域や角度範囲の指定はできない。</p>
+<p>HALCON의 <code style="color:#22d3bf">polar_trans_image_ext</code>(중심·반경 범위·각도 범위 등을 개별 지정할 수 있고, 고리 모양의 일부만 잘라 극좌표 변환하는 확장판 연산)와 달리, 이 구현은 영상 전체를 고정 파라미터로 변환하는 간략 근사 — 고리 모양 영역이나 각도 범위는 지정할 수 없다.</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>

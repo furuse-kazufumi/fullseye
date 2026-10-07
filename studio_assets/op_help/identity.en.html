@@ -12,8 +12,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Identity mapping. Mapped to HALCON&#x27;s <code style="color:#22d3bf">copy_image</code> (Copy an image and allocate new memory for it.), but unlike <code style="color:#22d3bf">copy_image</code>, which allocates new memory and duplicates the image, this implementation simply returns the input array as-is (it does not duplicate it).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。sort が <code style="color:#22d3bf">ANY</code>（image/region/feature いずれの入力にも一致）なのはこの op だけの特別扱いで、パイプラインの型を変えずに「何もしない」スロットを置くために使う（進化がスロット数を埋めたいだけのとき等）。値を作り直さず入力をそのまま返すため、呼び出し側で戻り値を書き換えると入力の配列も一緒に変わる点に注意。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. This op alone gets the special treatment of having the sort <code style="color:#22d3bf">ANY</code> (it matches image, region and feature input alike); it is used to place a &quot;do nothing&quot; slot without changing the types in the pipeline (e.g. when evolution only wants to fill up the number of slots). Because it returns the input as is instead of rebuilding the value, note that if the caller modifies the return value, the input array changes along with it.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

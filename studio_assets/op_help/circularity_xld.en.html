@@ -11,9 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/circularity_xld.chain.jpg">circularity_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>For the largest contour, computes <code style="color:#22d3bf">min(1, F/(pi * max^2))</code> from the shoelace area <code style="color:#22d3bf">F</code> and the largest distance <code style="color:#22d3bf">max</code> from the <b>centre of gravity of the enclosed area</b> to a contour point (the contour counterpart of <code style="color:#22d3bf">circularity</code>). <b>The same formula as</b> HALCON&#x27;s <code style="color:#22d3bf">circularity_xld</code> (Shape factor for the circularity (similarity to a circle) of contours or polygons.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★2026-09-26 まで等周比 <code style="color:#22d3bf">4π・面積/周囲長²</code> という別の量だった。重心は点の平均ではなく面積の重心を使う —— 点が密な側に寄ってしまうため。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>★Until 2026-09-26 it was a different quantity, the isoperimetric ratio <code style="color:#22d3bf">4π·area/perimeter²</code>. For the centroid, the centroid of the area is used rather than the mean of the points -- otherwise it would be pulled towards the side where the points are dense.</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

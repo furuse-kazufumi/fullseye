@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_label_to_region.inputs.jpg">r3_label_to_region: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Extracts only the pixels with one specific gray value (label) from a label image (equivalent to HALCON <code style="color:#22d3bf">label_to_region</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた<code style="color:#22d3bf">round(a * (ラベル数-1))</code> 番目のラベルを選んで、その値を持つ画素を領域として返す。<code style="color:#22d3bf">b</code> は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
+<p>Rounds the input to 3 decimal places, treats values greater than 0 as labels, selects the label at index <code style="color:#22d3bf">round(a * (number of labels-1))</code> in ascending order, and returns the pixels having that value as the region. <code style="color:#22d3bf">b</code> is unused. A simple 0/1 mask has only 1 label, so its foreground is always returned.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

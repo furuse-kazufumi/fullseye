@@ -13,11 +13,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>그레이값의 웅덩이(국소 최소의 평탄역)를 검출: 이웃 최소와 일치하는 화소 region.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">ndimage.minimum_filter</code>(<code style="color:#22d3bf">size</code> 角の正方形窓、鏡映境界)で局所最小 <code style="color:#22d3bf">mn</code> を取り、<code style="color:#22d3bf">v &lt;= mn + 1e-6</code> かつ <code style="color:#22d3bf">v &lt; 画像平均</code> の画素を 1 とする 0/1 の float region を返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 窓の一辺 <code style="color:#22d3bf">size = 3 + int(a*6)</code>(3〜9 画素)。大きいほど広い範囲で最小である必要があり、点が減る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>平坦な窪みは窓内の全画素が最小値に等しいため、領域ごと(1 点ではなく面で)拾われる。逆に画像全体が平坦だと <code style="color:#22d3bf">v &lt; mean</code> を満たす画素が無く空になる。「平均より暗い」条件のため、明るい面の中の浅い窪みは拾えない。雑音があると小さな極小が大量に出るので、前段に <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code> を置く。反対の隆起は画像を反転して同じ op を掛ける。</p>
+<p><code style="color:#22d3bf">ndimage.minimum_filter</code>(<code style="color:#22d3bf">size</code> 정사각형 창, 거울 반사 경계)로 국소 최소 <code style="color:#22d3bf">mn</code>을 구하고, <code style="color:#22d3bf">v &lt;= mn + 1e-6</code>이면서 <code style="color:#22d3bf">v &lt; 영상 평균</code>인 화소를 1로 하는 0/1의 float region을 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 창의 한 변의 길이 <code style="color:#22d3bf">size = 3 + int(a*6)</code>(3~9화소). 클수록 넓은 범위에서 최소여야 하며, 점이 줄어든다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>평탄한 움푹한 곳은 창 안의 모든 화소가 최솟값과 같으므로, 영역째(1점이 아니라 면으로) 주워진다. 반대로 영상 전체가 평탄하면 <code style="color:#22d3bf">v &lt; mean</code>을 만족하는 화소가 없어 비게 된다. &quot;평균보다 어둡다&quot;는 조건 때문에, 밝은 면 안의 얕은 움푹한 곳은 주울 수 없다. 잡음이 있으면 작은 극소가 대량으로 나오므로, 전단에 <code style="color:#22d3bf">hx_mean_shape</code> / <code style="color:#22d3bf">gauss_filter</code>를 둔다. 반대인 융기는영상을 반전하여 같은 op를 건다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

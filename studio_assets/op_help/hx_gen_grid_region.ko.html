@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>격자선(grid-line) region 을 생성한다. HALCON 의 <code style="color:#22d3bf">gen_grid_region</code>(직선 또는 픽셀로부터 region 을 생성한다)의 격자 패턴에 상응하는 간략화 버전이다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が格子間隔(<code style="color:#22d3bf">min(h, w)</code> の 5%〜25%)を振り、行・列インデックスが間隔の倍数の画素を前景とする。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p><code style="color:#22d3bf">a</code>가 격자 간격(<code style="color:#22d3bf">min(h, w)</code>의 5%~25%)을 바꾸고, 행·열 인덱스가간격의 배수인 화소를 전경으로 한다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>는 <b>단계적으로</b> 작용하며 전환점은 a ≈ 0.37、0.59、0.79、0.99(간격 0.02 스윕으로 실측).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>

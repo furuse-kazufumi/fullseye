@@ -14,19 +14,18 @@
 <p><img src="fig/tb_points_to_voxel.gif" alt="tb_points_to_voxel: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>点云 (N,3) → 密度体素 (size³)。通过 scatter_add 进行 splat，可选高斯平滑。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>bounds=(lo,hi) を与えれば複数雲を同一格子に載せられる(=マッチング前提)。</p>
-<p>手順: 各点を <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> で整数格子に落とし、その voxel に 1 を加算する(値 = その voxel に落ちた点の個数)。<code style="color:#22d3bf">smooth &gt; 0</code> なら σ=<code style="color:#22d3bf">smooth</code>(voxel 単位) の gaussian を 3 軸分離 conv で掛ける(半径 <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>、端は replicate)。出力の軸順は <b>点の列の順そのまま</b>(<code style="color:#22d3bf">points[:, 0]</code> → 軸 0)で、(depth,row,col) への並べ替えはしない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> の 3 次元ベクトル 2 本。None なら点群自身の min/max(雲ごとに</p>
-<p>格子が変わるので、2 つの雲を比べるときは必ず同じ bounds を渡す)。長さ 3 でない・非有限・ <code style="color:#22d3bf">hi &lt;= lo</code> の軸があると ValueError(tsdf 系の <code style="color:#22d3bf">((xmin,xmax),...)</code> 流儀は長さ 2 として拒否)。</p>
-<p style="margin:2px 0 2px 12px">• 範囲外の点は捨てずに <b>端の voxel へ clip される</b>(端に偽の密度が溜まる)。切り落としたい</p>
-<p>なら事前に点群側で除く。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: 一辺の voxel 数。<code style="color:#22d3bf">hi − lo</code> が 0 の軸は 1e-9 に置換されるだけで警告しない。</p>
-<p style="margin:2px 0 2px 12px">• 空の点群で bounds=None は numpy の min が例外を出す。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy(device で計算しても CPU に戻す)。値は個数</p>
-<p>(平滑後は個数の重み分布)で正規化はしない。</p>
-<p>後段: <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> の入力に。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">points_to_voxel</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>给出 bounds=(lo,hi) 就能把多个点云放到同一网格上(=匹配的前提)。</p>
+<p>步骤: 用 <code style="color:#22d3bf">idx = floor((p − lo)/(hi − lo)·(size − 1))</code> 把各点落到整数网格上,对该 voxel 加 1(值 = 落入该 voxel 的点的个数)。若 <code style="color:#22d3bf">smooth &gt; 0</code>,则以 σ=<code style="color:#22d3bf">smooth</code>(voxel 单位) 的 gaussian 做 3 轴可分离 conv(半径 <code style="color:#22d3bf">max(1, int(4σ + 0.5))</code>,边缘为 replicate)。输出的轴顺序<b>与点的列顺序完全相同</b>(<code style="color:#22d3bf">points[:, 0]</code> → 轴 0),不会重排为(depth,row,col)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">(lo, hi)</code> 这 2 个 3 维向量。为 None 时用点云自身的 min/max(每个点云的</p>
+<p>网格都不同,因此比较 2 个点云时必须传入相同的 bounds)。长度不为 3、非有限、<code style="color:#22d3bf">hi &lt;= lo</code> 的轴会引发 ValueError(tsdf 系的 <code style="color:#22d3bf">((xmin,xmax),...)</code> 写法按长度 2 拒绝)。</p>
+<p style="margin:2px 0 2px 12px">• 范围外的点不丢弃,而是<b>clip 到边缘的 voxel</b>(边缘会堆积虚假的密度)。想要截掉</p>
+<p>时请事先在点云侧去除。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">size</code>: 一边的 voxel 数。<code style="color:#22d3bf">hi − lo</code> 为 0 的轴只会被替换为 1e-9,不发出警告。</p>
+<p style="margin:2px 0 2px 12px">• 空点云且 bounds=None 时,numpy 的 min 会抛出异常。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(size, size, size)</code> float64 numpy(即使在 device 上计算也会返回 CPU)。值是个数</p>
+<p>(平滑后是个数的加权分布),不做归一化。</p>
+<p>后级: 作为 <code style="color:#22d3bf">match_points_ncc</code> / <code style="color:#22d3bf">signed_distance_field</code> / <code style="color:#22d3bf">voxel_to_mesh</code> 的输入。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">points_to_voxel</code>。实现相同,只有调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调点,<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

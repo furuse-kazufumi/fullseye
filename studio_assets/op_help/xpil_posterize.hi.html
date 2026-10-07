@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Posterization (tones की संख्या घटाना)। <code style="color:#22d3bf">PIL.ImageOps.posterize</code> को call करता है, और हर channel के effective bits घटाकर रंगों की संख्या कम करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>a が保持ビット数（<code style="color:#22d3bf">bits = 1 + int(a*6)</code>、範囲 1〜7）を振る。b は未使用。bits=1 では各チャンネルが 2 値化に近い極端な階調落ちになる。</p>
+<p>a रखे जाने वाले bits की संख्या (<code style="color:#22d3bf">bits = 1 + int(a*6)</code>, range 1-7) को बदलता है। b उपयोग नहीं होता। bits=1 पर हर channel में 2 मानों वाले binary के क़रीब, अत्यधिक tone हानि होती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

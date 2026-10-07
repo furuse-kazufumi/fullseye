@@ -14,10 +14,9 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_inner_rectangle1.inputs.jpg">r2_inner_rectangle1: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>最大的轴对齐内接矩形(a 收缩所画矩形;a=0 为精确)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>領域に内接する軸並行矩形のうち面積最大のものをマスクとして描く。前景マスク(<code style="color:#22d3bf">&gt; 0.5</code>)に対し、行ごとに各列の連続前景高さを積み、単調スタックで最大長方形を求めるヒストグラム法(O(H*W))で厳密解を得る。同面積の候補が複数あるときは走査順で最初に見つかったものを採る。</p>
-<p><code style="color:#22d3bf">a</code> は描く矩形を内側へ縮める割合で、<code style="color:#22d3bf">f = 0.3*a</code> として高さを <code style="color:#22d3bf">round(hh*f/2)</code> 行ずつ、幅を <code style="color:#22d3bf">round(ww*f/2)</code> 列ずつ両側から削る。<code style="color:#22d3bf">a=0</code> で厳密な最大内接矩形、<code style="color:#22d3bf">a=1</code> で各辺が約 15% ずつ縮む(面積ではおよそ半分)。縮めすぎて辺が潰れる場合は中央の 1 行 / 1 列に丸める。<code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。矩形は画素境界にそろうため <code style="color:#22d3bf">a=0</code> の出力は必ず領域に含まれる(<code style="color:#22d3bf">r2_inner_circle</code> と異なりはみ出さない)。孔のある領域では孔を避けた矩形になるので、孔を無視したいときは前段に <code style="color:#22d3bf">fill_up</code>。回転した矩形は扱えない(軸並行のみ)。外接側の軸並行矩形は <code style="color:#22d3bf">r2_smallest_rectangle1</code>。</p>
+<p>将区域内切的轴平行矩形中面积最大者绘制为掩模。对前景掩模(<code style="color:#22d3bf">&gt; 0.5</code>)，逐行累积各列的连续前景高度，用单调栈求最大矩形的直方图法(O(H*W))得到精确解。若有多个同面积的候选，则采用按扫描顺序最先找到的那个。</p>
+<p><code style="color:#22d3bf">a</code> 是将绘制的矩形向内收缩的比例，令 <code style="color:#22d3bf">f = 0.3*a</code>，高度从两侧各削去 <code style="color:#22d3bf">round(hh*f/2)</code> 行，宽度各削去 <code style="color:#22d3bf">round(ww*f/2)</code> 列。<code style="color:#22d3bf">a=0</code> 时为精确的最大内切矩形，<code style="color:#22d3bf">a=1</code> 时各边约各缩 15%(面积约为一半)。若收缩过度导致边塌缩，则取整为中央的 1 行 / 1 列。<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值是与输入同形的 float64 0/1 掩模。没有前景时全为零。矩形与像素边界对齐，因此 <code style="color:#22d3bf">a=0</code> 的输出必定包含在区域内(与 <code style="color:#22d3bf">r2_inner_circle</code> 不同，不会超出)。有孔的区域会得到避开孔的矩形，因此想忽略孔时，在前级使用 <code style="color:#22d3bf">fill_up</code>。无法处理旋转的矩形(仅限轴平行)。外接侧的轴平行矩形是 <code style="color:#22d3bf">r2_smallest_rectangle1</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/feature_to_img.inputs.jpg">feature_to_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Turns a scalar feature into a <b>band with tick marks</b> and back into an image — the sort for which, in the 2-D ledger, <b>125 ops produce it, yet not even 1 op could turn it into an image</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>★<b>数字そのものは描かない。</b> 文字を焼くと絵が<b>環境に入っている書体</b>で変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の<b>位置</b>で、目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)に渡すこと。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → スケールの上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 で 0.01、a=0.5 で <b>1.0</b>、a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目盛りの張り方。<code style="color:#22d3bf">b &lt; 0.5</code> は <b>片側</b> <code style="color:#22d3bf">[0, hi]</code>(左端が 0)、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>両側</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央が 0</b>。相関・歪度など符号のある量向け)。</p>
-<p style="margin:2px 0 2px 12px">• 上限を超える値は<b>端で止める</b>(帯が振り切れた状態 = 「スケールが小さい」の合図)。★NaN / Inf は<b>白紙</b>を返す(振り切れと区別する)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(128, 128)</code> float64、白地([0,1])。</p>
+<p>★<b>It does not draw the numbers themselves.</b> Burning in text would make the picture change with <b>the typeface installed in the environment</b>, breaking the contract that the same input gives the same pixels. What it draws is the <b>position</b> of the value, and the ticks (0, 1/4, 1/2, 3/4, 1) are the cues for reading it. If you need the numbers, pass them to <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code> (paper family).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → upper limit of the scale <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code> (0.01 at a=0, <b>1.0</b> at a=0.5, 100 at a=1). Features vary widely in magnitude, so choose here the magnitude you want to see.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → how the ticks are laid out. <code style="color:#22d3bf">b &lt; 0.5</code> is <b>one-sided</b> <code style="color:#22d3bf">[0, hi]</code> (left end is 0), <code style="color:#22d3bf">b &gt;= 0.5</code> is <b>two-sided</b> <code style="color:#22d3bf">[-hi, +hi]</code> (<b>the centre is 0</b>; for signed quantities such as correlation and skewness).</p>
+<p style="margin:2px 0 2px 12px">• Values above the upper limit are <b>clamped at the end</b> (the bar pinned to the end = the cue that &quot;the scale is too small&quot;). ★NaN / Inf returns a <b>blank sheet</b> (distinguished from being pinned to the end).</p>
+<p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(128, 128)</code> float64, on white ([0,1]).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

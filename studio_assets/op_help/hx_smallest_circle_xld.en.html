@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_smallest_circle_xld.chain.jpg">hx_smallest_circle_xld: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The radius of the minimum enclosing circle of all contour points (approximated with the centroid as centre), as a normalised feature.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>contour dict の全 contour の点をまとめ、点の平均(重心)を中心として最も遠い点までの距離 <code style="color:#22d3bf">r</code> を求め、<code style="color:#22d3bf">r / max(H, W)</code> を <code style="color:#22d3bf">np.float64</code> で返す。真の最小包含円(中心も最適化)ではなく「重心を中心とする包含円」の近似で、半径は真値以上になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 1 つも無ければ 0.0(有効な値 0 と区別できない)。</p>
-<p>複数 contour があっても 1 つの円で包む(contour ごとではない)。正規化は画像の長辺なので、同じ形でも画像サイズが変わると値が変わる。円らしさを測りたいなら <code style="color:#22d3bf">hx_fit_circle_contour</code>(残差)や <code style="color:#22d3bf">circularity_xld</code>。region 版の厳密解は <code style="color:#22d3bf">r2_smallest_circle</code>。</p>
+<p>Merges the points of all contours of a contour dict, takes the mean of the points (centroid) as the centre, finds the distance <code style="color:#22d3bf">r</code> to the farthest point, and returns <code style="color:#22d3bf">r / max(H, W)</code> as <code style="color:#22d3bf">np.float64</code>. It is not the true minimum enclosing circle (with the centre also optimised) but an approximation by an &quot;enclosing circle centred on the centroid&quot;, and its radius is at least the true value.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused.</p>
+<p style="margin:2px 0 2px 12px">• 0.0 if there is not even 1 point (indistinguishable from a valid value of 0).</p>
+<p>Even with multiple contours, they are enclosed by 1 circle (not per contour). The normalisation uses the image&#x27;s longer side, so even the same shape gives a different value when the image size changes. To measure circularity, use <code style="color:#22d3bf">hx_fit_circle_contour</code> (residual) or <code style="color:#22d3bf">circularity_xld</code>. The exact solution for regions is <code style="color:#22d3bf">r2_smallest_circle</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

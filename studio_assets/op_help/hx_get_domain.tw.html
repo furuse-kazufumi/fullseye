@@ -12,10 +12,9 @@
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把影像的定義域取為 region(預設為整幅)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状の全 1 の float64 配列(region)を返す。この実装は画像に ROI(定義域)の概念を持たないため、定義域は常に画像全面であり、<code style="color:#22d3bf">hx_full_domain</code> と同じ結果になる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。入力の gray 値も見ない。</p>
-<p>用途は「今の定義域を region として取り出し、他の region 演算の初期値にする」こと。ROI を絞った region が欲しいときは <code style="color:#22d3bf">hx_rectangle1_domain</code>(中央矩形)か <code style="color:#22d3bf">threshold</code> で作る。</p>
+<p>回傳與輸入 <code style="color:#22d3bf">v</code> 同形狀、全為 1 的 float64 陣列（region）。此實作中影像沒有 ROI（定義域）的概念，定義域總是整張影像，因此與 <code style="color:#22d3bf">hx_full_domain</code> 結果相同。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。也不查看輸入的 gray 值。</p>
+<p>用途是「把目前的定義域作為 region 取出，作為其他 region 運算的初始值」。想要縮小了 ROI 的 region 時，以 <code style="color:#22d3bf">hx_rectangle1_domain</code>（中央矩形）或 <code style="color:#22d3bf">threshold</code> 建構。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，全部像素都成為前景（1）</b>。過曝、被遮擋或沒有被攝物的影格會被報為「<b>缺陷 100%</b>」，因此應在上游判定是否均勻並加以剔除。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>

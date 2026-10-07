@@ -13,8 +13,7 @@
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>High-pass filter via FFT (extracting contours and high-frequency components). Equivalent to HALCON&#x27;s <code style="color:#22d3bf">highpass_image</code> (Extract high frequency components from an image.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code> が遮断周波数 <code style="color:#22d3bf">cutoff = 0.02 + 0.3a</code> を振る。<code style="color:#22d3bf">b</code> は未使用。2-D FFT で <code style="color:#22d3bf">rad &gt; cutoff</code> の高周波成分だけを残し、逆 FFT の実部を <code style="color:#22d3bf">_signed01</code> で <code style="color:#22d3bf">[0,1]</code> へ写す（0.5 が「変化なし」、それより明暗が高周波成分の符号を表す）。低域フィルタ同様、境界は周期的（FFT）に扱われる。</p>
+<p><code style="color:#22d3bf">a</code> sweeps the cutoff frequency <code style="color:#22d3bf">cutoff = 0.02 + 0.3a</code>. <code style="color:#22d3bf">b</code> is unused. A 2-D FFT keeps only the high-frequency components with <code style="color:#22d3bf">rad &gt; cutoff</code>, and the real part of the inverse FFT is mapped to <code style="color:#22d3bf">[0,1]</code> with <code style="color:#22d3bf">_signed01</code> (0.5 means &quot;no change&quot;; brighter or darker than that represents the sign of the high-frequency component). As with the low-pass filter, the border is treated as periodic (FFT).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_texture_freq">gallery2d_texture_freq family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

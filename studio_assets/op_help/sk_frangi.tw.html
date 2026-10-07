@@ -15,8 +15,7 @@
 <p>*未展示彩色 (H,W,3) 輸入: 此運算子把顏色通道當作第三個空間軸(跨通道)。請按通道分別呼叫。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Frangi 管狀結構偵測濾波器（vesselness filter）。依 Hessian 矩陣的特徵值比來偵測血管、皺紋、河流等細長的管狀結構。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)に相当(近似。線の幅や XLD 輪郭は返さず、応答強度の画像のみを返す)。2026-08-30 に a, b を配線した: a はスケール範囲(<code style="color:#22d3bf">sigmas=range(1, 2+round(a*4))</code> —— 最大 σ を 1〜5 に振る。a=0.5 で旧来の固定範囲 <code style="color:#22d3bf">range(1,4)</code> とビット一致)、b は Frangi の blobness 感度 β を 0.15〜0.85 に振る(b=0.5 で skimage 既定の 0.5 と一致し、既定出力は変わらない)。既定で <code style="color:#22d3bf">black_ridges=True</code>(明るい背景上の暗い管を検出する)ため、白い背景に黒い線が乗った画像でないと応答が弱く出る点に注意。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">lines_gauss</code>(Detect lines and their width.)（近似。不回傳線寬和 XLD 輪廓，只回傳響應強度的影像）。2026-08-30 接通了 a、b：a 是尺度範圍（<code style="color:#22d3bf">sigmas=range(1, 2+round(a*4))</code> —— 把最大 σ 在 1〜5 之間調整。a=0.5 時與舊的固定範圍 <code style="color:#22d3bf">range(1,4)</code> 逐位元一致），b 把 Frangi 的 blobness 靈敏度 β 在 0.15〜0.85 之間調整（b=0.5 時與 skimage 預設的 0.5 一致，預設輸出不變）。預設 <code style="color:#22d3bf">black_ridges=True</code>（偵測亮背景上的暗管），因此請注意，若不是白背景上有黑線的影像，響應會偏弱。</p>
 <p><b>數值可比性（實測）</b>：輸出以<b>該影像自身的最大值正規化</b>（輸出最大值恆為 1.0，輸入整體縮放不改變輸出）。因此<b>不能跨影像比較數值</b>——同樣強度的特徵會因該影像中最強特徵的不同而取不同的值；在只有弱特徵的影像中，雜訊會被抬升到 1.0。要跨影像比較，請以統一基準重新縮放。</p>
 <p><b>空影格（實測）</b>：輸入亮度均勻的影像時，<b>無論亮度為何，結果都為空（全部像素為背景 0）</b>。純白與純黑表現相同；僅憑亮度偵測不到任何東西。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

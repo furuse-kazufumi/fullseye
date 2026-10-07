@@ -13,16 +13,15 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Gradient दिशा के साथ non-maximum suppression (Canny का NMS stage)। Edges को 1 pixel तक पतला करता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>Sobel で <code style="color:#22d3bf">gx</code>(列方向)・<code style="color:#22d3bf">gy</code>(行方向)を取り、振幅 <code style="color:#22d3bf">hypot(gx, gy)</code> と方向 <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code> を求める。方向を 45° 刻みの 4 区分に量子化し、各画素をその区分に対応する 2 つの隣接画素と比べて <code style="color:#22d3bf">mag &gt;= 両隣</code> の画素だけ残す(それ以外は 0)。残った振幅を min-max で [0,1] に正規化し、<code style="color:#22d3bf">a*0.3</code> 未満を 0 に落とす。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 弱エッジのしきい値 <code style="color:#22d3bf">a*0.3</code>(正規化後の値に対して。a=0 でしきい値なし)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>注意点:</p>
-<p style="margin:2px 0 2px 12px">• 隣接比較は <code style="color:#22d3bf">np.roll</code> なので画像端では反対側の画素と比較される(端 1 画素は信用しない)。</p>
-<p style="margin:2px 0 2px 12px">• 比較が <code style="color:#22d3bf">&gt;=</code> のため、同じ振幅が並ぶ理想的なステップエッジは 2 画素幅で残る(1 画素にはならない)。</p>
-<p style="margin:2px 0 2px 12px">• 現状の実装では 45° と 135° の区分で比較する隣接画素の対が入れ替わっており、斜めのエッジは勾配方向でなく</p>
-<p>エッジに沿った方向で比較される。そのため水平・垂直エッジは細線化されるが、斜めエッジはほとんど細線化されない(ぼかした対角ステップエッジで 1400 画素前後がそのまま残る実測)。斜めエッジの細線化が要る場合は <code style="color:#22d3bf">canny</code> や <code style="color:#22d3bf">skeleton</code> を検討する。</p>
-<p><code style="color:#22d3bf">sobel_amp</code> のような振幅画像ではなく元の gray 画像を渡す(内部で微分する)。後段は <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>。</p>
+<p>Sobel से <code style="color:#22d3bf">gx</code> (column दिशा) और <code style="color:#22d3bf">gy</code> (row दिशा) लेकर amplitude <code style="color:#22d3bf">hypot(gx, gy)</code> और दिशा <code style="color:#22d3bf">arctan2(gy, gx) mod 180°</code> निकालता है। दिशा को 45° के अंतर पर 4 sectors में quantize करके, हर pixel की उसके sector के अनुरूप 2 पड़ोसी pixels से तुलना करता है, और केवल <code style="color:#22d3bf">mag &gt;= both neighbours</code> वाले pixels रखता है (बाकी 0)। बचे amplitude को min-max से [0,1] में normalise करके <code style="color:#22d3bf">a*0.3</code> से कम मानों को 0 कर देता है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → कमजोर edges का threshold <code style="color:#22d3bf">a*0.3</code> (normalise के बाद के मान पर; a=0 पर कोई threshold नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>ध्यान देने योग्य बातें:</p>
+<p style="margin:2px 0 2px 12px">• पड़ोसी तुलना <code style="color:#22d3bf">np.roll</code> से होती है, इसलिए image के किनारे पर विपरीत ओर के pixels से तुलना होती है (किनारे के 1 pixel पर भरोसा न करें)।</p>
+<p style="margin:2px 0 2px 12px">• तुलना <code style="color:#22d3bf">&gt;=</code> है, इसलिए समान amplitude वाली आदर्श step edge 2 pixels चौड़ी बची रहती है (1 pixel नहीं बनती)।</p>
+<p style="margin:2px 0 2px 12px">• वर्तमान implementation में 45° और 135° sectors में तुलना होने वाले पड़ोसी pixel pairs आपस में बदल गए हैं, इसलिए तिरछी edges की तुलना gradient दिशा में नहीं, बल्कि</p>
+<p>edge के साथ की दिशा में होती है। इस कारण horizontal और vertical edges thin होती हैं, पर तिरछी edges लगभग thin नहीं होतीं (blur की गई diagonal step edge पर लगभग 1400 pixels जैसे के तैसे बचे रहने का माप)। तिरछी edges का thinning चाहिए तो <code style="color:#22d3bf">canny</code> या <code style="color:#22d3bf">skeleton</code> पर विचार करें।</p>
+<p><code style="color:#22d3bf">sobel_amp</code> जैसी amplitude image नहीं, बल्कि मूल gray image दें (अंदर ही differentiate होता है)। बाद में <code style="color:#22d3bf">hx_close_edges</code> / <code style="color:#22d3bf">hx_detect_edge_segments</code> / <code style="color:#22d3bf">threshold</code>।</p>
 <p><b>Values की तुलना (मापा गया)</b>: output को <b>उसी image के अधिकतम से normalise</b> किया गया है (output का अधिकतम हमेशा 1.0 होता है, और input को किसी constant से गुणा करने पर भी output नहीं बदलता)। इसलिए <b>अलग-अलग images के values की तुलना नहीं की जा सकती</b> — समान ताकत वाले feature का value भी इस पर निर्भर करता है कि उस image में सबसे मज़बूत feature कौन-सा है। केवल कमज़ोर features वाली image में noise 1.0 तक उठ जाता है। images के बीच तुलना करनी हो तो किसी साझा reference से फिर से भाग दें।</p>
 <p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, परिणाम खाली होता है (सभी pixels background 0)</b>। पूरी सफ़ेद हो या पूरी काली, एक जैसा व्यवहार होता है; केवल brightness से कुछ detect नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>

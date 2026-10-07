@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Generate the parallel (normal-offset) contour of each contour (the signed distance comes from (a−0.5)).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各 contour(点数 2 以上)の接線を <code style="color:#22d3bf">np.gradient(c, axis=0)</code> で求め、それを 90° 回した単位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> の方向に <code style="color:#22d3bf">dist</code> だけ全点をずらした contour を返す。元の contour は出力に含まれない(置き換わる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 符号つきオフセット <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 画素。a=0.5 で無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 接線長が 1e-9 未満の点(重複点)は法線 0 とし動かさない。点数 1 の contour はそのまま。</p>
-<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと自己交差する(<code style="color:#22d3bf">hx_test_self_intersect</code> で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から一定距離に置くのに使う。</p>
+<p>For each contour (2 or more points), computes the tangent with <code style="color:#22d3bf">np.gradient(c, axis=0)</code>, rotates it by 90° to the unit normal <code style="color:#22d3bf">(-t_col, t_row) / |t|</code>, and returns the contour with all points shifted by <code style="color:#22d3bf">dist</code> along it. The original contour is not included in the output (it is replaced).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → signed offset <code style="color:#22d3bf">dist = (a - 0.5) * 10</code> (-5 to +5 pixels; no change at a=0.5).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p style="margin:2px 0 2px 12px">• Points with tangent length below 1e-9 (duplicate points) get normal 0 and are not moved. Contours with 1 point pass through unchanged.</p>
+<p>The normal direction is set by the direction of travel of the contour (whether left or right is positive depends on the point order). Shifting by more than the radius of curvature makes the contour self-intersect (detectable with <code style="color:#22d3bf">hx_test_self_intersect</code>). Used to compare fattened/thinned versions of an outline, or to place measurement lines at a fixed distance from a boundary.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

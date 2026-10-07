@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edges_color_sub_pix.inputs.jpg">edges_color_sub_pix: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>擷取彩色邊緣上的連通元件作為輪廓（contour）。號稱相當於 HALCON 的 <code style="color:#22d3bf">edges_color_sub_pix</code>（以 Deriche/Shen/Canny 擷取次像素精度的彩色邊緣），但<b>實作並非次像素精度</b>——將 <code style="color:#22d3bf">_edges_color</code> 的梯度強度以閾值二值化，用 8 連通標記（<code style="color:#22d3bf">scipy.ndimage.label</code>）連接後，將得到的像素座標直接作為輪廓點回傳（座標全部位於整數網格上）。捨棄 3 像素以下的元件。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>a はしきい値 <code style="color:#22d3bf">0.15 + 0.5 * a</code> を振る（大きいほど輪郭が減る）。b は未使用。戻り値は <code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [輪郭ごとの (N,2) 座標配列]}</code>。</p>
+<p>a 調整閾值 <code style="color:#22d3bf">0.15 + 0.5 * a</code>（越大輪廓越少）。b 未使用。傳回值為 <code style="color:#22d3bf">{&quot;shape&quot;:..., &quot;cs&quot;: [每個輪廓的 (N,2) 座標陣列]}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

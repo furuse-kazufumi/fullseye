@@ -12,8 +12,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>相位解卷绕（phase unwrapping）。将输入 [0,1] 视为相位 [-pi, pi]，用 <code style="color:#22d3bf">skimage.restoration.unwrap_phase</code> 去除 2*pi 的折返（wrap），然后通过 <code style="color:#22d3bf">signed01</code> 在保持符号的情况下转回 [0,1]（0 -&gt; 0.5）。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある結果にならないことがある。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。这是用于将干涉条纹等周期性卷绕的相位图像连续化的 op，对于均匀渐变或随机噪声等本来就不像相位的输入，可能得不到有意义的结果。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

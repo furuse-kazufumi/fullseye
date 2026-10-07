@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>वृत्ताकार region बनाता है। HALCON के <code style="color:#22d3bf">gen_circle</code> (वृत्त बनाना) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>画布中心 <code style="color:#22d3bf">(h/2, w/2)</code> を中心とする円板を描き、内部を 1・外部を 0 として返す。<code style="color:#22d3bf">a</code> が半径を <code style="color:#22d3bf">min(h, w)</code> の 10%〜50% の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>canvas के केंद्र <code style="color:#22d3bf">(h/2, w/2)</code> को केंद्र मानकर disc बनाता है, और अंदर को 1, बाहर को 0 रखकर लौटाता है। <code style="color:#22d3bf">a</code> radius को <code style="color:#22d3bf">min(h, w)</code> के 10% से 50% की सीमा में बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

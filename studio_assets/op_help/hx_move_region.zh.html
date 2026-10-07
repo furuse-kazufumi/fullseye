@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_move_region.inputs.jpg">hx_move_region: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平移 region(dy=a, dx=b,视为以 0 为中心的偏移)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>np.roll ゆえ<b>端は循環</b>(はみ出た region が反対側から現れる)。HALCON の move_region は端で消える(クリップ)なので端に触れる移動では挙動が異なる — 進化 op の特徴量用途では循環で一様性を保つ設計を維持し、差異はここに開示する。</p>
+<p>由于 np.roll，<b>边缘是循环的</b>（溢出的 region 会从对侧出现）。HALCON 的 move_region 在边缘处消失（裁剪），因此在接触边缘的移动中行为不同 — 在进化 op 的特征量用途中，保持以循环维持一致性的设计，差异在此公开。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

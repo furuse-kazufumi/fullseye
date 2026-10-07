@@ -12,8 +12,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p><code style="color:#22d3bf">log1p(x) / log(2)</code> से [0,1] को [0,1] में map करने वाला logarithmic compression (x=1 पर 1 होने वाले normalisation के साथ)। चमकीले हिस्सों को compress करके अँधेरे हिस्सों का detail उठाने वाली, <code style="color:#22d3bf">exp_image</code> से उलटी tone curve। HALCON के <code style="color:#22d3bf">log_image</code> (Calculate the logarithm of an image.) का विकल्प।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。ゲイン付き対数変換が欲しい場合は <code style="color:#22d3bf">lut</code> の <code style="color:#22d3bf">log_gain</code> 分岐(<code style="color:#22d3bf">a</code> でゲインを振れる、ただし SEED には未登録) に近い実装が別途ある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। gain वाला log transform चाहिए तो <code style="color:#22d3bf">lut</code> की <code style="color:#22d3bf">log_gain</code> branch (<code style="color:#22d3bf">a</code> से gain बदला जा सकता है, लेकिन यह SEED में registered नहीं है) में इससे मिलता-जुलता एक अलग implementation है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

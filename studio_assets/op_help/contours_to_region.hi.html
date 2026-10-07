@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contours_to_region.inputs.jpg">contours_to_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>XLD contours को rasterise करके region में बदलता है। HALCON के <code style="color:#22d3bf">gen_region_contour_xld</code> (Create a region from an XLD contour.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> が仕上げに掛ける膨張の反復回数を <code style="color:#22d3bf">1〜3</code>（<code style="color:#22d3bf">1 + int(2a)</code>）に振る。<code style="color:#22d3bf">b</code> は未使用。輪郭点の実数座標を最近傍の画素へ丸めてマスクを立て、点間が疎で線がつながらないぶんを膨張で補う（サブピクセル精度は失われる）。</p>
+<p><code style="color:#22d3bf">a</code> अंत में लगाए जाने वाले dilation की iteration संख्या को <code style="color:#22d3bf">1〜3</code> (<code style="color:#22d3bf">1 + int(2a)</code>) पर बदलता है। <code style="color:#22d3bf">b</code> उपयोग नहीं होता। contour point के real coordinate को nearest pixel पर round करके mask बनाया जाता है, और point के बीच दूरी होने से रेखा न जुड़ने वाली कमी को dilation से पूरा किया जाता है (sub-pixel precision खो जाती है)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

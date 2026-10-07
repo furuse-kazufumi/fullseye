@@ -13,13 +13,12 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把图像当作高度场，转换为 (x, y, z) 点云 (N,3)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各画素 <code style="color:#22d3bf">(row, col)</code> を 1 点 <code style="color:#22d3bf">(x, y, z) = (col * 10/W, row * 10/H, value * 10 * s)</code> に写す —— 画像の幅・高さを <b>一辺 10 の箱</b> に正規化した座標(<code style="color:#22d3bf">POINTS_BOX</code>)。点群 op の橋渡し(<code style="color:#22d3bf">tb_*</code>)が束縛している半径・境界箱・格子解像度はこの尺度(連鎖ファザーの種 <code style="color:#22d3bf">[0,10)^3</code>)を前提にしているので、画素座標のまま渡すと半径系 op の近傍が空になり占有格子が全 0 になる(実測)。画素に戻すなら <code style="color:#22d3bf">x * W / 10</code>、<code style="color:#22d3bf">y * H / 10</code>。列の規約は <code style="color:#22d3bf">camera.depth_to_points</code> と同じ <b>(x, y, z)</b> —— <code style="color:#22d3bf">reprconv</code> の <code style="color:#22d3bf">(z, y, x)</code> とは逆なので、その族へ渡すときは <code style="color:#22d3bf">tb_points_zyx_to_keypoints_uv</code> 等の入口で読み替えること。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。値域 [0,1] の画像なら z の範囲は x, y と同じ桁 [0, 11.25] になり、点群 op が「平面」でなく「地形」を見る)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 間引きの歩幅 <code style="color:#22d3bf">stride = 1 + int(b * 3)</code>(b=0.5 で 2。128×128 なら 4,096 点。b=0 で全画素、b=1 で 1/16)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N, 3)</code> float64、<code style="color:#22d3bf">N = ceil(H/stride) * ceil(W/stride)</code>。空にはならない。</p>
-<p style="margin:2px 0 2px 12px">• 順序は行優先(row-major)で決定的。同じ入力なら同じ配列。</p>
-<p>使いどころ: 点群 op(<code style="color:#22d3bf">tb_alpha_shape_boundary</code> / <code style="color:#22d3bf">tb_estimate_point_normals</code> / <code style="color:#22d3bf">tb_points_to_voxel</code> …)を <b>1 枚の画像から</b> 試す入口。DEM(標高図)を <code style="color:#22d3bf">value = 標高 / 最大標高</code> に正規化して渡せば、そのまま地形の点群になる。</p>
+<p>把每个像素 <code style="color:#22d3bf">(row, col)</code> 映射为 1 个点 <code style="color:#22d3bf">(x, y, z) = (col * 10/W, row * 10/H, value * 10 * s)</code> —— 即把图像的宽和高归一化到 <b>边长 10 的盒子</b> 的坐标(<code style="color:#22d3bf">POINTS_BOX</code>)。点云 op 的桥接(<code style="color:#22d3bf">tb_*</code>)所绑定的半径、包围盒、网格分辨率都以这一尺度(链式模糊测试器的种子 <code style="color:#22d3bf">[0,10)^3</code>)为前提，因此直接传入像素坐标会让半径类 op 的邻域为空、占据栅格全为 0(实测)。要换回像素，<code style="color:#22d3bf">x * W / 10</code>、<code style="color:#22d3bf">y * H / 10</code>。列的约定与 <code style="color:#22d3bf">camera.depth_to_points</code> 相同，为 <b>(x, y, z)</b> —— 与 <code style="color:#22d3bf">reprconv</code> 的 <code style="color:#22d3bf">(z, y, x)</code> 相反，所以传给那一族时，要在 <code style="color:#22d3bf">tb_points_zyx_to_keypoints_uv</code> 等入口处转换。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高度倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 时为 1.125。值域为 [0,1] 的图像时，z 的范围与 x, y 同一量级，为 [0, 11.25]，点云 op 看到的是“地形”而不是“平面”)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 抽稀步长 <code style="color:#22d3bf">stride = 1 + int(b * 3)</code>(b=0.5 时为 2。128×128 时为 4,096 点。b=0 为全部像素，b=1 为 1/16)。</p>
+<p style="margin:2px 0 2px 12px">• 返回值: <code style="color:#22d3bf">(N, 3)</code> float64，<code style="color:#22d3bf">N = ceil(H/stride) * ceil(W/stride)</code>。不会为空。</p>
+<p style="margin:2px 0 2px 12px">• 顺序为行优先(row-major)，是确定性的。输入相同则数组相同。</p>
+<p>用途: 试用点云 op(<code style="color:#22d3bf">tb_alpha_shape_boundary</code> / <code style="color:#22d3bf">tb_estimate_point_normals</code> / <code style="color:#22d3bf">tb_points_to_voxel</code> …)时 <b>从 1 张图像</b> 出发的入口。把 DEM(高程图)按 <code style="color:#22d3bf">value = 高程 / 最大高程</code> 归一化后传入，就直接成为地形点云。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

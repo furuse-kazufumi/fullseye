@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_color.inputs.jpg">lines_color: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Colour image की रेखाएँ (ridges) पहचानता है। इसे HALCON के <code style="color:#22d3bf">lines_color</code> (colour रेखाएँ और उनकी चौड़ाई पहचानना) के समकक्ष माना जाता है, लेकिन <b>रेखा की चौड़ाई का अनुमान नहीं लगाता</b>——brightness image पर Laplacian of Gaussian response को threshold से binarise करके connected components को contours के रूप में लौटाता है बस, और रेखा की चौड़ाई (HALCON की तरफ़ से लौटने वाला मान) के समकक्ष कोई आउटपुट नहीं है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">_rgb_to_gray</code> で輝度化した後、<code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> をシグマ <code style="color:#22d3bf">0.5 + 2.5 * a</code> でかけて絶対値を最大値正規化し、<code style="color:#22d3bf">0.2 + 0.4 * b</code> でしきい値二値化して 8 連結ラベリングする。a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。3 画素未満の成分は捨てる。</p>
+<p><code style="color:#22d3bf">_rgb_to_gray</code> से luminance में बदलने के बाद, <code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> को sigma <code style="color:#22d3bf">0.5 + 2.5 * a</code> से लागू करके absolute value को अधिकतम मान से normalise करता है, <code style="color:#22d3bf">0.2 + 0.4 * b</code> threshold से binary करके 8-connected labelling करता है। a ridge की मोटाई (LoG का scale) और b detection threshold को बदलता है। 3 pixels से कम वाले घटक हटा दिए जाते हैं।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

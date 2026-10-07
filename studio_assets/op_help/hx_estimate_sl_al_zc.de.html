@@ -9,10 +9,9 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zheng-Chellappa: schätzt den Slant, korrigiert über die Gradientenenergie.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">hx_estimate_sl_al_lr</code> と同じ <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> の slant に、Sobel 勾配振幅の平均 <code style="color:#22d3bf">e</code>(1 で頭打ち)による係数 <code style="color:#22d3bf">(1 + min(e, 1))</code> を掛けて、<code style="color:#22d3bf">pi/2</code> で割り 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> を返す。「勾配が強い=斜光=slant 大」という向きの補正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>補正係数は 1〜2 倍で、平均輝度が低く勾配も強い画像では上限 1 に張り付く。勾配振幅はテクスチャや雑音でも増えるので、照明以外の要因で slant が過大に出る。前段に <code style="color:#22d3bf">gauss_filter</code> を置くと雑音分の勾配は減る。反射率の推定は <code style="color:#22d3bf">hx_estimate_al_am</code>、方位は <code style="color:#22d3bf">hx_estimate_tilt_zc</code>。</p>
+<p>Multipliziert denselben slant <code style="color:#22d3bf">arccos(&lt;I&gt;)</code> wie <code style="color:#22d3bf">hx_estimate_sl_al_lr</code> mit einem Faktor <code style="color:#22d3bf">(1 + min(e, 1))</code> aus dem mittleren Sobel-Gradientenbetrag <code style="color:#22d3bf">e</code> (bei 1 gekappt), teilt durch <code style="color:#22d3bf">pi/2</code>, kappt bei 1 und gibt <code style="color:#22d3bf">np.float64</code> zurück. Eine Korrektur in Richtung &quot;starker Gradient = Schräglicht = großer slant&quot;.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet.</p>
+<p>Der Korrekturfaktor beträgt das 1- bis 2-Fache; bei Bildern mit niedriger mittlerer Leuchtdichte und starken Gradienten klebt das Ergebnis an der Obergrenze 1. Der Gradientenbetrag wächst auch durch Textur und Rauschen, daher fällt der slant durch andere Faktoren als die Beleuchtung zu groß aus. Ein vorgeschaltetes <code style="color:#22d3bf">gauss_filter</code> verringert den Rauschanteil des Gradienten. Die Schätzung des Reflexionsgrads ist <code style="color:#22d3bf">hx_estimate_al_am</code>, das Azimut <code style="color:#22d3bf">hx_estimate_tilt_zc</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">Leitfaden zur Familie gallery2d_halcon_ext</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

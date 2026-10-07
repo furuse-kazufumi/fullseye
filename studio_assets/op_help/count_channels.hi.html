@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/count_channels.chain.jpg">count_channels: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के channels की संख्या गिनता है। HALCON के <code style="color:#22d3bf">count_channels</code> (image के channels की संख्या गिनना) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">ndim == 3</code> ならその最後の軸の長さ（チャンネル数）、そうでなければ（グレースケール扱いで）1 を返す。a, b は未使用。出力は <code style="color:#22d3bf">feature</code> （スカラー 1 個）。</p>
+<p>यदि <code style="color:#22d3bf">ndim == 3</code> है तो उसके अंतिम axis की लंबाई (channels की संख्या), अन्यथा (grayscale मानकर) 1 लौटाता है। a, b उपयोग नहीं होते। आउटपुट <code style="color:#22d3bf">feature</code> है (1 scalar)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

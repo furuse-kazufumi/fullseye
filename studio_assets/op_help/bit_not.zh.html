@@ -12,8 +12,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>灰度反转（负片/正片反转）。实现为 <code style="color:#22d3bf">1 - x</code>（作为 [0,1] 连续值的反转），a、b 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">bit_not</code>（画素の全ビットを反転するビット単位演算）とは動作原理が異なる近似 —— 8bit 整数のビット補数ではなく浮動小数の線形反転なので、量子化された画像でのビットパターンは再現しない。明るい/暗いを単純に入れ替えたい用途には使える。</p>
+<p>与 HALCON 的 <code style="color:#22d3bf">bit_not</code>(将像素所有位取反的按位运算)工作原理不同的近似 —— 不是 8bit 整数的按位取补,而是浮点数的线性反转,因此不会重现量化图像中的位模式。可用于只想简单地对调明暗的用途。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

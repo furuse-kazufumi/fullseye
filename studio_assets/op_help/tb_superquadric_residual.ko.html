@@ -10,14 +10,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_superquadric_residual.chain.jpg">tb_superquadric_residual: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Gross-Boult 부피 보정 잔차: mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 ).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code> で各点の内外関数 F を求め、点ごとの残差 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code> の 2 乗平均を float で返す。表面上の点は <code style="color:#22d3bf">F=1</code> なので残差 0、内側は負・外側は正の残差になる(2 乗するので符号は消える)。<code style="color:#22d3bf">fit_superquadric</code> が最小化しているのと同じ量で、返り dict の <code style="color:#22d3bf">residual</code> もこの値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) にリシェイプできる点群(world 座標)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>: 半径 (a1,a2,a3)。<code style="color:#22d3bf">eps</code>: 形状指数 (eps1,eps2)(F の計算には両方、外側の <code style="color:#22d3bf">F**eps1</code> には <code style="color:#22d3bf">eps1</code> だけを使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>: 姿勢(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。<code style="color:#22d3bf">None</code> なら単位回転 / 原点。</p>
-<p>数値保護: F は [0, 1e12] にクリップし、<code style="color:#22d3bf">a1*a2*a3</code> は 1e-12 以上に持ち上げてから sqrt を取る(退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。</p>
-<p>次元: <code style="color:#22d3bf">sqrt(a1 a2 a3)</code> は長さの 3/2 乗、<code style="color:#22d3bf">F^eps1 - 1</code> は無次元なので、返り値は長さの 3 乗の次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring のとおり。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">superquadric_residual</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p><code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code>로 각 점의 내외 함수 F를 구하고, 점별 잔차 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code>의 2 제곱 평균을 float로 반환한다. 표면 위의 점은 <code style="color:#22d3bf">F=1</code>이므로잔차 0, 안쪽은 음, 바깥쪽은 양의 잔차가 된다(2 제곱하므로 부호는 사라진다). <code style="color:#22d3bf">fit_superquadric</code>가최소화하는 것과 같은 양이며, 반환 dict의 <code style="color:#22d3bf">residual</code>도 이 값이다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3)으로 reshape할 수 있는 점군(world 좌표).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>: 반지름 (a1,a2,a3). <code style="color:#22d3bf">eps</code>: 형상 지수 (eps1,eps2)(F 계산에는 둘 다, 바깥의 <code style="color:#22d3bf">F**eps1</code>에는 <code style="color:#22d3bf">eps1</code>만 쓴다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>: 자세(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>). <code style="color:#22d3bf">None</code>이면 단위 회전 / 원점.</p>
+<p>수치 보호: F는 [0, 1e12]로 클립하고, <code style="color:#22d3bf">a1*a2*a3</code>는 1e-12 이상으로 끌어올린 뒤 sqrt를 취한다(퇴화 파라미터에서 inf/NaN이 되지 않도록. 표면 근방의 값에는 영향이 없다).</p>
+<p>차원: <code style="color:#22d3bf">sqrt(a1 a2 a3)</code>는 길이의 3/2 제곱, <code style="color:#22d3bf">F^eps1 - 1</code>은 무차원이므로, 반환값은 길이의 3 제곱차원을 가지며 점군의 스케일에 의존한다. 크기가 다른 물체끼리의 비교에는 맞지 않는다. 참된 점-표면유클리드 거리가 아니라 반경 거리 근사라는 점, 이상값에 무방비하다는 점은 모듈 docstring 에 적힌 대로다.</p>
+<p>2-D 진화 레지스트리로 연결한 3d의 op <code style="color:#22d3bf">superquadric_residual</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. 이 op에는 조정할 매개변수가 없으며 <code style="color:#22d3bf">a</code>도 <code style="color:#22d3bf">b</code>도 쓰이지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

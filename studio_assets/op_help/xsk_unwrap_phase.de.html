@@ -12,8 +12,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Phasen-Unwrapping. Betrachtet die Eingabe [0,1] als Phase [-pi, pi], entfernt 2*pi-Umbrüche mit <code style="color:#22d3bf">skimage.restoration.unwrap_phase</code> und wandelt sie anschließend mit <code style="color:#22d3bf">signed01</code> unter Beibehaltung des Vorzeichens zurück in [0,1] (0 -&gt; 0.5).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。干渉縞など周期的にラップした位相画像の連続化に使う op で、一様なグラデーションやランダムノイズなど元々位相らしくない入力では意味のある結果にならないことがある。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Ein op, um periodisch umgebrochene Phasenbilder wie Interferenzstreifen stetig zu machen; bei Eingaben, die von vornherein nicht phasenartig sind, etwa ein gleichmäßiger Verlauf oder zufälliges Rauschen, entsteht möglicherweise kein sinnvolles Ergebnis.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">Leitfaden zur Familie gallery2d_smoothing_rank</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

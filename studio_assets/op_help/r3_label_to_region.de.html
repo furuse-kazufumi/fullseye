@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_label_to_region.inputs.jpg">r3_label_to_region: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Extrahiert aus einem Labelbild nur die Pixel mit einem bestimmten Grauwert (Label) (entspricht HALCON <code style="color:#22d3bf">label_to_region</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>入力を 3 桁に丸めた上で 0 より大きい値をラベルとみなし、昇順に並べた<code style="color:#22d3bf">round(a * (ラベル数-1))</code> 番目のラベルを選んで、その値を持つ画素を領域として返す。<code style="color:#22d3bf">b</code> は未使用。単純な 0/1 マスクはラベルが 1 つしか無いので常にその前景が返る。</p>
+<p>Rundet die Eingabe auf 3 Stellen, betrachtet Werte größer als 0 als Labels, wählt in aufsteigender Reihenfolge das Label an Position <code style="color:#22d3bf">round(a * (Anzahl Labels-1))</code> und gibt die Pixel mit diesem Wert als Region zurück. <code style="color:#22d3bf">b</code> wird nicht verwendet. Eine einfache 0/1-Maske hat nur 1 Label, daher wird stets ihr Vordergrund zurückgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">Leitfaden zur Familie gallery2d_region</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

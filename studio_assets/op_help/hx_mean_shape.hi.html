@@ -13,11 +13,10 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>किसी भी mask (वृत्त disk) से mean smoothing। Radius r, a से बदलता है (आयताकार mean से अलग op)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>半径 <code style="color:#22d3bf">r</code> の円板(<code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> を満たす画素を 1、総和で割って正規化)を <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code> で畳み込む。出力は入力と同形の float 配列で、値域は入力の範囲を出ない(重みの和が 1)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 半径 <code style="color:#22d3bf">r = 1 + int(a*4)</code>(1〜5 画素、5 になるのは a=1 のときだけ)。カーネルは <code style="color:#22d3bf">(2r+1)</code> 角の中の円板。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>矩形窓の <code style="color:#22d3bf">mean_image</code> と違い方向による重みの偏りが少なく、円板半径以下の構造を等方的にぼかす。境界は鏡映で延長するので端の暗落ちは起きない。入力検証は無く、NaN が含まれるとそのまま伝播する。</p>
+<p>radius <code style="color:#22d3bf">r</code> की disc (<code style="color:#22d3bf">xx^2+yy^2 &lt;= r^2</code> पूरा करने वाले pixels को 1, कुल योग से भाग देकर normalise) से <code style="color:#22d3bf">ndimage.convolve(mode=&quot;reflect&quot;)</code> द्वारा convolution करता है। output input के समान shape का float array है, और मान input की range से बाहर नहीं जाते (weights का योग 1)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → radius <code style="color:#22d3bf">r = 1 + int(a*4)</code> (1 से 5 pixels; 5 केवल a=1 पर होता है)। kernel <code style="color:#22d3bf">(2r+1)</code> वर्ग के भीतर की disc है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p>rectangular window वाले <code style="color:#22d3bf">mean_image</code> के विपरीत इसमें दिशा के अनुसार weights का bias कम है, और यह disc radius तक की structures को isotropic रूप से blur करता है। boundary को mirror से बढ़ाया जाता है, इसलिए किनारों पर अंधेरा नहीं आता। input की जाँच नहीं होती; NaN हो तो वह जैसा का तैसा propagate होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

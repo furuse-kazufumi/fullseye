@@ -13,11 +13,10 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>영상의 한 행(또는 열)의 농도 프로파일을 1-D 신호로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 位置。<code style="color:#22d3bf">b &lt; 0.5</code> なら行 <code style="color:#22d3bf">r = round(a * (H-1))</code> を横に読む(長さ W)、<code style="color:#22d3bf">b ≥ 0.5</code> なら列 <code style="color:#22d3bf">c = round(a * (W-1))</code> を縦に読む(長さ H)。a=0.5 は中央。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: 1-D float64、値はそのまま(正規化しない。画像が [0,1] なら [0,1])。</p>
-<p style="margin:2px 0 2px 12px">• 補間はしない(画素の値をそのまま並べる)。斜めの線が要るなら <code style="color:#22d3bf">line_profile</code> (台帳)を使う。</p>
-<p>使いどころ: 1-D 関数の族(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)を画像の断面で試す入口。周期構造(市松・縞)を横切る行を選ぶとスペクトル系 op の効果が見える。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 위치. <code style="color:#22d3bf">b &lt; 0.5</code>이면 행 <code style="color:#22d3bf">r = round(a * (H-1))</code>을 가로로 읽고(길이 W), <code style="color:#22d3bf">b ≥ 0.5</code>이면 열 <code style="color:#22d3bf">c = round(a * (W-1))</code>을 세로로 읽는다(길이 H). a=0.5는 중앙.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: 1-D float64, 값은 그대로(정규화하지 않는다. 영상이 [0,1]이면 [0,1]).</p>
+<p style="margin:2px 0 2px 12px">• 보간은 하지 않는다(화소 값을 그대로 늘어놓는다). 비스듬한 선이 필요하면 <code style="color:#22d3bf">line_profile</code> (대장)을 쓴다.</p>
+<p>쓰임새: 1-D 함수 계열(<code style="color:#22d3bf">tb_smooth_funct_1d_gauss</code> / <code style="color:#22d3bf">tb_derivate_funct_1d</code> / <code style="color:#22d3bf">tb_bandpass</code> …)을 영상의 단면에서 시험해 보는 입구. 주기 구조(체커·줄무늬)를 가로지르는 행을고르면 스펙트럼 계열 op의 효과가 보인다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -14,12 +14,11 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Image के domain को axis-parallel आयत (केंद्र में a×b का अनुपात) तक छोटा करता है, region।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>入力 <code style="color:#22d3bf">v</code> と同じ形状で、画像中央に置いた高さ <code style="color:#22d3bf">hh</code>・幅 <code style="color:#22d3bf">ww</code> の軸並行矩形を 1 とする 0/1 の float 配列(region)を返す。入力の中身は見ない。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの割合 <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 幅の割合 <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code>(20%〜90%)。</p>
-<p style="margin:2px 0 2px 12px">• 左上は <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> で、中央からのずれは整数切り捨てぶんだけ。</p>
-<p>画像の周辺(照明落ち・レンズ端)を検査対象から外す ROI を作るのに使う。画像全面が欲しければ <code style="color:#22d3bf">hx_full_domain</code>、既存 region の周辺を削るなら <code style="color:#22d3bf">hx_clip_region_rel</code>。</p>
+<p>input <code style="color:#22d3bf">v</code> के समान shape का, image के केंद्र में रखे ऊँचाई <code style="color:#22d3bf">hh</code> और चौड़ाई <code style="color:#22d3bf">ww</code> वाले axis-parallel rectangle को 1 रखने वाला 0/1 float array (region) लौटाता है। input की सामग्री नहीं देखी जाती।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → ऊँचाई का अनुपात <code style="color:#22d3bf">hh = int(h * (0.2 + 0.7*a))</code> (20% से 90%)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → चौड़ाई का अनुपात <code style="color:#22d3bf">ww = int(w * (0.2 + 0.7*b))</code> (20% से 90%)।</p>
+<p style="margin:2px 0 2px 12px">• ऊपरी-बायाँ कोना <code style="color:#22d3bf">((h-hh)//2, (w-ww)//2)</code> है, और केंद्र से विचलन केवल integer truncation जितना है।</p>
+<p>image की परिधि (illumination में गिरावट, lens का किनारा) को जाँच से बाहर रखने वाला ROI बनाने के लिए उपयोग होता है। पूरी image चाहिए तो <code style="color:#22d3bf">hx_full_domain</code>, मौजूदा region की परिधि छीलनी हो तो <code style="color:#22d3bf">hx_clip_region_rel</code>।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

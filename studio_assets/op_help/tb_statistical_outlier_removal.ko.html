@@ -14,23 +14,22 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_statistical_outlier_removal.inputs.jpg">tb_statistical_outlier_removal: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>각 점의 k-최근접 이웃 평균 거리가 전역적으로 벗어나는 점을 제거한다(통계적 이상치 제거).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>点ごとに「最も近い k 個(自分自身は除く)までの平均距離」を測り、その全点分布の <code style="color:#22d3bf">mean + std_ratio*std</code> を超える点を飛び点とみなして落とす。まばらな飛び点の掃除に有効で、密な面上の点は残る。</p>
+<p>점마다 &quot;가장 가까운 k개(자기 자신은 제외)까지의 평균 거리&quot;를 재고, 그 전체 점 분포의 <code style="color:#22d3bf">mean + std_ratio*std</code>를 넘는 점을 튀는 점으로 보고 떨어뜨린다. 성긴 튀는 점의 청소에유효하며, 조밀한 면 위의 점은 남는다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like, shape (N, 3)</p>
-<p>入力点群。</p>
+<p>입력 점군.</p>
 <p>k : int</p>
-<p>近傍数(既定 16)。点数が少なければ内部で <code style="color:#22d3bf">n-1</code> に丸める。</p>
+<p>근방 수(기본값 16). 점 수가 적으면 내부에서 <code style="color:#22d3bf">n-1</code>로 줄인다.</p>
 <p>std_ratio : float</p>
-<p>しきい値の緩さ。大きいほど残りやすい(除去が緩い)。</p>
+<p>임계값의 느슨함. 클수록 남기 쉽다(제거가 느슨하다).</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>filtered : ndarray, shape (M, 3)</p>
-<p>生き残った点(元の順序を保持)。</p>
+<p>살아남은 점(원래 순서를 유지).</p>
 <p>keep_mask : ndarray of bool, shape (N,)</p>
-<p>各入力点を残すか(True=残す)。<code style="color:#22d3bf">points[keep_mask]</code> が <code style="color:#22d3bf">filtered</code> に等しい。</p>
+<p>각 입력 점을 남길지(True=남김). <code style="color:#22d3bf">points[keep_mask]</code>가 <code style="color:#22d3bf">filtered</code>와 같다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
-<p>点数 &lt; 3 では統計が立たないため、全点を残す(graceful)。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">statistical_outlier_removal</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 16)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">std_ratio</code>(既定 2)を振る。</p>
+<p>점 수 &lt; 3에서는 통계가 서지 않으므로 모든 점을 남긴다(graceful).</p>
+<p>2-D 진화 레지스트리에 연결한 3d op <code style="color:#22d3bf">statistical_outlier_removal</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞춰 두었다. <code style="color:#22d3bf">a</code>가 <code style="color:#22d3bf">k</code>(기본값 16), <code style="color:#22d3bf">b</code>가 <code style="color:#22d3bf">std_ratio</code>(기본값 2)를 바꾼다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_dist.inputs.jpg">cv_dist: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>距離變換（distance transform，OpenCV 實作，L2／歐氏近似）。對前景區域中的每個像素，計算到最近背景像素的距離，並以影像形式回傳 —— 用作擷取區域「粗細」或中心線的前處理。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>HALCON の <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)に相当。実装は <code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code> を正規化したもの(cv2 は float32 で返すが、契約に合わせて float64 化 —— 2026-09-03 実測でベンチマーク済み)。maskSize=3 は 3x3 近傍での近似計算(厳密なユークリッド距離ではなく高速近似)。a, b は未使用。</p>
+<p>相當於 HALCON 的 <code style="color:#22d3bf">distance_transform</code>(Compute the distance transformation of a region.)。實作是將 <code style="color:#22d3bf">cv2.distanceTransform(_u8(binm(v)), DIST_L2, maskSize=3)</code> 正規化後的結果(cv2 回傳 float32,但為符合約定轉為 float64 —— 已於 2026-09-03 實測完成基準測試)。maskSize=3 是在 3x3 鄰域上的近似計算(不是嚴格的歐幾里得距離,而是快速近似)。a, b 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

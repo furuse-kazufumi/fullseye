@@ -12,12 +12,11 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>均匀量化器(<b>舍入</b>)。<code style="color:#22d3bf">a</code> 为位数 1〜8，<code style="color:#22d3bf">b</code> 未使用。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code>、<code style="color:#22d3bf">L = 2**bits</code>。刻みは <code style="color:#22d3bf">Δ = 1/(L-1)</code>。</p>
-<p><b><code style="color:#22d3bf">xpil_posterize</code> との違いはここで、無視できない</b>: あちらは PIL の実装で <b>下位ビットを切り捨てる</b>ので、出力の平均が入力より <code style="color:#22d3bf">Δ/2</code> だけ低い。一様分布の入力で実測すると、bits=4 で平均誤差 <code style="color:#22d3bf">-0.0312</code>(理論 <code style="color:#22d3bf">-Δ/2 = -0.03125</code>)。分散はどちらも <code style="color:#22d3bf">Δ²/12</code> で同じだが、偏りがある分だけ二乗誤差が</p>
-<p>切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12</p>
-<p>と <b>4 倍</b>ちがう。明るさを測る前段に置くなら丸めでなければならない。</p>
-<p><b>適用条件と誤差(閉形式)</b>: 入力が刻みに対して十分ばらついている(量子化雑音が入力と無相関とみなせる)とき、誤差は <code style="color:#22d3bf">[-Δ/2, +Δ/2]</code> の一様分布で、平均 0・分散 <code style="color:#22d3bf">Δ²/12</code>。<b>この仮定が崩れるのは平坦部</b>で、そこでは誤差が信号と相関して縞(バンディング)になる —— 誤差を雑音として扱いたいなら <code style="color:#22d3bf">dither_ordered</code> か <code style="color:#22d3bf">dither_floyd_steinberg</code> を通すこと。段差が見えているかは <code style="color:#22d3bf">banding_map</code> で測れる。</p>
+<p><code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code>，<code style="color:#22d3bf">L = 2**bits</code>。步长为 <code style="color:#22d3bf">Δ = 1/(L-1)</code>。</p>
+<p><b>与 <code style="color:#22d3bf">xpil_posterize</code> 的区别就在这里，而且不可忽略</b>：那个 op 是 PIL 的实现，<b>截断低位比特</b>，因此输出的平均值比输入低 <code style="color:#22d3bf">Δ/2</code>。用均匀分布的输入实测，bits=4 时平均误差为 <code style="color:#22d3bf">-0.0312</code>（理论 <code style="color:#22d3bf">-Δ/2 = -0.03125</code>）。两者的方差都是 <code style="color:#22d3bf">Δ²/12</code>，相同，但由于存在偏差，平方误差</p>
+<p>截断: Δ²/12 + (Δ/2)² = Δ²/3     舍入: Δ²/12</p>
+<p>相差 <b>4 倍</b>。若放在测量亮度之前，就必须用舍入。</p>
+<p><b>适用条件与误差（闭式）</b>：当输入相对于步长有足够的离散（可视为量化噪声与输入不相关）时，误差在 <code style="color:#22d3bf">[-Δ/2, +Δ/2]</code> 上均匀分布，平均 0、方差 <code style="color:#22d3bf">Δ²/12</code>。<b>这一假定在平坦部会失效</b>，那里误差与信号相关，变成条纹（色带）—— 若想把误差当作噪声处理，请通过 <code style="color:#22d3bf">dither_ordered</code> 或 <code style="color:#22d3bf">dither_floyd_steinberg</code>。阶跃是否可见可以用 <code style="color:#22d3bf">banding_map</code> 测量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

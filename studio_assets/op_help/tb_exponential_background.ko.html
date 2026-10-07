@@ -15,14 +15,13 @@
 <p><img src="fig/tb_exponential_background.gif" alt="tb_exponential_background: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>프레임별 재귀 배경 <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> → <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>最初のフレームで <code style="color:#22d3bf">bg</code> を初期化し、以後 <code style="color:#22d3bf">bg += α (frame - bg)</code> を画素ごとに繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム <code style="color:#22d3bf">t</code> の出力はその時点の <code style="color:#22d3bf">bg</code> の写しで、<code style="color:#22d3bf">t = 0</code> は入力の先頭フレームそのもの。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数 dtype は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float は <code style="color:#22d3bf">[0, 1]</code> にクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。時定数はおよそ <code style="color:#22d3bf">1/α</code> フレーム(0.05 → 約 20 枚)。0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。<b>物体が止まると <code style="color:#22d3bf">1/α</code> 枚ほどで背景に吸収される</b>(選択的更新は無い)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・<code style="color:#22d3bf">alpha</code> の範囲)。</p>
-<p>前景マスクまで欲しいなら同じモデルの <code style="color:#22d3bf">exponential_foreground</code>。画素ごとの雑音に閾値を合わせたいなら <code style="color:#22d3bf">running_gaussian_background</code>。</p>
-<p>2-D 進化レジストリへ橋渡しした videostream の op <code style="color:#22d3bf">exponential_background</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">alpha</code>(既定 0.05)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>첫 프레임으로 <code style="color:#22d3bf">bg</code>를 초기화하고, 이후 <code style="color:#22d3bf">bg += α (frame - bg)</code>를 화소별로반복하는 지수 이동 평균. 상태는 배경 1장뿐(창을 갖지 않는다). 프레임 <code style="color:#22d3bf">t</code>의출력은 그 시점의 <code style="color:#22d3bf">bg</code>의 사본이며, <code style="color:#22d3bf">t = 0</code>은 입력의 첫 프레임 그 자체.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 배열이나 2-D 프레임의 list. 정수 dtype은 최댓값으로 <code style="color:#22d3bf">[0, 1]</code>로 정규화, float는 <code style="color:#22d3bf">[0, 1]</code>로 클립. NaN/Inf는 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>. 시정수는 대략 <code style="color:#22d3bf">1/α</code> 프레임(0.05 → 약 20장). 0이면 배경은 첫 프레임 그대로 고정, 1이면 항상 현재 프레임. <b>물체가 멈추면 <code style="color:#22d3bf">1/α</code>장 정도로 배경에 흡수된다</b>(선택적 갱신은 없다).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(T, H, W)</code> float64, <code style="color:#22d3bf">[0, 1]</code>.</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형상·dtype·<code style="color:#22d3bf">alpha</code>의 범위).</p>
+<p>전경 마스크까지 원하면 같은 모델의 <code style="color:#22d3bf">exponential_foreground</code>. 화소별잡음에 임계값을 맞추고 싶다면 <code style="color:#22d3bf">running_gaussian_background</code>.</p>
+<p>2-D 진화 레지스트리로 연결한 videostream의 op <code style="color:#22d3bf">exponential_background</code>. 구현은 같고, 호출 규약만 <code style="color:#22d3bf">op(v, a, b)</code>에 맞췄다. <code style="color:#22d3bf">a</code>는 <code style="color:#22d3bf">alpha</code>(기본값 0.05)를 바꾼다. <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

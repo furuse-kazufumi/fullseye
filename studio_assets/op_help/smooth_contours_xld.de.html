@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/smooth_contours_xld.inputs.jpg">smooth_contours_xld: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Glättet die Koordinatenfolge einer Kontur mit einem gleitenden Durchschnitt (Fensterbreite <code style="color:#22d3bf">2*(1+3*a)+1</code>). Glättet die Zacken der Kontur (das durch Pixelgrenzen verursachte Zickzack). Entspricht HALCONs <code style="color:#22d3bf">smooth_contours_xld</code> (Smooth an XLD contour.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> が平滑化窓の幅を振る。<code style="color:#22d3bf">b</code> は未使用。点数が窓幅以下の短い輪郭は平滑化されずそのまま返る。</p>
+<p><code style="color:#22d3bf">a</code> variiert die Breite des Glättungsfensters. <code style="color:#22d3bf">b</code> wird nicht verwendet. Kurze Konturen mit höchstens so vielen Punkten wie die Fensterbreite werden ungeglättet unverändert zurückgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

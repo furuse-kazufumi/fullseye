@@ -11,11 +11,10 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_moments_any_xld.chain.jpg">hx_moments_any_xld: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>모든 contour 점의 2 차 중심 모멘트(퍼짐)를 정규화 feature 로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>contour dict の全点をまとめ、重心からの二乗距離の平均 <code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code> (2 次中心モーメント <code style="color:#22d3bf">mu20 + mu02</code> を点数で割ったもの)を <code style="color:#22d3bf">max(H, W)^2</code> で割り、1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 点が 2 個未満なら 0.0。</p>
-<p>「点群が重心からどれだけ広がっているか」の等方的な指標で、向きや縦横比は含まない。輪郭の点密度に依存するので、同じ図形でも点の刻みが不均一だと値が変わる。向き付きの慣性(長軸・短軸)は <code style="color:#22d3bf">hx_fit_ellipse_contour</code> / <code style="color:#22d3bf">elliptic_axis_xld</code>、region の 2 次モーメントは <code style="color:#22d3bf">moments_region_2nd</code>。</p>
+<p>contour dict의 모든 점을 모아 무게중심으로부터의 제곱 거리 평균 <code style="color:#22d3bf">mean((row - mean_row)^2 + (col - mean_col)^2)</code> (2차 중심 모멘트 <code style="color:#22d3bf">mu20 + mu02</code>를 점 수로 나눈 것)을 <code style="color:#22d3bf">max(H, W)^2</code>로 나누고 1에서 포화시킨 <code style="color:#22d3bf">np.float64</code>로 반환한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p style="margin:2px 0 2px 12px">• 점이 2개 미만이면 0.0.</p>
+<p>&quot;점군이 무게중심에서 얼마나 퍼져 있는가&quot;의 등방적 지표로, 방향이나 종횡비는 포함하지 않는다. 윤곽의 점 밀도에 의존하므로같은 도형이라도 점의 스텝이 불균일하면 값이 달라진다. 방향을 가진 관성(장축·단축)은 <code style="color:#22d3bf">hx_fit_ellipse_contour</code> / <code style="color:#22d3bf">elliptic_axis_xld</code>, region의 2차 모멘트는 <code style="color:#22d3bf">moments_region_2nd</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

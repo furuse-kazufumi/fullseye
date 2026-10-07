@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sk_medial.inputs.jpg">sk_medial: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>中心轴变换(medial axis transform)。这是一种与 sk_skeleton 不同的算法,通过提取距离变换的脊线来求得骨架,得到的骨架往往保留了距轮廓的距离信息。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>HALCON の <code style="color:#22d3bf">skeleton</code> に相当(近似)。実装は <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> —— <code style="color:#22d3bf">rng=0</code> はタイ(同点)の崩し方を決める乱数シードを固定し、毎回同じ結果になるようにしている。a, b は未使用。distance 出力(<code style="color:#22d3bf">return_distance</code>)は使っておらず、骨格の真偽値マスクのみを返す。</p>
+<p>相当于 HALCON 的 <code style="color:#22d3bf">skeleton</code>（近似）。实现为 <code style="color:#22d3bf">morphology.medial_axis(binm(v), rng=0)</code> —— <code style="color:#22d3bf">rng=0</code> 固定了决定平局（同分）如何打破的随机种子，使每次结果相同。a、b 未使用。不使用 distance 输出（<code style="color:#22d3bf">return_distance</code>），只返回骨架的布尔掩模。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

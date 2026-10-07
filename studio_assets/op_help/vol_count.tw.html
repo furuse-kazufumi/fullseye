@@ -10,8 +10,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/vol_count.chain.jpg">vol_count: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>回傳 3D 體資料中連通元件（blob）個數的特徵量。未指定對應的 HALCON op。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。しきい値は <code style="color:#22d3bf">0.5</code> に固定（<code style="color:#22d3bf">v &gt; 0.5</code> で二値化してから <code style="color:#22d3bf">scipy.ndimage.label</code>）。連結性は scipy の既定構造要素（面で接する 6 近傍相当）で、稜・頂点だけで接する（26 近傍でしか繋がらない）ボクセルは別ブロブとして数えられる——2-D の <code style="color:#22d3bf">_blob_count</code> が HALCON パリティのため 8 連結を明示指定しているのとは対照的に、こちらは既定のまま連結性を明示していない。</p>
+<p><code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。閾值固定為 <code style="color:#22d3bf">0.5</code>（以 <code style="color:#22d3bf">v &gt; 0.5</code> 二值化後再 <code style="color:#22d3bf">scipy.ndimage.label</code>）。連通性為 scipy 的預設結構元素（相當於以面相接的 6 鄰域），僅以稜、頂點相接（只在 26 鄰域下相連）的體素會被算作不同的斑點——與 2-D 的 <code style="color:#22d3bf">_blob_count</code> 為了 HALCON 一致性而明確指定 8 連通形成對比，這裡保持預設，沒有明確指定連通性。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

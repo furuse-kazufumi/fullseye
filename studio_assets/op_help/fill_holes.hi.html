@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fill_holes.inputs.jpg">fill_holes: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region के अंदर के छेद भरता है। HALCON के <code style="color:#22d3bf">fill_up</code> (Fill up holes in regions.) के समकक्ष है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。前景に完全に囲まれた背景画素（穴）をすべて前景に変える（<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code>）。画像端に接する背景は穴とみなされないため埋まらない。</p>
-<p><b>連結性</b>: 穴の判定に使う<b>背景は 4 連結</b>(<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code> の既定)。斜めだけで繋がった背景は繋がっているとみなさないので、市松模様では内側の背景画素がすべて穴として埋まる(8x8 で 32 -&gt; 50 画素。実測して scipy の 4 連結参照と位置まで一致、8 連結とは不一致)。第 2 実装がここで別の連結性を選び、差分検査で露見した。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> उपयोग नहीं होते। foreground से पूरी तरह घिरे हर background pixel (छेद) को foreground में बदलता है (<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code>)। image के किनारे को छूने वाले background को छेद नहीं माना जाता, इसलिए वह नहीं भरता।</p>
+<p><b>connectivity</b>: छेद तय करने में उपयोग होने वाला <b>background 4-connected है</b> (<code style="color:#22d3bf">scipy.ndimage.binary_fill_holes</code> का default)। केवल तिरछे जुड़े background को जुड़ा नहीं माना जाता, इसलिए checkerboard pattern में भीतर के सभी background pixel छेद के रूप में भर जाते हैं (8x8 पर 32 -&gt; 50 pixel; मापने पर scipy के 4-connected reference से position तक मेल खाता है, 8-connected से नहीं)। 2nd implementation ने यहाँ अलग connectivity चुनी थी, जो difference check में सामने आई।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

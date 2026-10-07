@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>हर contour का parallel (normal offset) contour बनाता है (दूरी (a-0.5) से, चिह्न सहित)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>各 contour(点数 2 以上)の接線を <code style="color:#22d3bf">np.gradient(c, axis=0)</code> で求め、それを 90° 回した単位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> の方向に <code style="color:#22d3bf">dist</code> だけ全点をずらした contour を返す。元の contour は出力に含まれない(置き換わる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 符号つきオフセット <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 画素。a=0.5 で無変化)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p style="margin:2px 0 2px 12px">• 接線長が 1e-9 未満の点(重複点)は法線 0 とし動かさない。点数 1 の contour はそのまま。</p>
-<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと自己交差する(<code style="color:#22d3bf">hx_test_self_intersect</code> で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から一定距離に置くのに使う。</p>
+<p>हर contour (2 या अधिक points) की tangent <code style="color:#22d3bf">np.gradient(c, axis=0)</code> से निकाली जाती है, उसे 90° घुमाकर unit normal <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> बनता है, और इसी दिशा में सभी points को <code style="color:#22d3bf">dist</code> से खिसकाया गया contour लौटाया जाता है। मूल contour output में शामिल नहीं होता (उसकी जगह यह आ जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → signed offset <code style="color:#22d3bf">dist = (a - 0.5) * 10</code> (-5 से +5 pixel; a=0.5 पर कोई बदलाव नहीं)।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> उपयोग नहीं होता।</p>
+<p style="margin:2px 0 2px 12px">• जिन points की tangent length 1e-9 से कम है (duplicate points), उनका normal 0 रखा जाता है और वे नहीं खिसकते। 1 point वाला contour जैसा का तैसा रहता है।</p>
+<p>normal की दिशा contour के चलने की दिशा से तय होती है (बायाँ या दायाँ positive है, यह points के क्रम पर निर्भर है)। curvature radius से अधिक खिसकाने पर contour self-intersect करता है (<code style="color:#22d3bf">hx_test_self_intersect</code> से पता लगाया जा सकता है)। outline को मोटा/पतला करके तुलना करने, या measurement lines को boundary से तय distance पर रखने में उपयोग होता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

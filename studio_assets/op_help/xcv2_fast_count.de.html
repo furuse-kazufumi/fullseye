@@ -9,8 +9,7 @@
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Anzahl der vom FAST-Eckendetektor erkannten Keypoints (<code style="color:#22d3bf">cv2.FastFeatureDetector</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は検出しきい値を 5〜45 に振る（<code style="color:#22d3bf">threshold = int(5 + 40*a)</code>、大きいほど検出されにくくなり数が減る）。<code style="color:#22d3bf">b</code> は未使用。テクスチャの豊富さ・コーナーの多さを表す特徴量で、値が大きいほど局所的な輝度変化に富む画像であることを示す。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Detektionsschwellwert über 5-45 (<code style="color:#22d3bf">threshold = int(5 + 40*a)</code>; je größer, desto schwerer wird detektiert und desto geringer die Anzahl). <code style="color:#22d3bf">b</code> wird nicht verwendet. Ein Merkmal für Texturreichtum und Eckenhäufigkeit; je größer der Wert, desto reicher ist das Bild an lokalen Leuchtdichteänderungen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">Leitfaden zur Familie gallery2d_features</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

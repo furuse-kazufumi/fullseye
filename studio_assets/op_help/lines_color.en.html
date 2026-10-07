@@ -15,8 +15,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/lines_color.inputs.jpg">lines_color: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Detects lines (ridges) in a color image. Claimed to correspond to HALCON&#x27;s <code style="color:#22d3bf">lines_color</code> (detects color lines and their width), but <b>it does not estimate line width</b> -- it only thresholds the Laplacian-of-Gaussian response on the luminance image into a binary image and returns the connected components as contours; it has no output corresponding to the line width that HALCON returns.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">_rgb_to_gray</code> で輝度化した後、<code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> をシグマ <code style="color:#22d3bf">0.5 + 2.5 * a</code> でかけて絶対値を最大値正規化し、<code style="color:#22d3bf">0.2 + 0.4 * b</code> でしきい値二値化して 8 連結ラベリングする。a はリッジの太さ（LoG のスケール）、b は検出しきい値を振る。3 画素未満の成分は捨てる。</p>
+<p>After converting to luminance with <code style="color:#22d3bf">_rgb_to_gray</code>, applies <code style="color:#22d3bf">scipy.ndimage.gaussian_laplace</code> with sigma <code style="color:#22d3bf">0.5 + 2.5 * a</code>, normalises the absolute value by its maximum, binarises with the threshold <code style="color:#22d3bf">0.2 + 0.4 * b</code> and performs 8-connected labelling. a sweeps the ridge thickness (the LoG scale), b the detection threshold. Components smaller than 3 pixels are discarded.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">gallery2d_contour_measure family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

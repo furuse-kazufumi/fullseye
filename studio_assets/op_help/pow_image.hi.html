@@ -13,8 +13,7 @@
 <p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Implementation <code style="color:#22d3bf">gamma_image</code> वाले <b>बिल्कुल उसी function</b> (<code style="color:#22d3bf">_sh_lut</code> की <code style="color:#22d3bf">kind: &quot;gamma&quot;</code> branch) की ओर इशारा करता है। यानी इस backend पर <code style="color:#22d3bf">pow_image</code> और <code style="color:#22d3bf">gamma_image</code> के गणना परिणाम एक जैसे होते हैं ―― HALCON में ये अलग operators हैं (exponent को स्पष्ट रूप से देने वाला <code style="color:#22d3bf">pow_image</code> और encoding/decoding के लिए बना <code style="color:#22d3bf">gamma_image</code>), लेकिन यहाँ विकल्प का असली implementation दोहराया गया है (सन्निकटन की सीमा के रूप में स्पष्ट लिखा गया)।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p><code style="color:#22d3bf">a</code> がべき指数を 0.3〜2.8 の範囲で振る。<code style="color:#22d3bf">b</code> は未使用。HALCON の <code style="color:#22d3bf">pow_image</code>（Raise an image to a power.）の代役。</p>
+<p><code style="color:#22d3bf">a</code> exponent को 0.3-2.8 की सीमा में बदलता है। <code style="color:#22d3bf">b</code> का उपयोग नहीं होता। यह HALCON के <code style="color:#22d3bf">pow_image</code> (Raise an image to a power.) की जगह काम करता है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

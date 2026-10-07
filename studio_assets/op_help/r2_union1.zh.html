@@ -13,9 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r2_union1.inputs.jpg">r2_union1: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把所有连通成分并成一张掩码(标签的 OR)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>前景マスク(<code style="color:#22d3bf">&gt; 0.5</code>)を <code style="color:#22d3bf">scipy.ndimage.label</code> で連結成分にラベル付けし、<code style="color:#22d3bf">label &gt; 0</code> を 1.0 に戻して 1 枚のマスクとして返す。全成分の和集合なので、結果は「入力を 0/1 に正規化したもの」と同じになる(値の 2 値化と非有限値の除去が実際の効果)。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>返り値は入力と同形の float64 0/1 マスク。前景が無ければ全零。0.5 以下のグレー値や NaN/Inf はすべて背景になる。複数のラベル値を持つラベル画像を受けた場合もラベル番号の区別は消え、単一の前景マスクになる(ラベルごとに取り出したいなら <code style="color:#22d3bf">r3_label_to_region</code>)。パイプライン上は「領域を 1 個のオブジェクトとして扱う」ことを明示する位置づけで、成分単位の選別(<code style="color:#22d3bf">select_shape</code> / <code style="color:#22d3bf">r2_sort_region</code>)はこの op より前に置く。</p>
+<p>用 <code style="color:#22d3bf">scipy.ndimage.label</code> 对前景掩模(<code style="color:#22d3bf">&gt; 0.5</code>)进行连通分量标记，再把 <code style="color:#22d3bf">label &gt; 0</code> 还原为 1.0，作为 1 张掩模返回。由于是全部分量的并集，结果与“把输入归一化为 0/1”相同(实际效果是值的 2 值化和非有限值的去除)。<code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">b</code> 未使用。</p>
+<p>返回值是与输入同形的 float64 0/1 掩模。没有前景时全为零。0.5 以下的灰度值和 NaN/Inf 全部成为背景。接收到含多个标签值的标签图像时，标签编号的区别也会消失，变为单一的前景掩模(若想按标签取出，请用 <code style="color:#22d3bf">r3_label_to_region</code>)。在流水线中，它的定位是明确表示“将区域作为 1 个对象处理”，按分量的筛选(<code style="color:#22d3bf">select_shape</code> / <code style="color:#22d3bf">r2_sort_region</code>)应放在此 op 之前。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

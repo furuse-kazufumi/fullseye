@@ -13,8 +13,7 @@
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>维纳反卷积（使用已知点扩散函数的去模糊）。调用<code style="color:#22d3bf">skimage.restoration.wiener</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>PSF はガウシアン形状を仮定して自前生成し、a が PSF の広がり（標準偏差 <code style="color:#22d3bf">0.5 + 1.5*a</code>、5x5 窓）を振る。b がバランス項（<code style="color:#22d3bf">0.05 + 0.5*b</code>。ノイズ対信号比の逆数に相当し、大きいほどノイズ抑制寄りになる）を振る。<b>入力画像のボケが実際にこの想定ガウシアン PSF と一致している場合にのみ有効</b>で、PSF の形が違うとリンギングや復元失敗が出る。</p>
+<p>PSF 假定为高斯形状并自行生成，a 调节 PSF 的扩展（标准差 <code style="color:#22d3bf">0.5 + 1.5*a</code>，5x5 窗口）。b 调节平衡项（<code style="color:#22d3bf">0.05 + 0.5*b</code>。相当于噪声对信号比的倒数，越大越偏向噪声抑制）。<b>只有当输入图像的模糊实际上与这个假定的高斯 PSF 一致时才有效</b>，PSF 的形状不同时会出现振铃或复原失败。</p>
 <p><b>边界处理</b>：环绕到对侧（周期）（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_smoothing_rank">gallery2d_smoothing_rank 族使用指南</a></p>

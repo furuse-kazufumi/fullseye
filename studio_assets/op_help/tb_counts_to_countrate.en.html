@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_counts_to_countrate.inputs.jpg">tb_counts_to_countrate: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Counts -&gt; count rate <code style="color:#22d3bf">[Hz]</code>. The inverse of <code style="color:#22d3bf">countrate_to_counts</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>counts: (N,) の非負計数。</p>
-<p>gate_s: 積算窓 [s]。&gt; 0。</p>
+<p>counts: (N,) non-negative counts.</p>
+<p>gate_s: integration window [s]. &gt; 0.</p>
 <p>Returns:</p>
-<p>(N,) float64 の非負レート [Hz]。</p>
+<p>(N,) float64 non-negative rate [Hz].</p>
 <p>Raises:</p>
-<p>ValueError: 負の計数 / gate_s &lt;= 0 / 形状不正 / 非有限。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">counts_to_countrate</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">gate_s</code>(既定 0.001)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>ValueError: negative count / gate_s &lt;= 0 / invalid shape / non-finite.</p>
+<p>The reprconv op <code style="color:#22d3bf">counts_to_countrate</code> bridged into the 2-D evolution registry. The implementation is the same; only the calling convention is adapted to <code style="color:#22d3bf">op(v, a, b)</code>. <code style="color:#22d3bf">a</code> sweeps <code style="color:#22d3bf">gate_s</code> (default 0.001). <code style="color:#22d3bf">b</code> is unused.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

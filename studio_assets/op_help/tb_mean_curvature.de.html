@@ -13,15 +13,14 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mean_curvature.inputs.jpg">tb_mean_curvature: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mittlere Krümmung H=(k1+k2)/2. → (N,). Eine orientierungsabhängige Größe.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
-<p>補足:</p>
-<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
-<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
-<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
-<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">mean_curvature</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">k</code>(既定 25)を振る。<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Ohne normals (orientierte Referenznormalen, (N,3)) wird eine Heuristik der konvexen Seite verwendet (das Konkav/Konvex-Vorzeichen einer offenen Fläche ist unbestimmt). Mit orientierten Normalen richtet es sich nach der globalen Orientierung und liefert das korrekte Vorzeichen.</p>
+<p>Ergänzung:</p>
+<p style="margin:2px 0 2px 12px">• Die Berechnung ist dieselbe wie bei <code style="color:#22d3bf">principal_curvatures</code> (PCA-Normale der k+1-Nachbarschaft + lokaler Quadrik-Fit) und gibt <code style="color:#22d3bf">(k1 + k2) / 2</code> zurück. Einheit 1/Länge.</p>
+<p style="margin:2px 0 2px 12px">• Die Vorzeichenkonvention zählt konvex als positiv; globalem Konkav/Konvex entspricht es nur, wenn <code style="color:#22d3bf">normals</code> übergeben wird. Ohne sie liegt H einer offenen Fläche immer auf der konvexen Seite (entspricht dem Absolutwert).</p>
+<p style="margin:2px 0 2px 12px">• Punkte mit weniger als 5 Nachbarn erhalten 0. <code style="color:#22d3bf">k</code> wird auf N-1 gekürzt.</p>
+<p style="margin:2px 0 2px 12px">• Eine Kugel mit Radius R ergibt <code style="color:#22d3bf">1/R</code>, ein Zylinder <code style="color:#22d3bf">1/(2R)</code>, eine Ebene 0. Ein Sattelpunkt (k1 = -k2) ergibt ebenfalls 0, aber <code style="color:#22d3bf">gaussian_curvature</code> ist dort negativ, sodass sie sich unterscheiden lassen.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> muss (N,3), endlich und mit Zeilen ungleich null sein (<code style="color:#22d3bf">ValueError</code>). Deterministisch.</p>
+<p>Die in die 2-D-Evolutionsregistrierung überbrückte 3d-op <code style="color:#22d3bf">mean_curvature</code>. Die Implementierung ist dieselbe, nur die Aufrufkonvention ist an <code style="color:#22d3bf">op(v, a, b)</code> angepasst. <code style="color:#22d3bf">a</code> variiert <code style="color:#22d3bf">k</code> (Standard 25). <code style="color:#22d3bf">b</code> wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

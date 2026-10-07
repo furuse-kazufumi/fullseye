@@ -12,17 +12,16 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_inside_outside.inputs.jpg">tb_inside_outside: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>超二次曲面的內外函數 F（表面 = 1，內部 &lt; 1，外部 &gt; 1）。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>。<code style="color:#22d3bf">R, t</code> で姿勢(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。</p>
+<p><code style="color:#22d3bf">F(X) = (|x/a1|^(2/eps2) + |y/a2|^(2/eps2))^(eps2/eps1) + |z/a3|^(2/eps1)</code>。用 <code style="color:#22d3bf">R, t</code> 表示位姿(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>points : array_like (N,3)</p>
-<p>a : (a1,a2,a3) 半径(すべて正)</p>
-<p>eps : (eps1,eps2) 形状指数(&gt; 0)</p>
-<p>R : (3,3) 回転(列 = body 軸の world 表現)、既定 = 単位</p>
-<p>t : (3,) 平行移動(body 中心の world 位置)、既定 = 原点</p>
+<p>a : (a1,a2,a3) 半徑(全部為正)</p>
+<p>eps : (eps1,eps2) 形狀指數(&gt; 0)</p>
+<p>R : (3,3) 旋轉(行 = body 軸的 world 表示),預設 = 單位</p>
+<p>t : (3,) 平移(body 中心的 world 位置),預設 = 原點</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>np.ndarray, shape (N,)</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">inside_outside</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>橋接到 2-D 演化登錄表的 3d op <code style="color:#22d3bf">inside_outside</code>。實作相同,只有呼叫慣例改為 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 沒有可調點,<code style="color:#22d3bf">a</code> 與 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

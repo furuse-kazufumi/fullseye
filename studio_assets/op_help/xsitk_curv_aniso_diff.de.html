@@ -14,8 +14,7 @@
 <p>*Keine Farb-Eingabe (H,W,3) gezeigt: dieser Op behandelt den Farbkanal als dritte Raumachse (vermischt Kanäle). Pro Kanal aufrufen.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Krümmungs-anisotrope Diffusion (SimpleITK <code style="color:#22d3bf">CurvatureAnisotropicDiffusion</code>). Eine Art der anisotropen Diffusion nach Perona-Malik, die die Diffusion an Kanten (Stellen mit großem Gradienten) unterdrückt und in flachen Bereichen stark diffundieren lässt, wodurch geglättet wird, während Kanten erhalten bleiben.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code> は伝導度パラメータ(conductance、<code style="color:#22d3bf">0.5+4.5*a</code> で 0.5〜5.0。大きいほどエッジ判定が緩くなり強く拡散する)、<code style="color:#22d3bf">b</code> は反復回数(1〜9 回)を振る。時間刻みは 0.0625 固定。出力は [0,1] にクリップ。</p>
+<p><code style="color:#22d3bf">a</code> variiert den Leitfähigkeitsparameter (conductance, 0.5-5.0 über <code style="color:#22d3bf">0.5+4.5*a</code>; je größer, desto lockerer die Kantenentscheidung und desto stärker die Diffusion), <code style="color:#22d3bf">b</code> die Anzahl der Iterationen (1-9). Die Zeitschrittweite ist auf 0.0625 festgelegt. Die Ausgabe wird auf [0,1] begrenzt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

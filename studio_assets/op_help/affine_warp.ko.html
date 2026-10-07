@@ -14,8 +14,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>임의의 아핀 변환(회전+전단)을 이미지에 적용한다. HALCON의 <code style="color:#22d3bf">affine_trans_image</code>(Apply an arbitrary affine 2D transformation to images.)에 해당한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code> が回転角を <code style="color:#22d3bf">-20°〜+20°</code> に、<code style="color:#22d3bf">b</code> がせん断量を <code style="color:#22d3bf">-0.2〜+0.2</code> に振る。回転中心は画像の中心、境界は <code style="color:#22d3bf">reflect</code>（鏡映）で埋め、結果を <code style="color:#22d3bf">[0,1]</code> に clip する。平行移動・拡大縮小は含まない（<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code> が別 op として存在）。</p>
+<p><code style="color:#22d3bf">a</code>가 회전각을 <code style="color:#22d3bf">-20°〜+20°</code>로, <code style="color:#22d3bf">b</code>가 전단량을 <code style="color:#22d3bf">-0.2〜+0.2</code>로 바꾼다. 회전 중심은 영상의 중심, 경계는 <code style="color:#22d3bf">reflect</code>(거울 반사)로 채우고, 결과를 <code style="color:#22d3bf">[0,1]</code>로 clip한다. 평행 이동·확대 축소는 포함하지 않는다(<code style="color:#22d3bf">_rescale_img</code>/<code style="color:#22d3bf">_rotate_img</code>가 별도 op로 존재).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

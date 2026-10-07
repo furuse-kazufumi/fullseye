@@ -13,12 +13,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_distance_pr.chain.jpg">hx_distance_pr: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>从查询点(归一化 a,b)到 region 的最小距离(feature),用距离变换。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">v &gt; 0.5</code> の region の補集合にユークリッド距離変換(<code style="color:#22d3bf">distance_transform_edt</code>)を掛け、正規化座標 <code style="color:#22d3bf">(a, b)</code> の画素での値(その画素から最も近い region 画素までの距離)を <code style="color:#22d3bf">max(H, W)</code> で割って 1 で頭打ちした <code style="color:#22d3bf">np.float64</code> で返す。</p>
+<p>对 <code style="color:#22d3bf">v &gt; 0.5</code> 的 region 的补集施加欧氏距离变换(<code style="color:#22d3bf">distance_transform_edt</code>),把正规化坐标 <code style="color:#22d3bf">(a, b)</code> 处像素的值(该像素到最近 region 像素的距离)除以 <code style="color:#22d3bf">max(H, W)</code> 并以 1 饱和截顶后作为 <code style="color:#22d3bf">np.float64</code> 返回。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 行 <code style="color:#22d3bf">min(int(a*H), H-1)</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 列 <code style="color:#22d3bf">min(int(b*W), W-1)</code>。</p>
-<p style="margin:2px 0 2px 12px">• region が空なら 1.0(「最大距離」の意味。<code style="color:#22d3bf">hx_distance_pc</code> の空=0 とは逆なので注意)。</p>
-<p>クエリ点が region の内側なら 0。距離変換は画像全体に対して計算するので 1 点の問い合わせとしては重いが、値は厳密な画素間距離(<code style="color:#22d3bf">hx_distance_pc</code> のような頂点近似ではない)。含むかどうかだけなら <code style="color:#22d3bf">hx_test_region_point</code>。</p>
+<p style="margin:2px 0 2px 12px">• region 为空时为 1.0(意为“最大距离”。与 <code style="color:#22d3bf">hx_distance_pc</code> 的空=0 相反,需注意)。</p>
+<p>查询点在 region 内侧时为 0。距离变换对整幅图像计算,作为 1 个点的查询较重, 但值是严格的像素间距离(不是 <code style="color:#22d3bf">hx_distance_pc</code> 那样的顶点近似)。只需判断是否包含时用 <code style="color:#22d3bf">hx_test_region_point</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

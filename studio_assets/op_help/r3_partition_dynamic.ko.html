@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/r3_partition_dynamic.inputs.jpg">r3_partition_dynamic: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>수직 방향 폭이 좁아지는 열(&quot;잘록한 곳&quot;)에서 영역을 수평으로 분할한다(HALCON <code style="color:#22d3bf">partition_dynamic</code>에 해당).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各列の前景画素数（密度）を数え、<code style="color:#22d3bf">0 &lt; 密度 &lt;= a * 最大密度</code> を満たす列（くびれ）をゼロに潰して領域を分断する。<code style="color:#22d3bf">a</code>（0〜1）がくびれと判定するしきい値の割合。<code style="color:#22d3bf">b</code> は未使用。密度が一様な領域には分断対象の列が無く、そのまま返る。</p>
+<p>각 열의 전경 화소 수(밀도)를 세어, <code style="color:#22d3bf">0 &lt; 밀도 &lt;= a * 최대 밀도</code>를 만족하는 열(잘록한 부분)을 0으로 지워 영역을 분단한다. <code style="color:#22d3bf">a</code>(0~1)가 잘록한 부분으로 판정하는 임계값의 비율이다. <code style="color:#22d3bf">b</code>는 사용하지 않는다. 밀도가 균일한 영역에는 분단 대상 열이 없어 그대로 반환된다.</p>
 <p><b>가장자리 처리</b>: 이미지 바깥은 배경(0)으로 간주한다(실측. <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region 패밀리 가이드</a></p>

@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/linear_trans_color.inputs.jpg">linear_trans_color: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Transformiert Kanäle linear mittels einer 3x3-Mischmatrix (affine Farbtransformation). Entspricht HALCONs <code style="color:#22d3bf">linear_trans_color</code> (berechnet eine affine Transformation der Farbwerte eines mehrkanaligen Bildes) (diese Implementierung ist eine reine lineare Transformation ohne Offset-Term).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>対角成分 0.6 + 非対角 0.2 を基本形とし、a で位相 <code style="color:#22d3bf">theta = pi * a</code> を振って対角成分の一部を <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> で回転的に変化させた行列を作り、各行を合計 1 に正規化してから <code style="color:#22d3bf">c @ M.T</code> を掛ける。a が 0→1 で R/G 寄りの重みづけが周期的に入れ替わる。b は未使用。</p>
+<p>Ausgehend von Diagonalelementen 0.6 + Nebendiagonale 0.2 als Grundform variiert a die Phase <code style="color:#22d3bf">theta = pi * a</code>, wodurch ein Teil der Diagonalelemente über <code style="color:#22d3bf">cos(theta)</code>/<code style="color:#22d3bf">sin(theta)</code> rotationsartig verändert wird; so entsteht eine Matrix, deren Zeilen jeweils auf Summe 1 normiert werden, bevor <code style="color:#22d3bf">c @ M.T</code> angewendet wird. Wenn a von 0→1 läuft, wechselt die R/G-lastige Gewichtung periodisch. b wird nicht verwendet.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_color_artistic">Leitfaden zur Familie gallery2d_color_artistic</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Hintergrundwissen (Physik und Konventionen hinter diesem Operator)</h3>

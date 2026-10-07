@@ -14,12 +14,11 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_radial_distort_contour.inputs.jpg">hx_radial_distort_contour: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply radial distortion r&#x27; = r(1 + k r^2) to a contour (k from (a−0.5): barrel or pincushion).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>各 contour の点を画像中心 <code style="color:#22d3bf">(H/2, W/2)</code> からの相対座標 <code style="color:#22d3bf">d</code> にし、正規化半径 <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code> に対して <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> と伸縮させた contour を返す(放射歪みモデルの 1 次項)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 歪み係数 <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code>(-0.75〜+0.75)。<code style="color:#22d3bf">k &lt; 0</code> で点が中心に寄る(樽型)、<code style="color:#22d3bf">k &gt; 0</code> で</p>
-<p>外へ広がる(糸巻き型)、a=0.5 で無変化。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
-<p>半径は画像長辺の半分で正規化しているので、画像の隅で <code style="color:#22d3bf">r</code> が 1 前後になり、<code style="color:#22d3bf">k = ±0.75</code> なら隅の点は 1.75 倍/0.25 倍まで動く。逆変換は無い(<code style="color:#22d3bf">k</code> の符号を反転しても厳密には戻らない)。レンズ歪みの影響を contour 計測(<code style="color:#22d3bf">hx_fit_circle_contour</code> 等)で試す、あるいは合成的にデータを増やす用途。</p>
+<p>Converts each contour point into coordinates <code style="color:#22d3bf">d</code> relative to the image centre <code style="color:#22d3bf">(H/2, W/2)</code> and, with the normalised radius <code style="color:#22d3bf">r = |d| / (max(H, W)/2)</code>, returns the contour stretched as <code style="color:#22d3bf">d&#x27; = d * (1 + k*r^2)</code> (the 1st-order term of a radial distortion model).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → distortion coefficient <code style="color:#22d3bf">k = (a - 0.5) * 1.5</code> (-0.75 to +0.75). <code style="color:#22d3bf">k &lt; 0</code> pulls points toward the centre (barrel), <code style="color:#22d3bf">k &gt; 0</code></p>
+<p>spreads them outward (pincushion), no change at a=0.5.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> is unused.</p>
+<p>The radius is normalised by half of the image&#x27;s long side, so at the image corners <code style="color:#22d3bf">r</code> is around 1, and with <code style="color:#22d3bf">k = ±0.75</code> corner points move up to 1.75× / 0.25×. There is no inverse (flipping the sign of <code style="color:#22d3bf">k</code> does not restore it exactly). For trying the effect of lens distortion on contour measurements (<code style="color:#22d3bf">hx_fit_circle_contour</code> etc.), or for synthetic data augmentation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

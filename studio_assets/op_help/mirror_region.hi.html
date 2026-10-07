@@ -14,8 +14,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/mirror_region.inputs.jpg">mirror_region: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region को उलटता (mirror) है। a के मान से axis बदलता है: a&lt;0.34 पर ऊपर-नीचे उलटना (<code style="color:#22d3bf">flipud</code>), 0.34≤a&lt;0.67 पर बाएँ-दाएँ उलटना (<code style="color:#22d3bf">fliplr</code>), अन्यथा transpose (diagonal उलटना, <code style="color:#22d3bf">x.T</code>)। b इस्तेमाल नहीं होता। Flip मान नहीं बदलता, इसलिए <code style="color:#22d3bf">_rebinarise</code> वास्तव में कुछ नहीं करता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">mirror_region</code>（軸を指定して領域を反射する演算）に相当。HALCON は軸位置を任意に指定できるが、この実装は画像中心を通る 3 種類の軸（縦/横/対角）に固定されている近似。</p>
+<p>HALCON के <code style="color:#22d3bf">mirror_region</code> (axis निर्दिष्ट करके region को प्रतिबिंबित करने वाला operation) के समकक्ष है। HALCON में axis की स्थिति मनचाहे ढंग से निर्दिष्ट की जा सकती है, पर यह implementation image के केंद्र से गुज़रने वाले 3 प्रकार के axes (ऊर्ध्वाधर/क्षैतिज/विकर्ण) पर स्थिर सन्निकटन है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/thinning.inputs.jpg">thinning: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Reduces a region to 1-pixel width using <code style="color:#22d3bf">skimage.morphology.thin</code> (a Zhang-Suen-family thinning algorithm). Its purpose is similar to <code style="color:#22d3bf">skeleton</code>, but the internal algorithm differs, so results can differ slightly near branch points and similar areas. A stand-in for HALCON&#x27;s <code style="color:#22d3bf">thinning</code> (Remove the result of a hit-or-miss operation from a region.).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。skimage が無い環境ではこの分岐は呼べない。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> are unused. This branch cannot be called in environments without skimage.</p>
 <p><b>Border handling</b>: treat everything outside the image as background (0) (measured; <code style="color:#22d3bf">tools/impl2/border_probe.py</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>

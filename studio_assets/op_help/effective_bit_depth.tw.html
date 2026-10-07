@@ -8,12 +8,10 @@
 <p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>估計影像<b>實際</b>使用的位元數，並映射到 <code style="color:#22d3bf">[0,1]</code> 後回傳(feature)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">8</code> ビットの器に入っていても、中身が <code style="color:#22d3bf">6</code> ビット相当しかないことはよくある —— 低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
-<p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み <code style="color:#22d3bf">Δ</code> とみて <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>。返り値は <code style="color:#22d3bf">bits / 16</code> (<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は未使用)。</p>
-<p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数のまま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、推定は <code style="color:#22d3bf">log2(N)</code> 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測 <b>13.7 bit</b>。16 に飽和するわけではないので、<b>「これ以上は測れない」線を画素数から先に引いておくこと</b>(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>
-<p style="margin:2px 0 2px 12px">(3) ディザが掛かっている画像では階調が埋まるので、実効ビット数は<b>高く</b>出る ——</p>
-<p>それは「情報として何ビット分あるか」ではなく「何段使っているか」の答え。</p>
+<p>即使裝在 <code style="color:#22d3bf">8</code> 位元的容器裡，內容只相當於 <code style="color:#22d3bf">6</code> 位元的情況也很常見 —— 拉伸了低位元感測器的輸出、經過一次 JPEG、套用了伽瑪，等等。這裡根據所佔灰階的<b>實際間隔</b>來估計有效位元數：把出現過的像素值排序，把相鄰值之差的<b>眾數</b>視為步長 <code style="color:#22d3bf">Δ</code>，<code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>。回傳值為 <code style="color:#22d3bf">bits / 16</code>（<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> 未使用）。</p>
+<p><b>適用條件與偏離方式</b>：(1) ★<b>像素數決定上限</b>。灰階幾乎連續（以浮點直接處理的影像）時，最小步長是「有 N 個值時的平均間隔 ~1/N」，因此估計在 <code style="color:#22d3bf">log2(N)</code> 附近飽和 —— 在 128x128（N=16384）的連續影像上實測為 <b>13.7 bit</b>。並不會飽和到 16，因此<b>應先根據像素數畫出「再往上就測不出」這條線</b>（在小裁切區域上量測會偏低）。(2) 經過非線性轉換（伽瑪、對數）後，步長因位置而異，因此眾數是「有代表性的步長」，而不是均勻的步長。</p>
+<p style="margin:2px 0 2px 12px">(3) 套用了抖動的影像中灰階會被填滿，因此有效位元數會<b>偏高</b> ——</p>
+<p>那回答的是「用了多少階」，而不是「作為資訊有多少位元」。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -14,8 +14,7 @@
 <p>*未展示彩色 (H,W,3) 输入: 此算子把颜色通道当作第三个空间轴(跨通道)。请按通道分别调用。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>实现与 <code style="color:#22d3bf">rank_image</code> 完全相同(<code style="color:#22d3bf">kind: &quot;rank&quot;</code>,方形窗的百分位滤波器)。在 HALCON 中,<code style="color:#22d3bf">rank_image</code>(任意遮罩)与 <code style="color:#22d3bf">rank_rect</code>(仅限矩形遮罩)是不同的算子,但此替代实现两者都指向同一个方形窗实现。是 HALCON 的 <code style="color:#22d3bf">rank_rect</code>(Compute a rank filter with rectangular masks.)的替代实现。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">a</code> が窓の一辺、<code style="color:#22d3bf">b</code> がパーセンタイル(5〜95%)を振る。両方が使われる。</p>
+<p><code style="color:#22d3bf">a</code> 调节窗口边长,<code style="color:#22d3bf">b</code> 调节百分位(5～95%)。两者都会使用。</p>
 <p><b>边界处理</b>：含端点的镜像折返 (d c b a | a b c d，scipy 默认的 <code style="color:#22d3bf">reflect</code>)（实测。<code style="color:#22d3bf">tools/impl2/border_probe.py</code>）。</p>
 <p><b>旋钮（实测）</b>：<code style="color:#22d3bf">a</code> 以<b>离散档位</b>生效，切换点在 a ≈ 0.25、0.49、0.75（以步长 0.02 扫描实测）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

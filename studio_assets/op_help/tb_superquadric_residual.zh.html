@@ -10,14 +10,13 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_superquadric_residual.chain.jpg">tb_superquadric_residual: 处理阶段</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Gross-Boult 体积修正残差：mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code> で各点の内外関数 F を求め、点ごとの残差 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code> の 2 乗平均を float で返す。表面上の点は <code style="color:#22d3bf">F=1</code> なので残差 0、内側は負・外側は正の残差になる(2 乗するので符号は消える)。<code style="color:#22d3bf">fit_superquadric</code> が最小化しているのと同じ量で、返り dict の <code style="color:#22d3bf">residual</code> もこの値。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) にリシェイプできる点群(world 座標)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>: 半径 (a1,a2,a3)。<code style="color:#22d3bf">eps</code>: 形状指数 (eps1,eps2)(F の計算には両方、外側の <code style="color:#22d3bf">F**eps1</code> には <code style="color:#22d3bf">eps1</code> だけを使う)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>: 姿勢(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。<code style="color:#22d3bf">None</code> なら単位回転 / 原点。</p>
-<p>数値保護: F は [0, 1e12] にクリップし、<code style="color:#22d3bf">a1*a2*a3</code> は 1e-12 以上に持ち上げてから sqrt を取る(退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。</p>
-<p>次元: <code style="color:#22d3bf">sqrt(a1 a2 a3)</code> は長さの 3/2 乗、<code style="color:#22d3bf">F^eps1 - 1</code> は無次元なので、返り値は長さの 3 乗の次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring のとおり。</p>
-<p>2-D 進化レジストリへ橋渡しした 3d の op <code style="color:#22d3bf">superquadric_residual</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
+<p>用 <code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code> 求出各点的内外函数 F，将逐点残差 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code> 的 2 次方均值以 float 返回。表面上的点 <code style="color:#22d3bf">F=1</code>，因此残差为 0，内侧为负、外侧为正的残差(因取 2 次方，符号消失)。与 <code style="color:#22d3bf">fit_superquadric</code> 所最小化的是同一个量，返回 dict 中的 <code style="color:#22d3bf">residual</code> 也是这个值。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>：可 reshape 为 (N,3) 的点云(world 坐标)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>：半径 (a1,a2,a3)。<code style="color:#22d3bf">eps</code>：形状指数 (eps1,eps2)(计算 F 时两者都用，外层的 <code style="color:#22d3bf">F**eps1</code> 只用 <code style="color:#22d3bf">eps1</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>：位姿(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。<code style="color:#22d3bf">None</code> 时为单位旋转 / 原点。</p>
+<p>数值保护：F 裁剪到 [0, 1e12]，<code style="color:#22d3bf">a1*a2*a3</code> 先抬高到 1e-12 以上再取 sqrt (以免退化参数产生 inf/NaN。对表面附近的值没有影响)。</p>
+<p>量纲：<code style="color:#22d3bf">sqrt(a1 a2 a3)</code> 是长度的 3/2 次方，<code style="color:#22d3bf">F^eps1 - 1</code> 无量纲，因此返回值具有长度 3 次方的量纲，依赖于点云的尺度。不适合在大小不同的物体之间比较。它不是真正的点-表面欧氏距离而是径向距离近似，并且对离群值毫无防护，这些都如模块 docstring 所述。</p>
+<p>桥接到 2-D 进化注册表的 3d op <code style="color:#22d3bf">superquadric_residual</code>。实现相同，只是调用约定改为 <code style="color:#22d3bf">op(v, a, b)</code>。此 op 没有可调参数，<code style="color:#22d3bf">a</code> 和 <code style="color:#22d3bf">b</code> 都不使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

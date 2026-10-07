@@ -15,12 +15,11 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>시차 이미지로부터 깊이 Z = f*baseline/disparity 를 계산(초점/기선은 a,b 로 가변). 정규화 Z.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">v</code>(0〜1)を視差 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 画素相当に写し、<code style="color:#22d3bf">Z = f * baseline / disp</code> を計算して min-max で [0,1] に正規化した画像を返す。X, Y は計算しない(Z のみ)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 焦点距離 <code style="color:#22d3bf">f = 200 + 600*a</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基線長 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>。</p>
-<p style="margin:2px 0 2px 12px">• 視差の下限を 0.5 に置いているのでゼロ除算は起きない。</p>
-<p>注意: <code style="color:#22d3bf">f * baseline</code> は全画素共通の定数倍で、最後の min-max 正規化で打ち消されるため、<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> を変えても出力は変わらない(実測で完全一致)。出力は実質「視差の逆数を正規化したもの」で、視差最大(<code style="color:#22d3bf">v = 1</code>)が 0、視差最小(<code style="color:#22d3bf">v = 0</code>)が 1 になる(近い物ほど暗い)。絶対的な深度が要る用途には使えない。逆数変換で遠方の量子化が粗くなるので、<code style="color:#22d3bf">v</code> が小さい領域の値は不安定。</p>
+<p><code style="color:#22d3bf">v</code>(0~1)를 시차 <code style="color:#22d3bf">disp = v*63 + 0.5</code> 화소 상당으로 사상하고, <code style="color:#22d3bf">Z = f * baseline / disp</code>를 계산해 min-max로 [0,1]로 정규화한 영상을 반환한다. X, Y는 계산하지 않는다(Z만).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 초점 거리 <code style="color:#22d3bf">f = 200 + 600*a</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 기선 길이 <code style="color:#22d3bf">baseline = 0.05 + 0.15*b</code>.</p>
+<p style="margin:2px 0 2px 12px">• 시차의 하한을 0.5로 두었으므로 0으로 나누기는 일어나지 않는다.</p>
+<p>주의: <code style="color:#22d3bf">f * baseline</code>은 모든 화소에 공통인 상수배이고 마지막 min-max 정규화에서 상쇄되므로, <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>를 바꿔도출력은 바뀌지 않는다(실측으로 완전 일치). 출력은 실질적으로 &quot;시차의 역수를 정규화한 것&quot;으로, 시차 최대(<code style="color:#22d3bf">v = 1</code>)가 0, 시차 최소(<code style="color:#22d3bf">v = 0</code>)가 1이 된다(가까운 물체일수록 어둡다). 절대적인 깊이가 필요한 용도에는 쓸 수 없다. 역수 변환으로 먼 곳의양자화가 거칠어지므로 <code style="color:#22d3bf">v</code>가 작은 영역의 값은 불안정하다.</p>
 <p><b>노브(실측)</b>: <code style="color:#22d3bf">a</code>를 0에서 1까지 변화시켜도 <b>출력이 바뀌지 않는다</b>(5가지 입력으로 실측).</p>
 <p><b>아무것도 찍히지 않은 프레임(실측)</b>: 밝기가 균일한 이미지를 넣으면 <b>밝기와 무관하게 결과가 비어 있다(모든 화소가 배경 0)</b>. 순백이든 순흑이든 같으며, 밝기 자체로는 아무것도 검출하지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

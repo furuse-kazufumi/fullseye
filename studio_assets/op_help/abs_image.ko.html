@@ -12,8 +12,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>화소값의 절댓값을 취한다(<code style="color:#22d3bf">np.abs</code>). fullseye의 <code style="color:#22d3bf">image</code>는 이미 [0,1] 계약(음이 아님)을 따르므로, 일반적인 이미지에 대해서는 아무것도 바꾸지 않는 항등 사상으로 작동한다. 차분 이미지처럼 부호가 있는 중간 결과를 직접 전달했을 때만 의미를 가진다. HALCON의 <code style="color:#22d3bf">abs_image</code>(Calculate the absolute value (modulus) of an image.)의 대역.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。clip 前の生値 <code style="color:#22d3bf">v</code> にそのまま <code style="color:#22d3bf">abs</code> を掛けている点に注意(他の pointwise 分岐は <code style="color:#22d3bf">x = clip(v,0,1)</code> を使うが、この分岐だけ <code style="color:#22d3bf">v</code> を直接見る)。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. clip 전의 원시값 <code style="color:#22d3bf">v</code>에 그대로 <code style="color:#22d3bf">abs</code>를 적용한다는 점에주의(다른 pointwise 분기는 <code style="color:#22d3bf">x = clip(v,0,1)</code>을 쓰지만, 이 분기만 <code style="color:#22d3bf">v</code>를직접 본다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_gray_arith">gallery2d_gray_arith 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

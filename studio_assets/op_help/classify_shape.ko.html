@@ -10,8 +10,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/classify_shape.chain.jpg">classify_shape: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>가장 큰 연결 영역에 대해 원형도(circularity)를 계산하는 형상 분류 기초 특징량. 대응하는 단일 HALCON op는 지정되어 있지 않다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。最大面積の連結成分について <code style="color:#22d3bf">4π×面積 / 周長²</code> を計算し、理想円で 1 になるよう <code style="color:#22d3bf">min(1.0, ...)</code> で頭打ちにする（数値誤差で 1 をわずかに超えるのを防ぐ）。周長は領域からその侵食を引いた境界画素数（<code style="color:#22d3bf">_region_boundary</code> と同じ考え方）で近似するため、輪郭ベースの周長より粗い。前景が無ければ 0 を返す。コード中のコメントの通り、OCR・良否判定など「形状で分類する」処理の土台として使うことを想定している。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>는 사용하지 않는다. 최대 면적의 연결 성분에 대해 <code style="color:#22d3bf">4π×면적 / 둘레²</code>를 계산하고, 이상적인 원에서 1이 되도록 <code style="color:#22d3bf">min(1.0, ...)</code>로 상한을 둔다(수치 오차로 1을 약간 넘는 것을 막는다). 둘레는 영역에서 그 침식을 뺀 경계 화소 수(<code style="color:#22d3bf">_region_boundary</code>와 같은 사고방식)로 근사하므로, 윤곽 기반의 둘레보다 거칠다. 전경이 없으면 0을 반환한다. 코드 속 주석대로 OCR·양부 판정 등 &quot;형상으로 분류하는&quot; 처리의 토대로 쓰는 것을 상정하고 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

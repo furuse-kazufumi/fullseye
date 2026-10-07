@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fit_line_contours.inputs.jpg">fit_line_contours: andere Eingaben</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Approximiert jede XLD-Kontur durch eine einzelne Gerade. Entspricht HALCONs <code style="color:#22d3bf">fit_line_contour_xld</code> (Approximate XLD contours by line segments.).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。輪郭点群の重心を通り、SVD（特異値分解）で求めた第一主成分方向を直線の向きとして採用し（全点との距離二乗和を最小化する直線）、元の点群の射影範囲に等間隔に打ち直した点列に置き換える。HALCON 版は折れ線（複数線分）に分割できるが、この実装は輪郭全体を 1 本の直線にする点が異なる。点が 2 点未満の輪郭はそのまま返す。</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Als Geradenrichtung wird die per SVD (Singulärwertzerlegung) bestimmte erste Hauptkomponentenrichtung durch den Schwerpunkt der Konturpunkte übernommen (die Gerade, die die Summe der quadrierten Abstände zu allen Punkten minimiert), und die Kontur wird durch eine Punktfolge ersetzt, die gleichabständig über den Projektionsbereich der ursprünglichen Punkte neu gesetzt wird. Der Unterschied: Die HALCON-Version kann in einen Polygonzug (mehrere Segmente) zerlegen, diese Implementierung macht die gesamte Kontur zu 1 Geraden. Konturen mit weniger als 2 Punkten werden unverändert zurückgegeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_contour_measure">Leitfaden zur Familie gallery2d_contour_measure</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -13,8 +13,7 @@
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>밝기 그래프에 대한 정규화 컷(normalized cut, 스펙트럴 2분할, Shi &amp; Malik)을 사용하여 이미지를 밝은 영역과 어두운 영역 두 개로 나눈다(대응하는 HALCON 연산자 없음).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>計算量を抑えるため画像を <code style="color:#22d3bf">sdim = round(10+b*14)</code> 程度まで間引いてから、輝度差と距離で重みを決めたアフィニティグラフを作り、一般化固有値問題 <code style="color:#22d3bf">(D-W)y = lambda*D*y</code> の第 2 固有ベクトル（Fiedler ベクトル）を中央値でしきい値化して 2 群に分ける。<code style="color:#22d3bf">a</code>（0〜1）は輝度方向の帯域幅<code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code> を振り、<code style="color:#22d3bf">b</code>（0〜1）は間引きの解像度を振る。明るい方の群を最近傍で元解像度に拡大して region として返す。</p>
+<p>계산량을 억제하기 위해 영상을 <code style="color:#22d3bf">sdim = round(10+b*14)</code> 정도까지 솎아낸 뒤, 휘도 차와 거리로 가중치를 정한 어피니티 그래프를 만들고, 일반화 고윳값 문제 <code style="color:#22d3bf">(D-W)y = lambda*D*y</code>의 제2 고유벡터(Fiedler 벡터)를 중앙값으로 임계값 처리하여 2군으로 나눈다. <code style="color:#22d3bf">a</code>(0~1)는 휘도 방향의 대역폭 <code style="color:#22d3bf">sig_i = 0.05 + a*0.5</code>를 바꾸고, <code style="color:#22d3bf">b</code>(0~1)는 솎아내기의 해상도를 바꾼다. 밝은 쪽 군을 최근접으로 원래 해상도로 확대하여 region으로 반환한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_segmentation">gallery2d_segmentation 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

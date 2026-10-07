@@ -11,8 +11,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/cv_cc_count.chain.jpg">cv_cc_count: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Connected components की गिनती (1 scalar feature, OpenCV implementation)। Binary region में connected components (foreground के टुकड़ों) की संख्या गिनता है —— background label वाला 1 घटाकर लौटाता है।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">connection</code>(Compute connected components of a region.)に相当(近似。分割結果ではなく個数のみを返す)。実装は <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code>。a, b は未使用。connectivity は OpenCV の既定(8 連結)のまま。</p>
+<p>HALCON के <code style="color:#22d3bf">connection</code> (Compute connected components of a region.) के समकक्ष है (सन्निकटन: segmentation का परिणाम नहीं, केवल संख्या लौटाता है)। implementation <code style="color:#22d3bf">cv2.connectedComponents(_u8(binm(v)))[0] - 1</code> है। a, b का उपयोग नहीं होता। connectivity OpenCV के default (8-connectivity) पर ही रहती है।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>

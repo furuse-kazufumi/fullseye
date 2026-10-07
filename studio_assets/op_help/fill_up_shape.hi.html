@@ -13,8 +13,7 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fill_up_shape.inputs.jpg">fill_up_shape: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
 <p>Region के अंदर के छोटे छेद भरता है। केवल <code style="color:#22d3bf">area_threshold = 16+200a</code> pixels या उससे छोटे छेद भरता है (skimage का <code style="color:#22d3bf">remove_small_holes</code>)। b इस्तेमाल नहीं होता।</p>
-<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
-<p>HALCON の <code style="color:#22d3bf">fill_up_shape</code>（面積・円形度など形状特徴で選んだ穴だけを埋める演算）とは異なり、この実装は面積の上限だけで穴を選別する単純化された近似 —— 円形度や凸性など他の形状特徴によるフィルタリングはできない。</p>
+<p>HALCON के <code style="color:#22d3bf">fill_up_shape</code> (area, circularity जैसे shape features से चुने गए holes को ही भरने वाला operation) से अलग, यह implementation केवल area की ऊपरी सीमा से holes चुनने वाला सरलीकृत सन्निकटन है — circularity या convexity जैसे अन्य shape features से filtering नहीं की जा सकती।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_region">gallery2d_region family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
