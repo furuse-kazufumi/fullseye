@@ -39,18 +39,35 @@ def _require_openpyxl():
 
 def _thumb(arr, longest=256):
     """大きい画像をストライドで縮めた [0,1] のサムネイル(PIL 不要)。"""
-    a = np.asarray(arr, np.float64)
+    from imgio import to_float01                                # 整数 dtype の最大値で割る(uint8 -> /255)
+    raw = np.asarray(arr)
+    if raw.dtype.kind not in "biuf":
+        return None
+    # ★ float64 に直してから [0,1] に clip すると uint8 の 0..255 が 0/1 の 2 値に潰れた
+    a = to_float01(raw)
     if a.ndim < 2:
         return None
     h, w = a.shape[:2]
-    step = max(1, int(max(h, w) / longest))
+    # ★ 切り捨ての int() だと 1000 px が step 3 で 334 px になり longest を守らない
+    step = max(1, int(np.ceil(max(h, w) / float(longest))))
     a = a[::step, ::step]
     return np.clip(a, 0.0, 1.0)
+
+
+def _cell_value(v):
+    """セルに書ける値へ: numpy のスカラは数値のまま(str にしない)、他は str。"""
+    if isinstance(v, np.generic) and v.dtype.kind in "biuf":
+        v = v.item()
+    return v if isinstance(v, (int, float, str)) or v is None else str(v)
 
 
 def _write_tabular(ws, r, value, sort, Font, float_fmt, max_rows):
     """table / points / matrix / signal … をセルに。次に書ける行 r を返す。"""
     if sort == "table":
+        if isinstance(value, dict):
+            # dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の
+            # 列になり、1 文字ずつのセルに綴られていた
+            value = [{"key": str(k), "value": v} for k, v in value.items()]
         rows = list(value) if not isinstance(value, np.ndarray) else [
             {"c%d" % j: v for j, v in enumerate(row)} for row in np.atleast_2d(value)]
         keys: list = []
@@ -64,7 +81,7 @@ def _write_tabular(ws, r, value, sort, Font, float_fmt, max_rows):
         for d in rows[:max_rows]:
             for j, k in enumerate(keys, 1):
                 v = d.get(k) if isinstance(d, dict) else (d[k] if k < len(d) else None)
-                ws.cell(r, j, v if isinstance(v, (int, float, str)) or v is None else str(v))
+                ws.cell(r, j, _cell_value(v))
             r += 1
         if len(rows) > max_rows:
             ws.cell(r, 1, "… %d 行中 %d 行のみ表示" % (len(rows), max_rows))

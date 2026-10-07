@@ -847,8 +847,13 @@ def _to01_by_depth(im):
     Float samples are assumed already normalised and merely clipped — the same
     rule :func:`raster.to01` applies, so both read paths agree."""
     a = np.asarray(im)
-    if a.dtype.kind in "ui":
+    if a.dtype.kind == "u":
         return a.astype(np.float64) / float(np.iinfo(a.dtype).max)
+    if a.dtype.kind == "i":
+        # signed: full dtype range -> [0, 1], the rule of to_float01 (/iinfo.max gave [-1, 1])
+        info = np.iinfo(a.dtype)
+        lo, hi = float(info.min), float(info.max)
+        return (a.astype(np.float64) - lo) / (hi - lo)
     return np.clip(a.astype(np.float64), 0.0, 1.0)
 
 

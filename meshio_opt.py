@@ -43,8 +43,9 @@ Honest limitations — nothing here claims more than its round-trip test proves:
     header scale and offset are applied (``coord = X*scale + offset``) but **no CRS
     reprojection** is done — a projected file stays in its projection.
   * **RGB scaling.** LAS colour is 16-bit per the ASPRS spec, but many tools write
-    8-bit values into the 16-bit field; the heuristic here is *per channel*: a
-    channel whose maximum exceeds 255 is divided by 65535, otherwise by 255. PCD
+    8-bit values into the 16-bit field; the heuristic here is decided *once for
+    all three channels* (the bit depth belongs to the file): if any channel
+    exceeds 255 all are divided by 65535, otherwise by 255. PCD
     ``rgb`` is unpacked by PCL's convention and divided by 255. Both are clipped to
     ``[0, 1]``. A genuinely dark 16-bit LAS whose every channel is <= 255 would be
     mis-scaled — document, don't guess silently.
@@ -441,10 +442,11 @@ def read_gltf_merged(path: str, apply_transforms: bool = True):
 def _scale_rgb(channels: list, src: str) -> np.ndarray:
     """Stack r/g/b -> (N,3) float64 in [0,1] with the 16-bit/8-bit heuristic."""
     C = np.column_stack([np.asarray(c, np.float64) for c in channels])
-    for j in range(3):
-        col = C[:, j]
-        if col.size and np.isfinite(col).all():
-            C[:, j] = col / (65535.0 if col.max() > 255.0 else 255.0)
+    # The bit depth is a property of the file, not of each channel: decide it
+    # ONCE from all three. ★ Per-channel, a 16-bit orange scene whose blue stays
+    # <= 255 (in 16-bit units) had blue divided by 255 -> 0.78 instead of 0.003.
+    if C.size and np.isfinite(C).all():
+        C = C / (65535.0 if C.max() > 255.0 else 255.0)
     return np.clip(C, 0.0, 1.0)
 
 

@@ -68,6 +68,7 @@ from __future__ import annotations
 
 import io
 import os
+import re
 
 import numpy as np
 
@@ -348,6 +349,12 @@ _STL_DTYPE = np.dtype([("normal", "<f4", (3,)), ("v", "<f4", (3, 3)), ("attr", "
 def _read_stl(raw: bytes, src: str):
     head = raw[:5].lower()
     probe = raw[:4096].lower()
+    # A binary STL whose 80-byte header happens to start with "solid" (some
+    # exporters write one) is recognised by its exact size 84 + 50*n first.
+    if len(raw) >= 84:
+        n_tri = int(np.frombuffer(raw, "<u4", count=1, offset=80)[0])
+        if 84 + _STL_DTYPE.itemsize * n_tri == len(raw):
+            return _read_stl_binary(raw, src)
     if head == b"solid" and b"facet" in probe:
         return _read_stl_ascii(raw, src)
     if len(raw) < 84:
@@ -400,9 +407,12 @@ def _ply_header(raw: bytes, src: str):
     list so the body reader knows the exact byte / token layout."""
     if not raw.startswith(b"ply"):
         raise ValueError("%s: not a PLY file — missing the 'ply' magic" % src)
-    end = raw.find(b"end_header")
-    if end < 0:
+    # ★ match the whole line: a comment that merely mentions end_header used to
+    #   end the header there and shift the binary body (silent garbage).
+    m = re.search(rb"(?m)^[ \t]*end_header[ \t]*\r?$", raw)
+    if m is None:
         raise ValueError("%s: PLY header has no 'end_header' line" % src)
+    end = m.start()
     nl = raw.find(b"\n", end)
     if nl < 0:
         raise ValueError("%s: PLY 'end_header' line is not terminated" % src)
@@ -636,11 +646,27 @@ def _read_ply_points(raw: bytes, src: str):
 def _read_xyz(raw: bytes, src: str):
     """Plain text ``x y z [r g b]``, one point per line (``#`` starts a comment)."""
     rows = []
-    for ln in _text(raw).splitlines():
+    comma_lines = plain_lines = 0
+    for i, ln in enumerate(_text(raw).splitlines()):
         s = ln.split("#")[0].strip()
         if not s:
             continue
-        rows.append(s.replace(",", " ").split())
+        if "," in s:
+            # ★ A comma is a column separator only when it is the ONLY one on the
+            #   line. "1,5 2,5 3,5" (decimal commas, European locale) used to be
+            #   re-split into 6 columns and read as xyz + colour (silently wrong).
+            toks = [t.strip() for t in s.split(",")]
+            if any((not t) or len(t.split()) != 1 for t in toks):
+                raise ValueError("%s: XYZ line %d mixes ',' with whitespace (decimal commas?) "
+                                 "— use '.' as the decimal mark and one separator" % (src, i + 1))
+            comma_lines += 1
+            rows.append(toks)
+        else:
+            plain_lines += 1
+            rows.append(s.split())
+    if comma_lines and plain_lines:
+        raise ValueError("%s: XYZ file mixes comma-separated and whitespace-separated lines"
+                         % src)
     if not rows:
         raise ValueError("%s: XYZ file has no data lines" % src)
     _check_count(len(rows), "points", src)

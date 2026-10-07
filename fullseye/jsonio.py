@@ -15,7 +15,9 @@ way back, with three rules:
    bit, and the tests demand it for every sort with the same probes the op
    gates use. A human-readable ``"encoding": "list"`` is available for small
    values (``readable=True``); it is also exact because Python's ``repr`` of
-   a float is the shortest round-tripping decimal.
+   a float is the shortest round-tripping decimal. A float array holding
+   NaN / inf travels as bytes even then (JSON has no such tokens), and complex
+   arrays are refused rather than silently reduced to their real part.
 3. **Fail-closed.** An unknown sort, a value that does not fit the sort's
    shape, or an envelope with the wrong version raises ``ValueError`` — nothing
    is guessed from the array's shape alone (a ``(4,)`` is a Stokes vector or a
@@ -80,44 +82,111 @@ JSON_SORTS = tuple(sorted(list(_ARRAY_SORTS) + list(_SPECIAL_SORTS)))
 # --------------------------------------------------------------------------- #
 def _encode_array(a, readable):
     a = np.ascontiguousarray(a)
+    if a.dtype.kind not in "biuf":
+        # complex used to lose its imaginary part silently (astype "<f8"); strings /
+        # objects have no array form here either. Refuse rather than guess.
+        raise ValueError("to_jsonable: cannot encode a %s array (bool / int / float only)"
+                         % a.dtype)
     if a.dtype == np.bool_:
         enc, arr = "b64u8", a.astype(np.uint8)
     elif np.issubdtype(a.dtype, np.integer):
         enc, arr = "b64i64", a.astype("<i8")
     else:
         enc, arr = "b64f64", a.astype("<f8")
-    if readable:
+    # JSON has no NaN / inf token (to_json uses allow_nan=False), so a non-finite
+    # float array travels as bytes even when readable=True was asked for.
+    if readable and not (enc == "b64f64" and not np.isfinite(arr).all()):
+        # a.tolist(), not arr.tolist(): a uint64 above 2**63 must not wrap negative
         return {"encoding": "list", "dtype": str(a.dtype), "shape": list(a.shape),
-                "data": arr.tolist()}
+                "data": a.tolist()}
     return {"encoding": enc, "dtype": str(a.dtype), "shape": list(a.shape),
             "data": base64.b64encode(arr.tobytes()).decode("ascii")}
+
+
+#: which dtype kinds each encoding may declare (anything else is a forged envelope)
+_ENC_KINDS = {"list": "biuf", "b64f64": "f", "b64i64": "iu", "b64u8": "bu"}
+
+
+def _envelope_dtype(p, enc, name, default):
+    d = p.get("dtype", default)
+    if d is None:
+        return None
+    try:
+        dt = np.dtype(d)
+    except (TypeError, ValueError):
+        raise ValueError("%s: envelope dtype %r is not a dtype" % (name, d)) from None
+    if dt.kind not in _ENC_KINDS[enc]:
+        raise ValueError("%s: envelope dtype %r is not allowed for encoding %r"
+                         % (name, d, enc))
+    return dt
+
+
+def _payload_shape(p, name):
+    shp = p["shape"]
+    if not isinstance(shp, (list, tuple)) or not all(
+            isinstance(s, int) and not isinstance(s, bool) and s >= 0 for s in shp):
+        raise ValueError("%s: shape must be a list of non-negative ints, got %r" % (name, shp))
+    return tuple(shp)
+
+
+def _cast_exact(arr, dt, name):
+    """Cast *arr* to *dt* only if every value survives (range / precision check)."""
+    with np.errstate(all="ignore"):
+        try:
+            out = arr.astype(dt)
+        except (OverflowError, ValueError):
+            raise ValueError("%s: values do not fit dtype %s" % (name, dt)) from None
+        back = out.astype(arr.dtype)
+    if not np.array_equal(back, arr, equal_nan=arr.dtype.kind == "f"):
+        raise ValueError("%s: values do not fit dtype %s exactly" % (name, dt))
+    return out
 
 
 def _decode_array(p, name="value"):
     if not isinstance(p, dict) or "encoding" not in p or "shape" not in p or "data" not in p:
         raise ValueError("%s: array payload needs encoding / shape / data" % name)
-    shape = tuple(int(s) for s in p["shape"])
+    shape = _payload_shape(p, name)
     enc = p["encoding"]
-    if enc == "list":
-        arr = np.asarray(p["data"], dtype=p.get("dtype", "float64"))
-        n = int(np.prod(shape)) if shape else 1
-        if arr.size != n:
-            raise ValueError("%s: list data has %d values, envelope shape %r wants %d"
-                             % (name, arr.size, shape, n))
-        return arr.reshape(shape)                      # an empty (0, 2) lists as [] — shape restores it
-    dt = {"b64f64": "<f8", "b64i64": "<i8", "b64u8": "u1"}.get(enc)
-    if dt is None:
+    if enc not in _ENC_KINDS:
         raise ValueError("%s: unknown encoding %r" % (name, enc))
-    raw = base64.b64decode(p["data"], validate=True)
+    if enc == "list":
+        dt = _envelope_dtype(p, enc, name, "float64")
+        try:
+            raw = np.asarray(p["data"])
+        except (TypeError, ValueError):
+            raise ValueError("%s: list data is not a numeric array" % name) from None
+        n = int(np.prod(shape)) if shape else 1
+        if raw.size != n:
+            raise ValueError("%s: list data has %d values, envelope shape %r wants %d"
+                             % (name, raw.size, shape, n))
+        if raw.size and raw.dtype.kind not in "biuf":
+            # strings ("1.5", "nan") / objects used to be coerced by the envelope dtype
+            raise ValueError("%s: list data must hold numbers, got %s" % (name, raw.dtype))
+        if raw.size == 0:
+            return np.zeros(shape, dtype=dt)            # an empty (0, 2) lists as [] — shape restores it
+        return _cast_exact(raw, dt, name).reshape(shape)
+    dt = {"b64f64": "<f8", "b64i64": "<i8", "b64u8": "u1"}[enc]
+    want = _envelope_dtype(p, enc, name, None)
+    try:
+        raw = base64.b64decode(p["data"], validate=True)
+    except (TypeError, ValueError):
+        raise ValueError("%s: data is not base64" % name) from None
     n = int(np.prod(shape)) if shape else 1
+    if len(raw) % np.dtype(dt).itemsize:
+        raise ValueError("%s: %d bytes is not a whole number of %s values" % (name, len(raw), dt))
     arr = np.frombuffer(raw, dtype=dt)
     if arr.size != n:
         raise ValueError("%s: %d values in data, shape %r wants %d" % (name, arr.size, shape, n))
     arr = arr.reshape(shape).copy()
-    if enc == "b64u8" and p.get("dtype") == "bool":
+    if enc == "b64u8" and want is not None and want.kind == "b":
+        if arr.size and arr.max() > 1:
+            raise ValueError("%s: bool data holds values other than 0 / 1" % name)
         arr = arr.astype(bool)
-    elif enc == "b64i64" and p.get("dtype"):
-        arr = arr.astype(p["dtype"])
+    elif enc == "b64i64" and want is not None:
+        if want == np.dtype(np.uint64):
+            arr = arr.astype(np.uint64)                # the writer wrapped uint64 into int64; undo it
+        else:
+            arr = _cast_exact(arr, want, name)
     return arr
 
 
@@ -214,7 +283,10 @@ def to_jsonable(value, sort, readable=False):
             raise ValueError("to_jsonable: contour must be {'shape': (H, W), 'cs': [arrays]}")
         cs = []
         for c in value["cs"]:
-            a = np.asarray(c, dtype=np.float64)
+            a = np.asarray(c)
+            if a.dtype.kind not in "biuf":
+                raise ValueError("to_jsonable: contour points must be real numbers, got %s" % a.dtype)
+            a = a.astype(np.float64)
             if a.ndim != 2 or a.shape[1] != 2:
                 raise ValueError("to_jsonable: each contour must be (N, 2), got %r" % (a.shape,))
             cs.append(_encode_array(a, readable))
@@ -237,7 +309,7 @@ def from_jsonable(env):
     """Inverse of :func:`to_jsonable`: ``(value, sort)``. Fail-closed on a bad envelope."""
     if not isinstance(env, dict) or "fullseye_sort" not in env:
         raise ValueError("from_jsonable: not a fullseye envelope (no 'fullseye_sort')")
-    if env.get("version") != VERSION:
+    if type(env.get("version")) is not int or env.get("version") != VERSION:
         raise ValueError("from_jsonable: envelope version %r, this reader knows %d"
                          % (env.get("version"), VERSION))
     sort = env["fullseye_sort"]
@@ -253,19 +325,38 @@ def from_jsonable(env):
     if sort in ("region", "mask"):
         if not isinstance(p, dict) or p.get("encoding") != "rle":
             raise ValueError("from_jsonable: %s payload must be rle" % sort)
-        return _rle_decode(p["runs"], p["shape"]), sort
+        if "runs" not in p or "shape" not in p:
+            raise ValueError("from_jsonable: %s payload needs shape and runs" % sort)
+        shp = _payload_shape(p, sort)
+        if len(shp) != 2:
+            raise ValueError("from_jsonable: %s shape must be (H, W), got %r" % (sort, shp))
+        runs = p["runs"]
+        if not isinstance(runs, list) or not all(
+                isinstance(r, int) and not isinstance(r, bool) for r in runs):
+            raise ValueError("from_jsonable: %s runs must be a list of ints" % sort)
+        return _rle_decode(runs, shp), sort
     if sort in ("feature", "scalar"):
-        v = p["value"] if isinstance(p, dict) else None
+        if not isinstance(p, dict) or "value" not in p:
+            raise ValueError("from_jsonable: %s payload needs a value" % sort)
+        v = p["value"]
         if isinstance(v, str):
-            v = float(v)                                   # "nan" / "inf" written by repr
-        if not isinstance(v, (int, float)):
+            try:
+                v = float(v)                               # "nan" / "inf" written by repr
+            except ValueError:
+                raise ValueError("from_jsonable: %s value %r is not a number" % (sort, v)) from None
+        if isinstance(v, bool) or not isinstance(v, (int, float)):
             raise ValueError("from_jsonable: %s payload must be a number" % sort)
         return float(v), sort
     if sort == "contour":
         if not isinstance(p, dict) or "cs" not in p or "shape" not in p:
             raise ValueError("from_jsonable: contour payload needs shape and cs")
+        if not isinstance(p["cs"], list):
+            raise ValueError("from_jsonable: contour cs must be a list")
         cs = [_decode_array(c, "contour") for c in p["cs"]]
-        return {"shape": tuple(int(s) for s in p["shape"]), "cs": cs}, sort
+        for c in cs:
+            if c.ndim != 2 or c.shape[1] != 2:
+                raise ValueError("from_jsonable: each contour must be (N, 2), got %r" % (c.shape,))
+        return {"shape": _payload_shape(p, "contour"), "cs": cs}, sort
     if sort == "table":
         return p, sort
     raise ValueError("from_jsonable: unhandled sort %r" % sort)     # pragma: no cover

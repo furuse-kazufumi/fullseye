@@ -134,8 +134,23 @@ def _guess_columns(A: np.ndarray) -> dict:
     mono = [c for c in rest if np.all(np.diff(A[:, c]) >= 0)]
     if not mono:
         raise ValueError("read_events: 時刻の列(単調非減少)が無い —— 時刻順に並んでいない?")
-    tcol = max(mono, key=lambda c: float(np.ptp(A[:, c])))
+    # ★ 値域(ptp)最大の単調列を時刻にすると、左→右に掃く縁の x(0..239 px)が
+    #   秒単位の t(0..0.1)に勝って x と t が入れ替わった(2026-10-07)。
+    #   x・y は画素座標なので整数値。時刻は「整数でない単調列」を優先し、
+    #   決まらなければ推測せず拒否する(見出しを付ければ名前で読める)。
+    integral = {c: bool(np.all(A[:, c] == np.round(A[:, c]))) for c in rest}
+    frac_mono = [c for c in mono if not integral[c]]
+    if len(frac_mono) == 1:
+        tcol = frac_mono[0]
+    elif not frac_mono and len(mono) == 1:
+        tcol = mono[0]
+    else:
+        raise ValueError("read_events: 時刻の列を一意に決められない(単調な列 %s、うち整数でない列 %s)"
+                         " —— 見出し行 'x y t p' を付けてください" % (mono, frac_mono))
     xy = [c for c in rest if c != tcol]
+    if not all(integral[c] for c in xy):
+        raise ValueError("read_events: x・y の候補 %s が整数値でない(画素座標でない)"
+                         " —— 見出し行 'x y t p' を付けてください" % xy)
     return {"x": xy[0], "y": xy[1], "t": tcol, "p": pcol}
 
 

@@ -130,8 +130,10 @@ def to01(arr, meta=None) -> np.ndarray:
     """Return a float64 view of *arr* in ``[0, 1]`` **without** touching the raw
     read.
 
-    Integer samples are divided by their dtype maximum (``uint16`` -> /65535,
-    ``uint8`` -> /255), ``bool`` maps to 0/1, and **float** samples are assumed
+    Unsigned integer samples are divided by their dtype maximum (``uint16`` ->
+    /65535, ``uint8`` -> /255); **signed** integers map their full dtype range
+    affinely onto [0, 1] (``int16 -32768 -> 0``, ``32767 -> 1``, the same rule as
+    ``imgio.to_float01``); ``bool`` maps to 0/1, and **float** samples are assumed
     already normalised and merely clipped into ``[0, 1]`` (see the module
     limitations — this does not rescale metric/radiance floats). *meta* is
     accepted for symmetry with :func:`read_raster` but the dtype of *arr* is
@@ -140,8 +142,13 @@ def to01(arr, meta=None) -> np.ndarray:
     a = np.asarray(arr)
     if a.dtype == bool:
         return a.astype(np.float64)
-    if a.dtype.kind in "ui":
+    if a.dtype.kind == "u":
         return a.astype(np.float64) / float(np.iinfo(a.dtype).max)
+    if a.dtype.kind == "i":
+        # ★ /iinfo.max put a signed image in [-1, 1] (int16 -32768 -> -1.00003)
+        info = np.iinfo(a.dtype)
+        lo, hi = float(info.min), float(info.max)
+        return (a.astype(np.float64) - lo) / (hi - lo)
     return np.clip(a.astype(np.float64), 0.0, 1.0)
 
 
