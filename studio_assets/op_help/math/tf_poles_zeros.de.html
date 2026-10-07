@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_poles_zeros(num, den) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_poles_zeros(num, den) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;tf_poles_zeros&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Pole, Nullstellen, Gleichverstärkung und Stabilität von H(s) = num/den.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>安定(漸近安定)= すべての極の実部 &lt; 0。直流ゲインは H(0)(原点に極があれば inf)。</p>
+<p>Stabil (asymptotisch stabil) = Realteile aller Pole &lt; 0. Die Gleichverstärkung ist H(0) (inf, wenn ein Pol im Ursprung liegt).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

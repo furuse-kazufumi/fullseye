@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathspectral; mathspectral.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;hilbert_analytic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>解析訊號 z = x + i·H[x] (以 FFT 消去負頻率)，以及從中讀出的振幅、瞬時相位與瞬時頻率。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>x: 実の 1-D 信号。</p>
-<p>fs: 標本化周波数(瞬時周波数の単位を決める)。</p>
+<p>x: 實數 1-D 訊號。</p>
+<p>fs: 取樣頻率(決定瞬時頻率的單位)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">analytic</code> 複素の解析信号、<code style="color:#22d3bf">amplitude</code> |z|(包絡線)、<code style="color:#22d3bf">phase</code> 連続につないだ位相 [rad]、</p>
-<p><code style="color:#22d3bf">frequency</code> 瞬時周波数 = 位相の時間微分 / 2π(中心差分、長さは x と同じ)。</p>
-<p>門: cos → sin(Hilbert 変換の定義)、線形チャープの瞬時周波数が f0 + k·t、Bedrosian の定理(包絡線が搬送波より低い帯域なら AM 信号の振幅がそのまま戻る)。端は周期の仮定で乱れる(信号を窓で絞ると減る)。</p>
+<p><code style="color:#22d3bf">analytic</code> 複數解析訊號、<code style="color:#22d3bf">amplitude</code> |z|(包絡)、<code style="color:#22d3bf">phase</code> 連續展開的相位 [rad]、</p>
+<p><code style="color:#22d3bf">frequency</code> 瞬時頻率 = 相位的時間導數 / 2π(中心差分，長度與 x 相同)。</p>
+<p>門檻：cos → sin(Hilbert 轉換的定義)、線性啁啾的瞬時頻率為 f0 + k·t、Bedrosian 定理(若包絡處於比載波更低的頻帶，則 AM 訊號的振幅原樣還原)。兩端因週期性假定而紊亂(以視窗收窄訊號可減輕)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

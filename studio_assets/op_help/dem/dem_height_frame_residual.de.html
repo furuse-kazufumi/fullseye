@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Residuum <code style="color:#22d3bf">h - H - N</code> — ein Detektor, der <b>eine Verwechslung der Höhen nicht stillschweigend durchgehen lässt</b> (<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
+<p>Ellipsoidische Höhe, orthometrische Höhe und Geoidhöhe sind durch 1 Identität verbunden (<code style="color:#22d3bf">h = H + N</code>). Misst man deren Residuum an Punkten, an denen alle 3 vorliegen, zeigt sich numerisch, dass <b>eine davon mit einem anderen Bezugssystem, einem anderen Modell oder einer anderen Version erstellt wurde</b>. Zwischen Vermessungsergebnissen bleibt das Residuum im cm-Bereich; wird die ellipsoidische Höhe direkt als orthometrische Höhe verwendet, klebt das Residuum an <code style="color:#22d3bf">-N</code> (−30 bis −40 m in der Nähe Japans) fest.</p>
 <p>Args:</p>
-<p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
-<p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
-<p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
-<p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
+<p>h_ellipsoidal_m: ellipsoidische Höhe [m] (von GNSS geliefert). Arrays erlaubt.</p>
+<p>h_orthometric_m: orthometrische Höhe derselben Punkte [m] (Karte, Nivellement).</p>
+<p>geoid_height_m: Geoidhöhe derselben Punkte [m].</p>
+<p>tol_m: Schwelle [m], ab der Werte als &quot;stimmig&quot; gelten. Standard 0.10 m.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>。</p>
-<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高をそのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
-<p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
+<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>.</p>
+<p>Per geschlossener Form prüfbar: bei gemäß der Identität gebildeten 3-Tupeln ist das Residuum 0 (gemessen rms 1.2e-14 m; nur wegen Rundung nicht exakt 0). Trägt man in die Spalte der orthometrischen Höhe die ellipsoidische Höhe direkt ein, klebt das Residuum an <b>−N</b> —— der Betrag der Verwechslung tritt unverändert hervor.</p>
+<p><b>ValueError</b>: Längen passen nicht zusammen, nicht-endliche Werte, negatives *tol_m*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

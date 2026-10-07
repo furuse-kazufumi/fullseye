@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;hilbert_analytic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Das analytische Signal z = x + i·H[x] (negative Frequenzen per FFT entfernt) sowie die daraus abgelesene Amplitude, Momentanphase und Momentanfrequenz.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>x: 実の 1-D 信号。</p>
-<p>fs: 標本化周波数(瞬時周波数の単位を決める)。</p>
+<p>x: reelles 1-D-Signal.</p>
+<p>fs: Abtastfrequenz (legt die Einheit der Momentanfrequenz fest).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">analytic</code> 複素の解析信号、<code style="color:#22d3bf">amplitude</code> |z|(包絡線)、<code style="color:#22d3bf">phase</code> 連続につないだ位相 [rad]、</p>
-<p><code style="color:#22d3bf">frequency</code> 瞬時周波数 = 位相の時間微分 / 2π(中心差分、長さは x と同じ)。</p>
-<p>門: cos → sin(Hilbert 変換の定義)、線形チャープの瞬時周波数が f0 + k·t、Bedrosian の定理(包絡線が搬送波より低い帯域なら AM 信号の振幅がそのまま戻る)。端は周期の仮定で乱れる(信号を窓で絞ると減る)。</p>
+<p><code style="color:#22d3bf">analytic</code> komplexes analytisches Signal, <code style="color:#22d3bf">amplitude</code> |z| (Einhüllende), <code style="color:#22d3bf">phase</code> stetig fortgesetzte Phase [rad],</p>
+<p><code style="color:#22d3bf">frequency</code> Momentanfrequenz = zeitliche Ableitung der Phase / 2π (zentrale Differenzen, gleiche Länge wie x).</p>
+<p>Gate: cos → sin (Definition der Hilbert-Transformation), die Momentanfrequenz eines linearen Chirps ist f0 + k·t, Satz von Bedrosian (liegt die Einhüllende in einem tieferen Band als der Träger, kommt die Amplitude eines AM-Signals unverändert zurück). Die Ränder werden durch die Periodizitätsannahme gestört (Eingrenzen des Signals mit einem Fenster verringert das).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

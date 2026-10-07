@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;tf_impulse_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>脈衝響應 h(t) = L⁻¹[H(s)] (t)(嚴格真分式部分。不回傳直通項的 delta)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>h(t) = C e^{At} B を行列指数で直接評価する(部分分数に頼らないので重根・原点の極でも分岐しない)。</p>
+<p>以矩陣指數直接計算 h(t) = C e^{At} B(不依賴部分分式，因此重根、原點極點也不需分支)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

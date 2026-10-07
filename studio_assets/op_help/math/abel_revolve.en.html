@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;abel_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Revolves a cross-section f(z, r) ((H, R), r = 0, dr, …) around the symmetry axis into a 3-D volume (H, 2R−1, 2R−1).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">abel_inverse_image</code> と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。</p>
-<p>門: できたボリュームを横に足し合わせる(投影する)と、元の投影画像に戻る(往復)。</p>
+<p>Combined with <code style="color:#22d3bf">abel_inverse_image</code>, the 3-D distribution of an axisymmetric object is recovered from 1 photo.</p>
+<p>Gate: summing the resulting volume sideways (projecting it) gives back the original projection image (round trip).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

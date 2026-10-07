@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Error function erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>正規分布の累積や、ぼけたエッジ(ガウスで畳んだ段差)の形そのもの: 幅 σ のガウスでぼけた段差は ½(1 + erf(x / (σ√2)))。門: 奇関数、erf(∞) = 1、導関数 = (2/√π) e^{−x²}、Gauss 求積による積分と一致。</p>
+<p>The cumulative normal distribution, and the very shape of a blurred edge (a step convolved with a Gaussian): a step blurred by a Gaussian of width σ is ½(1 + erf(x / (σ√2))). Gate: odd function, erf(∞) = 1, derivative = (2/√π) e^{−x²}, agrees with the integral by Gauss quadrature.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

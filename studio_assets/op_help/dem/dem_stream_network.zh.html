@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_stream_network&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将汇水量超过阈值的格子单元视为河道的二值掩膜。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>手順: <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code> で各セルの集水セル数(自セルを 1 と数える)を取り、<code style="color:#22d3bf">acc &gt;= threshold_cells</code> を 1、それ以外を 0 にする。欠測セルは <code style="color:#22d3bf">nan</code> のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>: 河道とみなす集水セル数。正の有限値(<code style="color:#22d3bf">ValueError</code>)。面積で決めたいなら <code style="color:#22d3bf">面積 [m^2] / cell_size^2</code> に換算して渡す(この op はセル数しか受けない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(既定): 先に priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>、<code style="color:#22d3bf">epsilon=1e-6</code>)で窪地を埋める。埋めないと窪地で流れが止まり、下流の集水量が小さく出て河道が途切れる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodata</code>: <code style="color:#22d3bf">&quot;error&quot;</code>(既定、<code style="color:#22d3bf">nan</code> があれば拒否)/ <code style="color:#22d3bf">&quot;outlet&quot;</code>(欠測 = 流出口、水域向き)/ <code style="color:#22d3bf">&quot;barrier&quot;</code>(欠測 = 壁)。定数で穴埋めする選択肢は無い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code> / <code style="color:#22d3bf">cell_size</code> の契約は <code style="color:#22d3bf">dem_slope</code> と同じ(3x3 以上、番兵値拒否、[m])。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 0 / 1(欠測は <code style="color:#22d3bf">nan</code>)。bool ではないので <code style="color:#22d3bf">blob_label</code> 等に渡すなら <code style="color:#22d3bf">== 1</code> で二値化する。</p>
-<p style="margin:2px 0 2px 12px">• 計算量: 集水量のトポロジカル走査がセル数ぶんの Python ループ。</p>
-<p>D8 流向(<code style="color:#22d3bf">dem_flow_direction</code>)に基づくので、平坦な埋立地では流れが一箇所に集まりやすい ―― 閾値を下げすぎると格子状の偽河道が出る。</p>
+<p>步骤:用 <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code> 求各单元的汇水单元数(自身计为 1),把 <code style="color:#22d3bf">acc &gt;= threshold_cells</code> 设为 1,其余设为 0。缺测单元保持 <code style="color:#22d3bf">nan</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>:视为河道的汇水单元数。正的有限值(<code style="color:#22d3bf">ValueError</code>)。想按面积决定时,换算为 <code style="color:#22d3bf">面积 [m^2] / cell_size^2</code> 再传入(此 op 只接受单元数)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(默认):先用 priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>,<code style="color:#22d3bf">epsilon=1e-6</code>) 填平洼地。不填的话流在洼地停止,下游汇水量偏小,河道会断开。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodata</code>:<code style="color:#22d3bf">&quot;error&quot;</code>(默认,有 <code style="color:#22d3bf">nan</code> 则拒绝)/ <code style="color:#22d3bf">&quot;outlet&quot;</code>(缺测 = 出流口, 适用于水域)/ <code style="color:#22d3bf">&quot;barrier&quot;</code>(缺测 = 墙)。没有用常数填补空洞的选项。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code> / <code style="color:#22d3bf">cell_size</code> 的约定与 <code style="color:#22d3bf">dem_slope</code> 相同(3x3 以上,拒绝哨兵值,[m])。</p>
+<p style="margin:2px 0 2px 12px">• 返回值:<code style="color:#22d3bf">(H, W)</code> float64 的 0 / 1(缺测为 <code style="color:#22d3bf">nan</code>)。不是 bool,所以传给 <code style="color:#22d3bf">blob_label</code> 等时要用 <code style="color:#22d3bf">== 1</code> 二值化。</p>
+<p style="margin:2px 0 2px 12px">• 计算量:汇水量的拓扑遍历是按单元数执行的 Python 循环。</p>
+<p>基于 D8 流向(<code style="color:#22d3bf">dem_flow_direction</code>),所以在平坦的填海地上流容易集中到一处 ―― 阈值降得过低会出现网格状的伪河道。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

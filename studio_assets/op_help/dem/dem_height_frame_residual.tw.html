@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><code style="color:#22d3bf">h - H - N</code> 的殘差 —— <b>不讓高度混淆悄無聲息地通過</b>的偵測器(<code style="color:#22d3bf">table</code>)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
+<p>橢球高、正高(標高)、大地水準面高由 1 個恆等式聯繫(<code style="color:#22d3bf">h = H + N</code>)。在 3 者齊備的點上量測其殘差，就能以數值顯示<b>某一個是用另一基準、另一模型或另一版本製作的</b>。測量成果之間殘差在 cm 級以內，若把橢球高直接當作標高使用，殘差會固定在 <code style="color:#22d3bf">-N</code>(日本附近為 −30~−40 m) 上。</p>
 <p>Args:</p>
-<p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
-<p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
-<p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
-<p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
+<p>h_ellipsoidal_m: 橢球高 [m] (GNSS 的回傳)。可為陣列。</p>
+<p>h_orthometric_m: 同一點的標高 [m] (地圖、水準測量)。</p>
+<p>geoid_height_m: 同一點的大地水準面高 [m]。</p>
+<p>tol_m: 視為「一致」的閾值 [m]。預設 0.10 m。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>。</p>
-<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高をそのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
-<p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
+<p>可用閉合式檢驗的內容：依恆等式構造的 3 元組殘差為 0 (實測 rms 1.2e-14 m。僅因捨入而不是嚴格的 0)。若在標高欄中直接填入橢球高，殘差會固定在 <b>−N</b> —— 混淆的量會原樣顯現。</p>
+<p><b>ValueError</b>：長度不一致、非有限值、負的 *tol_m*。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

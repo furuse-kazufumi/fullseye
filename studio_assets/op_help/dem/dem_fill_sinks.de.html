@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>DEM mit aufgefüllten Senken. Das Priority-Flood-Verfahren von Barnes, Lehman &amp; Mulla (2014).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">epsilon</code> に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
-<p><code style="color:#22d3bf">nodata</code> は <code style="color:#22d3bf">NODATA_POLICIES</code>。<code style="color:#22d3bf">&quot;outlet&quot;</code> なら欠測セルを外周と同じ <b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測は埋めの対象から外し、値を <code style="color:#22d3bf">nan</code> のまま返す。</p>
-<p>出力は入力以上(<code style="color:#22d3bf">filled &gt;= dem</code>、欠測を除く)。</p>
+<p>Gibt man <code style="color:#22d3bf">epsilon</code> einen winzigen Wert (z. B. 1e-6), erhalten die aufgefüllten Ebenen ein leichtes Gefälle (ohne das ist die Fließrichtung auf Ebenen unbestimmt und die Abflussakkumulation verschwindet unterwegs).</p>
+<p><code style="color:#22d3bf">nodata</code> ist einer aus <code style="color:#22d3bf">NODATA_POLICIES</code>. <code style="color:#22d3bf">&quot;outlet&quot;</code> behandelt Fehlwertzellen wie den Außenrand als <b>Saat</b> (Wasser, das in ein Gewässer fließt, verlässt dort das System). <code style="color:#22d3bf">&quot;barrier&quot;</code> schließt Fehlwerte vom Auffüllen aus und gibt ihre Werte als <code style="color:#22d3bf">nan</code> zurück.</p>
+<p>Die Ausgabe ist mindestens die Eingabe (<code style="color:#22d3bf">filled &gt;= dem</code>, ohne Fehlwerte).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

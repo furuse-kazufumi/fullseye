@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>비용 행렬 (n, m)의 할당 문제를 푼다(Kuhn 1955 / Munkres 1957의 헝가리안 방법, scipy 구현).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>行と列を 1 対 1 に結び、選んだコストの総和を最小(<code style="color:#22d3bf">maximize=True</code> で最大)にする。n != m なら短い側が全部結ばれる。返り値 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>。門: 小さな行列で全順列の総当たりと一致する。</p>
+<p>행과 열을 1 대 1로 짝지어, 고른 비용의 총합을 최소(<code style="color:#22d3bf">maximize=True</code>이면 최대)로 한다. n != m이면 짧은 쪽이 전부 짝지어진다. 반환값 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>. 게이트: 작은 행렬에서 모든 순열의 전수 조사와 일치한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

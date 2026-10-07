@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Builds the filters of the Daubechies orthonormal wavelet dbN by the textbook construction (spectral factorization).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
+<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2)), P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k (Daubechies 1988). From the roots of P, the zeros inside the unit circle are chosen and multiplied with (1 + z⁻¹)^N. No table is copied, so there are no transcription errors from loss of significant digits (the gate checks the values).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>
-<p><code style="color:#22d3bf">vanishing_moments</code> = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。</p>
+<p><code style="color:#22d3bf">lowpass</code> h (length 2N, sum √2), <code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n], <code style="color:#22d3bf">order</code>,</p>
+<p><code style="color:#22d3bf">vanishing_moments</code> = N (polynomials up to degree N−1 are cancelled in the detail coefficients). order=1 is Haar.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;low_discrepancy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Low-discrepancy point sequence (n, dim) in [0, 1)^dim.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;halton&quot;</code> —— 座標ごとに異なる素数を基数にした van der Corput 列(自前の実装、決定的)。<code style="color:#22d3bf">skip</code> 個を読み飛ばす(先頭の 0 を避けるなら 1)。高次元(&gt; 8 程度)では座標間に縞が出るので注意。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;sobol&quot;</code> —— scipy.stats.qmc.Sobol(<code style="color:#22d3bf">seed</code> を与えるとスクランブル)。n は 2 の冪が最良。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;random&quot;</code> —— 比較用の一様乱数(<code style="color:#22d3bf">seed</code> 必須、再現性のため)。</p>
-<p>門: なめらかな関数の積分誤差は乱数の N^{−1/2} より速く減る / 星形食い違い量が乱数より小さい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;halton&quot;</code> —— van der Corput sequences with a different prime base per coordinate (own implementation, deterministic). Skips <code style="color:#22d3bf">skip</code> points (1 to avoid the leading 0). Beware: in high dimensions (&gt; 8 or so) stripes appear between coordinates.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;sobol&quot;</code> —— scipy.stats.qmc.Sobol (scrambled if <code style="color:#22d3bf">seed</code> is given). n is best as a power of 2.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;random&quot;</code> —— uniform random numbers for comparison (<code style="color:#22d3bf">seed</code> required, for reproducibility).</p>
+<p>Gate: the integration error for smooth functions decreases faster than random&#x27;s N^{−1/2} / the star discrepancy is smaller than random&#x27;s.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

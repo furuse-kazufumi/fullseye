@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;crlb_gaussian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>白高斯噪声(标准差 sigma)下的 Cramér–Rao 下界。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>y_i = f(x_i; θ) + ε_i、ε ~ N(0, σ²) のとき Fisher 情報行列 I = JᵀJ / σ²(J = ∂f/∂θ、中心差分)、<b>どんな不偏推定量の共分散も I⁻¹ 以上</b>。<code style="color:#22d3bf">std</code> は各パラメータの標準偏差の下限 √diag(I⁻¹)。<code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ)。</p>
-<p>門: 定数の平均なら σ²/n。直線の最小二乗(効率的な推定量)のモンテカルロ分散が下界に一致する。</p>
+<p>y_i = f(x_i; θ) + ε_i、ε ~ N(0, σ²) 时，Fisher 信息矩阵 I = JᵀJ / σ²(J = ∂f/∂θ，中心差分)，<b>任何无偏估计量的协方差都不小于 I⁻¹</b>。<code style="color:#22d3bf">std</code> 是各参数标准差的下限 √diag(I⁻¹)。<code style="color:#22d3bf">model</code>：<code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ)。</p>
+<p>门禁：常数的平均为 σ²/n。直线最小二乘(有效估计量)的蒙特卡洛方差与下界一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

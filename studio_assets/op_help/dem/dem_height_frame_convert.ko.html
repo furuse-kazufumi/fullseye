@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이의 <b>기준</b>을 옮긴다: 타원체고 <code style="color:#22d3bf">h</code> ↔ 표고 <code style="color:#22d3bf">H</code>(<code style="color:#22d3bf">H = h - N</code>). <code style="color:#22d3bf">signal</code>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>同じ「高さ」という語で 2 つの別物が流通していて、どちらも例外を出さずに地図に載る。この op は<b>どちらからどちらへ移すのかを必ず書かせる</b> —— 既定はあるが、<code style="color:#22d3bf">frm</code> と <code style="color:#22d3bf">to</code> は docstring でなくコードに残る。</p>
+<p>같은 &quot;높이&quot;라는 말로 2개의 별개의 것이 유통되고 있으며, 둘 다 예외를 내지 않고지도에 실린다. 이 op는 <b>어느 쪽에서 어느 쪽으로 옮기는지를 반드시 쓰게 한다</b> —— 기본값은 있지만, <code style="color:#22d3bf">frm</code>과 <code style="color:#22d3bf">to</code>는 docstring이 아니라 코드에 남는다.</p>
 <p>Args:</p>
-<p>height_m: 高さ [m]。配列可。</p>
-<p>geoid_height_m: 同じ点のジオイド高 <code style="color:#22d3bf">N</code> [m] —— <code style="color:#22d3bf">dem_geoid_height</code> で引いた値。</p>
-<p>スカラでも配列でもよい。</p>
-<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code>(楕円体高)か <code style="color:#22d3bf">&quot;orthometric&quot;</code>(標高)。</p>
+<p>height_m: 높이 [m]. 배열 가능.</p>
+<p>geoid_height_m: 같은 점의 지오이드고 <code style="color:#22d3bf">N</code> [m] —— <code style="color:#22d3bf">dem_geoid_height</code>로 조회한 값.</p>
+<p>스칼라든 배열이든 좋다.</p>
+<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code>(타원체고) 또는 <code style="color:#22d3bf">&quot;orthometric&quot;</code>(표고).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n,)</code> の変換後の高さ [m]。<code style="color:#22d3bf">frm == to</code> なら値は変わらない。</p>
-<p>閉じた式で検査できること: <code style="color:#22d3bf">H = h - N</code> は定義そのものなので真値は引き算で出る。往復(h→H→h)の誤差は<b>実測で 5e-13 m 以下</b>(5,000 点、高さ −100〜4000 m・ <code style="color:#22d3bf">N</code> ±100 m)。ビット一致ではない —— <code style="color:#22d3bf">(h - N) + N</code> は丸めで 1 ulp 動くことがあり、実測では 5,000 点中 273 点がそうなった。<b>「往復で元に戻る」を等号で書かない</b>のはそのため。</p>
-<p><b>ValueError</b>: 未知の基準名、長さの食い違い、非有限。</p>
+<p><code style="color:#22d3bf">(n,)</code>의 변환 후 높이 [m]. <code style="color:#22d3bf">frm == to</code>이면 값은 바뀌지 않는다.</p>
+<p>닫힌 식으로 검사할 수 있는 것: <code style="color:#22d3bf">H = h - N</code>은 정의 그 자체이므로 참값은 뺄셈으로 나온다. 왕복(h→H→h)의 오차는 <b>실측으로 5e-13 m 이하</b>(5,000점, 높이 −100~4000 m, <code style="color:#22d3bf">N</code> ±100 m). 비트 일치는 아니다 —— <code style="color:#22d3bf">(h - N) + N</code>은 반올림으로 1 ulp 움직이는 경우가있으며, 실측에서는 5,000점 중 273점이 그랬다. <b>&quot;왕복하면 원래대로 돌아온다&quot;를 등호로쓰지 않는</b> 것은 그 때문.</p>
+<p><b>ValueError</b>: 미지의 기준명, 길이 불일치, 비유한.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

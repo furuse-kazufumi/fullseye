@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathspectral; mathspectral.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;ula_snapshots&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>產生等間隔線陣列接收的複數快拍 (M, K)(到達方向估計答案已確定的輸入)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>波源ごとに独立な複素ガウスの信号(無相関)。<code style="color:#22d3bf">snr_db</code> を与えると素子ごとの白色雑音を足す(None = 雑音なし)。</p>
+<p>每個波源獨立的複數高斯訊號(互不相關)。給定 <code style="color:#22d3bf">snr_db</code> 時，對每個陣元加白雜訊(None = 無雜訊)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

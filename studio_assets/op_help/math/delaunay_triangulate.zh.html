@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;delaunay_triangulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>平面点 (N, 2) 的三角剖分，或空间点 (N, 3) 的四面体剖分(Delaunay，scipy.spatial = Qhull)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D では <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> も同じ中身で返す)。外接円・外接球は描画・Voronoi 用。</p>
-<p>門: <b>どの外接円(球)の中にも他の点が無い</b>(空円性。2-D は既存の <code style="color:#22d3bf">is_delaunay_2d</code> も真値)/ 2-D の三角形の数は 2n − h − 2(h = 凸包の頂点数)/ 3-D の四面体の集まりは凸な塊なので V − E + F − T = 1(Euler)。共円・共球の点が多いと分割は一意でない(どれも Delaunay)。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D 时 <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> 也以相同内容返回)。外接圆、外接球用于绘图和 Voronoi。</p>
+<p>门禁：<b>任何外接圆(球)内都没有其他点</b>(空圆性。2-D 时既有的 <code style="color:#22d3bf">is_delaunay_2d</code> 也是真值)/ 2-D 三角形数为 2n − h − 2(h = 凸包顶点数)/ 3-D 四面体的集合是凸块，所以 V − E + F − T = 1(Euler)。共圆、共球的点多时剖分不唯一(都是 Delaunay)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

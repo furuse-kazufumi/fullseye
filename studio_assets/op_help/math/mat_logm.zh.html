@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.mat_logm(A) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mat_logm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>矩阵的主对数 log A(满足 e^X = A 的 X 中，特征值虚部位于 (−π, π] 的那个，scipy)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>負の実固有値を持つ行列は実の主対数を持たない → ValueError(複素数を黙って返さない)。</p>
+<p>具有负实特征值的矩阵没有实主对数 → ValueError(不会悄悄返回复数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

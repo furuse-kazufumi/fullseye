@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_paired&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Paired t-test: whether the mean of the differences d = x − y from measuring the same subjects 2 times is 0.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>t = mean(d) / (sd(d)/√n)、自由度 n−1、両側の p 値。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>。</p>
+<p>t = mean(d) / (sd(d)/√n), degrees of freedom n−1, two-sided p-value. Returns <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

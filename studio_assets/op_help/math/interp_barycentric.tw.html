@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以重心公式在 x 處計算通過點 (xk, yk) 的多項式(次數 len−1)的值(Berrut &amp; Trefethen 2004)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では <b>Runge 現象</b>(端の振動)がそのまま出る —— それは公式の欠陥ではなく、点の置き方の問題。</p>
-<p>門: 次数 len−1 以下の多項式は厳密に再現する。</p>
+<p>不經由係數(不求解 Vandermonde 矩陣)，因此高次時數值上也穩定。等間距點上 <b>Runge 現象</b>(端部振盪)會原樣出現 —— 那不是公式的缺陷，而是點的配置問題。</p>
+<p>門檻：次數不超過 len−1 的多項式精確重現。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

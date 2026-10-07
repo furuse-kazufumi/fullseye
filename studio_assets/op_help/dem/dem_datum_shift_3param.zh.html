@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>大地基准(datum)的转换 —— 地心 3 参数平移(<code style="color:#22d3bf">points</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
-<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
-<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
+<p>即使同为“北纬 35 度 41 分”，旧日本测地系与世界测地系所指的点在<b>地面上相距数百米</b>。本 op 将这一转换作为地心直角坐标中的平移(<code style="color:#22d3bf">Molodensky-Badekas</code> 中无旋转、无缩放的情形)来执行::</p>
+<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 大地坐标(a_to, f_to)</p>
+<p>★<b>参数不设默认值</b>。从哪个成果到哪个成果、用哪个平移量转换，因国家、地区、版本而异，若默默假定，就会得到“不报异常但偏离数百米的坐标” —— 这正是本 op 存在的理由，所以必须让调用者写明。</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。</p>
-<p>h_m: 元の成果での楕円体高 [m]。</p>
-<p>dx_m / dy_m / dz_m: 地心の平行移動量 [m] (元 → 先)。</p>
-<p>a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。</p>
-<p>a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。</p>
+<p>lat_deg / lon_deg: 原成果中的纬度、经度 [度]。可为数组。</p>
+<p>h_m: 原成果中的椭球高 [m]。</p>
+<p>dx_m / dy_m / dz_m: 地心平移量 [m] (原 → 目标)。</p>
+<p>a_from_m / f_from: 原椭球的长半径 [m] 与扁率。</p>
+<p>a_to_m / f_to: 目标椭球的长半径 [m] 与扁率。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b> (往復の床は <code style="color:#22d3bf">dem_ecef_to_geodetic</code> と同じ)。平行移動だけを与えたときの地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> 的 <code style="color:#22d3bf">(纬度[度], 经度[度], 椭球高[m])</code>。</p>
+<p>可用闭式检验的内容：平移为 0 且为同一椭球时为<b>恒等变换</b> (往返的下限与 <code style="color:#22d3bf">dem_ecef_to_geodetic</code> 相同)。只给出平移时的地面位移量，与该点 ECEF 基底下分解的分量一致。</p>
+<p><b>ValueError</b>：非有限值、纬度超出 ±90、长半径非正、扁率超出 [0, 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

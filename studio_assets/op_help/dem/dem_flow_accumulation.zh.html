@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>汇水格子单元数：流入各格子单元的上游格子单元个数(本格子单元计为 1)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">fill=True</code> なら先に窪地を埋める(埋めないと窪地で流れが止まり、下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は <code style="color:#22d3bf">nan</code>。</p>
-<p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で 2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
+<p><code style="color:#22d3bf">fill=True</code> 时先填平洼地(不填的话流在洼地停止, 下游的汇水量会<b>悄无声息地偏小</b>)。缺测单元的汇水量为 <code style="color:#22d3bf">nan</code>。</p>
+<p>图的构建已向量化。但<b>效果很小</b>:1024x1024 时 2.71 秒 -&gt; 2.39 秒。占主导的不是构建,而是之后的拓扑遍历(按单元数执行的 Python 循环)。想要加速就必须改写那里 —— 为了不留下“以为修好了其实没修好”而在此写明。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

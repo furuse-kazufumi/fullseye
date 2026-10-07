@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;abel_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将截面 f(z, r)((H, R)，r = 0, dr, …)绕对称轴旋转，得到 3-D 体积 (H, 2R−1, 2R−1)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">abel_inverse_image</code> と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。</p>
-<p>門: できたボリュームを横に足し合わせる(投影する)と、元の投影画像に戻る(往復)。</p>
+<p>与 <code style="color:#22d3bf">abel_inverse_image</code> 组合，可从 1 张照片还原轴对称物体的 3-D 分布。</p>
+<p>门禁：将得到的体数据横向叠加(投影)，即回到原投影图像(往返)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

@@ -6,50 +6,49 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(z, sq_analytic)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由指定的 PSD 合成高度場。回傳 <code style="color:#22d3bf">(z, sq_analytic)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>帯域 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> の各モードに振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>、自己アフィン)を置き、<b>位相だけ</b>乱数にする。全体を <code style="color:#22d3bf">sq</code> に規格化して返す。</p>
-<p>引数</p>
-<p>n           格子の大きさ。整数なら <code style="color:#22d3bf">n x n</code>、<code style="color:#22d3bf">(ny, nx)</code> でも可。</p>
-<p>dx          標本間隔(正方画素)。</p>
-<p>hurst       Hurst 指数 H(0 &lt; H &lt; 1)。大きいほど滑らか。</p>
-<p>lambda_lo   帯域の<b>短い</b>側の波長。</p>
-<p>lambda_hi   帯域の<b>長い</b>側の波長。</p>
-<p>sq          目標 Sq(帯域内の rms 高さ)。</p>
-<p>seed        位相の乱数種。</p>
-<p>★ 解析 Sq を一緒に返すのが肝</p>
-<p>振幅を固定して位相だけ振るので、Parseval から</p>
-<p><code style="color:#22d3bf">&lt;h²&gt; = (1/(ny nx))² Σ_k A_k²</code> が <b>位相の引き方によらず</b>決まる。</p>
-<p>つまり Sq の真値が乱数に依存しない。実測: <code style="color:#22d3bf">z.std()</code> と</p>
-<p><code style="color:#22d3bf">sq_analytic</code> の相対差は seed・H・帯域・寸法を振っても</p>
-<p><b>最大 2.2e-16</b>(下の表)。ここを「乱数を振って rms を測る」で</p>
-<p>済ませると、真値そのものが実現ごとにばらついて後段の誤差と混ざる。</p>
-<p>n     H     λ帯域        sq      |std/analytic-1|   尖度   PTV/rms</p>
+<p>在頻帶 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> 內的每個模態上放置振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>（= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>，自仿射），<b>只讓相位</b>隨機。整體正規化到 <code style="color:#22d3bf">sq</code> 後回傳。</p>
+<p>參數</p>
+<p>n           網格大小。整數時為 <code style="color:#22d3bf">n x n</code>，也可為 <code style="color:#22d3bf">(ny, nx)</code>。</p>
+<p>dx          取樣間隔（正方形像素）。</p>
+<p>hurst       Hurst 指數 H（0 &lt; H &lt; 1）。越大越平滑。</p>
+<p>lambda_lo   頻帶<b>短</b>波一側的波長。</p>
+<p>lambda_hi   頻帶<b>長</b>波一側的波長。</p>
+<p>sq          目標 Sq（頻帶內的 rms 高度）。</p>
+<p>seed        相位的亂數種子。</p>
+<p>★ 同時回傳解析 Sq 是關鍵</p>
+<p>因為振幅固定、只改變相位，由 Parseval 可知</p>
+<p><code style="color:#22d3bf">&lt;h²&gt; = (1/(ny nx))² Σ_k A_k²</code> <b>與相位的抽取方式無關</b>地確定。</p>
+<p>也就是說 Sq 的真值不依賴亂數。實測：<code style="color:#22d3bf">z.std()</code> 與</p>
+<p><code style="color:#22d3bf">sq_analytic</code> 的相對差，即使改變 seed、H、頻帶、尺寸，</p>
+<p><b>最大也只有 2.2e-16</b>（下表）。若這裡用「改變亂數再測 rms」來</p>
+<p>應付，真值本身就會隨每次實現而波動，與後級的誤差混在一起。</p>
+<p>n     H     λ頻帶        sq      |std/analytic-1|   峰度   PTV/rms</p>
 <p>128  0.30    4-32     0.5000       2.2e-16         3.084    7.97</p>
 <p>256  0.50    4-64     0.0800       0.0e+00         3.005    7.85</p>
 <p>256  0.80    2-64     0.0800       2.2e-16         2.893    6.92</p>
 <p>512  0.80    2-64     0.0800       0.0e+00         3.113    8.25</p>
 <p>512  0.95   8-256     2.0000       0.0e+00         2.542    5.69</p>
-<p>★ PoC が踏んだ落とし穴を実装側に閉じ込めてある</p>
-<p>係数をエルミートにするために位相を <code style="color:#22d3bf">phi = (u - u[-k]) / 2</code> で</p>
-<p>反対称化すると、<b>確かに反対称にはなるが位相が一様でなくなる</b></p>
-<p>(三角分布になって 0 の近くに寄る)。すると全モードが原点で同位相に</p>
-<p>足され、高さ場に 1 本のスパイクが立つ。同じ種・同じ帯域で測った実測</p>
-<p>(512², H=0.8, 帯域 2-64):</p>
-<p>位相の作り方                 PTV/rms    尖度    |std/analytic-1|</p>
-<p>(u - u[-k])/2 で反対称化      55.00     71.81       0.0e+00</p>
-<p>共役対の片方だけに一様乱数     8.47      2.95       0.0e+00  ← 正しい</p>
-<p><b>どちらも Sq は解析値と厳密に一致する。</b> 分散だけ見ていたら</p>
-<p>気づけない壊れ方なので、この関数は共役対の片方だけに一様乱数を引く</p>
-<p>実装に固定し、テストで尖度と PTV/rms も見る。自己共役モード</p>
-<p>(k = -k、4 点)は係数が実でなければならないので、位相ではなく</p>
-<p>符号 ±1 を振る(位相 0 に固定すると全部 +A に偏るため)。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code> が 8 未満 / <code style="color:#22d3bf">dx</code> が非正 / <code style="color:#22d3bf">hurst</code> が (0, 1) の外。</p>
+<p>★ PoC 踩過的坑已封裝在實作內部</p>
+<p>為了讓係數滿足厄米對稱而用 <code style="color:#22d3bf">phi = (u - u[-k]) / 2</code> 把相位</p>
+<p>反對稱化時，<b>確實會變成反對稱，但相位不再均勻</b></p>
+<p>（變成三角分布，向 0 附近集中）。於是所有模態在原點以同相位</p>
+<p>疊加，高度場上豎起 1 根尖峰。用相同種子、相同頻帶測得的實測</p>
+<p>（512², H=0.8, 頻帶 2-64）：</p>
+<p>相位的產生方式                 PTV/rms    峰度    |std/analytic-1|</p>
+<p>用 (u - u[-k])/2 反對稱化       55.00     71.81       0.0e+00</p>
+<p>僅對共軛對的一方取均勻亂數       8.47      2.95       0.0e+00  ← 正確</p>
+<p><b>兩者的 Sq 都與解析值嚴格一致。</b> 只看變異數就</p>
+<p>察覺不到這種損壞，因此本函式固定為只對共軛對的一方取均勻亂數的</p>
+<p>實作，測試中也檢查峰度和 PTV/rms。自共軛模態</p>
+<p>（k = -k，4 個點）的係數必須為實數，所以不隨機相位，而是</p>
+<p>隨機符號 ±1（若把相位固定為 0，則全部偏向 +A）。</p>
+<p>fail-closed(失敗即拒絕)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code> 小於 8 / <code style="color:#22d3bf">dx</code> 非正 / <code style="color:#22d3bf">hurst</code> 在 (0, 1) 之外。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo &gt;= lambda_hi</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo</code> が Nyquist 波長 <code style="color:#22d3bf">2*dx</code> 未満(実現できない帯域)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_hi</code> が評価長さ超(1 周期も入らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sq</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• 帯域に 1 モードも入らない(格子が粗すぎる / 帯域が狭すぎる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo</code> 小於 Nyquist 波長 <code style="color:#22d3bf">2*dx</code>（無法實現的頻帶）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_hi</code> 超過評定長度（連 1 個週期都放不下）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sq</code> 非正。</p>
+<p style="margin:2px 0 2px 12px">• 頻帶內連 1 個模態都沒有（網格太粗 / 頻帶太窄）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

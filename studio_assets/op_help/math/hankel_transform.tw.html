@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;hankel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以 quasi-discrete 法計算 p 階 Hankel 轉換 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">(r, f)</code> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、<code style="color:#22d3bf">r_max</code>(既定 = r の最大値)の外は 0。<code style="color:#22d3bf">f</code> に呼び出し可能を渡すと、標本点で直接評価する(<code style="color:#22d3bf">r</code> は無視して <code style="color:#22d3bf">r_max</code> を必ず渡す)。標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(<code style="color:#22d3bf">F</code> を f として渡す)。</p>
-<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の 2 次元フーリエ変換の動径断面に等しい。</p>
-<p>返り値: <code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(最後は ‖T·T − I‖_max)。</p>
+<p><code style="color:#22d3bf">(r, f)</code> 是徑向樣本(r 遞增)。以線性內插放到樣本點 r_k 上，<code style="color:#22d3bf">r_max</code>(預設 = r 的最大值)之外為 0。若對 <code style="color:#22d3bf">f</code> 傳入可呼叫物件，則在樣本點上直接求值(忽略 <code style="color:#22d3bf">r</code>，必須傳入 <code style="color:#22d3bf">r_max</code>)。樣本點為 r_k = j_k R / S(j_k 是 J_p 的第 k 個零點，S = j_{n+1})，頻率 ν_k = j_k / (2πR)。此轉換的核 T 是<b>對合</b>(T·T = I)，因此同一函式也可做逆轉換(把 <code style="color:#22d3bf">F</code> 當作 f 傳入)。</p>
+<p>門檻：exp(−π r²) 自對偶(F(ν) = exp(−π ν²))。0 階 Hankel 轉換等於軸對稱函數的 2 維傅立葉轉換的徑向截面。</p>
+<p>回傳值：<code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(最後一項為 ‖T·T − I‖_max)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>D8 flow direction. O&#x27;Callaghan &amp; Mark (1984).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>返り値は <code style="color:#22d3bf">(H, W)</code> の整数で、0-7 が <code style="color:#22d3bf">_D8</code> の並び、<code style="color:#22d3bf">-1</code> が「流出先なし」(周囲より低い = 窪地、または境界外へ出る)。</p>
-<p><code style="color:#22d3bf">nodata=&quot;outlet&quot;</code> なら、欠測セルへ向かう流れを<b>許す</b>(そこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測へは流れない。欠測セル自身は常に <code style="color:#22d3bf">-1</code>。</p>
+<p>The return value is an <code style="color:#22d3bf">(H, W)</code> integer array: 0-7 in the order of <code style="color:#22d3bf">_D8</code>, <code style="color:#22d3bf">-1</code> meaning &quot;no outflow target&quot; (lower than all neighbours = sink, or flows out of bounds).</p>
+<p>With <code style="color:#22d3bf">nodata=&quot;outlet&quot;</code>, flow into missing cells is <b>allowed</b> (it leaves the system there). With <code style="color:#22d3bf">&quot;barrier&quot;</code>, nothing flows into missing cells. Missing cells themselves are always <code style="color:#22d3bf">-1</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

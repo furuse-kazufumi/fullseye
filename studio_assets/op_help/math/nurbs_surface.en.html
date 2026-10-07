@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;nurbs_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluates a NURBS surface (tensor product).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>control_net: (mu, mv, 3) の制御網。</p>
-<p>weights: (mu, mv) の正の重み(省略で全部 1)。</p>
-<p>degree: (p, q)。knots_u, knots_v: 各方向の節点列(省略で clamped 一様)。</p>
-<p>n: (nu, nv) 評価点の格子。</p>
+<p>control_net: (mu, mv, 3) control net.</p>
+<p>weights: (mu, mv) positive weights (all 1 if omitted).</p>
+<p>degree: (p, q). knots_u, knots_v: knot vectors in each direction (clamped uniform if omitted).</p>
+<p>n: (nu, nv) grid of evaluation points.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (nu, nv, 3)、<code style="color:#22d3bf">mesh</code> = (V, F) の三角形メッシュ(<code style="color:#22d3bf">geodesic_heat</code> などにそのまま渡せる)、<code style="color:#22d3bf">u</code>・<code style="color:#22d3bf">v</code>・<code style="color:#22d3bf">knots_u</code>・<code style="color:#22d3bf">knots_v</code>・<code style="color:#22d3bf">weights</code>。</p>
+<p><code style="color:#22d3bf">points</code> (nu, nv, 3), <code style="color:#22d3bf">mesh</code> = (V, F) triangle mesh (can be passed as is to <code style="color:#22d3bf">geodesic_heat</code> etc.), <code style="color:#22d3bf">u</code>, <code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">knots_u</code>, <code style="color:#22d3bf">knots_v</code>, <code style="color:#22d3bf">weights</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

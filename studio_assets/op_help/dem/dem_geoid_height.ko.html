@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지오이드고 격자를 위도·경도로 <b>쌍선형 보간</b>하여 <code style="color:#22d3bf">N</code> [m]을 반환한다(<code style="color:#22d3bf">signal</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>GNSS が返すのは楕円体高 <code style="color:#22d3bf">h</code>、地図と設計図が使うのは標高 <code style="color:#22d3bf">H</code>。その差がジオイド高 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)で、日本付近では概ね <b>+30〜+40 m</b> ある。この op は公開されているジオイドモデルの格子(GSIGEO / EGM 系のような等間隔グリッド)を読む側の道具で、<b>モデルそのものは持たない</b> —— どの版を使ったかは呼び手の責任であり、版が変われば標高は数 cm 動く。</p>
+<p>GNSS가 반환하는 것은 타원체고 <code style="color:#22d3bf">h</code>, 지도와 설계도가 쓰는 것은 표고 <code style="color:#22d3bf">H</code>. 그 차이가지오이드고 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)이며, 일본 부근에서는 대략 <b>+30~+40 m</b> 있다. 이 op는 공개된 지오이드 모델의 격자(GSIGEO / EGM 계열 같은등간격 그리드)를 읽는 쪽의 도구로, <b>모델 자체는 갖지 않는다</b> —— 어느 판을썼는지는 호출자의 책임이며, 판이 바뀌면 표고는 수 cm 움직인다.</p>
 <p>Args:</p>
-<p>geoid: <code style="color:#22d3bf">(H, W)</code> のジオイド高 [m]。<code style="color:#22d3bf">geoid[0, 0]</code> が</p>
-<p><code style="color:#22d3bf">(lat0_deg, lon0_deg)</code>、行が増えると緯度が <code style="color:#22d3bf">d_lat_deg</code> 増え、</p>
-<p>列が増えると経度が <code style="color:#22d3bf">d_lon_deg</code> 増える(どちらの符号でもよい)。</p>
-<p>lat_deg / lon_deg: 引きたい点の緯度・経度 [度]。配列可。</p>
-<p>lat0_deg / lon0_deg: 格子の原点 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 格子の刻み [度]。0 は拒否する。</p>
+<p>geoid: <code style="color:#22d3bf">(H, W)</code>의 지오이드고 [m]. <code style="color:#22d3bf">geoid[0, 0]</code>이</p>
+<p><code style="color:#22d3bf">(lat0_deg, lon0_deg)</code>, 행이 늘면 위도가 <code style="color:#22d3bf">d_lat_deg</code> 늘고,</p>
+<p>열이 늘면 경도가 <code style="color:#22d3bf">d_lon_deg</code> 는다(어느 부호든 좋다).</p>
+<p>lat_deg / lon_deg: 조회할 점의 위도, 경도 [도]. 배열 가능.</p>
+<p>lat0_deg / lon0_deg: 격자의 원점 [도].</p>
+<p>d_lat_deg / d_lon_deg: 격자의 스텝 [도]. 0은 거부한다.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n,)</code> のジオイド高 [m]。</p>
-<p>閉じた式で検査できること: <code style="color:#22d3bf">N</code> が緯度・経度の <b>1 次式</b>であるような格子に対しては、双一次補間は<b>厳密</b>(機械精度)。2 次の項があるときの誤差は <code style="color:#22d3bf">|∂²N| * d² / 8</code> で上から押さえられる。</p>
-<p><b>ValueError</b>: 格子が 2-D でない / 2x2 未満 / 非有限、刻みが 0 か非有限、緯度が ±90 を外れる、そして<b>格子の外の点</b>(海域や範囲外を黙って端の値で埋めない —— 外挿したジオイド高は測量値ではない)。</p>
+<p><code style="color:#22d3bf">(n,)</code>의 지오이드고 [m].</p>
+<p>닫힌 식으로 검사할 수 있는 것: <code style="color:#22d3bf">N</code>이 위도, 경도의 <b>1차식</b>인 격자에대해서는, 쌍선형 보간은 <b>엄밀</b>(기계 정밀도). 2차 항이 있을 때의 오차는 <code style="color:#22d3bf">|∂²N| * d² / 8</code>로 위에서 억제된다.</p>
+<p><b>ValueError</b>: 격자가 2-D가 아님 / 2x2 미만 / 비유한, 스텝이 0이거나 비유한, 위도가 ±90을 벗어남, 그리고 <b>격자 밖의 점</b>(해역이나 범위 밖을 조용히 끝 값으로메우지 않는다 —— 외삽한 지오이드고는 측량값이 아니다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

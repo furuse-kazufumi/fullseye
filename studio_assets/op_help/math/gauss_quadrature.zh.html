@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;gauss_quadrature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>n 点 Gauss 求积的节点与权重。∫ f ≈ Σ w_k f(x_k)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>n 点で <b>2n−1 次までの多項式を厳密に</b>積分する(等間隔の台形則は 1 次まで)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> は区間 [a, b] へ写せる(既定 [−1, 1])。他の kind は重み関数込みの積分(<code style="color:#22d3bf">integral</code> 参照)。</p>
-<p>門: 2n−1 次の単項式は厳密、2n 次は厳密でない(両向き)。</p>
+<p>用 n 个点<b>精确积分 2n−1 次及以下的多项式</b>(等间距梯形法则只到 1 次)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> 可映射到区间 [a, b] (默认 [−1, 1])。其他 kind 为含权函数的积分(参见 <code style="color:#22d3bf">integral</code>)。</p>
+<p>门禁：2n−1 次单项式精确，2n 次不精确(双向)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

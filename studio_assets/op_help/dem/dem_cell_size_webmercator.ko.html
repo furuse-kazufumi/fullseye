@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>웹 메르카토르 타일의 지상 해상도 [m/px]. <b>위도에 따라 변한다</b>.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(タイルが 256 px の場合)。</p>
-<p>実測の目安: 東京(北緯 35.68 度)の z=15 で <b>3.880 m</b>、赤道では 4.777 m。赤道の値をそのまま使うと東京で傾斜が <b>23 % 過小</b>になります —— これは例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。</p>
+<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(타일이 256 px인 경우).</p>
+<p>실측 기준: 도쿄(북위 35.68도)의 z=15에서 <b>3.880 m</b>, 적도에서는 4.777 m. 적도의 값을 그대로 쓰면 도쿄에서 경사가 <b>23 % 과소</b>가 됩니다 —— 이것은예외를 내지 않고 모든 하류의 숫자를 어긋나게 하므로, 이 계열에서 가장 많은 사고입니다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

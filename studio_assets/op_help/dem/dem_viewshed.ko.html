@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_viewshed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>1개 점에서의 가시 영역(1 = 보임). 시선이 지형에 가려지는지를 판정한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">observer_rc</code> は <code style="color:#22d3bf">(row, col)</code>。観測点自身は常に可視。</p>
-<p>手順: 目の高さ <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>。各セルへの視線を <code style="color:#22d3bf">ceil(hypot(H, W))</code> 等分し、途中の地形の仰角 <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> が目標の仰角 <code style="color:#22d3bf">(z + target_height_m - eye) / d</code> を上回るセルがあれば遮蔽(0)。途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。<b>地球の曲率と大気屈折は入れない</b>(数 km 超では別途補正する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、番兵値は拒否(<code style="color:#22d3bf">dem_slope</code> と同じ契約)。<code style="color:#22d3bf">nan</code> セルは比較が偽になるため<b>遮蔽にも被遮蔽にもならず 1 のまま</b>残る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m]、正。距離判定に使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: 格子内の <code style="color:#22d3bf">(row, col)</code> 整数。外や pair でないものは <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: 地面からの高さ [m]。既定は目の高さ 1.7 m と地表 0 m。鉄塔からの可視域なら <code style="color:#22d3bf">observer_height_m</code> を上げる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: これより遠いセルは 0(省略時は無制限)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 1 / 0。観測点は常に 1。</p>
-<p style="margin:2px 0 2px 12px">• 計算量: 格子全体 × <code style="color:#22d3bf">ceil(hypot(H, W))</code> 回のベクトル演算。</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> は逆に「各セルから空がどれだけ見えるか」を出す。</p>
+<p><code style="color:#22d3bf">observer_rc</code>는 <code style="color:#22d3bf">(row, col)</code>. 관측점 자신은 항상 가시.</p>
+<p>절차: 눈높이 <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>. 각 셀로의 시선을 <code style="color:#22d3bf">ceil(hypot(H, W))</code> 등분하고, 도중 지형의 앙각 <code style="color:#22d3bf">(z_mid - eye) / d_mid</code>가목표의 앙각 <code style="color:#22d3bf">(z + target_height_m - eye) / d</code>를 웃도는 셀이 있으면 차폐(0). 도중의 점은 최근접 셀로 반올림하므로, 비스듬한 시선은 격자 오차를 포함한다. <b>지구의 곡률과 대기 굴절은 넣지 않는다</b>(수 km 초과에서는 별도로 보정한다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 이상, 센티넬 값은 거부(<code style="color:#22d3bf">dem_slope</code>와 같은 계약). <code style="color:#22d3bf">nan</code> 셀은 비교가 거짓이 되므로 <b>차폐도 피차폐도 되지 않고 1인 채로</b> 남는다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m], 양수. 거리 판정에 쓴다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: 격자 안의 <code style="color:#22d3bf">(row, col)</code> 정수. 밖이거나 pair가 아닌 것은 <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: 지면으로부터의 높이 [m]. 기본값은 눈높이 1.7 m와 지표 0 m. 철탑으로부터의 가시 영역이라면 <code style="color:#22d3bf">observer_height_m</code>를 올린다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: 이보다 먼 셀은 0(생략 시 무제한).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(H, W)</code> float64의 1 / 0. 관측점은 항상 1.</p>
+<p style="margin:2px 0 2px 12px">• 계산량: 격자 전체 × <code style="color:#22d3bf">ceil(hypot(H, W))</code>회의 벡터 연산.</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code>는 반대로 “각 셀에서 하늘이 얼마나보이는가”를 낸다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

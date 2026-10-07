@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_geocentric_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wandelt jede DEM-Zelle in <b>Koordinaten vom Erdmittelpunkt aus gesehen</b> um.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">(H, W)</code> の標高格子を、北西角が <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> にある局所平面とみなし、各セルを ECEF(既定)または<b>地心球座標</b>へ写す。</p>
+<p>Betrachtet ein <code style="color:#22d3bf">(H, W)</code>-Höhengitter als lokale Ebene, deren Nordwestecke bei <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> liegt, und bildet jede Zelle auf ECEF (Default) oder auf <b>geozentrische Kugelkoordinaten</b> ab.</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code> の標高 [m]。</p>
-<p>lat0_deg / lon0_deg: 格子の<b>北西角</b>の緯度経度 [度]。</p>
-<p>cell_size: セル寸法 [m]。緯度方向・経度方向とも同じとみなす</p>
-<p>(Web メルカトルのタイルはそうなっている。</p>
-<p><code style="color:#22d3bf">dem_cell_size_webmercator</code> を参照)。</p>
-<p>spherical: <code style="color:#22d3bf">True</code> なら <code style="color:#22d3bf">(半径 r[m], 地心緯度[度], 経度[度])</code> を返す。</p>
-<p><code style="color:#22d3bf">False</code>(既定)なら ECEF <code style="color:#22d3bf">(x, y, z)</code> [m]。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>-Höhen [m].</p>
+<p>lat0_deg / lon0_deg: Breite/Länge der <b>Nordwestecke</b> des Gitters [Grad].</p>
+<p>cell_size: Zellgröße [m]. Wird in Breiten- und Längenrichtung als gleich angenommen</p>
+<p>(bei Web-Mercator-Kacheln ist das so.</p>
+<p>Siehe <code style="color:#22d3bf">dem_cell_size_webmercator</code>).</p>
+<p>spherical: bei <code style="color:#22d3bf">True</code> wird <code style="color:#22d3bf">(Radius r[m], geozentrische Breite[Grad], Länge[Grad])</code> zurückgegeben.</p>
+<p>Bei <code style="color:#22d3bf">False</code> (Default) ECEF <code style="color:#22d3bf">(x, y, z)</code> [m].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(H, W, 3)</code>。</p>
-<p>★ <b>地心緯度は測地緯度ではありません</b>。<code style="color:#22d3bf">spherical=True</code> の返りの緯度は地球中心から見た角度で、地図の緯度(楕円体の法線が赤道面となす角)とは最大 0.19 度違います。地図に戻すときは ECEF 側を <code style="color:#22d3bf">dem_ecef_to_geodetic</code> に渡してください。</p>
+<p><code style="color:#22d3bf">(H, W, 3)</code>.</p>
+<p>★ <b>Die geozentrische Breite ist nicht die geodätische Breite</b>. Die mit <code style="color:#22d3bf">spherical=True</code> zurückgegebene Breite ist der vom Erdmittelpunkt aus gesehene Winkel und weicht von der Kartenbreite (Winkel der Ellipsoidnormalen zur Äquatorebene) um bis zu 0.19 Grad ab. Um zur Karte zurückzukehren, die ECEF-Seite</p>
+<p>an <code style="color:#22d3bf">dem_ecef_to_geodetic</code> übergeben.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

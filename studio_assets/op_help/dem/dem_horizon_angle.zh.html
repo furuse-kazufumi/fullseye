@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_horizon_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>指定方位的地平线仰角 [度]。0 为水平，90 表示正上方被遮挡。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>各セルから <code style="color:#22d3bf">azimuth_deg</code> の向きへ視線を進め、<code style="color:#22d3bf">atan((z_j - z_0)/d)</code> の最大値を返す。落ちる影・日照時間・天空率の下ごしらえになる。</p>
+<p>从各单元格沿 <code style="color:#22d3bf">azimuth_deg</code> 方向推进视线，返回 <code style="color:#22d3bf">atan((z_j - z_0)/d)</code> 的最大值。是投影阴影、日照时间、天空可视因子的前期准备。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

@@ -6,58 +6,57 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(roughness, waviness)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Zerlegt ein Höhenfeld in Rauheit und Welligkeit (Gauß-Filter nach ISO 16610-21).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>戻り値は <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> が λc より短い成分、<code style="color:#22d3bf">waviness</code> が長い成分で、<code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> でなければ <code style="color:#22d3bf">roughness + waviness</code> は入力(λs を掛けたあとの一次形状)に厳密に一致する。</p>
-<p>引数</p>
-<p>z          高さ場 <code style="color:#22d3bf">z[i, j]</code>(行 = y、列 = x)。</p>
-<p>dx, dy     標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>lambda_c   長波長側カットオフ(粗さ / うねりの境)。<code style="color:#22d3bf">None</code> なら分けない</p>
-<p>(<code style="color:#22d3bf">waviness</code> はゼロ配列)。</p>
-<p>lambda_s   短波長側カットオフ(雑音を落とす S フィルタ)。<code style="color:#22d3bf">None</code> で無効。</p>
-<p>kind       <code style="color:#22d3bf">&quot;gaussian&quot;</code> のみ。他を渡すと <b>黙って代用せず</b> 例外にする。</p>
-<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(既定) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>。下記。</p>
-<p>dy         行方向の標本間隔(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>)。</p>
-<p>★ 端の扱い(<code style="color:#22d3bf">end_effect</code>)—— ここがこの op を書いた理由</p>
-<p>畳み込みはカーネル半径 <code style="color:#22d3bf">λc/2</code> のぶん、端で「無い所のデータ」を要る。</p>
-<p>規格(ISO 16610-28)は評価領域を両端 <code style="color:#22d3bf">λc/2</code> ずつ削ることを前提にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(既定)—— 両端 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 標本を<b>捨てる</b>。出力は入力より小さい配列になる。捨てた領域は「測っていない」ので、これが唯一嘘のない選択肢。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 鏡像で延長して同じ形を返す。端では面が偶関数だと仮定する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 循環畳み込み(FFT と同じ)。左端の続きが右端だと仮定する。</p>
-<p><b>実測</b>。真値は 704x704 の面をフィルタしてから中央 512x512 を切り出した</p>
-<p>もの(端の外側に本物のデータがある状態で計算した答え)。dx=1、λc=80、</p>
-<p>端の帯 = 外周 40 標本、そこでの真値の rms は 0.1932。</p>
-<p>面の状態     end_effect   端の帯の rms 誤差    中央部の rms 誤差</p>
-<p>傾きあり     wrap           4.3883 (2272 %)      0.0e+00 (0.000 %)</p>
-<p>傾きあり     mirror         0.1765 (  91 %)      0.0e+00 (0.000 %)</p>
-<p>傾き除去済   wrap           0.0111 ( 5.7 %)      4.4e-15 (0.000 %)</p>
-<p>傾き除去済   mirror         0.0115 ( 5.9 %)      4.4e-15 (0.000 %)</p>
-<p>(どれでも)  reject         —— 返さない ——      0.0e+00 (0.000 %)</p>
-<p>読み取れること 4 つ:</p>
-<p style="margin:2px 0 2px 12px">1. <b>端の扱いは端でしか効かない。</b> 中央部はどれも真値と厳密に一致する(カーネルが端に届かないので当然だが、確かめた)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>最悪の組み合わせは「傾きを残したまま wrap」</b> —— 端の誤差が真値そのものの 23 倍。左端の続きが右端だと仮定するので、高さの違う 2 辺の継ぎ目に段差が立つ。</p>
-<p style="margin:2px 0 2px 12px">3. <b>傾きさえ除けば wrap と mirror に差は無い</b>(5.7 % 対 5.9 %、wrap がわずかに良い)。「循環畳み込みは常に悪い」ではなく「<b>傾きを除かずに使うのが悪い</b>」が正しい。</p>
-<p style="margin:2px 0 2px 12px">4. reject の代償は面積。512x512・λc=80 で <b>28.8 % を捨てる</b> (432x432 が残る)。捨てる割合は <code style="color:#22d3bf">1 - (1 - λc/L)²</code> で増えるので、λc が評価長さの 1/4 を超えると半分近くを失う。</p>
-<p>★ 透過率は規格どおりか(実測、λc=80、dx=1、整数周期の正弦を射影で測定)</p>
-<p>λ         うねり側    ISO 規格値    差</p>
+<p>Rückgabe ist <code style="color:#22d3bf">(roughness, waviness)</code>. <code style="color:#22d3bf">roughness</code> ist der Anteil kürzer als λc, <code style="color:#22d3bf">waviness</code> der längere, und sofern nicht <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code>, stimmt <code style="color:#22d3bf">roughness + waviness</code> exakt mit der Eingabe (der Primärfläche nach Anwendung von λs) überein.</p>
+<p>Argumente</p>
+<p>z          Höhenfeld <code style="color:#22d3bf">z[i, j]</code> (Zeile = y, Spalte = x).</p>
+<p>dx, dy     Abtastabstände. <code style="color:#22d3bf">dy=None</code> bedeutet quadratische Pixel.</p>
+<p>lambda_c   langwellige Grenzwellenlänge (Grenze Rauheit / Welligkeit). Bei <code style="color:#22d3bf">None</code> keine Trennung</p>
+<p>(<code style="color:#22d3bf">waviness</code> ist ein Null-Array).</p>
+<p>lambda_s   kurzwellige Grenzwellenlänge (S-Filter gegen Rauschen). Mit <code style="color:#22d3bf">None</code> deaktiviert.</p>
+<p>kind       nur <code style="color:#22d3bf">&quot;gaussian&quot;</code>. Alles andere löst eine Ausnahme aus, <b>statt stillschweigend ersetzt zu werden</b>.</p>
+<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code> (Standard) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>. Siehe unten.</p>
+<p>dy         Abtastabstand in Zeilenrichtung (<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>).</p>
+<p>★ Randbehandlung (<code style="color:#22d3bf">end_effect</code>) — der Grund, warum dieser op geschrieben wurde</p>
+<p>Die Faltung braucht an den Rändern über den Kernradius <code style="color:#22d3bf">λc/2</code> hinweg &quot;Daten von dort, wo keine sind&quot;.</p>
+<p>Die Norm (ISO 16610-28) setzt voraus, dass der Auswertebereich an beiden Enden um je <code style="color:#22d3bf">λc/2</code> beschnitten wird.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> (Standard) — <b>verwirft</b> an beiden Enden <code style="color:#22d3bf">ceil(λc/2/pitch)</code> Abtastwerte. Die Ausgabe ist ein kleineres Array als die Eingabe. Der verworfene Bereich ist &quot;nicht gemessen&quot;, daher ist dies die einzige Option ohne Lüge.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> — setzt spiegelbildlich fort und gibt dieselbe Form zurück. Nimmt an, dass die Fläche an den Rändern eine gerade Funktion ist.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> — zyklische Faltung (wie FFT). Nimmt an, dass auf das linke Ende das rechte Ende folgt.</p>
+<p><b>Gemessen</b>. Die Ground Truth ist eine 704x704-Fläche, zuerst gefiltert und dann auf die mittleren 512x512 zugeschnitten</p>
+<p>(die Antwort, berechnet mit echten Daten außerhalb der Ränder). dx=1, λc=80,</p>
+<p>Randstreifen = äußere 40 Abtastwerte, dort beträgt der rms der Ground Truth 0.1932.</p>
+<p>Flächenzustand   end_effect   rms-Fehler Randstreifen   rms-Fehler Mitte</p>
+<p>geneigt          wrap           4.3883 (2272 %)         0.0e+00 (0.000 %)</p>
+<p>geneigt          mirror         0.1765 (  91 %)         0.0e+00 (0.000 %)</p>
+<p>Neigung entfernt wrap           0.0111 ( 5.7 %)         4.4e-15 (0.000 %)</p>
+<p>Neigung entfernt mirror         0.0115 ( 5.9 %)         4.4e-15 (0.000 %)</p>
+<p>(beliebig)       reject         — keine Rückgabe —      0.0e+00 (0.000 %)</p>
+<p>4 Erkenntnisse:</p>
+<p style="margin:2px 0 2px 12px">1. <b>Die Randbehandlung wirkt nur am Rand.</b> Die Mitte stimmt bei allen exakt mit der Ground Truth überein (selbstverständlich, da der Kern die Ränder nicht erreicht, aber geprüft).</p>
+<p style="margin:2px 0 2px 12px">2. <b>Die schlechteste Kombination ist &quot;wrap mit verbliebener Neigung&quot;</b> — der Randfehler beträgt das 23-fache der Ground Truth selbst. Da angenommen wird, dass auf das linke Ende das rechte folgt, entsteht an der Nahtstelle der 2 unterschiedlich hohen Kanten eine Stufe.</p>
+<p style="margin:2px 0 2px 12px">3. <b>Ist die Neigung entfernt, gibt es zwischen wrap und mirror keinen Unterschied</b> (5.7 % gegen 5.9 %, wrap etwas besser). Nicht &quot;zyklische Faltung ist immer schlecht&quot;, sondern &quot;<b>sie zu verwenden, ohne die Neigung zu entfernen, ist schlecht</b>&quot; ist richtig.</p>
+<p style="margin:2px 0 2px 12px">4. Der Preis von reject ist Fläche. Bei 512x512 und λc=80 werden <b>28.8 % verworfen</b> (432x432 bleiben). Der verworfene Anteil wächst mit <code style="color:#22d3bf">1 - (1 - λc/L)²</code>, daher geht fast die Hälfte verloren, sobald λc 1/4 der Messstrecke übersteigt.</p>
+<p>★ Entspricht die Übertragung der Norm? (gemessen, λc=80, dx=1, Sinus mit ganzzahliger Periode per Projektion gemessen)</p>
+<p>λ         Welligkeit   ISO-Normwert   Differenz</p>
 <p>16      0.000806     0.000000    +8.1e-04</p>
 <p>32      0.017206     0.013139    +4.1e-03</p>
 <p>40      0.058676     0.062500    -3.8e-03</p>
 <p>64      0.342826     0.338564    +4.3e-03</p>
-<p>80      0.509549     0.500000    +9.6e-03   ← 最大</p>
+<p>80      0.509549     0.500000    +9.6e-03   ← Maximum</p>
 <p>128      0.772150     0.762799    +9.4e-03</p>
 <p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>カットオフ波長そのもので 0.5000 でなく 0.5095</b>(相対 +1.9 %)。原因は</p>
-<p>規格が指定する打ち切り <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)で、裾の 0.8 % が落ちるため。</p>
-<p>打ち切りを 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)まで広げると最大誤差は 9e-05 に落ちる</p>
-<p>(実測)が、reject で捨てる帯が 1.5 倍になる。<b>規格に合わせる側を採り、ずれを書く</b>方を選んだ。粗さとうねりの和は常に入力に厳密一致する</p>
-<p>(上の表で <code style="color:#22d3bf">roughness + waviness = 1.000000</code>)ので、分配の境目が</p>
-<p>1.9 % ずれるだけで、エネルギーが消えたり湧いたりはしない。</p>
+<p><b>Bei der Grenzwellenlänge selbst 0.5095 statt 0.5000</b> (relativ +1.9 %). Ursache ist</p>
+<p>die von der Norm vorgegebene Kappung <code style="color:#22d3bf">±λc/2</code> (= 2.67 σ), durch die 0.8 % der Ausläufer wegfallen.</p>
+<p>Erweitert man die Kappung auf 4 σ (<code style="color:#22d3bf">±0.75 λc</code>), fällt der maximale Fehler auf 9e-05</p>
+<p>(gemessen), aber der von reject verworfene Streifen wird 1.5-mal so breit. <b>Wir haben uns entschieden, der Norm zu folgen und die Abweichung zu dokumentieren.</b> Die Summe aus Rauheit und Welligkeit stimmt stets exakt mit der Eingabe überein</p>
+<p>(<code style="color:#22d3bf">roughness + waviness = 1.000000</code> in der Tabelle oben), daher verschiebt sich nur die Aufteilungsgrenze</p>
+<p>um 1.9 %; Energie verschwindet weder, noch entsteht sie.</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;gaussian&quot;</code> 以外 / <code style="color:#22d3bf">end_effect</code> が既知の 3 つ以外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> と <code style="color:#22d3bf">lambda_s</code> の両方が <code style="color:#22d3bf">None</code>(何もしない呼び出し)。</p>
-<p style="margin:2px 0 2px 12px">• カットオフが Nyquist 波長 <code style="color:#22d3bf">2*pitch</code> 未満、または評価長さ超。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code>(帯域が空になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> で削ったあと配列が残らない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> nicht <code style="color:#22d3bf">&quot;gaussian&quot;</code> / <code style="color:#22d3bf">end_effect</code> keiner der 3 bekannten Werte.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> und <code style="color:#22d3bf">lambda_s</code> beide <code style="color:#22d3bf">None</code> (ein Aufruf, der nichts tut).</p>
+<p style="margin:2px 0 2px 12px">• Grenzwellenlänge unter der Nyquist-Wellenlänge <code style="color:#22d3bf">2*pitch</code> oder über der Messstrecke.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code> (das Band wird leer).</p>
+<p style="margin:2px 0 2px 12px">• nach dem Beschneiden mit <code style="color:#22d3bf">&quot;reject&quot;</code> bleibt kein Array übrig.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

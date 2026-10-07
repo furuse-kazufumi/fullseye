@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;kalman_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>선형 가우스 상태 공간 모델 x_{k+1} = F x_k + w(w ~ N(0,Q)), z_k = H x_k + v(v ~ N(0,R))의 Kalman 필터(전방향)와 Rauch–Tung–Striebel 평활(역방향).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">z</code> は (T, m) の観測(NaN の行は欠測として更新を飛ばす)。返り値 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>。</p>
-<p>門: 平滑化の結果は、全観測と事前分布を一度に使う最小二乗(一括の MAP)と厳密に一致する。</p>
+<p><code style="color:#22d3bf">z</code>는 (T, m)의 관측(NaN인 행은 결측으로 보고 갱신을 건너뛴다). 반환값 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>.</p>
+<p>게이트: 평활화 결과는 모든 관측과 사전분포를 한 번에 쓰는 최소제곱(일괄 MAP)과 엄밀히 일치한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

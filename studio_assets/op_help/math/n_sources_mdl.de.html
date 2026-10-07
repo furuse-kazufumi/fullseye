@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schätzt die Anzahl der Quellen aus Snapshots mit dem MDL-Kriterium (Wax &amp; Kailath 1985).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>共分散の固有値を大きい順に並べ、「下から M−k 個が等しい(= 雑音)」という仮説ごとに MDL(k) = −K (M−k) log(幾何平均 / 算術平均) + ½ k (2M−k) log K を計算し、最小の k を選ぶ。雑音が白色で、スナップショット数 K が素子数 M より十分多いことが前提。</p>
+<p>Die Eigenwerte der Kovarianz werden absteigend sortiert, und für jede Hypothese „die unteren M−k sind gleich (= Rauschen)“ wird MDL(k) = −K (M−k) log(geometrisches Mittel / arithmetisches Mittel) + ½ k (2M−k) log K berechnet; das k mit dem Minimum wird gewählt.</p>
+<p>Voraussetzung: das Rauschen ist weiß, und die Zahl der Snapshots K ist hinreichend größer als die Zahl der Elemente M.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

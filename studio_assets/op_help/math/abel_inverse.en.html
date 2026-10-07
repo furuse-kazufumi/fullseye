@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Recovers an axisymmetric distribution f(r) from the projection A(y) (inverse Abel transform = tomography of an axisymmetric object).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy。y = √(r² + u²) と置いて特異点を消し、A を 3 次スプラインで微分する。滑らかな投影には精度が高いが、<b>微分が雑音を増幅する</b>:</p>
-<p>雑音の誤差は標本間隔 dr に反比例して増える(2026-10-03 実測、雑音 1%: 標本数 80 → 640 で</p>
-<p>平均誤差 0.027 → 0.237、両対数の傾き ≈ 1)。粗い格子ではこちらが良い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 殻を剥く: f を半径 dr の殻ごとに一定とみなし、弦の長さの上三角行列を外側から解く。解像度は殻の幅で決まり、微分を取らないぶん雑音の増え方が緩い(同じ実測で 0.036 → 0.100、傾き ≈ 1/2)。<b>細かい格子の実測ではこちら</b>(n=640 で微分の 2.4 分の 1)、粗い格子(n≈80)では逆転する。</p>
-<p>2 つは独立な離散化なので、<b>同じ投影に両方を当てて食い違いを見る</b>のが検算になる。</p>
-<p>門: A(y) = √π σ exp(−y²/σ²) から f(r) = exp(−r²/σ²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy. Substituting y = √(r² + u²) removes the singularity, and A is differentiated with a cubic spline. Accurate for smooth projections, but <b>differentiation amplifies noise</b>:</p>
+<p>the noise error grows inversely with the sample spacing dr (measured 2026-10-03, 1% noise: 80 → 640 samples gives</p>
+<p>mean error 0.027 → 0.237, log-log slope ≈ 1). On coarse grids this one is better.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— onion peeling: f is taken as constant per shell of radius dr, and the upper-triangular matrix of chord lengths is solved from the outside in. Resolution is set by the shell width; since no derivative is taken, noise grows more slowly (same measurement: 0.036 → 0.100, slope ≈ 1/2). <b>In measurements on fine grids, this one wins</b> (1/2.4 of the derivative&#x27;s error at n=640); on coarse grids (n≈80) it reverses.</p>
+<p>The 2 are independent discretizations, so <b>applying both to the same projection and checking the discrepancy</b> serves as a cross-check.</p>
+<p>Gate: from A(y) = √π σ exp(−y²/σ²), f(r) = exp(−r²/σ²).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

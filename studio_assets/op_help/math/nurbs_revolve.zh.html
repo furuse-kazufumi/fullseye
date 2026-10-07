@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>将平面 NURBS 曲线 (r, z) 绕 z 轴旋转 1 周得到的旋转面(Piegl &amp; Tiller §8.5)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>断面の各制御点を <code style="color:#22d3bf">nurbs_circle</code> の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
+<p>将截面的每个控制点用 <code style="color:#22d3bf">nurbs_circle</code> 的 9 个点旋转，并把权重相乘。若截面是精确的圆弧，所得曲面也是精确的球面、环面、圆锥面（多项式曲面只能做近似）。</p>
 <p>Args:</p>
-<p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>
-<p>weights, degree, knots: 断面の NURBS(<code style="color:#22d3bf">nurbs_curve</code> と同じ)。</p>
-<p>n: (周方向, 断面方向) の評価点数。</p>
+<p>profile: (m, 2) 的截面控制点 (r, z)。r 为到轴的距离（0 以上）。</p>
+<p>weights, degree, knots: 截面的 NURBS（与 <code style="color:#22d3bf">nurbs_curve</code> 相同）。</p>
+<p>n: （周向, 截面方向）的求值点数。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nurbs_surface</code> と同じ dict に <code style="color:#22d3bf">control_net</code>・<code style="color:#22d3bf">net_weights</code> を足したもの。</p>
+<p>在与 <code style="color:#22d3bf">nurbs_surface</code> 相同的 dict 中加上 <code style="color:#22d3bf">control_net</code>、<code style="color:#22d3bf">net_weights</code> 的结果。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

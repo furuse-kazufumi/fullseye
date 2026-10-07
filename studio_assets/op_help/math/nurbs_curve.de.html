@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;nurbs_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet eine NURBS-Kurve aus (gewichtet; geht im Allgemeinen nicht durch die Kontrollpunkte).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>control_points: (m, d) の制御点(d = 2 なら平面、3 なら空間)。</p>
-<p>weights: 長さ m の正の重み。省略すると全部 1(= 普通の B スプライン)。重みを大きくすると曲線がその点に寄る。</p>
-<p>degree: 次数 p(m − 1 以下)。</p>
-<p>knots: 長さ m + p + 1 の節点列。省略すると両端 p+1 重の一様節点(端点だけは制御点を通る)。</p>
-<p>n: 評価する点の数(定義域を等分)。</p>
+<p>control_points: (m, d) Kontrollpunkte (d = 2 eben, 3 räumlich).</p>
+<p>weights: positive Gewichte der Länge m. Ohne Angabe alle 1 (= gewöhnlicher B-Spline). Ein größeres Gewicht zieht die Kurve zu diesem Punkt.</p>
+<p>degree: Grad p (höchstens m − 1).</p>
+<p>knots: Knotenvektor der Länge m + p + 1. Ohne Angabe gleichmäßige Knoten mit (p+1)-facher Vielfachheit an beiden Enden (nur an den Endpunkten geht die Kurve durch die Kontrollpunkte).</p>
+<p>n: Anzahl der auszuwertenden Punkte (der Definitionsbereich wird gleichmäßig geteilt).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (n, d) 曲線上の点、<code style="color:#22d3bf">u</code> パラメータ、<code style="color:#22d3bf">basis</code> (n, m) 有理基底 R_i(u)(各行の和は 1)、</p>
-<p><code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">degree</code>。</p>
-<p>例: 9 点の 2 次 NURBS で円を <b>厳密に</b> 描く(<code style="color:#22d3bf">nurbs_circle</code> が制御点・重み・節点を返す)。多項式の B スプラインでは円は近似しかできない —— 重みが要る理由がここにある。</p>
+<p><code style="color:#22d3bf">points</code> (n, d) Punkte auf der Kurve, <code style="color:#22d3bf">u</code> Parameter, <code style="color:#22d3bf">basis</code> (n, m) rationale Basis R_i(u) (jede Zeile summiert zu 1),</p>
+<p><code style="color:#22d3bf">knots</code>, <code style="color:#22d3bf">weights</code>, <code style="color:#22d3bf">degree</code>.</p>
+<p>Beispiel: ein NURBS 2. Grades mit 9 Punkten zeichnet einen Kreis <b>exakt</b> (<code style="color:#22d3bf">nurbs_circle</code> liefert Kontrollpunkte, Gewichte und Knoten). Ein polynomialer B-Spline kann einen Kreis nur annähern —— darum braucht man Gewichte.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

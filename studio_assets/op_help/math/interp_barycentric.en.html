@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluates at x the polynomial (degree len−1) through the points (xk, yk) with the barycentric formula (Berrut &amp; Trefethen 2004).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では <b>Runge 現象</b>(端の振動)がそのまま出る —— それは公式の欠陥ではなく、点の置き方の問題。</p>
-<p>門: 次数 len−1 以下の多項式は厳密に再現する。</p>
+<p>Does not go through coefficients (no Vandermonde matrix is solved), so it is numerically stable even at high degree. With equally spaced points the <b>Runge phenomenon</b> (oscillation at the ends) shows up as is —— that is not a defect of the formula but a matter of how the points are placed.</p>
+<p>Gate: polynomials of degree at most len−1 are reproduced exactly.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

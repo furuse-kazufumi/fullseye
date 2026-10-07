@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>움푹 팬 곳을 메운 DEM. Barnes, Lehman &amp; Mulla (2014)의 priority-flood.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">epsilon</code> に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
-<p><code style="color:#22d3bf">nodata</code> は <code style="color:#22d3bf">NODATA_POLICIES</code>。<code style="color:#22d3bf">&quot;outlet&quot;</code> なら欠測セルを外周と同じ <b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測は埋めの対象から外し、値を <code style="color:#22d3bf">nan</code> のまま返す。</p>
-<p>出力は入力以上(<code style="color:#22d3bf">filled &gt;= dem</code>、欠測を除く)。</p>
+<p><code style="color:#22d3bf">epsilon</code>에 미소값(예 1e-6)을 주면, 메운 평탄면에 약간의 경사를 붙인다(이것이 없으면 평탄면에서 흐름 방향이 정해지지 않아, 집수량이 도중에 사라진다).</p>
+<p><code style="color:#22d3bf">nodata</code>는 <code style="color:#22d3bf">NODATA_POLICIES</code>. <code style="color:#22d3bf">&quot;outlet&quot;</code>이면 결측 셀을 바깥 둘레와 같은 <b>씨앗</b>으로 취급한다(수역으로 흘러든 물은 거기서 계를 나간다). <code style="color:#22d3bf">&quot;barrier&quot;</code>이면결측은 메우기 대상에서 제외하고, 값을 <code style="color:#22d3bf">nan</code> 그대로 반환한다.</p>
+<p>출력은 입력 이상(<code style="color:#22d3bf">filled &gt;= dem</code>, 결측 제외).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

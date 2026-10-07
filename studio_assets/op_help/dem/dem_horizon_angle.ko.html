@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_horizon_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지정 방위의 지평선 앙각 [도]. 0은 수평, 90은 바로 위가 막힌 상태.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>各セルから <code style="color:#22d3bf">azimuth_deg</code> の向きへ視線を進め、<code style="color:#22d3bf">atan((z_j - z_0)/d)</code> の最大値を返す。落ちる影・日照時間・天空率の下ごしらえになる。</p>
+<p>각 셀에서 <code style="color:#22d3bf">azimuth_deg</code> 방향으로 시선을 진행시켜, <code style="color:#22d3bf">atan((z_j - z_0)/d)</code>의최댓값을 반환한다. 드리우는 그림자·일조 시간·천공률의 사전 준비가 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

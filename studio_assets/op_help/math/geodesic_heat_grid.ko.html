@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>2-D 영상·3-D 볼륨의 격자 위에서 장애물을 피한 측지 거리를 열 방법으로 구한다(Crane et al. 2013의 격자판).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">mask</code> は通れる画素/ボクセルが True の bool 配列(2-D か 3-D)、<code style="color:#22d3bf">source</code> は始点の添字(1 点 <code style="color:#22d3bf">(i, j[, k])</code> か点の列。省略すると最初の通れる画素)。<code style="color:#22d3bf">spacing</code> は軸ごとの画素の大きさ(スカラーか軸ごと)。</p>
-<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(熱を広げる、Δ は通れる画素の間だけを結ぶ 2d+1 点の Laplacian = 障害物は断熱)</p>
-<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(面の間の差分で)  3) Δφ = ∇·X を解いて始点で 0 にずらす。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(通れない画素と、始点と繋がらない画素は inf)。</p>
-<p>門: 障害物の無い空間ではユークリッド距離へ収束する。画素の Dijkstra(4/8 近傍)は格子の向きの誤差(4 近傍で最大 41%、8 近傍で最大 8%)が細かくしても消えないが、熱法は消えていく。</p>
+<p><code style="color:#22d3bf">mask</code>는 통과 가능한 화소/복셀이 True인 bool 배열(2-D 또는 3-D), <code style="color:#22d3bf">source</code>는 시작점의 인덱스(1점 <code style="color:#22d3bf">(i, j[, k])</code> 또는 점의 열. 생략하면 첫 번째 통과 가능한 화소). <code style="color:#22d3bf">spacing</code>은 축마다의 화소 크기(스칼라 또는 축마다).</p>
+<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(열을 퍼뜨린다, Δ는 통과 가능한 화소 사이만 잇는 2d+1점 Laplacian = 장애물은 단열)</p>
+<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(면 사이의 차분으로)  3) Δφ = ∇·X를 풀어 시작점에서 0으로 이동한다.</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(통과할 수 없는 화소와, 시작점과 이어지지 않는 화소는 inf).</p>
+<p>게이트: 장애물이 없는 공간에서는 유클리드 거리로 수렴한다. 화소의 Dijkstra(4/8 근방)는 격자 방향의 오차(4 근방에서 최대 41%, 8 근방에서 최대 8%)가 세밀하게 해도 사라지지 않지만, 열 방법은 사라져 간다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

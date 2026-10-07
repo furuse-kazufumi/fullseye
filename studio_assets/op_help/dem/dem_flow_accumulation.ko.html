@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>집수 셀 수. 각 셀로 흘러드는 상류 셀의 개수(자기 셀을 1로 센다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">fill=True</code> なら先に窪地を埋める(埋めないと窪地で流れが止まり、下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は <code style="color:#22d3bf">nan</code>。</p>
-<p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で 2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
+<p><code style="color:#22d3bf">fill=True</code>이면 먼저 와지를 메운다(메우지 않으면 와지에서 흐름이 멈춰, 하류의 집수량이 <b>조용히 작게 나온다</b>). 결측 셀의 집수량은 <code style="color:#22d3bf">nan</code>.</p>
+<p>그래프 구축은 벡터화해 두었다. 다만 <b>효과는 작다</b>: 1024x1024에서 2.71초 -&gt; 2.39초. 지배하고 있는 것은 구축이 아니라, 그 뒤의 위상주사(셀 수만큼의 Python 루프) 쪽이었다. 빠르게 하고 싶다면 그 부분을다시 써야 한다 —— 고쳤다고 생각했는데 고쳐지지 않은 상태를 남기지 않기 위해 명기한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在 2-D 图像或 3-D 体数据的网格上，用热方法求避开障碍物的测地距离(Crane et al. 2013 的网格版)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">mask</code> は通れる画素/ボクセルが True の bool 配列(2-D か 3-D)、<code style="color:#22d3bf">source</code> は始点の添字(1 点 <code style="color:#22d3bf">(i, j[, k])</code> か点の列。省略すると最初の通れる画素)。<code style="color:#22d3bf">spacing</code> は軸ごとの画素の大きさ(スカラーか軸ごと)。</p>
-<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(熱を広げる、Δ は通れる画素の間だけを結ぶ 2d+1 点の Laplacian = 障害物は断熱)</p>
-<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(面の間の差分で)  3) Δφ = ∇·X を解いて始点で 0 にずらす。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(通れない画素と、始点と繋がらない画素は inf)。</p>
-<p>門: 障害物の無い空間ではユークリッド距離へ収束する。画素の Dijkstra(4/8 近傍)は格子の向きの誤差(4 近傍で最大 41%、8 近傍で最大 8%)が細かくしても消えないが、熱法は消えていく。</p>
+<p><code style="color:#22d3bf">mask</code> 是可通行像素/体素为 True 的 bool 数组(2-D 或 3-D)，<code style="color:#22d3bf">source</code> 是起点的下标(1 点 <code style="color:#22d3bf">(i, j[, k])</code> 或点的序列。省略时为第一个可通行像素)。<code style="color:#22d3bf">spacing</code> 是各轴的像素大小(标量或逐轴)。</p>
+<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(扩散热，Δ 是只连接可通行像素之间的 2d+1 点 Laplacian = 障碍物绝热)</p>
+<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(用面之间的差分)  3) 解 Δφ = ∇·X，并平移使起点处为 0。</p>
+<p>返回值 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(不可通行像素，以及与起点不连通的像素为 inf)。</p>
+<p>门禁：在无障碍物的空间中收敛到欧氏距离。像素的 Dijkstra(4/8 邻域)的网格方向误差(4 邻域最大 41%，8 邻域最大 8%)即使细分也不会消失，而热方法的误差会逐渐消失。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

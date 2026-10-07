@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_horizon_angle(dem, cell_size, azimuth_deg, max_distance_m=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_horizon_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Horizonthöhenwinkel in einem gegebenen Azimut [Grad]. 0 ist horizontal, 90 bedeutet, dass der Himmel direkt darüber verdeckt ist.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>各セルから <code style="color:#22d3bf">azimuth_deg</code> の向きへ視線を進め、<code style="color:#22d3bf">atan((z_j - z_0)/d)</code> の最大値を返す。落ちる影・日照時間・天空率の下ごしらえになる。</p>
+<p>Von jeder Zelle aus wird eine Sichtlinie in Richtung <code style="color:#22d3bf">azimuth_deg</code> vorangetrieben und das Maximum von <code style="color:#22d3bf">atan((z_j - z_0)/d)</code> zurückgegeben. Vorarbeit für Schlagschatten, Sonnenscheindauer und Himmelssichtfaktor.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

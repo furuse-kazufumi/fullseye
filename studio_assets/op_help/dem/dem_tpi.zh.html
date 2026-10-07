@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>地形位置指数 TPI —— 本格子单元与 8 邻域均值之差 [m]。正为山脊，负为山谷。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>式: <code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>(Weiss の TPI を 3x3 の最小近傍で取ったもの)。縁は端の値を複製して埋める。近傍が 1 セル固定なので、<b>スケールは <code style="color:#22d3bf">cell_size</code> 1 つぶんに固定</b>で、より広い尾根/谷を見たいときは先に <code style="color:#22d3bf">dem</code> を粗くする(この op に半径の引数は無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、実数、<code style="color:#22d3bf">inf</code> 不可。欠測は <code style="color:#22d3bf">nan</code>(番兵値 <code style="color:#22d3bf">&lt;= -9000</code> が <code style="color:#22d3bf">nan</code> 無しで入っていれば拒否)。<code style="color:#22d3bf">nan</code> は 3x3 に伝播する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 結果には影響しない(差分に距離は入らない)が、単位が [m] であることを呼び出し側に意識させるため受け取り、正の有限値かを検査する。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 [m]。0 付近が斜面の途中、正が凸(尾根・頂)、負が凹(谷・窪地)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、番兵値、<code style="color:#22d3bf">cell_size</code>)。</p>
-<p><code style="color:#22d3bf">dem_roughness</code>(同じ近傍の RMS)と組み合わせると地形分類の特徴になる。</p>
+<p>公式:<code style="color:#22d3bf">tpi = z - mean(8 邻域的 z)</code>(以最小的 3x3 邻域求取的 Weiss TPI)。边缘用复制边界值填充。邻域固定为 1 个单元,所以<b>尺度固定为 1 个 <code style="color:#22d3bf">cell_size</code></b>;想看更宽的山脊/山谷时,先把 <code style="color:#22d3bf">dem</code> 变粗(此 op 没有半径参数)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>:<code style="color:#22d3bf">(H, W)</code> [m],3x3 以上,实数,不可含 <code style="color:#22d3bf">inf</code>。缺测用 <code style="color:#22d3bf">nan</code>(若存在哨兵值 <code style="color:#22d3bf">&lt;= -9000</code> 而没有 <code style="color:#22d3bf">nan</code> 则拒绝)。<code style="color:#22d3bf">nan</code> 会传播到 3x3。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>:不影响结果(差分中不含距离),但为了让调用方意识到单位是 [m] 而接收它,并检查是否为正的有限值。</p>
+<p style="margin:2px 0 2px 12px">• 返回值:<code style="color:#22d3bf">(H, W)</code> float64 [m]。0 附近为斜坡中段,正为凸(山脊、山顶), 负为凹(山谷、洼地)。</p>
+<p style="margin:2px 0 2px 12px">• 失败:<code style="color:#22d3bf">ValueError</code>(形状、哨兵值、<code style="color:#22d3bf">cell_size</code>)。</p>
+<p>与 <code style="color:#22d3bf">dem_roughness</code>(同一邻域的 RMS)组合可作为地形分类的特征。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

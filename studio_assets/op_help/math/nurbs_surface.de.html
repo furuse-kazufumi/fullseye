@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;nurbs_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Wertet eine NURBS-Fläche (Tensorprodukt) aus.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>control_net: (mu, mv, 3) の制御網。</p>
-<p>weights: (mu, mv) の正の重み(省略で全部 1)。</p>
-<p>degree: (p, q)。knots_u, knots_v: 各方向の節点列(省略で clamped 一様)。</p>
-<p>n: (nu, nv) 評価点の格子。</p>
+<p>control_net: (mu, mv, 3) Kontrollnetz.</p>
+<p>weights: (mu, mv) positive Gewichte (ohne Angabe alle 1).</p>
+<p>degree: (p, q). knots_u, knots_v: Knotenvektoren je Richtung (ohne Angabe clamped gleichmäßig).</p>
+<p>n: (nu, nv) Gitter der Auswertungspunkte.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (nu, nv, 3)、<code style="color:#22d3bf">mesh</code> = (V, F) の三角形メッシュ(<code style="color:#22d3bf">geodesic_heat</code> などにそのまま渡せる)、<code style="color:#22d3bf">u</code>・<code style="color:#22d3bf">v</code>・<code style="color:#22d3bf">knots_u</code>・<code style="color:#22d3bf">knots_v</code>・<code style="color:#22d3bf">weights</code>。</p>
+<p><code style="color:#22d3bf">points</code> (nu, nv, 3), <code style="color:#22d3bf">mesh</code> = (V, F) Dreiecks-Mesh (kann unverändert an <code style="color:#22d3bf">geodesic_heat</code> usw. übergeben werden), <code style="color:#22d3bf">u</code>, <code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">knots_u</code>, <code style="color:#22d3bf">knots_v</code>, <code style="color:#22d3bf">weights</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

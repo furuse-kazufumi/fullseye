@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Ground resolution of a Web Mercator tile [m/px]. <b>It varies with latitude</b>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(タイルが 256 px の場合)。</p>
-<p>実測の目安: 東京(北緯 35.68 度)の z=15 で <b>3.880 m</b>、赤道では 4.777 m。赤道の値をそのまま使うと東京で傾斜が <b>23 % 過小</b>になります —— これは例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。</p>
+<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code> (for 256 px tiles).</p>
+<p>Measured guide: Tokyo (35.68 degrees north) at z=15 gives <b>3.880 m</b>, the equator 4.777 m. Using the equator value as is makes slopes in Tokyo <b>23 % too small</b> —— this throws no exception and skews every downstream number, making it the most common accident in this family.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

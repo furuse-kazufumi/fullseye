@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;angle_defect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>정점별 각 결손(이산 가우스 곡률) K_v = 2π − Σ(그 정점에서의 삼각형의 각). 경계 정점은 π − Σ(측지 곡률).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>閉じたメッシュでは Σ K_v = 2πχ が<b>厳密に</b>成り立つ(Descartes の定理)。境界があるときは Σ(内部の K) + Σ(境界の π − Σθ) = 2πχ(離散 Gauss–Bonnet)。返り値 <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>。</p>
+<p>닫힌 메시에서는 Σ K_v = 2πχ가 <b>엄밀하게</b> 성립한다(Descartes의 정리). 경계가 있을 때는 Σ(내부의 K) + Σ(경계의 π − Σθ) = 2πχ(이산 Gauss–Bonnet). 반환값 <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

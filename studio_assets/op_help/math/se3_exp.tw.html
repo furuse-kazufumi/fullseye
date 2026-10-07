@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.se3_exp(xi) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;se3_exp&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>SE(3) 的指數映射：6 維旋量 ξ = (v, ω)(平移速度 v、旋轉向量 ω)→ 4×4 剛體變換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>閉じた式(Rodrigues + 左ヤコビアン): R = I + sinθ/θ ω̂ + (1−cosθ)/θ² ω̂²、t = V v、V = I + (1−cosθ)/θ² ω̂ + (θ−sinθ)/θ³ ω̂²。θ → 0 は級数で。門: 4×4 の生成元の mat_expm と一致。</p>
+<p>閉合式(Rodrigues + 左 Jacobian)：R = I + sinθ/θ ω̂ + (1−cosθ)/θ² ω̂²，t = V v，V = I + (1−cosθ)/θ² ω̂ + (θ−sinθ)/θ³ ω̂²。θ → 0 時用級數。門檻：與 4×4 生成元的 mat_expm 一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

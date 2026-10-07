@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathspectral; mathspectral.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;lomb_scargle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>非等间隔时间序列 (t, y) 的 Lomb–Scargle 周期图(带 Scargle 1982 的时间平移 τ，先减去均值)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt。f は周波数(t の単位の逆数)。f = 0 は定義されないので拒否する。</p>
-<p>門: 等間隔の標本ではフーリエ周波数 k/(NΔt) で |DFT|²/N に一致する。返り値 <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>。</p>
+<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]，ω = 2πf，tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt。f 为频率(t 的单位的倒数)。f = 0 无定义，因此拒绝。</p>
+<p>门禁：对等间距样本，在傅里叶频率 k/(NΔt) 处与 |DFT|²/N 一致。返回值 <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

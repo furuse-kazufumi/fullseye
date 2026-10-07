@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mesh_euler_characteristic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>三角网格的 V − E + F，以及若为闭合可定向曲面时的亏格 g = (2 − χ)/2。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>使われていない頂点は数えない(浮いた頂点で χ がずれるのを防ぐ)。境界辺(1 枚の面にしか属さない辺)と非多様体辺(3 枚以上)も返す —— 境界があると χ = 2 − 2g − b(b = 境界の輪の数)になり、種数は <code style="color:#22d3bf">None</code>。</p>
-<p>門: 正二十面体 χ = 2、トーラス χ = 0・種数 1、円板 χ = 1。</p>
+<p>不计入未被使用的顶点(防止悬空顶点使 χ 偏移)。边界边(只属于 1 个面的边)与非流形边(3 个以上)也一并返回 —— 有边界时 χ = 2 − 2g − b(b = 边界环的数量)，亏格为 <code style="color:#22d3bf">None</code>。</p>
+<p>门禁：正二十面体 χ = 2，环面 χ = 0、亏格 1，圆盘 χ = 1。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>視線計算中的<b>地球曲率下降量</b> [m]。<code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。標準大気(<code style="color:#22d3bf">k = 0.13</code>)での目安:</p>
+<p>遠處的地面會因地球的弧度而顯得下沉,大氣折射會部分抵消這一點。標準大氣(<code style="color:#22d3bf">k = 0.13</code>)下的參考值:</p>
 <p>==========  ============  ============</p>
-<p>距離        曲率のみ      屈折込み</p>
+<p>距離        僅曲率        含折射</p>
 <p>==========  ============  ============</p>
 <p>1 km        0.078 m       0.068 m</p>
 <p>5 km        1.962 m       1.707 m</p>
 <p>10 km       7.848 m       6.828 m</p>
 <p>30 km       70.63 m       61.45 m</p>
 <p>==========  ============  ============</p>
-<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域はその距離では意味を持ちません。<code style="color:#22d3bf">refraction</code> は標準大気の慣行値であって定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<p>30 km 外的視線會下沉 <b>60 m 以上</b>,因此按平面處理的可視區域在該距離上沒有意義。<code style="color:#22d3bf">refraction</code> 是標準大氣的慣用值,而不是常數 —— 在夜間的逆溫層中可能為負,也可能達到 0.25。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

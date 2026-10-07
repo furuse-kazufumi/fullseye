@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_roughness(dem, cell_size=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_roughness(dem, cell_size=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_roughness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Terrain Ruggedness Index TRI — quadratischer Mittelwert der Höhendifferenzen zu den 8 Nachbarn [m].</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Riley ほか (1999)。<code style="color:#22d3bf">cell_size</code> は結果に影響しないが、<b>単位が m であることを呼び出し側に意識させる</b>ために受け取る(検証もする)。</p>
+<p>Riley et al. (1999). <code style="color:#22d3bf">cell_size</code> beeinflusst das Ergebnis nicht, wird aber angenommen (und geprüft), <b>um dem Aufrufer bewusst zu machen, dass die Einheit m ist</b>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

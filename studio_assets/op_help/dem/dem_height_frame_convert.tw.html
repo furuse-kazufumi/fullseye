@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>轉換高度的<b>基準</b>：橢球高 <code style="color:#22d3bf">h</code> ↔ 正高 <code style="color:#22d3bf">H</code>(<code style="color:#22d3bf">H = h - N</code>)。<code style="color:#22d3bf">signal</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>同じ「高さ」という語で 2 つの別物が流通していて、どちらも例外を出さずに地図に載る。この op は<b>どちらからどちらへ移すのかを必ず書かせる</b> —— 既定はあるが、<code style="color:#22d3bf">frm</code> と <code style="color:#22d3bf">to</code> は docstring でなくコードに残る。</p>
+<p>同一個「高度」一詞下流通著 2 種不同的東西,而且兩者都不拋例外就登上地圖。本 op <b>強制寫明從哪一種轉換到哪一種</b> —— 雖然有預設值,但 <code style="color:#22d3bf">frm</code> 與 <code style="color:#22d3bf">to</code> 會留在程式碼中而不是 docstring 裡。</p>
 <p>Args:</p>
-<p>height_m: 高さ [m]。配列可。</p>
-<p>geoid_height_m: 同じ点のジオイド高 <code style="color:#22d3bf">N</code> [m] —— <code style="color:#22d3bf">dem_geoid_height</code> で引いた値。</p>
-<p>スカラでも配列でもよい。</p>
-<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code>(楕円体高)か <code style="color:#22d3bf">&quot;orthometric&quot;</code>(標高)。</p>
+<p>height_m: 高度 [m]。可為陣列。</p>
+<p>geoid_height_m: 同一點的大地水準面高 <code style="color:#22d3bf">N</code> [m] —— 以 <code style="color:#22d3bf">dem_geoid_height</code> 查到的值。</p>
+<p>純量或陣列皆可。</p>
+<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code>(橢球高)或 <code style="color:#22d3bf">&quot;orthometric&quot;</code>(正高)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n,)</code> の変換後の高さ [m]。<code style="color:#22d3bf">frm == to</code> なら値は変わらない。</p>
-<p>閉じた式で検査できること: <code style="color:#22d3bf">H = h - N</code> は定義そのものなので真値は引き算で出る。往復(h→H→h)の誤差は<b>実測で 5e-13 m 以下</b>(5,000 点、高さ −100〜4000 m・ <code style="color:#22d3bf">N</code> ±100 m)。ビット一致ではない —— <code style="color:#22d3bf">(h - N) + N</code> は丸めで 1 ulp 動くことがあり、実測では 5,000 点中 273 点がそうなった。<b>「往復で元に戻る」を等号で書かない</b>のはそのため。</p>
-<p><b>ValueError</b>: 未知の基準名、長さの食い違い、非有限。</p>
+<p><code style="color:#22d3bf">(n,)</code> 的轉換後高度 [m]。<code style="color:#22d3bf">frm == to</code> 時值不變。</p>
+<p>可用閉合公式檢驗的部分:<code style="color:#22d3bf">H = h - N</code> 就是定義本身,所以真值由減法得出。往返(h→H→h)的誤差<b>實測在 5e-13 m 以下</b>(5,000 點,高度 −100~4000 m、<code style="color:#22d3bf">N</code> ±100 m)。並非逐位元一致 —— <code style="color:#22d3bf">(h - N) + N</code> 可能因捨入而變動 1 ulp, 實測中 5,000 點裡有 273 點如此。<b>不以等號來寫「往返後恢復原值」</b>,原因就在於此。</p>
+<p><b>ValueError</b>:未知的基準名、長度不一致、非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

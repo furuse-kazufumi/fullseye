@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>大地坐标(纬度、经度、椭球高)→ <b>地心直角坐标 ECEF</b> [m]。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>地球の中心を原点、赤道面の本初子午線方向を x、東経 90 度を y、北極を z とする右手系。地形を「地球中心から見た座標」で扱いたいときの入口。</p>
-<p>球ではなく <b>WGS84 楕円体</b>で計算する —— 球近似は緯度 45 度あたりで最大 21 km ずれる(極半径が赤道半径より短いぶん)。</p>
+<p>以地球中心为原点,赤道面上本初子午线方向为 x,东经 90 度为 y,北极为 z 的右手系。想以“从地球中心看的坐标”处理地形时的入口。</p>
+<p>不是用球,而是用 <b>WGS84 椭球</b>计算 —— 球近似在纬度 45 度附近最多偏差 21 km(因为极半径比赤道半径短)。</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。</p>
-<p>height_m: 楕円体高 [m]。スカラでも配列でも可。</p>
+<p>lat_deg / lon_deg: 纬度、经度 [度]。可为数组(同形状)。</p>
+<p>height_m: 椭球高 [m]。标量或数组均可。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(..., 3)</code> の ECEF 座標 [m]。</p>
+<p><code style="color:#22d3bf">(..., 3)</code> 的 ECEF 坐标 [m]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

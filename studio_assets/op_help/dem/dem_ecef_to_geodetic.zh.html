@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_ecef_to_geodetic(xyz)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_ecef_to_geodetic(xyz)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_ecef_to_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ECEF → 大地坐标。返回 <code style="color:#22d3bf">(..., 3)</code> 的 <code style="color:#22d3bf">(纬度[度], 经度[度], 高度[m])</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>Bowring (1976) の閉形式に近い解法。往復(測地→ECEF→測地)の誤差は <b>どこを標本にしたかで 1 桁以上動く</b>ので、範囲つきで書く(2026-09-08 再測。以前は「緯度・経度 1e-12 度未満、高さ 1e-7 m 未満」と書いていたが、★これは緯度 ±85 度・高さ -500〜9000 m の 4000 点で既に <b>最大 6.4e-12 度 / 8.5e-07 m</b> と超えていた —— 中央値 2.6e-13 度 / 3.3e-08 m と混同していた):</p>
-<p style="margin:2px 0 2px 12px">• 緯度 ±85 度・高さ -500〜9000 m … 緯度 中央 2.6e-13 / 最大 6.4e-12 度、高さ 中央 3.3e-08 / 最大 8.5e-07 m</p>
-<p style="margin:2px 0 2px 12px">• 緯度 ±89.9 度・高さ -11 km〜40 km … 緯度 中央 2.9e-12 / 最大 1.3e-10 度、高さ 中央 3.5e-07 / 最大 1.7e-05 m(<b>極に寄せると 20 倍悪くなる</b>)</p>
-<p>経度はどちらでも最大 2.8e-14 度。いずれも地上では µm 以下で、実用上は「誤差の床」として扱ってよいが、<b>中央値を最大値として引用しないこと</b>。</p>
-<p>地心<b>球</b>座標が欲しいだけなら、<code style="color:#22d3bf">r = |xyz|</code> と <code style="color:#22d3bf">geocentric_lat = asin(z/r)</code> で足りる —— ただしそれは<b>測地緯度ではない</b> (両者は最大 0.19 度、距離にして約 21 km ずれる)。この op が返すのは地図や GPS と同じ<b>測地</b>緯度のほう。</p>
-<p>★<b>地球の中心付近では fail-closed で拒否する</b>(2026-09-08、<code style="color:#22d3bf">poc_geodetic_height_frames</code> が踏んだ)。楕円体の縮閉線(evolute) <code style="color:#22d3bf">(a·p)^(2/3) + (b·|z|)^(2/3) &lt; (a²-b²)^(2/3)</code> の内側では、楕円体面から立てた法線が 1 本に決まらず、<b>測地緯度がそもそも一意でない</b>。それまではここで黙って <code style="color:#22d3bf">lat = 180 度</code> を返していた —— 緯度として存在しない値で、しかも<b>自分の逆関数 <code style="color:#22d3bf">dem_geodetic_to_ecef</code> が「lat_deg must be within [-90, 90]」で拒否する</b>値だった。領域は赤道面で軸から <code style="color:#22d3bf">e²a = 42697.7 m</code>、極軸上で <code style="color:#22d3bf">(a²-b²)/b = 42841.3 m</code> まで(実測: 42600 m で 180 度、42700 m で 0 度 —— 閉形式の境界とちょうど一致)。</p>
+<p>接近 Bowring (1976) 闭式的解法。往返(大地→ECEF→大地)的误差 <b>随取样位置不同会变动一个数量级以上</b>,因此附上范围来写(2026-09-08 重测。以前写的是“纬度、经度小于 1e-12 度,高度小于 1e-7 m”,但 ★这在纬度 ±85 度、高度 -500~9000 m 的 4000 个点上就已经以 <b>最大 6.4e-12 度 / 8.5e-07 m</b> 超出了 —— 当时是与中位数 2.6e-13 度 / 3.3e-08 m 混淆了):</p>
+<p style="margin:2px 0 2px 12px">• 纬度 ±85 度、高度 -500~9000 m … 纬度 中位 2.6e-13 / 最大 6.4e-12 度, 高度 中位 3.3e-08 / 最大 8.5e-07 m</p>
+<p style="margin:2px 0 2px 12px">• 纬度 ±89.9 度、高度 -11 km~40 km … 纬度 中位 2.9e-12 / 最大 1.3e-10 度, 高度 中位 3.5e-07 / 最大 1.7e-05 m(<b>靠近极点会差 20 倍</b>)</p>
+<p>经度在两种情况下最大都是 2.8e-14 度。在地面上都在 µm 以下,实用上可以当作“误差的地板”,但<b>不要把中位数当作最大值引用</b>。</p>
+<p>如果只是想要地心<b>球</b>坐标,用 <code style="color:#22d3bf">r = |xyz|</code> 和 <code style="color:#22d3bf">geocentric_lat = asin(z/r)</code> 就够了 —— 但那<b>不是大地纬度</b> (两者最多相差 0.19 度,换算成距离约 21 km)。本 op 返回的是与地图和 GPS 相同的<b>大地</b>纬度。</p>
+<p>★<b>在地球中心附近以 fail-closed(失败即拒绝)方式拒绝</b>(2026-09-08, <code style="color:#22d3bf">poc_geodetic_height_frames</code> 踩到了)。在椭球的渐屈线(evolute) <code style="color:#22d3bf">(a·p)^(2/3) + (b·|z|)^(2/3) &lt; (a²-b²)^(2/3)</code> 的内侧,从椭球面立起的法线不唯一,<b>大地纬度本身就不唯一</b>。在此之前这里会默默返回 <code style="color:#22d3bf">lat = 180 度</code> —— 这是作为纬度并不存在的值, 而且是<b>自身的逆函数 <code style="color:#22d3bf">dem_geodetic_to_ecef</code> 会以 “lat_deg must be within [-90, 90]”拒绝</b>的值。该区域在赤道面上从轴到 <code style="color:#22d3bf">e²a = 42697.7 m</code>,在极轴上到 <code style="color:#22d3bf">(a²-b²)/b = 42841.3 m</code> 为止(实测:42600 m 时为 180 度,42700 m 时为 0 度 —— 与闭式的边界恰好一致)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

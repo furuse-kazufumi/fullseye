@@ -4,19 +4,18 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_geocentric_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>DEM의 각 셀을 <b>지구 중심에서 본 좌표</b>로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">(H, W)</code> の標高格子を、北西角が <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> にある局所平面とみなし、各セルを ECEF(既定)または<b>地心球座標</b>へ写す。</p>
+<p><code style="color:#22d3bf">(H, W)</code>의 표고 격자를, 북서 모서리가 <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code>에 있는 국소 평면으로간주하고, 각 셀을 ECEF(기본값) 또는 <b>지심 구 좌표</b>로 옮긴다.</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code> の標高 [m]。</p>
-<p>lat0_deg / lon0_deg: 格子の<b>北西角</b>の緯度経度 [度]。</p>
-<p>cell_size: セル寸法 [m]。緯度方向・経度方向とも同じとみなす</p>
-<p>(Web メルカトルのタイルはそうなっている。</p>
-<p><code style="color:#22d3bf">dem_cell_size_webmercator</code> を参照)。</p>
-<p>spherical: <code style="color:#22d3bf">True</code> なら <code style="color:#22d3bf">(半径 r[m], 地心緯度[度], 経度[度])</code> を返す。</p>
-<p><code style="color:#22d3bf">False</code>(既定)なら ECEF <code style="color:#22d3bf">(x, y, z)</code> [m]。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>의 표고 [m].</p>
+<p>lat0_deg / lon0_deg: 격자의 <b>북서 모서리</b>의 위경도 [도].</p>
+<p>cell_size: 셀 치수 [m]. 위도 방향, 경도 방향 모두 같다고 간주한다</p>
+<p>(Web 메르카토르의 타일은 그렇게 되어 있다.</p>
+<p><code style="color:#22d3bf">dem_cell_size_webmercator</code> 참조).</p>
+<p>spherical: <code style="color:#22d3bf">True</code>이면 <code style="color:#22d3bf">(반경 r[m], 지심 위도[도], 경도[도])</code>를 반환한다.</p>
+<p><code style="color:#22d3bf">False</code>(기본값)이면 ECEF <code style="color:#22d3bf">(x, y, z)</code> [m].</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(H, W, 3)</code>。</p>
-<p>★ <b>地心緯度は測地緯度ではありません</b>。<code style="color:#22d3bf">spherical=True</code> の返りの緯度は地球中心から見た角度で、地図の緯度(楕円体の法線が赤道面となす角)とは最大 0.19 度違います。地図に戻すときは ECEF 側を <code style="color:#22d3bf">dem_ecef_to_geodetic</code> に渡してください。</p>
+<p><code style="color:#22d3bf">(H, W, 3)</code>.</p>
+<p>★ <b>지심 위도는 측지 위도가 아닙니다</b>. <code style="color:#22d3bf">spherical=True</code>의 반환 위도는지구 중심에서 본 각도로, 지도의 위도(타원체의 법선이 적도면과 이루는 각)와는최대 0.19도 다릅니다. 지도로 되돌릴 때는 ECEF 쪽을 <code style="color:#22d3bf">dem_ecef_to_geodetic</code>에 넘겨 주십시오.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

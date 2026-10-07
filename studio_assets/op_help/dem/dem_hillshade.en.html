@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Hillshade [0,1]. <code style="color:#22d3bf">azimuth_deg</code> is the azimuth of the light source (north 0 degrees, increasing towards east).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>Lambert の余弦則そのもので、<b>遮蔽は考えない</b>(自分より手前の尾根で影になる分は含まれない)。落ちる影が要るなら <code style="color:#22d3bf">dem_horizon_angle</code> と組み合わせること —— 「陰影起伏に影が入っている」と思い込むのが定番の誤解。</p>
-<p>平坦面では <code style="color:#22d3bf">sin(altitude)</code> に一致する(実測 1e-15 以下)。</p>
+<p>It is Lambert&#x27;s cosine law as is, and <b>occlusion is not considered</b> (the portion shadowed by a ridge in front of the cell is not included). If cast shadows are needed, combine with <code style="color:#22d3bf">dem_horizon_angle</code> —— assuming &quot;the hillshade contains shadows&quot; is the classic misconception.</p>
+<p>On a flat surface it equals <code style="color:#22d3bf">sin(altitude)</code> (measured 1e-15 or less).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

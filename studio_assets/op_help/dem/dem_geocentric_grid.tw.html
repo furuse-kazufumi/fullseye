@@ -4,19 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_geocentric_grid(dem, lat0_deg, lon0_deg, cell_size, spherical=False)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_geocentric_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將 DEM 的各格子單元轉換為<b>從地球中心看到的座標</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">(H, W)</code> の標高格子を、北西角が <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> にある局所平面とみなし、各セルを ECEF(既定)または<b>地心球座標</b>へ写す。</p>
+<p>把 <code style="color:#22d3bf">(H, W)</code> 的高程網格視為西北角位於 <code style="color:#22d3bf">(lat0_deg, lon0_deg)</code> 的局部平面, 將各單元映射到 ECEF(預設)或<b>地心球座標</b>。</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code> の標高 [m]。</p>
-<p>lat0_deg / lon0_deg: 格子の<b>北西角</b>の緯度経度 [度]。</p>
-<p>cell_size: セル寸法 [m]。緯度方向・経度方向とも同じとみなす</p>
-<p>(Web メルカトルのタイルはそうなっている。</p>
-<p><code style="color:#22d3bf">dem_cell_size_webmercator</code> を参照)。</p>
-<p>spherical: <code style="color:#22d3bf">True</code> なら <code style="color:#22d3bf">(半径 r[m], 地心緯度[度], 経度[度])</code> を返す。</p>
-<p><code style="color:#22d3bf">False</code>(既定)なら ECEF <code style="color:#22d3bf">(x, y, z)</code> [m]。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code> 的高程 [m]。</p>
+<p>lat0_deg / lon0_deg: 網格<b>西北角</b>的經緯度 [度]。</p>
+<p>cell_size: 單元尺寸 [m]。視緯度方向、經度方向相同</p>
+<p>(Web 麥卡托的圖磚就是如此。</p>
+<p>參見 <code style="color:#22d3bf">dem_cell_size_webmercator</code>)。</p>
+<p>spherical: 為 <code style="color:#22d3bf">True</code> 時回傳 <code style="color:#22d3bf">(半徑 r[m], 地心緯度[度], 經度[度])</code>。</p>
+<p>為 <code style="color:#22d3bf">False</code>(預設)時回傳 ECEF <code style="color:#22d3bf">(x, y, z)</code> [m]。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">(H, W, 3)</code>。</p>
-<p>★ <b>地心緯度は測地緯度ではありません</b>。<code style="color:#22d3bf">spherical=True</code> の返りの緯度は地球中心から見た角度で、地図の緯度(楕円体の法線が赤道面となす角)とは最大 0.19 度違います。地図に戻すときは ECEF 側を <code style="color:#22d3bf">dem_ecef_to_geodetic</code> に渡してください。</p>
+<p>★ <b>地心緯度不是大地緯度</b>。<code style="color:#22d3bf">spherical=True</code> 回傳的緯度是從地球中心看的角度,與地圖的緯度(橢球法線與赤道面所成的角) 最多相差 0.19 度。要回到地圖時,請把 ECEF 一側</p>
+<p>傳給 <code style="color:#22d3bf">dem_ecef_to_geodetic</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

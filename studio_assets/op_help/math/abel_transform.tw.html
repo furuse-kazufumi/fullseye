@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;abel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>把軸對稱分布 f(r)(在 r = 0, dr, 2dr, … 處的取樣)映射為投影 A(y)(正向 Abel 轉換)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr。r = √(y² + u²) と置くと A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du になり、y = r の特異点が消える(被積分関数は滑らか)。f は 3 次スプラインで補間し、u の積分は Gauss–Legendre <code style="color:#22d3bf">n_quad</code> 点。R の外では f = 0 とみなす。</p>
-<p>門: f = exp(−r²/σ²) なら A(y) = √π σ exp(−y²/σ²)(R が十分大きいとき)。返り値は f と同じ長さ・同じ格子(y = 0, dr, 2dr, …)。</p>
+<p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr。令 r = √(y² + u²)，則 A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du，y = r 處的奇異點消失(被積函數平滑)。f 以 3 次樣條內插，u 的積分用 Gauss–Legendre <code style="color:#22d3bf">n_quad</code> 點。R 之外視 f = 0。</p>
+<p>門檻：若 f = exp(−r²/σ²)，則 A(y) = √π σ exp(−y²/σ²)(R 足夠大時)。回傳值與 f 長度相同、網格相同(y = 0, dr, 2dr, …)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;gauss_quadrature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>n점 Gauss 구적의 절점과 가중치. ∫ f ≈ Σ w_k f(x_k).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>n 点で <b>2n−1 次までの多項式を厳密に</b>積分する(等間隔の台形則は 1 次まで)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> は区間 [a, b] へ写せる(既定 [−1, 1])。他の kind は重み関数込みの積分(<code style="color:#22d3bf">integral</code> 参照)。</p>
-<p>門: 2n−1 次の単項式は厳密、2n 次は厳密でない(両向き)。</p>
+<p>n점으로 <b>2n−1차까지의 다항식을 엄밀하게</b> 적분한다(등간격 사다리꼴 공식은 1차까지). <code style="color:#22d3bf">kind=&quot;legendre&quot;</code>는 구간 [a, b]로 옮길 수 있다(기본값 [−1, 1]). 다른 kind는 가중 함수를 포함한 적분(<code style="color:#22d3bf">integral</code> 참조).</p>
+<p>게이트: 2n−1차 단항식은 엄밀, 2n차는 엄밀하지 않다(양방향).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

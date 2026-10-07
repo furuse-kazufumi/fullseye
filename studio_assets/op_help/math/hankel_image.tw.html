@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>以沿徑向的 1 次 Hankel 轉換求軸對稱影像(圓形孔徑、高斯團塊、繞射環)的 2 維傅立葉轉換。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、<code style="color:#22d3bf">hankel_transform</code>(0 次)にかける。軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称からどれだけ崩れているか(<code style="color:#22d3bf">asymmetry</code>)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>
+<p>將影像依到中心的距離分成 1 像素寬的環並取平均(徑向分布)，再送入 <code style="color:#22d3bf">hankel_transform</code>(0 階)。若軸對稱，2 維轉換只需<b>1 個積分</b>(依環平均，雜訊也降為 1/√(環的像素數))，並以數值回傳偏離軸對稱的程度(<code style="color:#22d3bf">asymmetry</code>)。頻率步長與 2-D FFT 相同，約為 1/(2·半徑)，不會更細。</p>
 <p>Args:</p>
-<p>image: 2-D の実画像。</p>
-<p>center: 中心 (行, 列)。省略すると明るさの重心。</p>
-<p>spacing: 1 画素の長さ(周波数の単位を決める)。</p>
-<p>n: Hankel 変換の標本数。</p>
-<p>r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。</p>
+<p>image: 2-D 實數影像。</p>
+<p>center: 中心 (列, 行)。省略時取亮度重心。</p>
+<p>spacing: 1 像素的長度(決定頻率的單位)。</p>
+<p>n: Hankel 轉換的樣本數。</p>
+<p>r_max: 所用半徑的上限(預設 = 中心到影像邊緣的最短距離。不使用缺角的環)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nu</code>(周波数)・<code style="color:#22d3bf">F</code>(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・<code style="color:#22d3bf">r</code>・<code style="color:#22d3bf">profile</code>(動径の分布)・</p>
-<p><code style="color:#22d3bf">center</code>・<code style="color:#22d3bf">asymmetry</code> = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。</p>
-<p>門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、2-D FFT の動径断面と一致。</p>
+<p><code style="color:#22d3bf">nu</code>(頻率)、<code style="color:#22d3bf">F</code>(2-D 傅立葉轉換的徑向截面，∬ f e^{−2πi k·x} dx 的值)、<code style="color:#22d3bf">r</code>、<code style="color:#22d3bf">profile</code>(徑向分布)、</p>
+<p><code style="color:#22d3bf">center</code>、<code style="color:#22d3bf">asymmetry</code> = ‖影像 − 由分布重建的軸對稱影像‖ / ‖影像‖(0 即軸對稱。不會被暗背景稀釋)。</p>
+<p>門檻：半徑 R 的圓盤 F(ν) = R J₁(2πνR)/ν(Airy)，exp(−π r²/σ²) 為 σ² exp(−π σ² ν²)(自對偶的縮放)，與 2-D FFT 的徑向截面一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

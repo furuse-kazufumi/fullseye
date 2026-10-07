@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;dwt_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Daubechies dbN 的多級、N 維離散小波轉換(在週期邊界下嚴格正交歸一)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。</p>
-<p>order: dbN の N(1 = Haar)。</p>
-<p>levels: 段数。各段で近似(全軸ローパス)をさらに分ける。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
+<p>x: 實數陣列(1-D 訊號、2-D 影像、3-D 體積資料)。要轉換的軸的長度為 2^levels 的倍數。</p>
+<p>order: dbN 的 N(1 = Haar)。</p>
+<p>levels: 級數。每一級將近似(全軸低通)進一步分解。</p>
+<p>axes: 要轉換的軸(省略則為全部軸)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">approx</code> 最後の近似、<code style="color:#22d3bf">details</code> = 段ごとの dict(キーは軸ごとの &#x27;a&#x27;/&#x27;d&#x27; の並び、例 2-D なら &#x27;ad&#x27;・&#x27;da&#x27;・&#x27;dd&#x27;)、<code style="color:#22d3bf">energy_in</code>・<code style="color:#22d3bf">energy_out</code>(Parseval で一致)、<code style="color:#22d3bf">order</code>・<code style="color:#22d3bf">levels</code>・<code style="color:#22d3bf">axes</code>。<code style="color:#22d3bf">dwt_inverse</code> に丸ごと渡すと元に戻る。</p>
+<p><code style="color:#22d3bf">approx</code> 最後的近似、<code style="color:#22d3bf">details</code> = 每級一個 dict(鍵為各軸 &#x27;a&#x27;/&#x27;d&#x27; 的排列，例如 2-D 時為 &#x27;ad&#x27;、&#x27;da&#x27;、&#x27;dd&#x27;)、<code style="color:#22d3bf">energy_in</code>、<code style="color:#22d3bf">energy_out</code>(依 Parseval 一致)、<code style="color:#22d3bf">order</code>、<code style="color:#22d3bf">levels</code>、<code style="color:#22d3bf">axes</code>。整個傳給 <code style="color:#22d3bf">dwt_inverse</code> 即可還原。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;lomb_scargle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Lomb–Scargle periodogram of an unevenly sampled time series (t, y) (with the time offset τ of Scargle 1982, after subtracting the mean).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt。f は周波数(t の単位の逆数)。f = 0 は定義されないので拒否する。</p>
-<p>門: 等間隔の標本ではフーリエ周波数 k/(NΔt) で |DFT|²/N に一致する。返り値 <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>。</p>
+<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ], ω = 2πf, tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt. f is frequency (reciprocal of the unit of t). f = 0 is undefined and therefore rejected.</p>
+<p>Gate: for equally spaced samples it matches |DFT|²/N at the Fourier frequencies k/(NΔt). Returns <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

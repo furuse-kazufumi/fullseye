@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Daubechies 정규직교 웨이블릿 dbN의 필터를 교과서의 구성(스펙트럼 분해)으로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
+<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2)), P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988). P의 근에서 단위원안쪽의 영점을 골라 (1 + z⁻¹)^N과 곱한다. 표를 베끼지 않으므로 자릿수 손실의 전사 실수가 없다(게이트가 값을 확인한다).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>
-<p><code style="color:#22d3bf">vanishing_moments</code> = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。</p>
+<p><code style="color:#22d3bf">lowpass</code> h(길이 2N, 합 √2), <code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n], <code style="color:#22d3bf">order</code>,</p>
+<p><code style="color:#22d3bf">vanishing_moments</code> = N(차수 N−1까지의 다항식을 상세 계수에서 없앤다). order=1은 Haar.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

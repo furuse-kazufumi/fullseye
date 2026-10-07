@@ -6,48 +6,47 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>高度场的功率谱密度。返回 <code style="color:#22d3bf">(q, C)</code>。<b>约定通过参数明确指定。</b></p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>引数</p>
-<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2 次元 PSD <code style="color:#22d3bf">C_2D(q)</code> の環平均。</p>
-<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1 次元動径 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
-<p>規約(ここを書かないと較正なしでは読めない ―― 既存の <code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> は <b>cycles / length</b>(角周波数 <code style="color:#22d3bf">2π/λ</code> ではない)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。規格化は Parseval に合わせてある: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> かつ <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
-<p style="margin:2px 0 2px 12px">• 自己アフィン面 <code style="color:#22d3bf">H</code> に対する傾きは <b>面 PSD で <code style="color:#22d3bf">-2(H+1)</code>、動径 PSD で <code style="color:#22d3bf">-2H-1</code></b>(ちょうど 1 だけ違う)。</p>
-<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
-<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
-<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
-<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
-<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
-<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
-<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
-<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
-<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
-<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
-<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
-<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
-<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
-<p>実装でやると誤差が消える。原因を切り分けたところ、<b>環の代表 <code style="color:#22d3bf">q</code> にビン番号 <code style="color:#22d3bf">i·Δq</code> を使うか、環内の <code style="color:#22d3bf">q</code> の平均を使うかの差</b>だった</p>
-<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
-<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
-<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
-<p><b>この関数は環内の <code style="color:#22d3bf">q</code> の平均を返す。</b></p>
-<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
-<p>正方格子の最大 <code style="color:#22d3bf">|q|</code> は <code style="color:#22d3bf">√2/(2 dx)</code> だが、<code style="color:#22d3bf">q &gt; 1/(2 dx)</code> の環は</p>
-<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
-<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 <code style="color:#22d3bf">2πq/Δq</code> に対して</p>
-<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
-<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
-<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
-<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
-<p style="margin:2px 0 2px 12px">• 2 次元の全格子で <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> を取ると <b>+0.0000 %</b>(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して 1 次元に潰した時点でこの分は失われる —— <b>環平均は要約であって可逆ではない。</b> 0.5 % を超える精度が要る用途では 2 次元の <code style="color:#22d3bf">C_2D</code> を自分で積分すること。</p>
-<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 % のまま変わらない(角の分に中身が無い)。角に中身がある面(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;areal&quot;</code>・<code style="color:#22d3bf">&quot;radial&quot;</code> 以外。</p>
+<p>参数</p>
+<p>z       高度场(内部减去均值。不返回 DC 区间)。</p>
+<p>dx, dy  采样间隔。<code style="color:#22d3bf">dy=None</code> 表示正方形像素。</p>
+<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 二维 PSD <code style="color:#22d3bf">C_2D(q)</code> 的环平均。</p>
+<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 一维径向 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
+<p>约定(不写明这些,没有标定就无法读懂 ―― 现有的 <code style="color:#22d3bf">radial_power_spectrum</code> 的 docstring 中没有这些)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> 的单位是 <b>cycles / length</b>(不是角频率 <code style="color:#22d3bf">2π/λ</code>)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。归一化与 Parseval 一致: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> 且 <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
+<p style="margin:2px 0 2px 12px">• 自仿射面 <code style="color:#22d3bf">H</code> 对应的斜率为 <b>面 PSD 为 <code style="color:#22d3bf">-2(H+1)</code>, 径向 PSD 为 <code style="color:#22d3bf">-2H-1</code></b>(恰好相差 1)。</p>
+<p>★ 实测 —— 无论哪种约定,H 都能在无标定下恢复</p>
+<p>用 <code style="color:#22d3bf">surface_synth_psd</code> 设定 H,在 q ∈ [2/λ_hi, 0.4/dx] 上做双对数</p>
+<p>直线拟合恢复 H(512²,频带 2-64 µm):</p>
+<p>设定的 H   面 PSD 斜率   恢复的 H   径向斜率   恢复的 H   斜率差</p>
+<p>0.30      -2.600       0.300     -1.600     0.300     1.0000</p>
+<p>0.50      -3.000       0.500     -2.000     0.500     1.0000</p>
+<p>0.80      -3.600       0.800     -2.600     0.800     1.0000</p>
+<p>0.95      -3.901       0.950     -2.901     0.950     1.0000</p>
+<p>4 例误差均在 <b>±0.0003 以内</b>,两种约定的斜率差对任何 H 都</p>
+<p>严格为 1.0000。<b>无需标定即可读懂。</b></p>
+<p>★ 这里是 PoC 重新测量后结论发生改变之处。PoC 用现有的</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> 发现了 <b>一律 -0.013(H 的 1.6 %)的系统误差</b>,</p>
+<p>并得出“环平均离散化造成的系统误差”的结论。用本</p>
+<p>实现做同样的验算,误差消失了。排查原因后发现,<b>是环的代表 <code style="color:#22d3bf">q</code> 用区间编号 <code style="color:#22d3bf">i·Δq</code> 还是用环内 <code style="color:#22d3bf">q</code> 的平均值的差异</b></p>
+<p>—— 用区间编号会出现 -0.0007~-0.0010 的负偏差(实测,同一面、同一</p>
+<p>拟合频带)。方向与 PoC 的观测相同,但大小只有 1/15,因此</p>
+<p>-0.013 的其余部分并非来自环平均的离散化,而是来自该函数的其他实现差异。</p>
+<p><b>本函数返回环内 <code style="color:#22d3bf">q</code> 的平均值。</b></p>
+<p>★ 陷阱 —— 超过 Nyquist 的环“只由角落”构成</p>
+<p>正方形网格的最大 <code style="color:#22d3bf">|q|</code> 是 <code style="color:#22d3bf">√2/(2 dx)</code>,但 <code style="color:#22d3bf">q &gt; 1/(2 dx)</code> 的环</p>
+<p>只包含频率平面的四个角。实测(512²):全部 362 个区间中排在最上的</p>
+<p>107 个区间(29.6 %)超过 Nyquist。环内点数相对理想值 <code style="color:#22d3bf">2πq/Δq</code></p>
+<p>缺少多少:在 Nyquist 以下最低也会降到 0.838 倍</p>
+<p>(网格的离散化),而超过 Nyquist 则会降到 0。</p>
+<p><b>斜率拟合不要使用超过 Nyquist 的部分。</b></p>
+<p>★ Parseval 验算可以信到什么程度(实测,512²,Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• 在二维全网格上求 <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> 得 <b>+0.0000 %</b>(严格)。</p>
+<p style="margin:2px 0 2px 12px">• 对返回的径向 PSD 做梯形积分得 <b>-0.55 %</b>。按环取平均压成一维时这部分就丢失了 —— <b>环平均是摘要, 不可逆。</b> 需要优于 0.5 % 精度的用途,请自行对二维的 <code style="color:#22d3bf">C_2D</code> 积分。</p>
+<p style="margin:2px 0 2px 12px">• 此面的频带上端就是 Nyquist,所以在 Nyquist 处截断仍为 -0.55 % 不变(角落部分没有内容)。对角落有内容的面(频带超过 Nyquist 的面),截断就会缺失。</p>
+<p>fail-closed(失败即拒绝)</p>
+<p style="margin:2px 0 2px 12px">• 不是二维 / 小于 8x8 / 含 NaN 或 Inf / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> 非正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> 不是 <code style="color:#22d3bf">&quot;areal&quot;</code> 或 <code style="color:#22d3bf">&quot;radial&quot;</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

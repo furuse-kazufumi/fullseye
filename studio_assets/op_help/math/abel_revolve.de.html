@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;abel_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Rotiert einen Querschnitt f(z, r) ((H, R), r = 0, dr, …) um die Symmetrieachse zu einem 3-D-Volumen (H, 2R−1, 2R−1).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">abel_inverse_image</code> と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。</p>
-<p>門: できたボリュームを横に足し合わせる(投影する)と、元の投影画像に戻る(往復)。</p>
+<p>Kombiniert mit <code style="color:#22d3bf">abel_inverse_image</code> wird aus 1 Foto die 3-D-Verteilung eines achsensymmetrischen Objekts zurückgewonnen.</p>
+<p>Gate: Summiert man das entstandene Volumen seitlich auf (Projektion), erhält man das ursprüngliche Projektionsbild zurück (Hin und zurück).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

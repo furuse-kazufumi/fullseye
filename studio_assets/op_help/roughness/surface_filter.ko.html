@@ -6,58 +6,57 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(roughness, waviness)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이장을 거칠기와 파상도로 나눈다(ISO 16610-21의 가우스 필터).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>戻り値は <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> が λc より短い成分、<code style="color:#22d3bf">waviness</code> が長い成分で、<code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> でなければ <code style="color:#22d3bf">roughness + waviness</code> は入力(λs を掛けたあとの一次形状)に厳密に一致する。</p>
-<p>引数</p>
-<p>z          高さ場 <code style="color:#22d3bf">z[i, j]</code>(行 = y、列 = x)。</p>
-<p>dx, dy     標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>lambda_c   長波長側カットオフ(粗さ / うねりの境)。<code style="color:#22d3bf">None</code> なら分けない</p>
-<p>(<code style="color:#22d3bf">waviness</code> はゼロ配列)。</p>
-<p>lambda_s   短波長側カットオフ(雑音を落とす S フィルタ)。<code style="color:#22d3bf">None</code> で無効。</p>
-<p>kind       <code style="color:#22d3bf">&quot;gaussian&quot;</code> のみ。他を渡すと <b>黙って代用せず</b> 例外にする。</p>
-<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(既定) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>。下記。</p>
-<p>dy         行方向の標本間隔(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>)。</p>
-<p>★ 端の扱い(<code style="color:#22d3bf">end_effect</code>)—— ここがこの op を書いた理由</p>
-<p>畳み込みはカーネル半径 <code style="color:#22d3bf">λc/2</code> のぶん、端で「無い所のデータ」を要る。</p>
-<p>規格(ISO 16610-28)は評価領域を両端 <code style="color:#22d3bf">λc/2</code> ずつ削ることを前提にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(既定)—— 両端 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 標本を<b>捨てる</b>。出力は入力より小さい配列になる。捨てた領域は「測っていない」ので、これが唯一嘘のない選択肢。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 鏡像で延長して同じ形を返す。端では面が偶関数だと仮定する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 循環畳み込み(FFT と同じ)。左端の続きが右端だと仮定する。</p>
-<p><b>実測</b>。真値は 704x704 の面をフィルタしてから中央 512x512 を切り出した</p>
-<p>もの(端の外側に本物のデータがある状態で計算した答え)。dx=1、λc=80、</p>
-<p>端の帯 = 外周 40 標本、そこでの真値の rms は 0.1932。</p>
-<p>面の状態     end_effect   端の帯の rms 誤差    中央部の rms 誤差</p>
-<p>傾きあり     wrap           4.3883 (2272 %)      0.0e+00 (0.000 %)</p>
-<p>傾きあり     mirror         0.1765 (  91 %)      0.0e+00 (0.000 %)</p>
-<p>傾き除去済   wrap           0.0111 ( 5.7 %)      4.4e-15 (0.000 %)</p>
-<p>傾き除去済   mirror         0.0115 ( 5.9 %)      4.4e-15 (0.000 %)</p>
-<p>(どれでも)  reject         —— 返さない ——      0.0e+00 (0.000 %)</p>
-<p>読み取れること 4 つ:</p>
-<p style="margin:2px 0 2px 12px">1. <b>端の扱いは端でしか効かない。</b> 中央部はどれも真値と厳密に一致する(カーネルが端に届かないので当然だが、確かめた)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>最悪の組み合わせは「傾きを残したまま wrap」</b> —— 端の誤差が真値そのものの 23 倍。左端の続きが右端だと仮定するので、高さの違う 2 辺の継ぎ目に段差が立つ。</p>
-<p style="margin:2px 0 2px 12px">3. <b>傾きさえ除けば wrap と mirror に差は無い</b>(5.7 % 対 5.9 %、wrap がわずかに良い)。「循環畳み込みは常に悪い」ではなく「<b>傾きを除かずに使うのが悪い</b>」が正しい。</p>
-<p style="margin:2px 0 2px 12px">4. reject の代償は面積。512x512・λc=80 で <b>28.8 % を捨てる</b> (432x432 が残る)。捨てる割合は <code style="color:#22d3bf">1 - (1 - λc/L)²</code> で増えるので、λc が評価長さの 1/4 を超えると半分近くを失う。</p>
-<p>★ 透過率は規格どおりか(実測、λc=80、dx=1、整数周期の正弦を射影で測定)</p>
-<p>λ         うねり側    ISO 規格値    差</p>
+<p>반환값은 <code style="color:#22d3bf">(roughness, waviness)</code>. <code style="color:#22d3bf">roughness</code> 가 λc 보다 짧은 성분, <code style="color:#22d3bf">waviness</code> 가 긴 성분이며, <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> 가 아니면 <code style="color:#22d3bf">roughness + waviness</code> 는 입력(λs 를 건 뒤의 일차 형상)과 엄밀히 일치한다.</p>
+<p>인수</p>
+<p>z          높이장 <code style="color:#22d3bf">z[i, j]</code>(행 = y, 열 = x).</p>
+<p>dx, dy     샘플 간격. <code style="color:#22d3bf">dy=None</code> 은 정사각 화소.</p>
+<p>lambda_c   장파장 쪽 컷오프(거칠기 / 파상도의 경계). <code style="color:#22d3bf">None</code> 이면 나누지 않는다</p>
+<p>(<code style="color:#22d3bf">waviness</code> 는 영 배열).</p>
+<p>lambda_s   단파장 쪽 컷오프(잡음을 떨어뜨리는 S 필터). <code style="color:#22d3bf">None</code> 으로 무효.</p>
+<p>kind       <code style="color:#22d3bf">&quot;gaussian&quot;</code> 만. 다른 것을 넘기면 <b>조용히 대체하지 않고</b> 예외로 한다.</p>
+<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(기본값) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>. 아래 참조.</p>
+<p>dy         행 방향 샘플 간격(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>).</p>
+<p>★ 끝단 처리(<code style="color:#22d3bf">end_effect</code>) —— 이것이 이 op 를 쓴 이유</p>
+<p>합성곱은 커널 반경 <code style="color:#22d3bf">λc/2</code> 만큼, 끝단에서 &quot;없는 곳의 데이터&quot;를 필요로 한다.</p>
+<p>규격(ISO 16610-28)은 평가 영역을 양 끝에서 <code style="color:#22d3bf">λc/2</code> 씩 깎는 것을 전제로 한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(기본값) —— 양 끝 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 샘플을 <b>버린다</b>. 출력은 입력보다 작은 배열이 된다. 버린 영역은 &quot;측정하지 않은&quot; 것이므로, 이것이 유일하게 거짓이 없는 선택지.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 거울상으로 연장해 같은 형태를 반환한다. 끝단에서 면이 우함수라고 가정한다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 순환 합성곱(FFT 와 동일). 왼쪽 끝의 다음이 오른쪽 끝이라고 가정한다.</p>
+<p><b>실측</b>. 참값은 704x704 면을 필터링한 뒤 중앙 512x512 를 잘라낸</p>
+<p>것(끝단 바깥에 진짜 데이터가 있는 상태에서 계산한 답). dx=1, λc=80,</p>
+<p>끝단 띠 = 외곽 40 샘플, 거기서의 참값 rms 는 0.1932.</p>
+<p>면의 상태      end_effect   끝단 띠 rms 오차     중앙부 rms 오차</p>
+<p>기울기 있음    wrap           4.3883 (2272 %)      0.0e+00 (0.000 %)</p>
+<p>기울기 있음    mirror         0.1765 (  91 %)      0.0e+00 (0.000 %)</p>
+<p>기울기 제거    wrap           0.0111 ( 5.7 %)      4.4e-15 (0.000 %)</p>
+<p>기울기 제거    mirror         0.0115 ( 5.9 %)      4.4e-15 (0.000 %)</p>
+<p>(아무거나)     reject         —— 반환 안 함 ——     0.0e+00 (0.000 %)</p>
+<p>읽어낼 수 있는 것 4 가지:</p>
+<p style="margin:2px 0 2px 12px">1. <b>끝단 처리는 끝단에서만 효과가 있다.</b> 중앙부는 어느 것이나 참값과 엄밀히 일치한다(커널이 끝단에 닿지 않으니 당연하지만, 확인했다).</p>
+<p style="margin:2px 0 2px 12px">2. <b>최악의 조합은 &quot;기울기를 남긴 채 wrap&quot;</b> —— 끝단 오차가참값 자체의 23 배. 왼쪽 끝의 다음이 오른쪽 끝이라고 가정하므로, 높이가 다른 2 변의 이음매에 단차가 생긴다.</p>
+<p style="margin:2px 0 2px 12px">3. <b>기울기만 제거하면 wrap 과 mirror 에 차이는 없다</b>(5.7 % 대 5.9 %, wrap 이 약간 낫다). &quot;순환 합성곱은 항상 나쁘다&quot;가 아니라 &quot;<b>기울기를 제거하지 않고 쓰는 것이 나쁘다</b>&quot;가 옳다.</p>
+<p style="margin:2px 0 2px 12px">4. reject 의 대가는 면적. 512x512·λc=80 에서 <b>28.8 % 를 버린다</b> (432x432 가 남는다). 버리는 비율은 <code style="color:#22d3bf">1 - (1 - λc/L)²</code> 로 늘어나므로, λc 가 평가 길이의 1/4 을 넘으면 절반 가까이를 잃는다.</p>
+<p>★ 투과율은 규격대로인가(실측, λc=80, dx=1, 정수 주기의 사인을 사영으로 측정)</p>
+<p>λ         파상도 쪽    ISO 규격값    차</p>
 <p>16      0.000806     0.000000    +8.1e-04</p>
 <p>32      0.017206     0.013139    +4.1e-03</p>
 <p>40      0.058676     0.062500    -3.8e-03</p>
 <p>64      0.342826     0.338564    +4.3e-03</p>
-<p>80      0.509549     0.500000    +9.6e-03   ← 最大</p>
+<p>80      0.509549     0.500000    +9.6e-03   ← 최대</p>
 <p>128      0.772150     0.762799    +9.4e-03</p>
 <p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>カットオフ波長そのもので 0.5000 でなく 0.5095</b>(相対 +1.9 %)。原因は</p>
-<p>規格が指定する打ち切り <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)で、裾の 0.8 % が落ちるため。</p>
-<p>打ち切りを 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)まで広げると最大誤差は 9e-05 に落ちる</p>
-<p>(実測)が、reject で捨てる帯が 1.5 倍になる。<b>規格に合わせる側を採り、ずれを書く</b>方を選んだ。粗さとうねりの和は常に入力に厳密一致する</p>
-<p>(上の表で <code style="color:#22d3bf">roughness + waviness = 1.000000</code>)ので、分配の境目が</p>
-<p>1.9 % ずれるだけで、エネルギーが消えたり湧いたりはしない。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;gaussian&quot;</code> 以外 / <code style="color:#22d3bf">end_effect</code> が既知の 3 つ以外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> と <code style="color:#22d3bf">lambda_s</code> の両方が <code style="color:#22d3bf">None</code>(何もしない呼び出し)。</p>
-<p style="margin:2px 0 2px 12px">• カットオフが Nyquist 波長 <code style="color:#22d3bf">2*pitch</code> 未満、または評価長さ超。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code>(帯域が空になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> で削ったあと配列が残らない。</p>
+<p><b>컷오프 파장 그 자체에서 0.5000 이 아니라 0.5095</b>(상대 +1.9 %). 원인은</p>
+<p>규격이 지정하는 절단 <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)로, 꼬리의 0.8 % 가 떨어지기 때문.</p>
+<p>절단을 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)까지 넓히면 최대 오차는 9e-05 로 떨어지지만</p>
+<p>(실측), reject 로 버리는 띠가 1.5 배가 된다. <b>규격에 맞추는 쪽을 택하고, 어긋남을 적는</b> 쪽을 골랐다. 거칠기와 파상도의 합은 항상 입력과 엄밀히 일치하므로</p>
+<p>(위 표에서 <code style="color:#22d3bf">roughness + waviness = 1.000000</code>), 분배의 경계가</p>
+<p>1.9 % 어긋날 뿐, 에너지가 사라지거나 솟아나지는 않는다.</p>
+<p>fail-closed(실패 시 거부)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> 가 <code style="color:#22d3bf">&quot;gaussian&quot;</code> 이외 / <code style="color:#22d3bf">end_effect</code> 가 알려진 3 가지 이외.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> 와 <code style="color:#22d3bf">lambda_s</code> 가 둘 다 <code style="color:#22d3bf">None</code>(아무것도 하지 않는 호출).</p>
+<p style="margin:2px 0 2px 12px">• 컷오프가 Nyquist 파장 <code style="color:#22d3bf">2*pitch</code> 미만, 또는 평가 길이 초과.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code>(대역이 비게 된다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> 로 깎은 뒤 배열이 남지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

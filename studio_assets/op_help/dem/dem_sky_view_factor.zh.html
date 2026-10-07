@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>天空可视因子 [0,1]。能看到多少天空。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">n_azimuth</code> 方位の地平線仰角から <code style="color:#22d3bf">mean(cos^2(horizon))</code> で求める(等方輝度の空を仮定した標準的な近似)。<b>平坦面では厳密に 1</b>。都市の暑熱や谷底の冷え込みで効く量。</p>
+<p>由 <code style="color:#22d3bf">n_azimuth</code> 个方位的地平线仰角，以 <code style="color:#22d3bf">mean(cos^2(horizon))</code> 求得(假定各向同性亮度天空的标准近似)。<b>平坦面上严格为 1</b>。对城市热环境、谷底降温有影响的量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

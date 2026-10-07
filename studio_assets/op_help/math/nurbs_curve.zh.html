@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求 NURBS 曲线的值(带权重，一般不经过控制点)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>control_points: (m, d) の制御点(d = 2 なら平面、3 なら空間)。</p>
-<p>weights: 長さ m の正の重み。省略すると全部 1(= 普通の B スプライン)。重みを大きくすると曲線がその点に寄る。</p>
-<p>degree: 次数 p(m − 1 以下)。</p>
-<p>knots: 長さ m + p + 1 の節点列。省略すると両端 p+1 重の一様節点(端点だけは制御点を通る)。</p>
-<p>n: 評価する点の数(定義域を等分)。</p>
+<p>control_points: (m, d) 的控制点(d = 2 为平面，3 为空间)。</p>
+<p>weights: 长度为 m 的正权重。省略则全部为 1(= 普通的 B 样条)。增大权重会使曲线靠近该点。</p>
+<p>degree: 次数 p(不超过 m − 1)。</p>
+<p>knots: 长度为 m + p + 1 的节点序列。省略则为两端 p+1 重的均匀节点(仅在端点处通过控制点)。</p>
+<p>n: 求值的点数(将定义域等分)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (n, d) 曲線上の点、<code style="color:#22d3bf">u</code> パラメータ、<code style="color:#22d3bf">basis</code> (n, m) 有理基底 R_i(u)(各行の和は 1)、</p>
-<p><code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">degree</code>。</p>
-<p>例: 9 点の 2 次 NURBS で円を <b>厳密に</b> 描く(<code style="color:#22d3bf">nurbs_circle</code> が制御点・重み・節点を返す)。多項式の B スプラインでは円は近似しかできない —— 重みが要る理由がここにある。</p>
+<p><code style="color:#22d3bf">points</code> (n, d) 曲线上的点、<code style="color:#22d3bf">u</code> 参数、<code style="color:#22d3bf">basis</code> (n, m) 有理基函数 R_i(u)(每行之和为 1)、</p>
+<p><code style="color:#22d3bf">knots</code>、<code style="color:#22d3bf">weights</code>、<code style="color:#22d3bf">degree</code>。</p>
+<p>例：用 9 点的 2 次 NURBS <b>精确地</b>画圆(<code style="color:#22d3bf">nurbs_circle</code> 返回控制点、权重、节点)。多项式的 B 样条只能近似圆 —— 这正是需要权重的原因。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

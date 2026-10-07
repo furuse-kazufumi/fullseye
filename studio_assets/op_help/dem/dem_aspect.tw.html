@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>坡向 [度]。<b>北為 0 度，向東旋轉</b>。平坦的格子單元為 <code style="color:#22d3bf">ASPECT_FLAT</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>平坦を 0 で返さないのは、0 が「北向き斜面」を意味してしまうため —— 区別できない値を返すのは、例外を出さずに間違える典型。</p>
-<p>手順: <code style="color:#22d3bf">dem_slope</code> と同じ 3x3 勾配 <code style="color:#22d3bf">(dz/dx, dz/dy)</code> を取り、<b>下り勾配</b>の向き <code style="color:#22d3bf">atan2(-dz/dx, -dz/dy)</code> を度にして <code style="color:#22d3bf">[0, 360)</code> に折り返す。行 0 が北・列が増える向きが東という前提で、北 0 / 東 90 / 南 180 / 西 270。行 0 が南の格子(上下反転した配列)を渡すと南北が入れ替わり、<b>例外は出ない</b>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>, <code style="color:#22d3bf">cell_size</code>, <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">dem_slope</code> と同じ契約(3x3 以上、<code style="color:#22d3bf">nan</code> で欠測、番兵値は拒否、<code style="color:#22d3bf">cell_size</code> は正の [m])。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flat_tol</code>: 勾配の大きさ <code style="color:#22d3bf">hypot(dz/dx, dz/dy)</code> [m/m] がこれ以下なら平坦とみなし <code style="color:#22d3bf">ASPECT_FLAT</code>(= -1.0)を返す。既定 1e-12 は「数値的に厳密に平坦」だけ。整数標高の平地でも微小勾配で方位が付くことがあるので、意味のある閾(例 1e-3)を明示するとよい。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64。<code style="color:#22d3bf">[0, 360)</code> または <code style="color:#22d3bf">-1.0</code>。<code style="color:#22d3bf">nan</code> セルの周りは <code style="color:#22d3bf">nan</code>。</p>
-<p style="margin:2px 0 2px 12px">• 方位のヒストグラムや平均を取るときは <code style="color:#22d3bf">-1</code> を先に除く(<code style="color:#22d3bf">out &gt;= 0</code>)。</p>
+<p>平坦處不回傳 0,是因為 0 會表示「朝北的斜坡」—— 回傳無法區分的值,是不拋例外卻出錯的典型。</p>
+<p>步驟:取與 <code style="color:#22d3bf">dem_slope</code> 相同的 3x3 梯度 <code style="color:#22d3bf">(dz/dx, dz/dy)</code>,把<b>下坡梯度</b>的方向 <code style="color:#22d3bf">atan2(-dz/dx, -dz/dy)</code> 換算為度並折回到 <code style="color:#22d3bf">[0, 360)</code>。以第 0 列為北、行號增大的方向為東為前提,北 0 / 東 90 / 南 180 / 西 270。傳入第 0 列為南的網格(上下翻轉的陣列)會使南北互換,且<b>不會拋出例外</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>, <code style="color:#22d3bf">cell_size</code>, <code style="color:#22d3bf">method</code>:與 <code style="color:#22d3bf">dem_slope</code> 相同的約定(3x3 以上,<code style="color:#22d3bf">nan</code> 表示缺測,拒絕哨兵值,<code style="color:#22d3bf">cell_size</code> 為正的 [m])。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flat_tol</code>:梯度大小 <code style="color:#22d3bf">hypot(dz/dx, dz/dy)</code> [m/m] 不大於此值時視為平坦, 回傳 <code style="color:#22d3bf">ASPECT_FLAT</code>(= -1.0)。預設值 1e-12 只涵蓋「數值上嚴格平坦」。即使是整數高程的平地,也可能因微小梯度而得到坡向,因此最好明確給出有意義的閾值(例如 1e-3)。</p>
+<p style="margin:2px 0 2px 12px">• 回傳值:<code style="color:#22d3bf">(H, W)</code> float64。<code style="color:#22d3bf">[0, 360)</code> 或 <code style="color:#22d3bf">-1.0</code>。<code style="color:#22d3bf">nan</code> 單元周圍為 <code style="color:#22d3bf">nan</code>。</p>
+<p style="margin:2px 0 2px 12px">• 對坡向做直方圖或求平均時,先去掉 <code style="color:#22d3bf">-1</code>(<code style="color:#22d3bf">out &gt;= 0</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

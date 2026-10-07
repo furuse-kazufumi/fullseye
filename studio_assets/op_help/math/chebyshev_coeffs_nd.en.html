@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_coeffs_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Computes N-dimensional Chebyshev coefficients from values sampled on a tensor-product Chebyshev–Lobatto grid (DCT-I).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>values: 形 (n1, …, nd) の配列。軸 i の標本は <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(昇順)の上の値。</p>
-<p>box: 軸ごとの区間 [(lo, hi), …] (省略で全軸 [−1, 1]、1 組なら全軸に共通)。</p>
+<p>values: array of shape (n1, …, nd). The samples on axis i are the values on <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code> (ascending).</p>
+<p>box: interval per axis [(lo, hi), …] (if omitted, [−1, 1] on all axes; 1 pair is shared by all axes).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i は [−1, 1] に写した座標)、<code style="color:#22d3bf">box</code>、</p>
-<p><code style="color:#22d3bf">decay</code> = 軸ごとに |c| の最大を次数ごとに並べた列(滑らかな関数は幾何級数的に落ちる = スペクトル収束)、</p>
-<p><code style="color:#22d3bf">tail</code> = 各軸の最後の 2 次数の |c| の最大(打ち切り誤差の目安。小さいほど点数が足りている)。</p>
-<p>門: 次数が各軸 n_i − 1 以下の多項式は厳密に再現する / 1/(a − x) 型の極を持つ関数の係数は ρ^−k(ρ = a + √(a² − 1)、Bernstein の楕円)で落ちる。画像では、照明むら・反りなどの<b>滑らかな面</b>を数十の係数で表す(多項式のべき基底は高次で悪条件、Chebyshev は安定)。</p>
+<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i) (t_i is the coordinate mapped to [−1, 1]), <code style="color:#22d3bf">box</code>,</p>
+<p><code style="color:#22d3bf">decay</code> = per axis, the max of |c| listed by degree (for smooth functions it falls geometrically = spectral convergence),</p>
+<p><code style="color:#22d3bf">tail</code> = per axis, the max of |c| over the last 2 degrees (a gauge of truncation error; the smaller, the more sufficient the number of points).</p>
+<p>Gate: polynomials of degree at most n_i − 1 on each axis are reproduced exactly / for functions with a pole of the form 1/(a − x), the coefficients fall as ρ^−k (ρ = a + √(a² − 1), Bernstein ellipse). For images, <b>smooth surfaces</b> such as uneven illumination or warping are represented with a few dozen coefficients (the polynomial power basis is ill-conditioned at high degree; Chebyshev is stable).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

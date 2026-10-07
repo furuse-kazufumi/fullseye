@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Geodätische Koordinaten (Breite, Länge, ellipsoidische Höhe) → <b>erdzentrierte kartesische Koordinaten ECEF</b> [m].</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>地球の中心を原点、赤道面の本初子午線方向を x、東経 90 度を y、北極を z とする右手系。地形を「地球中心から見た座標」で扱いたいときの入口。</p>
-<p>球ではなく <b>WGS84 楕円体</b>で計算する —— 球近似は緯度 45 度あたりで最大 21 km ずれる(極半径が赤道半径より短いぶん)。</p>
+<p>Ein Rechtssystem mit Ursprung im Erdmittelpunkt, x in Richtung Nullmeridian in der Äquatorebene, y bei 90 Grad östlicher Länge und z zum Nordpol. Der Einstieg, wenn Gelände in &quot;vom Erdmittelpunkt aus gesehenen Koordinaten&quot; behandelt werden soll.</p>
+<p>Berechnet wird auf dem <b>WGS84-Ellipsoid</b>, nicht auf einer Kugel —— die Kugelnäherung weicht um etwa 45 Grad Breite um bis zu 21 km ab (weil der Polradius kürzer ist als der Äquatorradius).</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。</p>
-<p>height_m: 楕円体高 [m]。スカラでも配列でも可。</p>
+<p>lat_deg / lon_deg: Breite und Länge [Grad]. Arrays erlaubt (gleiche Form).</p>
+<p>height_m: ellipsoidische Höhe [m]. Skalar oder Array.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(..., 3)</code> の ECEF 座標 [m]。</p>
+<p><code style="color:#22d3bf">(..., 3)</code>-ECEF-Koordinaten [m].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

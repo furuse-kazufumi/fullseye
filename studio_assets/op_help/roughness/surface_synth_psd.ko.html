@@ -6,50 +6,49 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(z, sq_analytic)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지정한 PSD로부터 높이장을 합성한다. <code style="color:#22d3bf">(z, sq_analytic)</code>를 반환한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>帯域 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> の各モードに振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>、自己アフィン)を置き、<b>位相だけ</b>乱数にする。全体を <code style="color:#22d3bf">sq</code> に規格化して返す。</p>
-<p>引数</p>
-<p>n           格子の大きさ。整数なら <code style="color:#22d3bf">n x n</code>、<code style="color:#22d3bf">(ny, nx)</code> でも可。</p>
-<p>dx          標本間隔(正方画素)。</p>
-<p>hurst       Hurst 指数 H(0 &lt; H &lt; 1)。大きいほど滑らか。</p>
-<p>lambda_lo   帯域の<b>短い</b>側の波長。</p>
-<p>lambda_hi   帯域の<b>長い</b>側の波長。</p>
-<p>sq          目標 Sq(帯域内の rms 高さ)。</p>
-<p>seed        位相の乱数種。</p>
-<p>★ 解析 Sq を一緒に返すのが肝</p>
-<p>振幅を固定して位相だけ振るので、Parseval から</p>
-<p><code style="color:#22d3bf">&lt;h²&gt; = (1/(ny nx))² Σ_k A_k²</code> が <b>位相の引き方によらず</b>決まる。</p>
-<p>つまり Sq の真値が乱数に依存しない。実測: <code style="color:#22d3bf">z.std()</code> と</p>
-<p><code style="color:#22d3bf">sq_analytic</code> の相対差は seed・H・帯域・寸法を振っても</p>
-<p><b>最大 2.2e-16</b>(下の表)。ここを「乱数を振って rms を測る」で</p>
-<p>済ませると、真値そのものが実現ごとにばらついて後段の誤差と混ざる。</p>
-<p>n     H     λ帯域        sq      |std/analytic-1|   尖度   PTV/rms</p>
+<p>대역 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> 의 각 모드에 진폭 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 면 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>, 자기 아핀)를 두고, <b>위상만</b> 난수로 한다. 전체를 <code style="color:#22d3bf">sq</code> 로 정규화하여 반환한다.</p>
+<p>인수</p>
+<p>n           격자 크기. 정수면 <code style="color:#22d3bf">n x n</code>, <code style="color:#22d3bf">(ny, nx)</code> 도 가능.</p>
+<p>dx          샘플 간격(정사각 화소).</p>
+<p>hurst       Hurst 지수 H(0 &lt; H &lt; 1). 클수록 매끄럽다.</p>
+<p>lambda_lo   대역의 <b>짧은</b> 쪽 파장.</p>
+<p>lambda_hi   대역의 <b>긴</b> 쪽 파장.</p>
+<p>sq          목표 Sq(대역 내 rms 높이).</p>
+<p>seed        위상의 난수 시드.</p>
+<p>★ 해석 Sq 를 함께 반환하는 것이 핵심</p>
+<p>진폭을 고정하고 위상만 바꾸므로, Parseval 로부터</p>
+<p><code style="color:#22d3bf">&lt;h²&gt; = (1/(ny nx))² Σ_k A_k²</code> 가 <b>위상을 뽑는 방식과 무관하게</b> 정해진다.</p>
+<p>즉 Sq 의 참값이 난수에 의존하지 않는다. 실측: <code style="color:#22d3bf">z.std()</code> 와</p>
+<p><code style="color:#22d3bf">sq_analytic</code> 의 상대차는 seed·H·대역·크기를 바꿔도</p>
+<p><b>최대 2.2e-16</b>(아래 표). 이것을 &quot;난수를 바꿔 rms 를 잰다&quot;로</p>
+<p>끝내면, 참값 자체가 실현마다 흩어져 후단의 오차와 섞인다.</p>
+<p>n     H     λ대역        sq      |std/analytic-1|   첨도   PTV/rms</p>
 <p>128  0.30    4-32     0.5000       2.2e-16         3.084    7.97</p>
 <p>256  0.50    4-64     0.0800       0.0e+00         3.005    7.85</p>
 <p>256  0.80    2-64     0.0800       2.2e-16         2.893    6.92</p>
 <p>512  0.80    2-64     0.0800       0.0e+00         3.113    8.25</p>
 <p>512  0.95   8-256     2.0000       0.0e+00         2.542    5.69</p>
-<p>★ PoC が踏んだ落とし穴を実装側に閉じ込めてある</p>
-<p>係数をエルミートにするために位相を <code style="color:#22d3bf">phi = (u - u[-k]) / 2</code> で</p>
-<p>反対称化すると、<b>確かに反対称にはなるが位相が一様でなくなる</b></p>
-<p>(三角分布になって 0 の近くに寄る)。すると全モードが原点で同位相に</p>
-<p>足され、高さ場に 1 本のスパイクが立つ。同じ種・同じ帯域で測った実測</p>
-<p>(512², H=0.8, 帯域 2-64):</p>
-<p>位相の作り方                 PTV/rms    尖度    |std/analytic-1|</p>
-<p>(u - u[-k])/2 で反対称化      55.00     71.81       0.0e+00</p>
-<p>共役対の片方だけに一様乱数     8.47      2.95       0.0e+00  ← 正しい</p>
-<p><b>どちらも Sq は解析値と厳密に一致する。</b> 分散だけ見ていたら</p>
-<p>気づけない壊れ方なので、この関数は共役対の片方だけに一様乱数を引く</p>
-<p>実装に固定し、テストで尖度と PTV/rms も見る。自己共役モード</p>
-<p>(k = -k、4 点)は係数が実でなければならないので、位相ではなく</p>
-<p>符号 ±1 を振る(位相 0 に固定すると全部 +A に偏るため)。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code> が 8 未満 / <code style="color:#22d3bf">dx</code> が非正 / <code style="color:#22d3bf">hurst</code> が (0, 1) の外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo &gt;= lambda_hi</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo</code> が Nyquist 波長 <code style="color:#22d3bf">2*dx</code> 未満(実現できない帯域)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_hi</code> が評価長さ超(1 周期も入らない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sq</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• 帯域に 1 モードも入らない(格子が粗すぎる / 帯域が狭すぎる)。</p>
+<p>★ PoC 가 밟은 함정을 구현 쪽에 가둬 두었다</p>
+<p>계수를 에르미트로 만들기 위해 위상을 <code style="color:#22d3bf">phi = (u - u[-k]) / 2</code> 로</p>
+<p>반대칭화하면, <b>확실히 반대칭은 되지만 위상이 균일하지 않게 된다</b></p>
+<p>(삼각 분포가 되어 0 근처로 몰린다). 그러면 모든 모드가 원점에서 같은 위상으로</p>
+<p>더해져, 높이장에 1 개의 스파이크가 선다. 같은 시드·같은 대역으로 잰 실측</p>
+<p>(512², H=0.8, 대역 2-64):</p>
+<p>위상을 만드는 방법                 PTV/rms    첨도    |std/analytic-1|</p>
+<p>(u - u[-k])/2 로 반대칭화           55.00     71.81       0.0e+00</p>
+<p>켤레 쌍의 한쪽에만 균일 난수         8.47      2.95       0.0e+00  ← 올바름</p>
+<p><b>어느 쪽도 Sq 는 해석값과 엄밀히 일치한다.</b> 분산만 보고 있으면</p>
+<p>알아챌 수 없는 망가짐이므로, 이 함수는 켤레 쌍의 한쪽에만 균일 난수를 뽑는</p>
+<p>구현으로 고정하고, 테스트에서 첨도와 PTV/rms 도 본다. 자기 켤레 모드</p>
+<p>(k = -k, 4 점)는 계수가 실수여야 하므로, 위상이 아니라</p>
+<p>부호 ±1 을 무작위로 준다(위상 0 으로 고정하면 모두 +A 로 치우치기 때문).</p>
+<p>fail-closed(실패 시 거부)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code> 이 8 미만 / <code style="color:#22d3bf">dx</code> 가 양수가 아님 / <code style="color:#22d3bf">hurst</code> 가 (0, 1) 밖.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo &gt;= lambda_hi</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_lo</code> 가 Nyquist 파장 <code style="color:#22d3bf">2*dx</code> 미만(실현할 수 없는 대역).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_hi</code> 가 평가 길이 초과(1 주기도 들어가지 않는다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sq</code> 가 양수가 아님.</p>
+<p style="margin:2px 0 2px 12px">• 대역에 1 모드도 들어가지 않는다(격자가 너무 거칠다 / 대역이 너무 좁다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

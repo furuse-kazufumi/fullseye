@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;stat_ks_test&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Kolmogorov–Smirnov 检验。给出 <code style="color:#22d3bf">y</code> 时为 2 样本检验(是否来自同一分布)，否则为与标准正态分布的拟合优度检验。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>D = 経験分布関数どうしの最大の差。p 値は scipy(厳密/漸近を自動で選ぶ)。</p>
+<p>D = 经验分布函数之间的最大差。p 值由 scipy 给出(自动选择精确/渐近)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

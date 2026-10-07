@@ -4,12 +4,11 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Computes obstacle-avoiding geodesic distance on the grid of a 2-D image or 3-D volume by the heat method (grid version of Crane et al. 2013).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">mask</code> は通れる画素/ボクセルが True の bool 配列(2-D か 3-D)、<code style="color:#22d3bf">source</code> は始点の添字(1 点 <code style="color:#22d3bf">(i, j[, k])</code> か点の列。省略すると最初の通れる画素)。<code style="color:#22d3bf">spacing</code> は軸ごとの画素の大きさ(スカラーか軸ごと)。</p>
-<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(熱を広げる、Δ は通れる画素の間だけを結ぶ 2d+1 点の Laplacian = 障害物は断熱)</p>
-<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(面の間の差分で)  3) Δφ = ∇·X を解いて始点で 0 にずらす。</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(通れない画素と、始点と繋がらない画素は inf)。</p>
-<p>門: 障害物の無い空間ではユークリッド距離へ収束する。画素の Dijkstra(4/8 近傍)は格子の向きの誤差(4 近傍で最大 41%、8 近傍で最大 8%)が細かくしても消えないが、熱法は消えていく。</p>
+<p><code style="color:#22d3bf">mask</code> is a bool array (2-D or 3-D) where passable pixels/voxels are True; <code style="color:#22d3bf">source</code> is the index of the start point (1 point <code style="color:#22d3bf">(i, j[, k])</code> or a list of points; if omitted, the first passable pixel). <code style="color:#22d3bf">spacing</code> is the pixel size per axis (scalar or per axis).</p>
+<p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ (spreading heat; Δ is the 2d+1-point Laplacian linking only passable pixels = obstacles are insulating)</p>
+<p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u| (with differences across faces)  3) Solve Δφ = ∇·X and shift to 0 at the start point.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code> (impassable pixels, and pixels not connected to the start point, are inf).</p>
+<p>Gate: in obstacle-free space it converges to the Euclidean distance. Pixel Dijkstra (4/8-neighbourhood) has a grid-orientation error (up to 41% with 4-neighbourhood, up to 8% with 8-neighbourhood) that does not vanish with refinement, whereas the heat method&#x27;s does.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

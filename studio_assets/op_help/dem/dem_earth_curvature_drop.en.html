@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_earth_curvature_drop(distance_m, refraction=0.13)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p><b>Earth-curvature drop</b> [m] for line-of-sight computations. <code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。標準大気(<code style="color:#22d3bf">k = 0.13</code>)での目安:</p>
-<p>==========  ============  ============</p>
-<p>距離        曲率のみ      屈折込み</p>
-<p>==========  ============  ============</p>
-<p>1 km        0.078 m       0.068 m</p>
-<p>5 km        1.962 m       1.707 m</p>
-<p>10 km       7.848 m       6.828 m</p>
-<p>30 km       70.63 m       61.45 m</p>
-<p>==========  ============  ============</p>
-<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域はその距離では意味を持ちません。<code style="color:#22d3bf">refraction</code> は標準大気の慣行値であって定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<p>Distant ground appears lowered by the Earth&#x27;s curvature, and atmospheric refraction partly cancels this. Guide values for the standard atmosphere (<code style="color:#22d3bf">k = 0.13</code>):</p>
+<p>==========  ================  ================</p>
+<p>Distance    Curvature only    With refraction</p>
+<p>==========  ================  ================</p>
+<p>1 km        0.078 m           0.068 m</p>
+<p>5 km        1.962 m           1.707 m</p>
+<p>10 km       7.848 m           6.828 m</p>
+<p>30 km       70.63 m           61.45 m</p>
+<p>==========  ================  ================</p>
+<p>For a line of sight 30 km away the ground drops by <b>more than 60 m</b>, so a viewshed computed as a plane is meaningless at that distance. <code style="color:#22d3bf">refraction</code> is a conventional value for the standard atmosphere, not a constant —— in a night-time inversion layer it can be negative or even 0.25.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

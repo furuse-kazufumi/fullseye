@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathspectral; mathspectral.n_sources_mdl(X) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;n_sources_mdl&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>根据快拍数据，用 MDL 准则估计信号源的数量(Wax &amp; Kailath 1985)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>共分散の固有値を大きい順に並べ、「下から M−k 個が等しい(= 雑音)」という仮説ごとに MDL(k) = −K (M−k) log(幾何平均 / 算術平均) + ½ k (2M−k) log K を計算し、最小の k を選ぶ。雑音が白色で、スナップショット数 K が素子数 M より十分多いことが前提。</p>
+<p>将协方差的特征值按从大到小排列，对“从下数 M−k 个相等(= 噪声)”的每个假设计算 MDL(k) = −K (M−k) log(几何平均 / 算术平均) + ½ k (2M−k) log K，选取最小的 k。前提是噪声为白噪声，且快照数 K 远多于阵元数 M。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

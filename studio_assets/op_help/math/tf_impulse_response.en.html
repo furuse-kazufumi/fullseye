@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_impulse_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;tf_impulse_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Impulse response h(t) = L⁻¹[H(s)] (t) (the strictly proper part; the delta of the direct feedthrough term is not returned).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>h(t) = C e^{At} B を行列指数で直接評価する(部分分数に頼らないので重根・原点の極でも分岐しない)。</p>
+<p>Evaluates h(t) = C e^{At} B directly via the matrix exponential (no reliance on partial fractions, so no branching even for repeated roots or poles at the origin).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

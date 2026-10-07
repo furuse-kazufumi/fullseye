@@ -396,9 +396,12 @@ I18N_PATH = os.path.join(_ROOT, "docs", "i18n", "opdocs.json")
 #: 出さない**(原文が変わったのに訳が古いまま、が一番たちが悪い ――
 #: :func:`op_summary_stale` が数える)。
 SUMMARY_I18N_PATH = os.path.join(_ROOT, "docs", "i18n", "op_summary.json")
+#: op の詳細説明(要約の後の段落)の対訳表。要約と同じく原文の指紋つきで、原文が変わった訳は出さない(2026-10-07)。
+REST_I18N_PATH = os.path.join(_ROOT, "docs", "i18n", "op_rest.json")
 
 _I18N = None
 _SUMMARY_I18N = None
+_REST_I18N = None
 
 #: :func:`T` が実際に引いた原文。対訳表の**過不足**をテストで突き合わせるための実測。
 SEEN_STRINGS = set()
@@ -424,6 +427,13 @@ def summary_i18n():
     if _SUMMARY_I18N is None:
         _SUMMARY_I18N = _load_json(SUMMARY_I18N_PATH, "summaries")
     return _SUMMARY_I18N
+
+
+def rest_i18n():
+    global _REST_I18N
+    if _REST_I18N is None:
+        _REST_I18N = _load_json(REST_I18N_PATH, "bodies")
+    return _REST_I18N
 
 
 def T(s, lang="ja"):
@@ -506,6 +516,24 @@ def op_summary(rec, lang):
     return (tr, True) if tr else (src, False)
 
 
+def op_rest(rec, lang):
+    """op の詳細説明(要約の後の段落)の訳。``(text, in_readers_language)``。
+
+    規約は :func:`op_summary` と同じ: 読み手の言語で書かれた原文は素通し、表は原文の指紋が
+    一致するときだけ使う(原文が変わった古い訳は出さず、原文と「原文のままです」の断りに戻る)。
+    """
+    src = summary_and_rest(rec.get("doc"))[1]
+    if not src:
+        return src, True
+    if not not_in_language(src, lang):
+        return src, True
+    ent = rest_i18n().get("%s/%s" % (rec["dim"], rec["name"])) or {}
+    if ent.get("fp") != fingerprint(src):
+        return src, False
+    tr = (ent.get(lang) or "").strip()
+    return (tr, True) if tr else (src, False)
+
+
 def op_summary_stale():
     """指紋が現行の原文と合わない要約訳のキー(= 出せない訳)を列挙する。"""
     recs, _, _, _ = _records()
@@ -517,6 +545,14 @@ def op_summary_stale():
         if live.get(k) != ent.get("fp"):
             bad.append(k)
     return sorted(bad)
+
+def op_rest_stale():
+    """指紋が現行の詳細説明と合わない本文訳のキー(= 出せない訳)を列挙する。"""
+    recs, _, _, _ = _records()
+    live = {"%s/%s" % (r["dim"], r["name"]):
+            fingerprint(summary_and_rest(r.get("doc"))[1])
+            for r in recs if summary_and_rest(r.get("doc"))[1]}
+    return sorted(k for k, ent in rest_i18n().items() if live.get(k) != ent.get("fp"))
 
 # ------------------------------------------------------------------ #
 # registry access
@@ -1265,10 +1301,11 @@ def _op_md(rec, path, by_name, lang="ja", verbatim_doc=None):
             lines.append(summ)
             if rest:
                 lines.append("")
-                if not_in_language(rest, lang):
+                rest_out, rest_ok = op_rest(rec, lang)
+                if not rest_ok:
                     lines.append(T("> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。", lang))
                     lines.append("")
-                lines.append(rest)
+                lines.append(rest_out)
         else:
             lines.append(T("> この op の説明はまだ訳がありません。原文をそのまま載せます。", lang))
             lines.append("")

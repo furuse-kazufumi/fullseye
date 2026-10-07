@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;crlb_gaussian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>백색 가우스 잡음(표준편차 sigma) 하에서의 Cramér–Rao 하한.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>y_i = f(x_i; θ) + ε_i、ε ~ N(0, σ²) のとき Fisher 情報行列 I = JᵀJ / σ²(J = ∂f/∂θ、中心差分)、<b>どんな不偏推定量の共分散も I⁻¹ 以上</b>。<code style="color:#22d3bf">std</code> は各パラメータの標準偏差の下限 √diag(I⁻¹)。<code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ)。</p>
-<p>門: 定数の平均なら σ²/n。直線の最小二乗(効率的な推定量)のモンテカルロ分散が下界に一致する。</p>
+<p>y_i = f(x_i; θ) + ε_i, ε ~ N(0, σ²)일 때 Fisher 정보 행렬 I = JᵀJ / σ²(J = ∂f/∂θ, 중심 차분), <b>어떤 불편 추정량의 공분산도 I⁻¹ 이상</b>. <code style="color:#22d3bf">std</code>는 각 파라미터의 표준편차의 하한 √diag(I⁻¹). <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ).</p>
+<p>게이트: 상수의 평균이면 σ²/n. 직선의 최소제곱(효율적 추정량)의 몬테카를로 분산이 하계와 일치한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

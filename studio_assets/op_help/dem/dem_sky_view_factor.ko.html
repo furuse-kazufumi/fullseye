@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_sky_view_factor(dem, cell_size, n_azimuth=16, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_sky_view_factor&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>천공률 [0,1]. 하늘이 얼마나 보이는가.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">n_azimuth</code> 方位の地平線仰角から <code style="color:#22d3bf">mean(cos^2(horizon))</code> で求める(等方輝度の空を仮定した標準的な近似)。<b>平坦面では厳密に 1</b>。都市の暑熱や谷底の冷え込みで効く量。</p>
+<p><code style="color:#22d3bf">n_azimuth</code> 방위의 지평선 앙각으로부터 <code style="color:#22d3bf">mean(cos^2(horizon))</code>로 구한다(등방 휘도의 하늘을 가정한 표준적인 근사). <b>평탄면에서는 엄밀하게 1</b>. 도시의 더위나 골짜기 바닥의 냉각에 효과가 있는 양.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

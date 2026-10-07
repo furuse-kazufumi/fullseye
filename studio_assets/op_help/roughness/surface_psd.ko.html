@@ -6,48 +6,47 @@
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>높이장의 파워 스펙트럼 밀도. <code style="color:#22d3bf">(q, C)</code>를 반환한다. <b>규약은 인수로 명시한다.</b></p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>引数</p>
-<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2 次元 PSD <code style="color:#22d3bf">C_2D(q)</code> の環平均。</p>
-<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1 次元動径 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
-<p>規約(ここを書かないと較正なしでは読めない ―― 既存の <code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> は <b>cycles / length</b>(角周波数 <code style="color:#22d3bf">2π/λ</code> ではない)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。規格化は Parseval に合わせてある: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> かつ <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
-<p style="margin:2px 0 2px 12px">• 自己アフィン面 <code style="color:#22d3bf">H</code> に対する傾きは <b>面 PSD で <code style="color:#22d3bf">-2(H+1)</code>、動径 PSD で <code style="color:#22d3bf">-2H-1</code></b>(ちょうど 1 だけ違う)。</p>
-<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
-<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
-<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
-<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
-<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
-<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
-<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
-<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
-<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
-<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
-<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
-<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
-<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
-<p>実装でやると誤差が消える。原因を切り分けたところ、<b>環の代表 <code style="color:#22d3bf">q</code> にビン番号 <code style="color:#22d3bf">i·Δq</code> を使うか、環内の <code style="color:#22d3bf">q</code> の平均を使うかの差</b>だった</p>
-<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
-<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
-<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
-<p><b>この関数は環内の <code style="color:#22d3bf">q</code> の平均を返す。</b></p>
-<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
-<p>正方格子の最大 <code style="color:#22d3bf">|q|</code> は <code style="color:#22d3bf">√2/(2 dx)</code> だが、<code style="color:#22d3bf">q &gt; 1/(2 dx)</code> の環は</p>
-<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
-<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 <code style="color:#22d3bf">2πq/Δq</code> に対して</p>
-<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
-<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
-<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
-<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
-<p style="margin:2px 0 2px 12px">• 2 次元の全格子で <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> を取ると <b>+0.0000 %</b>(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して 1 次元に潰した時点でこの分は失われる —— <b>環平均は要約であって可逆ではない。</b> 0.5 % を超える精度が要る用途では 2 次元の <code style="color:#22d3bf">C_2D</code> を自分で積分すること。</p>
-<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 % のまま変わらない(角の分に中身が無い)。角に中身がある面(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;areal&quot;</code>・<code style="color:#22d3bf">&quot;radial&quot;</code> 以外。</p>
+<p>인수</p>
+<p>z       높이장(평균은 내부에서 뺀다. DC 빈은 반환하지 않는다).</p>
+<p>dx, dy  샘플 간격. <code style="color:#22d3bf">dy=None</code>은 정사각 화소.</p>
+<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2차원 PSD <code style="color:#22d3bf">C_2D(q)</code>의 고리 평균.</p>
+<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1차원 동경 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>.</p>
+<p>규약(이것을 써 두지 않으면 캘리브레이션 없이는 읽을 수 없다 ―― 기존의 <code style="color:#22d3bf">radial_power_spectrum</code>은 이것이 docstring에 없다)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code>는 <b>cycles / length</b>(각주파수 <code style="color:#22d3bf">2π/λ</code>가 아니다). <code style="color:#22d3bf">q = 1/λ</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>. 정규화는 Parseval에 맞춰 두었다: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> 그리고 <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>.</p>
+<p style="margin:2px 0 2px 12px">• 자기 아핀 면 <code style="color:#22d3bf">H</code>에 대한 기울기는 <b>면 PSD에서 <code style="color:#22d3bf">-2(H+1)</code>, 동경 PSD에서 <code style="color:#22d3bf">-2H-1</code></b>(정확히 1만큼 다르다).</p>
+<p>★ 실측 —— 어느 규약이든 H는 캘리브레이션 없이 복원된다</p>
+<p><code style="color:#22d3bf">surface_synth_psd</code>로 H를 심고, q ∈ [2/λ_hi, 0.4/dx]에서 로그-로그</p>
+<p>직선을 맞춰 H를 복원했다(512², 대역 2-64 µm):</p>
+<p>심은 H   면 PSD 기울기   복원한 H   동경 기울기   복원한 H   기울기 차</p>
+<p>0.30    -2.600         0.300      -1.600        0.300      1.0000</p>
+<p>0.50    -3.000         0.500      -2.000        0.500      1.0000</p>
+<p>0.80    -3.600         0.800      -2.600        0.800      1.0000</p>
+<p>0.95    -3.901         0.950      -2.901        0.950      1.0000</p>
+<p>오차는 4예 모두 <b>±0.0003 이내</b>, 두 규약의 기울기 차는 어느 H에서도</p>
+<p>엄밀히 1.0000. <b>캘리브레이션 없이 읽을 수 있다.</b></p>
+<p>★ 여기는 PoC를 다시 측정해 결론이 바뀐 곳. PoC는 기존</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code>에서 <b>일률적인 -0.013(H의 1.6 %)의 계통 오차</b>를</p>
+<p>발견하고, &quot;고리 평균의 이산화에 의한 계통 오차&quot;라고 결론지었다. 같은 검산을 이</p>
+<p>구현으로 하면 오차가 사라진다. 원인을 분리해 보니, <b>고리의 대표 <code style="color:#22d3bf">q</code>로빈 번호 <code style="color:#22d3bf">i·Δq</code>를 쓰느냐, 고리 내 <code style="color:#22d3bf">q</code>의 평균을 쓰느냐의 차이</b>였다</p>
+<p>—— 빈 번호로는 -0.0007~-0.0010의 음의 어긋남이 나온다(실측, 같은 면, 같은</p>
+<p>피팅 대역). 방향은 PoC의 관측과 같지만 크기는 1/15이므로,</p>
+<p>-0.013의 나머지는 고리 평균의 이산화가 아니라 그 함수의 다른 구현 차이에서 유래한다.</p>
+<p><b>이 함수는 고리 내 <code style="color:#22d3bf">q</code>의 평균을 반환한다.</b></p>
+<p>★ 함정 —— Nyquist를 넘는 고리는 &quot;모서리만&quot;으로 이루어져 있다</p>
+<p>정사각 격자의 최대 <code style="color:#22d3bf">|q|</code>는 <code style="color:#22d3bf">√2/(2 dx)</code>이지만, <code style="color:#22d3bf">q &gt; 1/(2 dx)</code>의 고리는</p>
+<p>주파수 평면의 네 모서리만 포함한다. 실측(512²): 전체 362빈 중 상위</p>
+<p>107빈(29.6 %)이 Nyquist 초과. 고리 내 점 수가 이상값 <code style="color:#22d3bf">2πq/Δq</code>에 대해</p>
+<p>얼마나 모자라는지는, Nyquist 이하에서도 최소 0.838배까지 떨어지지만</p>
+<p>(격자의 이산화), Nyquist 초과에서는 0까지 떨어진다.</p>
+<p><b>기울기 피팅에는 Nyquist 초과를 쓰지 말 것.</b></p>
+<p>★ Parseval 검산을 어디까지 믿어도 되는가(실측, 512², Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• 2차원 전체 격자에서 <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code>를 취하면 <b>+0.0000 %</b>(엄밀).</p>
+<p style="margin:2px 0 2px 12px">• 반환한 동경 PSD를 사다리꼴 적분하면 <b>-0.55 %</b>. 고리마다 평균하여 1차원으로 뭉갠 시점에서 이만큼은 사라진다 —— <b>고리 평균은 요약이며가역이 아니다.</b> 0.5 %를 넘는 정밀도가 필요한 용도에서는 2차원 <code style="color:#22d3bf">C_2D</code>를 직접 적분할 것.</p>
+<p style="margin:2px 0 2px 12px">• 이 면은 대역 상단이 Nyquist이므로, Nyquist에서 잘라도 -0.55 % 그대로 변하지 않는다(모서리 부분에 내용이 없다). 모서리에 내용이 있는 면(대역이 Nyquist를 넘는 면)에서는, 자르면 빠진다.</p>
+<p>fail-closed(실패 시 거부)</p>
+<p style="margin:2px 0 2px 12px">• 2차원이 아님 / 8x8 미만 / NaN 또는 Inf를 포함 / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code>가 양수가 아님.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code>가 <code style="color:#22d3bf">&quot;areal&quot;</code>, <code style="color:#22d3bf">&quot;radial&quot;</code> 이외.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

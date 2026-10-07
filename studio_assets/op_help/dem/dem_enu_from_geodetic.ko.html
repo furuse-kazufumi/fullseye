@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측지 좌표 → 기준점 주위의 <b>국소 ENU</b>(동·북·상) [m] (<code style="color:#22d3bf">points</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
-<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>현장 도면·로봇의 지도·점군의 대부분은 “원점으로부터의 동·북·상”으로 쓰인다. ECEF로부터의 변환은 기준점에서의 회전 1개로, <code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>.</p>
+<p>★ 평면 직각 좌표(투영)가 <b>아니다</b>. ENU는 기준점에서 접하는 평면으로의 정사영에해당하며, 거리가 늘어날수록 지구의 곡률만큼 높이 방향으로 떨어진다 —— 10 km에서 약 7.8 m, 100 km에서 약 780 m. 넓은 영역을 “평평한 xy”로 다루는 것은 이 낙차를 버리는 것.</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
-<p>h_m: 点の楕円体高 [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
+<p>lat_deg / lon_deg: 점의 위도·경도 [도]. 배열 가능.</p>
+<p>h_m: 점의 타원체고 [m].</p>
+<p>lat0_deg / lon0_deg / h0_m: 기준점(원점)의 측지 좌표.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。基準点そのものは厳密に <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
-<p>閉じた式で検査できること: 基準点で <code style="color:#22d3bf">(0, 0, 0)</code>、<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の <code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する(<b>別経路での検算</b>)。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
+<p><code style="color:#22d3bf">(n, 3)</code>의 <code style="color:#22d3bf">(east, north, up)</code> [m]. 기준점 자체는 엄밀하게 <code style="color:#22d3bf">(0, 0, 0)</code>.</p>
+<p>닫힌 식으로 검사할 수 있는 것: 기준점에서 <code style="color:#22d3bf">(0, 0, 0)</code>, <code style="color:#22d3bf">dem_geodetic_from_enu</code>와의 왕복이 1e-9 m 급, 그리고 기존의 <code style="color:#22d3bf">dem_geodetic_to_ecef</code>를 거쳐 직접 회전한 결과와 일치한다(<b>다른 경로에 의한 검산</b>).</p>
+<p><b>ValueError</b>: 비유한, 위도가 ±90을 벗어남, 길이 불일치.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

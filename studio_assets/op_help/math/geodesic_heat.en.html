@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodesic distance on a surface by the heat method (Crane et al. 2013). <code style="color:#22d3bf">source</code> is a vertex index (or a sequence of indices; default vertex 0). The mesh may be given as <code style="color:#22d3bf">(vertices, faces)</code> or as 1 mesh tuple.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p style="margin:2px 0 2px 12px">1) (M − tL) u = δ を 1 ステップ解く(熱を時間 t だけ広げる、t の既定 = 平均辺長²)</p>
-<p style="margin:2px 0 2px 12px">2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
-<p style="margin:2px 0 2px 12px">3) L φ = ∇·X を解き、source で 0 になるようずらす</p>
-<p>門: 平面メッシュでユークリッド距離、球面で大円距離 Rθ に、細かくするほど近づく。返り値 <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code>(どの面にも使われない頂点と、始点と繋がらない頂点は inf)。</p>
+<p style="margin:2px 0 2px 12px">1) Solve (M − tL) u = δ for 1 step (spread heat for time t; default t = mean edge length²)</p>
+<p style="margin:2px 0 2px 12px">2) On each triangle, X = −∇u / |∇u| (opposite to the direction the heat came from = the direction in which distance increases)</p>
+<p style="margin:2px 0 2px 12px">3) Solve L φ = ∇·X and shift so that it is 0 at the source</p>
+<p>Gate: approaches the Euclidean distance on a planar mesh and the great-circle distance Rθ on a sphere as it is refined. Returns <code style="color:#22d3bf">{&quot;distance&quot;, &quot;t&quot;}</code> (vertices not used by any face, and vertices not connected to the start point, are inf).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

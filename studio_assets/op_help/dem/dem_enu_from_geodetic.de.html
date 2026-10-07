@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Geodätische Koordinaten → <b>lokales ENU</b> (Ost, Nord, Oben) um einen Bezugspunkt [m] (<code style="color:#22d3bf">points</code>).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
-<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>Die meisten Baustellenpläne, Roboterkarten und Punktwolken sind als &quot;Ost, Nord, Oben vom Ursprung aus&quot; angegeben. Die Umrechnung aus ECEF ist 1 Rotation am Bezugspunkt: <code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>.</p>
+<p>★ Das sind <b>keine</b> ebenen rechtwinkligen Koordinaten (Projektion). ENU entspricht der Orthogonalprojektion auf die im Bezugspunkt tangierende Ebene, und je größer die Entfernung, desto stärker fällt die Höhe um die Erdkrümmung ab —— bei 10 km etwa 7.8 m, bei 100 km etwa 780 m. Ein weites Gebiet als &quot;flaches xy&quot; zu behandeln heißt, diesen Höhenabfall zu verwerfen.</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
-<p>h_m: 点の楕円体高 [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
+<p>lat_deg / lon_deg: Breite/Länge der Punkte [Grad]. Arrays erlaubt.</p>
+<p>h_m: ellipsoidische Höhe der Punkte [m].</p>
+<p>lat0_deg / lon0_deg / h0_m: geodätische Koordinaten des Bezugspunkts (Ursprung).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。基準点そのものは厳密に <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
-<p>閉じた式で検査できること: 基準点で <code style="color:#22d3bf">(0, 0, 0)</code>、<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の <code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する(<b>別経路での検算</b>)。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> mit <code style="color:#22d3bf">(east, north, up)</code> [m]. Der Bezugspunkt selbst ist exakt <code style="color:#22d3bf">(0, 0, 0)</code>.</p>
+<p>Per geschlossener Form prüfbar: <code style="color:#22d3bf">(0, 0, 0)</code> am Bezugspunkt, Hin und zurück mit <code style="color:#22d3bf">dem_geodetic_from_enu</code> im Bereich 1e-9 m, und Übereinstimmung mit dem Ergebnis der eigenen Rotation über das vorhandene <code style="color:#22d3bf">dem_geodetic_to_ecef</code> (<b>Gegenprobe über einen anderen Pfad</b>).</p>
+<p><b>ValueError</b>: nicht-endliche Werte, Breite außerhalb ±90, Längen passen nicht zusammen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

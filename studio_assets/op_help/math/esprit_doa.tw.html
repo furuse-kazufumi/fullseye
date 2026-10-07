@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathspectral; mathspectral.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;esprit_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>ESPRIT(Roy &amp; Kailath 1989)：利用陣列「平移 1 個陣元」的不變性，不使用網格直接解出方向。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>信号部分空間 E_s の上 M−1 行と下 M−1 行を最小二乗で結ぶ Φ の固有値 λ_k = exp(−2πi d sin θ_k) から θ_k = arcsin(−arg λ_k / (2π d))。雑音なし・無相関なら厳密(格子の分解能に縛られない)。<code style="color:#22d3bf">n_sources=None</code> なら MDL で推定する。返り値 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>。</p>
+<p>由以最小平方連接訊號子空間 E_s 的上 M−1 列與下 M−1 列的 Φ 的特徵值 λ_k = exp(−2πi d sin θ_k) 得 θ_k = arcsin(−arg λ_k / (2π d))。無雜訊且互不相關時精確(不受網格解析度限制)。<code style="color:#22d3bf">n_sources=None</code> 時以 MDL 估計。回傳值 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

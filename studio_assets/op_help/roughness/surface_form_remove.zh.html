@@ -6,50 +6,49 @@
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(residual, coeffs)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>直接在网格上去除平面 / 二次曲面。返回 <code style="color:#22d3bf">(residual, coeffs)</code>。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>引数</p>
-<p>z       高さ場。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>order   1 = 平面、2 = 二次曲面。</p>
-<p>method  <code style="color:#22d3bf">&quot;ls&quot;</code>(最小二乗)または <code style="color:#22d3bf">&quot;ransac&quot;</code>(ロバスト)。</p>
-<p>thresh  RANSAC の内点しきい値(高さの単位)。<code style="color:#22d3bf">None</code> なら最小二乗残差の</p>
-<p>ロバストな散らばり <code style="color:#22d3bf">2.5 x 1.4826 x MAD</code> を使う。</p>
-<p>iters   RANSAC の試行回数。<code style="color:#22d3bf">seed</code> で決定的。</p>
-<p><code style="color:#22d3bf">coeffs</code> は <b>場の中心を原点とする物理座標の単項式係数</b>。<code style="color:#22d3bf">order=1</code> なら <code style="color:#22d3bf">[c0, gx, gy]</code> で <code style="color:#22d3bf">gx</code>/<code style="color:#22d3bf">gy</code> がそのまま勾配、<code style="color:#22d3bf">order=2</code> なら <code style="color:#22d3bf">[c0, gx, gy, cxx, cxy, cyy]</code>(<code style="color:#22d3bf">x^2, xy, y^2</code> の順)。</p>
-<p>★ なぜ格子のまま受けるのか</p>
-<p>既存の <code style="color:#22d3bf">fit_plane</code> / <code style="color:#22d3bf">fit_plane_ransac</code> は (N,3) 点群しか受けない。</p>
-<p>512² の高さ場を渡すには毎回 <code style="color:#22d3bf">column_stack</code> で 262144x3 = <b>6.3 MB</b> に</p>
-<p>展開する必要がある(実測)。ここは格子を格子のまま受け、基底も</p>
-<p>1 次元ベクトルの外積で作るので展開が要らない。</p>
-<p>★ 費用(実測、1024x1024、<code style="color:#22d3bf">iters=200</code>)</p>
-<p><code style="color:#22d3bf">method=&quot;ls&quot;</code> 47 ms に対し <code style="color:#22d3bf">method=&quot;ransac&quot;</code> は <b>1.8 秒</b>(38 倍)。</p>
-<p>RANSAC は毎回 1024² 点の残差を数え直すので、<code style="color:#22d3bf">iters</code> に線形に効く。</p>
-<p>粗さだけを見るなら「LS + λc ハイパス」で同じ答えが 40 分の 1 で出る</p>
-<p>(下の実測を参照)—— <b>RANSAC を既定にしない理由がこれ。</b></p>
-<p>★ 落とし穴 —— ロバストが要るのは「深い傷」ではなく「<b>広い</b>外れ値」。</p>
-<p>ただし外れ値が多数派になると RANSAC も同時に壊れる。</p>
-<p>深さ 3 µm の傷 4 本を片側に寄せた 512x512 の面で、傷の<b>幅だけ</b>を</p>
-<p>変えた実測(傾き 0.050/-0.025 を仕込んで除く。真値は傷を含む面そのもの):</p>
-<p>傷の半値半幅   面積比    LS の Sq 誤差   RANSAC の Sq 誤差   改善</p>
+<p>参数</p>
+<p>z       高度场。</p>
+<p>dx, dy  采样间隔。<code style="color:#22d3bf">dy=None</code> 为正方形像素。</p>
+<p>order   1 = 平面，2 = 二次曲面。</p>
+<p>method  <code style="color:#22d3bf">&quot;ls&quot;</code>（最小二乘）或 <code style="color:#22d3bf">&quot;ransac&quot;</code>（鲁棒）。</p>
+<p>thresh  RANSAC 的内点阈值（高度单位）。为 <code style="color:#22d3bf">None</code> 时使用最小二乘残差的</p>
+<p>鲁棒离散度 <code style="color:#22d3bf">2.5 x 1.4826 x MAD</code>。</p>
+<p>iters   RANSAC 的试行次数。由 <code style="color:#22d3bf">seed</code> 确定。</p>
+<p><code style="color:#22d3bf">coeffs</code> 是<b>以场的中心为原点的物理坐标下的单项式系数</b>。<code style="color:#22d3bf">order=1</code> 时为 <code style="color:#22d3bf">[c0, gx, gy]</code>，<code style="color:#22d3bf">gx</code>/<code style="color:#22d3bf">gy</code> 直接就是梯度； <code style="color:#22d3bf">order=2</code> 时为 <code style="color:#22d3bf">[c0, gx, gy, cxx, cxy, cyy]</code>（按 <code style="color:#22d3bf">x^2, xy, y^2</code> 的顺序）。</p>
+<p>★ 为什么直接接收网格</p>
+<p>现有的 <code style="color:#22d3bf">fit_plane</code> / <code style="color:#22d3bf">fit_plane_ransac</code> 只接收 (N,3) 点云。</p>
+<p>要传入 512² 的高度场，每次都得用 <code style="color:#22d3bf">column_stack</code> 展开成 262144x3 = <b>6.3 MB</b></p>
+<p>（实测）。这里把网格作为网格直接接收，基底也</p>
+<p>用 1 维向量的外积构造，因此无需展开。</p>
+<p>★ 开销（实测，1024x1024，<code style="color:#22d3bf">iters=200</code>）</p>
+<p><code style="color:#22d3bf">method=&quot;ls&quot;</code> 47 ms，而 <code style="color:#22d3bf">method=&quot;ransac&quot;</code> 为 <b>1.8 秒</b>（38 倍）。</p>
+<p>RANSAC 每次都要重新统计 1024² 个点的残差，因此与 <code style="color:#22d3bf">iters</code> 成线性关系。</p>
+<p>若只看粗糙度，“LS + λc 高通”能以 1/40 的开销得到相同答案</p>
+<p>（见下方实测）—— <b>这就是不把 RANSAC 设为默认的原因。</b></p>
+<p>★ 陷阱 —— 需要鲁棒性的不是“深划痕”，而是“<b>宽</b>的离群值”。</p>
+<p>但当离群值成为多数时，RANSAC 也会一起失效。</p>
+<p>在把 4 条深 3 µm 的划痕集中在一侧的 512x512 面上，只改变划痕的<b>宽度</b>的</p>
+<p>实测（注入并去除 0.050/-0.025 的倾斜。真值是含划痕的面本身）：</p>
+<p>划痕半高半宽   面积比    LS 的 Sq 误差   RANSAC 的 Sq 误差   改善</p>
 <p>4 µm         5.6 %      -1.94 %          -0.39 %        5.0 倍</p>
 <p>12 µm        16.3 %      -6.47 %          -3.03 %        2.1 倍</p>
 <p>24 µm        31.0 %     -13.79 %         -11.53 %        1.2 倍</p>
 <p>40 µm        46.0 %     -23.80 %         -23.56 %        1.0 倍</p>
-<p>3 つ読める:</p>
-<p style="margin:2px 0 2px 12px">• 効くのは深さではなく<b>面積比</b>。「深い傷 = ロバスト必須」は早合点で、正しくは「<b>広い</b>外れ値 = ロバスト必須」。</p>
-<p style="margin:2px 0 2px 12px">• 誤差は必ず<b>過小側</b>に出る —— 最小二乗が「傷が片側に寄っていることによる本物の非対称」まで平面として吸い上げるから。<b>合否判定では危険な向きに壊れる。</b></p>
-<p style="margin:2px 0 2px 12px">• <b>面積比 46 % では RANSAC も助けにならない</b>(改善 1.0 倍)。外れ値が半分近くを占めると、RANSAC の多数決そのものが傷を選ぶ。ロバスト当てはめは「外れ値が少数派である」という前提の道具で、その前提が切れる所は表で示すしかない。</p>
-<p>★ 落とし穴 —— λc を後段に置くと LS と RANSAC の差は消える</p>
-<p>同じ面(半値半幅 4 µm)に λc=80 µm のハイパスを後から掛けると、</p>
-<p>Sq 誤差は <b>LS +0.00 % / RANSAC -0.00 %</b>(上の表では 5.0 倍差)。</p>
-<p>余計に除いた平面は純粋な長波長なので、ハイパスが同じものをもう一度</p>
-<p>捨てるだけ。<b>当てはめのロバスト性が効くのは λc を掛けない運用(平面度・形状偏差)のとき。</b> 粗さだけを見るなら順序で救える。</p>
-<p>なお平面そのものの回復は LS でも良く、上の面で仕込んだ勾配</p>
-<p>0.050 / -0.025 に対し 0.050006 / -0.025127 が返る(実測)。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code> が 1 か 2 以外 / <code style="color:#22d3bf">method</code> が <code style="color:#22d3bf">&quot;ls&quot;</code>・<code style="color:#22d3bf">&quot;ransac&quot;</code> 以外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code> が非正・非有限。</p>
-<p style="margin:2px 0 2px 12px">• RANSAC が内点を規定数集められない(退化した面)。</p>
+<p>可以读出 3 点：</p>
+<p style="margin:2px 0 2px 12px">• 起作用的不是深度而是<b>面积比</b>。“深划痕 = 必须鲁棒”是草率的结论，正确的是“<b>宽</b>的离群值 = 必须鲁棒”。</p>
+<p style="margin:2px 0 2px 12px">• 误差必定出现在<b>偏小一侧</b> —— 因为最小二乘连“划痕集中在一侧所造成的真实不对称”也当作平面吸收掉了。<b>在合格判定中会朝危险的方向失效。</b></p>
+<p style="margin:2px 0 2px 12px">• <b>面积比 46 % 时 RANSAC 也帮不上忙</b>（改善 1.0 倍）。离群值占到近一半时，RANSAC 的多数表决本身就会选中划痕。鲁棒拟合是以“离群值是少数”为前提的工具，该前提失效之处只能用表来展示。</p>
+<p>★ 陷阱 —— 把 λc 放在后级，LS 与 RANSAC 的差就消失了</p>
+<p>对同一个面（半高半宽 4 µm）事后施加 λc=80 µm 的高通，</p>
+<p>Sq 误差为 <b>LS +0.00 % / RANSAC -0.00 %</b>（上表中相差 5.0 倍）。</p>
+<p>多去除的平面是纯粹的长波长，高通只是把同样的东西再</p>
+<p>扔一次而已。<b>拟合的鲁棒性起作用的是不施加 λc 的使用方式（平面度、形状偏差）时。</b> 若只看粗糙度，靠顺序就能挽救。</p>
+<p>另外，平面本身的恢复用 LS 也不错：对上面那个面中注入的梯度</p>
+<p>0.050 / -0.025，返回 0.050006 / -0.025127（实测）。</p>
+<p>fail-closed(失败即拒绝)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code> 不是 1 或 2 / <code style="color:#22d3bf">method</code> 不是 <code style="color:#22d3bf">&quot;ls&quot;</code>、<code style="color:#22d3bf">&quot;ransac&quot;</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code> 非正、非有限。</p>
+<p style="margin:2px 0 2px 12px">• RANSAC 收集不到规定数量的内点（退化的面）。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

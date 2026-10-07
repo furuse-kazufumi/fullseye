@@ -4,17 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>大地坐标 → 参考点周围的<b>局部 ENU</b>(东、北、上)[m] (<code style="color:#22d3bf">points</code>)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
-<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>现场图纸、机器人地图、点云大多以“相对原点的东、北、上”表示。从 ECEF 的转换是在基准点处的 1 次旋转，<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
+<p>★ <b>不是</b>平面直角坐标(投影)。ENU 相当于向基准点处切平面的正射投影，距离越远，因地球曲率在高度方向下落越多 —— 10 km 约 7.8 m，100 km 约 780 m。把大范围当作“平坦的 xy”处理，就是丢弃了这一落差。</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
-<p>h_m: 点の楕円体高 [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
+<p>lat_deg / lon_deg: 点的纬度、经度 [度]。可为数组。</p>
+<p>h_m: 点的椭球高 [m]。</p>
+<p>lat0_deg / lon0_deg / h0_m: 基准点(原点)的大地坐标。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。基準点そのものは厳密に <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
-<p>閉じた式で検査できること: 基準点で <code style="color:#22d3bf">(0, 0, 0)</code>、<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の <code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する(<b>別経路での検算</b>)。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> 的 <code style="color:#22d3bf">(east, north, up)</code> [m]。基准点本身严格为 <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
+<p>可用闭式检验的内容：基准点处为 <code style="color:#22d3bf">(0, 0, 0)</code>，</p>
+<p>与 <code style="color:#22d3bf">dem_geodetic_from_enu</code> 的往返为 1e-9 m 级，并且与经由既有的 <code style="color:#22d3bf">dem_geodetic_to_ecef</code> 自行旋转的结果一致(<b>经由另一路径的验算</b>)。</p>
+<p><b>ValueError</b>：非有限值、纬度超出 ±90、长度不一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

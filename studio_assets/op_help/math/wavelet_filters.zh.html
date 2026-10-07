@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>按教科书的构造方法(谱分解)生成 Daubechies 正交归一小波 dbN 的滤波器。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
+<p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))，P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。从 P 的根中选出单位圆内侧的零点，与 (1 + z⁻¹)^N 相乘。不抄表，因此没有有效数字丢失的转录错误(由门禁核对数值)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>
-<p><code style="color:#22d3bf">vanishing_moments</code> = N(次数 N−1 までの多項式を詳細係数で消す)。order=1 は Haar。</p>
+<p><code style="color:#22d3bf">lowpass</code> h(长度 2N，和为 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>
+<p><code style="color:#22d3bf">vanishing_moments</code> = N(细节系数会消去 N−1 次及以下的多项式)。order=1 即 Haar。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

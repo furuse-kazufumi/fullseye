@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Topographic Position Index TPI — Differenz zwischen der Zelle selbst und dem Mittelwert ihrer 8 Nachbarn [m]. Positiv bedeutet Rücken, negativ Tal.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>式: <code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>(Weiss の TPI を 3x3 の最小近傍で取ったもの)。縁は端の値を複製して埋める。近傍が 1 セル固定なので、<b>スケールは <code style="color:#22d3bf">cell_size</code> 1 つぶんに固定</b>で、より広い尾根/谷を見たいときは先に <code style="color:#22d3bf">dem</code> を粗くする(この op に半径の引数は無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、実数、<code style="color:#22d3bf">inf</code> 不可。欠測は <code style="color:#22d3bf">nan</code>(番兵値 <code style="color:#22d3bf">&lt;= -9000</code> が <code style="color:#22d3bf">nan</code> 無しで入っていれば拒否)。<code style="color:#22d3bf">nan</code> は 3x3 に伝播する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 結果には影響しない(差分に距離は入らない)が、単位が [m] であることを呼び出し側に意識させるため受け取り、正の有限値かを検査する。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 [m]。0 付近が斜面の途中、正が凸(尾根・頂)、負が凹(谷・窪地)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、番兵値、<code style="color:#22d3bf">cell_size</code>)。</p>
-<p><code style="color:#22d3bf">dem_roughness</code>(同じ近傍の RMS)と組み合わせると地形分類の特徴になる。</p>
+<p>Formel: <code style="color:#22d3bf">tpi = z - mean(z der 8 Nachbarn)</code> (Weiss&#x27; TPI mit der minimalen 3x3-Nachbarschaft). Ränder werden durch Kopieren der Randwerte aufgefüllt. Da die Nachbarschaft fest 1 Zelle ist, <b>ist der Maßstab fest auf 1 <code style="color:#22d3bf">cell_size</code></b>; um breitere Rücken/Täler zu sehen, zuerst <code style="color:#22d3bf">dem</code> vergröbern (dieser op hat kein Radius-Argument).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], mindestens 3x3, reell, kein <code style="color:#22d3bf">inf</code>. Fehlwerte als <code style="color:#22d3bf">nan</code> (abgelehnt, wenn Sentinel-Werte <code style="color:#22d3bf">&lt;= -9000</code> ohne <code style="color:#22d3bf">nan</code> vorliegen). <code style="color:#22d3bf">nan</code> breitet sich über 3x3 aus.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: beeinflusst das Ergebnis nicht (in die Differenz geht kein Abstand ein), wird aber angenommen, um dem Aufrufer bewusst zu machen, dass die Einheit [m] ist, und auf positiv-endlich geprüft.</p>
+<p style="margin:2px 0 2px 12px">• Rückgabewert: <code style="color:#22d3bf">(H, W)</code> float64 [m]. Um 0 Hangmitte, positiv konvex (Rücken, Gipfel), negativ konkav (Täler, Senken).</p>
+<p style="margin:2px 0 2px 12px">• Fehler: <code style="color:#22d3bf">ValueError</code> (Form, Sentinel-Werte, <code style="color:#22d3bf">cell_size</code>).</p>
+<p>Kombiniert mit <code style="color:#22d3bf">dem_roughness</code> (RMS über dieselbe Nachbarschaft) ergibt es Merkmale zur Geländeklassifikation.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

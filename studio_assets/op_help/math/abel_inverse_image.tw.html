@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對從側面拍攝的軸對稱物體<b>影像</b>(縱向 = 對稱軸方向，橫向 = 距軸的距離)逐列做逆 Abel 轉換，得到截面影像。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>炎・プラズマ・噴流の写真は、奥行き方向に足し合わさった投影しか写らない。各行を中心列で左右に分け、2 つの半分を平均してから(左右の非対称を均す)逆 Abel する。<code style="color:#22d3bf">center</code> は対称軸の列(既定 = 明るさの重心、行ごとではなく画像全体で 1 本)。返り値 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice は (H, R) の f(z, r)、asymmetry は左右の半分の差の大きさ(0 に近いほど軸対称の仮定が成り立つ)。</p>
-<p>門: 3-D のガウスの塊の投影から、断面のガウスが戻る(閉じた式)。</p>
+<p>火焰、電漿、噴流的照片只能拍到沿深度方向疊加的投影。將每列在中心行處分為左右，對 2 個半邊取平均(抹平左右不對稱)後再做逆 Abel 轉換。<code style="color:#22d3bf">center</code> 是對稱軸所在的行(預設 = 亮度重心，整張影像共用 1 條，而非逐列)。回傳值 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice 是 (H, R) 的 f(z, r)，asymmetry 是左右兩半之差的大小(越接近 0，軸對稱的假定越成立)。</p>
+<p>門檻：由 3-D 高斯團塊的投影可還原截面的高斯(閉合式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_from_enu&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>局部 ENU → 大地座標(<code style="color:#22d3bf">dem_enu_from_geodetic</code> 的逆轉換)。<code style="color:#22d3bf">points</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>enu: <code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点の測地座標。</p>
+<p>enu: <code style="color:#22d3bf">(n, 3)</code> 的 <code style="color:#22d3bf">(east, north, up)</code> [m]。</p>
+<p>lat0_deg / lon0_deg / h0_m: 基準點的大地座標。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 往復が 1e-9 m 級、<code style="color:#22d3bf">(0, 0, 0)</code> は基準点そのもの。</p>
-<p><b>ValueError</b>: <code style="color:#22d3bf">(n, 3)</code> でない、非有限、基準点が不正。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> 的 <code style="color:#22d3bf">(緯度[度], 經度[度], 橢球高[m])</code>。</p>
+<p>可用閉合式檢驗的內容：往返為 1e-9 m 級，<code style="color:#22d3bf">(0, 0, 0)</code> 即基準點本身。</p>
+<p><b>ValueError</b>：不是 <code style="color:#22d3bf">(n, 3)</code>、非有限值、基準點不合法。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

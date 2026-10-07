@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Topographic position index TPI — the difference between the cell itself and the mean of its 8 neighbors [m]. Positive means ridge, negative means valley.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>式: <code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>(Weiss の TPI を 3x3 の最小近傍で取ったもの)。縁は端の値を複製して埋める。近傍が 1 セル固定なので、<b>スケールは <code style="color:#22d3bf">cell_size</code> 1 つぶんに固定</b>で、より広い尾根/谷を見たいときは先に <code style="color:#22d3bf">dem</code> を粗くする(この op に半径の引数は無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、実数、<code style="color:#22d3bf">inf</code> 不可。欠測は <code style="color:#22d3bf">nan</code>(番兵値 <code style="color:#22d3bf">&lt;= -9000</code> が <code style="color:#22d3bf">nan</code> 無しで入っていれば拒否)。<code style="color:#22d3bf">nan</code> は 3x3 に伝播する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 結果には影響しない(差分に距離は入らない)が、単位が [m] であることを呼び出し側に意識させるため受け取り、正の有限値かを検査する。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 [m]。0 付近が斜面の途中、正が凸(尾根・頂)、負が凹(谷・窪地)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、番兵値、<code style="color:#22d3bf">cell_size</code>)。</p>
-<p><code style="color:#22d3bf">dem_roughness</code>(同じ近傍の RMS)と組み合わせると地形分類の特徴になる。</p>
+<p>Formula: <code style="color:#22d3bf">tpi = z - mean(z of the 8 neighbours)</code> (Weiss&#x27;s TPI taken with the minimal 3x3 neighbourhood). Edges are padded by replicating border values. Since the neighbourhood is fixed at 1 cell, <b>the scale is fixed at 1 <code style="color:#22d3bf">cell_size</code></b>; to see broader ridges/valleys, first coarsen <code style="color:#22d3bf">dem</code> (this op has no radius argument).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 or larger, real, no <code style="color:#22d3bf">inf</code>. Missing data as <code style="color:#22d3bf">nan</code> (rejected if sentinel values <code style="color:#22d3bf">&lt;= -9000</code> are present without <code style="color:#22d3bf">nan</code>). <code style="color:#22d3bf">nan</code> propagates over 3x3.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: does not affect the result (no distance enters the difference), but is accepted to make the caller aware that the unit is [m], and is checked to be positive finite.</p>
+<p style="margin:2px 0 2px 12px">• Return value: <code style="color:#22d3bf">(H, W)</code> float64 [m]. Near 0 is mid-slope, positive is convex (ridges, peaks), negative is concave (valleys, hollows).</p>
+<p style="margin:2px 0 2px 12px">• Failure: <code style="color:#22d3bf">ValueError</code> (shape, sentinel values, <code style="color:#22d3bf">cell_size</code>).</p>
+<p>Combined with <code style="color:#22d3bf">dem_roughness</code> (RMS over the same neighbourhood) it gives features for landform classification.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

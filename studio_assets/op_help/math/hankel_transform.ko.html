@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_transform(r, f, *, r_max: &#x27;float | None&#x27; = None, order: &#x27;int&#x27; = 0, n: &#x27;int&#x27; = 256) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hankel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>p차 Hankel 변환 F(ν) = 2π ∫_0^∞ f(r) J_p(2πνr) r dr를 quasi-discrete 법으로.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">(r, f)</code> は動径の標本(r は昇順)。標本点 r_k へは線形補間で載せ、<code style="color:#22d3bf">r_max</code>(既定 = r の最大値)の外は 0。<code style="color:#22d3bf">f</code> に呼び出し可能を渡すと、標本点で直接評価する(<code style="color:#22d3bf">r</code> は無視して <code style="color:#22d3bf">r_max</code> を必ず渡す)。標本点は r_k = j_k R / S(j_k は J_p の k 番目の零点、S = j_{n+1})、周波数 ν_k = j_k / (2πR)。この変換は核 T が<b>対合</b>(T·T = I)なので、同じ関数で逆変換もできる(<code style="color:#22d3bf">F</code> を f として渡す)。</p>
-<p>門: exp(−π r²) は自己双対(F(ν) = exp(−π ν²))。0 次の Hankel 変換は軸対称な関数の 2 次元フーリエ変換の動径断面に等しい。</p>
-<p>返り値: <code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(最後は ‖T·T − I‖_max)。</p>
+<p><code style="color:#22d3bf">(r, f)</code>는 동경 방향 표본(r은 오름차순). 표본점 r_k에는 선형 보간으로 올리고, <code style="color:#22d3bf">r_max</code>(기본값 = r의 최댓값) 바깥은 0. <code style="color:#22d3bf">f</code>에 호출 가능 객체를 넘기면 표본점에서 직접 평가한다(<code style="color:#22d3bf">r</code>은 무시되며 <code style="color:#22d3bf">r_max</code>를 반드시 넘긴다). 표본점은 r_k = j_k R / S(j_k는 J_p의 k번째 영점, S = j_{n+1}), 주파수 ν_k = j_k / (2πR). 이 변환은 커널 T가 <b>대합</b>(T·T = I)이므로, 같은 함수로 역변환도 할 수 있다(<code style="color:#22d3bf">F</code>를 f로 넘긴다).</p>
+<p>게이트: exp(−π r²)는 자기 쌍대(F(ν) = exp(−π ν²)). 0차 Hankel 변환은 축대칭 함수의 2차원 푸리에 변환의 동경 단면과 같다.</p>
+<p>반환값: <code style="color:#22d3bf">{&quot;r&quot;, &quot;f&quot;, &quot;nu&quot;, &quot;F&quot;, &quot;T_involution_error&quot;}</code>(마지막은 ‖T·T − I‖_max).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

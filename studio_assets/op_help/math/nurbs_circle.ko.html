@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>원을 엄밀하게 나타내는 2차 NURBS(Piegl &amp; Tiller 예 7.1: 정사각형의 4개 모서리와 4변의 중점, 모서리의 가중치는 1/√2).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返す <code style="color:#22d3bf">control_points</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">degree</code> をそのまま <code style="color:#22d3bf">nurbs_curve</code> に渡すと、どの点も中心から <code style="color:#22d3bf">radius</code> の距離にある(丸め誤差まで)。隅の制御点は円の外 (√2 − 1)·radius の所にあり、曲線は通らない。</p>
+<p>반환하는 <code style="color:#22d3bf">control_points</code>·<code style="color:#22d3bf">weights</code>·<code style="color:#22d3bf">knots</code>·<code style="color:#22d3bf">degree</code>를 그대로 <code style="color:#22d3bf">nurbs_curve</code>에 넘기면, 모든 점이 중심에서 <code style="color:#22d3bf">radius</code>의 거리에 있다(반올림 오차까지). 모서리의 제어점은 원 바깥 (√2 − 1)·radius 위치에 있으며, 곡선은 지나지 않는다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

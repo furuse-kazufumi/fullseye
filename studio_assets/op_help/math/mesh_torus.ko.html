@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;mesh_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>토러스(도넛)의 닫힌 삼각형 메시 (vertices, faces). 큰 반경 R, 관의 반경 r(R &gt; r &gt; 0).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>種数 1 の曲面の見本: χ = 0、角欠損の総和 = 0(外側の凸の部分が正、内側の鞍の部分が負で打ち消し合う)。頂点は (u, v) の格子(u が大円、v が管のまわり)の順で、<code style="color:#22d3bf">u = i·2π/n_u</code>、<code style="color:#22d3bf">v = j·2π/n_v</code> の頂点が i·n_v + j 番。</p>
+<p>종수 1인 곡면의 견본: χ = 0, 각 결손의 총합 = 0(바깥쪽 볼록한 부분이 양, 안쪽 안장 부분이 음으로 서로 상쇄한다). 정점은 (u, v) 격자(u가 대원, v가 관의 둘레)의 순서이며, <code style="color:#22d3bf">u = i·2π/n_u</code>, <code style="color:#22d3bf">v = j·2π/n_v</code>의 정점이 i·n_v + j번.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

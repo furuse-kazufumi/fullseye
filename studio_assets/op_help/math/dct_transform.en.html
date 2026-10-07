@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;dct_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Orthonormal DCT-II (with <code style="color:#22d3bf">inverse=True</code>, DCT-III = the inverse transform) in N dimensions.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>x: 任意次元の実配列(信号・画像・ボリューム)。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
-<p>inverse: True なら係数から元に戻す。</p>
+<p>x: real array of any dimension (signal, image, volume).</p>
+<p>axes: axes to transform (all axes if omitted).</p>
+<p>inverse: if True, reconstruct from the coefficients.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code>(同じ形)、<code style="color:#22d3bf">energy</code>(Σx²、正規直交なので変換の前後で同じ = Parseval)、<code style="color:#22d3bf">compaction</code> = 大きい順に並べた係数のエネルギーの累積割合(先頭 1% で何割を持つか、が JPEG の理由)。</p>
-<p>門は定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) の行列と一致すること・逆変換で 1e-12 で戻ること。</p>
+<p><code style="color:#22d3bf">coeffs</code> (same shape), <code style="color:#22d3bf">energy</code> (Σx²; orthonormal, so the same before and after the transform = Parseval), <code style="color:#22d3bf">compaction</code> = cumulative energy fraction of the coefficients sorted largest first (what fraction the top 1% holds is the reason for JPEG).</p>
+<p>Gate: agreement with the matrix of the defining formula C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N), and the inverse transform returning to within 1e-12.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

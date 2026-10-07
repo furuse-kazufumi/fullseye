@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Surface of revolution obtained by sweeping a planar NURBS curve (r, z) 1 full turn around the z axis (Piegl &amp; Tiller §8.5).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>断面の各制御点を <code style="color:#22d3bf">nurbs_circle</code> の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
+<p>Rotates each control point of the cross-section with the 9 points of <code style="color:#22d3bf">nurbs_circle</code> and multiplies the weights. If the cross-section is an exact circular arc, the resulting surface is also an exact sphere, torus or cone (polynomial surfaces can only approximate them).</p>
 <p>Args:</p>
-<p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>
-<p>weights, degree, knots: 断面の NURBS(<code style="color:#22d3bf">nurbs_curve</code> と同じ)。</p>
-<p>n: (周方向, 断面方向) の評価点数。</p>
+<p>profile: (m, 2) control points (r, z) of the cross-section. r is the distance from the axis (0 or more).</p>
+<p>weights, degree, knots: NURBS of the cross-section (same as <code style="color:#22d3bf">nurbs_curve</code>).</p>
+<p>n: number of evaluation points (circumferential, along the cross-section).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nurbs_surface</code> と同じ dict に <code style="color:#22d3bf">control_net</code>・<code style="color:#22d3bf">net_weights</code> を足したもの。</p>
+<p>The same dict as <code style="color:#22d3bf">nurbs_surface</code> with <code style="color:#22d3bf">control_net</code> and <code style="color:#22d3bf">net_weights</code> added.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

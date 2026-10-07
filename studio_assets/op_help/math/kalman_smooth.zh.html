@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;kalman_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>线性高斯状态空间模型 x_{k+1} = F x_k + w(w ~ N(0,Q))、z_k = H x_k + v(v ~ N(0,R))的 Kalman 滤波(前向)与 Rauch–Tung–Striebel 平滑(后向)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">z</code> は (T, m) の観測(NaN の行は欠測として更新を飛ばす)。返り値 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>。</p>
-<p>門: 平滑化の結果は、全観測と事前分布を一度に使う最小二乗(一括の MAP)と厳密に一致する。</p>
+<p><code style="color:#22d3bf">z</code> 为 (T, m) 的观测(含 NaN 的行视为缺测，跳过更新)。返回值 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>。</p>
+<p>门禁：平滑结果与一次性使用全部观测和先验分布的最小二乘(批量 MAP)严格一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

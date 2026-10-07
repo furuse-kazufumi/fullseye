@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求解成本矩陣 (n, m) 的指派問題(Kuhn 1955 / Munkres 1957 的匈牙利演算法，scipy 的實作)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>行と列を 1 対 1 に結び、選んだコストの総和を最小(<code style="color:#22d3bf">maximize=True</code> で最大)にする。n != m なら短い側が全部結ばれる。返り値 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>。門: 小さな行列で全順列の総当たりと一致する。</p>
+<p>將列與行 1 對 1 配對，使所選成本總和最小(<code style="color:#22d3bf">maximize=True</code> 時最大)。n != m 時較短的一側全部被配對。回傳值 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>。門檻：在小矩陣上與全排列窮舉一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

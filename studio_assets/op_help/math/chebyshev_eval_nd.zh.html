@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_eval_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>在点 (M, d) 处计算 <code style="color:#22d3bf">chebyshev_coeffs_nd</code> 系数的值(各轴 T_k(t) = cos(k·arccos t))。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p><code style="color:#22d3bf">points</code> が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。</p>
+<p>若 <code style="color:#22d3bf">points</code> 是 d 个 1-D 数组的组，则在其网格(外积)上求值并返回形状 (m1, …, md)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

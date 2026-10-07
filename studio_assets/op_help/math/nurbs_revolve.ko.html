@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평면 NURBS 곡선 (r, z)를 z축 둘레로 1바퀴 돌린 회전면(Piegl &amp; Tiller §8.5).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>断面の各制御点を <code style="color:#22d3bf">nurbs_circle</code> の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
+<p>단면의 각 제어점을 <code style="color:#22d3bf">nurbs_circle</code> 의 9 점으로 회전시키고 가중치를 곱한다. 단면이 엄밀한 원호라면 만들어지는 곡면도 엄밀한구·토러스·원뿔이 된다(다항식 곡면으로는 근사밖에 할 수 없다).</p>
 <p>Args:</p>
-<p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>
-<p>weights, degree, knots: 断面の NURBS(<code style="color:#22d3bf">nurbs_curve</code> と同じ)。</p>
-<p>n: (周方向, 断面方向) の評価点数。</p>
+<p>profile: (m, 2) 단면의 제어점 (r, z). r 은 축으로부터의 거리(0 이상).</p>
+<p>weights, degree, knots: 단면의 NURBS(<code style="color:#22d3bf">nurbs_curve</code> 와 동일).</p>
+<p>n: (원주 방향, 단면 방향)의 평가점 수.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nurbs_surface</code> と同じ dict に <code style="color:#22d3bf">control_net</code>・<code style="color:#22d3bf">net_weights</code> を足したもの。</p>
+<p><code style="color:#22d3bf">nurbs_surface</code> 와 같은 dict 에 <code style="color:#22d3bf">control_net</code>·<code style="color:#22d3bf">net_weights</code> 를 추가한 것.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_surface(control_net, weights=None, *, degree=(3, 3), knots_u=None, knots_v=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_surface&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>求 NURBS 曲面(张量积)的值。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>control_net: (mu, mv, 3) の制御網。</p>
-<p>weights: (mu, mv) の正の重み(省略で全部 1)。</p>
-<p>degree: (p, q)。knots_u, knots_v: 各方向の節点列(省略で clamped 一様)。</p>
-<p>n: (nu, nv) 評価点の格子。</p>
+<p>control_net: (mu, mv, 3) 的控制网。</p>
+<p>weights: (mu, mv) 的正权重(省略则全部为 1)。</p>
+<p>degree: (p, q)。knots_u, knots_v: 各方向的节点序列(省略则为 clamped 均匀)。</p>
+<p>n: (nu, nv) 求值点的网格。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (nu, nv, 3)、<code style="color:#22d3bf">mesh</code> = (V, F) の三角形メッシュ(<code style="color:#22d3bf">geodesic_heat</code> などにそのまま渡せる)、<code style="color:#22d3bf">u</code>・<code style="color:#22d3bf">v</code>・<code style="color:#22d3bf">knots_u</code>・<code style="color:#22d3bf">knots_v</code>・<code style="color:#22d3bf">weights</code>。</p>
+<p><code style="color:#22d3bf">points</code> (nu, nv, 3)、<code style="color:#22d3bf">mesh</code> = (V, F) 的三角形网格(mesh)(可直接传给 <code style="color:#22d3bf">geodesic_heat</code> 等)、<code style="color:#22d3bf">u</code>、<code style="color:#22d3bf">v</code>、<code style="color:#22d3bf">knots_u</code>、<code style="color:#22d3bf">knots_v</code>、<code style="color:#22d3bf">weights</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

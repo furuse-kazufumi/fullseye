@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_eval_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Evaluates the coefficients from <code style="color:#22d3bf">chebyshev_coeffs_nd</code> at points (M, d) (per axis T_k(t) = cos(k·arccos t)).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">points</code> が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。</p>
+<p>If <code style="color:#22d3bf">points</code> is a tuple of d 1-D arrays, evaluates on their grid (outer product) and returns shape (m1, …, md).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

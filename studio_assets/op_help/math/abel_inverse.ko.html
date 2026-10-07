@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>투영 A(y)로부터 축대칭 분포 f(r)를 되돌린다(역 Abel 변환 = 축대칭 물체의 단층화).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy。y = √(r² + u²) と置いて特異点を消し、A を 3 次スプラインで微分する。滑らかな投影には精度が高いが、<b>微分が雑音を増幅する</b>:</p>
-<p>雑音の誤差は標本間隔 dr に反比例して増える(2026-10-03 実測、雑音 1%: 標本数 80 → 640 で</p>
-<p>平均誤差 0.027 → 0.237、両対数の傾き ≈ 1)。粗い格子ではこちらが良い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 殻を剥く: f を半径 dr の殻ごとに一定とみなし、弦の長さの上三角行列を外側から解く。解像度は殻の幅で決まり、微分を取らないぶん雑音の増え方が緩い(同じ実測で 0.036 → 0.100、傾き ≈ 1/2)。<b>細かい格子の実測ではこちら</b>(n=640 で微分の 2.4 分の 1)、粗い格子(n≈80)では逆転する。</p>
-<p>2 つは独立な離散化なので、<b>同じ投影に両方を当てて食い違いを見る</b>のが検算になる。</p>
-<p>門: A(y) = √π σ exp(−y²/σ²) から f(r) = exp(−r²/σ²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy. y = √(r² + u²)로 두어 특이점을 없애고, A를 3차 스플라인으로 미분한다. 매끄러운 투영에는 정확도가 높지만, <b>미분이 잡음을 증폭한다</b>:</p>
+<p>잡음 오차는 표본 간격 dr에 반비례하여 커진다(2026-10-03 실측, 잡음 1%: 표본 수 80 → 640에서</p>
+<p>평균 오차 0.027 → 0.237, 양대수 기울기 ≈ 1). 거친 격자에서는 이쪽이 낫다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 껍질 벗기기: f를 반경 dr의 껍질마다 일정하다고 보고, 현 길이의 상삼각 행렬을 바깥쪽부터 푼다. 해상도는 껍질 폭으로 정해지며, 미분을 하지 않는 만큼 잡음의 증가가 완만하다(같은 실측에서 0.036 → 0.100, 기울기 ≈ 1/2). <b>세밀한 격자의 실측에서는 이쪽</b>(n=640에서 미분의 2.4분의 1), 거친 격자(n≈80)에서는 역전된다.</p>
+<p>2가지는 독립된 이산화이므로, <b>같은 투영에 둘 다 적용해 어긋남을 보는 것</b>이 검산이 된다.</p>
+<p>게이트: A(y) = √π σ exp(−y²/σ²)로부터 f(r) = exp(−r²/σ²).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;hilbert_analytic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>The analytic signal z = x + i·H[x] (negative frequencies removed via FFT), and the amplitude, instantaneous phase and instantaneous frequency read from it.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
-<p>x: 実の 1-D 信号。</p>
-<p>fs: 標本化周波数(瞬時周波数の単位を決める)。</p>
+<p>x: real 1-D signal.</p>
+<p>fs: sampling frequency (sets the unit of the instantaneous frequency).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">analytic</code> 複素の解析信号、<code style="color:#22d3bf">amplitude</code> |z|(包絡線)、<code style="color:#22d3bf">phase</code> 連続につないだ位相 [rad]、</p>
-<p><code style="color:#22d3bf">frequency</code> 瞬時周波数 = 位相の時間微分 / 2π(中心差分、長さは x と同じ)。</p>
-<p>門: cos → sin(Hilbert 変換の定義)、線形チャープの瞬時周波数が f0 + k·t、Bedrosian の定理(包絡線が搬送波より低い帯域なら AM 信号の振幅がそのまま戻る)。端は周期の仮定で乱れる(信号を窓で絞ると減る)。</p>
+<p><code style="color:#22d3bf">analytic</code> complex analytic signal, <code style="color:#22d3bf">amplitude</code> |z| (envelope), <code style="color:#22d3bf">phase</code> unwrapped phase [rad],</p>
+<p><code style="color:#22d3bf">frequency</code> instantaneous frequency = time derivative of the phase / 2π (central differences, same length as x).</p>
+<p>Gate: cos → sin (definition of the Hilbert transform), the instantaneous frequency of a linear chirp is f0 + k·t, Bedrosian&#x27;s theorem (if the envelope is band-limited below the carrier, the amplitude of an AM signal comes back as is). The ends are disturbed by the periodicity assumption (tapering the signal with a window reduces this).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

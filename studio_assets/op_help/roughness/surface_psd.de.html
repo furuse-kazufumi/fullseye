@@ -6,48 +6,47 @@
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Leistungsdichtespektrum des Höhenfelds. Gibt <code style="color:#22d3bf">(q, C)</code> zurück. <b>Die Konventionen werden über Argumente explizit angegeben.</b></p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>引数</p>
-<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2 次元 PSD <code style="color:#22d3bf">C_2D(q)</code> の環平均。</p>
-<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1 次元動径 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
-<p>規約(ここを書かないと較正なしでは読めない ―― 既存の <code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> は <b>cycles / length</b>(角周波数 <code style="color:#22d3bf">2π/λ</code> ではない)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。規格化は Parseval に合わせてある: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> かつ <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
-<p style="margin:2px 0 2px 12px">• 自己アフィン面 <code style="color:#22d3bf">H</code> に対する傾きは <b>面 PSD で <code style="color:#22d3bf">-2(H+1)</code>、動径 PSD で <code style="color:#22d3bf">-2H-1</code></b>(ちょうど 1 だけ違う)。</p>
-<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
-<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
-<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
-<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
-<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
-<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
-<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
-<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
-<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
-<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
-<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
-<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
-<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
-<p>実装でやると誤差が消える。原因を切り分けたところ、<b>環の代表 <code style="color:#22d3bf">q</code> にビン番号 <code style="color:#22d3bf">i·Δq</code> を使うか、環内の <code style="color:#22d3bf">q</code> の平均を使うかの差</b>だった</p>
-<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
-<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
-<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
-<p><b>この関数は環内の <code style="color:#22d3bf">q</code> の平均を返す。</b></p>
-<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
-<p>正方格子の最大 <code style="color:#22d3bf">|q|</code> は <code style="color:#22d3bf">√2/(2 dx)</code> だが、<code style="color:#22d3bf">q &gt; 1/(2 dx)</code> の環は</p>
-<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
-<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 <code style="color:#22d3bf">2πq/Δq</code> に対して</p>
-<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
-<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
-<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
-<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
-<p style="margin:2px 0 2px 12px">• 2 次元の全格子で <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> を取ると <b>+0.0000 %</b>(厳密)。</p>
-<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して 1 次元に潰した時点でこの分は失われる —— <b>環平均は要約であって可逆ではない。</b> 0.5 % を超える精度が要る用途では 2 次元の <code style="color:#22d3bf">C_2D</code> を自分で積分すること。</p>
-<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 % のまま変わらない(角の分に中身が無い)。角に中身がある面(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
+<p>Argumente</p>
+<p>z       Höhenfeld (der Mittelwert wird intern abgezogen; der DC-Bin wird nicht zurückgegeben).</p>
+<p>dx, dy  Abtastabstand. <code style="color:#22d3bf">dy=None</code> bedeutet quadratische Pixel.</p>
+<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> ... Ringmittel der 2-D-PSD <code style="color:#22d3bf">C_2D(q)</code>.</p>
+<p><code style="color:#22d3bf">&quot;radial&quot;</code> ... 1-D-Radial-PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>.</p>
+<p>Konventionen (ohne sie hier aufzuschreiben ist das Ergebnis ohne Kalibrierung nicht lesbar ―― das bestehende <code style="color:#22d3bf">radial_power_spectrum</code> hat sie nicht im Docstring)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> ist in <b>cycles / length</b> (nicht die Kreisfrequenz <code style="color:#22d3bf">2π/λ</code>). <code style="color:#22d3bf">q = 1/λ</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>. Die Normierung folgt Parseval: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> und <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>.</p>
+<p style="margin:2px 0 2px 12px">• Die Steigung für eine selbstaffine Fläche <code style="color:#22d3bf">H</code> ist <b><code style="color:#22d3bf">-2(H+1)</code> bei der Flächen-PSD und <code style="color:#22d3bf">-2H-1</code> bei der Radial-PSD</b> (sie unterscheiden sich um genau 1).</p>
+<p>★ Gemessen —— H wird unter beiden Konventionen ohne Kalibrierung zurückgewonnen</p>
+<p>H wurde mit <code style="color:#22d3bf">surface_synth_psd</code> vorgegeben, über q ∈ [2/λ_hi, 0.4/dx] doppelt-logarithmisch</p>
+<p>eine Gerade angepasst und H zurückgewonnen (512², Band 2-64 µm):</p>
+<p>vorgeg. H   Steigung Flächen-PSD   zurückgew. H   Steigung radial   zurückgew. H   Steigungsdiff.</p>
+<p>0.30         -2.600                0.300           -1.600            0.300          1.0000</p>
+<p>0.50         -3.000                0.500           -2.000            0.500          1.0000</p>
+<p>0.80         -3.600                0.800           -2.600            0.800          1.0000</p>
+<p>0.95         -3.901                0.950           -2.901            0.950          1.0000</p>
+<p>Der Fehler liegt in allen 4 Fällen <b>innerhalb ±0.0003</b>, die Steigungsdifferenz der beiden Konventionen ist für jedes H</p>
+<p>exakt 1.0000. <b>Ohne Kalibrierung lesbar.</b></p>
+<p>★ Hier hat die Nachmessung des PoC die Schlussfolgerung geändert. Der PoC fand mit dem bestehenden</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> <b>einen gleichförmigen systematischen Fehler von -0.013 (1.6 % von H)</b> und</p>
+<p>schloss auf &quot;systematischen Fehler durch Diskretisierung des Ringmittels&quot;. Die gleiche Gegenprobe mit dieser</p>
+<p>Implementierung lässt den Fehler verschwinden. Die Ursachenisolierung ergab: <b>es ist der Unterschied, ob als repräsentatives <code style="color:#22d3bf">q</code> eines Rings der Bin-Index <code style="color:#22d3bf">i·Δq</code> oder der Mittelwert von <code style="color:#22d3bf">q</code> im Ring verwendet wird</b></p>
+<p>—— mit dem Bin-Index entsteht eine negative Abweichung von -0.0007 bis -0.0010 (gemessen, gleiche Fläche, gleiches</p>
+<p>Anpassungsband). Die Richtung entspricht der Beobachtung im PoC, die Größe ist aber 1/15, daher</p>
+<p>stammt der Rest der -0.013 nicht aus der Diskretisierung des Ringmittels, sondern aus anderen Implementierungsunterschieden jener Funktion.</p>
+<p><b>Diese Funktion gibt den Mittelwert von <code style="color:#22d3bf">q</code> im Ring zurück.</b></p>
+<p>★ Falle —— Ringe jenseits von Nyquist bestehen &quot;nur aus Ecken&quot;</p>
+<p>Das maximale <code style="color:#22d3bf">|q|</code> eines quadratischen Gitters ist <code style="color:#22d3bf">√2/(2 dx)</code>, aber Ringe mit <code style="color:#22d3bf">q &gt; 1/(2 dx)</code></p>
+<p>enthalten nur die vier Ecken der Frequenzebene. Gemessen (512²): von allen 362 Bins sind die obersten</p>
+<p>107 Bins (29.6 %) jenseits von Nyquist. Wie weit die Punktzahl im Ring hinter dem Idealwert <code style="color:#22d3bf">2πq/Δq</code> zurückbleibt,</p>
+<p>fällt schon unterhalb von Nyquist bis auf minimal das 0.838-fache</p>
+<p>(Diskretisierung des Gitters), jenseits von Nyquist aber bis auf 0.</p>
+<p><b>Für die Anpassung der Steigung nichts jenseits von Nyquist verwenden.</b></p>
+<p>★ Wie weit man der Parseval-Gegenprobe trauen darf (gemessen, 512², Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> über das volle 2-D-Gitter ergibt <b>+0.0000 %</b> (exakt).</p>
+<p style="margin:2px 0 2px 12px">• Trapezintegration der zurückgegebenen Radial-PSD ergibt <b>-0.55 %</b>. Dieser Anteil geht verloren, sobald ringweise gemittelt und auf 1-D zusammengedrückt wird —— <b>das Ringmittel ist eine Zusammenfassung und nicht umkehrbar.</b> Wo Genauigkeit über 0.5 % hinaus nötig ist, die 2-D- <code style="color:#22d3bf">C_2D</code> selbst integrieren.</p>
+<p style="margin:2px 0 2px 12px">• Bei dieser Fläche liegt die obere Bandgrenze bei Nyquist, daher bleibt es bei Abschneiden an Nyquist bei -0.55 % unverändert (die Ecken haben keinen Inhalt). Bei Flächen mit Inhalt in den Ecken (Band jenseits von Nyquist) fehlt beim Abschneiden etwas.</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> が非正。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;areal&quot;</code>・<code style="color:#22d3bf">&quot;radial&quot;</code> 以外。</p>
+<p style="margin:2px 0 2px 12px">• Nicht 2-D / kleiner als 8x8 / enthält NaN oder Inf / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> nicht positiv.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> ist weder <code style="color:#22d3bf">&quot;areal&quot;</code> noch <code style="color:#22d3bf">&quot;radial&quot;</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

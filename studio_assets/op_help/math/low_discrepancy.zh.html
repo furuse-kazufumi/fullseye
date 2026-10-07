@@ -4,11 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;low_discrepancy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>[0, 1)^dim 中的低差异点列 (n, dim)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;halton&quot;</code> —— 座標ごとに異なる素数を基数にした van der Corput 列(自前の実装、決定的)。<code style="color:#22d3bf">skip</code> 個を読み飛ばす(先頭の 0 を避けるなら 1)。高次元(&gt; 8 程度)では座標間に縞が出るので注意。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;sobol&quot;</code> —— scipy.stats.qmc.Sobol(<code style="color:#22d3bf">seed</code> を与えるとスクランブル)。n は 2 の冪が最良。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;random&quot;</code> —— 比較用の一様乱数(<code style="color:#22d3bf">seed</code> 必須、再現性のため)。</p>
-<p>門: なめらかな関数の積分誤差は乱数の N^{−1/2} より速く減る / 星形食い違い量が乱数より小さい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;halton&quot;</code> —— 每个坐标以不同素数为基数的 van der Corput 序列(自行实现，确定性)。跳过 <code style="color:#22d3bf">skip</code> 个(若要避开开头的 0 则为 1)。高维(&gt; 8 左右)时坐标之间会出现条纹，需注意。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;sobol&quot;</code> —— scipy.stats.qmc.Sobol(给出 <code style="color:#22d3bf">seed</code> 则加扰)。n 以 2 的幂为最佳。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;random&quot;</code> —— 用于比较的均匀随机数(<code style="color:#22d3bf">seed</code> 必需，为了可复现)。</p>
+<p>门禁：光滑函数的积分误差比随机数的 N^{−1/2} 下降更快 / 星差异小于随机数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

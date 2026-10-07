@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;mesh_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>环面(甜甜圈)的闭合三角网格 (vertices, faces)。大半径 R、管半径 r(R &gt; r &gt; 0)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>種数 1 の曲面の見本: χ = 0、角欠損の総和 = 0(外側の凸の部分が正、内側の鞍の部分が負で打ち消し合う)。頂点は (u, v) の格子(u が大円、v が管のまわり)の順で、<code style="color:#22d3bf">u = i·2π/n_u</code>、<code style="color:#22d3bf">v = j·2π/n_v</code> の頂点が i·n_v + j 番。</p>
+<p>亏格 1 曲面的样本：χ = 0，角亏总和 = 0(外侧凸的部分为正，内侧鞍形部分为负，相互抵消)。顶点按 (u, v) 网格(u 为大圆方向，v 为绕管方向)的顺序排列，<code style="color:#22d3bf">u = i·2π/n_u</code>、<code style="color:#22d3bf">v = j·2π/n_v</code> 的顶点为第 i·n_v + j 个。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

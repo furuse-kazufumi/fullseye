@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathspectral; mathspectral.hilbert_analytic(x, fs: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hilbert_analytic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>해석 신호 z = x + i·H[x] (FFT로 음의 주파수를 제거)와, 그로부터 읽어 내는 진폭·순시 위상·순시 주파수.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>x: 実の 1-D 信号。</p>
-<p>fs: 標本化周波数(瞬時周波数の単位を決める)。</p>
+<p>x: 실수 1-D 신호.</p>
+<p>fs: 표본화 주파수(순시 주파수의 단위를 정한다).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">analytic</code> 複素の解析信号、<code style="color:#22d3bf">amplitude</code> |z|(包絡線)、<code style="color:#22d3bf">phase</code> 連続につないだ位相 [rad]、</p>
-<p><code style="color:#22d3bf">frequency</code> 瞬時周波数 = 位相の時間微分 / 2π(中心差分、長さは x と同じ)。</p>
-<p>門: cos → sin(Hilbert 変換の定義)、線形チャープの瞬時周波数が f0 + k·t、Bedrosian の定理(包絡線が搬送波より低い帯域なら AM 信号の振幅がそのまま戻る)。端は周期の仮定で乱れる(信号を窓で絞ると減る)。</p>
+<p><code style="color:#22d3bf">analytic</code> 복소 해석 신호, <code style="color:#22d3bf">amplitude</code> |z|(포락선), <code style="color:#22d3bf">phase</code> 연속으로 이은 위상 [rad],</p>
+<p><code style="color:#22d3bf">frequency</code> 순시 주파수 = 위상의 시간 미분 / 2π(중심 차분, 길이는 x와 같다).</p>
+<p>게이트: cos → sin(Hilbert 변환의 정의), 선형 처프의 순시 주파수가 f0 + k·t, Bedrosian의 정리(포락선이반송파보다 낮은 대역이면 AM 신호의 진폭이 그대로 돌아온다). 끝은 주기 가정 때문에 흐트러진다(신호를 창으로 좁히면 줄어든다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p><b>經緯度網格</b>(等角度間隔)DEM 的坡度。格子單元尺寸隨緯度變化。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>公開 DEM の多くは「1 秒メッシュ」のように<b>角度で等間隔</b>です。この格子を</p>
-<p>そのまま <code style="color:#22d3bf">dem_slope</code> に一定のセル寸法で渡すと、経度方向の実距離が <code style="color:#22d3bf">cos(緯度)</code> 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと <b>東西の傾斜が過小</b>になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば今度は南北が過大になります。<b>どちらに転ぶかは何を定数にしたかで決まる</b>ので、「過大/過小」を覚えるのではなく<b>緯度ごとに寸法を計算する</b>のが正解です。</p>
-<p>★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら <b>半分になった</b>(過小)。符号や向きの主張は測ってから書くこと。</p>
-<p>ここでは緯度ごとに東西のセル寸法を計算し、格子を等距離へ直してから測ります。</p>
+<p>公開的 DEM 大多像「1 秒網格(mesh)」那樣<b>按角度等間隔</b>。把這種網格</p>
+<p>直接以固定單元尺寸傳給 <code style="color:#22d3bf">dem_slope</code>,就會忽略經度方向的實際距離短了 <code style="color:#22d3bf">cos(緯度)</code> 倍這一點。若兩軸都用緯度方向的尺寸, <b>東西向坡度會偏小</b>(北緯 60 度時減半);若兩軸都用經度方向的尺寸, 則反過來南北向偏大。<b>偏向哪一邊取決於把什麼當作常數</b>,所以正確做法不是記住「偏大/偏小」,而是<b>按緯度計算尺寸</b>。</p>
+<p>★ 最初這個 docstring 寫的是「東西向會偏大」,但用測試量測後 <b>變成了一半</b>(偏小)。關於符號或方向的主張要先量測再寫。</p>
+<p>這裡按緯度計算東西向的單元尺寸,把網格修正為等距離後再量測。</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code>。行 0 が北。</p>
-<p>lat0_deg: <b>北西角</b>の緯度 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度]。正の値。</p>
-<p>method / units: <code style="color:#22d3bf">dem_slope</code> と同じ。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>。第 0 列為北。</p>
+<p>lat0_deg: <b>西北角</b>的緯度 [度]。</p>
+<p>d_lat_deg / d_lon_deg: 每個單元的緯度、經度步長 [度]。正值。</p>
+<p>method / units: 與 <code style="color:#22d3bf">dem_slope</code> 相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

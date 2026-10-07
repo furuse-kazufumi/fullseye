@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_chi2_gof&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>χ² goodness-of-fit test: whether the counts <code style="color:#22d3bf">observed</code> match the expected counts (uniform by default). Degrees of freedom = number of bins − 1.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>期待度数が 5 未満の区分があると近似が悪い(<code style="color:#22d3bf">low_expected</code> に数を返す)。</p>
+<p>If any bin has an expected count below 5, the approximation is poor (the number is returned in <code style="color:#22d3bf">low_expected</code>).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

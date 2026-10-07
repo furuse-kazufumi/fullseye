@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>측지 성과(datum)의 변환 —— 지심 3 매개변수 평행 이동(<code style="color:#22d3bf">points</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
-<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
-<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
+<p>같은 “북위 35도 41분”이라도, 구 일본 측지계와 세계 측지계에서는 <b>지상에서 수백 미터</b> 떨어진 점을 가리킨다. 이 op는 그 전환을 지심 직교 좌표에서의 평행 이동(<code style="color:#22d3bf">Molodensky-Badekas</code>의 회전·축척 없는 경우)으로 수행한다::</p>
+<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 측지 좌표(a_to, f_to)</p>
+<p>★<b>파라미터에 기본값을 두지 않는다</b>. 어느 성과에서 어느 성과로, 어느 평행 이동량으로옮기는지는 나라·지역·판마다 다르며, 말없이 가정하면 “예외는 나지 않지만 수백 미터어긋난 좌표”가 나온다 —— 그것이 이 op의 존재 이유이므로, 호출하는 쪽이 반드시 쓰게 한다.</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。</p>
-<p>h_m: 元の成果での楕円体高 [m]。</p>
-<p>dx_m / dy_m / dz_m: 地心の平行移動量 [m] (元 → 先)。</p>
-<p>a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。</p>
-<p>a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。</p>
+<p>lat_deg / lon_deg: 원래 성과에서의 위도·경도 [도]. 배열 가능.</p>
+<p>h_m: 원래 성과에서의 타원체고 [m].</p>
+<p>dx_m / dy_m / dz_m: 지심의 평행 이동량 [m] (원래 → 대상).</p>
+<p>a_from_m / f_from: 원래 타원체의 장반경 [m]과 편평률.</p>
+<p>a_to_m / f_to: 대상 타원체의 장반경 [m]과 편평률.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b> (往復の床は <code style="color:#22d3bf">dem_ecef_to_geodetic</code> と同じ)。平行移動だけを与えたときの地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。</p>
+<p><code style="color:#22d3bf">(n, 3)</code>의 <code style="color:#22d3bf">(위도[도], 경도[도], 타원체고[m])</code>.</p>
+<p>닫힌 식으로 검사할 수 있는 것: 평행 이동 0이고 같은 타원체이면 <b>항등 변환</b> (왕복의 하한은 <code style="color:#22d3bf">dem_ecef_to_geodetic</code>과 같다). 평행 이동만 주었을 때의지상 이동량은, 그 점의 ECEF 기저로 분해한 성분과 일치한다.</p>
+<p><b>ValueError</b>: 비유한, 위도가 ±90을 벗어남, 장반경이 양수가 아님, 편평률이 [0, 1)을 벗어남.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,32 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)</code>; aus dem Register: <code style="color:#22d3bf">opsroughness.get(&quot;profile_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Profil-Rauheitskenngrößen Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku (ISO 4287).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>引数</p>
-<p>p           帯域処理済みの断面(1 次元)。</p>
-<p>dx          標本間隔。パラメータ自体には効かないが <code style="color:#22d3bf">sampling_length</code> の</p>
-<p>報告に要る(単位を持たせないと Rz の条件が書けない)。</p>
-<p>n_sampling  基準長さの分割数。ISO 4287 の既定は 5。</p>
-<p>★ Rz と Rt を<b>両方</b>返す —— 定義差をここで消す ISO 4287 の Rz は「評価長さを <code style="color:#22d3bf">n_sampling</code> 等分し、各区間の最大山高さ + 最大谷深さを平均したもの」。一方 Rt は評価長さ全体の最大高低差。同じ断面でも値が違い、しかも文献や装置によって「Rz」がどちらを指すか揺れる。<b>両方返せば取り違えようがない。</b></p>
-<p>実測(512 点、λc=80 µm で切った断面。深い傷を 1 本含む行を選んだ):</p>
-<p>Rz(5 区間の平均)    1.5076</p>
-<p>Rz_max(区間の最大)  5.4706</p>
-<p>Rt(評価長さ全体)    5.4706</p>
-<p>Rt / Rz               3.63</p>
-<p>傷が 1 区間にしか無いので、5 区間の平均が傷の寄与を 1/5 に薄める。<b>同じ断面で 3.6 倍違う数字が、どちらも「Rz」と呼ばれている。</b> 同じ行から傷だけ抜くと Rt/Rz = 1.21 まで下がる —— <b>差が開くのは孤立した特徴があるときだけ</b>なので、「うちの装置では一致するから同じ」は反例に当たっていないだけ。</p>
-<p>★ 落とし穴 —— 断面 1 本の Rz は面の Sz を代表しない加工目が行方向に走る面(512x512、深い傷 4 本、λc=80 µm)で、断面を 171 本ずつ取った実測:</p>
-<p style="margin:2px 0 2px 12px">• 目に<b>直交</b>する列方向の Rq は、平行な行方向の <b>2.67 倍</b> (0.1853 対 0.0694)。同じ表面・同じ装置で、向きが違うだけ。</p>
-<p style="margin:2px 0 2px 12px">• 行方向の Rt は最小 0.2765 / 最大 5.4706 で <b>19.8 倍</b>ばらつく。</p>
-<p style="margin:2px 0 2px 12px">• 面の Sz(5.9694)の 8 割に届く断面は <b>171 本中 6 本</b>(3.5 %)。</p>
-<p>Rq は数本で足りるが Rz は足りない —— <b>同じ 1 次元断面でも、パラメータごとに必要な本数が違う。</b> Rz を報告するなら本数と向きを必ず添えること。</p>
-<p>定義の細部(規格からの逸脱をここに明示する)</p>
-<p style="margin:2px 0 2px 12px">• 基準線は評価長さ全体の平均線(最小二乗直線ではない)。傾きは <code style="color:#22d3bf">surface_form_remove</code> か <code style="color:#22d3bf">surface_filter</code> で先に除いておくこと。</p>
-<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku は評価長さ全体で計算する(区間平均ではない)。</p>
-<p style="margin:2px 0 2px 12px">• 評価長さが <code style="color:#22d3bf">n_sampling</code> で割り切れないときは余りを捨てる。捨てた点数は <code style="color:#22d3bf">dropped_samples</code> で返す。</p>
+<p>Argumente</p>
+<p>p           Bandgefiltertes Profil (1-D).</p>
+<p>dx          Abtastabstand. Wirkt nicht auf die Parameter selbst, wird aber für die Angabe von <code style="color:#22d3bf">sampling_length</code></p>
+<p>benötigt (ohne Einheiten lassen sich die Bedingungen von Rz nicht angeben).</p>
+<p>n_sampling  Anzahl der Einzelmessstrecken. Default in ISO 4287 ist 5.</p>
+<p>★ Gibt Rz und Rt <b>beide</b> zurück —— der Definitionsunterschied wird hier beseitigt Rz nach ISO 4287 ist &quot;die Messstrecke in <code style="color:#22d3bf">n_sampling</code> gleiche Teile geteilt und je Abschnitt größte Spitzenhöhe + größte Taltiefe gemittelt&quot;. Rt dagegen ist die größte Höhendifferenz über die gesamte Messstrecke. Auf demselben Profil unterscheiden sich die Werte, und je nach Literatur oder Gerät schwankt, was mit &quot;Rz&quot; gemeint ist. <b>Wer beide zurückgibt, kann sie nicht verwechseln.</b></p>
+<p>Gemessen (512 Punkte, Profil bei λc=80 µm abgeschnitten; gewählt wurde eine Zeile mit 1 tiefen Kratzer):</p>
+<p>Rz (Mittel über 5 Abschnitte)   1.5076</p>
+<p>Rz_max (Maximum der Abschnitte) 5.4706</p>
+<p>Rt (gesamte Messstrecke)    5.4706</p>
+<p>Rt / Rz                         3.63</p>
+<p>Da der Kratzer nur in 1 Abschnitt liegt, verdünnt das Mittel über 5 Abschnitte seinen Beitrag auf 1/5. <b>Auf demselben Profil heißen zwei um das 3.6-fache verschiedene Zahlen beide &quot;Rz&quot;.</b> Entfernt man aus derselben Zeile nur den Kratzer, sinkt Rt/Rz auf 1.21 —— <b>die Lücke öffnet sich nur bei einem isolierten Merkmal</b>, daher heißt &quot;auf unserem Gerät stimmen sie überein, also sind sie gleich&quot; nur, dass man noch kein Gegenbeispiel getroffen hat.</p>
+<p>★ Falle —— das Rz eines einzelnen Profils repräsentiert nicht das flächenhafte Sz Auf einer Fläche mit in Zeilenrichtung laufenden Bearbeitungsspuren (512x512, 4 tiefe Kratzer, λc=80 µm), gemessen mit je 171 Profilen pro Richtung:</p>
+<p style="margin:2px 0 2px 12px">• Rq in Spaltenrichtung, <b>senkrecht</b> zu den Riefen, ist das <b>2.67-fache</b> der parallelen Zeilenrichtung (0.1853 gegenüber 0.0694). Gleiche Oberfläche, gleiches Gerät, nur die Richtung ist anders.</p>
+<p style="margin:2px 0 2px 12px">• Rt in Zeilenrichtung streut zwischen Minimum 0.2765 / Maximum 5.4706 um das <b>19.8-fache</b>.</p>
+<p style="margin:2px 0 2px 12px">• Profile, die 80 % des flächenhaften Sz (5.9694) erreichen: <b>6 von 171</b> (3.5 %).</p>
+<p>Für Rq genügen wenige Profile, für Rz nicht —— <b>selbst beim gleichen 1-D-Profil braucht jeder Parameter eine andere Anzahl.</b> Wer Rz angibt, muss Anzahl und Richtung stets mit angeben.</p>
+<p>Details der Definition (Abweichungen von der Norm werden hier ausdrücklich genannt)</p>
+<p style="margin:2px 0 2px 12px">• Die Bezugslinie ist die Mittellinie über die gesamte Messstrecke (keine Gerade nach kleinsten Quadraten). Neigung vorher mit <code style="color:#22d3bf">surface_form_remove</code> oder <code style="color:#22d3bf">surface_filter</code> entfernen.</p>
+<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku werden über die gesamte Messstrecke berechnet (nicht je Abschnitt gemittelt).</p>
+<p style="margin:2px 0 2px 12px">• Ist die Messstrecke nicht durch <code style="color:#22d3bf">n_sampling</code> teilbar, wird der Rest verworfen. Die Zahl der verworfenen Punkte wird in <code style="color:#22d3bf">dropped_samples</code> zurückgegeben.</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> が 1 未満、または区間あたり 4 点未満になる。</p>
-<p style="margin:2px 0 2px 12px">• 断面が完全に平坦(Rq=0)。</p>
+<p style="margin:2px 0 2px 12px">• Nicht 1-D / weniger als 8 Punkte / enthält NaN oder Inf.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> kleiner als 1, oder weniger als 4 Punkte pro Abschnitt.</p>
+<p style="margin:2px 0 2px 12px">• Das Profil ist vollkommen eben (Rq=0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">Leitfaden zur Familie surface_roughness</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

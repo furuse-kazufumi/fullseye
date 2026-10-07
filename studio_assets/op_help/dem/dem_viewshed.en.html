@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_viewshed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Visible area from 1 point (1 = visible). Decides whether the line of sight is blocked by the terrain.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p><code style="color:#22d3bf">observer_rc</code> は <code style="color:#22d3bf">(row, col)</code>。観測点自身は常に可視。</p>
-<p>手順: 目の高さ <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>。各セルへの視線を <code style="color:#22d3bf">ceil(hypot(H, W))</code> 等分し、途中の地形の仰角 <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> が目標の仰角 <code style="color:#22d3bf">(z + target_height_m - eye) / d</code> を上回るセルがあれば遮蔽(0)。途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。<b>地球の曲率と大気屈折は入れない</b>(数 km 超では別途補正する)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、番兵値は拒否(<code style="color:#22d3bf">dem_slope</code> と同じ契約)。<code style="color:#22d3bf">nan</code> セルは比較が偽になるため<b>遮蔽にも被遮蔽にもならず 1 のまま</b>残る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m]、正。距離判定に使う。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: 格子内の <code style="color:#22d3bf">(row, col)</code> 整数。外や pair でないものは <code style="color:#22d3bf">ValueError</code>。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: 地面からの高さ [m]。既定は目の高さ 1.7 m と地表 0 m。鉄塔からの可視域なら <code style="color:#22d3bf">observer_height_m</code> を上げる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: これより遠いセルは 0(省略時は無制限)。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 1 / 0。観測点は常に 1。</p>
-<p style="margin:2px 0 2px 12px">• 計算量: 格子全体 × <code style="color:#22d3bf">ceil(hypot(H, W))</code> 回のベクトル演算。</p>
-<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> は逆に「各セルから空がどれだけ見えるか」を出す。</p>
+<p><code style="color:#22d3bf">observer_rc</code> is <code style="color:#22d3bf">(row, col)</code>. The observer itself is always visible.</p>
+<p>Procedure: eye height <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>. The line of sight to each cell is divided into <code style="color:#22d3bf">ceil(hypot(H, W))</code> equal parts, and if at any intermediate cell the terrain elevation angle <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> exceeds the target elevation angle <code style="color:#22d3bf">(z + target_height_m - eye) / d</code>, the cell is occluded (0). Intermediate points are rounded to the nearest cell, so oblique lines of sight include grid error. <b>Earth curvature and atmospheric refraction are not included</b> (beyond a few km, correct separately).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 or larger, sentinel values rejected (same contract as <code style="color:#22d3bf">dem_slope</code>). <code style="color:#22d3bf">nan</code> cells make comparisons false, so they <b>neither occlude nor get occluded and stay at 1</b>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: [m], positive. Used for distance tests.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_rc</code>: integer <code style="color:#22d3bf">(row, col)</code> within the grid. Outside or not a pair gives <code style="color:#22d3bf">ValueError</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">observer_height_m</code> / <code style="color:#22d3bf">target_height_m</code>: height above ground [m]. Defaults are eye height 1.7 m and ground surface 0 m. For the viewshed from a steel tower, raise <code style="color:#22d3bf">observer_height_m</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">max_distance_m</code>: cells farther than this are 0 (unlimited if omitted).</p>
+<p style="margin:2px 0 2px 12px">• Returns: <code style="color:#22d3bf">(H, W)</code> float64 of 1 / 0. The observer is always 1.</p>
+<p style="margin:2px 0 2px 12px">• Cost: whole grid × <code style="color:#22d3bf">ceil(hypot(H, W))</code> vector operations.</p>
+<p><code style="color:#22d3bf">dem_horizon_angle</code> / <code style="color:#22d3bf">dem_sky_view_factor</code> conversely give &quot;how much sky is visible from each cell&quot;.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

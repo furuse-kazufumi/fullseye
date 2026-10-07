@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Fehlerfunktion erf(x) = (2/√π) ∫_0^x e^{−t²} dt.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>正規分布の累積や、ぼけたエッジ(ガウスで畳んだ段差)の形そのもの: 幅 σ のガウスでぼけた段差は ½(1 + erf(x / (σ√2)))。門: 奇関数、erf(∞) = 1、導関数 = (2/√π) e^{−x²}、Gauss 求積による積分と一致。</p>
+<p>Die kumulierte Normalverteilung und genau die Form einer unscharfen Kante (mit einer Gauß-Funktion gefaltete Stufe): eine durch einen Gauß der Breite σ verwischte Stufe ist ½(1 + erf(x / (σ√2))). Gate: ungerade Funktion, erf(∞) = 1, Ableitung = (2/√π) e^{−x²}, Übereinstimmung mit dem Integral per Gauß-Quadratur.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

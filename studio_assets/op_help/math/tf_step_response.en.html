@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_step_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_step_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;tf_step_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Unit step response y(t) = L⁻¹[H(s)/s] (t).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>拡大行列 [[A, B], [0, 0]] の指数関数で ∫_0^t e^{Aτ} B dτ を厳密に得る(A が特異でも可)。</p>
-<p>門: 1/(s+a) → (1 − e^{−at})/a、2 次系 ω²/(s² + 2ζωs + ω²) の閉じた式。</p>
+<p>The exponential of the augmented matrix [[A, B], [0, 0]] gives ∫_0^t e^{Aτ} B dτ exactly (works even if A is singular).</p>
+<p>Gate: 1/(s+a) → (1 − e^{−at})/a, and the closed form of the 2nd-order system ω²/(s² + 2ζωs + ω²).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

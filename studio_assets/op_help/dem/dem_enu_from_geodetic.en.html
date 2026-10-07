@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodetic coordinates → <b>local ENU</b> (east, north, up) around a reference point [m] (<code style="color:#22d3bf">points</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
-<p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
+<p>Most site drawings, robot maps and point clouds are written as &quot;east, north, up from an origin&quot;. The conversion from ECEF is 1 rotation at the reference point: <code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>.</p>
+<p>★ It is <b>not</b> plane rectangular coordinates (a projection). ENU corresponds to orthographic projection onto the plane tangent at the reference point, and the farther the distance, the more it drops in height by the Earth&#x27;s curvature —— about 7.8 m at 10 km, about 780 m at 100 km. Treating a wide area as &quot;flat xy&quot; means throwing this drop away.</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 点の緯度・経度 [度]。配列可。</p>
-<p>h_m: 点の楕円体高 [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点(原点)の測地座標。</p>
+<p>lat_deg / lon_deg: latitude/longitude of the points [deg]. Arrays allowed.</p>
+<p>h_m: ellipsoidal height of the points [m].</p>
+<p>lat0_deg / lon0_deg / h0_m: geodetic coordinates of the reference point (origin).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。基準点そのものは厳密に <code style="color:#22d3bf">(0, 0, 0)</code>。</p>
-<p>閉じた式で検査できること: 基準点で <code style="color:#22d3bf">(0, 0, 0)</code>、<code style="color:#22d3bf">dem_geodetic_from_enu</code> との往復が 1e-9 m 級、そして既存の <code style="color:#22d3bf">dem_geodetic_to_ecef</code> を経由して自分で回した結果と一致する(<b>別経路での検算</b>)。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長さの食い違い。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> of <code style="color:#22d3bf">(east, north, up)</code> [m]. The reference point itself is exactly <code style="color:#22d3bf">(0, 0, 0)</code>.</p>
+<p>Checkable by closed form: <code style="color:#22d3bf">(0, 0, 0)</code> at the reference point, round trip with <code style="color:#22d3bf">dem_geodetic_from_enu</code> at the 1e-9 m level, and agreement with the result of rotating it oneself via the existing <code style="color:#22d3bf">dem_geodetic_to_ecef</code> (<b>cross-check via a separate path</b>).</p>
+<p><b>ValueError</b>: non-finite values, latitude outside ±90, length mismatch.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

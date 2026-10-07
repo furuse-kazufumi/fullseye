@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_cell_size_webmercator(zoom, lat_deg)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_cell_size_webmercator(zoom, lat_deg)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_cell_size_webmercator&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Web 麥卡托圖磚的地面解析度 [m/px]。<b>隨緯度變化</b>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(タイルが 256 px の場合)。</p>
-<p>実測の目安: 東京(北緯 35.68 度)の z=15 で <b>3.880 m</b>、赤道では 4.777 m。赤道の値をそのまま使うと東京で傾斜が <b>23 % 過小</b>になります —— これは例外を出さずに全部の下流の数字を狂わせるので、この族で最も多い事故です。</p>
+<p><code style="color:#22d3bf">156543.03392804097 * cos(lat) / 2^zoom</code>(圖磚為 256 px 時)。</p>
+<p>實測參考:東京(北緯 35.68 度)在 z=15 時為 <b>3.880 m</b>,赤道為 4.777 m。直接使用赤道的值,東京的坡度會<b>偏小 23 %</b> —— 這不會拋出例外卻會讓所有下游數字出錯,是這一族中最常見的事故。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -4,16 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Slope of a DEM on a <b>latitude-longitude grid</b> (equal angular spacing). The cell dimensions vary with latitude.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>公開 DEM の多くは「1 秒メッシュ」のように<b>角度で等間隔</b>です。この格子を</p>
-<p>そのまま <code style="color:#22d3bf">dem_slope</code> に一定のセル寸法で渡すと、経度方向の実距離が <code style="color:#22d3bf">cos(緯度)</code> 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと <b>東西の傾斜が過小</b>になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば今度は南北が過大になります。<b>どちらに転ぶかは何を定数にしたかで決まる</b>ので、「過大/過小」を覚えるのではなく<b>緯度ごとに寸法を計算する</b>のが正解です。</p>
-<p>★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら <b>半分になった</b>(過小)。符号や向きの主張は測ってから書くこと。</p>
-<p>ここでは緯度ごとに東西のセル寸法を計算し、格子を等距離へ直してから測ります。</p>
+<p>Many public DEMs are <b>equally spaced in angle</b>, like a &quot;1-arc-second mesh&quot;. Passing this grid as is to <code style="color:#22d3bf">dem_slope</code> with a fixed cell size ignores that the real distance in the longitude direction is shorter by a factor of <code style="color:#22d3bf">cos(latitude)</code>. Using the latitude-direction size for both axes makes <b>east-west slopes too small</b> (half at 60 degrees north), and using the longitude-direction size for both axes makes north-south too large instead. <b>Which way it goes depends on what was taken as constant</b>, so rather than memorising &quot;too large/too small&quot;, <b>computing the size per latitude</b> is the right answer.</p>
+<p>★ At first this docstring said &quot;east-west becomes too large&quot;, but when measured in a test it <b>came out half</b> (too small). Measure claims about sign or direction before writing them.</p>
+<p>Here the east-west cell size is computed per latitude, and the grid is converted to equal distances before measuring.</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code>。行 0 が北。</p>
-<p>lat0_deg: <b>北西角</b>の緯度 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度]。正の値。</p>
-<p>method / units: <code style="color:#22d3bf">dem_slope</code> と同じ。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>. Row 0 is north.</p>
+<p>lat0_deg: latitude of the <b>north-west corner</b> [degrees].</p>
+<p>d_lat_deg / d_lon_deg: latitude/longitude step per cell [degrees]. Positive values.</p>
+<p>method / units: same as <code style="color:#22d3bf">dem_slope</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

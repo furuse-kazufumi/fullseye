@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;angle_defect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>每個頂點的角虧(離散 Gauss 曲率)K_v = 2π − Σ(該頂點處各三角形的角)。邊界頂點為 π − Σ(測地曲率)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>閉じたメッシュでは Σ K_v = 2πχ が<b>厳密に</b>成り立つ(Descartes の定理)。境界があるときは Σ(内部の K) + Σ(境界の π − Σθ) = 2πχ(離散 Gauss–Bonnet)。返り値 <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>。</p>
+<p>在封閉網格(mesh)上 Σ K_v = 2πχ <b>嚴格</b>成立(Descartes 定理)。有邊界時 Σ(內部的 K) + Σ(邊界的 π − Σθ) = 2πχ(離散 Gauss–Bonnet)。回傳值 <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

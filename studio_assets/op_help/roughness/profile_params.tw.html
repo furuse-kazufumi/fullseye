@@ -4,32 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)</code>;從台帳取用則 <code style="color:#22d3bf">opsroughness.get(&quot;profile_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>截面粗糙度參數 Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>引数</p>
-<p>p           帯域処理済みの断面(1 次元)。</p>
-<p>dx          標本間隔。パラメータ自体には効かないが <code style="color:#22d3bf">sampling_length</code> の</p>
-<p>報告に要る(単位を持たせないと Rz の条件が書けない)。</p>
-<p>n_sampling  基準長さの分割数。ISO 4287 の既定は 5。</p>
-<p>★ Rz と Rt を<b>両方</b>返す —— 定義差をここで消す ISO 4287 の Rz は「評価長さを <code style="color:#22d3bf">n_sampling</code> 等分し、各区間の最大山高さ + 最大谷深さを平均したもの」。一方 Rt は評価長さ全体の最大高低差。同じ断面でも値が違い、しかも文献や装置によって「Rz」がどちらを指すか揺れる。<b>両方返せば取り違えようがない。</b></p>
-<p>実測(512 点、λc=80 µm で切った断面。深い傷を 1 本含む行を選んだ):</p>
-<p>Rz(5 区間の平均)    1.5076</p>
-<p>Rz_max(区間の最大)  5.4706</p>
-<p>Rt(評価長さ全体)    5.4706</p>
-<p>Rt / Rz               3.63</p>
-<p>傷が 1 区間にしか無いので、5 区間の平均が傷の寄与を 1/5 に薄める。<b>同じ断面で 3.6 倍違う数字が、どちらも「Rz」と呼ばれている。</b> 同じ行から傷だけ抜くと Rt/Rz = 1.21 まで下がる —— <b>差が開くのは孤立した特徴があるときだけ</b>なので、「うちの装置では一致するから同じ」は反例に当たっていないだけ。</p>
-<p>★ 落とし穴 —— 断面 1 本の Rz は面の Sz を代表しない加工目が行方向に走る面(512x512、深い傷 4 本、λc=80 µm)で、断面を 171 本ずつ取った実測:</p>
-<p style="margin:2px 0 2px 12px">• 目に<b>直交</b>する列方向の Rq は、平行な行方向の <b>2.67 倍</b> (0.1853 対 0.0694)。同じ表面・同じ装置で、向きが違うだけ。</p>
-<p style="margin:2px 0 2px 12px">• 行方向の Rt は最小 0.2765 / 最大 5.4706 で <b>19.8 倍</b>ばらつく。</p>
-<p style="margin:2px 0 2px 12px">• 面の Sz(5.9694)の 8 割に届く断面は <b>171 本中 6 本</b>(3.5 %)。</p>
-<p>Rq は数本で足りるが Rz は足りない —— <b>同じ 1 次元断面でも、パラメータごとに必要な本数が違う。</b> Rz を報告するなら本数と向きを必ず添えること。</p>
-<p>定義の細部(規格からの逸脱をここに明示する)</p>
-<p style="margin:2px 0 2px 12px">• 基準線は評価長さ全体の平均線(最小二乗直線ではない)。傾きは <code style="color:#22d3bf">surface_form_remove</code> か <code style="color:#22d3bf">surface_filter</code> で先に除いておくこと。</p>
-<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku は評価長さ全体で計算する(区間平均ではない)。</p>
-<p style="margin:2px 0 2px 12px">• 評価長さが <code style="color:#22d3bf">n_sampling</code> で割り切れないときは余りを捨てる。捨てた点数は <code style="color:#22d3bf">dropped_samples</code> で返す。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> が 1 未満、または区間あたり 4 点未満になる。</p>
-<p style="margin:2px 0 2px 12px">• 断面が完全に平坦(Rq=0)。</p>
+<p>引數</p>
+<p>p           經過帶通處理的輪廓(一維)。</p>
+<p>dx          取樣間隔。對參數本身沒有影響,但回報 <code style="color:#22d3bf">sampling_length</code> 時</p>
+<p>需要(沒有單位就無法寫出 Rz 的條件)。</p>
+<p>n_sampling  取樣長度的分段數。ISO 4287 的預設值為 5。</p>
+<p>★ 同時回傳 Rz 與 Rt <b>兩者</b> —— 在這裡消除定義差異 ISO 4287 的 Rz 是「將評定長度 <code style="color:#22d3bf">n_sampling</code> 等分,對各區間的最大峰高 + 最大谷深取平均」。而 Rt 是整個評定長度上的最大高低差。同一輪廓上兩者的值也不同,而且依文獻與儀器不同, 「Rz」指哪一個並不統一。<b>兩者都回傳就不會搞混。</b></p>
+<p>實測(512 點,以 λc=80 µm 截止的輪廓。選取了含 1 條深刮痕的列):</p>
+<p>Rz(5 個區間的平均)    1.5076</p>
+<p>Rz_max(區間的最大)    5.4706</p>
+<p>Rt(整個評定長度)      5.4706</p>
+<p>Rt / Rz                 3.63</p>
+<p>刮痕只在 1 個區間內,所以 5 個區間的平均把刮痕的貢獻稀釋為 1/5。<b>同一輪廓上相差 3.6 倍的數字,都被稱為「Rz」。</b> 從同一列中只去掉刮痕,Rt/Rz 降至 1.21 —— <b>只有存在孤立特徵時差距才會拉開</b>,所以「在我們的儀器上一致所以相同」只是還沒碰到反例而已。</p>
+<p>★ 陷阱 —— 單條輪廓的 Rz 不能代表面的 Sz 在加工紋理沿列方向的面上(512x512,4 條深刮痕,λc=80 µm),每個方向各取 171 條輪廓的實測:</p>
+<p style="margin:2px 0 2px 12px">• 與紋理<b>正交</b>的行方向的 Rq 是平行的列方向的 <b>2.67 倍</b> (0.1853 對 0.0694)。同一表面、同一儀器,僅方向不同。</p>
+<p style="margin:2px 0 2px 12px">• 列方向的 Rt 最小 0.2765 / 最大 5.4706,離散達 <b>19.8 倍</b>。</p>
+<p style="margin:2px 0 2px 12px">• 達到面 Sz(5.9694)80 % 的輪廓 <b>171 條中僅 6 條</b>(3.5 %)。</p>
+<p>Rq 用幾條就夠,Rz 則不夠 —— <b>即使是同樣的一維輪廓, 各參數所需的條數也不同。</b> 回報 Rz 時務必附上條數與方向。</p>
+<p>定義細節(在此明示與標準的偏離)</p>
+<p style="margin:2px 0 2px 12px">• 基準線是整個評定長度的平均線(不是最小平方直線)。傾斜應預先用 <code style="color:#22d3bf">surface_form_remove</code> 或 <code style="color:#22d3bf">surface_filter</code> 去除。</p>
+<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku 在整個評定長度上計算(不是區間平均)。</p>
+<p style="margin:2px 0 2px 12px">• 評定長度不能被 <code style="color:#22d3bf">n_sampling</code> 整除時捨棄餘數。捨棄的點數由 <code style="color:#22d3bf">dropped_samples</code> 回傳。</p>
+<p>fail-closed(失敗即拒絕)</p>
+<p style="margin:2px 0 2px 12px">• 不是一維 / 少於 8 點 / 含 NaN 或 Inf。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> 小於 1,或每個區間少於 4 點。</p>
+<p style="margin:2px 0 2px 12px">• 輪廓完全平坦(Rq=0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

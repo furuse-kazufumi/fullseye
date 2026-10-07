@@ -4,32 +4,31 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_params(p, dx=1.0, n_sampling=5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roughness; roughness.profile_params(p, dx=1.0, n_sampling=5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsroughness.get(&quot;profile_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>단면 거칠기 파라미터 Ra/Rq/Rz/Rt/Rp/Rv/Rsk/Rku(ISO 4287).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>引数</p>
-<p>p           帯域処理済みの断面(1 次元)。</p>
-<p>dx          標本間隔。パラメータ自体には効かないが <code style="color:#22d3bf">sampling_length</code> の</p>
-<p>報告に要る(単位を持たせないと Rz の条件が書けない)。</p>
-<p>n_sampling  基準長さの分割数。ISO 4287 の既定は 5。</p>
-<p>★ Rz と Rt を<b>両方</b>返す —— 定義差をここで消す ISO 4287 の Rz は「評価長さを <code style="color:#22d3bf">n_sampling</code> 等分し、各区間の最大山高さ + 最大谷深さを平均したもの」。一方 Rt は評価長さ全体の最大高低差。同じ断面でも値が違い、しかも文献や装置によって「Rz」がどちらを指すか揺れる。<b>両方返せば取り違えようがない。</b></p>
-<p>実測(512 点、λc=80 µm で切った断面。深い傷を 1 本含む行を選んだ):</p>
-<p>Rz(5 区間の平均)    1.5076</p>
-<p>Rz_max(区間の最大)  5.4706</p>
-<p>Rt(評価長さ全体)    5.4706</p>
+<p>인수</p>
+<p>p           대역 처리된 단면(1차원).</p>
+<p>dx          샘플 간격. 파라미터 자체에는 영향이 없지만 <code style="color:#22d3bf">sampling_length</code></p>
+<p>보고에 필요하다(단위가 없으면 Rz의 조건을 쓸 수 없다).</p>
+<p>n_sampling  기준 길이의 분할 수. ISO 4287의 기본값은 5.</p>
+<p>★ Rz와 Rt를 <b>둘 다</b> 반환한다 —— 정의 차이를 여기서 없앤다 ISO 4287의 Rz는 &quot;평가 길이를 <code style="color:#22d3bf">n_sampling</code> 등분하고, 각 구간의최대 산 높이 + 최대 골 깊이를 평균한 것&quot;. 한편 Rt는 평가 길이 전체의최대 고저차. 같은 단면이라도 값이 다르고, 게다가 문헌이나 장치에 따라 &quot;Rz&quot;가 어느 쪽을 가리키는지 흔들린다. <b>둘 다 반환하면 혼동할 수가 없다.</b></p>
+<p>실측(512점, λc=80 µm로 자른 단면. 깊은 흠집을 1개 포함하는 행을 골랐다):</p>
+<p>Rz(5구간의 평균)      1.5076</p>
+<p>Rz_max(구간의 최대)   5.4706</p>
+<p>Rt(평가 길이 전체)    5.4706</p>
 <p>Rt / Rz               3.63</p>
-<p>傷が 1 区間にしか無いので、5 区間の平均が傷の寄与を 1/5 に薄める。<b>同じ断面で 3.6 倍違う数字が、どちらも「Rz」と呼ばれている。</b> 同じ行から傷だけ抜くと Rt/Rz = 1.21 まで下がる —— <b>差が開くのは孤立した特徴があるときだけ</b>なので、「うちの装置では一致するから同じ」は反例に当たっていないだけ。</p>
-<p>★ 落とし穴 —— 断面 1 本の Rz は面の Sz を代表しない加工目が行方向に走る面(512x512、深い傷 4 本、λc=80 µm)で、断面を 171 本ずつ取った実測:</p>
-<p style="margin:2px 0 2px 12px">• 目に<b>直交</b>する列方向の Rq は、平行な行方向の <b>2.67 倍</b> (0.1853 対 0.0694)。同じ表面・同じ装置で、向きが違うだけ。</p>
-<p style="margin:2px 0 2px 12px">• 行方向の Rt は最小 0.2765 / 最大 5.4706 で <b>19.8 倍</b>ばらつく。</p>
-<p style="margin:2px 0 2px 12px">• 面の Sz(5.9694)の 8 割に届く断面は <b>171 本中 6 本</b>(3.5 %)。</p>
-<p>Rq は数本で足りるが Rz は足りない —— <b>同じ 1 次元断面でも、パラメータごとに必要な本数が違う。</b> Rz を報告するなら本数と向きを必ず添えること。</p>
-<p>定義の細部(規格からの逸脱をここに明示する)</p>
-<p style="margin:2px 0 2px 12px">• 基準線は評価長さ全体の平均線(最小二乗直線ではない)。傾きは <code style="color:#22d3bf">surface_form_remove</code> か <code style="color:#22d3bf">surface_filter</code> で先に除いておくこと。</p>
-<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku は評価長さ全体で計算する(区間平均ではない)。</p>
-<p style="margin:2px 0 2px 12px">• 評価長さが <code style="color:#22d3bf">n_sampling</code> で割り切れないときは余りを捨てる。捨てた点数は <code style="color:#22d3bf">dropped_samples</code> で返す。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• 1 次元でない / 8 点未満 / NaN・Inf を含む。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code> が 1 未満、または区間あたり 4 点未満になる。</p>
-<p style="margin:2px 0 2px 12px">• 断面が完全に平坦(Rq=0)。</p>
+<p>흠집이 1구간에만 있으므로, 5구간의 평균이 흠집의 기여를 1/5로 희석한다. <b>같은 단면에서 3.6배 다른 숫자가, 둘 다 &quot;Rz&quot;라고 불리고 있다.</b> 같은 행에서 흠집만 빼면 Rt/Rz = 1.21까지 내려간다 —— <b>차이가 벌어지는 것은 고립된 특징이 있을 때뿐</b>이므로, &quot;우리 장치에서는 일치하니까 같다&quot;는 반례에 부딪히지 않았을 뿐이다.</p>
+<p>★ 함정 —— 단면 1개의 Rz는 면의 Sz를 대표하지 않는다가공 자국이 행 방향으로 달리는 면(512x512, 깊은 흠집 4개, λc=80 µm)에서, 단면을 171개씩 취한 실측:</p>
+<p style="margin:2px 0 2px 12px">• 결에 <b>직교</b>하는 열 방향의 Rq는 평행한 행 방향의 <b>2.67배</b> (0.1853 대 0.0694). 같은 표면, 같은 장치에서 방향만 다를 뿐.</p>
+<p style="margin:2px 0 2px 12px">• 행 방향의 Rt는 최소 0.2765 / 최대 5.4706으로 <b>19.8배</b> 흩어진다.</p>
+<p style="margin:2px 0 2px 12px">• 면의 Sz(5.9694)의 80 %에 도달하는 단면은 <b>171개 중 6개</b>(3.5 %).</p>
+<p>Rq는 몇 개로 충분하지만 Rz는 부족하다 —— <b>같은 1차원 단면이라도, 파라미터마다 필요한 개수가 다르다.</b> Rz를 보고한다면 개수와 방향을반드시 덧붙일 것.</p>
+<p>정의의 세부(규격으로부터의 일탈을 여기에 명시한다)</p>
+<p style="margin:2px 0 2px 12px">• 기준선은 평가 길이 전체의 평균선(최소제곱 직선이 아니다). 기울기는 <code style="color:#22d3bf">surface_form_remove</code> 또는 <code style="color:#22d3bf">surface_filter</code>로 먼저 제거해 둘 것.</p>
+<p style="margin:2px 0 2px 12px">• Rp / Rv / Rsk / Rku는 평가 길이 전체로 계산한다(구간 평균이 아니다).</p>
+<p style="margin:2px 0 2px 12px">• 평가 길이가 <code style="color:#22d3bf">n_sampling</code>으로 나누어떨어지지 않을 때는 나머지를 버린다. 버린점 수는 <code style="color:#22d3bf">dropped_samples</code>로 반환한다.</p>
+<p>fail-closed(실패 시 거부)</p>
+<p style="margin:2px 0 2px 12px">• 1차원이 아님 / 8점 미만 / NaN 또는 Inf를 포함.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_sampling</code>이 1 미만, 또는 구간당 4점 미만이 된다.</p>
+<p style="margin:2px 0 2px 12px">• 단면이 완전히 평탄(Rq=0).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

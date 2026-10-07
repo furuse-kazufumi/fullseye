@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><code style="color:#22d3bf">h - H - N</code>의 잔차 —— 높이의 혼동을 <b>조용히 넘어가게 하지 않는</b> 검출기(<code style="color:#22d3bf">table</code>).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
+<p>타원체고·표고·지오이드고는 1개의 항등식으로 연결되어 있다(<code style="color:#22d3bf">h = H + N</code>). 3개가 갖춰진 점에서 그 잔차를 재면, <b>어느 하나가 다른 기준·다른 모델·다른 판으로만들어져 있다</b>는 것이 수치로 나온다. 측량 성과끼리라면 잔차는 cm 급에 들어가고, 타원체고를 그대로 표고로 쓰고 있으면 잔차는 <code style="color:#22d3bf">-N</code>(일본 부근에서 −30~−40 m) 에 달라붙는다.</p>
 <p>Args:</p>
-<p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>
-<p>h_orthometric_m: 同じ点の標高 [m] (地図・水準測量)。</p>
-<p>geoid_height_m: 同じ点のジオイド高 [m]。</p>
-<p>tol_m: 「合っている」とみなす閾値 [m]。既定 0.10 m。</p>
+<p>h_ellipsoidal_m: 타원체고 [m] (GNSS의 반환). 배열 가능.</p>
+<p>h_orthometric_m: 같은 점의 표고 [m] (지도·수준 측량).</p>
+<p>geoid_height_m: 같은 점의 지오이드고 [m].</p>
+<p>tol_m: “맞다”고 간주하는 임계값 [m]. 기본값 0.10 m.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>。</p>
-<p>閉じた式で検査できること: 恒等式どおりに作った 3 つ組では残差は 0 になる(実測 rms 1.2e-14 m。丸めの分だけ厳密な 0 ではない)。標高の列に楕円体高をそのまま入れると残差は <b>−N</b> に張り付く —— 取り違えの量がそのまま出る。</p>
-<p><b>ValueError</b>: 長さの食い違い、非有限、負の *tol_m*。</p>
+<p><code style="color:#22d3bf">{&quot;residual_m&quot;: (n,), &quot;rms_m&quot;, &quot;max_abs_m&quot;, &quot;median_m&quot;, &quot;n&quot;, &quot;n_over_tol&quot;, &quot;tol_m&quot;, &quot;fraction_over_tol&quot;}</code>.</p>
+<p>닫힌 식으로 검사할 수 있는 것: 항등식대로 만든 3개 조에서는 잔차가 0이 된다(실측 rms 1.2e-14 m. 반올림만큼 엄밀한 0은 아니다). 표고 열에 타원체고를그대로 넣으면 잔차는 <b>−N</b>에 달라붙는다 —— 혼동한 양이 그대로 나온다.</p>
+<p><b>ValueError</b>: 길이 불일치, 비유한, 음의 *tol_m*.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

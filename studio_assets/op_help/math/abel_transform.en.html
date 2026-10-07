@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;abel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Maps an axisymmetric distribution f(r) (samples at r = 0, dr, 2dr, …) to its projection A(y) (forward Abel transform).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr。r = √(y² + u²) と置くと A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du になり、y = r の特異点が消える(被積分関数は滑らか)。f は 3 次スプラインで補間し、u の積分は Gauss–Legendre <code style="color:#22d3bf">n_quad</code> 点。R の外では f = 0 とみなす。</p>
-<p>門: f = exp(−r²/σ²) なら A(y) = √π σ exp(−y²/σ²)(R が十分大きいとき)。返り値は f と同じ長さ・同じ格子(y = 0, dr, 2dr, …)。</p>
+<p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr. Substituting r = √(y² + u²) gives A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du, and the singularity at y = r disappears (the integrand is smooth). f is interpolated with a cubic spline, and the integral over u uses Gauss–Legendre with <code style="color:#22d3bf">n_quad</code> points. Outside R, f = 0 is assumed.</p>
+<p>Gate: if f = exp(−r²/σ²), then A(y) = √π σ exp(−y²/σ²) (when R is large enough). The return value has the same length and the same grid as f (y = 0, dr, 2dr, …).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

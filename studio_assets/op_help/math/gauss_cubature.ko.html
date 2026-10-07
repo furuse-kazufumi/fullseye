@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>Gauss–Legendre의 텐서곱으로, 상자 [a, b]^dim(a, b는 축마다 달라도 됨)의 구적 절점 (n^dim, dim)과 가중치.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>画像の画素平均・ボリュームの体積積分・PSF の積分に。各軸で 2n−1 次までの多項式の積を<b>厳密に</b>積分する(門: x^p y^q で p, q &lt;= 2n−1 は厳密、どれかが 2n で誤差)。点の数は n^dim なので高次元では急に増える(dim &gt; 6 では低食い違い列の方が向く)。</p>
+<p>화상의 화소 평균·볼륨의 체적 적분·PSF의 적분에. 각 축에서 2n−1차까지의 다항식의 곱을 <b>엄밀하게</b> 적분한다(게이트: x^p y^q에서 p, q &lt;= 2n−1은 엄밀, 어느 하나가 2n이면 오차). 점의 수는 n^dim이므로 고차원에서는 급격히 늘어난다(dim &gt; 6에서는 저불일치 수열 쪽이 적합하다).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

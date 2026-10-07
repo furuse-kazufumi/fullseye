@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_revolve(slice_rows, dr: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;abel_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>단면 f(z, r)((H, R), r = 0, dr, …)를 대칭축 둘레로 돌려 3-D 볼륨 (H, 2R−1, 2R−1)으로 만든다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p><code style="color:#22d3bf">abel_inverse_image</code> と組むと、1 枚の写真から軸対称な物体の 3-D の分布が戻る。</p>
-<p>門: できたボリュームを横に足し合わせる(投影する)と、元の投影画像に戻る(往復)。</p>
+<p><code style="color:#22d3bf">abel_inverse_image</code>와 조합하면, 1장의 사진에서 축대칭 물체의 3-D 분포가 복원된다.</p>
+<p>게이트: 만들어진 볼륨을 옆으로 더하면(투영하면) 원래의 투영 화상으로 돌아온다(왕복).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

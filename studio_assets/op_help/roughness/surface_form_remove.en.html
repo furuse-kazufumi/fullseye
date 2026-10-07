@@ -6,50 +6,49 @@
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(residual, coeffs)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Removes a plane / quadric surface directly on the grid. Returns <code style="color:#22d3bf">(residual, coeffs)</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>引数</p>
-<p>z       高さ場。</p>
-<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>order   1 = 平面、2 = 二次曲面。</p>
-<p>method  <code style="color:#22d3bf">&quot;ls&quot;</code>(最小二乗)または <code style="color:#22d3bf">&quot;ransac&quot;</code>(ロバスト)。</p>
-<p>thresh  RANSAC の内点しきい値(高さの単位)。<code style="color:#22d3bf">None</code> なら最小二乗残差の</p>
-<p>ロバストな散らばり <code style="color:#22d3bf">2.5 x 1.4826 x MAD</code> を使う。</p>
-<p>iters   RANSAC の試行回数。<code style="color:#22d3bf">seed</code> で決定的。</p>
-<p><code style="color:#22d3bf">coeffs</code> は <b>場の中心を原点とする物理座標の単項式係数</b>。<code style="color:#22d3bf">order=1</code> なら <code style="color:#22d3bf">[c0, gx, gy]</code> で <code style="color:#22d3bf">gx</code>/<code style="color:#22d3bf">gy</code> がそのまま勾配、<code style="color:#22d3bf">order=2</code> なら <code style="color:#22d3bf">[c0, gx, gy, cxx, cxy, cyy]</code>(<code style="color:#22d3bf">x^2, xy, y^2</code> の順)。</p>
-<p>★ なぜ格子のまま受けるのか</p>
-<p>既存の <code style="color:#22d3bf">fit_plane</code> / <code style="color:#22d3bf">fit_plane_ransac</code> は (N,3) 点群しか受けない。</p>
-<p>512² の高さ場を渡すには毎回 <code style="color:#22d3bf">column_stack</code> で 262144x3 = <b>6.3 MB</b> に</p>
-<p>展開する必要がある(実測)。ここは格子を格子のまま受け、基底も</p>
-<p>1 次元ベクトルの外積で作るので展開が要らない。</p>
-<p>★ 費用(実測、1024x1024、<code style="color:#22d3bf">iters=200</code>)</p>
-<p><code style="color:#22d3bf">method=&quot;ls&quot;</code> 47 ms に対し <code style="color:#22d3bf">method=&quot;ransac&quot;</code> は <b>1.8 秒</b>(38 倍)。</p>
-<p>RANSAC は毎回 1024² 点の残差を数え直すので、<code style="color:#22d3bf">iters</code> に線形に効く。</p>
-<p>粗さだけを見るなら「LS + λc ハイパス」で同じ答えが 40 分の 1 で出る</p>
-<p>(下の実測を参照)—— <b>RANSAC を既定にしない理由がこれ。</b></p>
-<p>★ 落とし穴 —— ロバストが要るのは「深い傷」ではなく「<b>広い</b>外れ値」。</p>
-<p>ただし外れ値が多数派になると RANSAC も同時に壊れる。</p>
-<p>深さ 3 µm の傷 4 本を片側に寄せた 512x512 の面で、傷の<b>幅だけ</b>を</p>
-<p>変えた実測(傾き 0.050/-0.025 を仕込んで除く。真値は傷を含む面そのもの):</p>
-<p>傷の半値半幅   面積比    LS の Sq 誤差   RANSAC の Sq 誤差   改善</p>
-<p>4 µm         5.6 %      -1.94 %          -0.39 %        5.0 倍</p>
-<p>12 µm        16.3 %      -6.47 %          -3.03 %        2.1 倍</p>
-<p>24 µm        31.0 %     -13.79 %         -11.53 %        1.2 倍</p>
-<p>40 µm        46.0 %     -23.80 %         -23.56 %        1.0 倍</p>
-<p>3 つ読める:</p>
-<p style="margin:2px 0 2px 12px">• 効くのは深さではなく<b>面積比</b>。「深い傷 = ロバスト必須」は早合点で、正しくは「<b>広い</b>外れ値 = ロバスト必須」。</p>
-<p style="margin:2px 0 2px 12px">• 誤差は必ず<b>過小側</b>に出る —— 最小二乗が「傷が片側に寄っていることによる本物の非対称」まで平面として吸い上げるから。<b>合否判定では危険な向きに壊れる。</b></p>
-<p style="margin:2px 0 2px 12px">• <b>面積比 46 % では RANSAC も助けにならない</b>(改善 1.0 倍)。外れ値が半分近くを占めると、RANSAC の多数決そのものが傷を選ぶ。ロバスト当てはめは「外れ値が少数派である」という前提の道具で、その前提が切れる所は表で示すしかない。</p>
-<p>★ 落とし穴 —— λc を後段に置くと LS と RANSAC の差は消える</p>
-<p>同じ面(半値半幅 4 µm)に λc=80 µm のハイパスを後から掛けると、</p>
-<p>Sq 誤差は <b>LS +0.00 % / RANSAC -0.00 %</b>(上の表では 5.0 倍差)。</p>
-<p>余計に除いた平面は純粋な長波長なので、ハイパスが同じものをもう一度</p>
-<p>捨てるだけ。<b>当てはめのロバスト性が効くのは λc を掛けない運用(平面度・形状偏差)のとき。</b> 粗さだけを見るなら順序で救える。</p>
-<p>なお平面そのものの回復は LS でも良く、上の面で仕込んだ勾配</p>
-<p>0.050 / -0.025 に対し 0.050006 / -0.025127 が返る(実測)。</p>
+<p>Arguments</p>
+<p>z       height field.</p>
+<p>dx, dy  sampling intervals. <code style="color:#22d3bf">dy=None</code> means square pixels.</p>
+<p>order   1 = plane, 2 = quadric surface.</p>
+<p>method  <code style="color:#22d3bf">&quot;ls&quot;</code> (least squares) or <code style="color:#22d3bf">&quot;ransac&quot;</code> (robust).</p>
+<p>thresh  RANSAC inlier threshold (in height units). With <code style="color:#22d3bf">None</code>, the robust spread of the least-squares residuals</p>
+<p><code style="color:#22d3bf">2.5 x 1.4826 x MAD</code> is used.</p>
+<p>iters   number of RANSAC trials. Deterministic via <code style="color:#22d3bf">seed</code>.</p>
+<p><code style="color:#22d3bf">coeffs</code> are <b>monomial coefficients in physical coordinates with the field center as origin</b>. For <code style="color:#22d3bf">order=1</code> they are <code style="color:#22d3bf">[c0, gx, gy]</code>, with <code style="color:#22d3bf">gx</code>/<code style="color:#22d3bf">gy</code> directly the gradient; for <code style="color:#22d3bf">order=2</code> they are <code style="color:#22d3bf">[c0, gx, gy, cxx, cxy, cyy]</code> (in the order <code style="color:#22d3bf">x^2, xy, y^2</code>).</p>
+<p>★ Why it takes the grid as a grid</p>
+<p>The existing <code style="color:#22d3bf">fit_plane</code> / <code style="color:#22d3bf">fit_plane_ransac</code> accept only (N,3) point clouds.</p>
+<p>Passing a 512² height field to them requires expanding it every time with <code style="color:#22d3bf">column_stack</code> into 262144x3 = <b>6.3 MB</b></p>
+<p>(measured). This op takes the grid as a grid and builds the basis</p>
+<p>from outer products of 1-D vectors, so no expansion is needed.</p>
+<p>★ Cost (measured, 1024x1024, <code style="color:#22d3bf">iters=200</code>)</p>
+<p><code style="color:#22d3bf">method=&quot;ls&quot;</code> 47 ms versus <code style="color:#22d3bf">method=&quot;ransac&quot;</code> <b>1.8 s</b> (38 times).</p>
+<p>RANSAC recounts the residuals of 1024² points on every trial, so it scales linearly with <code style="color:#22d3bf">iters</code>.</p>
+<p>If you only look at roughness, &quot;LS + λc high-pass&quot; gives the same answer at 1/40 of the cost</p>
+<p>(see the measurements below) — <b>this is why RANSAC is not the default.</b></p>
+<p>★ Pitfall — robustness is needed not for &quot;deep scratches&quot; but for &quot;<b>wide</b> outliers&quot;.</p>
+<p>But once the outliers become the majority, RANSAC breaks too.</p>
+<p>Measured on a 512x512 surface with 4 scratches of depth 3 µm gathered on one side, varying <b>only the width</b> of the scratches</p>
+<p>(a tilt of 0.050/-0.025 is injected and removed; the ground truth is the surface itself including the scratches):</p>
+<p>scratch HWHM   area ratio   LS Sq error   RANSAC Sq error   gain</p>
+<p>4 µm         5.6 %      -1.94 %          -0.39 %        5.0x</p>
+<p>12 µm        16.3 %      -6.47 %          -3.03 %        2.1x</p>
+<p>24 µm        31.0 %     -13.79 %         -11.53 %        1.2x</p>
+<p>40 µm        46.0 %     -23.80 %         -23.56 %        1.0x</p>
+<p>3 things can be read off:</p>
+<p style="margin:2px 0 2px 12px">• What matters is not the depth but the <b>area ratio</b>. &quot;Deep scratch = robust fit required&quot; is a hasty conclusion; the correct form is &quot;<b>wide</b> outliers = robust fit required&quot;.</p>
+<p style="margin:2px 0 2px 12px">• The error always comes out on the <b>low side</b> — because least squares absorbs into the plane even &quot;the genuine asymmetry caused by the scratches being gathered on one side&quot;. <b>In pass/fail decisions it fails in the dangerous direction.</b></p>
+<p style="margin:2px 0 2px 12px">• <b>At an area ratio of 46 % even RANSAC does not help</b> (gain 1.0x). When outliers occupy nearly half, RANSAC&#x27;s majority vote itself picks the scratches. Robust fitting is a tool premised on &quot;outliers are a minority&quot;, and where that premise breaks can only be shown with a table.</p>
+<p>★ Pitfall — putting λc downstream makes the difference between LS and RANSAC vanish</p>
+<p>Applying a λc=80 µm high-pass afterwards to the same surface (HWHM 4 µm),</p>
+<p>the Sq error is <b>LS +0.00 % / RANSAC -0.00 %</b> (a 5.0x difference in the table above).</p>
+<p>The extra plane removed is pure long wavelength, so the high-pass merely throws the same thing away</p>
+<p>once more. <b>Robustness of the fit matters in workflows that apply no λc (flatness, form deviation).</b> If you only look at roughness, the ordering saves you.</p>
+<p>Note that the plane itself is recovered well even by LS: for the gradients injected into the surface above,</p>
+<p>0.050 / -0.025, it returns 0.050006 / -0.025127 (measured).</p>
 <p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code> が 1 か 2 以外 / <code style="color:#22d3bf">method</code> が <code style="color:#22d3bf">&quot;ls&quot;</code>・<code style="color:#22d3bf">&quot;ransac&quot;</code> 以外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code> が非正・非有限。</p>
-<p style="margin:2px 0 2px 12px">• RANSAC が内点を規定数集められない(退化した面)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">order</code> other than 1 or 2 / <code style="color:#22d3bf">method</code> other than <code style="color:#22d3bf">&quot;ls&quot;</code> or <code style="color:#22d3bf">&quot;ransac&quot;</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code> non-positive or non-finite.</p>
+<p style="margin:2px 0 2px 12px">• RANSAC cannot gather the required number of inliers (degenerate surface).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

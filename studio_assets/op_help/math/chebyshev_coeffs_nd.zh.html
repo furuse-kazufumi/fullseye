@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_coeffs_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由在张量积 Chebyshev–Lobatto 网格上采样的值求 N 维 Chebyshev 系数(DCT-I)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
-<p>values: 形 (n1, …, nd) の配列。軸 i の標本は <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(昇順)の上の値。</p>
-<p>box: 軸ごとの区間 [(lo, hi), …] (省略で全軸 [−1, 1]、1 組なら全軸に共通)。</p>
+<p>values: 形状为 (n1, …, nd) 的数组。轴 i 的样本是 <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(升序)上的值。</p>
+<p>box: 各轴的区间 [(lo, hi), …] (省略则全部轴为 [−1, 1]，只给 1 组则各轴共用)。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i は [−1, 1] に写した座標)、<code style="color:#22d3bf">box</code>、</p>
-<p><code style="color:#22d3bf">decay</code> = 軸ごとに |c| の最大を次数ごとに並べた列(滑らかな関数は幾何級数的に落ちる = スペクトル収束)、</p>
-<p><code style="color:#22d3bf">tail</code> = 各軸の最後の 2 次数の |c| の最大(打ち切り誤差の目安。小さいほど点数が足りている)。</p>
-<p>門: 次数が各軸 n_i − 1 以下の多項式は厳密に再現する / 1/(a − x) 型の極を持つ関数の係数は ρ^−k(ρ = a + √(a² − 1)、Bernstein の楕円)で落ちる。画像では、照明むら・反りなどの<b>滑らかな面</b>を数十の係数で表す(多項式のべき基底は高次で悪条件、Chebyshev は安定)。</p>
+<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd)：f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i 为映射到 [−1, 1] 的坐标)、<code style="color:#22d3bf">box</code>、</p>
+<p><code style="color:#22d3bf">decay</code> = 每个轴按次数排列的 |c| 最大值序列(光滑函数呈几何级数下降 = 谱收敛)、</p>
+<p><code style="color:#22d3bf">tail</code> = 各轴最后 2 个次数的 |c| 最大值(截断误差的参考。越小说明点数越充足)。</p>
+<p>门禁：各轴次数不超过 n_i − 1 的多项式精确重现 / 带有 1/(a − x) 型极点的函数的系数按 ρ^−k(ρ = a + √(a² − 1)，Bernstein 椭圆)下降。在图像中，用几十个系数表示照明不均、翘曲等<b>光滑曲面</b> (多项式的幂基在高次时病态，Chebyshev 稳定)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

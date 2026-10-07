@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Schummerung [0,1]. <code style="color:#22d3bf">azimuth_deg</code> ist das Azimut der Lichtquelle (Norden 0 Grad, nach Osten zunehmend).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>Lambert の余弦則そのもので、<b>遮蔽は考えない</b>(自分より手前の尾根で影になる分は含まれない)。落ちる影が要るなら <code style="color:#22d3bf">dem_horizon_angle</code> と組み合わせること —— 「陰影起伏に影が入っている」と思い込むのが定番の誤解。</p>
-<p>平坦面では <code style="color:#22d3bf">sin(altitude)</code> に一致する(実測 1e-15 以下)。</p>
+<p>Es ist das Lambertsche Kosinusgesetz pur, <b>Verdeckung wird nicht berücksichtigt</b> (der Anteil, der durch einen davorliegenden Rücken beschattet wird, ist nicht enthalten). Werden Schlagschatten gebraucht, mit <code style="color:#22d3bf">dem_horizon_angle</code> kombinieren —— anzunehmen, &quot;die Schummerung enthält Schatten&quot;, ist das klassische Missverständnis.</p>
+<p>Auf einer ebenen Fläche entspricht es <code style="color:#22d3bf">sin(altitude)</code> (gemessen 1e-15 oder weniger).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

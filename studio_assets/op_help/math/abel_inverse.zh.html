@@ -4,13 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse(A, dr: &#x27;float&#x27; = 1.0, *, method: &#x27;str&#x27; = &#x27;derivative&#x27;, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>由投影 A(y) 还原轴对称分布 f(r)(逆 Abel 变换 = 轴对称物体的断层成像)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy。y = √(r² + u²) と置いて特異点を消し、A を 3 次スプラインで微分する。滑らかな投影には精度が高いが、<b>微分が雑音を増幅する</b>:</p>
-<p>雑音の誤差は標本間隔 dr に反比例して増える(2026-10-03 実測、雑音 1%: 標本数 80 → 640 で</p>
-<p>平均誤差 0.027 → 0.237、両対数の傾き ≈ 1)。粗い格子ではこちらが良い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 殻を剥く: f を半径 dr の殻ごとに一定とみなし、弦の長さの上三角行列を外側から解く。解像度は殻の幅で決まり、微分を取らないぶん雑音の増え方が緩い(同じ実測で 0.036 → 0.100、傾き ≈ 1/2)。<b>細かい格子の実測ではこちら</b>(n=640 で微分の 2.4 分の 1)、粗い格子(n≈80)では逆転する。</p>
-<p>2 つは独立な離散化なので、<b>同じ投影に両方を当てて食い違いを見る</b>のが検算になる。</p>
-<p>門: A(y) = √π σ exp(−y²/σ²) から f(r) = exp(−r²/σ²)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;derivative&quot;</code> —— f(r) = −(1/π) ∫_r^R A&#x27;(y) / √(y² − r²) dy。令 y = √(r² + u²) 消去奇点，用 3 次样条对 A 求导。对光滑投影精度高，但<b>求导会放大噪声</b>：噪声误差与采样间隔 dr 成反比增长(2026-10-03 实测，噪声 1%：采样数 80 → 640 时平均误差 0.027 → 0.237，双对数斜率 ≈ 1)。粗网格上这一种更好。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;onion&quot;</code> —— 剥壳：把 f 视为在每个半径 dr 的壳内为常数，从外侧求解弦长的上三角矩阵。分辨率由壳宽决定，由于不求导，噪声增长较缓(同一实测：0.036 → 0.100，斜率 ≈ 1/2)。<b>细网格的实测中这一种更好</b>(n=640 时为求导法的 1/2.4)，粗网格(n≈80)上则反转。</p>
+<p>2 者是独立的离散化，所以<b>对同一投影同时施加两者并查看差异</b>即可作为验算。</p>
+<p>门禁：由 A(y) = √π σ exp(−y²/σ²) 得 f(r) = exp(−r²/σ²)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

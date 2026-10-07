@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathspectral; mathspectral.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;music_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>MUSIC(Schmidt 1986)：搜尋與共變異數雜訊子空間正交的方向。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²。真の向きでは分母がほぼ 0 になり鋭い峰が立つ。</p>
-<p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。<code style="color:#22d3bf">n_sources=None</code> なら <code style="color:#22d3bf">n_sources_mdl</code> で推定し、返り値の <code style="color:#22d3bf">n_sources_estimated</code> を True にする。返り値 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>(doa は峰の大きい順に n 個、格子の分解能)。</p>
+<p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²。在真實方向上分母幾乎為 0，出現尖銳的峰。</p>
+<p><b>前提</b>：波源數正確、波源之間互不相關(相關的波 = 多重反射時子空間塌縮，峰消失)。<code style="color:#22d3bf">n_sources=None</code> 時以 <code style="color:#22d3bf">n_sources_mdl</code> 估計，並將回傳值的 <code style="color:#22d3bf">n_sources_estimated</code> 設為 True。回傳值 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>(doa 為依峰大小排序的 n 個，網格的解析度)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

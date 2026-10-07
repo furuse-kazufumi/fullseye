@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>精确表示圆的 2 次 NURBS(Piegl &amp; Tiller 例 7.1：正方形的 4 个角与 4 条边的中点，角点权重为 1/√2)。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>返す <code style="color:#22d3bf">control_points</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">degree</code> をそのまま <code style="color:#22d3bf">nurbs_curve</code> に渡すと、どの点も中心から <code style="color:#22d3bf">radius</code> の距離にある(丸め誤差まで)。隅の制御点は円の外 (√2 − 1)·radius の所にあり、曲線は通らない。</p>
+<p>将返回的 <code style="color:#22d3bf">control_points</code>、<code style="color:#22d3bf">weights</code>、<code style="color:#22d3bf">knots</code>、<code style="color:#22d3bf">degree</code> 原样传给 <code style="color:#22d3bf">nurbs_curve</code>，每个点到中心的距离都是 <code style="color:#22d3bf">radius</code>(直到舍入误差)。角上的控制点位于圆外 (√2 − 1)·radius 处，曲线不经过它们。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

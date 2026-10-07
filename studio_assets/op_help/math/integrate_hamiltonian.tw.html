@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>對帶名稱的哈密頓系統(質量 1)做時間積分。回傳值 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">method</code>:</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;verlet&quot;</code> —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で<b>有界</b>のまま振動し、長時間でも増えない。dt を負にして回すと元の状態に(丸め誤差まで)戻る。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;euler&quot;</code> —— 陽的 Euler(比較用の失敗例)。調和振動子ではエネルギーが毎ステップ (1 + ω²dt²) 倍に増え、位相空間で外向きの渦巻きになる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rk4&quot;</code> —— 古典的 4 次 Runge–Kutta。短時間はとても正確だが、シンプレクティックではないのでエネルギーは長時間でゆっくり減り続ける(有界ではない)。</p>
-<p><code style="color:#22d3bf">system</code>: <code style="color:#22d3bf">&quot;harmonic&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;pendulum&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;kepler&quot;</code>(mu、2-D)。</p>
-<p>門: Verlet のエネルギー誤差が有界 / 時間反転で戻る / Euler の増幅率が (1 + ω²dt²)^n。</p>
+<p><code style="color:#22d3bf">method</code>：</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;verlet&quot;</code> —— 速度 Verlet(辛、時間反演對稱)。能量誤差以 O(dt²) 保持<b>有界</b>地振盪，長時間也不增加。把 dt 設為負來執行，會回到原狀態(直到捨入誤差)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;euler&quot;</code> —— 顯式 Euler(用於比較的失敗例)。對諧振子，能量每步增大 (1 + ω²dt²) 倍，在相空間中呈向外的螺旋。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;rk4&quot;</code> —— 古典 4 階 Runge–Kutta。短時間內非常精確，但由於不是辛的，能量在長時間中持續緩慢減少(不是有界的)。</p>
+<p><code style="color:#22d3bf">system</code>：<code style="color:#22d3bf">&quot;harmonic&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;pendulum&quot;</code>(omega)/ <code style="color:#22d3bf">&quot;kepler&quot;</code>(mu，2-D)。</p>
+<p>門檻：Verlet 的能量誤差有界 / 時間反演可回到原狀 / Euler 的放大率為 (1 + ω²dt²)^n。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

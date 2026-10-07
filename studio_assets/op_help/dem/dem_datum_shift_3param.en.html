@@ -4,20 +4,19 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Switching the geodetic datum — a geocentric 3-parameter translation (<code style="color:#22d3bf">points</code>).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
-<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
-<p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>
+<p>Even the same &quot;35 degrees 41 minutes north&quot; points to locations <b>several hundred metres apart on the ground</b> in the old Japanese geodetic system and the world geodetic system. This op performs that switch as a translation in geocentric Cartesian coordinates (the <code style="color:#22d3bf">Molodensky-Badekas</code> case without rotation or scale)::</p>
+<p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; geodetic(a_to, f_to)</p>
+<p>★<b>No default values for the parameters</b>. Which datum to which datum, by which translation, differs by country, region and version; assuming silently yields &quot;coordinates that raise no exception but are several hundred metres off&quot; —— that is this op&#x27;s reason to exist, so the caller must always write them out.</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 元の成果での緯度・経度 [度]。配列可。</p>
-<p>h_m: 元の成果での楕円体高 [m]。</p>
-<p>dx_m / dy_m / dz_m: 地心の平行移動量 [m] (元 → 先)。</p>
-<p>a_from_m / f_from: 元の楕円体の長半径 [m] と扁平率。</p>
-<p>a_to_m / f_to: 先の楕円体の長半径 [m] と扁平率。</p>
+<p>lat_deg / lon_deg: latitude/longitude in the source datum [deg]. Arrays allowed.</p>
+<p>h_m: ellipsoidal height in the source datum [m].</p>
+<p>dx_m / dy_m / dz_m: geocentric translation [m] (source → target).</p>
+<p>a_from_m / f_from: semi-major axis [m] and flattening of the source ellipsoid.</p>
+<p>a_to_m / f_to: semi-major axis [m] and flattening of the target ellipsoid.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 平行移動 0 かつ同じ楕円体なら<b>恒等変換</b> (往復の床は <code style="color:#22d3bf">dem_ecef_to_geodetic</code> と同じ)。平行移動だけを与えたときの地上の移動量は、その点の ECEF 基底で分解した成分と一致する。</p>
-<p><b>ValueError</b>: 非有限、緯度が ±90 を外れる、長半径が非正、扁平率が [0, 1) を外れる。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> of <code style="color:#22d3bf">(latitude[deg], longitude[deg], ellipsoidal height[m])</code>.</p>
+<p>Checkable by closed form: with translation 0 and the same ellipsoid, the <b>identity transform</b> (the round-trip floor is the same as for <code style="color:#22d3bf">dem_ecef_to_geodetic</code>). When only a translation is given, the displacement on the ground matches its components decomposed in the ECEF basis at that point.</p>
+<p><b>ValueError</b>: non-finite values, latitude outside ±90, non-positive semi-major axis, flattening outside [0, 1).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

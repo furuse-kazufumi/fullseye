@@ -898,6 +898,8 @@ def test_no_stale_summary_translation_is_shipped():
     requires_full_registry()
     stale = OD.op_summary_stale()
     assert not stale, ("原文と指紋が合わない要約訳(古い訳): " + ", ".join(stale[:12]))
+    stale = OD.op_rest_stale()
+    assert not stale, ("原文と指紋が合わない本文訳(古い訳、docs/i18n/op_rest.json): " + ", ".join(stale[:12]))
 
 
 def test_help_language_bar_only_offers_languages_that_exist():
@@ -1261,3 +1263,22 @@ def test_the_generator_removes_a_note_left_behind_in_an_old_layer(tmp_path):
     assert kept.exists() and handwritten.exists() and guide.exists()
     # 2 回目は何も消さない(冪等)
     assert OD.prune_stale_notes(str(tmp_path), written) == []
+
+
+def test_detail_body_translation_is_used_only_while_its_fingerprint_matches(monkeypatch):
+    """★2026-10-07: 詳細説明(要約の後)の対訳表 docs/i18n/op_rest.json。指紋が合えば訳を出して断り書きを消し、
+    原文が変わって指紋が合わなければ原文と「原文のままです」の断り書きに戻る(古い訳を出さない)。"""
+    rec = next(r for r in _RECS
+               if OD.has_japanese(OD.summary_and_rest(r.get("doc"))[1]) and OD.op_summary(r, "en")[1])
+    body = OD.summary_and_rest(rec["doc"])[1]
+    key = "%s/%s" % (rec["dim"], rec["name"])
+    note = OD.T("> 以下の詳細説明は原文のままです —— 要約と見出しは訳出済み。", "en")
+    head = body.splitlines()[0][:20]
+    by = {r["name"]: r for r in _RECS}
+    path = OD._op_path(rec)
+    monkeypatch.setattr(OD, "_REST_I18N", {key: {"fp": OD.fingerprint(body), "en": "TRANSLATED BODY"}})
+    md = OD._op_md(rec, path, by, lang="en")
+    assert "TRANSLATED BODY" in md and head not in md and note not in md
+    monkeypatch.setattr(OD, "_REST_I18N", {key: {"fp": "000000000000", "en": "TRANSLATED BODY"}})
+    md = OD._op_md(rec, path, by, lang="en")
+    assert "TRANSLATED BODY" not in md and head in md and note in md

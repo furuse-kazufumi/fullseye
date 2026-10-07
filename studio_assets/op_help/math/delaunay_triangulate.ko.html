@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;delaunay_triangulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>평면 (N, 2)의 삼각 분할 또는 공간 (N, 3)의 사면체 분할(Delaunay, scipy.spatial = Qhull).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>返り値 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D では <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> も同じ中身で返す)。外接円・外接球は描画・Voronoi 用。</p>
-<p>門: <b>どの外接円(球)の中にも他の点が無い</b>(空円性。2-D は既存の <code style="color:#22d3bf">is_delaunay_2d</code> も真値)/ 2-D の三角形の数は 2n − h − 2(h = 凸包の頂点数)/ 3-D の四面体の集まりは凸な塊なので V − E + F − T = 1(Euler)。共円・共球の点が多いと分割は一意でない(どれも Delaunay)。</p>
+<p>반환값 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D에서는 <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code>도 같은 내용으로 반환한다). 외접원·외접구는 그리기·Voronoi용.</p>
+<p>게이트: <b>어느 외접원(구) 안에도 다른 점이 없다</b>(빈 원 성질. 2-D는 기존 <code style="color:#22d3bf">is_delaunay_2d</code>도 참값) / 2-D의 삼각형 수는 2n − h − 2(h = 볼록 껍질의 정점 수) / 3-D의 사면체 모임은 볼록한 덩어리이므로 V − E + F − T = 1(Euler). 공원·공구 점이 많으면 분할은 유일하지 않다(어느 것이든 Delaunay).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

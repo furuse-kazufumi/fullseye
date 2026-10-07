@@ -4,16 +4,15 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p><b>위경도 격자</b>(등각도 간격) DEM의 경사. 셀 치수가 위도에 따라 변한다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>公開 DEM の多くは「1 秒メッシュ」のように<b>角度で等間隔</b>です。この格子を</p>
-<p>そのまま <code style="color:#22d3bf">dem_slope</code> に一定のセル寸法で渡すと、経度方向の実距離が <code style="color:#22d3bf">cos(緯度)</code> 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと <b>東西の傾斜が過小</b>になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば今度は南北が過大になります。<b>どちらに転ぶかは何を定数にしたかで決まる</b>ので、「過大/過小」を覚えるのではなく<b>緯度ごとに寸法を計算する</b>のが正解です。</p>
-<p>★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら <b>半分になった</b>(過小)。符号や向きの主張は測ってから書くこと。</p>
-<p>ここでは緯度ごとに東西のセル寸法を計算し、格子を等距離へ直してから測ります。</p>
+<p>공개 DEM의 대부분은 &quot;1초 메시&quot;처럼 <b>각도로 등간격</b>입니다. 이 격자를</p>
+<p>그대로 <code style="color:#22d3bf">dem_slope</code>에 일정한 셀 치수로 넘기면, 경도 방향의 실제 거리가 <code style="color:#22d3bf">cos(위도)</code>배만큼 짧다는 것이 무시됩니다. 위도 방향의 치수를 두 축에 쓰면 <b>동서의 경사가 과소</b>가 되고(북위 60도에서 절반), 경도 방향의 치수를 두 축에 쓰면이번에는 남북이 과대가 됩니다. <b>어느 쪽으로 기우는지는 무엇을 상수로 했느냐로 정해지므로</b>, &quot;과대/과소&quot;를 외우는 것이 아니라 <b>위도마다 치수를 계산하는</b> 것이 정답입니다.</p>
+<p>★ 처음 이 docstring에 &quot;동서가 과대가 된다&quot;고 썼지만, 테스트로 측정했더니 <b>절반이 되었다</b>(과소). 부호나 방향의 주장은 측정하고 나서 쓸 것.</p>
+<p>여기서는 위도마다 동서의 셀 치수를 계산하고, 격자를 등거리로 고친 뒤 측정합니다.</p>
 <p>Args:</p>
-<p>dem: <code style="color:#22d3bf">(H, W)</code>。行 0 が北。</p>
-<p>lat0_deg: <b>北西角</b>の緯度 [度]。</p>
-<p>d_lat_deg / d_lon_deg: 1 セルあたりの緯度・経度の刻み [度]。正の値。</p>
-<p>method / units: <code style="color:#22d3bf">dem_slope</code> と同じ。</p>
+<p>dem: <code style="color:#22d3bf">(H, W)</code>. 행 0이 북.</p>
+<p>lat0_deg: <b>북서 모서리</b>의 위도 [도].</p>
+<p>d_lat_deg / d_lon_deg: 1셀당 위도, 경도의 스텝 [도]. 양의 값.</p>
+<p>method / units: <code style="color:#22d3bf">dem_slope</code>와 같다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

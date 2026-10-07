@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_coeffs_nd(values, box=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_coeffs_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>텐서곱 Chebyshev–Lobatto 격자에서 표본화한 값으로부터 N차원 Chebyshev 계수를 구한다(DCT-I).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>values: 形 (n1, …, nd) の配列。軸 i の標本は <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(昇順)の上の値。</p>
-<p>box: 軸ごとの区間 [(lo, hi), …] (省略で全軸 [−1, 1]、1 組なら全軸に共通)。</p>
+<p>values: 형태 (n1, …, nd)의 배열. 축 i의 표본은 <code style="color:#22d3bf">chebyshev_nodes(n_i, lo_i, hi_i)</code>(오름차순) 위의 값.</p>
+<p>box: 축마다의 구간 [(lo, hi), …] (생략하면 모든 축 [−1, 1], 1쌍이면 모든 축에 공통).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i は [−1, 1] に写した座標)、<code style="color:#22d3bf">box</code>、</p>
-<p><code style="color:#22d3bf">decay</code> = 軸ごとに |c| の最大を次数ごとに並べた列(滑らかな関数は幾何級数的に落ちる = スペクトル収束)、</p>
-<p><code style="color:#22d3bf">tail</code> = 各軸の最後の 2 次数の |c| の最大(打ち切り誤差の目安。小さいほど点数が足りている)。</p>
-<p>門: 次数が各軸 n_i − 1 以下の多項式は厳密に再現する / 1/(a − x) 型の極を持つ関数の係数は ρ^−k(ρ = a + √(a² − 1)、Bernstein の楕円)で落ちる。画像では、照明むら・反りなどの<b>滑らかな面</b>を数十の係数で表す(多項式のべき基底は高次で悪条件、Chebyshev は安定)。</p>
+<p><code style="color:#22d3bf">coeffs</code> (n1, …, nd): f ≈ Σ c[k] Π T_{k_i}(t_i)(t_i는 [−1, 1]로 옮긴 좌표), <code style="color:#22d3bf">box</code>,</p>
+<p><code style="color:#22d3bf">decay</code> = 축마다 |c|의 최대를 차수별로 나열한 열(매끄러운 함수는 기하급수적으로 떨어진다 = 스펙트럼 수렴),</p>
+<p><code style="color:#22d3bf">tail</code> = 각 축의 마지막 2개 차수의 |c|의 최대(절단 오차의 기준. 작을수록 점 수가 충분하다).</p>
+<p>게이트: 차수가 각 축 n_i − 1 이하인 다항식은 엄밀하게 재현한다 / 1/(a − x)형 극을 갖는 함수의 계수는 ρ^−k(ρ = a + √(a² − 1), Bernstein 타원)로 떨어진다. 화상에서는 조명 얼룩·휨 등의 <b>매끄러운 면</b>을수십 개의 계수로 나타낸다(다항식의 거듭제곱 기저는 고차에서 악조건, Chebyshev는 안정).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

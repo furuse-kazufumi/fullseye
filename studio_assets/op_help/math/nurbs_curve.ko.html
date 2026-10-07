@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_curve(control_points, weights=None, *, degree: &#x27;int&#x27; = 3, knots=None, n: &#x27;int&#x27; = 200) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>NURBS 곡선을 평가한다(가중치가 있으며 일반적으로 제어점을 지나지 않는다).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Args:</p>
-<p>control_points: (m, d) の制御点(d = 2 なら平面、3 なら空間)。</p>
-<p>weights: 長さ m の正の重み。省略すると全部 1(= 普通の B スプライン)。重みを大きくすると曲線がその点に寄る。</p>
-<p>degree: 次数 p(m − 1 以下)。</p>
-<p>knots: 長さ m + p + 1 の節点列。省略すると両端 p+1 重の一様節点(端点だけは制御点を通る)。</p>
-<p>n: 評価する点の数(定義域を等分)。</p>
+<p>control_points: (m, d)의 제어점(d = 2이면 평면, 3이면 공간).</p>
+<p>weights: 길이 m의 양의 가중치. 생략하면 전부 1(= 보통의 B 스플라인). 가중치를 크게 하면 곡선이 그 점으로 다가간다.</p>
+<p>degree: 차수 p(m − 1 이하).</p>
+<p>knots: 길이 m + p + 1의 절점열. 생략하면 양 끝 p+1중의 균일 절점(끝점에서만 제어점을 지난다).</p>
+<p>n: 평가할 점의 수(정의역을 등분).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">points</code> (n, d) 曲線上の点、<code style="color:#22d3bf">u</code> パラメータ、<code style="color:#22d3bf">basis</code> (n, m) 有理基底 R_i(u)(各行の和は 1)、</p>
-<p><code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">degree</code>。</p>
-<p>例: 9 点の 2 次 NURBS で円を <b>厳密に</b> 描く(<code style="color:#22d3bf">nurbs_circle</code> が制御点・重み・節点を返す)。多項式の B スプラインでは円は近似しかできない —— 重みが要る理由がここにある。</p>
+<p><code style="color:#22d3bf">points</code> (n, d) 곡선 위의 점, <code style="color:#22d3bf">u</code> 파라미터, <code style="color:#22d3bf">basis</code> (n, m) 유리 기저 R_i(u)(각 행의 합은 1),</p>
+<p><code style="color:#22d3bf">knots</code>·<code style="color:#22d3bf">weights</code>·<code style="color:#22d3bf">degree</code>.</p>
+<p>예: 9점의 2차 NURBS로 원을 <b>엄밀하게</b> 그린다(<code style="color:#22d3bf">nurbs_circle</code>이 제어점·가중치·절점을 반환한다). 다항식의 B 스플라인으로는 원을 근사밖에 할 수 없다 —— 가중치가 필요한 이유가 여기에 있다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

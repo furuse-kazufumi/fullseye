@@ -6,39 +6,38 @@
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(roughness, waviness)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將高度場分解為粗糙度與波紋度(ISO 16610-21 的高斯濾波器)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>戻り値は <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> が λc より短い成分、<code style="color:#22d3bf">waviness</code> が長い成分で、<code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> でなければ <code style="color:#22d3bf">roughness + waviness</code> は入力(λs を掛けたあとの一次形状)に厳密に一致する。</p>
-<p>引数</p>
-<p>z          高さ場 <code style="color:#22d3bf">z[i, j]</code>(行 = y、列 = x)。</p>
-<p>dx, dy     標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
-<p>lambda_c   長波長側カットオフ(粗さ / うねりの境)。<code style="color:#22d3bf">None</code> なら分けない</p>
-<p>(<code style="color:#22d3bf">waviness</code> はゼロ配列)。</p>
-<p>lambda_s   短波長側カットオフ(雑音を落とす S フィルタ)。<code style="color:#22d3bf">None</code> で無効。</p>
-<p>kind       <code style="color:#22d3bf">&quot;gaussian&quot;</code> のみ。他を渡すと <b>黙って代用せず</b> 例外にする。</p>
-<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>(既定) / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>。下記。</p>
-<p>dy         行方向の標本間隔(<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>)。</p>
-<p>★ 端の扱い(<code style="color:#22d3bf">end_effect</code>)—— ここがこの op を書いた理由</p>
-<p>畳み込みはカーネル半径 <code style="color:#22d3bf">λc/2</code> のぶん、端で「無い所のデータ」を要る。</p>
-<p>規格(ISO 16610-28)は評価領域を両端 <code style="color:#22d3bf">λc/2</code> ずつ削ることを前提にする。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>(既定)—— 両端 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 標本を<b>捨てる</b>。出力は入力より小さい配列になる。捨てた領域は「測っていない」ので、これが唯一嘘のない選択肢。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 鏡像で延長して同じ形を返す。端では面が偶関数だと仮定する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 循環畳み込み(FFT と同じ)。左端の続きが右端だと仮定する。</p>
-<p><b>実測</b>。真値は 704x704 の面をフィルタしてから中央 512x512 を切り出した</p>
-<p>もの(端の外側に本物のデータがある状態で計算した答え)。dx=1、λc=80、</p>
-<p>端の帯 = 外周 40 標本、そこでの真値の rms は 0.1932。</p>
-<p>面の状態     end_effect   端の帯の rms 誤差    中央部の rms 誤差</p>
-<p>傾きあり     wrap           4.3883 (2272 %)      0.0e+00 (0.000 %)</p>
-<p>傾きあり     mirror         0.1765 (  91 %)      0.0e+00 (0.000 %)</p>
-<p>傾き除去済   wrap           0.0111 ( 5.7 %)      4.4e-15 (0.000 %)</p>
-<p>傾き除去済   mirror         0.0115 ( 5.9 %)      4.4e-15 (0.000 %)</p>
-<p>(どれでも)  reject         —— 返さない ——      0.0e+00 (0.000 %)</p>
-<p>読み取れること 4 つ:</p>
-<p style="margin:2px 0 2px 12px">1. <b>端の扱いは端でしか効かない。</b> 中央部はどれも真値と厳密に一致する(カーネルが端に届かないので当然だが、確かめた)。</p>
-<p style="margin:2px 0 2px 12px">2. <b>最悪の組み合わせは「傾きを残したまま wrap」</b> —— 端の誤差が真値そのものの 23 倍。左端の続きが右端だと仮定するので、高さの違う 2 辺の継ぎ目に段差が立つ。</p>
-<p style="margin:2px 0 2px 12px">3. <b>傾きさえ除けば wrap と mirror に差は無い</b>(5.7 % 対 5.9 %、wrap がわずかに良い)。「循環畳み込みは常に悪い」ではなく「<b>傾きを除かずに使うのが悪い</b>」が正しい。</p>
-<p style="margin:2px 0 2px 12px">4. reject の代償は面積。512x512・λc=80 で <b>28.8 % を捨てる</b> (432x432 が残る)。捨てる割合は <code style="color:#22d3bf">1 - (1 - λc/L)²</code> で増えるので、λc が評価長さの 1/4 を超えると半分近くを失う。</p>
-<p>★ 透過率は規格どおりか(実測、λc=80、dx=1、整数周期の正弦を射影で測定)</p>
-<p>λ         うねり側    ISO 規格値    差</p>
+<p>回傳值為 <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> 是比 λc 短的成分，<code style="color:#22d3bf">waviness</code> 是長的成分；只要不是 <code style="color:#22d3bf">end_effect=&quot;reject&quot;</code>，<code style="color:#22d3bf">roughness + waviness</code> 就與輸入（套用 λs 之後的原始形狀）嚴格一致。</p>
+<p>參數</p>
+<p>z          高度場 <code style="color:#22d3bf">z[i, j]</code>（列 = y，行 = x）。</p>
+<p>dx, dy     取樣間隔。<code style="color:#22d3bf">dy=None</code> 為正方形像素。</p>
+<p>lambda_c   長波長側截止（粗糙度 / 波紋度的分界）。為 <code style="color:#22d3bf">None</code> 時不分離</p>
+<p>（<code style="color:#22d3bf">waviness</code> 為全零陣列）。</p>
+<p>lambda_s   短波長側截止（去除雜訊的 S 濾波器）。<code style="color:#22d3bf">None</code> 時無效。</p>
+<p>kind       僅 <code style="color:#22d3bf">&quot;gaussian&quot;</code>。傳入其他值時<b>不會悄悄替代</b>，而是拋出例外。</p>
+<p>end_effect <code style="color:#22d3bf">&quot;reject&quot;</code>（預設） / <code style="color:#22d3bf">&quot;mirror&quot;</code> / <code style="color:#22d3bf">&quot;wrap&quot;</code>。見下文。</p>
+<p>dy         列方向的取樣間隔（<code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">dx</code>）。</p>
+<p>★ 端部處理（<code style="color:#22d3bf">end_effect</code>）—— 這正是撰寫此 op 的理由</p>
+<p>卷積在端部需要核半徑 <code style="color:#22d3bf">λc/2</code> 範圍內「不存在之處的資料」。</p>
+<p>標準（ISO 16610-28）以評定區域兩端各削去 <code style="color:#22d3bf">λc/2</code> 為前提。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code>（預設）—— <b>捨棄</b>兩端各 <code style="color:#22d3bf">ceil(λc/2/pitch)</code> 個樣本。輸出是比輸入小的陣列。被捨棄的區域「沒有量測」，所以這是唯一不說謊的選項。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;mirror&quot;</code> —— 以鏡像延拓並回傳相同形狀。假定面在端部是偶函數。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;wrap&quot;</code> —— 循環卷積（與 FFT 相同）。假定左端的延續就是右端。</p>
+<p><b>實測</b>。真值是對 704x704 的面先濾波、再切出中央 512x512</p>
+<p>的結果（在端部外側有真實資料的狀態下計算的答案）。dx=1，λc=80，</p>
+<p>端部帶 = 外周 40 個樣本，該處真值的 rms 為 0.1932。</p>
+<p>面的狀態     end_effect   端部帶的 rms 誤差    中央部的 rms 誤差</p>
+<p>有傾斜       wrap           4.3883 (2272 %)      0.0e+00 (0.000 %)</p>
+<p>有傾斜       mirror         0.1765 (  91 %)      0.0e+00 (0.000 %)</p>
+<p>已去傾斜     wrap           0.0111 ( 5.7 %)      4.4e-15 (0.000 %)</p>
+<p>已去傾斜     mirror         0.0115 ( 5.9 %)      4.4e-15 (0.000 %)</p>
+<p>（任意）     reject         —— 不回傳 ——        0.0e+00 (0.000 %)</p>
+<p>可以讀出 4 點：</p>
+<p style="margin:2px 0 2px 12px">1. <b>端部處理只在端部起作用。</b> 中央部無論哪種都與真值嚴格一致（核碰不到端部，這是理所當然的，但做了確認）。</p>
+<p style="margin:2px 0 2px 12px">2. <b>最糟的組合是「保留傾斜直接 wrap」</b> —— 端部誤差達到真值本身的 23 倍。因為假定左端的延續就是右端，在高度不同的 2 條邊的接縫處會出現台階。</p>
+<p style="margin:2px 0 2px 12px">3. <b>只要去掉傾斜，wrap 與 mirror 就沒有差別</b>（5.7 % 對 5.9 %，wrap 略好）。正確的說法不是「循環卷積總是不好」，而是「<b>不去傾斜就使用才不好</b>」。</p>
+<p style="margin:2px 0 2px 12px">4. reject 的代價是面積。512x512、λc=80 時<b>捨棄 28.8 %</b> （剩下 432x432）。捨棄比例按 <code style="color:#22d3bf">1 - (1 - λc/L)²</code> 增長，因此 λc 超過評定長度的 1/4 時會失去近一半。</p>
+<p>★ 傳遞率是否符合標準（實測，λc=80，dx=1，用投影量測整數週期的正弦）</p>
+<p>λ         波紋度側    ISO 標準值    差</p>
 <p>16      0.000806     0.000000    +8.1e-04</p>
 <p>32      0.017206     0.013139    +4.1e-03</p>
 <p>40      0.058676     0.062500    -3.8e-03</p>
@@ -46,18 +45,18 @@
 <p>80      0.509549     0.500000    +9.6e-03   ← 最大</p>
 <p>128      0.772150     0.762799    +9.4e-03</p>
 <p>256      0.937944     0.934550    +3.4e-03</p>
-<p><b>カットオフ波長そのもので 0.5000 でなく 0.5095</b>(相対 +1.9 %)。原因は</p>
-<p>規格が指定する打ち切り <code style="color:#22d3bf">±λc/2</code>(= 2.67 σ)で、裾の 0.8 % が落ちるため。</p>
-<p>打ち切りを 4 σ(<code style="color:#22d3bf">±0.75 λc</code>)まで広げると最大誤差は 9e-05 に落ちる</p>
-<p>(実測)が、reject で捨てる帯が 1.5 倍になる。<b>規格に合わせる側を採り、ずれを書く</b>方を選んだ。粗さとうねりの和は常に入力に厳密一致する</p>
-<p>(上の表で <code style="color:#22d3bf">roughness + waviness = 1.000000</code>)ので、分配の境目が</p>
-<p>1.9 % ずれるだけで、エネルギーが消えたり湧いたりはしない。</p>
-<p>fail-closed</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;gaussian&quot;</code> 以外 / <code style="color:#22d3bf">end_effect</code> が既知の 3 つ以外。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> と <code style="color:#22d3bf">lambda_s</code> の両方が <code style="color:#22d3bf">None</code>(何もしない呼び出し)。</p>
-<p style="margin:2px 0 2px 12px">• カットオフが Nyquist 波長 <code style="color:#22d3bf">2*pitch</code> 未満、または評価長さ超。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code>(帯域が空になる)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> で削ったあと配列が残らない。</p>
+<p><b>在截止波長本身處不是 0.5000 而是 0.5095</b>（相對 +1.9 %）。原因是</p>
+<p>標準規定的截斷 <code style="color:#22d3bf">±λc/2</code>（= 2.67 σ），使尾部的 0.8 % 被丟掉。</p>
+<p>若把截斷放寬到 4 σ（<code style="color:#22d3bf">±0.75 λc</code>），最大誤差降到 9e-05</p>
+<p>（實測），但 reject 捨棄的帶會變成 1.5 倍。<b>選擇了遵循標準、並寫明偏差</b>的做法。粗糙度與波紋度之和始終與輸入嚴格一致</p>
+<p>（上表中 <code style="color:#22d3bf">roughness + waviness = 1.000000</code>），所以只是分配的分界</p>
+<p>偏移 1.9 %，能量既不會消失也不會憑空出現。</p>
+<p>fail-closed(失敗即拒絕)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> 不是 <code style="color:#22d3bf">&quot;gaussian&quot;</code> / <code style="color:#22d3bf">end_effect</code> 不是已知的 3 種之一。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_c</code> 與 <code style="color:#22d3bf">lambda_s</code> 都是 <code style="color:#22d3bf">None</code>（什麼也不做的呼叫）。</p>
+<p style="margin:2px 0 2px 12px">• 截止低於 Nyquist 波長 <code style="color:#22d3bf">2*pitch</code>，或超過評定長度。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lambda_s &gt;= lambda_c</code>（頻帶為空）。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reject&quot;</code> 削去後陣列一點不剩。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

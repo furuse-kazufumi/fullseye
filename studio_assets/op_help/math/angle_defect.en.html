@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.angle_defect(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;angle_defect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Per-vertex angle defect (discrete Gaussian curvature) K_v = 2π − Σ(angles of the triangles at that vertex). For boundary vertices, π − Σ (geodesic curvature).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>閉じたメッシュでは Σ K_v = 2πχ が<b>厳密に</b>成り立つ(Descartes の定理)。境界があるときは Σ(内部の K) + Σ(境界の π − Σθ) = 2πχ(離散 Gauss–Bonnet)。返り値 <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>。</p>
+<p>On a closed mesh Σ K_v = 2πχ holds <b>exactly</b> (Descartes&#x27; theorem). With a boundary, Σ(interior K) + Σ(boundary π − Σθ) = 2πχ (discrete Gauss–Bonnet). Returns <code style="color:#22d3bf">{&quot;defect&quot;, &quot;total&quot;, &quot;two_pi_chi&quot;, &quot;is_boundary&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

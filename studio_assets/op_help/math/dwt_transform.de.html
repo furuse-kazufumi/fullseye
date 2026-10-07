@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;dwt_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Mehrstufige, N-dimensionale diskrete Wavelet-Transformation mit Daubechies dbN (bei periodischem Rand exakt orthonormal).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。</p>
-<p>order: dbN の N(1 = Haar)。</p>
-<p>levels: 段数。各段で近似(全軸ローパス)をさらに分ける。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
+<p>x: reelles Array (1-D-Signal, 2-D-Bild, 3-D-Volumen). Die Länge jeder transformierten Achse ist ein Vielfaches von 2^levels.</p>
+<p>order: das N von dbN (1 = Haar).</p>
+<p>levels: Anzahl der Stufen. In jeder Stufe wird die Approximation (Tiefpass auf allen Achsen) weiter zerlegt.</p>
+<p>axes: zu transformierende Achsen (ohne Angabe alle Achsen).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">approx</code> 最後の近似、<code style="color:#22d3bf">details</code> = 段ごとの dict(キーは軸ごとの &#x27;a&#x27;/&#x27;d&#x27; の並び、例 2-D なら &#x27;ad&#x27;・&#x27;da&#x27;・&#x27;dd&#x27;)、<code style="color:#22d3bf">energy_in</code>・<code style="color:#22d3bf">energy_out</code>(Parseval で一致)、<code style="color:#22d3bf">order</code>・<code style="color:#22d3bf">levels</code>・<code style="color:#22d3bf">axes</code>。<code style="color:#22d3bf">dwt_inverse</code> に丸ごと渡すと元に戻る。</p>
+<p><code style="color:#22d3bf">approx</code> die letzte Approximation, <code style="color:#22d3bf">details</code> = ein dict pro Stufe (Schlüssel sind die Folgen von &#x27;a&#x27;/&#x27;d&#x27; pro Achse, z. B. bei 2-D &#x27;ad&#x27;, &#x27;da&#x27;, &#x27;dd&#x27;), <code style="color:#22d3bf">energy_in</code>, <code style="color:#22d3bf">energy_out</code> (gleich nach Parseval), <code style="color:#22d3bf">order</code>, <code style="color:#22d3bf">levels</code>, <code style="color:#22d3bf">axes</code>. Das Ganze an <code style="color:#22d3bf">dwt_inverse</code> übergeben stellt das Original wieder her.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

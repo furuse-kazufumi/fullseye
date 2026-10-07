@@ -4,15 +4,14 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_stream_network&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>집수량이 임계값을 넘은 셀을 하도로 간주하는 이진 마스크.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>手順: <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code> で各セルの集水セル数(自セルを 1 と数える)を取り、<code style="color:#22d3bf">acc &gt;= threshold_cells</code> を 1、それ以外を 0 にする。欠測セルは <code style="color:#22d3bf">nan</code> のまま。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>: 河道とみなす集水セル数。正の有限値(<code style="color:#22d3bf">ValueError</code>)。面積で決めたいなら <code style="color:#22d3bf">面積 [m^2] / cell_size^2</code> に換算して渡す(この op はセル数しか受けない)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(既定): 先に priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>、<code style="color:#22d3bf">epsilon=1e-6</code>)で窪地を埋める。埋めないと窪地で流れが止まり、下流の集水量が小さく出て河道が途切れる。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodata</code>: <code style="color:#22d3bf">&quot;error&quot;</code>(既定、<code style="color:#22d3bf">nan</code> があれば拒否)/ <code style="color:#22d3bf">&quot;outlet&quot;</code>(欠測 = 流出口、水域向き)/ <code style="color:#22d3bf">&quot;barrier&quot;</code>(欠測 = 壁)。定数で穴埋めする選択肢は無い。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code> / <code style="color:#22d3bf">cell_size</code> の契約は <code style="color:#22d3bf">dem_slope</code> と同じ(3x3 以上、番兵値拒否、[m])。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 0 / 1(欠測は <code style="color:#22d3bf">nan</code>)。bool ではないので <code style="color:#22d3bf">blob_label</code> 等に渡すなら <code style="color:#22d3bf">== 1</code> で二値化する。</p>
-<p style="margin:2px 0 2px 12px">• 計算量: 集水量のトポロジカル走査がセル数ぶんの Python ループ。</p>
-<p>D8 流向(<code style="color:#22d3bf">dem_flow_direction</code>)に基づくので、平坦な埋立地では流れが一箇所に集まりやすい ―― 閾値を下げすぎると格子状の偽河道が出る。</p>
+<p>절차: <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code>로 각 셀의 집수셀 수(자기 셀을 1로 센다)를 취하고, <code style="color:#22d3bf">acc &gt;= threshold_cells</code>를 1, 그 외를 0 으로 한다. 결측 셀은 <code style="color:#22d3bf">nan</code> 그대로.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>: 하도로 간주하는 집수 셀 수. 양의 유한값(<code style="color:#22d3bf">ValueError</code>). 면적으로 정하고 싶다면 <code style="color:#22d3bf">면적 [m^2] / cell_size^2</code>로 환산해 넘긴다(이 op는셀 수만 받는다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(기본값): 먼저 priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>, <code style="color:#22d3bf">epsilon=1e-6</code>)로와지를 메운다. 메우지 않으면 와지에서 흐름이 멈춰, 하류의 집수량이 작게 나와 하도가끊긴다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodata</code>: <code style="color:#22d3bf">&quot;error&quot;</code>(기본값, <code style="color:#22d3bf">nan</code>이 있으면 거부) / <code style="color:#22d3bf">&quot;outlet&quot;</code>(결측 = 유출구, 수역용) / <code style="color:#22d3bf">&quot;barrier&quot;</code>(결측 = 벽). 상수로 구멍을 메우는 선택지는 없다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code> / <code style="color:#22d3bf">cell_size</code>의 계약은 <code style="color:#22d3bf">dem_slope</code>와 같다(3x3 이상, 센티넬 값 거부, [m]).</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(H, W)</code> float64의 0 / 1(결측은 <code style="color:#22d3bf">nan</code>). bool이 아니므로 <code style="color:#22d3bf">blob_label</code> 등에 넘길 때는 <code style="color:#22d3bf">== 1</code>로 이진화한다.</p>
+<p style="margin:2px 0 2px 12px">• 계산량: 집수량의 위상 주사가 셀 수만큼의 Python 루프.</p>
+<p>D8 흐름 방향(<code style="color:#22d3bf">dem_flow_direction</code>)에 기반하므로, 평탄한 매립지에서는 흐름이 한 곳에모이기 쉽다 ―― 임계값을 너무 낮추면 격자 모양의 가짜 하도가 나온다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathspectral; mathspectral.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;esprit_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>ESPRIT(Roy &amp; Kailath 1989): 어레이의 &#x27;1소자 이동&#x27; 불변성으로부터 격자를 쓰지 않고 방향을 푼다.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>信号部分空間 E_s の上 M−1 行と下 M−1 行を最小二乗で結ぶ Φ の固有値 λ_k = exp(−2πi d sin θ_k) から θ_k = arcsin(−arg λ_k / (2π d))。雑音なし・無相関なら厳密(格子の分解能に縛られない)。<code style="color:#22d3bf">n_sources=None</code> なら MDL で推定する。返り値 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>。</p>
+<p>신호 부분공간 E_s의 위 M−1행과 아래 M−1행을 최소제곱으로 잇는 Φ의 고윳값 λ_k = exp(−2πi d sin θ_k)로부터 θ_k = arcsin(−arg λ_k / (2π d)). 잡음 없음·무상관이면 엄밀(격자의 분해능에 묶이지 않는다). <code style="color:#22d3bf">n_sources=None</code>이면 MDL로 추정한다. 반환값 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

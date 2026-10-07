@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bessel(x, order: &#x27;float&#x27; = 0, kind: &#x27;str&#x27; = &#x27;j&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathnumerics; mathnumerics.bessel(x, order: &#x27;float&#x27; = 0, kind: &#x27;str&#x27; = &#x27;j&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;bessel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>Bessel 函數。<code style="color:#22d3bf">kind</code> = <code style="color:#22d3bf">&quot;j&quot;</code>(第 1 類 J)/ <code style="color:#22d3bf">&quot;y&quot;</code>(第 2 類 Y)/ <code style="color:#22d3bf">&quot;i&quot;</code>、<code style="color:#22d3bf">&quot;k&quot;</code>(修正)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>円い膜の振動・円い開口の回折(Airy = J₁)・円筒の熱伝導に出る。門: Wronskian J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx)、漸化式 J_{ν−1} + J_{ν+1} = (2ν/x) J_ν。Y と K は x &gt; 0 のみ(原点で発散する)。</p>
+<p>出現在圓膜振動、圓孔繞射(Airy = J₁)、圓柱熱傳導中。門檻：Wronskian J_{ν+1}(x)Y_ν(x) − J_ν(x)Y_{ν+1}(x) = 2/(πx)，遞迴式 J_{ν−1} + J_{ν+1} = (2ν/x) J_ν。Y 與 K 僅限 x &gt; 0(在原點發散)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>

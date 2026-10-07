@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;lomb_scargle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lomb–Scargle-Periodogramm einer ungleichmäßig abgetasteten Zeitreihe (t, y) (mit der Zeitverschiebung τ nach Scargle 1982, nach Abzug des Mittelwerts).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt。f は周波数(t の単位の逆数)。f = 0 は定義されないので拒否する。</p>
-<p>門: 等間隔の標本ではフーリエ周波数 k/(NΔt) で |DFT|²/N に一致する。返り値 <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>。</p>
+<p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ], ω = 2πf, tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt. f ist die Frequenz (Kehrwert der Einheit von t). f = 0 ist nicht definiert und wird daher abgewiesen.</p>
+<p>Gate: bei äquidistanten Abtastwerten Übereinstimmung mit |DFT|²/N an den Fourier-Frequenzen k/(NΔt). Rückgabewert <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

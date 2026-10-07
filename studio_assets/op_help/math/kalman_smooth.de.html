@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathestimation; mathestimation.kalman_smooth(z, F, H, Q, R, x0, P0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;kalman_smooth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Kalman-Filter (vorwärts) und Rauch-Tung-Striebel-Glätter (rückwärts) für das lineare Gaußsche Zustandsraummodell x_{k+1} = F x_k + w (w ~ N(0,Q)), z_k = H x_k + v (v ~ N(0,R)).</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
-<p><code style="color:#22d3bf">z</code> は (T, m) の観測(NaN の行は欠測として更新を飛ばす)。返り値 <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>。</p>
-<p>門: 平滑化の結果は、全観測と事前分布を一度に使う最小二乗(一括の MAP)と厳密に一致する。</p>
+<p><code style="color:#22d3bf">z</code> sind die (T, m)-Beobachtungen (Zeilen mit NaN gelten als fehlend, das Update wird übersprungen). Rückgabewert <code style="color:#22d3bf">{&quot;x_filt&quot;, &quot;P_filt&quot;, &quot;x_smooth&quot;, &quot;P_smooth&quot;, &quot;nll&quot;}</code>.</p>
+<p>Gate: das Glättungsergebnis stimmt exakt mit den kleinsten Quadraten überein, die alle Beobachtungen und die Prior-Verteilung auf einmal nutzen (Batch-MAP).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Komplexe Eingaben lösen <code style="color:#22d3bf">ValueError</code> aus</b> — die Umwandlung nach float64 verwirft den Imaginärteil stillschweigend (numpy meldet nur eine ComplexWarning und liefert eine plausibel aussehende, falsche reelle Zahl). Schreiben Sie <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explizit oder nutzen Sie complexops.</p>

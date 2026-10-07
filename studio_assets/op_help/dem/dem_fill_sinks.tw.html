@@ -4,10 +4,9 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_fill_sinks(dem, epsilon=0.0, nodata=&#x27;error&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_fill_sinks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>填平窪地後的 DEM。Barnes, Lehman &amp; Mulla (2014) 的 priority-flood。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p><code style="color:#22d3bf">epsilon</code> に微小値(例 1e-6)を与えると、埋めた平坦面にわずかな傾斜を付ける(これが無いと平坦面で流向が決まらず、集水量が途中で消える)。</p>
-<p><code style="color:#22d3bf">nodata</code> は <code style="color:#22d3bf">NODATA_POLICIES</code>。<code style="color:#22d3bf">&quot;outlet&quot;</code> なら欠測セルを外周と同じ <b>種</b>として扱う(水域に流れ込んだ水はそこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測は埋めの対象から外し、値を <code style="color:#22d3bf">nan</code> のまま返す。</p>
-<p>出力は入力以上(<code style="color:#22d3bf">filled &gt;= dem</code>、欠測を除く)。</p>
+<p>給 <code style="color:#22d3bf">epsilon</code> 一個微小值(例如 1e-6),會在填平的平坦面上加上輕微的傾斜(否則平坦面上流向無法確定,匯水量會中途消失)。</p>
+<p><code style="color:#22d3bf">nodata</code> 取 <code style="color:#22d3bf">NODATA_POLICIES</code> 之一。<code style="color:#22d3bf">&quot;outlet&quot;</code> 把缺測單元當作與外圈相同的 <b>種子</b>(流入水域的水在那裡離開系統)。<code style="color:#22d3bf">&quot;barrier&quot;</code> 則把缺測排除在填補對象之外,值保持 <code style="color:#22d3bf">nan</code> 回傳。</p>
+<p>輸出不小於輸入(<code style="color:#22d3bf">filled &gt;= dem</code>,缺測除外)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

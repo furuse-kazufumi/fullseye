@@ -4,13 +4,12 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_tpi(dem, cell_size=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_tpi(dem, cell_size=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_tpi&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>지형 위치 지수 TPI —— 자기 셀과 8근방 평균의 차 [m]. 양수는 능선, 음수는 골짜기.</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>式: <code style="color:#22d3bf">tpi = z - mean(8 近傍の z)</code>(Weiss の TPI を 3x3 の最小近傍で取ったもの)。縁は端の値を複製して埋める。近傍が 1 セル固定なので、<b>スケールは <code style="color:#22d3bf">cell_size</code> 1 つぶんに固定</b>で、より広い尾根/谷を見たいときは先に <code style="color:#22d3bf">dem</code> を粗くする(この op に半径の引数は無い)。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、実数、<code style="color:#22d3bf">inf</code> 不可。欠測は <code style="color:#22d3bf">nan</code>(番兵値 <code style="color:#22d3bf">&lt;= -9000</code> が <code style="color:#22d3bf">nan</code> 無しで入っていれば拒否)。<code style="color:#22d3bf">nan</code> は 3x3 に伝播する。</p>
-<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 結果には影響しない(差分に距離は入らない)が、単位が [m] であることを呼び出し側に意識させるため受け取り、正の有限値かを検査する。</p>
-<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 [m]。0 付近が斜面の途中、正が凸(尾根・頂)、負が凹(谷・窪地)。</p>
-<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形、番兵値、<code style="color:#22d3bf">cell_size</code>)。</p>
-<p><code style="color:#22d3bf">dem_roughness</code>(同じ近傍の RMS)と組み合わせると地形分類の特徴になる。</p>
+<p>식: <code style="color:#22d3bf">tpi = z - mean(8 근방의 z)</code>(Weiss의 TPI를 3x3의 최소 근방으로 취한 것). 가장자리는 끝 값을 복제해 채운다. 근방이 1셀 고정이므로, <b>스케일은 <code style="color:#22d3bf">cell_size</code> 1개분으로 고정</b>이며, 더 넓은 능선/계곡을 보고 싶을 때는 먼저 <code style="color:#22d3bf">dem</code>을 거칠게 한다(이 op에 반경 인수는 없다).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m], 3x3 이상, 실수, <code style="color:#22d3bf">inf</code> 불가. 결측은 <code style="color:#22d3bf">nan</code>(센티넬 값 <code style="color:#22d3bf">&lt;= -9000</code>이 <code style="color:#22d3bf">nan</code> 없이 들어 있으면 거부). <code style="color:#22d3bf">nan</code>은 3x3으로 전파된다.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cell_size</code>: 결과에는 영향을 주지 않지만(차분에 거리가 들어가지 않는다), 단위가 [m]라는것을 호출 측에 의식시키기 위해 받으며, 양의 유한값인지 검사한다.</p>
+<p style="margin:2px 0 2px 12px">• 반환값: <code style="color:#22d3bf">(H, W)</code> float64 [m]. 0 부근이 사면의 중간, 양이 볼록(능선, 정상), 음이 오목(계곡, 와지).</p>
+<p style="margin:2px 0 2px 12px">• 실패: <code style="color:#22d3bf">ValueError</code>(형상, 센티넬 값, <code style="color:#22d3bf">cell_size</code>).</p>
+<p><code style="color:#22d3bf">dem_roughness</code>(같은 근방의 RMS)와 조합하면 지형 분류의 특징이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 패밀리 가이드</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

@@ -4,18 +4,17 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Obtains the 2-dimensional Fourier transform of an axisymmetric image (a round aperture, a Gaussian blob, diffraction rings) with 1 radial Hankel transform.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、<code style="color:#22d3bf">hankel_transform</code>(0 次)にかける。軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称からどれだけ崩れているか(<code style="color:#22d3bf">asymmetry</code>)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>
+<p>The image is split into rings 1 pixel wide by distance from the centre and averaged (radial profile), then passed to <code style="color:#22d3bf">hankel_transform</code> (order 0). If axisymmetric, the 2-D transform takes <b>just 1 integral</b> (averaging over rings also reduces noise by 1/√(pixels per ring)), and how far it departs from axial symmetry is returned as a number (<code style="color:#22d3bf">asymmetry</code>). The frequency step is about 1/(2·radius), as with the 2-D FFT; it does not get finer.</p>
 <p>Args:</p>
-<p>image: 2-D の実画像。</p>
-<p>center: 中心 (行, 列)。省略すると明るさの重心。</p>
-<p>spacing: 1 画素の長さ(周波数の単位を決める)。</p>
-<p>n: Hankel 変換の標本数。</p>
-<p>r_max: 使う半径の上限(既定 = 中心から画像の縁までの最短距離。角の欠けた輪は使わない)。</p>
+<p>image: 2-D real image.</p>
+<p>center: centre (row, col). If omitted, the brightness centroid.</p>
+<p>spacing: length of 1 pixel (sets the frequency unit).</p>
+<p>n: number of samples of the Hankel transform.</p>
+<p>r_max: upper limit of the radius used (default = shortest distance from the centre to the image edge; rings with missing corners are not used).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">nu</code>(周波数)・<code style="color:#22d3bf">F</code>(2-D フーリエ変換の動径断面、∬ f e^{−2πi k·x} dx の値)・<code style="color:#22d3bf">r</code>・<code style="color:#22d3bf">profile</code>(動径の分布)・</p>
-<p><code style="color:#22d3bf">center</code>・<code style="color:#22d3bf">asymmetry</code> = ‖画像 − 分布から作り直した軸対称の画像‖ / ‖画像‖(0 なら軸対称。暗い背景で薄めない)。</p>
-<p>門: 半径 R の円板は F(ν) = R J₁(2πνR)/ν(Airy)、exp(−π r²/σ²) は σ² exp(−π σ² ν²)(自己双対の拡大)、2-D FFT の動径断面と一致。</p>
+<p><code style="color:#22d3bf">nu</code> (frequency), <code style="color:#22d3bf">F</code> (radial cross-section of the 2-D Fourier transform, the value of ∬ f e^{−2πi k·x} dx), <code style="color:#22d3bf">r</code>, <code style="color:#22d3bf">profile</code> (radial profile),</p>
+<p><code style="color:#22d3bf">center</code>, <code style="color:#22d3bf">asymmetry</code> = ‖image − axisymmetric image rebuilt from the profile‖ / ‖image‖ (0 means axisymmetric; not diluted by a dark background).</p>
+<p>Gate: a disc of radius R gives F(ν) = R J₁(2πνR)/ν (Airy), exp(−π r²/σ²) gives σ² exp(−π σ² ν²) (self-dual scaling), and it matches the radial cross-section of the 2-D FFT.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

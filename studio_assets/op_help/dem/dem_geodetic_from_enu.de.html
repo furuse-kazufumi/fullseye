@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_geodetic_from_enu(enu, lat0_deg, lon0_deg, h0_m)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_from_enu&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
 <p>Lokales ENU → geodätische Koordinaten (die Umkehrung von <code style="color:#22d3bf">dem_enu_from_geodetic</code>). <code style="color:#22d3bf">points</code>.</p>
-<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
-<p>enu: <code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(east, north, up)</code> [m]。</p>
-<p>lat0_deg / lon0_deg / h0_m: 基準点の測地座標。</p>
+<p>enu: <code style="color:#22d3bf">(n, 3)</code> mit <code style="color:#22d3bf">(east, north, up)</code> [m].</p>
+<p>lat0_deg / lon0_deg / h0_m: geodätische Koordinaten des Bezugspunkts.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n, 3)</code> の <code style="color:#22d3bf">(緯度[度], 経度[度], 楕円体高[m])</code>。</p>
-<p>閉じた式で検査できること: 往復が 1e-9 m 級、<code style="color:#22d3bf">(0, 0, 0)</code> は基準点そのもの。</p>
-<p><b>ValueError</b>: <code style="color:#22d3bf">(n, 3)</code> でない、非有限、基準点が不正。</p>
+<p><code style="color:#22d3bf">(n, 3)</code> mit <code style="color:#22d3bf">(Breite[Grad], Länge[Grad], ellipsoidische Höhe[m])</code>.</p>
+<p>Per geschlossener Form prüfbar: Hin und zurück im Bereich 1e-9 m, <code style="color:#22d3bf">(0, 0, 0)</code> ist der Bezugspunkt selbst.</p>
+<p><b>ValueError</b>: nicht <code style="color:#22d3bf">(n, 3)</code>, nicht-endliche Werte, ungültiger Bezugspunkt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

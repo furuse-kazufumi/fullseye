@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_flow_direction(dem, cell_size, nodata=&#x27;error&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>D8 流向。O&#x27;Callaghan &amp; Mark (1984)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
-<p>返り値は <code style="color:#22d3bf">(H, W)</code> の整数で、0-7 が <code style="color:#22d3bf">_D8</code> の並び、<code style="color:#22d3bf">-1</code> が「流出先なし」(周囲より低い = 窪地、または境界外へ出る)。</p>
-<p><code style="color:#22d3bf">nodata=&quot;outlet&quot;</code> なら、欠測セルへ向かう流れを<b>許す</b>(そこで系を出る)。<code style="color:#22d3bf">&quot;barrier&quot;</code> なら欠測へは流れない。欠測セル自身は常に <code style="color:#22d3bf">-1</code>。</p>
+<p>回傳值為 <code style="color:#22d3bf">(H, W)</code> 的整數,0-7 是 <code style="color:#22d3bf">_D8</code> 的順序,<code style="color:#22d3bf">-1</code> 表示「無流出目標」(比周圍低 = 窪地,或流出邊界之外)。</p>
+<p><code style="color:#22d3bf">nodata=&quot;outlet&quot;</code> 時<b>允許</b>流向缺測單元(在那裡離開系統)。<code style="color:#22d3bf">&quot;barrier&quot;</code> 時不流向缺測。缺測單元本身始終為 <code style="color:#22d3bf">-1</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

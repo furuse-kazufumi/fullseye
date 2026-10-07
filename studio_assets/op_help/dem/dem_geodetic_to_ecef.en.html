@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_geodetic_to_ecef(lat_deg, lon_deg, height_m=0.0)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_to_ecef&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Geodetic coordinates (latitude, longitude, ellipsoidal height) → <b>Earth-centered Cartesian coordinates ECEF</b> [m].</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>地球の中心を原点、赤道面の本初子午線方向を x、東経 90 度を y、北極を z とする右手系。地形を「地球中心から見た座標」で扱いたいときの入口。</p>
-<p>球ではなく <b>WGS84 楕円体</b>で計算する —— 球近似は緯度 45 度あたりで最大 21 km ずれる(極半径が赤道半径より短いぶん)。</p>
+<p>A right-handed system with origin at the Earth&#x27;s centre, x toward the prime meridian in the equatorial plane, y at 90 degrees east longitude, and z at the North Pole. The entry point when terrain is to be handled in &quot;coordinates seen from the Earth&#x27;s centre&quot;.</p>
+<p>Computed on the <b>WGS84 ellipsoid</b>, not a sphere —— a spherical approximation deviates by up to 21 km around 45 degrees latitude (because the polar radius is shorter than the equatorial radius).</p>
 <p>Args:</p>
-<p>lat_deg / lon_deg: 緯度・経度 [度]。配列可(同じ形)。</p>
-<p>height_m: 楕円体高 [m]。スカラでも配列でも可。</p>
+<p>lat_deg / lon_deg: latitude and longitude [degrees]. Arrays allowed (same shape).</p>
+<p>height_m: ellipsoidal height [m]. Scalar or array.</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(..., 3)</code> の ECEF 座標 [m]。</p>
+<p><code style="color:#22d3bf">(..., 3)</code> ECEF coordinates [m].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

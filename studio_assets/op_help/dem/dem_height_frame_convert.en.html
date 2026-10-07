@@ -4,17 +4,16 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_height_frame_convert(height_m, geoid_height_m, frm=&#x27;ellipsoidal&#x27;, to=&#x27;orthometric&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_convert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Moves the height <b>reference</b>: ellipsoidal height <code style="color:#22d3bf">h</code> ↔ orthometric height <code style="color:#22d3bf">H</code> (<code style="color:#22d3bf">H = h - N</code>). <code style="color:#22d3bf">signal</code>.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>同じ「高さ」という語で 2 つの別物が流通していて、どちらも例外を出さずに地図に載る。この op は<b>どちらからどちらへ移すのかを必ず書かせる</b> —— 既定はあるが、<code style="color:#22d3bf">frm</code> と <code style="color:#22d3bf">to</code> は docstring でなくコードに残る。</p>
+<p>2 different things circulate under the same word &quot;height&quot;, and both end up on maps without raising an exception. This op <b>forces you to write from which to which you are converting</b> —— there are defaults, but <code style="color:#22d3bf">frm</code> and <code style="color:#22d3bf">to</code> remain in the code, not in the docstring.</p>
 <p>Args:</p>
-<p>height_m: 高さ [m]。配列可。</p>
-<p>geoid_height_m: 同じ点のジオイド高 <code style="color:#22d3bf">N</code> [m] —— <code style="color:#22d3bf">dem_geoid_height</code> で引いた値。</p>
-<p>スカラでも配列でもよい。</p>
-<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code>(楕円体高)か <code style="color:#22d3bf">&quot;orthometric&quot;</code>(標高)。</p>
+<p>height_m: height [m]. Arrays allowed.</p>
+<p>geoid_height_m: geoid height <code style="color:#22d3bf">N</code> [m] at the same points —— the value looked up with <code style="color:#22d3bf">dem_geoid_height</code>.</p>
+<p>Scalar or array.</p>
+<p>frm / to: <code style="color:#22d3bf">&quot;ellipsoidal&quot;</code> (ellipsoidal height) or <code style="color:#22d3bf">&quot;orthometric&quot;</code> (orthometric height).</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">(n,)</code> の変換後の高さ [m]。<code style="color:#22d3bf">frm == to</code> なら値は変わらない。</p>
-<p>閉じた式で検査できること: <code style="color:#22d3bf">H = h - N</code> は定義そのものなので真値は引き算で出る。往復(h→H→h)の誤差は<b>実測で 5e-13 m 以下</b>(5,000 点、高さ −100〜4000 m・ <code style="color:#22d3bf">N</code> ±100 m)。ビット一致ではない —— <code style="color:#22d3bf">(h - N) + N</code> は丸めで 1 ulp 動くことがあり、実測では 5,000 点中 273 点がそうなった。<b>「往復で元に戻る」を等号で書かない</b>のはそのため。</p>
-<p><b>ValueError</b>: 未知の基準名、長さの食い違い、非有限。</p>
+<p><code style="color:#22d3bf">(n,)</code> converted heights [m]. If <code style="color:#22d3bf">frm == to</code> the values do not change.</p>
+<p>What can be checked with a closed formula: <code style="color:#22d3bf">H = h - N</code> is the definition itself, so the ground truth comes from a subtraction. The round-trip (h→H→h) error is <b>measured at 5e-13 m or less</b> (5,000 points, height −100 to 4000 m, <code style="color:#22d3bf">N</code> ±100 m). Not bit-identical —— <code style="color:#22d3bf">(h - N) + N</code> can move by 1 ulp through rounding, and in measurement 273 of 5,000 points did so. That is why <b>&quot;it returns to the original after a round trip&quot; is not written as an equality</b>.</p>
+<p><b>ValueError</b>: unknown frame name, length mismatch, non-finite.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

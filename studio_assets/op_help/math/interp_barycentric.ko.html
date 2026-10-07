@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>점 (xk, yk)를 지나는 다항식(차수 len−1)을 무게중심 공식으로 x에서 평가한다(Berrut &amp; Trefethen 2004).</p>
-<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
-<p>係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では <b>Runge 現象</b>(端の振動)がそのまま出る —— それは公式の欠陥ではなく、点の置き方の問題。</p>
-<p>門: 次数 len−1 以下の多項式は厳密に再現する。</p>
+<p>계수를 거치지 않으므로(Vandermonde 행렬은 풀지 않는다) 고차에서도 수치적으로 안정. 등간격 점에서는 <b>Runge 현상</b>(끝의 진동)이 그대로 나온다 —— 그것은 공식의 결함이 아니라 점 배치의 문제.</p>
+<p>게이트: 차수 len−1 이하의 다항식은 엄밀하게 재현한다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 입력은 <code style="color:#22d3bf">ValueError</code></b> —— float64 로의 강제 변환은 허수부를 조용히 버립니다(numpy 는 ComplexWarning 만 내고 「그럴듯하게 틀린」 실수를 돌려줍니다). <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> 를 명시하거나 복소수를 다루는 complexops 를 쓰세요.</p>

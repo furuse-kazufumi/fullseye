@@ -4,9 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_euler_characteristic(vertices, faces=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mesh_euler_characteristic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>V − E + F of a triangle mesh and, for a closed orientable surface, the genus g = (2 − χ)/2.</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>使われていない頂点は数えない(浮いた頂点で χ がずれるのを防ぐ)。境界辺(1 枚の面にしか属さない辺)と非多様体辺(3 枚以上)も返す —— 境界があると χ = 2 − 2g − b(b = 境界の輪の数)になり、種数は <code style="color:#22d3bf">None</code>。</p>
-<p>門: 正二十面体 χ = 2、トーラス χ = 0・種数 1、円板 χ = 1。</p>
+<p>Unused vertices are not counted (prevents χ from shifting due to floating vertices). Boundary edges (edges belonging to only 1 face) and non-manifold edges (3 or more faces) are also returned —— with a boundary, χ = 2 − 2g − b (b = number of boundary loops), and the genus is <code style="color:#22d3bf">None</code>.</p>
+<p>Gate: icosahedron χ = 2, torus χ = 0 with genus 1, disc χ = 1.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

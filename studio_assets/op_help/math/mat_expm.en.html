@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_expm(A) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.mat_expm(A) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_expm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Matrix exponential e^A (Padé approximation + scaling-and-squaring, scipy).</p>
-<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
-<p>線形 ODE x&#x27; = A x の解 x(t) = e^{At} x(0)。歪対称 3×3 なら回転行列(Rodrigues の公式と一致)。</p>
+<p>Solution x(t) = e^{At} x(0) of the linear ODE x&#x27; = A x. For a skew-symmetric 3×3, a rotation matrix (agrees with Rodrigues&#x27; formula).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex input raises <code style="color:#22d3bf">ValueError</code></b> — coercing to float64 silently discards the imaginary part (numpy only emits a ComplexWarning and returns a plausible-looking wrong real number). State <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> explicitly, or use complexops, which handles complex data.</p>

@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_paired&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>配对 t 检验：对同一对象测量 2 次所得差值 d = x − y 的均值是否为 0。</p>
-<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
-<p>t = mean(d) / (sd(d)/√n)、自由度 n−1、両側の p 値。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>。</p>
+<p>t = mean(d) / (sd(d)/√n)，自由度 n−1，双侧 p 值。返回值 <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 输入一律 <code style="color:#22d3bf">ValueError</code></b> —— 强制转成 float64 会无声丢掉虚部(numpy 只发一个 ComplexWarning,然后返回一个「看着合理却是错的」实数)。请显式写出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支持复数的 complexops。</p>

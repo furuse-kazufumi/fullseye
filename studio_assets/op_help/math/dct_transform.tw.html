@@ -4,14 +4,13 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.dct_transform(x, *, axes=None, inverse: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;dct_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>N 維的正交歸一 DCT-II(<code style="color:#22d3bf">inverse=True</code> 時為 DCT-III = 逆轉換)。</p>
-<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
-<p>x: 任意次元の実配列(信号・画像・ボリューム)。</p>
-<p>axes: 変換する軸(省略で全軸)。</p>
-<p>inverse: True なら係数から元に戻す。</p>
+<p>x: 任意維度的實數陣列(訊號、影像、體積資料)。</p>
+<p>axes: 要轉換的軸(省略則為全部軸)。</p>
+<p>inverse: 為 True 時由係數還原。</p>
 <p>Returns:</p>
-<p><code style="color:#22d3bf">coeffs</code>(同じ形)、<code style="color:#22d3bf">energy</code>(Σx²、正規直交なので変換の前後で同じ = Parseval)、<code style="color:#22d3bf">compaction</code> = 大きい順に並べた係数のエネルギーの累積割合(先頭 1% で何割を持つか、が JPEG の理由)。</p>
-<p>門は定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) の行列と一致すること・逆変換で 1e-12 で戻ること。</p>
+<p><code style="color:#22d3bf">coeffs</code>(形狀相同)、<code style="color:#22d3bf">energy</code>(Σx²，正交歸一，所以轉換前後相同 = Parseval)、<code style="color:#22d3bf">compaction</code> = 依大小排序的係數能量的累積比例(前 1% 佔多少，正是 JPEG 的理由)。</p>
+<p>門檻是與定義式 C[k, n] = √(2/N)·c_k·cos(π(2n+1)k / 2N) 的矩陣一致、逆轉換在 1e-12 內還原。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>complex 輸入一律 <code style="color:#22d3bf">ValueError</code></b> —— 強制轉成 float64 會無聲丟掉虛部(numpy 只發一個 ComplexWarning,然後回傳一個「看似合理卻是錯的」實數)。請明確寫出 <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code>,或改用支援複數的 complexops。</p>
