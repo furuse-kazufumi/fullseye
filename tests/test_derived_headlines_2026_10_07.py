@@ -55,6 +55,10 @@ def test_halcon_parity_headline_matches_a_recount_from_the_shipped_names():
         "HALCON_PARITY.md の見出しは %s / %s、同梱の名前表から数え直すと %d / %d —— "
         "手元(data/halcon_operators.json のある checkout)で `py -3.11 honest_summary.py` を回すこと"
         % (m.group(1), m.group(2), total, n_real))
+    # ★2026-10-07(CI で判明): registry の op 数は入っている backend で変わる(py3.10/3.12 の CI は 910)。
+    #   見出し(上)は同梱の名前表だけで決まるので常に照合し、registry 行は完全な registry の環境でだけ照合する。
+    from conftest import requires_full_registry
+    requires_full_registry()
     m2 = re.search(r"registry ops: (\d+) ; distinct real HALCON ops covered: \*\*(\d+)\*\*", md)
     assert m2 and (int(m2.group(1)), int(m2.group(2))) == (n_registry, reg_cov), (
         "HALCON_PARITY.md の registry 行が古い(数え直し: registry %d / covered %d)"

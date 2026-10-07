@@ -440,7 +440,7 @@ def region01(out):
 NONFINITE_BY_DESIGN: frozenset = frozenset({"tb_fly_tau_from_expansion"})
 
 
-def keep_complex(out, v, out_sort, name):
+def _keep_complex(out, v, out_sort, name):
     """複素の sort(cimage / beatcube)用の ``finish``: 虚部を残したまま、非有限だけは記録して 0 で埋める。
 
     ★2026-10-07: ``sanitize`` は実 sort 向けの規約で**実部だけ**を返すので、複素の op を通すと位相が

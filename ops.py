@@ -2552,7 +2552,7 @@ def _wrap_unguarded() -> int:
             #   backends_bridge の橋は同じ理由で既に素通しにしていた —— その規約をこちらにも揃える。
             _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name,
                                finish=lambda out, v, _s=_op.out_sort, _n=_op.name, _bs=_bs:
-                               _bs.keep_complex(out, v, _s, _n))
+                               _bs._keep_complex(out, v, _s, _n))
         else:
             _op.fn = _bs.guard(_op.fn, _op.out_sort, name=_op.name)
         n += 1

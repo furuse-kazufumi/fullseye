@@ -18,7 +18,7 @@ import pytest
 
 import backend_safe as _bs
 import ops
-from conftest import KNOBS, copy_input, inputs_for, requires_full_registry
+from conftest import _REQUIRE_OPTIONAL, KNOBS, copy_input, inputs_for, requires_full_registry
 
 ALL_OPS = list(ops.REGISTRY)
 OP_IDS = [op.name for op in ALL_OPS]
@@ -220,7 +220,12 @@ def _call_recording(op, iv, a, b, fell, iname):
     if _bs.mark() != m and iname not in fell:
         ev = _bs.events_since(m, this_thread=False)
         e = ev[0] if ev else {"source": "?", "error": "event evicted from the ring"}
-        fell[iname] = "%s @ (a=%s, b=%s): %s" % (e["source"], a, b, str(e["error"])[:240])
+        err = str(e["error"])
+        # ★2026-10-07(CI で判明): optional backend が無い環境の ImportError は「劣化」ではなく
+        #   「この環境では走らない」—— requires_backend と同じく skip(py3.11 の完全環境では失敗にする)。
+        if ("ImportError" in err or "ModuleNotFoundError" in err) and not _REQUIRE_OPTIONAL:
+            pytest.skip("optional backend が無い: %s: %s" % (op.name, err[:160]))
+        fell[iname] = "%s @ (a=%s, b=%s): %s" % (e["source"], a, b, err[:240])
     return out
 
 
