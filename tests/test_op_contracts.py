@@ -225,7 +225,35 @@ def _call_recording(op, iv, a, b, fell, iname):
         if ("ImportError" in err or "ModuleNotFoundError" in err) and not _REQUIRE_OPTIONAL:
             pytest.skip("optional backend が無い: %s: %s" % (op.name, err[:160]))
         fell[iname] = "%s @ (a=%s, b=%s): %s" % (e["source"], a, b, err[:240])
+        if op.name in KNOWN_ORDER_DEPENDENT:
+            _record_order_dependent(op, iv, a, b, iname, err)
     return out
+
+
+def _record_order_dependent(op, iv, a, b, iname, err):
+    """順序依存の劣化が**起きた瞬間**の状態を warning に残す(再現できない欠陥の証拠集め)。
+
+    単独では 2000 回呼んでも再現しない(2026-10-07 に 4 回試行)ので、推測を重ねる代わりに
+    起きた全体実行の中で「同じ呼び出しをもう一度したら直るか(一過性か持続か)」「浮動小数の
+    例外設定」「生の backend 出力の非有限画素」を測って CI ログに残す。
+    """
+    import warnings
+
+    info = {"op": op.name, "input": iname, "a": a, "b": b, "err": err[:160],
+            "np_geterr": np.geterr()}
+    try:
+        again = op.fn(copy_input(iv), a, b)
+        info["recall_finite"] = bool(np.all(np.isfinite(np.asarray(again, dtype=complex))))
+    except Exception as exc:                                   # noqa: BLE001
+        info["recall_error"] = repr(exc)[:160]
+    if op.name == "sk_gabor":
+        try:
+            from skimage import filters as _f
+            raw = _f.gabor(np.asarray(copy_input(iv), dtype=np.float64), frequency=0.1 + 0.3 * a)[0]
+            info["raw_nonfinite"] = int(np.size(raw) - np.count_nonzero(np.isfinite(raw)))
+        except Exception as exc:                               # noqa: BLE001
+            info["raw_error"] = repr(exc)[:160]
+    warnings.warn("ORDER_DEPENDENT_FORENSICS %r" % (info,), stacklevel=2)
 
 
 #: ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。
