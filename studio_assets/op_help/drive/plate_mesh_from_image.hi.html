@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">plate_mesh_from_image — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgba</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roadjp; roadjp.plate_mesh_from_image(rgba, width: &#x27;float&#x27;, height: &#x27;float&#x27;, *, cell: &#x27;int&#x27; = 4, thickness: &#x27;float&#x27; = 0.004, back_color=(0.55, 0.55, 0.55), label: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;plate_mesh_from_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>RGBA image को face रंगों वाली पतली plate के mesh में बदलता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画像を <code style="color:#22d3bf">cell × cell</code> 画素の区画に切り、alpha の平均が 0.5 以上の区画だけを面にする(2 三角形)。面の色 = その区画の alpha で重みづけた平均色 <code style="color:#22d3bf">Σ(α·rgb) / Σα</code>。表面の法線 = <b>−x</b>(yaw 0 で +x へ進んで来る車に向く)、裏面は同じ形で <code style="color:#22d3bf">back_color</code>(法線 +x)。原点 = 板の中心、板は y-z 平面(画像の左 = +y、上 = +z)、厚さ <code style="color:#22d3bf">thickness</code> を x の ±半分に振る。使われない頂点は残さない(寸法を頂点から測れるように)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;front_faces&quot;: (0, n), &quot;back_faces&quot;: (n, 2n), &quot;cells&quot;: (rows, cols)}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">roadjp</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sign_params">sign_params</a> · <a style="color:#22d3bf" href="opdrive:sign_image">sign_image</a> · <a style="color:#22d3bf" href="opdrive:sign_mesh">sign_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_sign">add_sign</a> · <a style="color:#22d3bf" href="opdrive:signal_jp_mesh">signal_jp_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_signal_jp">add_signal_jp</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadjp.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

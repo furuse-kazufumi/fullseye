@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">radon_transform — TOMOGRAPHY <code style="color:#22d3bf">forward</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.radon_transform(image, angles_deg=None, n_detectors=None, oversample=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;radon_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>forward parallel-beam projection: slice अंदर, <b>sinogram</b> बाहर।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Rows of the result are projection angles and columns are detector bins. The convention is fixed here and never negotiated again; every other operator in this module reads it the same way, and a transposed sinogram is structurally indistinguishable from a valid one (see <code style="color:#22d3bf">opstomography</code> for the measured consequences of not giving it its own sort).</p>
+<p>The ray at detector bin <code style="color:#22d3bf">j</code> and angle <code style="color:#22d3bf">theta</code> is the line <code style="color:#22d3bf">x cos(theta) + y sin(theta) = j - (n_det-1)/2</code>, with <code style="color:#22d3bf">x</code> the column offset from the image centre and <code style="color:#22d3bf">y</code> the row offset — so <code style="color:#22d3bf">+y</code> runs *down* the array, matching the rest of Fullseye&#x27;s image indexing rather than a textbook&#x27;s upward <code style="color:#22d3bf">y</code>. The transform is the same either way (the sinogram is mirrored in the angle axis), but only one of the two agrees with <code style="color:#22d3bf">ellipse_phantom</code>, and the tests hold them together.</p>
+<p>Accuracy against the closed form (a disc of radius 60 px in a 256-px grid, 180 views), measured in <code style="color:#22d3bf">tests/test_tomography.py</code>: interior RMS error <b>0.073 %</b> of the peak line integral, whole-sinogram RMS <b>0.402 %</b> — the difference between the two being the partial-volume edge, where the phantom&#x27;s own anti-aliased boundary is what is being sampled.</p>
+<p>:param image: 2-D slice, at least 2x2. :param angles_deg: 1-D view angles in degrees; <code style="color:#22d3bf">None</code> -&gt;</p>
+<p><code style="color:#22d3bf">linspace(0, 180, 180, endpoint=False)</code>.</p>
+<p>:param n_detectors: bins; <code style="color:#22d3bf">None</code> -&gt; odd count covering the diagonal. :param oversample: ray samples per pixel, <code style="color:#22d3bf">1 .. 8</code>. The default is 1</p>
+<p>because 4 measures no better (0.073 % against 0.070 %).</p>
+<p>:returns: <code style="color:#22d3bf">(n_angles, n_detectors)</code> float64 sinogram. :raises ValueError: on non-finite input, an empty angle list, a detector count</p>
+<p>under 4, or a sinogram over <code style="color:#22d3bf">MAX_SINOGRAM_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_fidelity">poc_ct_fidelity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_fidelity.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sinogram</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">forward</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:ellipse_phantom">ellipse_phantom</a> · <a style="color:#22d3bf" href="optomography:ellipse_sinogram">ellipse_sinogram</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

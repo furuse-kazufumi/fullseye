@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">reflection_symmetry_score — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflection_symmetry_score(points, plane_point, plane_normal)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry3d; symmetry3d.reflection_symmetry_score(points, plane_point, plane_normal)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;reflection_symmetry_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>reflection symmetry score = chamfer(mirrored, मूल) / median nearest-neighbour spacing (जितना छोटा उतना symmetric, scale-invariant)। → float।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">reflect_points</code> で点群を平面で鏡映し、元の点群との対称 Chamfer 距離(<code style="color:#22d3bf">chamfer_distance</code>:</p>
+<p>双方向の最近傍距離の平均の平均)を、元の点群の最近傍間隔の中央値で割る。「鏡像が元の点から点間隔の何倍ずれているか」という無次元量なので、座標を定数倍しても値は変わらない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">plane_point</code> / <code style="color:#22d3bf">plane_normal</code>: 候補平面(法線は内部で正規化)。</p>
+<p style="margin:2px 0 2px 12px">• fail-closed: 点群が空・(N,3) でない(<code style="color:#22d3bf">chamfer_distance</code> が <code style="color:#22d3bf">ValueError</code>)、全点が一致して間隔が定義できない(<code style="color:#22d3bf">ValueError</code>)。重複点で中央値間隔が 0 になる場合だけ、重心からの RMS 半径 × 1e-12 を床にする。</p>
+<p>読み方の注意: 厳密に対称な形でも、鏡像の点が元のサンプル点にぴったり重なるわけではないのでスコアは 0 にならず、点間隔程度が床になる(実測値は <code style="color:#22d3bf">detect_reflection_symmetry</code> の表を参照)。閾値で採否を決めるより、複数候補を掃引して最小値と 2 位との差(<code style="color:#22d3bf">margin</code>)を見る。PCA の 3 軸以外の候補面を試したいときは、この関数を平面パラメータで直接掃引する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_symmetry">dl_mesh_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reflection_symmetry">reflection_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reflection_symmetry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:detect_reflection_symmetry">detect_reflection_symmetry</a> · <a style="color:#22d3bf" href="op3d:detect_rotational_symmetry">detect_rotational_symmetry</a> · <a style="color:#22d3bf" href="op3d:reflect_points">reflect_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,6 +7,7 @@ title_zh: 与 Blender 配合使用 —— 在 Blender 中建形、用 fullseye �
 title_tw: 與 Blender 搭配使用 —— 在 Blender 中建形、用 fullseye 量測(座標軸、單位、真值資料的陷阱)
 title_ko: Blender와 함께 쓰기 — 형상을 만들고 fullseye로 측정(축·단위·정답 데이터의 함정)
 title_de: Zusammen mit Blender — Form bauen, mit fullseye messen (Fallstricke: Achsen, Einheiten, Referenzdaten)
+title_hi: Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

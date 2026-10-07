@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pose_error — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pose_error(R_est, t_est, R_gt, t_gt)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrics3d; metrics3d.pose_error(R_est, t_est, R_gt, t_gt)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;pose_error&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.pose_error(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">table</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.pose_error.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">metrics3d.pose_error</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>pose error = (rotation angle [डिग्री], translation norm)। registration result की GT से तुलना। → (rot_deg, trans_err)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>計算:</p>
+<p style="margin:2px 0 2px 12px">• 回転: <code style="color:#22d3bf">dR = R_est.T @ R_gt</code> の回転角 <code style="color:#22d3bf">arccos((trace(dR) - 1) / 2)</code> を度に直す(<code style="color:#22d3bf">cos</code> は <code style="color:#22d3bf">[-1, 1]</code> にクリップして丸め誤差で NaN にしない)。値域 <code style="color:#22d3bf">[0, 180]</code> 度。<code style="color:#22d3bf">R_est == R_gt</code> なら 0。</p>
+<p style="margin:2px 0 2px 12px">• 並進: <code style="color:#22d3bf">|t_est - t_gt|</code>(ユークリッドノルム、座標と同じ単位)。</p>
+<p>引数: <code style="color:#22d3bf">R_est</code>, <code style="color:#22d3bf">R_gt</code> は <code style="color:#22d3bf">(3, 3)</code>、<code style="color:#22d3bf">t_est</code>, <code style="color:#22d3bf">t_gt</code> は長さ 3。float に変換するだけで <b>形・直交性の検査はしない</b> — <code style="color:#22d3bf">R</code> が回転行列でない(反射・スケール入り)と <code style="color:#22d3bf">trace</code> の式は意味を失い、<code style="color:#22d3bf">(3, 3)</code> 以外は行列積の <code style="color:#22d3bf">ValueError</code> か無意味な値になる。<code style="color:#22d3bf">register_fpfh</code> / <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">register_cross</code> の返り値 <code style="color:#22d3bf">(R, t)</code> と GT の <code style="color:#22d3bf">(R, t)</code> を、同じ慣習(<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)で渡すこと。</p>
+<p>返り値: <code style="color:#22d3bf">(rot_deg, trans_err)</code> の 2 つの <code style="color:#22d3bf">float</code>。</p>
+<p>注意: 並進誤差は回転誤差と結合している(原点から遠い対象では小さな回転誤差が大きな並進誤差として現れる)。点群上の実効誤差を見るなら、変換後の雲同士を <code style="color:#22d3bf">rmse_correspondence</code>(対応既知)か <code style="color:#22d3bf">chamfer_distance</code> で比べる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_self_register">itokawa_self_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_self_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:m3c2_distance">m3c2_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

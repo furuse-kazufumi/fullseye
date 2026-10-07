@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">video_cube_cut — VIDEOCUBE <code style="color:#22d3bf">cube</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>cube का 1 cross-section (<code style="color:#22d3bf">image2d</code>)। <code style="color:#22d3bf">&quot;xt&quot;</code> = row <code style="color:#22d3bf">position</code> का slit scan (T, W), <code style="color:#22d3bf">&quot;yt&quot;</code> = column का (T, H), <code style="color:#22d3bf">&quot;xy&quot;</code> = समय <code style="color:#22d3bf">position</code> का frame (H, W)। <code style="color:#22d3bf">position</code> [0, 1] में अनुपात है (row, column या समय का कितना भाग)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>x–t 断面では、右へ動く物体は右下がりの筋、止まっている物体は縦の帯になる —— <b>速度が傾きとして読める</b>。</p>
+<p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # 4 割目の行を横切ったものの記録</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideocube:videocube">videocube family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_video_cube">poc_video_cube</a> — <code style="color:#22d3bf">py -3.11 examples/poc_video_cube.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">cube</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideocube:video_spacetime_cube">video_spacetime_cube</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videocube.py — VIDEOCUBE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

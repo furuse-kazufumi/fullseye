@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_focal_stack — LIGHTFIELD <code style="color:#22d3bf">refocus</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lightfield; lightfield.lf_focal_stack(lf, slopes=(-2.0, -1.0, 0.0, 1.0, 2.0), *, interp=&#x27;linear&#x27;, edge=&#x27;nearest&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opslightfield.get(&quot;lf_focal_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>*slopes* के हर slope पर refocus करता है — एक exposure से focal stack।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns a <code style="color:#22d3bf">list</code> of <code style="color:#22d3bf">(H, W)</code> images (the <code style="color:#22d3bf">images</code> type), in the order given, so <code style="color:#22d3bf">focus_stack</code>&#x27;s fusion and any multi-image operator applies unchanged. The physical camera equivalent is racking the focus N times; here it costs one exposure and <code style="color:#22d3bf">len(slopes) * V * U</code> image shifts.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* not a valid light field, *slopes* empty or longer than <code style="color:#22d3bf">MAX_STACK_SLICES</code>, any slope non-finite or over <code style="color:#22d3bf">MAX_ABS_SLOPE</code>, a stack larger than <code style="color:#22d3bf">MAX_STACK_ELEMENTS</code>, unknown *interp* / *edge*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">refocus</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_aperture_mask">lf_aperture_mask</a> · <a style="color:#22d3bf" href="oplightfield:lf_synthetic_aperture">lf_synthetic_aperture</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

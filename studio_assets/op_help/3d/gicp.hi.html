@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gicp — 3D <code style="color:#22d3bf">gicp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gicp; gicp.gicp(source, target, max_iter: &#x27;int&#x27; = 30, k: &#x27;int&#x27; = 20, epsilon: &#x27;float&#x27; = 0.001, tol: &#x27;float&#x27; = 1e-08, init=None, reproducible: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;gicp&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.gicp(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pose</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.gicp.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">gicp.gicp</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Generalized-ICP (covariance-weighted Mahalanobis ICP) से rigid transform (R,t) का अनुमान लगाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各反復で source→target の最近傍対応を張り、残差 <code style="color:#22d3bf">d_i = R·s_i + t - q_i</code> を重み <code style="color:#22d3bf">W_i = (C_target[q_i] + R·C_source[s_i]·Rᵀ)⁻¹</code> で測るマハラノビスコスト <code style="color:#22d3bf">Σ d_iᵀ W_i d_i</code> を、小角線形化 <code style="color:#22d3bf">R ← (I+[ω]×)R</code> の Gauss-Newton で最小化する。各対応のヤコビアン <code style="color:#22d3bf">J_i = [-[R·s_i+t]× | I]</code>(3×6)から正規方程式 <code style="color:#22d3bf">(Σ J_iᵀ W_i J_i) x = -(Σ J_iᵀ W_i d_i)</code>(6×6)を解いて増分 <code style="color:#22d3bf">x=[ω|τ]</code> を得、Rodrigues で回転に戻して累積する。</p>
+<p>共分散は plane-to-plane(<code style="color:#22d3bf">estimate_covariances</code>)。point-to-plane が target の法線方向へ残差を射影する(rank-1)のに対し、GICP は source・target 双方の full 3×3 共分散を合成した重みを使うため、平面的・ノイズを含む点群で頑健。</p>
+<p>ICP はローカル最適化なので <b>近い初期化を前提</b>(粗マッチや <code style="color:#22d3bf">init</code> を渡す)。</p>
+<p>引数:</p>
+<p>source (N,3): 動かす側の点群。</p>
+<p>target (M,3): 参照側(固定)の点群。</p>
+<p>max_iter: 最大反復数。</p>
+<p>k: 共分散推定の近傍数。</p>
+<p>epsilon: plane-to-plane の法線方向小分散(0&lt;ε&lt;1)。</p>
+<p>tol: 収束閾値。増分並進 ‖τ‖ が <code style="color:#22d3bf">tol×(target のRMS半径)</code> 未満かつ</p>
+<p>増分回転 ‖ω‖(rad)が <code style="color:#22d3bf">tol</code> 未満で打ち切り(スケール相対)。</p>
+<p>init: (R0(3,3), t0(3,)) の初期姿勢タプル、または None(単位)。</p>
+<p>reproducible: True なら N 点の和 <code style="color:#22d3bf">Σ J_iᵀ W_i J_i</code>・<code style="color:#22d3bf">Σ J_iᵀ W_i d_i</code> を ozakimm(Ozaki スキーム)の縮約に、</p>
+<p>姿勢の適用を要素ごとの演算に、RMSE を math.fsum にする。source の点の順・BLAS のスレッド数に依らず</p>
+<p>R・t・rmse がビット単位で同じ(共分散の近傍に距離がちょうど同点の点があると近傍の選ばれ方が変わりうる)。</p>
+<p>既定 False は従来どおり。</p>
+<p>返り値:</p>
+<p>dict:</p>
+<p>&quot;R&quot; (3,3) ndarray  — target ≈ R·source + t を満たす回転。</p>
+<p>&quot;t&quot; (3,) ndarray   — 並進。</p>
+<p>&quot;rmse&quot; float       — 最終対応上のユークリッド RMSE(採用点)。</p>
+<p>&quot;iterations&quot; int   — 実反復数。</p>
+<p>例外:</p>
+<p>ValueError: 入力形状不正 / 点数不足 / 数値発散(非有限)= fail-closed。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gicp_register">gicp_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gicp_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">gicp</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:estimate_covariances">estimate_covariances</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gicp.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

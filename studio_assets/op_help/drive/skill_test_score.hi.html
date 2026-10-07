@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">skill_test_score — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;skill_test_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>driving skill test के negative points जोड़ता है (National Police Agency, notice Hei-Un-Hatsu No. 12, Reiwa 4 के विस्तृत negative point items)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>events : dict の列。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code> → gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code> → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;start&quot;, &quot;rollback&quot;: 逆行 [m] (その場所の累計), &quot;delay&quot;: 発進の合図から動き出すまで [s] (任意)}</code> → 逆行小・中・大(大は試験中止)、delay &gt; start_delay_max で 発進手間どり。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;hold&quot;, &quot;creep&quot;: 保持中に動いた距離 [m]}</code> → creep &gt; creep_eps で 制動操作不良(クリープ)。</p>
+<p>venue : &quot;場内&quot; か &quot;路上&quot;(点数が違う細目がある)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">deductions</code>(<code style="color:#22d3bf">(細目, 点, 説明)</code> の列。点 None = 試験中止)、<code style="color:#22d3bf">total</code>(減点の合計)、<code style="color:#22d3bf">score</code>(100 − 合計、</p>
+<p>試験中止なら None)、<code style="color:#22d3bf">test_stopped</code>、<code style="color:#22d3bf">passed</code>(第一種 70 点以上)、<code style="color:#22d3bf">thresholds</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: venue が不正、event の kind が不明・値が非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

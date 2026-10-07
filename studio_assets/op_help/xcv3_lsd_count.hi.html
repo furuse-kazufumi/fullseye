@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">xcv3_lsd_count — 2D <code style="color:#22d3bf">features</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">feature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xcv3_lsd_count&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/xcv3_lsd_count.png" alt="xcv3_lsd_count: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p>*Knob a output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>पहचाने गए line segments की संख्या (OpenCV <code style="color:#22d3bf">cv2.createLineSegmentDetector</code> से Line Segment Detector, LSD)। Image में पहचाने गए straight line segments की संख्या feature के रूप में लौटाता है (0 पहचान होने पर implementation <code style="color:#22d3bf">None</code> लौटाता है, इसलिए उस स्थिति को 0 माना जाता है)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。エッジの直線的な構造の多さ(建築物、部品の輪郭など)を数える指標になる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_features">gallery2d_features family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">xcv3_lsd_count 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:xcv3_lsd_count%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:xcv3_lsd_count%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_features">gallery2d_features</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_features.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">feature</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:feature_to_img">feature_to_img</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">features</code>)</h3>
+<p><a style="color:#22d3bf" href="op:effective_bit_depth">effective_bit_depth</a> · <a style="color:#22d3bf" href="op:blob_count">blob_count</a> · <a style="color:#22d3bf" href="op:area_frac">area_frac</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:vol_count">vol_count</a> · <a style="color:#22d3bf" href="op:sk_euler">sk_euler</a> · <a style="color:#22d3bf" href="op:sk_entropy_feat">sk_entropy_feat</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

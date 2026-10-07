@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_curvature_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_curvature_3d(scene, template, device=&#x27;cpu&#x27;, mc=0.000625, subvoxel=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_curvature_3d(scene, template, device=&#x27;cpu&#x27;, mc=0.000625, subvoxel=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_curvature_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.match_curvature_3d(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">position</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.match_curvature_3d.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">match3d.match_curvature_3d</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>curvature (shape index) matching। voxel × curvature column (line→surface lift का मुख्य हिस्सा)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>scene/template を <b>curvedness で重み付けした shape-index 場</b>へ変換 → 既存 3D NCC で定位。強度でなく <b>局所曲面形状</b>で一致を測るため、同じ強度でも形が違う対象(球 vs 円柱/鞍点)を区別できる。S は回転不変なので回転にもある程度頑健。返り値 [score, d, h, w]。</p>
+<p>手順: 両 volume で <code style="color:#22d3bf">curvature_maps</code> → <code style="color:#22d3bf">S × curvedness × mask</code> の重み付き shape-index 場 <code style="color:#22d3bf">w</code> を作り、テンプレ側は <code style="color:#22d3bf">|w| &gt; 0.1·max|w|</code> の bbox を切り出して <code style="color:#22d3bf">accel_match.ncc_locate_3d</code> に渡す。返り値 <code style="color:#22d3bf">[NCC, z, y, x]</code> float64、NCC ∈ [−1, 1]。</p>
+<p style="margin:2px 0 2px 12px">• <b>位置は切り出した bbox テンプレの中心</b>が scene に載る座標。元テンプレ volume の中心とは</p>
+<p>bbox のオフセット分ずれる(元テンプレ座標に戻すには bbox の lo を足し直す)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mc</code>: <code style="color:#22d3bf">curvature_maps</code> の勾配マスク閾値(真の勾配単位、voxel あたり)。平坦部を除いて</p>
+<p>曲率ノイズを抑える。</p>
+<p style="margin:2px 0 2px 12px">• テンプレの曲率場が全 0(平坦・<code style="color:#22d3bf">mc</code> が高すぎ)なら <code style="color:#22d3bf">[0,0,0,0]</code> を返す。</p>
+<p style="margin:2px 0 2px 12px">• 曲率は 2 階微分なのでノイズに敏感。ノイズが多い volume は先に <code style="color:#22d3bf">points_to_voxel</code> の</p>
+<p><code style="color:#22d3bf">smooth</code> 等で滑らかにする。<code style="color:#22d3bf">subvoxel=True</code> で NCC ピークの ±2 近傍重心に精緻化。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:matching_localize">matching_localize</a> — <code style="color:#22d3bf">py -3.11 examples_3d/matching_localize.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">position</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_peak_newton">refine_peak_newton</a> · <a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match_localize</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_shape_3d">match_shape_3d</a> · <a style="color:#22d3bf" href="op3d:match_chamfer_3d">match_chamfer_3d</a> · <a style="color:#22d3bf" href="op3d:match_hough_3d">match_hough_3d</a> · <a style="color:#22d3bf" href="op3d:match_mip_2d">match_mip_2d</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

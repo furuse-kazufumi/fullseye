@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">inner_box3 — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inner_box3(vol) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import regionprops3d; regionprops3d.inner_box3(vol) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inner_box3&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>binary voxel region में पूरी तरह inscribed सबसे बड़ा axis-aligned box (2-D <code style="color:#22d3bf">inner_rectangle1</code> का</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>3-D 版)。</p>
+<p>厳密解: どの深さ区間 [z0, z1] についても、ボックスはスライス z0..z1 の <b>論理積</b> (全スライスで前景のボクセル)の内側に無ければならない。その積の中の最大内接 2-D 長方形(ヒストグラム法 = <code style="color:#22d3bf">inner_rectangle1</code> と同じコア)× 区間長 が候補ボックスで、全区間についての最大が厳密な最大内接ボックスになる。O(D^2 * H * W)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p>(depth,row,col) 軸順で <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> 隅、<code style="color:#22d3bf">center</code> (+ <code style="color:#22d3bf">cd/cr/cc</code>)、</p>
+<p>全幅 <code style="color:#22d3bf">size</code>、ボクセル数の <code style="color:#22d3bf">volume</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>非 3-D 入力、または前景ゼロの領域(内接ボックス無し)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> は <b>両端を含む</b> ボクセル添字(float 配列)。<code style="color:#22d3bf">size = max - min + 1</code>、<code style="color:#22d3bf">volume = prod(size)</code>。<code style="color:#22d3bf">center</code> は <code style="color:#22d3bf">(min + max) / 2</code> で .5 が付き得る。2-D 側の登録名は <code style="color:#22d3bf">r2_inner_rectangle1</code>。</p>
+<p style="margin:2px 0 2px 12px">• 深さ区間ごとに Python ループで最大長方形を探す O(D²·H·W)。積が空になった時点でその z0 の探索は打ち切る。大きなボリュームでは遅い。</p>
+<p style="margin:2px 0 2px 12px">• 同体積の候補が複数あるときは先に見つかったもの(z0 が小さく、その中で z1 が小さい)を返す。</p>
+<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順は (depth, row, col)。</p>
+<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">largest_component</code> で対象を 1 つに絞ってから呼ぶ(複数成分が混ざると最大成分のボックスとは限らない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:inner_box_inspection">inner_box_inspection</a> — <code style="color:#22d3bf">py -3.11 examples_3d/inner_box_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">regionprops</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:region_props">region_props</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:filter_by_volume">filter_by_volume</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: regionprops3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

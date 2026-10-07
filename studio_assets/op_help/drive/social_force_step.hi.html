@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">social_force_step — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points × points</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>social force का 1 step (प्रति unit mass; Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000 के रूप में)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
+<p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
+<p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>
+<p>v&#x27; = v_d + (v − v_d) e^{−dt/τ}、x&#x27; = x + v_d dt + (v − v_d) τ (1 − e^{−dt/τ})。1 人で斥力が無ければ v(t) = v0(1 − e^{−t/τ}) に <b>dt に依らず</b> 一致する(門)。斥力がある時は 1 次の誤差。</p>
+<p>引数: <code style="color:#22d3bf">pos</code>, <code style="color:#22d3bf">vel</code>, <code style="color:#22d3bf">goals</code> は (N, 2)。<code style="color:#22d3bf">v0</code> と <code style="color:#22d3bf">radius</code> はスカラーか (N,)。<code style="color:#22d3bf">walls</code> は (M, 2, 2) か None。</p>
+<p>戻り値: (pos&#x27;, vel&#x27;)。配置が鏡映・点対称なら結果も同じ対称性を保つ(式が対称なので。門で確かめる)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の不一致、非有限、τ・B・dt ≤ 0、A &lt; 0、半径 &lt; 0、2 人の位置が一致。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:ou_estimate">ou_estimate</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a> · <a style="color:#22d3bf" href="opdrive:occlusion_reveal_distance">occlusion_reveal_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

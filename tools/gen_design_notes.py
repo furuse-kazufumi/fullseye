@@ -41,6 +41,9 @@ _ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(_ROOT, "tools"))
 
 import opdocs as OD  # noqa: E402  (LANGS / LANG_NAMES / _COPYRIGHT を共有)
+#: 設計ノートの言語。ヘルプ(opdocs.LANGS)とは**別の訳表**(docs/design_notes.json)を持つので、
+#: ヘルプに言語を足しても(2026-10-07 の hi)設計ノートは訳が揃うまで増やさない —— 増やすと未訳の版が日本語のまま出る。
+DN_LANGS = ("ja", "en", "zh", "tw", "ko", "de")
 
 #: ★対訳表は **op ドキュメントとは別ファイル**にする。`opdocs.T` を使うと
 #: 引いた原文が `opdocs.SEEN_STRINGS` に載り、既存の「枠の対訳に穴がある」門が
@@ -205,7 +208,7 @@ def render(blocks, lang: str) -> str:
 
 def _lang_nav(current: str) -> str:
     out = []
-    for code in OD.LANGS:
+    for code in DN_LANGS:
         label = OD.LANG_NAMES.get(code, code)
         name = "DESIGN_NOTES.md" if code == "ja" else "DESIGN_NOTES.%s.md" % code
         out.append("**%s**" % label if code == current else "[%s](./%s)" % (label, name))
@@ -219,7 +222,7 @@ def main(argv=None) -> int:
     a = ap.parse_args(argv)
 
     blocks = collect()
-    langs = [c for c in OD.LANGS if c != "ja"]
+    langs = [c for c in DN_LANGS if c != "ja"]
     counts = {c: sum(1 for b in blocks if _translated(b["text"], c)) for c in langs}
     if a.stats:
         print("★ の塊: %d 件 / %d ファイル"
@@ -230,7 +233,7 @@ def main(argv=None) -> int:
         return 0
 
     docs = os.path.join(_ROOT, "docs")
-    for lang in OD.LANGS:
+    for lang in DN_LANGS:
         name = "DESIGN_NOTES.md" if lang == "ja" else "DESIGN_NOTES.%s.md" % lang
         with open(os.path.join(docs, name), "w", encoding="utf-8", newline="\n") as f:
             f.write(render(blocks, lang))

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tree_from_swc — GRAPH <code style="color:#22d3bf">tree</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tree_from_swc(swc)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import treemorph; treemorph.tree_from_swc(swc)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgraph.get(&quot;tree_from_swc&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SWC text (या <code style="color:#22d3bf">.swc</code> file का path) को parse करके जाँची गई tree table बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns a dict with <code style="color:#22d3bf">id</code> (n,), <code style="color:#22d3bf">type</code> (n,), <code style="color:#22d3bf">xyz</code> (n, 3), <code style="color:#22d3bf">radius</code> (n,), <code style="color:#22d3bf">parent_index</code> (n,; -1 for the root, otherwise the row of the parent) and <code style="color:#22d3bf">root</code> (row of the root). Rows keep the file order. Comment lines (<code style="color:#22d3bf">#</code>) and blank lines are skipped.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: not a string; a data line with fewer than 7 fields or unparsable numbers; no nodes; duplicate ids; zero or more than one root (parent == -1); a parent id that is not smaller than its child&#x27;s; a parent id that does not exist; non-finite coordinates or radius; a negative radius; more than <code style="color:#22d3bf">MAX_TREE_NODES</code> nodes.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_skeleton_run_length_vs_voi">poc_skeleton_run_length_vs_voi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_skeleton_run_length_vs_voi.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swc_tree_truth">poc_swc_tree_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swc_tree_truth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_neurites_grow">poc_worm_neurites_grow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_neurites_grow.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_synapses_vs_neurites">poc_worm_synapses_vs_neurites</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_synapses_vs_neurites.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">tree</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: treemorph.py — GRAPH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">veiling_luminance — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;veiling_luminance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>disability glare की veiling luminance L_v [cd/m²] (arrays भी चलते हैं)। E_glare = आँख की स्थिति पर light source की illuminance [lx], θ = light source और दृष्टि-रेखा के बीच कोण [degrees]।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">model=&quot;stiles_holladay&quot;</code>: L_v = 10 E / θ²(θ は 1°〜30° 程度で使われる経験式)。<code style="color:#22d3bf">model=&quot;cie&quot;</code>: CIE 146:2002 の一般式 L_v/E = 10/θ³ + (5/θ² + 0.1 p/θ)(1 + (age/62.5)⁴) + 0.0025 p (p = 目の色素の係数、既定 0.5)。θ ≤ 0 は拒否(光源そのものは光幕でなく像)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_at">sun_at</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

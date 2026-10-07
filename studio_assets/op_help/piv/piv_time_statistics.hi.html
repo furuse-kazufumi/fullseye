@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_time_statistics — PIV <code style="color:#22d3bf">assess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image क्रम → समय-औसत, उतार-चढ़ाव का RMS और Reynolds stress।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが出発点で、<code style="color:#22d3bf">u&#x27;v&#x27;</code> の符号と大きさが運動量輸送そのものになる。</p>
+<p><b>1 対だけでは意味が無い</b>(変動が定義できない)ので 3 枚以上を要求する。</p>
+<p>Args:</p>
+<p>images: 3 枚以上の画像列。</p>
+<p>window / overlap / kw: <code style="color:#22d3bf">piv_cross_correlate</code> へ渡す。</p>
+<p>Returns:</p>
+<p>dict: <code style="color:#22d3bf">mean</code>(<code style="color:#22d3bf">(2, h, w)</code>)、<code style="color:#22d3bf">rms</code>(同)、<code style="color:#22d3bf">reynolds</code></p>
+<p>(<code style="color:#22d3bf">&lt;u&#x27;v&#x27;&gt;</code>、<code style="color:#22d3bf">(h, w)</code>)、<code style="color:#22d3bf">turbulence_intensity</code>、<code style="color:#22d3bf">n_pairs</code>、</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> / <code style="color:#22d3bf">step</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">assess</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_error_stats">piv_error_stats</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

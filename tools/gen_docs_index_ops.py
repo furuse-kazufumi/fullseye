@@ -250,7 +250,8 @@ def _note_substance():
     base = os.path.join(_ROOT, "docs", "ops")
     for q in glob.glob(os.path.join(base, "**", "*.md"), recursive=True):
         qq = q.replace("\\", "/")
-        if "/guides/" in qq or os.path.basename(q) in ("INDEX.md", "SAMPLES.md"):
+        # ★2026-10-07: 言語版の目次 INDEX.<lang>.md もノートではない(以前は 5 本を数えて 3089 本を 3094 本と書いていた)
+        if "/guides/" in qq or re.fullmatch(r"(INDEX|SAMPLES)(\.[a-z]{2})?\.md", os.path.basename(q)):
             continue
         total += 1
         txt = io.open(q, encoding="utf-8").read()

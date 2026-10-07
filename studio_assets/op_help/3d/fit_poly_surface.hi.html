@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_poly_surface — 3D <code style="color:#22d3bf">surface_fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">poly_surface</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_poly_surface(x, y, z, degree=2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.fit_poly_surface(x, y, z, degree=2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_poly_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>बिखरे (x,y,z) → z=f(x,y) polynomial least squares। return value model (coef/powers/degree/rms/pv)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>基底 <code style="color:#22d3bf">{x^i·y^j : i + j &lt;= degree}</code>(項数 <code style="color:#22d3bf">(degree+1)(degree+2)/2</code>。degree=1 で 3 項の平面、2 で 6 項の 2 次曲面)を <code style="color:#22d3bf">lstsq</code> で当てる。<code style="color:#22d3bf">x, y, z</code> は同じ要素数なら形は問わない(内部で ravel。格子なら <code style="color:#22d3bf">np.mgrid</code> の出力をそのまま)。返り値 dict: <code style="color:#22d3bf">coef</code> (T,) 係数、<code style="color:#22d3bf">powers</code> は各係数の <code style="color:#22d3bf">(i, j)</code>(項 <code style="color:#22d3bf">x**i * y**j</code>)、<code style="color:#22d3bf">degree</code>、<code style="color:#22d3bf">rms</code> は残差 RMS、<code style="color:#22d3bf">pv</code> は残差の peak-to-valley(max − min)。単位は z。</p>
+<p style="margin:2px 0 2px 12px">• 点数が項数より少ないと最小ノルム解が黙って返る。x, y の桁が大きいと高次で条件が悪くなる</p>
+<p>(座標を中心化・正規化してから)。NaN の検証は無い。</p>
+<p>後段: <code style="color:#22d3bf">eval_poly_surface(model, x, y)</code> で任意点を評価。格子の高さ場なら <code style="color:#22d3bf">surface_form_error</code> / <code style="color:#22d3bf">background_flatten</code> がこれを内部で呼ぶ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:contours_to_terrain">contours_to_terrain</a> — <code style="color:#22d3bf">py -3.11 examples_3d/contours_to_terrain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">poly_surface</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">surface_fit</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

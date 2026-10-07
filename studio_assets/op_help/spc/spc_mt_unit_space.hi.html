@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_unit_space — SPC <code style="color:#22d3bf">mt</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_unit_space(data)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.spc_mt_unit_space(data)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_unit_space&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ज्ञात-अच्छे observations से MT-method unit space बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(n, p)</code> — <code style="color:#22d3bf">n</code> observations of <code style="color:#22d3bf">p</code> features, <b>all of which must be normal product</b>. The unit space is the triple <code style="color:#22d3bf">(mean, std, inv_corr)</code>: per-feature mean and ddof=1 standard deviation, and the inverse of the correlation matrix of the standardised data. Feed it to <code style="color:#22d3bf">spc_mt_distance</code> to score new observations.</p>
+<p>Returns a dict with <code style="color:#22d3bf">mean</code>, <code style="color:#22d3bf">std</code>, <code style="color:#22d3bf">corr</code> and <code style="color:#22d3bf">inv_corr</code> arrays, the unit space&#x27;s own <code style="color:#22d3bf">md</code> per row, <code style="color:#22d3bf">md_sq_mean</code>, the exact expected value <code style="color:#22d3bf">md_sq_mean_exact = (n-1)/n</code>, the counts <code style="color:#22d3bf">n</code> and <code style="color:#22d3bf">p</code>, how many features had no spread (<code style="color:#22d3bf">flat_features</code>), and whether the correlation matrix was singular enough to need a pseudo-inverse (<code style="color:#22d3bf">pseudo_inverse</code>).</p>
+<p>The mean of <code style="color:#22d3bf">md**2</code> over the unit space equals <code style="color:#22d3bf">(n-1)/n</code> exactly — the quantitative form of &quot;a unit space averages a distance of one&quot;. It reaches 1 only as <code style="color:#22d3bf">n</code> grows; the deficit is exactly <code style="color:#22d3bf">1/n</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, fewer than two observations (no spread to standardise by), zero features, or non-finite input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mt_hidden_fault">poc_mt_hidden_fault</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mt_hidden_fault.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">mt</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_mt_distance">spc_mt_distance</a> · <a style="color:#22d3bf" href="opspc:spc_mt_sn_ratio">spc_mt_sn_ratio</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

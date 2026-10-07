@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">volume_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.volume_downsample(vol, factor, mode=&#x27;mean&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;volume_downsample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">(D, H, W)</code> volume को हर axis पर integer *factor* से block-pool करता है (data decimation)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Large CT / laminography / simulation volumes must be thinned before the heavier 3-D operators (Frangi/Sato are capped at ~256**3 voxels, see <code style="color:#22d3bf">MAX_EIGEN_VOXELS</code>). This is the volume analogue of the point-cloud <code style="color:#22d3bf">voxel_grid_downsample</code> and the mesh <code style="color:#22d3bf">decimate_qem</code> — the third leg of Fullseye&#x27;s *間引き* (decimation) family, one per 3-D data sort.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>vol : array_like, shape (D, H, W)</p>
+<p>Input volume (coerced to float64; NaN/Inf rejected).</p>
+<p>factor : int or (fz, fy, fx)</p>
+<p>Block size per axis, each <code style="color:#22d3bf">&gt;= 1</code>. The output shape is</p>
+<p><code style="color:#22d3bf">(D//fz, H//fy, W//fx)</code>; a trailing partial block that cannot fill a</p>
+<p>full factor is dropped (deterministic, no edge bias).</p>
+<p>mode : {&#x27;mean&#x27;, &#x27;max&#x27;, &#x27;stride&#x27;}</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;mean&#x27;</code> — average-pool. Band-limits before subsampling (the anti-aliasing choice); the right default for grey CT / MRI.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;max&#x27;</code>  — max-pool. Preserves thin bright structures (bone, vessel, defect voxels) that averaging would wash out.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&#x27;stride&#x27;</code> — plain subsample <code style="color:#22d3bf">vol[::fz, ::fy, ::fx]</code> (fastest, but aliases — no pre-filter).</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray, shape (D//fz, H//fy, W//fx), float64</p>
+<p>The downsampled volume. Spacing scales by the same factor: an input</p>
+<p>spacing <code style="color:#22d3bf">(sz, sy, sx)</code> mm becomes <code style="color:#22d3bf">(sz*fz, sy*fy, sx*fx)</code> mm.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>Non-3-D input, a factor component <code style="color:#22d3bf">&lt; 1</code> or larger than its axis, or an</p>
+<p>unknown *mode* (fail-closed).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:volume_downsampling">volume_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/volume_downsampling.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">preprocess</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:statistical_outlier_removal">statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op3d:radius_outlier_removal">radius_outlier_removal</a> · <a style="color:#22d3bf" href="op3d:voxel_grid_downsample">voxel_grid_downsample</a> · <a style="color:#22d3bf" href="op3d:mls_smooth">mls_smooth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

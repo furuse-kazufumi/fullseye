@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_pca — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_pca(pts_scene, pts_model)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_pca(pts_scene, pts_model)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_pca&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>PCA pose matching (structure=point cloud × method=principal-axis alignment)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>両雲の主軸を合わせる粗い剛体変換(回転 R + 並進 t)を返す。NCC/位相相関が扱えない <b>回転</b>をここで担う(符号の 4 通り曖昧性は最小二乗で解消。この残差は両雲の点が同じ並び順で対応している前提の粗い基準 — 無対応の実測雲では ICP 等で後段精密化を)。返り値 (R(3,3), t(3,))。</p>
+<p>返り値の意味: <code style="color:#22d3bf">pts_scene ≈ (R @ pts_model.T).T + t</code>(<code style="color:#22d3bf">t = c_scene − R·c_model</code>)。R は必ず <code style="color:#22d3bf">det=+1</code> の回転(反射は出さない)。残差は点を index 順に対応させて測るので、無対応の雲では 4 候補の選択が当てにならない(その場合は <code style="color:#22d3bf">icp_point2point_3d</code> に <code style="color:#22d3bf">init_R/init_t</code> として渡して精緻化する)。主軸が縮退している(球・円柱など固有値が等しい)雲では軸が不定で結果は安定しない。点数は両雲で違ってよい。入力は (N,3)(検証は <code style="color:#22d3bf">moment_axes</code> 任せで無い)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match_pose</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_phase_3d">match_phase_3d</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:match_logpolar_z">match_logpolar_z</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

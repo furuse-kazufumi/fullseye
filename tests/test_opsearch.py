@@ -27,6 +27,8 @@ NOISE = {"xsp_dct_denoise", "xcv3_denoise_tvl1", "cv_median", "sk_wavelet", "sk_
     ("ko", "에지 검출", EDGE), ("de", "Kantenerkennung", EDGE), ("tw", "邊緣", EDGE),
     ("ja", "ノイズ除去", NOISE), ("en", "denoise", NOISE), ("zh", "去噪", NOISE),
     ("ko", "노이즈 제거", NOISE), ("de", "Rauschen entfernen", NOISE), ("tw", "雜訊去除", NOISE),
+    # hi: 訳の方針(術語は英語のまま)に合わせ、術語は英語・文はヒンディー語の問い合わせ
+    ("hi", "edge पहचान", EDGE), ("hi", "noise हटाना", NOISE),
 ])
 def test_each_language_finds_ops_that_do_the_job(lang, query, want):
     r = search_ops(query, k=8, lang=lang)
@@ -144,3 +146,16 @@ def test_synonym_table_is_not_cross_language_and_stays_small():
     assert all(2 <= len(g) <= 4 for g in SYNONYMS)
     banned = {"boundary", "rand", "輪郭", "轮廓", "경계"}
     assert not banned & {w for g in SYNONYMS for w in g}
+
+
+
+def test_hindi_function_words_do_not_match_everything():
+    """★2026-10-07: 「का」「पता」のような機能語を残すと 1 語で 1,000 op 以上が当たった。"""
+    from fullseye.opsearch import tokenize
+    assert tokenize("किनारे का पता लगाना") == ["किनारे"]
+    assert detect_lang("edge पहचान") == "hi"
+    r = search_ops("edge पहचान", k=3)
+    rows = r["ops"]
+    assert r["lang"] == "hi"
+    assert rows
+    assert all(o["summary"] for o in rows)

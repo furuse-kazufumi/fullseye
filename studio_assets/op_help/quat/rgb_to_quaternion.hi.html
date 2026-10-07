@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rgb_to_quaternion — QUAT <code style="color:#22d3bf">convert</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage</code> → <code style="color:#22d3bf">qimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rgb_to_quaternion(image_rgb) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import quatimage; quatimage.rgb_to_quaternion(image_rgb) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsquat.get(&quot;rgb_to_quaternion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>colour image को pure quaternions <code style="color:#22d3bf">0 + R i + G j + B k</code> के रूप में embed करता है। → (H, W, 4)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Sangwine&#x27;s 1996 encoding, and the entry point of the whole colour half of this module: once a pixel is a quaternion, <code style="color:#22d3bf">q x conj(q)</code> rotates its colour</p>
+<p>and <code style="color:#22d3bf">qft2</code> transforms the three channels as <b>one</b> hypercomplex signal instead of three unrelated real ones.</p>
+<p>The scalar (<code style="color:#22d3bf">w</code>) component is set to exactly zero — a *pure* quaternion — because that is what makes the conjugation a 3-D rotation. Values are not</p>
+<p>clamped: linear RGB after black-level subtraction legitimately goes negative, and clipping it would change the colour direction, which is the quantity every operator downstream reads.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *image_rgb* is not a finite <code style="color:#22d3bf">(H, W, 3)</code> numeric array, is complex / bool / string-typed / masked, or exceeds <code style="color:#22d3bf">MAX_PIXELS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">qimage</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a> · <a style="color:#22d3bf" href="opquat:quat_conjugate_image">quat_conjugate_image</a> · <a style="color:#22d3bf" href="opquat:quat_normalize_image">quat_normalize_image</a> · <a style="color:#22d3bf" href="opquat:quat_image_multiply">quat_image_multiply</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_phase">monogenic_phase</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">convert</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:quaternion_to_rgb">quaternion_to_rgb</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

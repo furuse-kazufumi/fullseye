@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">swt_map — TEXT <code style="color:#22d3bf">stroke</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import textregion; textregion.swt_map(img, dark_on_light: &#x27;bool&#x27; = True, sigma: &#x27;float&#x27; = 1.0, max_width: &#x27;int&#x27; = 64, angle_tol: &#x27;float&#x27; = 0.5235987755982988)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstext.get(&quot;swt_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Stroke Width Transform —— हर pixel पर उस stroke की चौड़ाई लिखता है जिसमें वह pixel है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>文字側の境界画素から、勾配の向きに沿って文字の内側へ光線を飛ばし、向かい合う境界画素(勾配がほぼ逆向き)に当たったら、光線上の全画素に幅(境界画素の中心間距離 + 1) を書く(既に小さい値があれば小さい方)。Epshtein 2010 §3 の手順で、2 回目の走査で光線上の中央値より大きい値を中央値に置き換える(角の過大を抑える)。エッジの規約は <code style="color:#22d3bf">_edges_and_gradient</code> に書いた(矩形ストロークで幅が厳密に整数になる)。</p>
+<p>Returns dict: <code style="color:#22d3bf">swt</code>(幅の配列、ストローク外は 0)/ <code style="color:#22d3bf">edges</code> / <code style="color:#22d3bf">n_rays</code> / <code style="color:#22d3bf">n_hits</code>(向かい合うエッジに当たった光線の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_text_region_truth">poc_text_region_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_text_region_truth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optext:text_lines">text_lines</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">stroke</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: textregion.py — TEXT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

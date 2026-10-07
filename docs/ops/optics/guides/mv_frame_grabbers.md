@@ -7,6 +7,7 @@ title_zh: 图像采集卡(不属于光学系统,却决定能否采到图像)
 title_tw: 影像擷取卡(不屬於光學系統,卻決定能否擷取到影像)
 title_ko: 프레임 그래버 보드(광학계는 아니지만 촬영 가능 여부를 정한다)
 title_de: Framegrabber-Karten (keine Optik, entscheiden aber, ob überhaupt aufgenommen werden kann)
+title_hi: Frame grabber boards (optics नहीं, पर यही तय करते हैं कि capture हो भी सकता है या नहीं)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

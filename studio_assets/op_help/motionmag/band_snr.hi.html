@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">band_snr — MOTIONMAG <code style="color:#22d3bf">temporal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_snr(video, f_lo, f_hi, fps) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motionmag; motionmag.band_snr(video, f_lo, f_hi, fps) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmotionmag.get(&quot;band_snr&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>मापता है कि clip के temporal band में क्या है, और उसकी क्या कीमत है -&gt; <code style="color:#22d3bf">dict</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Every quantity is a measured mean-square power obtained from the per-pixel temporal DFT (Parseval-normalised so that the bins of one pixel sum to that pixel&#x27;s mean square), averaged over pixels:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">static_power</code> — the DC bin. The scene that is simply *there*.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">band_power</code> — the bins inside <code style="color:#22d3bf">[f_lo, f_hi]</code>. Coherent motion <b>plus</b> whatever noise happens to fall in the band.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">out_of_band_power</code> / <code style="color:#22d3bf">out_of_band_bins</code> — everything else except DC. With broadband sensor noise this is the noise floor, and <code style="color:#22d3bf">noise_power_per_bin</code> is its per-bin density.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">noise_in_band</code> = <code style="color:#22d3bf">noise_power_per_bin * band_bins</code> — how much of <code style="color:#22d3bf">band_power</code> is expected to be noise.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">motion_power</code> = <code style="color:#22d3bf">max(band_power - noise_in_band, 0)</code> and <code style="color:#22d3bf">motion_snr_db</code> = <code style="color:#22d3bf">10*log10(motion_power / noise_in_band)</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">image_snr_db</code> = <code style="color:#22d3bf">10*log10(static_power / (band_power + out_of_band_power))</code> — the static scene against everything that flickers.</p>
+<p><b>The two SNRs answer different questions and magnification moves only one of them.</b> Scaling the in-band phase by <code style="color:#22d3bf">alpha</code> scales the in-band motion *and* the in-band noise by the same factor, so the true motion SNR cannot</p>
+<p>improve: magnification never makes a measurement more certain than the recording was. What does change is <code style="color:#22d3bf">image_snr_db</code>, because the temporal fluctuation of the output frames grows like <code style="color:#22d3bf">alpha^2</code> while the static scene does not.</p>
+<p><b>A caveat that matters when this is run on an already-magnified clip.</b> <code style="color:#22d3bf">motion_snr_db</code> here divides the in-band signal by a noise floor estimated from the *out-of-band* bins, and magnification does not touch those. Applied to a magnified video it therefore credits <code style="color:#22d3bf">alpha^2</code> more in-band power against an unchanged noise estimate and reports an improvement that did not occur — measured, <code style="color:#22d3bf">+6.86 dB</code> at <code style="color:#22d3bf">alpha = 2</code> on a clip whose true motion SNR cannot have moved. <code style="color:#22d3bf">motion_magnify</code> knows the gain and returns the corrected figure as <code style="color:#22d3bf">motion_snr_out_db</code>; use that one, not <code style="color:#22d3bf">result[&quot;snr_out&quot;][&quot;motion_snr_db&quot;]</code>.</p>
+<p><code style="color:#22d3bf">snr_clamped</code> is True when a reported dB hit the <code style="color:#22d3bf">[-100, +100]</code> window (a noiseless synthetic has zero out-of-band power, which is a division by zero rather than an infinite SNR).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_motion_magnification">poc_motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/poc_motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">temporal</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:temporal_bandpass">temporal_bandpass</a> · <a style="color:#22d3bf" href="opmotionmag:temporal_band_power">temporal_band_power</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

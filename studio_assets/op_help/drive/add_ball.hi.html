@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">add_ball — DRIVE <code style="color:#22d3bf">ballworld</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ballworld; ballworld.add_ball(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, p, R=None, *, name: &#x27;str&#x27; = &#x27;ball&#x27;) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;add_ball&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>गेंद को pose (p, R) पर world में जोड़ता है। हर face के labels (गेंद 23 / marker 24) वैसे ही रहते हैं। return value = objects में index।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_bounce">poc_table_tennis_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_bounce.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_spin">poc_table_tennis_spin</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_spin.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">ballworld</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:table_params">table_params</a> · <a style="color:#22d3bf" href="opdrive:table_world">table_world</a> · <a style="color:#22d3bf" href="opdrive:ball_mesh">ball_mesh</a> · <a style="color:#22d3bf" href="opdrive:ball_set_pose">ball_set_pose</a> · <a style="color:#22d3bf" href="opdrive:rotation_from_omega">rotation_from_omega</a> · <a style="color:#22d3bf" href="opdrive:camera_rig">camera_rig</a> · <a style="color:#22d3bf" href="opdrive:ball_truth">ball_truth</a> · <a style="color:#22d3bf" href="opdrive:icosphere">icosphere</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ballworld.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

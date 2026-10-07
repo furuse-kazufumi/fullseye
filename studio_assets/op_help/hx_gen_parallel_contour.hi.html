@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hx_gen_parallel_contour — 2D <code style="color:#22d3bf">halcon_ext</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_parallel_contour&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">gen_parallel_contour_xld</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p><img src="fig/hx_gen_parallel_contour.png" alt="hx_gen_parallel_contour: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.a.jpg">hx_gen_parallel_contour: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.chain.jpg">hx_gen_parallel_contour: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_parallel_contour.inputs.jpg">hx_gen_parallel_contour: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर contour का parallel (normal offset) contour बनाता है (दूरी (a-0.5) से, चिह्न सहित)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各 contour(点数 2 以上)の接線を <code style="color:#22d3bf">np.gradient(c, axis=0)</code> で求め、それを 90° 回した単位法線 <code style="color:#22d3bf">(-t_col, t_row) / |t|</code> の方向に <code style="color:#22d3bf">dist</code> だけ全点をずらした contour を返す。元の contour は出力に含まれない(置き換わる)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 符号つきオフセット <code style="color:#22d3bf">dist = (a - 0.5) * 10</code>(-5〜+5 画素。a=0.5 で無変化)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> は未使用。</p>
+<p style="margin:2px 0 2px 12px">• 接線長が 1e-9 未満の点(重複点)は法線 0 とし動かさない。点数 1 の contour はそのまま。</p>
+<p>法線の向きは contour の進行方向で決まる(左右どちらが正かは点列の向き次第)。曲率半径より大きくずらすと自己交差する(<code style="color:#22d3bf">hx_test_self_intersect</code> で検出可能)。輪郭を太らせ/痩せさせた形の比較や、計測線を境界から一定距離に置くのに使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
+sk_find_contours 0.50 0.50
+hx_gen_parallel_contour 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Ahx_gen_parallel_contour%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">contour</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:select_contours">select_contours</a> · <a style="color:#22d3bf" href="op:smooth_contours">smooth_contours</a> · <a style="color:#22d3bf" href="op:fit_line_contours">fit_line_contours</a> · <a style="color:#22d3bf" href="op:contours_to_region">contours_to_region</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:select_contours_xld">select_contours_xld</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">halcon_ext</code>)</h3>
+<p><a style="color:#22d3bf" href="op:hx_gen_circle">hx_gen_circle</a> · <a style="color:#22d3bf" href="op:hx_gen_ellipse">hx_gen_ellipse</a> · <a style="color:#22d3bf" href="op:hx_gen_rectangle2">hx_gen_rectangle2</a> · <a style="color:#22d3bf" href="op:hx_gen_checker_region">hx_gen_checker_region</a> · <a style="color:#22d3bf" href="op:hx_gen_grid_region">hx_gen_grid_region</a> · <a style="color:#22d3bf" href="op:hx_gabor">hx_gabor</a> · <a style="color:#22d3bf" href="op:hx_fit_surface1">hx_fit_surface1</a> · <a style="color:#22d3bf" href="op:hx_fit_surface2">hx_fit_surface2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

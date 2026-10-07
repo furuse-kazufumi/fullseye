@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gs_read_file — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_read_file(path, *, min_opacity: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;gs_read_file&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D Gaussian Splatting file पढ़ता है और Gaussians के केंद्र, रंग, opacity, scale और दिशाएँ लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>対応: <b>INRIA 形式の .ply</b>(x, y, z, f_dc_0..2, opacity(logit), scale_0..2(log), rot_0..3(wxyz)。<code style="color:#22d3bf">gsplat_train_native</code> の出力もこれ)と <b>.splat</b>(1 個 32 バイト: 位置 3×f32、大きさ 3×f32、RGBA 4×u8、回転 4×u8(wxyz、(q·128)+128))。</p>
+<p>Args:</p>
+<p>path: ファイル。</p>
+<p>min_opacity: これ未満の不透明度のガウスを落とす(0 なら全部)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">{&quot;xyz&quot; (N,3), &quot;rgb&quot; (N,3) [0,1], &quot;opacity&quot; (N,) [0,1], &quot;scale&quot; (N,3)(実寸、exp 済み), &quot;rot&quot; (N,4) wxyz 単位四元数, &quot;n_total&quot;, &quot;format&quot;}</code>。色は 0 次の球面調和だけ(視点で変わる高次は捨てる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">gsplat</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:gs_from_world">gs_from_world</a> · <a style="color:#22d3bf" href="opdrive:gs_update">gs_update</a> · <a style="color:#22d3bf" href="opdrive:gs_render">gs_render</a> · <a style="color:#22d3bf" href="opdrive:gs_render_fn">gs_render_fn</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gsplatnp.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">town_world — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">driveworld.world_build</code> का पतला wrapper (<code style="color:#22d3bf">props</code> और बाकी arguments जैसे के तैसे देता है), जो stop lines, signals और railway crossings की स्थितियों की table <code style="color:#22d3bf">world[&quot;town&quot;]</code> के रूप में जोड़ता है, और हर crossing element पर <b>gate वाले 2 warning signals, gate arms (ऊपर उठे), crossing के तख्ते और train (दूर प्रतीक्षा में)</b> रखता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals は交差点の 4 基全部、yaw = 灯器が向く向き。stop_lines は</p>
+<p>左側通行の物)。設備の状態は <code style="color:#22d3bf">town_crossing_state</code> で時刻ごとに書き換える。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない(world_build の例外はそのまま)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_stop_lines">town_stop_lines</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a> · <a style="color:#22d3bf" href="opdrive:town_checks">town_checks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

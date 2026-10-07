@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">carla_pose_to_world — DRIVE <code style="color:#22d3bf">carla</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import carlabridge; carlabridge.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;carla_pose_to_world&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>CARLA का [x, y, z, roll, pitch, yaw] → Fullseye का 4×4 (world ← object, right-handed: y और yaw के चिह्न उलटे)। R_f = M R_c M, t_f = M t_c (M = diag(1, −1, 1))। object का local frame x आगे, y बाएँ, z ऊपर (driveworld की cars जैसा)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:relative_motion">relative_motion</a> · <a style="color:#22d3bf" href="opdrive:foe_from_motion">foe_from_motion</a> · <a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:world_materials">world_materials</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">carla</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:carla_labels">carla_labels</a> · <a style="color:#22d3bf" href="opdrive:carla_label_map">carla_label_map</a> · <a style="color:#22d3bf" href="opdrive:carla_label_unmap">carla_label_unmap</a> · <a style="color:#22d3bf" href="opdrive:carla_depth_decode">carla_depth_decode</a> · <a style="color:#22d3bf" href="opdrive:carla_depth_encode">carla_depth_encode</a> · <a style="color:#22d3bf" href="opdrive:carla_intrinsics">carla_intrinsics</a> · <a style="color:#22d3bf" href="opdrive:intrinsics_to_fullseye">intrinsics_to_fullseye</a> · <a style="color:#22d3bf" href="opdrive:intrinsics_to_carla">intrinsics_to_carla</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: carlabridge.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

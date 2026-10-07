@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">x_range_funct_1d — ONED <code style="color:#22d3bf">function</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.x_range_funct_1d(y)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import funct1d; funct1d.x_range_funct_1d(y)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;x_range_funct_1d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.x_range_funct_1d.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">funct1d.x_range_funct_1d</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>x-domain <code style="color:#22d3bf">(0.0, n - 1.0)</code> (HALCON <code style="color:#22d3bf">x_range_funct_1d</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>:param y: 1-D function, at least 1 sample (an empty function has no domain). :raises ValueError: non-1-D / NaN / Inf input, or empty input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:signal_funct1d">signal_funct1d</a> — <code style="color:#22d3bf">py -3.11 examples/signal_funct1d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">function</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: funct1d.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

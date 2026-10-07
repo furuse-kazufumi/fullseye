@@ -1,12 +1,12 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""事例: 「やりたいこと」を 6 つの言語で書いて、同じ op にたどり着く(RAG の入口)。
+"""事例: 「やりたいこと」を 7 つの言語で書いて、同じ op にたどり着く(RAG の入口)。
 
 やりたいこと: op の名前を知らないまま、母語で「エッジを検出したい」「ノイズを除きたい」と
 書いて、使える op とそのノート(型の契約・呼び出し形・実行できる例)を引く。
 
 使う関数: ``fullseye.search_ops``(コマンドなら ``fullseye-rag search "<言葉>"``、MCP なら
 ``fullseye_find_ops``)。索引は op の要約 6 言語(ja 原文 + en / zh / tw / ko / de の訳)と
-名前・HALCON 名・型。埋め込みも外部サービスも使わない(BM25、標準ライブラリだけ)。
+名前・HALCON 名・型(hi は訳の方針で術語を英語のまま書くので、術語は英語で引く)。埋め込みも外部サービスも使わない(BM25、標準ライブラリだけ)。
 
 検証(GT): 言語ごとに書いた同じ意味の問い合わせの上位 8 件に、その意味の op の集合
 (エッジ = 勾配の大きさ / Canny 系、ノイズ = 平滑化・ノイズ除去系)のどれかが**全言語で**入る。
@@ -31,14 +31,14 @@ NOISE = {"xsp_dct_denoise", "xcv3_denoise_tvl1", "cv_median", "sk_wavelet", "sk_
          "gray_opening_rect", "xmh_majority"}
 QUERIES = {
     "edge": [("ja", "エッジ検出"), ("en", "edge detection"), ("zh", "边缘检测"), ("ko", "에지 검출"),
-             ("de", "Kantenerkennung"), ("tw", "邊緣")],
+             ("de", "Kantenerkennung"), ("tw", "邊緣"), ("hi", "edge पहचान")],
     "noise": [("ja", "ノイズ除去"), ("en", "denoise"), ("zh", "去噪"), ("ko", "노이즈 제거"),
-              ("de", "Rauschen entfernen"), ("tw", "雜訊去除")],
+              ("de", "Rauschen entfernen"), ("tw", "雜訊去除"), ("hi", "noise हटाना")],
 }
 
 
 def main():
-    print("== 1. 同じ意味を 6 言語で引く(上位 8 件のうち、その意味の op が何件あるか)")
+    print("== 1. 同じ意味を 7 言語で引く(上位 8 件のうち、その意味の op が何件あるか)")
     returned = {"edge": set(), "noise": set()}
     for concept, qs in QUERIES.items():
         want = EDGE if concept == "edge" else NOISE

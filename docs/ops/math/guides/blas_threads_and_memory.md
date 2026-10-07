@@ -7,6 +7,7 @@ title_zh: 矩阵分解为何慢 —— BLAS 线程、缓存、内存布局
 title_tw: 矩陣分解為何慢 —— BLAS 執行緒、快取、記憶體配置
 title_ko: 행렬 분해가 느린 이유 — BLAS 스레드·캐시·메모리 배치
 title_de: Warum Matrixzerlegungen langsam sind — BLAS-Threads, Caches, Speicherlayout
+title_hi: Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

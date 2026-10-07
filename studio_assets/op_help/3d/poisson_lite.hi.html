@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">poisson_lite — 3D <code style="color:#22d3bf">reconstruct</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import recon3d; recon3d.poisson_lite(points, size=64, sigma=1.0, iso=0.5, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;poisson_lite&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point cloud (N,3) → (vertices(V,3), faces(F,3)) surface mesh (screened Poisson का हल्का approximation)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>点群を size³ の voxel 格子へ splat し、等値面場を作って marching cubes で三角形メッシュ化する。出力頂点は入力点群と同じ<b>世界座標</b>(bbox から逆写像)。bounds は点群 bbox(+σ 依存の padding)。</p>
+<p>2 モード:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals is None</code>: <b>占有(occupancy)</b> をガウス平滑・[0,1] 正規化し、<code style="color:#22d3bf">iso</code> で二値化した表面バンドの内部を <code style="color:#22d3bf">binary_fill_holes</code> で充填してから再平滑し、単一の外殻を <code style="color:#22d3bf">iso</code> で抜く。占有(unsigned)場は内外対称で、平滑した薄殻の等値面は内スロープ・外スロープの二か所を通り <b>同心二重殻</b>になってしまう。内部充填で内外対称性を破ることで、<b>閉じた</b>表面サンプルからは(格子/σ に対し十分密なら)単一殻が得られる。開いた曲面は充填されず薄い面のまま。疎すぎる/σ が小さいと隙間から充填が漏れ二重殻へ縮退しうる(厳密な内外判定が要るなら <code style="color:#22d3bf">normals</code> 指定を使う)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> 指定: 向き付き点の <b>winding number</b> で内外指標場を作りガウス平滑、<code style="color:#22d3bf">iso</code> (既定 0.5)で表面抜き。表面のみサンプルでも内部を埋めて閉曲面を得られる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : array_like (N,3)</p>
+<p>入力点群。</p>
+<p>size : int</p>
+<p>voxel 格子の一辺(既定 64)。大きいほど精細だが O(size³)。</p>
+<p>sigma : float</p>
+<p>ガウス平滑の標準偏差(voxel 単位、既定 1.0)。padding は ⌈3σ⌉+2 voxel を自動確保。</p>
+<p>iso : float</p>
+<p>等値面レベル。正規化場 [0,1] 上の値(既定 0.5)。</p>
+<p>normals : array_like (N,3) or None</p>
+<p>点法線。与えると winding number モード、None なら占有モード。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>vertices : numpy.ndarray (V,3) float64</p>
+<p>世界座標の頂点。</p>
+<p>faces : numpy.ndarray (F,3) int64</p>
+<p>三角形の頂点インデックス(vertices を参照)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>点数不足(&lt;4)、size が小さすぎる、占有/指標場が薄く iso が場の値域外、など。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:poisson_surface_recon">poisson_surface_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/poisson_surface_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">reconstruct</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:alpha_shape_mesh">alpha_shape_mesh</a> · <a style="color:#22d3bf" href="op3d:alpha_shape_boundary">alpha_shape_boundary</a> · <a style="color:#22d3bf" href="op3d:estimate_alpha">estimate_alpha</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: recon3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_shot — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_shot; feat_shot.register_shot(src, dst, radius=None, normal_k=16, ratio=0.9, ransac_iters=2000, inlier_thr=None, refine_icp=True, max_kp=400, device=&#x27;cpu&#x27;, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_shot&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SHOT descriptor से sparse feature matching + RANSAC rigid pose estimation (पूरी pipeline)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>初期推定なしに、大回転・部分重なりの 2 点群を対応付けて剛体変換(回転 R + 並進 t)を返す。密マッチ(NCC/Hough/PCA)と異なり、ISS キーポイントごとに局所参照フレーム(LRF)を張り、球状分割セルの法線角度ヒストグラム(SHOT)で記述 → Lowe 比率テスト + 相互最近傍でマッチ → RANSAC で外れ値に頑健に姿勢推定する。得た姿勢は ICP の粗初期値(coarse init)供給にも使える。</p>
+<p>LRF の符号曖昧性: 距離重み付き共分散の固有ベクトルは符号が定まらないため、各軸(x=最大, z=最小 固有値)を近傍ベクトル (p_i-p) の投影多数派へ合わせ(Tombari の符号則)、y=z×x で右手系を構成する。点法線も同則で近傍質量から離れる向き(局所外向き)に統一するため回転に共変で部分重なりにも安定。両点群に同一則を適用することで記述子の repeatability を担保。</p>
+<p>引数:</p>
+<p>src, dst: (N,3)/(M,3) 点群(numpy か torch)。src を dst へ合わせる。</p>
+<p>radius: SHOT 支持半径。None なら各点群自身の bbox 対角(小さい方)の 0.15 倍</p>
+<p>(結合 bbox は並進で対角が水増しされスケールが狂うため使わない)。</p>
+<p>normal_k: 法線推定の knn 数。</p>
+<p>ratio: Lowe 比率テスト閾値(小さいほど厳格)。</p>
+<p>ransac_iters: RANSAC 反復数。</p>
+<p>inlier_thr: RANSAC インライア距離。None なら bbox 対角の 0.03 倍。</p>
+<p>refine_icp: True なら得た姿勢を初期値に Trimmed ICP(icp_point2point_3d)で精緻化。</p>
+<p>max_kp: キーポイント上限。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD/ICP をこの上で解く。</p>
+<p>seed: RANSAC 乱数種。</p>
+<p>返り値:</p>
+<p>R: (3,3) numpy。dst ≈ src @ R.T + t を満たす回転(icp と同規約)。</p>
+<p>t: (3,) numpy。並進。</p>
+<p>info: dict。&quot;n_kp_src&quot;,&quot;n_kp_dst&quot;,&quot;n_matches&quot;,&quot;n_inliers&quot;,&quot;inlier_ratio&quot;,</p>
+<p>&quot;icp_rmse&quot;(refine_icp 時),&quot;ok&quot;(True=推定成功; インライア&lt;4 は</p>
+<p>信頼不可として False + 単位変換を返す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_shot.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

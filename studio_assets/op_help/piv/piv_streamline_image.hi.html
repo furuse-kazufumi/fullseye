@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_streamline_image — PIV <code style="color:#22d3bf">visualise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>streamline plot (MATLAB का <code style="color:#22d3bf">streamslice</code>)। <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
+<p>Args:</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>upsample / background / color / width: <code style="color:#22d3bf">piv_quiver</code> と同じ。</p>
+<p>arrows: 矢じりを置くか。</p>
+<p>**stream_kw: <code style="color:#22d3bf">piv_streamlines</code> へ素通し(<code style="color:#22d3bf">separation</code> など)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">visualise</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_flow_to_rgbimage">piv_flow_to_rgbimage</a> · <a style="color:#22d3bf" href="oppiv:piv_line_integral_convolution">piv_line_integral_convolution</a> · <a style="color:#22d3bf" href="oppiv:piv_streamlines">piv_streamlines</a> · <a style="color:#22d3bf" href="oppiv:piv_quiver">piv_quiver</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

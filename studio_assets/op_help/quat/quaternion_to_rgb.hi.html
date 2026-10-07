@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">quaternion_to_rgb — QUAT <code style="color:#22d3bf">convert</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.quaternion_to_rgb(qimage, allow_scalar: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import quatimage; quatimage.quaternion_to_rgb(qimage, allow_scalar: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsquat.get(&quot;quaternion_to_rgb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>quaternion image का vector भाग, linear RGB के रूप में। → (H, W, 3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The inverse of <code style="color:#22d3bf">rgb_to_quaternion</code> — and, by default, a *checked* inverse. A quaternion image that picked up a scalar component somewhere (a Hamilton product with a non-pure quaternion, a monogenic signal handed here by mistake) is <b>refused</b> rather than silently truncated, because dropping the <code style="color:#22d3bf">w</code> component is exactly the kind of loss that produces a plausible picture from the wrong data. Pass <code style="color:#22d3bf">allow_scalar=True</code> to opt in to the truncation when it is what you meant.</p>
+<p>The tolerance is relative to the field&#x27;s own peak modulus (<code style="color:#22d3bf">_MONOGENIC_K_TOL</code>, 1e-9): a quaternion image that really is pure carries <code style="color:#22d3bf">|w|</code> at the 1e-17 level after a round trip through two FFTs, and anything with a meaningful scalar part is many orders above that. Nothing real lives in between.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *qimage* is not a finite <code style="color:#22d3bf">(H, W, 4)</code> array; or it has a non-negligible scalar part and <code style="color:#22d3bf">allow_scalar</code> is False.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgbimage</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opquat:rgb_to_quaternion">rgb_to_quaternion</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">convert</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:rgb_to_quaternion">rgb_to_quaternion</a> · <a style="color:#22d3bf" href="opquat:quat_norm">quat_norm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

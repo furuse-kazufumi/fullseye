@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">threshold_isodata — SEGMENTATION <code style="color:#22d3bf">threshold</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.threshold_isodata(image, *, nbins: &#x27;int&#x27; = 256, max_iter: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import seggraph; seggraph.threshold_isodata(image, *, nbins: &#x27;int&#x27; = 256, max_iter: &#x27;int&#x27; = 1000) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;threshold_isodata&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>isodata (Ridler–Calvard 1978): t ← (μ_≤t + μ_&gt;t)/2 को <b>pixel के मानों पर</b> तब तक दोहराता है जब तक विभाजन बदलना बंद न हो (प्रारंभिक मान = mean)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>分割が止まれば t は μ を計算し直しても動かない = 不動点 t = (μ_low + μ_high)/2 が厳密に成り立つ(<code style="color:#22d3bf">residual</code> = 0)。ヒストグラムの上の不動点(skimage と同じ「ビンの中心 c で 0 ≤ (μ_≤c + μ_&gt;c)/2 − c &lt; ビン幅」)も <code style="color:#22d3bf">fixed_points</code> で返す。</p>
+<p>返す: <code style="color:#22d3bf">threshold</code>、<code style="color:#22d3bf">mask</code> = image &gt; t、<code style="color:#22d3bf">mu_low</code> / <code style="color:#22d3bf">mu_high</code>、<code style="color:#22d3bf">residual</code>、<code style="color:#22d3bf">n_iter</code>、<code style="color:#22d3bf">fixed_points</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:graph_hierarchy_and_thresholds">graph_hierarchy_and_thresholds</a> — Graph, hierarchy और threshold theorems से segmentation — क्या exact है, और partition कहाँ टूटता है</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">threshold</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:threshold_triangle">threshold_triangle</a> · <a style="color:#22d3bf" href="opsegmentation:threshold_kittler">threshold_kittler</a> · <a style="color:#22d3bf" href="opsegmentation:threshold_kapur">threshold_kapur</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: seggraph.py — SEGMENTATION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

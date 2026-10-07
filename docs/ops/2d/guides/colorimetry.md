@@ -7,6 +7,7 @@ title_zh: 测色与光谱知识 —— 颜色只由“光谱 × 光源 × 观察
 title_tw: 測色與光譜知識 —— 顏色只由「光譜 × 光源 × 觀察者」決定
 title_ko: 측색과 분광 지식 — 색은 ‘분광 × 광원 × 관찰자’로만 정해진다
 title_de: Farbmetrik und Spektren — Farbe ist nur durch Spektrum × Lichtart × Beobachter bestimmt
+title_hi: Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

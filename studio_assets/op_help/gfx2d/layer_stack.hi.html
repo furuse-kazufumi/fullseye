@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">layer_stack — GFX2D <code style="color:#22d3bf">composite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.layer_stack(layers)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.layer_stack(layers)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;layer_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>z-क्रम वाली <code style="color:#22d3bf">rgba</code> layer की सूची को composite करता है, सबसे नीचे वाली पहले।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Each layer is a dict:</p>
+<p><code style="color:#22d3bf">{&quot;image&quot;: rgba, &quot;mode&quot;: str = &quot;normal&quot;, &quot;opacity&quot;: float = 1.0}</code></p>
+<p>and the W3C rule for a blend mode against a *partially transparent* backdrop is used — the blend function is weighted by the backdrop&#x27;s own alpha, <code style="color:#22d3bf">Cs&#x27; = (1 - a_b) Cs + a_b B(Cb, Cs)</code> — so a layer over empty space keeps its own colour whatever the mode. The result is straight-alpha <code style="color:#22d3bf">rgba</code>.</p>
+<p>All layers must share one shape; see <code style="color:#22d3bf">alpha_composite</code> on why.</p>
+<p>Raises ValueError: empty list, more than <code style="color:#22d3bf">MAX_LAYERS</code>, a non-dict entry, an unknown key, mismatched shapes.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgba</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_blit">sprite_blit</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">composite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:unpremultiply">unpremultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite_premul">alpha_composite_premul</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

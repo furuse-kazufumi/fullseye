@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signal_jp_mesh — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signal_jp_mesh(*, lens: &#x27;float&#x27; = 0.3, n: &#x27;int&#x27; = 3, hood: &#x27;bool&#x27; = True, state: &#x27;str&#x27; = &#x27;off&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roadjp; roadjp.signal_jp_mesh(*, lens: &#x27;float&#x27; = 0.3, n: &#x27;int&#x27; = 3, hood: &#x27;bool&#x27; = True, state: &#x27;str&#x27; = &#x27;off&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;signal_jp_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>क्षैतिज vehicle signal head (जापानी शैली)। origin = signal head के तले का केंद्र, display face −x की ओर है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>箱: 幅 = n·(lens + 0.10) + 0.05(3 灯・300 mm で 1.25 m)、高さ = lens + 0.13(0.43 m)、奥行 0.30 m、濃い灰。レンズ = 半径 lens/2 の円盤(24 分割)を前面より 5 mm 外(−x 側)に置く。並びは <b>−x を向いて見て左から 青・黄・赤</b> = 青が +y、赤が −y(運転者から見て左から青・黄・赤 — Wikipedia 日本の交通信号機、一次資料で要確認)。n = 2 なら 黄・赤、n = 1 なら 黄(一灯点滅式)。各レンズの上に庇(薄い箱、長さ 0.25 m、<code style="color:#22d3bf">hood</code>)。レンズ径は 300 mm(2017 年度から標準 250 mm、どちらも現役)。</p>
+<p>返り値 <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;: 3, &quot;lamp_faces&quot;: {&quot;green&quot;: (f0, f1), ...}, &quot;width&quot;, &quot;height&quot;, &quot;depth&quot;, &quot;lens&quot;}</code>。<code style="color:#22d3bf">lamp_faces</code> はこのメッシュ内の面の索引の範囲(世界に足すときは world_add の返す範囲へ平行移動する — <code style="color:#22d3bf">driveworld.add_signal</code> と同じ仕組み)。<code style="color:#22d3bf">state</code> の灯だけ driveworld._LAMP の色、他は &quot;off&quot; の色。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">roadjp</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sign_params">sign_params</a> · <a style="color:#22d3bf" href="opdrive:sign_image">sign_image</a> · <a style="color:#22d3bf" href="opdrive:plate_mesh_from_image">plate_mesh_from_image</a> · <a style="color:#22d3bf" href="opdrive:sign_mesh">sign_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_sign">add_sign</a> · <a style="color:#22d3bf" href="opdrive:add_signal_jp">add_signal_jp</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadjp.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

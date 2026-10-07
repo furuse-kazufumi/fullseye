@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">displacement_series — MOTIONMAG <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motionmag; motionmag.displacement_series(video, f_lo, f_hi, fps, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmotionmag.get(&quot;displacement_series&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>पूरे frame का displacement waveform -&gt; <code style="color:#22d3bf">(dx, dy)</code> का <code style="color:#22d3bf">(T, 2)</code> array।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The contrast-weighted spatial mean of <code style="color:#22d3bf">phase_displacement</code>, i.e. the rigid-body motion of the scene in pixels, one row per frame. This is the trace to plot, or to feed to <code style="color:#22d3bf">dsp.spectrum</code> to read off the resonant frequency — a vibration waveform recovered from a camera.</p>
+<p>Weights are the same <code style="color:#22d3bf">|z|^2</code> contrast the field solve uses, restricted to the pixels marked <code style="color:#22d3bf">valid</code>, so blank regions do not drag the average towards zero. A clip with no valid pixel anywhere (a constant image) returns exact zeros rather than a division by zero.</p>
+<p>Sub-pixel accuracy and its cliff inherit from <code style="color:#22d3bf">phase_displacement</code>; measured on the 64x64x64 / 8 px / 4 Hz synthetic, a true 0.5 px amplitude is recovered as 0.50000000 px (6.7e-16 relative), and a true 0.001 px amplitude as 0.00100000 px (8.7e-15).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_motion_magnification">poc_motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/poc_motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:phase_displacement">phase_displacement</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

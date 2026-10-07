@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_visible_faces — CADMAP <code style="color:#22d3bf">visibility</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cadmap; cadmap.cad_visible_faces(mesh, K=None, R=None, t=None, width=64, height=64, cull_backfaces=True, strict=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscadmap.get(&quot;cad_visible_faces&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>इस camera से <b>वास्तव में दिखने वाले</b> face के ID (आरोही क्रम, <code style="color:#22d3bf">indices</code> sort)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画像格子(<code style="color:#22d3bf">width</code> x <code style="color:#22d3bf">height</code>、画素中心は整数座標)へ光線を撃ち、最も手前に来た面を集める。裏面(法線がカメラを向いていない)と、手前の面に完全に隠れた面は入らない。検査カバレッジ — 「この視点で CAD のどの面を見たことになるか」— をそのまま返す量で、<code style="color:#22d3bf">mesh_area</code> と組み合わせれば「未検査の面積」が出る。</p>
+<p>格子の分解能より小さく写る面は取りこぼす(標本化なので当然)。<b>取りこぼしを「隠れている」と言い換えない</b>ために、返るのは「見えた面」であって「見えない面の補集合」ではない。</p>
+<p>★ここだけ <code style="color:#22d3bf">strict</code> の既定が <code style="color:#22d3bf">True</code>(他の 3 つは <code style="color:#22d3bf">False</code>)。返りが素の添字配列なので、<b>巻きを直したという事実を載せる先が無い</b>からで、「黙って直す」を避けるにはここは拒否するしかない。<code style="color:#22d3bf">cull_backfaces=True</code> のまま内向きの閉メッシュを渡すと <code style="color:#22d3bf">ValueError</code> になる。自動修正が欲しいときは <code style="color:#22d3bf">strict=False</code> を<b>呼び出し側で明示</b>すること — そのときは利用者が修正を要求したのだから、返り値に載らなくても黙ってはいない。<code style="color:#22d3bf">cull_backfaces=False</code> なら巻き方向は結果に効かないので検査もしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">indices</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">visibility</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

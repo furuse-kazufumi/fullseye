@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">measure_pos — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pos&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>measurement line पर edge की position (subpixel) और amplitude निकालता है (measure_pos)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各エッジ: <code style="color:#22d3bf">pos</code>(サンプル index、矩形は始点からの px)/ <code style="color:#22d3bf">dist</code>(始点からの距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(符号つきグレー差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 測定方向に明るくなる)。<code style="color:#22d3bf">threshold</code> は |amplitude| の下限、<code style="color:#22d3bf">transition</code> は &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_barcode_1d">poc_barcode_1d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_barcode_1d.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_battery_electrode_breathing">poc_battery_electrode_breathing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_battery_electrode_breathing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calipers_under_illusion">poc_calipers_under_illusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calipers_under_illusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_screw_thread_metrology">poc_screw_thread_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_screw_thread_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_limb_darkening">poc_solar_limb_darkening</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_limb_darkening.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tree_ring_dendro">poc_tree_ring_dendro</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tree_ring_dendro.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_water_level">poc_water_level</a> — <code style="color:#22d3bf">py -3.11 examples/poc_water_level.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_bead_profile">poc_weld_bead_profile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_bead_profile.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">caliper</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:gen_measure_rectangle2">gen_measure_rectangle2</a> · <a style="color:#22d3bf" href="opmeasure1d:gen_measure_arc">gen_measure_arc</a> · <a style="color:#22d3bf" href="opmeasure1d:translate_measure">translate_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pairs">measure_pairs</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

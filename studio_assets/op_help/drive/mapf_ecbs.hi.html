@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mapf_ecbs — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ऊपरी level को focal search बनाया गया CBS (ECBS के ऊपरी level जैसा ही विचार, Barer et al. 2014)। कुल cost <b>optimum के w गुना के भीतर</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>開いている節のうち最小の総コスト <code style="color:#22d3bf">LB</code> は最適値以下(最適解はどれかの節の下にある)。そこで <code style="color:#22d3bf">コスト ≤ w · LB</code> の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(門)。返りは <code style="color:#22d3bf">mapf_cbs</code> の dict に <code style="color:#22d3bf">lower_bound</code> と <code style="color:#22d3bf">w</code> を足したもの。細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">agv</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:warehouse_grid">warehouse_grid</a> · <a style="color:#22d3bf" href="opdrive:grid_distances">grid_distances</a> · <a style="color:#22d3bf" href="opdrive:mapf_cbs">mapf_cbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_joint_astar">mapf_joint_astar</a> · <a style="color:#22d3bf" href="opdrive:mapf_prioritized">mapf_prioritized</a> · <a style="color:#22d3bf" href="opdrive:plan_conflicts">plan_conflicts</a> · <a style="color:#22d3bf" href="opdrive:plan_cost">plan_cost</a> · <a style="color:#22d3bf" href="opdrive:adg_build">adg_build</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: agvfleet.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

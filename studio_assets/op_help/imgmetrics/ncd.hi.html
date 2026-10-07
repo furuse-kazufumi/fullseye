@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ncd — IMGMETRICS <code style="color:#22d3bf">compression</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgmetrics; imgmetrics.ncd(a, b, compressor=&#x27;lzma&#x27;, levels=None, data_range=None, symmetric=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;ncd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>normalised compression distance (Li, Chen, Li, Ma &amp; Vitányi, IEEE TIT 50(12), 2004)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">NCD(x,y) = (C(xy) - min(C(x),C(y))) / max(C(x),C(y))</code>。同じものなら 0 に近づき、無関係なら 1 に近づく ―― ただし <b>実際の圧縮器は理想的な Kolmogorov 複雑度ではない</b>ので、同一入力でも厳密に 0 にはならない(ヘッダぶんの下駄がある)。その下駄の実測値はテストに残してある。</p>
+<p><b>生の float 配列は受け付けない。</b> 圧縮器はバイト列の繰り返しを見るので、値がごくわずか違うだけで float の仮数部が総取っ替えになり、<b>似ている 2 枚でも共通のバイト列が消える</b>。実測(2026-09-02、<code style="color:#22d3bf">linspace</code> の勾配とそれを +0.02 した絵、PSNR 34.0 dB = よく似ている):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">float64</code> のまま:8 バイト語の共有率 <b>0.02 %</b> → <b>NCD 1.0959</b> (「まったく無関係」と読める値。しかも 1 を超える)</p>
+<p style="margin:2px 0 2px 12px">• 256 段に量子化:<b>NCD 0.1290</b>(正しく「よく似ている」)</p>
+<p style="margin:2px 0 2px 12px">• 本当に無関係な 2 枚:<b>NCD 0.9981</b></p>
+<p>つまり float のまま測ると<b>例外なく逆の結論</b>が出る。よって float には <code style="color:#22d3bf">levels</code> の明示を要求する(<code style="color:#22d3bf">levels=256</code> なら <code style="color:#22d3bf">data_range</code> を 256 段に量子化してから測る)。整数 dtype はそのまま測れる。</p>
+<p><code style="color:#22d3bf">symmetric=True</code>(既定)は <b>両向きを測って平均する</b>。圧縮器は前から順に辞書を作るので <code style="color:#22d3bf">C(xy) != C(yx)</code> になり、素朴に実装すると「距離」を名乗りながら引数の順で値が変わる(実測: 縦縞と横縞で 0.571429 対 0.595238、相対 4 %)。<b>一様乱数どうしでは差 0.000e+00 になるので、乱数で試している限り気づけない</b> ―― 構造のある実データで初めて破れる型の欠陥。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_quality_metrics">image_quality_metrics</a> — <code style="color:#22d3bf">py -3.11 examples/image_quality_metrics.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">compression</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:compressed_size">compressed_size</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgmetrics.py — IMGMETRICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

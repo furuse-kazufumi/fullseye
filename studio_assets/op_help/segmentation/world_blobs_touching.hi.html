@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_blobs_touching — SEGMENTATION <code style="color:#22d3bf">world</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segworld; segworld.world_blobs_touching(n: &#x27;int&#x27; = 10, overlap: &#x27;float&#x27; = 0.2, seed: &#x27;int&#x27; = 0, *, size=(160, 160), radius: &#x27;float&#x27; = 14.0, noise: &#x27;float&#x27; = 0.03) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;world_blobs_touching&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>overlap होने वाले वृत्तों (cell/कण) की दुनिया: chain में रखे समान radius के वृत्त, हर वृत्त केवल पिछले वृत्त से केंद्र दूरी 2r(1 − overlap) पर overlap करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>ラベル = 円の内側で最も近い中心(重なりは垂直二等分線で分ける)。画像 = 明るい内部 + 暗い縁 + 重なりはやや明るい + ぼかし + 雑音(細胞の見た目)。鎖がそれ以上伸ばせなければ新しい鎖を始める(その円は誰とも重ならない)。</p>
+<p>返り値: <code style="color:#22d3bf">image</code>、<code style="color:#22d3bf">labels</code>、<code style="color:#22d3bf">count_map</code>(各画素を覆う円の数)、<code style="color:#22d3bf">truth</code> = {<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">centers</code> (n, 2) [y, x]、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">overlap</code>、<code style="color:#22d3bf">pairs</code> (m, 2)(重なる組)、<code style="color:#22d3bf">lens_area</code> (m,)(閉形式)、<code style="color:#22d3bf">areas</code> (n,)(πr² − Σ レンズ/2)、<code style="color:#22d3bf">union_area</code>、<code style="color:#22d3bf">overlap_measured</code>(2 つ以上に覆われた画素 / 和集合の画素)}。置けなければ ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:segmentation_scoring_and_worlds">segmentation_scoring_and_worlds</a> — Segmentations की scoring और ground truth वाले synthetic worlds — कौन-सा metric किस failure को नहीं देख पाता</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:class_ndim_norm">class_ndim_norm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">world</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:world_grains_voronoi">world_grains_voronoi</a> · <a style="color:#22d3bf" href="opsegmentation:world_parts_with_shadow">world_parts_with_shadow</a> · <a style="color:#22d3bf" href="opsegmentation:world_texture_regions">world_texture_regions</a> · <a style="color:#22d3bf" href="opsegmentation:world_gradient_illumination">world_gradient_illumination</a> · <a style="color:#22d3bf" href="opsegmentation:world_thin_structures">world_thin_structures</a> · <a style="color:#22d3bf" href="opsegmentation:lens_area">lens_area</a> · <a style="color:#22d3bf" href="opsegmentation:voronoi_cells">voronoi_cells</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segworld.py — SEGMENTATION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

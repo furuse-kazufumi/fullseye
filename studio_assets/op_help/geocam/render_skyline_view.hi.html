@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">render_skyline_view — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>skyline table और orientation से, उस दिशा में देखते camera को दिखने वाला <b>आकाश का mask</b> (H, W) बनाता है → image2d (0/1)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
+<p>Args:</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>
+<p>K: (fx, fy, cx, cy)。shape: (H, W)。</p>
+<p>yaw_deg, pitch_deg, roll_deg: 姿勢(モジュール冒頭の規約)。</p>
+<p>Returns:</p>
+<p>image2d (H, W) float {0, 1}: 1 = 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:sun_bloom_fit">sun_bloom_fit</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">skyline</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:dem_skyline">dem_skyline</a> · <a style="color:#22d3bf" href="opgeocam:skyline_extract">skyline_extract</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

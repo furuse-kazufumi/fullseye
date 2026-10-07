@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normals_to_angles — REPRCONV <code style="color:#22d3bf">direction</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normals</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normals_to_angles(normals)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.normals_to_angles(normals)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;normals_to_angles&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>normal <code style="color:#22d3bf">(N,3)</code> → azimuth/elevation जोड़े <code style="color:#22d3bf">(N,2)</code> <b>[degree]</b> में। <code style="color:#22d3bf">normals</code> से निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">az = atan2(c1, c0)</code> を軸0-軸1 平面内の方位、<code style="color:#22d3bf">el = asin(c2/|v|)</code> を軸2 からの仰角とする。<b>x/y/z でなく「軸0/1/2」で定義する</b>のは、この repo に(z,y,x) 順の点群と (x,y,z) 順の点群が両方いるため —— 名前で書くと、渡された配列がどちらの流儀かに依存して意味が変わってしまう。</p>
+<p>可逆: <code style="color:#22d3bf">angles_to_normals</code> と往復して <b>方向は厳密に戻る</b>(実測 max|Δ| = 6.1e-16、<code style="color:#22d3bf">selftest</code> が毎回測る)。<b>戻らないのは長さだけ</b> —— 法線は向きなので、非単位ベクトルを渡すと往復で単位ベクトルになる。</p>
+<p>Args:</p>
+<p>normals: (N, 3) 実配列。零ベクトルは拒否(方位が定義できない)。</p>
+<p>Returns:</p>
+<p>(N, 2) float64。列 0 = 方位 (-180, 180]、列 1 = 仰角 [-90, 90]。</p>
+<p>Raises:</p>
+<p>ValueError: 形状が (N,3) でない / 非有限 / 長さ 0 のベクトルを含む。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:shape_index_to_curvature">shape_index_to_curvature</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">direction</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angles_to_normals">angles_to_normals</a> · <a style="color:#22d3bf" href="opreprconv:normals_to_egi">normals_to_egi</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

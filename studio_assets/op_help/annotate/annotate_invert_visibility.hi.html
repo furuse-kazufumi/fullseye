@@ -1,0 +1,53 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_visibility — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>बनाने से पहले मापता है कि inverted रंग <b>उस background पर वास्तव में दिखता है</b> या नहीं।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、しかも致命的 —— <b>中間調では反転しても同じ色になる</b>。8bit グレーの v=128 に対する補色は v=127 で、WCAG のコントラスト比は <b>1.014</b> (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。</p>
+<p><code style="color:#22d3bf">annotate_invert</code> と <code style="color:#22d3bf">annotate_invert_path</code> は内部でこれを呼んで警告するが、<b>自分で fail-closed にしたいとき</b>はこの op で測ってから描く(<code style="color:#22d3bf">min_contrast</code> を見て、低ければ <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> に倒す)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>img : (H,W) または (H,W,C)</p>
+<p>地。値域 [0,1]。</p>
+<p>mask : (H,W)</p>
+<p>反転を乗せるところ。真偽か [0,1] の重み。<b>形が違えば例外</b>。</p>
+<p>mode : str</p>
+<p><code style="color:#22d3bf">INVERT_MODES</code> のいずれか。</p>
+<p>alpha : float</p>
+<p>反転の効き。描くときと同じ値を渡すこと —— 見え方は「反転色」ではなく</p>
+<p><b>実際に置かれる色</b>で決まるので、<code style="color:#22d3bf">alpha</code> を落とすと答えが変わる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">pixels</code>(重み &gt;= 0.5 の画素数) / <code style="color:#22d3bf">min_contrast</code> /</p>
+<p><code style="color:#22d3bf">median_contrast</code> / <code style="color:#22d3bf">invisible_fraction</code>(比が</p>
+<p><code style="color:#22d3bf">INVERT_MIN_CONTRAST</code> 未満の割合) / <code style="color:#22d3bf">worst_xy</code>(最悪の画素、</p>
+<p>無ければ <code style="color:#22d3bf">None</code>)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np, annotate</p>
+<p>&gt;&gt;&gt; flat = np.full((8, 8), 128 / 255.0)          # 中間調 —— 反転が消える地</p>
+<p>&gt;&gt;&gt; rep = annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool))</p>
+<p>&gt;&gt;&gt; round(rep[&quot;min_contrast&quot;], 3)</p>
+<p>1.014</p>
+<p>&gt;&gt;&gt; rep[&quot;invisible_fraction&quot;]</p>
+<p>1.0</p>
+<p>&gt;&gt;&gt; annotate.annotate_invert_visibility(flat, np.ones((8, 8), bool),</p>
+<p>...                                     mode=&quot;contrast&quot;)[&quot;min_contrast&quot;] &gt; 4.5</p>
+<p>True</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">overlay</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:overlay_mask">overlay_mask</a> · <a style="color:#22d3bf" href="opannotate:overlay_labels">overlay_labels</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert">annotate_invert</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert_path">annotate_invert_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

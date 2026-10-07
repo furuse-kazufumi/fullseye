@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_lut — GFX2D <code style="color:#22d3bf">post</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">lut</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.color_lut(size=17, gain=(1.0, 1.0, 1.0), lift=(0.0, 0.0, 0.0), gamma=(1.0, 1.0, 1.0), saturation=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;color_lut&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3-D colour LUT बनाता है, <code style="color:#22d3bf">(n, n, n, 3)</code>, <code style="color:#22d3bf">[r, g, b]</code> से index किया गया।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">out = clip(lift + gain * in**gamma)</code> per channel, then saturation is applied about the Rec. 709 luma. With all defaults this is the <b>identity LUT</b>, and because trilinear interpolation is exact for a function that is linear in each variable, <code style="color:#22d3bf">color_grade</code> with the identity LUT is the identity to float64 rounding (measured maximum 3.3e-16 at size 17 and 2.2e-16 at size 2) — the property the suite uses to prove the interpolation itself is right before testing any grade.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:genspark_external_review">genspark_external_review</a> — <code style="color:#22d3bf">py -3.11 examples/genspark_external_review.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">lut</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:color_grade">color_grade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">post</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a> · <a style="color:#22d3bf" href="opgfx2d:color_grade">color_grade</a> · <a style="color:#22d3bf" href="opgfx2d:dither">dither</a> · <a style="color:#22d3bf" href="opgfx2d:palette_quantize">palette_quantize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

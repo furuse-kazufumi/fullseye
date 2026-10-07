@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photometric_stereo — 3D <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">normalmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photometric; photometric.photometric_stereo(images, lights, mask=None, normalize=True, *, lit_only=False, lit_thresh=0.001)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;photometric_stereo&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.photometric_stereo(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">normalmap</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.photometric_stereo.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">photometric.photometric_stereo</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Lambertian photometric stereo: ज्ञात light directions वाली N images से normal और albedo वापस निकालता है। → (normals HxWx3, albedo HxW)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>I_n = albedo * max(N·L_n, 0)。各画素で g = albedo*N を最小二乗 g = pinv(L) @ I で解き、albedo=|g|, normal=g/|g|。N&gt;=3 必要。albedo~0 や mask 外の画素は normal=(0,0,1)。normalize=True で光源ベクトルを単位方向に正規化(render_lambertian と同一規約 = アルベド絶対値が正しく出る)。強度重み付き光源を使うなら normalize=False にし、合成側も生ベクトルで揃えること。</p>
+<p>lit_only(2026-09-04 追加): <b>付着影(attached shadow)を外して解く</b>。モデルの max(·, 0) は非線形なので、N·L &lt; 0 の観測(真の値は 0)を線形最小二乗にそのまま入れると解が偏る ―― 実測: 影も AO も無い球で中央値 <b>9°</b>、点灯している光源だけで解くと <b>0.000°</b>。既定は False(従来の挙動を変えない)。True にすると画素ごとに <code style="color:#22d3bf">I &gt; lit_thresh</code> の光源だけを使って解き直す。<b>同じ点灯パターンの画素をまとめて</b> 1 回の疑似逆行列で処理するので、追加コストは光源数ぶんのパターン数に比例する程度(6 灯なら最大 64 群)。点灯光源が 3 未満の画素は全光源の解に戻す(fail-open:</p>
+<p>解けない画素を NaN にするより、偏っていても値がある方が下流の積分が壊れない)。</p>
+<p>lit_thresh: 「点灯している」とみなす輝度の下限。撮影ノイズより上に置く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:photometric_stereo">photometric_stereo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/photometric_stereo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">normalmap</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:phong_shade">phong_shade</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a> · <a style="color:#22d3bf" href="op3d:brdf_lommel_seeliger">brdf_lommel_seeliger</a> · <a style="color:#22d3bf" href="op3d:brdf_hapke">brdf_hapke</a> · <a style="color:#22d3bf" href="op3d:bump_normals_fbm">bump_normals_fbm</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a> · <a style="color:#22d3bf" href="op3d:render_lambertian">render_lambertian</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photometric.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

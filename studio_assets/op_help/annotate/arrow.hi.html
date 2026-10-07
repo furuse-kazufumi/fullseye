@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">arrow — ANNOTATE <code style="color:#22d3bf">pointer</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.arrow(img, p0, p1, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, scheme=&#x27;okabe_ito&#x27;, style=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;arrow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">p0</code> से <code style="color:#22d3bf">p1</code> तक तीर (shaft <code style="color:#22d3bf">imagedraw.draw_line</code> से, सिरा भरा हुआ)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>p0, p1 : (x, y)</p>
+<p>起点・先端。<b>x=col, y=row</b>。</p>
+<p>head_len, head_width : float</p>
+<p>矢じりの長さ・幅[px]。<code style="color:#22d3bf">0</code> で線分のみ。軸より矢じりが長い短距離の</p>
+<p>矢印では、矢じりを軸長の 8 割まで<b>相似に縮める</b>(そうしないと</p>
+<p>矢じりの根元が起点の手前に来て、軸が逆向きに描かれる)。</p>
+<p>style : dict or None</p>
+<p>軸線を引く <code style="color:#22d3bf">imagedraw.draw_line</code> への素通し引数(破線など)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>端点が非有限/一致、負の太さ・矢じり寸法、両端とも画像の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_car_parking">poc_car_parking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_car_parking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leak_localization">poc_leak_localization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leak_localization.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_machine_condition_fusion">poc_machine_condition_fusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_machine_condition_fusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pointer</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

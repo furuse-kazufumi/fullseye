@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_tau_from_expansion — FLYVISION <code style="color:#22d3bf">looming</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_tau_from_expansion(theta_signal, dt_s, shape=&#x27;sphere&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import flyvision; flyvision.fly_tau_from_expansion(theta_signal, dt_s, shape=&#x27;sphere&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsflyvision.get(&quot;fly_tau_from_expansion&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>optical expansion से time-to-contact — tau margin।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>From the subtended angle and its rate::</p>
+<p>shape=&quot;disk&quot;:   tau = sin(theta) / theta&#x27;</p>
+<p>shape=&quot;sphere&quot;: tau = 2*tan(theta/2) / theta&#x27;</p>
+<p><code style="color:#22d3bf">theta_signal</code> is the full subtended angle over time, radians.</p>
+<p>★ The two object models differ by 33% at a 60-degree subtense (<code style="color:#22d3bf">sin 60 = 0.866</code> vs <code style="color:#22d3bf">2 tan 30 = 1.155</code>); using the wrong one silently mis-times a landing, so the model is a required, named choice rather than a default guess.</p>
+<p>theta_signal: the full subtended angle per sample, radians.</p>
+<p>dt_s:  the sample interval, seconds.</p>
+<p>shape: <code style="color:#22d3bf">&quot;disk&quot;</code> (a frontal circular disk) or <code style="color:#22d3bf">&quot;sphere&quot;</code>.</p>
+<p>Returns a 1-D float64 array of the time-to-contact per sample, seconds. Non-expanding samples (<code style="color:#22d3bf">theta&#x27; &lt;= 0</code>) return <code style="color:#22d3bf">NaN</code> — a documented non-finite, because a contracting or static angle has no time-to-contact and inventing one would be a plausible-wrong number. (The registry op <code style="color:#22d3bf">tb_fly_tau_from_expansion</code> must return a finite signal, so it replaces those NaN by the signal fallback without recording a fallback event — <code style="color:#22d3bf">backend_safe.NONFINITE_BY_DESIGN</code>; call this function directly to keep the NaN.)</p>
+<p>Ground truth: for the model&#x27;s own object geometry (<code style="color:#22d3bf">theta = 2 asin(l/d)</code> for a sphere, <code style="color:#22d3bf">theta = 2 atan(l/d)</code> for a disk) approaching at speed <code style="color:#22d3bf">|v|</code>, the returned tau equals the true distance-over-speed <code style="color:#22d3bf">d/|v|</code> (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty / too-short (&lt; 3) / non-finite *theta_signal*, a signal over <code style="color:#22d3bf">MAX_SIGNAL_POINTS</code>, a non-positive *dt_s*, and an unknown *shape*. A non-expanding angle is <b>not</b> an error — it is the documented <code style="color:#22d3bf">NaN</code> return above.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_vision">poc_fly_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_vision.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_hex_quantize">fly_hex_quantize</a> · <a style="color:#22d3bf" href="opflyvision:fly_emd_response">fly_emd_response</a> · <a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a> · <a style="color:#22d3bf" href="opflyvision:fly_dsi">fly_dsi</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">looming</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_lgmd_eta">fly_lgmd_eta</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

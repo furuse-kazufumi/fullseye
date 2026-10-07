@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_error_stats — PIV <code style="color:#22d3bf">assess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ground truth से अंतर का विवरण। <b>bias और बिखराव को अलग-अलग</b> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
+<p>Args:</p>
+<p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>truth: 同じ格子の真値 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_sample_at_windows</code> の返り)。</p>
+<p>trim: 外周から除く格子数。窓が画像の縁にかかると相関が落ちるので、</p>
+<p>既定で 1 列ぶん落とす。0 で全格子。</p>
+<p>Returns:</p>
+<p>dict: <code style="color:#22d3bf">bias_dy</code> / <code style="color:#22d3bf">bias_dx</code> / <code style="color:#22d3bf">std_dy</code> / <code style="color:#22d3bf">std_dx</code> / <code style="color:#22d3bf">rms</code></p>
+<p>(2 成分合わせた二乗平均平方根) / <code style="color:#22d3bf">median_abs</code> / <code style="color:#22d3bf">p95_abs</code> /</p>
+<p><code style="color:#22d3bf">n_valid</code> / <code style="color:#22d3bf">n_total</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_strain_history">poc_strain_history</a> — <code style="color:#22d3bf">py -3.11 examples/poc_strain_history.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">assess</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_sample_at_windows">piv_sample_at_windows</a> · <a style="color:#22d3bf" href="oppiv:piv_peak_locking">piv_peak_locking</a> · <a style="color:#22d3bf" href="oppiv:piv_time_statistics">piv_time_statistics</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

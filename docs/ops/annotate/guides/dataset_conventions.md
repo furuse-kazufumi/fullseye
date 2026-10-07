@@ -7,6 +7,7 @@ title_zh: 训练数据集规范知识 —— COCO / YOLO / VOC 及外观检测�
 title_tw: 訓練資料集規範知識 —— COCO / YOLO / VOC 及外觀檢測中的陷阱
 title_ko: 학습 데이터셋 규약 지식 — COCO / YOLO / VOC와 외관 검사의 함정
 title_de: Konventionen für Trainingsdatensätze — COCO / YOLO / VOC und Fallstricke in der Sichtprüfung
+title_hi: Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

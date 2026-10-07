@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">monogenic_phase — QUAT <code style="color:#22d3bf">riesz</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">qimage</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.monogenic_phase(qimage, display: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import quatimage; quatimage.monogenic_phase(qimage, display: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsquat.get(&quot;monogenic_phase&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>monogenic signal का local phase <code style="color:#22d3bf">atan2(|R|, f)</code>। → (H, W)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>In <code style="color:#22d3bf">[0, pi]</code> — the monogenic phase is measured against the *magnitude* of the Riesz vector, whose sign is carried by the orientation instead, so the range is a half turn rather than a full one. That is the standard convention (Felsberg &amp; Sommer) and it is stated here because a caller arriving from <code style="color:#22d3bf">complexops.cx_phase</code> (whose raw range is <code style="color:#22d3bf">(-pi, pi]</code>) will otherwise assume a full turn and see a &quot;wrapped&quot; map that is not wrapped.</p>
+<p><code style="color:#22d3bf">display=True</code> maps <code style="color:#22d3bf">[0, pi]</code> to <code style="color:#22d3bf">[0, 1]</code> for viewing; the default is <code style="color:#22d3bf">False</code> — the <b>opposite</b> of <code style="color:#22d3bf">cx_phase</code>&#x27;s default, deliberately, because the consumers of this quantity in this module are numerical, and a display scaling that arrives silently in a measurement is a factor of <code style="color:#22d3bf">pi</code> that nothing announces.</p>
+<p>Phase is the quantity a translation shifts linearly, which is why the whole motion half of this module reads it. For an edge, phase 0 means the peak of a bright line, <code style="color:#22d3bf">pi/2</code> a step edge and <code style="color:#22d3bf">pi</code> the peak of a dark line — the local *structure type*, independent of contrast.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the input is not a valid quaternion field, or its <code style="color:#22d3bf">k</code> component is non-zero; *display* is not a bool.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidequat:quaternion_monogenic">quaternion_monogenic family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:quaternion_monogenic">quaternion_monogenic</a> — <code style="color:#22d3bf">py -3.11 examples/quaternion_monogenic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">riesz</code>)</h3>
+<p><a style="color:#22d3bf" href="opquat:riesz_transform">riesz_transform</a> · <a style="color:#22d3bf" href="opquat:monogenic_signal">monogenic_signal</a> · <a style="color:#22d3bf" href="opquat:monogenic_amplitude">monogenic_amplitude</a> · <a style="color:#22d3bf" href="opquat:monogenic_orientation">monogenic_orientation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: quatimage.py — QUAT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

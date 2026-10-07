@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sh_descriptor — 3D <code style="color:#22d3bf">describe</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device=&#x27;cpu&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.sh_descriptor(vol, L=8, nradii=12, ntheta=32, nphi=64, device=&#x27;cpu&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sh_descriptor&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>spherical harmonic descriptor। concentric sphere shells की SH band energy ‖f_l(r)‖ को (radius × frequency) के रूप में लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>2D 閉輪郭を 1D Fourier 記述子で表す <b>線→面リフト</b>: 3D 閉曲面は SH で表し、帯域エネルギーは回転で m を帯域内に混ぜるだけ=<b>回転不変</b>(Kazhdan 2003)。全 shell を grid_sample で取り、固定 SH 基底との内積 → 帯域二乗和。retrieval/verification 用の大域シグネチャ。返り値 (nradii,L+1)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 球面求積は一様 θ×φ グリッド和(Gauss-Legendre でない)ため、値は<b>厳密な SH 帯域エネルギーの近似</b>(既定 32×64 で l=4 自己内積が理論値の ~0.62 倍、解像度↑で 1 に収束)。match_sh_descriptor は L2 正規化+コサイン類似度なので<b>同一 ntheta/nphi 同士の比較には影響しない</b>が、絶対値を物理量として使う・異なる解像度設定間で比較するのは不可。</p>
+<p>引数: <code style="color:#22d3bf">vol</code> は <b>立方体</b>(N,N,N)前提。中心 <code style="color:#22d3bf">c = (N−1)/2</code> と座標の正規化に軸 0 の長さ N だけを使うので、非立方体だと軸 1,2 のサンプル位置が歪む(検証は無い)。shell 半径は <code style="color:#22d3bf">0.2·rmax</code> 〜 <code style="color:#22d3bf">rmax = N/2 − 1</code> を <code style="color:#22d3bf">nradii</code> 等分(voxel 単位)、各 shell を <code style="color:#22d3bf">ntheta × nphi</code> の (θ,φ) 格子で trilinear サンプルする。<code style="color:#22d3bf">L</code> は最大次数。返り値 <code style="color:#22d3bf">(nradii, L+1)</code> float32 numpy、<code style="color:#22d3bf">[i, l]</code> が i 番目の shell の次数 l のエネルギー(非負)。物体は volume の中心に置く(中心がずれると回転不変性が崩れる。<code style="color:#22d3bf">moment_axes</code> の重心で先に中心合わせを)。scipy の <code style="color:#22d3bf">sph_harm_y</code>/<code style="color:#22d3bf">sph_harm</code> を呼び出し時 import。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sh_descriptor_retrieval">sh_descriptor_retrieval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sh_descriptor_retrieval.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_descriptor">shape_descriptor</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_descriptor.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">descriptor</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">describe</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_sh_descriptor">match_sh_descriptor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

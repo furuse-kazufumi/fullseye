@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stat_zscore — MATH <code style="color:#22d3bf">stats</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_zscore(x)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathops; mathops.stat_zscore(x)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;stat_zscore&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>1-D sample को standardise करता है: <code style="color:#22d3bf">(x - mean) / std</code> (population <code style="color:#22d3bf">ddof=0</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The result has mean 0 and standard deviation 1 — the common currency for comparing residuals across scales and flagging outliers (<code style="color:#22d3bf">|z| &gt; 3</code>).</p>
+<p><b>A constant input raises <code style="color:#22d3bf">ValueError</code></b> — the decision, stated: with zero variance the z-score is 0/0. Returning silent zeros would claim &quot;every point is perfectly average&quot;, which is *a* convention but hides upstream breakage (a sensor stuck at one value would sail through an outlier gate). Fail-closed instead; a caller who wants the all-zeros convention can catch this and substitute deliberately.</p>
+<p>HALCON: no direct tuple operator (compose <code style="color:#22d3bf">tuple_mean</code> + <code style="color:#22d3bf">tuple_deviation</code> + arithmetic).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array (masked elements वाला) से <code style="color:#22d3bf">ValueError</code></b> — mask हटाकर नीचे के raw values इस्तेमाल करने वाला implicit conversion अस्वीकार है। भरना है या हटाना है, यह स्पष्ट रूप से बताएँ।</p>
+<p style="margin:2px 0 2px 12px">• <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b> (गिनती बताकर अस्वीकार — क्योंकि यह पूरे परिणाम में फैल जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Shape सख़्त है</b>: 1-D और 2-D को implicit रूप से promote या broadcast नहीं किया जाता (vector slot में matrix या matrix slot में vector देने पर <code style="color:#22d3bf">ValueError</code>; reshape स्पष्ट रूप से करें)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: matrix लेने वाले ops और <code style="color:#22d3bf">stat_histogram</code> के bins, <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 6.7 करोड़ elements) से अधिक होने पर <code style="color:#22d3bf">ValueError</code> देते हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:math_metrology">math_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:interp_linear">interp_linear</a> · <a style="color:#22d3bf" href="opmath:interp_cubic">interp_cubic</a> · <a style="color:#22d3bf" href="opmath:interp_scattered">interp_scattered</a> · <a style="color:#22d3bf" href="opmath:poly_fit">poly_fit</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">stats</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:stat_describe">stat_describe</a> · <a style="color:#22d3bf" href="opmath:stat_histogram">stat_histogram</a> · <a style="color:#22d3bf" href="opmath:stat_covariance">stat_covariance</a> · <a style="color:#22d3bf" href="opmath:stat_correlation">stat_correlation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gcode_extrusion_volume — PRINTPATH <code style="color:#22d3bf">gcode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_extrusion_volume(table: &#x27;Any&#x27;, filament_mm: &#x27;float&#x27; = 1.75) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.gcode_extrusion_volume(table: &#x27;Any&#x27;, filament_mm: &#x27;float&#x27; = 1.75) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_extrusion_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>extrude की गई filament का volume [mm³] = Σe × π (d / 2)² (<code style="color:#22d3bf">measurement</code>)। भार = density × volume (PLA ≈ 1.24 g/cm³)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">gcode</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_read">gcode_read</a> · <a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

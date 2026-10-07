@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">residue_fault_locate — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import residue; residue.residue_fault_locate(residues, periods, weights=None, lo=0.0, hi=None, tol=0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsresidue.get(&quot;residue_fault_locate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>कौन सा band corrupt है? (redundant residue number system) -&gt; <code style="color:#22d3bf">dict</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>With more bands than <code style="color:#22d3bf">[lo, hi)</code> needs, the bands check each other. Each band is left out in turn and the rest are solved; the band whose removal leaves a consistent set (every residual within <code style="color:#22d3bf">tol</code> x its period) while itself disagreeing by more than <code style="color:#22d3bf">tol</code> is the corrupted one. If no single removal is consistent, or two different removals both are, the answer is <b>undecidable</b> and the value is NaN — never a guess.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;value&quot;, &quot;faulty&quot;, &quot;consistent_all&quot;, &quot;worst_leave_one_out&quot;}</code>:</p>
+<p><code style="color:#22d3bf">faulty</code> is the band index, <code style="color:#22d3bf">-1</code> = all bands agree (no fault), <code style="color:#22d3bf">-2</code> = undecidable. Localising one fault needs the range to be resolvable by every subset of <code style="color:#22d3bf">N-1</code> bands (it is refused otherwise); the narrower <code style="color:#22d3bf">[lo, hi)</code> is relative to the periods&#x27; least common multiple, the more of the redundancy is left to localise with.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">robust</code>)</h3>
+<p><a style="color:#22d3bf" href="opresidue:residue_crt">residue_crt</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: residue.py — RESIDUE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

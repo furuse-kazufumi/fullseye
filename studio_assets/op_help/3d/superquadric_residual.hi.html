@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">superquadric_residual — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.superquadric_residual(points, a, eps, R, t) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import superquadric; superquadric.superquadric_residual(points, a, eps, R, t) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;superquadric_residual&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Gross-Boult volume-corrected residual mean( (sqrt(a1 a2 a3)(F^eps1 - 1))^2 )।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">inside_outside(points, a, eps, R, t)</code> で各点の内外関数 F を求め、点ごとの残差 <code style="color:#22d3bf">r_i = sqrt(a1*a2*a3) * (F_i**eps1 - 1)</code> の 2 乗平均を float で返す。表面上の点は <code style="color:#22d3bf">F=1</code> なので残差 0、内側は負・外側は正の残差になる(2 乗するので符号は消える)。<code style="color:#22d3bf">fit_superquadric</code> が最小化しているのと同じ量で、返り dict の <code style="color:#22d3bf">residual</code> もこの値。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) にリシェイプできる点群(world 座標)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>: 半径 (a1,a2,a3)。<code style="color:#22d3bf">eps</code>: 形状指数 (eps1,eps2)(F の計算には両方、外側の <code style="color:#22d3bf">F**eps1</code> には <code style="color:#22d3bf">eps1</code> だけを使う)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">R</code>/<code style="color:#22d3bf">t</code>: 姿勢(<code style="color:#22d3bf">X_body = R.T @ (X - t)</code>)。<code style="color:#22d3bf">None</code> なら単位回転 / 原点。</p>
+<p>数値保護: F は [0, 1e12] にクリップし、<code style="color:#22d3bf">a1*a2*a3</code> は 1e-12 以上に持ち上げてから sqrt を取る(退化パラメータで inf/NaN にならないため。表面近傍の値には影響しない)。</p>
+<p>次元: <code style="color:#22d3bf">sqrt(a1 a2 a3)</code> は長さの 3/2 乗、<code style="color:#22d3bf">F^eps1 - 1</code> は無次元なので、返り値は長さの 3 乗の次元を持ち点群のスケールに依存する。大きさの違う物体どうしの比較には向かない。真の点-表面ユークリッド距離ではなく半径距離近似であること、外れ値に無防備なことはモジュール docstring のとおり。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:superquadric_fit">superquadric_fit</a> — <code style="color:#22d3bf">py -3.11 examples_3d/superquadric_fit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">superquadric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_superquadric">fit_superquadric</a> · <a style="color:#22d3bf" href="op3d:sample_surface">sample_surface</a> · <a style="color:#22d3bf" href="op3d:inside_outside">inside_outside</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: superquadric.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

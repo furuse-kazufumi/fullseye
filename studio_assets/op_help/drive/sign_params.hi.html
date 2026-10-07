@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sign_params — DRIVE <code style="color:#22d3bf">roadjp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roadjp; roadjp.sign_params(kind: &#x27;str&#x27;, *, side: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sign_params&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>road sign <code style="color:#22d3bf">kind</code> का आकार, माप और रंग लौटाता है (प्रकाशित मान, primary source से जाँच आवश्यक)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">{&quot;shape&quot;, &quot;width&quot;, &quot;height&quot;, &quot;mount_height&quot;, &quot;ground&quot;, &quot;border&quot;, &quot;ink&quot;, &quot;side&quot;}</code>。shape は circle / triangle_down / diamond / pentagon / rect。width・height は板の外形 [m]:</p>
+<p>円 直径 0.6、逆三角形 一辺 0.6(高さ = 一辺 × √3/2)、菱形 一辺 0.45(対角 = 一辺 × √2)、横長矩形 0.6 × 0.3、五角形(横断歩道)0.6 × 0.6 —— 出典: 道路標識、区画線及び道路標示に関する命令 別表第二 / KICTEC 寸法表。矩形・五角形の寸法は同表で確かめていない(要確認)。<code style="color:#22d3bf">side</code> を渡すと一辺(円は直径、菱形は一辺)を置き換える(一時停止 800 mm の記述に合わせるなど)。mount_height = 1.8(路側式、板の下端)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">roadjp</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sign_image">sign_image</a> · <a style="color:#22d3bf" href="opdrive:plate_mesh_from_image">plate_mesh_from_image</a> · <a style="color:#22d3bf" href="opdrive:sign_mesh">sign_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_sign">add_sign</a> · <a style="color:#22d3bf" href="opdrive:signal_jp_mesh">signal_jp_mesh</a> · <a style="color:#22d3bf" href="opdrive:add_signal_jp">add_signal_jp</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roadjp.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

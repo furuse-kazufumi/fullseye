@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curve_speed_limit — DRIVE <code style="color:#22d3bf">lateral</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>superelevation i और side-friction coefficient f वाले curve (त्रिज्या R) पर बाहर न फिसलने की ऊपरी गति सीमा v = √(g R (i + f)/(1 − i f)) [m/s]।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)<code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> は配列でもよい(&gt; 0)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、f &lt; 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lateral</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:friction_circle_usage">friction_circle_usage</a> · <a style="color:#22d3bf" href="opdrive:design_min_radius">design_min_radius</a> · <a style="color:#22d3bf" href="opdrive:understeer_gradient">understeer_gradient</a> · <a style="color:#22d3bf" href="opdrive:steady_cornering">steady_cornering</a> · <a style="color:#22d3bf" href="opdrive:bicycle_model_step">bicycle_model_step</a> · <a style="color:#22d3bf" href="opdrive:ackermann_steer_angles">ackermann_steer_angles</a> · <a style="color:#22d3bf" href="opdrive:offtracking_circle">offtracking_circle</a> · <a style="color:#22d3bf" href="opdrive:rear_axle_path">rear_axle_path</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelateral.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

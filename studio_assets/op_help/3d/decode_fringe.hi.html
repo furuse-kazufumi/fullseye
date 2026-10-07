@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">decode_fringe — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.decode_fringe(phase_shift_images, ref_phase=None, k=1.0, mask=None, min_modulation=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;decode_fringe&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>phase-shift image series को एक साथ decode करता है: wrapped → unwrap → (reference घटाकर) height।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>phase_shift_images: N-step 位相シフト縞画像列((N,H,W) または長さ N のシーケンス)。</p>
+<p>ref_phase:          参照平面(高さ 0)のアンラップ済み位相。None なら高さ = k·(unwrapped)。</p>
+<p>k:                  位相→高さ較正定数。</p>
+<p>mask:               省略可。True=有効画素。無効画素は NaN。</p>
+<p>min_modulation:     省略可。指定すると modulation &lt; この値の画素を低信頼として無効化。</p>
+<p>返り値: 高さマップ(2D float)。ref_phase=None のときは k を掛けた連続位相を返す。無効画素は NaN。</p>
+<p>手順(実装どおり): <code style="color:#22d3bf">wrapped_phase</code> → 信頼マスクを組む(<code style="color:#22d3bf">min_modulation</code> があれば <code style="color:#22d3bf">modulation(stack) &gt;= min_modulation</code>、<code style="color:#22d3bf">mask</code> があればそれと AND)→ <code style="color:#22d3bf">unwrap_phase_2d(wrapped, mask=信頼マスク)</code> → <code style="color:#22d3bf">ref_phase</code> が <code style="color:#22d3bf">None</code> なら <code style="color:#22d3bf">k * unwrapped</code>、あれば <code style="color:#22d3bf">phase_to_height</code>(<code style="color:#22d3bf">k * (unwrapped - ref_phase)</code>)。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phase_shift_images</code>: <code style="color:#22d3bf">(N, H, W)</code>、<code style="color:#22d3bf">N &gt;= 3</code>、等間隔位相シフト。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ref_phase</code>: スカラまたは <code style="color:#22d3bf">(H, W)</code>。参照面を<b>同じ手順で展開した</b>位相を渡す(<code style="color:#22d3bf">unwrap_phase_2d</code> の大域オフセットが両者で同じ扱いになるよう、参照も本 op で <code style="color:#22d3bf">ref_phase=None</code> として復号した結果を使うのが安全)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: 位相→高さの較正定数(単位/rad)。<code style="color:#22d3bf">synthesize_fringes</code> の <code style="color:#22d3bf">phase_gain</code> の逆数に対応。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code>: <code style="color:#22d3bf">(H, W)</code> の bool、True = 有効。<code style="color:#22d3bf">min_modulation</code>: 変調度の下限(<code style="color:#22d3bf">[0, 1]</code> 程度。影・飽和の画素を落とす)。</p>
+<p>検証(<code style="color:#22d3bf">ValueError</code>): 画像列が 3-D でない・<code style="color:#22d3bf">N &lt; 3</code>・非有限 / <code style="color:#22d3bf">mask</code> の形が違う / <code style="color:#22d3bf">ref_phase</code> の形が違う / 有効画素がゼロ。scikit-image が無ければ <code style="color:#22d3bf">RuntimeError</code>。</p>
+<p>返り値: <code style="color:#22d3bf">(H, W)</code> float64。無効画素は NaN。単位は <code style="color:#22d3bf">k</code> の単位。</p>
+<p>注意: 空間アンラップに依存するので、段差・オクルージョンで島に分かれた場面では島ごとに <code style="color:#22d3bf">2πm k</code> の高さオフセットが残りうる。絶対高さが要る場面は <code style="color:#22d3bf">graycode_decode</code> → <code style="color:#22d3bf">absolute_phase</code> → <code style="color:#22d3bf">triangulate_column</code> の経路。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:structured_light">structured_light</a> — <code style="color:#22d3bf">py -3.11 examples_3d/structured_light.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a> · <a style="color:#22d3bf" href="op3d:triangulate_column">triangulate_column</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fringe.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

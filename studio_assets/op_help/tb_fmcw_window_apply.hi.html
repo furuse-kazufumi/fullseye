@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_fmcw_window_apply — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">beatcube</code> → <code style="color:#22d3bf">beatcube</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_fmcw_window_apply&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tb_fmcw_window_apply.png" alt="tb_fmcw_window_apply: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p>*Knob a output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.chain.jpg">tb_fmcw_window_apply: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_fmcw_window_apply.inputs.jpg">tb_fmcw_window_apply: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>beat cube के range और/या Doppler axis पर periodic window लागू करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The sidelobes of a rectangular (unwindowed) transform are -13.3 dB, so a strong target buries a weak one 20 dB down at a completely different range. Windowing trades main-lobe width for sidelobe level; the published figures (Harris 1978, Table 1) and the levels <b>measured</b> in this repository on a single bin-centred target are:</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>window      published PSL   measured PSL    measured -3 dB lobe</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>rect        -13.3 dB        -13.25 dB       0.885 bin</p>
+<p>hann        -31.5 dB        -31.47 dB       1.438 bin</p>
+<p>hamming     -42.7 dB        -42.45 dB       1.301 bin</p>
+<p>blackman    -58.1 dB        -58.11 dB       1.641 bin</p>
+<p>==========  ==============  ==============  ==================</p>
+<p>Measured by transforming each window on its own with 2^18-point zero padding and taking the highest lobe past the first null — that *is* the definition of peak sidelobe level, so these are the module&#x27;s own numbers, not copied ones. Hamming lands 0.25 dB off the published figure because the published one is for the optimal 0.53836/0.46164 pair; the 0.54/0.46 coefficients written here are the textbook ones and this is what they actually give.</p>
+<p>What it buys, measured end to end: a target 45 dB below a strong one, seven range bins away, is <b>undetectable</b> unwindowed (its cell sits 24.6 dB down in the leakage skirt and is not even a local maximum) and becomes a clean local maximum at -43.6 dB with <code style="color:#22d3bf">hann</code>. That comparison is step 4 of <code style="color:#22d3bf">examples/fmcw_range_doppler.py</code>.</p>
+<p>*axis* is named by <b>role</b> — <code style="color:#22d3bf">&quot;range&quot;</code> (fast time, the last axis), <code style="color:#22d3bf">&quot;doppler&quot;</code> (slow time, the middle axis) or <code style="color:#22d3bf">&quot;both&quot;</code> — never by number, because a transposed cube is the mistake this naming is defending against.</p>
+<p>The window is *not* folded into <code style="color:#22d3bf">range_doppler_map</code>: keeping it a separate op is what lets the sidelobe table above be measured as a difference, and keeps the transform op a pure 2-D FFT.</p>
+<p>Returns a new complex cube of the same shape. <b>Raises</b> <code style="color:#22d3bf">ValueError</code> on a real-valued or malformed cube, or an unknown *window* / *axis*.</p>
+<p>Typed bridge of the rangedoppler op <code style="color:#22d3bf">fmcw_window_apply</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_beatcube 0.50 0.50
+tb_fmcw_window_apply 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_beatcube%200.50%200.50%0Atb_fmcw_window_apply%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p>नीचे के उदाहरण मूल ledger op <code style="color:#22d3bf">fmcw_window_apply</code> को call करते हैं। यह bridge op वही implementation है, बस <code style="color:#22d3bf">fn(v, a, b)</code> convention के अनुसार ढाला गया है, इसलिए व्यवहार वैसा ही लागू होता है (केवल call का रूप अलग है)।</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">beatcube</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_range_doppler_map">tb_range_doppler_map</a> · <a style="color:#22d3bf" href="op:tb_fmcw_range_profile">tb_fmcw_range_profile</a> · <a style="color:#22d3bf" href="op:tb_beamform_delay_sum">tb_beamform_delay_sum</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -75,7 +75,7 @@ TOOLS: dict[str, dict] = {
     },
     "fullseye_find_ops": {
         "description": (
-            "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch)で op を探す。"
+            "やりたいことの言葉(日本語・英語・中文(簡/繁)・한국어・Deutsch・हिन्दी)で op を探す。"
             "op の要約 6 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約とノートの場所を返す。"
             "名前を知っているなら fullseye_search_ops(部分一致)の方が速い。同義語は拾わないので、"
             "0 件なら別の言い方・英語で試す。"),
@@ -84,7 +84,7 @@ TOOLS: dict[str, dict] = {
             "properties": {
                 "query": {"type": "string", "minLength": 1, "maxLength": 200,
                           "description": "やりたいこと(例: ノイズ除去 / remove noise / 边缘检测)"},
-                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de"],
+                "lang": {"type": "string", "enum": ["ja", "en", "zh", "tw", "ko", "de", "hi"],
                          "description": "要約を返す言語(既定は問い合わせから推す)"},
                 "in_sort": {"type": "string", "description": _SORT_DESC},
                 "out_sort": {"type": "string", "description": _SORT_DESC},

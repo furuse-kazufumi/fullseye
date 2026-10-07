@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_lamina_filter — FLYVISION <code style="color:#22d3bf">lamina</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import flyvision; flyvision.fly_lamina_filter(movie, dt_s, tau_adapt_s=0.2, tau_lp_s=0.02, mode=&#x27;divisive&#x27;, floor=0.001)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsflyvision.get(&quot;fly_lamina_filter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>photoreceptor adaptation + lamina का band-pass: intensities इनपुट, contrast आउटपुट।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The first thing the optic lobe does to a picture is throw away its brightness. A photoreceptor adapts to the running mean light level and the large monopolar cells (L1/L2) report the *deviation* from it, so the same scene at dawn and at noon arrives at the motion detectors as the same signal. Two closed-form stages, in that order:</p>
+<p style="margin:2px 0 2px 12px">1. <b>adaptation</b> — a first-order low-pass of time constant *tau_adapt_s* per ommatidium is the adaptation state <code style="color:#22d3bf">a(t)</code>. <code style="color:#22d3bf">mode=&quot;divisive&quot;</code> returns the Weber contrast <code style="color:#22d3bf">(x - a)/(a + eps)</code> (<code style="color:#22d3bf">eps = floor * mean(x)</code>, so it scales with the picture and a dark ommatidium cannot divide by zero); <code style="color:#22d3bf">mode=&quot;subtractive&quot;</code> returns <code style="color:#22d3bf">x - a</code>, which is the same high-pass without the gain control.</p>
+<p style="margin:2px 0 2px 12px">2. <b>membrane</b> — a first-order low-pass of time constant *tau_lp_s*, the cell&#x27;s own bandwidth.</p>
+<p>movie: <code style="color:#22d3bf">(T, n)</code> intensities, rows = time. <code style="color:#22d3bf">mode=&quot;divisive&quot;</code> refuses a negative entry (a negative light level is not a measurement) and an all-zero movie (its contrast is 0/0, which would be fabricated rather than measured).</p>
+<p>dt_s: sample interval, seconds. tau_adapt_s / tau_lp_s: the two time constants, seconds. floor: the divisive guard, relative to the mean intensity.</p>
+<p>Returns <code style="color:#22d3bf">(T, n)</code> float64 contrast.</p>
+<p>Ground truth, both exact rather than approximate:</p>
+<p style="margin:2px 0 2px 12px">• <b>Weber invariance.</b> In <code style="color:#22d3bf">&quot;divisive&quot;</code> mode, scaling the whole movie by any positive constant returns *the same array* — both <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">eps</code> scale with it. That is the point of the stage and the tests pin it to machine precision.</p>
+<p style="margin:2px 0 2px 12px">• <b>The transfer is the product of the two first-order filters.</b> With <code style="color:#22d3bf">A = 1 - exp(-dt/tau_adapt)</code> and <code style="color:#22d3bf">B = 1 - exp(-dt/tau_lp)</code>, the steady-state gain at angular frequency <code style="color:#22d3bf">w</code> is <code style="color:#22d3bf">|1 - H_A(w)| * |H_B(w)|</code> where <code style="color:#22d3bf">H(w) = C/(1 - (1-C) exp(-i w dt))</code> — a band-pass that blocks DC exactly and is measured at four frequencies in the tests.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / too-short / non-finite *movie*, a movie</p>
+<p>over <code style="color:#22d3bf">MAX_MOVIE_ELEMENTS</code>, a non-positive *dt_s* / *tau_adapt_s* / *tau_lp_s*, a non-positive *floor*, an unknown *mode*, and (divisive only) a negative or all-zero movie.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a> · <a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_egomotion_from_flow">fly_egomotion_from_flow</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lamina</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_onoff_split">fly_onoff_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

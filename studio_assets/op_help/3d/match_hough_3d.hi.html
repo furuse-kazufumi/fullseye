@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_hough_3d — 3D <code style="color:#22d3bf">match_localize</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">position</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_hough_3d(scene, template, device=&#x27;cpu&#x27;, ndir=26, mc=0.05, topk=1, nms=3, subvoxel=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_hough_3d(scene, template, device=&#x27;cpu&#x27;, ndir=26, mc=0.05, topk=1, nms=3, subvoxel=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_hough_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.match_hough_3d(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">position</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.match_hough_3d.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">match3d.match_hough_3d</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>generalized Hough 3D (Ballard R-table voting)। voxel × Hough column।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>GHT を <b>向きビンごとの相関の総和</b> として GPU ネイティブに定式化:</p>
+<p>accumulator A(t) = Σ_bin ( scene_bin ⋆ template_bin )。各エッジが勾配方向に応じて投票し、欠けたエッジはピークを下げるだけ(<b>遮蔽・クラッタに頑健</b>)。shape-based(連続内積の単一解) と違い <b>投票 accumulator を返し、NMS で複数ピーク = 複数インスタンス</b> を取れるのが差別化。返り値 (topk,4) の [votes, d, h, w] (votes 降順)。</p>
+<p>手順: 両 volume の単位勾配(<code style="color:#22d3bf">mc</code> は <code style="color:#22d3bf">sobel3d</code> の生出力への閾値)を <code style="color:#22d3bf">ndir</code> 本の参照方向のうち最も近いものに量子化し、方向ビンごとに「scene のそのビンの 2 値場 ⋆ テンプレのそのビンの 2 値場」を conv3d で足し合わせる。テンプレの有効エッジ数で割るので votes は <b>[0, 1]</b>、1 で全エッジが一致。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ndir</code>: 26 以下は 26 近傍方向のリストの先頭 <code style="color:#22d3bf">ndir</code> 本(26 未満は方向が偏る)、27 以上は</p>
+<p>fibonacci 球で一様。方向が粗いほど回転に寛容だが偽ピークも増える。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(topk, 4)</code> の各行 <code style="color:#22d3bf">[votes, z, y, x]</code>、votes 降順。座標は <b>テンプレ中心 (T//2)</b></p>
+<p>の scene 座標、<code style="color:#22d3bf">subvoxel=True</code> なら ±2 近傍重心。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nms</code>: ピークを取るたびに <code style="color:#22d3bf">±nms</code> voxel の立方体を −1 で潰してから次を探す。近接する</p>
+<p>複数インスタンスは <code style="color:#22d3bf">nms</code> を小さく。</p>
+<p style="margin:2px 0 2px 12px">• テンプレにエッジが無ければ全 0 の <code style="color:#22d3bf">(topk,4)</code>。テンプレが完全に収まらない位置は 0。</p>
+<p>後段: 各ピークを <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> で精緻化。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:matching_localize">matching_localize</a> — <code style="color:#22d3bf">py -3.11 examples_3d/matching_localize.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">position</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_peak_newton">refine_peak_newton</a> · <a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match_localize</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_shape_3d">match_shape_3d</a> · <a style="color:#22d3bf" href="op3d:match_chamfer_3d">match_chamfer_3d</a> · <a style="color:#22d3bf" href="op3d:match_curvature_3d">match_curvature_3d</a> · <a style="color:#22d3bf" href="op3d:match_mip_2d">match_mip_2d</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

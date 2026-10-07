@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">mesh</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.minimal_surface(kind=&#x27;catenoid&#x27;, nu=80, nv=120, extent=1.5, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक classical minimal surface, उसके exact parametrisation से।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">catenoid</code> <code style="color:#22d3bf">(c cosh(u/c) cos v, c cosh(u/c) sin v, u)</code>, <code style="color:#22d3bf">helicoid</code> <code style="color:#22d3bf">(u cos v, u sin v, c v)</code>, <code style="color:#22d3bf">enneper</code> <code style="color:#22d3bf">(u - u^3/3 + u v^2, v - v^3/3 + v u^2, u^2 - v^2)</code> and <code style="color:#22d3bf">scherk</code> <code style="color:#22d3bf">z = log(cos y / cos x)</code> (the doubly periodic surface, over one cell).</p>
+<p>★★<b>Why this earns its place — the definition is the gate.</b> A minimal surface is one whose <b>mean curvature vanishes everywhere</b>, and the existing <code style="color:#22d3bf">vertex_curvature</code> op measures exactly that. So the claim &quot;this is a minimal surface&quot; is checked by an op that knows nothing about how the surface was built. ★A trap worth naming: the catenoid and the helicoid are *isometric*, so their <b>Gaussian</b> curvatures agree pointwise — but that is a <b>necessary, not sufficient</b> condition for minimality (a sphere and a plane differ in K, yet matching K would not make either minimal). Grade on H.</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>kind : str</p>
+<p>One of <code style="color:#22d3bf">MINIMAL_SURFACES</code>.</p>
+<p>nu, nv : int</p>
+<p>Grid resolution along the two parameters.</p>
+<p>extent : float</p>
+<p>Half-range of the first parameter (how much of the surface to take).</p>
+<p>scale : float</p>
+<p>The surface&#x27;s own scale parameter (<code style="color:#22d3bf">c</code> for catenoid and helicoid).</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code>: <code style="color:#22d3bf">(vertices, faces)</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: unknown kind; a grid below 4x4 or over the cap; non-positive scale; an extent that reaches the singularity (Scherk&#x27;s surface is only defined where <code style="color:#22d3bf">cos x</code> and <code style="color:#22d3bf">cos y</code> share a sign, so an extent at or beyond <code style="color:#22d3bf">pi/2</code> is refused rather than silently clipped to infinity).</p>
+<p>HALCON: no operator.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

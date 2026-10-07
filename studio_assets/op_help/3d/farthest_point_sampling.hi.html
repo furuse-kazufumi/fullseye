@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">farthest_point_sampling — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">indices</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geodesic3d; geodesic3d.farthest_point_sampling(points: numpy.ndarray, n: int, k: int = 8, start: int = 0) -&gt; numpy.ndarray</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;farthest_point_sampling&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>geodesic distance से farthest point sampling (समान रूप से पतला करना)। → चुने गए indices की series (n,) int।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">start</code> を最初の代表点にし、「既に選んだ点集合への測地距離が最大の点」を 1 つずつ追加する貪欲法(FPS)。距離は <code style="color:#22d3bf">knn_graph(points, k)</code> の無向 kNN グラフ上の Dijkstra で測り、既選択集合への距離は各代表点の単源距離の要素ごと最小 <code style="color:#22d3bf">mind</code> として保持、代表点を 1 つ足すたびに <code style="color:#22d3bf">mind = min(mind, d_new)</code> で更新する。代表点 1 つにつき Dijkstra 1 回なので計算量は n 回分の単源最短路。乱数は使わず決定的。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 点群。<code style="color:#22d3bf">n</code>: 欲しい点数。<code style="color:#22d3bf">N</code> を超えると <code style="color:#22d3bf">N</code> に、負なら 0 に丸める(0 なら空配列)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code>: kNN グラフの近傍数(既定 8)。<code style="color:#22d3bf">start</code>: 最初の代表点(<code style="color:#22d3bf">start % N</code> で範囲内に折り返す)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は選んだ順の添字列(先頭が <code style="color:#22d3bf">start</code>)。<code style="color:#22d3bf">points[idx]</code> で代表点群になる。</p>
+<p>罠: グラフが複数の連結成分に分かれていると、不達の点は距離 <code style="color:#22d3bf">inf</code> なので未到達の成分が先に選ばれる(argmax が <code style="color:#22d3bf">inf</code> を拾う)。「離れた塊から先に取る」挙動になるので、成分ごとに均等に間引きたいなら <code style="color:#22d3bf">euclidean_cluster</code> 等で分けてから使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_distance">geodesic_distance</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_distance.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pointcloud_downsampling">pointcloud_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pointcloud_downsampling.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">indices</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geodesic</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:geodesic_distances">geodesic_distances</a> · <a style="color:#22d3bf" href="op3d:geodesic_mesh">geodesic_mesh</a> · <a style="color:#22d3bf" href="op3d:knn_graph">knn_graph</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geodesic3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

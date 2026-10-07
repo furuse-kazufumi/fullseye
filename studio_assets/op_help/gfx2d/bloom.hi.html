@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bloom — GFX2D <code style="color:#22d3bf">post</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.bloom(rgb, threshold=0.8, sigma=4.0, intensity=0.6)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;bloom&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image के चमकीले हिस्सों को उनके आस-पास फैलाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The classical three steps: isolate what is above <code style="color:#22d3bf">threshold</code>, blur it by a Gaussian of <code style="color:#22d3bf">sigma</code>, add <code style="color:#22d3bf">intensity</code> times the result back, clip.</p>
+<p>A *linear-light* operator: light spreading in a lens adds radiance. Running it on sRGB-encoded values makes the halo too strong in the mid-tones — <code style="color:#22d3bf">srgb_to_linear</code> first, <code style="color:#22d3bf">linear_to_srgb</code> after.</p>
+<p>Exact identities: <code style="color:#22d3bf">intensity=0</code> and <code style="color:#22d3bf">threshold &gt;= 1</code> both return the input bit for bit, and a black image stays black.</p>
+<p>The added energy is *not* conserved by the clip at the end. The suite measures both halves: on a centred bright blob the Gaussian preserves the bright mass to <b>5.0e-16</b> relative, so everything lost after that is the clip — on a random scene with a saturated square, 2.69 % of the pixels clip and 1.65 % of the total energy is thrown away, and neither number is returned to the caller.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading_real">poc_public_camera_heading_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">post</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a> · <a style="color:#22d3bf" href="opgfx2d:color_lut">color_lut</a> · <a style="color:#22d3bf" href="opgfx2d:color_grade">color_grade</a> · <a style="color:#22d3bf" href="opgfx2d:dither">dither</a> · <a style="color:#22d3bf" href="opgfx2d:palette_quantize">palette_quantize</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

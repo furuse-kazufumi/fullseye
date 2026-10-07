@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">integrate_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_normals(normals, mask=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photometric; photometric.integrate_normals(normals, mask=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;integrate_normals&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>normal field → height field z, Frankot-Chellappa integration से। → z HxW (एक constant की स्वतंत्रता, औसत 0 को संदर्भ)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>手順: 法線 <code style="color:#22d3bf">(H,W,3)</code> を勾配 <code style="color:#22d3bf">p = -nx/nz</code>、<code style="color:#22d3bf">q = -ny/nz</code> に直し(<code style="color:#22d3bf">|nz| &lt; 1e-6</code> の画素は nz を ±1e-6 に置き換えて零割を避ける)、FFT 領域で最小二乗解 <code style="color:#22d3bf">Z(wx,wy) = (-j·wx·P - j·wy·Q) / (wx² + wy²)</code> を求め(直流成分は 0)、逆変換して平均を 0 に引く。<code style="color:#22d3bf">mask</code> (bool HxW) を与えると mask 外の勾配を 0 にしてから積分する(その領域は平坦として扱われる)。返り値は float64 の <code style="color:#22d3bf">(H,W)</code>。</p>
+<p>注意点:</p>
+<p style="margin:2px 0 2px 12px">• 周期境界を仮定するため、画像の上下・左右がつながるように端が歪む。</p>
+<p style="margin:2px 0 2px 12px">• 絶対高さは決まらない(平均 0)。格子間隔 1 画素で積分するので <code style="color:#22d3bf">z</code> も画素単位の</p>
+<p>高さになり、実寸には画素ピッチを掛ける。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nz ≈ 0</code>(輪郭付近・視線に平行な面)は勾配が発散し、波打ちを周囲へ広げる。</p>
+<p><code style="color:#22d3bf">mask</code> で除くか法線を事前に平滑する。入力検証は無い(<code style="color:#22d3bf">(H,W,3)</code> 以外は内部の添字で失敗)。<code style="color:#22d3bf">surface_normals</code> が逆変換で、<code style="color:#22d3bf">photometric_stereo</code> の法線をここへ渡すと形状(高さ場)が得られる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:photometric_stereo">photometric_stereo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/photometric_stereo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:surface_normals">surface_normals</a> · <a style="color:#22d3bf" href="op3d:render_lambertian">render_lambertian</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photometric.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

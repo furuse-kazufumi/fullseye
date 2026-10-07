@@ -1,0 +1,65 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_psd — ROUGHNESS <code style="color:#22d3bf">measure</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import roughness; roughness.surface_psd(z, dx, kind=&#x27;areal&#x27;, dy=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsroughness.get(&quot;surface_psd&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.surface_psd(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">pairs</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.surface_psd.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">roughness.surface_psd</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>height field का power spectral density। <code style="color:#22d3bf">(q, C)</code> लौटाता है। <b>परिपाटी argument से स्पष्ट की जाती है</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>引数</p>
+<p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
+<p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>
+<p>kind    <code style="color:#22d3bf">&quot;areal&quot;</code> … 2 次元 PSD <code style="color:#22d3bf">C_2D(q)</code> の環平均。</p>
+<p><code style="color:#22d3bf">&quot;radial&quot;</code> … 1 次元動径 PSD <code style="color:#22d3bf">C_1D(q) = 2π q C_2D(q)</code>。</p>
+<p>規約(ここを書かないと較正なしでは読めない ―― 既存の <code style="color:#22d3bf">radial_power_spectrum</code> はこれが docstring に無い)</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">q</code> は <b>cycles / length</b>(角周波数 <code style="color:#22d3bf">2π/λ</code> ではない)。<code style="color:#22d3bf">q = 1/λ</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">C_2D(q) = dx dy |F|² / (ny nx)</code>。規格化は Parseval に合わせてある: <code style="color:#22d3bf">∫ C_2D d²q = &lt;h²&gt;</code> かつ <code style="color:#22d3bf">∫ C_1D dq = &lt;h²&gt;</code>。</p>
+<p style="margin:2px 0 2px 12px">• 自己アフィン面 <code style="color:#22d3bf">H</code> に対する傾きは <b>面 PSD で <code style="color:#22d3bf">-2(H+1)</code>、動径 PSD で <code style="color:#22d3bf">-2H-1</code></b>(ちょうど 1 だけ違う)。</p>
+<p>★ 実測 —— どちらの規約でも H は較正なしで戻る</p>
+<p><code style="color:#22d3bf">surface_synth_psd</code> で H を仕込み、q ∈ [2/λ_hi, 0.4/dx] で対数対数の</p>
+<p>直線を当てはめて H を戻した(512², 帯域 2-64 µm):</p>
+<p>仕込んだ H   面 PSD の傾き   戻した H   動径の傾き   戻した H   傾き差</p>
+<p>0.30        -2.600        0.300      -1.600       0.300     1.0000</p>
+<p>0.50        -3.000        0.500      -2.000       0.500     1.0000</p>
+<p>0.80        -3.600        0.800      -2.600       0.800     1.0000</p>
+<p>0.95        -3.901        0.950      -2.901       0.950     1.0000</p>
+<p>誤差は 4 例とも <b>±0.0003 以内</b>、二つの規約の傾き差はどの H でも</p>
+<p>厳密に 1.0000。<b>較正なしで読める。</b></p>
+<p>★ ここは PoC の測り直しで結論が変わった箇所。PoC は既存</p>
+<p><code style="color:#22d3bf">radial_power_spectrum</code> で <b>一律 -0.013(H の 1.6 %)の系統誤差</b>を</p>
+<p>見つけ、「環平均の離散化による系統誤差」と結論した。同じ検算をこの</p>
+<p>実装でやると誤差が消える。原因を切り分けたところ、<b>環の代表 <code style="color:#22d3bf">q</code> にビン番号 <code style="color:#22d3bf">i·Δq</code> を使うか、環内の <code style="color:#22d3bf">q</code> の平均を使うかの差</b>だった</p>
+<p>—— ビン番号だと -0.0007〜-0.0010 の負のずれが出る(実測、同じ面・同じ</p>
+<p>当てはめ帯域)。向きは PoC の観測と同じだが大きさは 1/15 なので、</p>
+<p>-0.013 の残りは環平均の離散化ではなく、その関数の他の実装差に由来する。</p>
+<p><b>この関数は環内の <code style="color:#22d3bf">q</code> の平均を返す。</b></p>
+<p>★ 落とし穴 —— Nyquist を超える環は「角だけ」で出来ている</p>
+<p>正方格子の最大 <code style="color:#22d3bf">|q|</code> は <code style="color:#22d3bf">√2/(2 dx)</code> だが、<code style="color:#22d3bf">q &gt; 1/(2 dx)</code> の環は</p>
+<p>周波数平面の四隅しか含まない。実測(512²): 全 362 ビンのうち上位</p>
+<p>107 ビン(29.6 %)が Nyquist 超。環内の点数が理想値 <code style="color:#22d3bf">2πq/Δq</code> に対して</p>
+<p>どれだけ欠けるかは、Nyquist 以下でも最小 0.838 倍まで落ちる</p>
+<p>(格子の離散化)が、Nyquist 超では 0 まで落ちる。</p>
+<p><b>傾きの当てはめには Nyquist 超を使わないこと。</b></p>
+<p>★ Parseval の検算をどこまで信じてよいか(実測、512²、Sq²=6.400e-03)</p>
+<p style="margin:2px 0 2px 12px">• 2 次元の全格子で <code style="color:#22d3bf">Σ C_2D Δqx Δqy</code> を取ると <b>+0.0000 %</b>(厳密)。</p>
+<p style="margin:2px 0 2px 12px">• 返した動径 PSD を台形積分すると <b>-0.55 %</b>。環ごとに平均して 1 次元に潰した時点でこの分は失われる —— <b>環平均は要約であって可逆ではない。</b> 0.5 % を超える精度が要る用途では 2 次元の <code style="color:#22d3bf">C_2D</code> を自分で積分すること。</p>
+<p style="margin:2px 0 2px 12px">• この面は帯域上端が Nyquist なので、Nyquist で打ち切っても -0.55 % のまま変わらない(角の分に中身が無い)。角に中身がある面(帯域が Nyquist を超える面)では、打ち切ると欠ける。</p>
+<p>fail-closed</p>
+<p style="margin:2px 0 2px 12px">• 2 次元でない / 8x8 未満 / NaN・Inf を含む / <code style="color:#22d3bf">dx</code>, <code style="color:#22d3bf">dy</code> が非正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">kind</code> が <code style="color:#22d3bf">&quot;areal&quot;</code>・<code style="color:#22d3bf">&quot;radial&quot;</code> 以外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideroughness:surface_roughness">surface_roughness family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_surface_roughness">poc_surface_roughness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_surface_roughness.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">measure</code>)</h3>
+<p><a style="color:#22d3bf" href="oproughness:surface_params">surface_params</a> · <a style="color:#22d3bf" href="oproughness:profile_params">profile_params</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: roughness.py — ROUGHNESS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

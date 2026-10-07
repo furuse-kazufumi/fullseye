@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">flash_frequency — DRIVE <code style="color:#22d3bf">decide</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flash_frequency(intensity_series, fps, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivedecide; drivedecide.flash_frequency(intensity_series, fps, *, f_min: &#x27;float&#x27; = 0.0, pad: &#x27;int&#x27; = 8) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;flash_frequency&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>pixel (या region के औसत) की brightness की time series से टिमटिमाने की frequency का अनुमान लगाता है (FFT का सबसे ऊँचा peak)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>平均を引き、Hann 窓をかけ、<code style="color:#22d3bf">pad</code> 倍に 0 を詰めて rFFT。<code style="color:#22d3bf">f_min</code> 以上でいちばん高い山を対数振幅の放物線で補間する。返る周波数は <b>見かけの</b> 周波数(fps/2 を超える点滅は <code style="color:#22d3bf">aliased_frequency</code> の値に折り返って見える)。</p>
+<p>返り値: <code style="color:#22d3bf">frequency</code>、<code style="color:#22d3bf">bin_width</code> = fps / n(窓の分解能の目安)、<code style="color:#22d3bf">nyquist</code> = fps/2、<code style="color:#22d3bf">peak_ratio</code>(山の高さ / 山以外の中央値。点滅していない画素は小さい)。一定の系列(振れ幅 0)は ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">decide</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:mirror_reflection_matrix">mirror_reflection_matrix</a> · <a style="color:#22d3bf" href="opdrive:mirror_virtual_camera">mirror_virtual_camera</a> · <a style="color:#22d3bf" href="opdrive:mirror_aim_normal">mirror_aim_normal</a> · <a style="color:#22d3bf" href="opdrive:convex_mirror_fov">convex_mirror_fov</a> · <a style="color:#22d3bf" href="opdrive:mirror_blind_zone">mirror_blind_zone</a> · <a style="color:#22d3bf" href="opdrive:check_sequence_score">check_sequence_score</a> · <a style="color:#22d3bf" href="opdrive:signal_phase_plan">signal_phase_plan</a> · <a style="color:#22d3bf" href="opdrive:signal_state">signal_state</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivedecide.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

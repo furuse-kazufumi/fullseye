@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">particle_step — GFX2D <code style="color:#22d3bf">particle</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.particle_step(state, dt, gravity=(0.0, 98.0), drag=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;particle_step&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>particle state को <code style="color:#22d3bf">dt</code> second आगे बढ़ाता है। <b>नया</b> dict लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Semi-implicit (symplectic) Euler::</p>
+<p>v &lt;- v + (g - drag*v) * dt</p>
+<p>p &lt;- p + v * dt</p>
+<p>age &lt;- age + dt</p>
+<p>which makes the closed form exact and checkable: with <code style="color:#22d3bf">gravity=(0,0)</code> and <code style="color:#22d3bf">drag=0</code> the position after <code style="color:#22d3bf">k</code> steps is <code style="color:#22d3bf">p0 + v0*k*dt</code>, and with drag the speed is <code style="color:#22d3bf">v0 * (1 - drag*dt)**k</code>. Both are compared as equalities in the test suite.</p>
+<p><code style="color:#22d3bf">gravity</code> is <code style="color:#22d3bf">(gx, gy)</code> in px/s^2, positive <code style="color:#22d3bf">gy</code> pulling <b>down</b> the screen. The input dict is never mutated.</p>
+<p>Raises ValueError: <code style="color:#22d3bf">dt &lt;= 0</code>; <code style="color:#22d3bf">drag * dt &gt;= 1</code>, which is the point where explicit drag stops decaying the speed and starts reversing it — an instability that otherwise shows up as particles flying backwards rather than as an error.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:layer_stack">layer_stack</a> · <a style="color:#22d3bf" href="opgfx2d:particle_render">particle_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">particle</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:particle_emit">particle_emit</a> · <a style="color:#22d3bf" href="opgfx2d:particle_render">particle_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

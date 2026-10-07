@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_rle_intersect — 3D <code style="color:#22d3bf">rle_region</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rle_region × rle_region</code> → <code style="color:#22d3bf">rle_region</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_rle_intersect(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volregion; volregion.vol_rle_intersect(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_rle_intersect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>runs पर दो RLE regions का intersection (decode के बिना)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">vol_rle_union</code> と同じ掃引エンジン(<code style="color:#22d3bf">_rle_boolean</code>)で、区間ごとの被覆状態が <code style="color:#22d3bf">ia &amp; ib</code>(両方の内側)の区間だけを run として残す。計算量は run 数に対して O(n log n) で、voxel 数には依存しない。</p>
+<p>返り値: 同じ <code style="color:#22d3bf">shape</code> の新しい <code style="color:#22d3bf">VolRLE</code>。共通部分が無ければ run 0 本の region (エラーではない。空かどうかは <code style="color:#22d3bf">len(region) == 0</code> か <code style="color:#22d3bf">vol_rle_volume</code> で見る)。<code style="color:#22d3bf">vol_rle_decode(result) == decode(a) &amp; decode(b)</code> が voxel 単位で成り立つ。</p>
+<p>検証(<code style="color:#22d3bf">ValueError</code>): どちらかが <code style="color:#22d3bf">VolRLE</code> でない・run 配列の整合性検査に失敗 / <code style="color:#22d3bf">a.shape != b.shape</code>。</p>
+<p>使いどころ: ROI(<code style="color:#22d3bf">vol_rle_encode</code> した domain マスク)と成分(<code style="color:#22d3bf">vol_rle_components</code>) の重なり判定、2 つの閾値結果の共通領域、<code style="color:#22d3bf">vol_rle_volume</code> と組み合わせた IoU 計算(<code style="color:#22d3bf">|a∩b| / |a∪b|</code>)を密配列なしで行う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:rle_region_efficiency">rle_region_efficiency</a> — <code style="color:#22d3bf">py -3.11 examples_3d/rle_region_efficiency.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rle_region</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_rle_decode">vol_rle_decode</a> · <a style="color:#22d3bf" href="op3d:vol_rle_volume">vol_rle_volume</a> · <a style="color:#22d3bf" href="op3d:vol_rle_bbox">vol_rle_bbox</a> · <a style="color:#22d3bf" href="op3d:vol_rle_centroid">vol_rle_centroid</a> · <a style="color:#22d3bf" href="op3d:vol_rle_union">vol_rle_union</a> · <a style="color:#22d3bf" href="op3d:vol_rle_difference">vol_rle_difference</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">rle_region</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_rle_encode">vol_rle_encode</a> · <a style="color:#22d3bf" href="op3d:vol_rle_decode">vol_rle_decode</a> · <a style="color:#22d3bf" href="op3d:vol_rle_volume">vol_rle_volume</a> · <a style="color:#22d3bf" href="op3d:vol_rle_bbox">vol_rle_bbox</a> · <a style="color:#22d3bf" href="op3d:vol_rle_centroid">vol_rle_centroid</a> · <a style="color:#22d3bf" href="op3d:vol_rle_union">vol_rle_union</a> · <a style="color:#22d3bf" href="op3d:vol_rle_difference">vol_rle_difference</a> · <a style="color:#22d3bf" href="op3d:vol_rle_components">vol_rle_components</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volregion.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

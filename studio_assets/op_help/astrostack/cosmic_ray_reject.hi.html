@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cosmic_ray_reject — ASTROSTACK <code style="color:#22d3bf">cosmic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.cosmic_ray_reject(frame, sigma=5.0, f_lim=2.0, replace_box=5, iters=1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;cosmic_ray_reject&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.cosmic_ray_reject.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">astrostack.cosmic_ray_reject</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(cleaned, mask) -&gt; image2d</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक frame से cosmic ray हटाना (Laplacian sharpness)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>van Dokkum, *Cosmic-Ray Rejection by Laplacian Edge Detection*, PASP 113, 1420 (2001) の考え方 —— 宇宙線は<b>星より鋭い</b>。星は PSF でぼけているので必ず数画素にまたがるが、宇宙線は光学系を通っていないので 1〜数画素で立ち上がる。そこで</p>
+<p style="margin:2px 0 2px 12px">1. ラプラシアン <code style="color:#22d3bf">L</code> の正の成分を雑音で規格化した有意度 <code style="color:#22d3bf">S = L / (2 sigma_noise)</code> を作り、</p>
+<p style="margin:2px 0 2px 12px">2. 微細構造像 <code style="color:#22d3bf">F = median3 - median7(median3)</code> と比べて <code style="color:#22d3bf">L / F</code> が <code style="color:#22d3bf">f_lim</code> を超えるものだけを宇宙線とする。</p>
+<p>2 番目の条件が無いと<b>星の中心が必ず宇宙線に見える</b>(星も局所的には尖っている)。<code style="color:#22d3bf">f_lim</code> はその境目で、原論文の推奨は 2.0。</p>
+<p><code style="color:#22d3bf">iters</code> を増やすと、除去 → 再測定を繰り返す(大きなヒットの裾が残るとき)。置換は <code style="color:#22d3bf">replace_box</code> の窓での<b>非汚染画素の中央値</b>。</p>
+<p>Returns <code style="color:#22d3bf">(cleaned, mask)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cleaned</code> —— <code style="color:#22d3bf">(H, W)</code> float64、宇宙線画素を置換した像。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">mask</code> —— <code style="color:#22d3bf">(H, W)</code> bool、<code style="color:#22d3bf">True</code> = 宇宙線と判定した画素。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 非有限を含む / *sigma* が非正 / *f_lim* が非正 / *replace_box* が 3 未満または偶数の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_quality">frame_quality</a> · <a style="color:#22d3bf" href="opastrostack:noise_sigma">noise_sigma</a> · <a style="color:#22d3bf" href="opastrostack:star_detect">star_detect</a> · <a style="color:#22d3bf" href="opastrostack:psf_fit">psf_fit</a> · <a style="color:#22d3bf" href="opastrostack:aperture_photometry">aperture_photometry</a> · <a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">cosmic</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject_stack">cosmic_ray_reject_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

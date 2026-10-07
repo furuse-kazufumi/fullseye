@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hill_start_rollback — DRIVE <code style="color:#22d3bf">long</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivelong; drivelong.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_rollback&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>चढ़ाई (θ &gt; 0) पर रुकी car के brake छोड़ने और τ seconds बाद drive a_drive लगने पर पीछे खिसकना (air resistance के बिना closed form)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>τ の間の下向きの加速度 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 ならずり下がらない)。距離 ½ a₁ τ²、速さ a₁ τ。駆動が入ると後ろ向きの動きを a₂ = a_drive − g sin θ + c_rr g cos θ で止める(転がり抵抗も動きに逆らう)→ (a₁ τ)²/(2 a₂)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">rollback</code>(合計 [m])、<code style="color:#22d3bf">during_gap</code>(½ a₁ τ²)、<code style="color:#22d3bf">recovery</code>((a₁τ)²/(2a₂))、<code style="color:#22d3bf">a1</code>、<code style="color:#22d3bf">a2</code>、<code style="color:#22d3bf">v_back</code>。</p>
+<p>a₂ ≤ 0(駆動が坂に負ける)なら rollback = inf。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: τ &lt; 0、a_drive ≤ 0、非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">long</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:long_params">long_params</a> · <a style="color:#22d3bf" href="opdrive:road_profile">road_profile</a> · <a style="color:#22d3bf" href="opdrive:road_eval">road_eval</a> · <a style="color:#22d3bf" href="opdrive:long_simulate">long_simulate</a> · <a style="color:#22d3bf" href="opdrive:long_energy_residual">long_energy_residual</a> · <a style="color:#22d3bf" href="opdrive:stopping_distance_grade">stopping_distance_grade</a> · <a style="color:#22d3bf" href="opdrive:stop_line_plan">stop_line_plan</a> · <a style="color:#22d3bf" href="opdrive:plan_command">plan_command</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivelong.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

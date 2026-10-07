@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">region_growing — 3D <code style="color:#22d3bf">segment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segment3d; segment3d.region_growing(points, normals=None, angle_thresh_deg: &#x27;float&#x27; = 15.0, k: &#x27;int&#x27; = 20, min_region_size: &#x27;int&#x27; = 3) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;region_growing&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>normal similarity से region growing करता है और जुड़े हुए smooth regions को समान label देता है (curvature gate के बिना variant)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各点を k 近傍グラフ上で BFS 成長させ、隣接点 q を「法線 n_p と n_q の成す角が <code style="color:#22d3bf">angle_thresh_deg</code> 未満」のときだけ同領域に加える。平面内の法線はほぼ平行なので同一領域に連結し、向きの違う面の境界では角度が開いて連結が切れる → 面ごとに別領域。法線は符号不定(PCA 由来)なので <code style="color:#22d3bf">|n_p·n_q|</code> で判定(表裏を同一視)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>normals: (N,3) 単位法線。None なら <code style="color:#22d3bf">pointcloud.estimate_normals</code> で PCA 推定。</p>
+<p>angle_thresh_deg: 隣接法線角度の許容上限[度]。(0,180) の範囲。</p>
+<p>k: 近傍数(kNN グラフの次数)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。連結平滑領域ごとに 0,1,2,... を付与。<b>min_region_size 未満の小領域(孤立点・向き不一致のゴミ)は -1(ノイズ/未割当)</b> = 統一契約(-1=ノイズ)に従う。</p>
+<p>空入力は shape (0,) を返す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sensor_seg">sensor_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sensor_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">segment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:euclidean_cluster">euclidean_cluster</a> · <a style="color:#22d3bf" href="op3d:plane_segmentation">plane_segmentation</a> · <a style="color:#22d3bf" href="op3d:vol_watershed">vol_watershed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segment3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

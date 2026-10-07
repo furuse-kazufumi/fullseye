@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hx_gen_circle_sector — 2D <code style="color:#22d3bf">halcon_ext</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">region</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;hx_gen_circle_sector&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">gen_circle_sector</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p><img src="fig/hx_gen_circle_sector.png" alt="hx_gen_circle_sector: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_circle_sector.a.jpg">hx_gen_circle_sector: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Knob b को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_circle_sector.b.jpg">hx_gen_circle_sector: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/hx_gen_circle_sector.inputs.jpg">hx_gen_circle_sector: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>वृत्त का sector region (शुरुआती कोण b*2pi, sweep a*2pi)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画像中心 <code style="color:#22d3bf">((h-1)/2, (w-1)/2)</code>・半径 <code style="color:#22d3bf">r = 0.42*min(h, w)</code>(固定)の円板のうち、開始角から掃引角ぶんの扇形を 1 とする 0/1 の float region を返す。角度は <code style="color:#22d3bf">arctan2(row-cy, col-cx)</code> で測る(0 が +列方向。行が下向きに増える画像座標では画面上で時計回りに増える)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 掃引角 <code style="color:#22d3bf">sweep = 0.1 + a*(2*pi - 0.1)</code>(約 5.7°〜360°。a=1 で完全な円板)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 開始角 <code style="color:#22d3bf">start = b*2*pi</code>。</p>
+<p>扇形の判定は <code style="color:#22d3bf">(ang - start) mod 2*pi &lt;= sweep</code> なので 360° をまたいでも途切れない。半径は固定で、変えたいときは <code style="color:#22d3bf">hx_gen_circle</code> / <code style="color:#22d3bf">hx_gen_disc_se</code> を重ねる。楕円版は <code style="color:#22d3bf">hx_gen_ellipse_sector</code>。入力画像の中身は見ない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_halcon_ext">gallery2d_halcon_ext family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">hx_gen_circle_sector 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:hx_gen_circle_sector%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:hx_gen_circle_sector%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_halcon_ext">gallery2d_halcon_ext</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_halcon_ext.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">region</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">halcon_ext</code>)</h3>
+<p><a style="color:#22d3bf" href="op:hx_gen_circle">hx_gen_circle</a> · <a style="color:#22d3bf" href="op:hx_gen_ellipse">hx_gen_ellipse</a> · <a style="color:#22d3bf" href="op:hx_gen_rectangle2">hx_gen_rectangle2</a> · <a style="color:#22d3bf" href="op:hx_gen_checker_region">hx_gen_checker_region</a> · <a style="color:#22d3bf" href="op:hx_gen_grid_region">hx_gen_grid_region</a> · <a style="color:#22d3bf" href="op:hx_gabor">hx_gabor</a> · <a style="color:#22d3bf" href="op:hx_fit_surface1">hx_fit_surface1</a> · <a style="color:#22d3bf" href="op:hx_fit_surface2">hx_fit_surface2</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

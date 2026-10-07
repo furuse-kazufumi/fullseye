@@ -7,6 +7,7 @@ title_zh: 手部 21 个关键点与手指屈曲角 —— 使用指南
 title_tw: 手部 21 個關鍵點與手指屈曲角 —— 使用指南
 title_ko: 손의 21개 키포인트와 손가락 굴곡각 — 사용 가이드
 title_de: Die 21 Hand-Keypoints und Fingerbeugewinkel — Anleitung
+title_hi: हाथ के 21 keypoints और उंगलियों के flexion angles — उपयोग गाइड
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

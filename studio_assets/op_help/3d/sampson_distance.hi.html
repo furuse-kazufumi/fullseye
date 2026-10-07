@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sampson_distance — 3D <code style="color:#22d3bf">two_view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sampson_distance(F, pts1, pts2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.sampson_distance(F, pts1, pts2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sampson_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>epipolar constraint की Sampson distance (1st-order geometric error, हर correspondence के लिए)। → (N,)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
+<p>計算: 同次座標 x1=(u1,v1,1)、x2=(u2,v2,1) で <code style="color:#22d3bf">(x2ᵀ F x1)² / ((F x1)_0² + (F x1)_1² + (Fᵀ x2)_0² + (Fᵀ x2)_1² + 1e-12)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>単位は画素の 2 乗</b>(距離の 2 乗)。画素で閾値を切るなら <code style="color:#22d3bf">sqrt</code> を取るか、閾値側を 2 乗する。</p>
+<p style="margin:2px 0 2px 12px">• F は <code style="color:#22d3bf">fundamental_8point</code> の規約 <code style="color:#22d3bf">x2ᵀ F x1 = 0</code>(pts1 → x1、pts2 → x2)。順序を入れ替えるなら F を転置する。</p>
+<p style="margin:2px 0 2px 12px">• 分母に 1e-12 を足しているので F=0 でも例外にはならず 0 を返す(F の検査は行わない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 (N,)。決定論的。(N,2) でない・非有限・点数不一致は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fundamental_8point</code> の当てはまり確認、誤対応(大きい値)の選別、<code style="color:#22d3bf">recover_pose</code> 前の前処理。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:two_view_pose">two_view_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/two_view_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">two_view</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fundamental_8point">fundamental_8point</a> · <a style="color:#22d3bf" href="op3d:essential_8point">essential_8point</a> · <a style="color:#22d3bf" href="op3d:recover_pose">recover_pose</a> · <a style="color:#22d3bf" href="op3d:triangulate">triangulate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: twoview.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

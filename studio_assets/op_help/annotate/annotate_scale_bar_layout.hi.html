@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_scale_bar_layout — ANNOTATE <code style="color:#22d3bf">paper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_scale_bar_layout(shape, units_per_pixel, unit=&#x27;µm&#x27;, corner=&#x27;rb&#x27;, target_fraction=0.2, margin=14, thickness=5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_scale_bar_layout&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>table (dict) लौटाता है: image की चौड़ाई के <code style="color:#22d3bf">target_fraction</code> से अधिक नहीं, <b>गोल</b> लंबाई वाली bar।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>長さは <code style="color:#22d3bf">1/2/5 × 10^k</code> のうち <code style="color:#22d3bf">target_fraction * W * units_per_pixel</code> 以下の最大値。画素長 = <code style="color:#22d3bf">round(length / units_per_pixel)</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">{&quot;length&quot;,&quot;px&quot;,&quot;rect&quot;:(x,y,w,h),&quot;unit&quot;,&quot;corner&quot;,&quot;label&quot;}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>units_per_pixel / target_fraction が非正、未知の corner、</p>
+<p>バーが 1 画素未満か画像に収まらない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:paper_figure">paper_figure</a> — <code style="color:#22d3bf">py -3.11 examples/paper_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">paper</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:annotate_leader_layout">annotate_leader_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_leader">annotate_leader</a> · <a style="color:#22d3bf" href="opannotate:annotate_markers">annotate_markers</a> · <a style="color:#22d3bf" href="opannotate:annotate_legend">annotate_legend</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension_layout">annotate_dimension_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_dimension">annotate_dimension</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle_layout">annotate_angle_layout</a> · <a style="color:#22d3bf" href="opannotate:annotate_angle">annotate_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

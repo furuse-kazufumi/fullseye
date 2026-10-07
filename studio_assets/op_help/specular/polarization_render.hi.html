@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">polarization_render — SPECULAR <code style="color:#22d3bf">polarization</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">polsweep</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import specularity; specularity.polarization_render(diffuse, specular, angles_deg=(0.0, 45.0, 90.0, 135.0), azimuth_deg=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;polarization_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>polariser sweep का forward model: एक ज्ञात split को उन frames में बदलता है जिन्हें polarisation camera record करता। → (N, H, W)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">I(t) = 0.5 * diffuse + specular * cos^2(t - azimuth)</code>. The diffuse term is treated as completely unpolarised, so it contributes half its radiance at every analyser angle; the specular term is treated as completely linearly polarised at *azimuth_deg*, so it follows Malus&#x27;s law. Those are the two</p>
+<p>assumptions <code style="color:#22d3bf">polarization_separate</code> inverts, and rendering with them is how the inversion gets a ground truth to be exact against.</p>
+<p>Physically the assumptions hold near Brewster&#x27;s angle for a dielectric and fail at normal incidence; the module docstring says where. This operator does not model the incidence angle at all — it takes the two radiance maps you specify and produces the sweep they imply.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *diffuse* / *specular* are not 2-D arrays of the same shape, or are complex / masked / non-finite / string-typed; either has a negative value (a negative radiance is not a scene); *angles_deg* has fewer than 3 entries or does not determine the three unknowns.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_polarization_specular">poc_polarization_specular</a> — <code style="color:#22d3bf">py -3.11 examples/poc_polarization_specular.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">polsweep</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">polarization</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_separate">polarization_separate</a> · <a style="color:#22d3bf" href="opspecular:polarization_dolp_map">polarization_dolp_map</a> · <a style="color:#22d3bf" href="opspecular:polarization_stokes">polarization_stokes</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

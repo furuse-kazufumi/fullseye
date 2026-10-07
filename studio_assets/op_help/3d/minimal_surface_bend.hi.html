@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">minimal_surface_bend — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">mesh</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.minimal_surface_bend(t=0.0, nu=80, nv=120, extent=1.5, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;minimal_surface_bend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>catenoid-helicoid bend — family का हर सदस्य फिर भी minimal रहता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The *associate family* <code style="color:#22d3bf">cos(t) * helicoid + sin(t) * catenoid</code> (in the Weierstrass sense) deforms one into the other <b>without stretching</b>: the surfaces are isometric at every <code style="color:#22d3bf">t</code>, and every one of them is minimal. <code style="color:#22d3bf">t = 0</code> is the helicoid, <code style="color:#22d3bf">t = pi/2</code> the catenoid.</p>
+<p>★<b>Why this earns its place</b>: it turns &quot;minimal&quot; from a property of two named surfaces into a <b>one-parameter claim that must hold throughout</b>. If an implementation is only accidentally right at the endpoints, the middle of the family exposes it — and the intrinsic geometry (first fundamental form) must not change along the way, which is a second, independent check.</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code>.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: the same shape/scale contracts as <code style="color:#22d3bf">minimal_surface</code>; a non-finite <code style="color:#22d3bf">t</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a> · <a style="color:#22d3bf" href="op3d:curve3d_tube_mesh">curve3d_tube_mesh</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

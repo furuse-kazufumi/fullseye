@@ -1,5 +1,5 @@
 # Copyright (c) 2026 Kazufumi Furuse. Licensed under the Apache License, Version 2.0 (see LICENSE).
-"""Find operators by what they do, in any of six languages -> ranked rows.
+"""Find operators by what they do, in any of the supported languages -> ranked rows.
 
 意味で op を引く検索(RAG の入口)。``fullseye.search_ops("ノイズ除去")`` /
 ``fullseye-rag search "remove noise"`` / MCP ``fullseye_find_ops`` が同じ関数を呼ぶ。
@@ -10,7 +10,7 @@
 ``docs/i18n/op_summary.json`` に en / zh / tw / ko / de の訳がある —— それを検索面にする。
 
 **何を照合するか**: op 名(``_`` で区切った語)・HALCON 名・族 / 分類・入出力の型と、
-要約の 6 言語(ja 原文 + 5 訳)。順位は BM25(語の希少さで重み付け)。
+要約の多言語訳(ja 原文 + en / zh / tw / ko / de / hi)。順位は BM25(語の希少さで重み付け)。
 
 **語の切り方**(依存ゼロ・決定的): ラテン文字は語ごと(6 文字を超える語は先頭 6 文字に
 縮めて ``denoise`` / ``denoising``、``segment`` / ``segmentation`` を同じ語にする)、漢字・仮名・
@@ -32,7 +32,7 @@ from collections import Counter
 __all__ = ["search_ops", "load_index", "tokenize", "detect_lang", "LANGS", "main"]
 
 #: 要約を持つ言語(ja = 原文)。表示言語の既定は問い合わせの文字種から決める(:func:`detect_lang`)。
-LANGS = ("ja", "en", "zh", "tw", "ko", "de")
+LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
 PKG_SEARCH = "OP_SEARCH.json"
 _STEM = 6
 _K1, _B = 1.2, 0.75
@@ -43,6 +43,8 @@ _LATIN = re.compile(r"[0-9a-zß-ɏ]+")
 _CJK = re.compile(r"[぀-ヿ㐀-䶿一-鿿豈-﫿]+")
 _HANGUL = re.compile(r"[가-힯ᄀ-ᇿ㄰-㆏]+")
 _KANA = re.compile(r"[぀-ヿ]")
+#: デーヴァナーガリー(ヒンディー語)。語は空白で区切られるので語ごとに切る(母音記号・virama も語の内側)
+_DEVANAGARI = re.compile(r"[ऀ-ॿ꣠-ꣿ]+")
 _GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kante|rauschen)\b")
 
 _CACHE: dict = {}
@@ -66,6 +68,21 @@ SYNONYMS: tuple = (
 )
 _W_SYNONYM = 0.6
 
+#: ヒンディー語の機能語(後置詞・助動詞・代名詞)。どの要約にも出るので、残すと「का」1 語で 1,000 op が当たる
+#: (2026-10-07 実測: 「किनारे का पता लगाना」が 1,226 件・上位は無関係)。索引と問い合わせの両方から外す。
+_HI_STOP = frozenset("""के का की को में से पर है हैं था थे थी और या एक यह वह ये वे जो तो भी ही
+    कर करता करती करते करें करना किया होता होती होते होना हो गया गई गए वाला वाली वाले लिए साथ तक द्वारा
+    इस उस इन उन कि नहीं न अपने अपना अपनी लगाना पता""".split())
+
+#: ヒンディー語の日常語 → 英語の術語(訳の方針で術語は英語のまま書いたので、日常語で引いても当たるように)。
+#: 言語をまたぐ組はこの表だけ(他の言語は要約自体が訳語で書かれている)。
+HI_TERMS: tuple = (
+    ("किनारा", "किनारे", "किनारों", "edge"), ("शोर", "noise"), ("पहचान", "पहचानना", "detect"),
+    ("धुंधला", "blur"), ("चिकना", "smooth"), ("रंग", "color", "colour"), ("सीमा", "threshold"),
+    ("कोना", "कोने", "corner"), ("गहराई", "depth"), ("मापना", "माप", "measure"), ("आकार", "shape"),
+    ("बिंदु", "point"), ("रेखा", "line"), ("वृत्त", "circle"), ("प्रकाश", "light"), ("कैमरा", "camera"),
+)
+
 
 def _norm(text: str) -> str:
     return unicodedata.normalize("NFKC", text or "").lower()
@@ -77,6 +94,7 @@ def tokenize(text: str) -> list[str]:
     out: list[str] = []
     for w in _LATIN.findall(t):
         out.append(w[:_STEM] if len(w) > _STEM else w)
+    out.extend(w for w in _DEVANAGARI.findall(t) if w not in ("।", "॥") and w not in _HI_STOP)
     for rx in (_CJK, _HANGUL):
         for run in rx.findall(t):
             if len(run) == 1:
@@ -90,6 +108,8 @@ def detect_lang(query: str) -> str:
     """問い合わせの文字種から表示言語を推す: ハングル → ko、仮名 → ja、漢字だけ → zh、
     ドイツ語の印(ウムラウト・ß・よく出る語)→ de、それ以外 → en。tw は推せないので ``lang="tw"`` で。"""
     q = _norm(query)
+    if _DEVANAGARI.search(q):
+        return "hi"
     if _HANGUL.search(q):
         return "ko"
     if _KANA.search(q):
@@ -111,7 +131,7 @@ def _synonym_tokens(query: str, have: set) -> list[str]:
     """問い合わせに含まれる言い換え表の語について、同じ組の他の語の検索語(既にあるものは除く)。"""
     fq = _fold(query)
     out: list[str] = []
-    for group in SYNONYMS:
+    for group in SYNONYMS + HI_TERMS:
         if any(_fold(w) in fq for w in group):
             for w in group:
                 for tok in tokenize(w):
@@ -125,7 +145,7 @@ def _pick_lang(query: str, qtok: list, top_rows: list) -> str:
     文字種では ja / zh / tw、en / de を分けられないので、**上位の op の要約のうち問い合わせの語を
     いちばん多く含む言語**を採る(同点は :func:`detect_lang` の推定を優先)。"""
     guess = detect_lang(query)
-    if guess in ("ko", "ja") or not top_rows:
+    if guess in ("ko", "ja", "hi") or not top_rows:
         return guess
     cands = ("ja", "zh", "tw") if guess == "zh" else ("en", "de")
     qs = set(qtok)
@@ -191,7 +211,7 @@ def load_index(path: str | None = None) -> dict:
 
 def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str | None = None,
                out_sort: str | None = None, dim: str | None = None, index_path: str | None = None) -> dict:
-    """``query``(6 言語のどれでも)に合う op を順位つきで返す。
+    """``query``(:data:`LANGS` のどの言語でも)に合う op を順位つきで返す。
 
     返り: ``{"query", "lang", "total", "ops": [{"name", "dim", "category", "in_sort", "out_sort",
     "halcon", "note", "summary", "score"}], "hint"}``。``summary`` は ``lang``(既定は問い合わせから
@@ -285,8 +305,8 @@ def main(argv=None) -> int:
     """``fullseye-rag search <query>`` / ``py -m fullseye.opsearch <query>`` の本体。"""
     import argparse
     ap = argparse.ArgumentParser(prog="fullseye-rag search",
-                                 description="Find Fullseye operators by what they do (ja/en/zh/tw/ko/de).")
-    ap.add_argument("query", nargs="+", help="what you want to do, in any of the six languages")
+                                 description="Find Fullseye operators by what they do (ja/en/zh/tw/ko/de/hi).")
+    ap.add_argument("query", nargs="+", help="what you want to do, in any supported language")
     ap.add_argument("-k", type=int, default=10, help="how many rows (default 10)")
     ap.add_argument("--lang", choices=LANGS, default=None, help="summary language (default: from the query)")
     ap.add_argument("--in-sort", default=None)

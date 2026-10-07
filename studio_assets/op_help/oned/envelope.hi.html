@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">envelope — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.envelope(x)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.envelope(x)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;envelope&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>analytic (Hilbert) signal से amplitude envelope — knock / impact / acoustic-emission burst का आकार।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:coherence_scanning">coherence_scanning</a> — <code style="color:#22d3bf">py -3.11 examples/coherence_scanning.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beam_modal_video">poc_beam_modal_video</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beam_modal_video.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oponed:create_funct_1d_array">create_funct_1d_array</a> · <a style="color:#22d3bf" href="oponed:create_funct_1d_pairs">create_funct_1d_pairs</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_gauss">smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="oponed:smooth_funct_1d_mean">smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="oponed:derivate_funct_1d">derivate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:integrate_funct_1d">integrate_funct_1d</a> · <a style="color:#22d3bf" href="oponed:zero_crossings_funct_1d">zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="oponed:local_min_max_funct_1d">local_min_max_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:local_std">local_std</a> · <a style="color:#22d3bf" href="oponed:quantize">quantize</a> · <a style="color:#22d3bf" href="oponed:companding_mu_law">companding_mu_law</a> · <a style="color:#22d3bf" href="oponed:resample">resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

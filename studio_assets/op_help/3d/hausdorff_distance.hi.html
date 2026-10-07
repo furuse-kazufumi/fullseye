@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hausdorff_distance — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hausdorff_distance(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrics3d; metrics3d.hausdorff_distance(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;hausdorff_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>symmetric Hausdorff distance = max(max_a min_b, max_b min_a)। → scalar। worst-case अंतर।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>計算: <code style="color:#22d3bf">cKDTree</code> で <code style="color:#22d3bf">a</code> の各点から <code style="color:#22d3bf">b</code> への最近傍距離と、<code style="color:#22d3bf">b</code> から <code style="color:#22d3bf">a</code> への最近傍距離を取り、両方向の <b>最大値</b> のうち大きい方を返す。「一方の雲のどの点も、相手の雲からこの距離以内にある」を保証する最小の半径。単位は座標の単位。</p>
+<p>入力: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は <code style="color:#22d3bf">(N, 3)</code> / <code style="color:#22d3bf">(M, 3)</code> の点群(点数は異なってよい、対応不要)。<b>この op は入口検査を持たない</b>(<code style="color:#22d3bf">_require_cloud</code> を通らない): 空の点群を渡すと <code style="color:#22d3bf">max()</code> が numpy の <code style="color:#22d3bf">ValueError</code>(&quot;zero-size array&quot;)で落ち、<code style="color:#22d3bf">(N, 2)</code> など 3 列でない入力は cKDTree の次元不一致で <code style="color:#22d3bf">ValueError</code> になる — いずれもメッセージはこの op のものではない。呼ぶ前に空でないことを確かめること。</p>
+<p>返り値: Python <code style="color:#22d3bf">float</code>、<code style="color:#22d3bf">[0, inf)</code>。同一点群なら 0。正規化はしない。</p>
+<p>注意: 1 点の外れ値で値が決まる(平均ではなく最大)。ノイズを含むスキャンの評価には <code style="color:#22d3bf">chamfer_distance</code> か <code style="color:#22d3bf">fscore</code>(閾値 <code style="color:#22d3bf">tau</code> 以内の割合)の方が安定で、Hausdorff は「最悪でもこの精度」を主張したいとき(公差検証、LOD の <code style="color:#22d3bf">max_error</code> と同じ性格)に使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_lod_download">mesh_lod_download</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_lod_download.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pointcloud_downsampling">pointcloud_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pointcloud_downsampling.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:poisson_surface_recon">poisson_surface_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/poisson_surface_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:m3c2_distance">m3c2_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">text_candidates — TEXT <code style="color:#22d3bf">detect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import textregion; textregion.text_candidates(swt, min_area: &#x27;int&#x27; = 8, max_var_ratio: &#x27;float&#x27; = 0.5, aspect_range=(0.1, 10.0), max_height: &#x27;int&#x27; = 300)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstext.get(&quot;text_candidates&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SWT के connected components को character candidates तक छाँटता है (चौड़ाई का फैलाव, aspect ratio, आकार)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Epshtein 2010 §4 の規則: 成分内のストローク幅の分散が平均に対して小さい / 縦横比が極端でない / 大きすぎない。<code style="color:#22d3bf">swt</code> は <code style="color:#22d3bf">swt_map</code> の <code style="color:#22d3bf">swt</code>。Returns dict: <code style="color:#22d3bf">boxes</code>(N×4 の [y0, x0, y1, x1]、半開区間)/ <code style="color:#22d3bf">labels</code> / <code style="color:#22d3bf">stroke_width</code>(各成分の中央値)/ <code style="color:#22d3bf">n_components</code>(絞る前の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_text_region_truth">poc_text_region_truth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_text_region_truth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optext:text_lines">text_lines</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">detect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: textregion.py — TEXT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

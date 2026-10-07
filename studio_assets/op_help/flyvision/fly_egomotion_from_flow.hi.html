@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fly_egomotion_from_flow — FLYVISION <code style="color:#22d3bf">selfmotion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import flyvision; flyvision.fly_egomotion_from_flow(flow, lattice, axes=None, weights=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsflyvision.get(&quot;fly_egomotion_from_flow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>आँख के flow field से उसका least-squares rotation — और आँख का अपना आकार उत्तर की conditioning को कितना बिगाड़ता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Given the flow <code style="color:#22d3bf">f_i</code> at known viewing directions <code style="color:#22d3bf">d_i</code>, a pure rotation <code style="color:#22d3bf">w</code> predicts <code style="color:#22d3bf">f_i = -(w x d_i)</code>, which is <b>linear in w</b>: projecting on the tangent basis gives <code style="color:#22d3bf">f_az = -w . (d x e_az)</code> and <code style="color:#22d3bf">f_el = -w . (d x e_el)</code>, so the estimate is one <code style="color:#22d3bf">2n x 3</code> least-squares solve with no iteration and no starting guess (Franz et al.&#x27;s linear egomotion estimate, *Biol. Cybern.* 2004).</p>
+<p>The catch is not the algebra, it is the eye. A single patch of ommatidia sees a small piece of the sphere, and over a small piece the flow of a yaw and the flow of a sideways translation — or of a pitch — look nearly the same. This op therefore returns the <b>condition number</b> of that solve next to the answer, so that &quot;the fit converged&quot; and &quot;the fit was identifiable&quot; stay separate claims.</p>
+<p>flow: <code style="color:#22d3bf">(n, 2)</code> azimuth/elevation components per ommatidium (<code style="color:#22d3bf">fly_flow_from_directions</code> or <code style="color:#22d3bf">fly_matched_filter</code>).</p>
+<p>lattice: the eye they were measured on.</p>
+<p>axes: <code style="color:#22d3bf">None</code> to solve for the full 3-D rotation, or a <code style="color:#22d3bf">(k, 3)</code> array of axes to restrict the fit to (<code style="color:#22d3bf">[[0, 0, 1]]</code> = yaw only, the well-conditioned question a forward-looking eye can actually answer).</p>
+<p>weights: <code style="color:#22d3bf">None</code> or <code style="color:#22d3bf">(n,)</code> non-negative per-ommatidium weights — a confidence, e.g. the local contrast, or zeros to drop the rim.</p>
+<p>Returns a dict::</p>
+<p>{&quot;omega_rad_s&quot;: (3,), &quot;yaw_rad_s&quot;: float, &quot;pitch_rad_s&quot;: float,</p>
+<p>&quot;roll_rad_s&quot;: float, &quot;residual_rms&quot;: float, &quot;flow_rms&quot;: float,</p>
+<p>&quot;explained&quot;: float, &quot;condition&quot;: float, &quot;n_ommatidia&quot;: int}</p>
+<p>with yaw about +z (left positive), pitch about +y, roll about +x, and <code style="color:#22d3bf">explained = 1 - residual_rms/flow_rms</code> (1.0 = the flow is exactly a rotation, 0.0 = the fit explains none of it).</p>
+<p>Ground truth: handed a <code style="color:#22d3bf">fly_matched_filter</code> template scaled by a known rate, it returns that rate to machine precision and <code style="color:#22d3bf">explained = 1</code>; handed a pure translation field it returns a small rate with a low <code style="color:#22d3bf">explained</code>; and the condition number of a narrow forward eye is large (the tests measure it) while the yaw-only fit is near 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a *flow* that is not <code style="color:#22d3bf">(n, 2)</code> for this lattice, non-finite entries, a malformed *axes* / *weights*, all-zero weights, and a lattice with fewer ommatidia than the fit has unknowns.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideflyvision:fly_vision">fly_vision family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_t4t5_field">fly_t4t5_field</a> · <a style="color:#22d3bf" href="opflyvision:fly_flow_from_directions">fly_flow_from_directions</a> · <a style="color:#22d3bf" href="opflyvision:fly_matched_filter">fly_matched_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a> · <a style="color:#22d3bf" href="opflyvision:fly_hex_resample">fly_hex_resample</a> · <a style="color:#22d3bf" href="opflyvision:fly_hs_readout">fly_hs_readout</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">selfmotion</code>)</h3>
+<p><a style="color:#22d3bf" href="opflyvision:fly_matched_filter">fly_matched_filter</a> · <a style="color:#22d3bf" href="opflyvision:fly_eye_merge">fly_eye_merge</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: flyvision.py — FLYVISION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

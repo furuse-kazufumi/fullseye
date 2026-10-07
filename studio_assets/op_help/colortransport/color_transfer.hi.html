@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">color_transfer — COLORTRANSPORT <code style="color:#22d3bf">matching</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">rgbimage</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import colortransport; colortransport.color_transfer(src, ref, method=&#x27;reinhard&#x27;, space=&#x27;lab&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscolortransport.get(&quot;color_transfer&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">src</code> के रंग के झुकाव को <code style="color:#22d3bf">ref</code> की ओर ले जाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>src, ref : array_like</p>
+<p><code style="color:#22d3bf">(..., 3)</code> の sRGB(<code style="color:#22d3bf">[0, 1]</code> の float、または整数 dtype)。</p>
+<p>大きさは違ってよい(統計だけを使う)。</p>
+<p>method : {&quot;reinhard&quot;, &quot;gaussian&quot;, &quot;histogram&quot;}</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;reinhard&quot;</code> —— 各チャネルの平均と標準偏差だけ合わせる(Reinhard, Ashikhmin, Gooch &amp; Shirley, IEEE CG&amp;A 21(5), 2001)。<b>各チャネルが単峰の正規分布</b>という仮定が効いている。前景と背景がはっきり分かれた 二峰の絵では、平均と分散は合うのに <b>どちらの峰にも当たらない色</b>になる(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> —— 共分散ごと運ぶ Monge 写像。<b>相関が保たれる</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;histogram&quot;</code> —— チャネルごとに厳密なヒストグラム整合。周辺分布は完全に一致するが、<b>チャネル間の相関は壊れる</b>。</p>
+<p>space : {&quot;lab&quot;, &quot;rgb&quot;}</p>
+<p>統計を取る空間。既定の <code style="color:#22d3bf">lab</code> は <code style="color:#22d3bf">imgmetrics</code> の実体を使う。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray</p>
+<p><code style="color:#22d3bf">src</code> と同じ形の sRGB <code style="color:#22d3bf">[0, 1]</code>(色域外は切り詰められる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidecolortransport:colorimetry">colorimetry</a> — Colorimetry और spectra — रंग केवल spectrum × illuminant × observer से तय होता है</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:color_transport">color_transport</a> — <code style="color:#22d3bf">py -3.11 examples/color_transport.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgbimage</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">matching</code>)</h3>
+<p><a style="color:#22d3bf" href="opcolortransport:histogram_match">histogram_match</a> · <a style="color:#22d3bf" href="opcolortransport:gaussian_transport_map">gaussian_transport_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: colortransport.py — COLORTRANSPORT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

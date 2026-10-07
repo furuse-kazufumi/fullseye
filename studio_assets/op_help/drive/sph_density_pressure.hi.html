@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sph_density_pressure — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point set की SPH density ρ_i = Σ_j m W(|x_i − x_j|, h) (स्वयं सहित) और weakly compressible अवस्था समीकरण p = c² (ρ − ρ₀)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>格子の間隔 Δ で m = ρ₀ Δ² に置けば、内側の点の ρ は ρ₀ に近い(h = 1.3Δ で 0.3 % 以内 —— 門で数える)。</p>
+<p>Args:</p>
+<p>points: (N, 2) の位置 [m]。</p>
+<p>h: 平滑化の長さ [m]。</p>
+<p>mass: 1 点の質量(群れでは 1 = 個体数の密度)。</p>
+<p>rho0: 静止の密度。</p>
+<p>c: 音速 [m/s] (圧力の硬さ)。</p>
+<p>box: 周期境界の箱 (Lx, Ly) か None。</p>
+<p>Returns:</p>
+<p>dict: <code style="color:#22d3bf">rho</code> (N,)、<code style="color:#22d3bf">p</code> (N,)、<code style="color:#22d3bf">n_neighbors</code> (N,)(台の中の他の点の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a> · <a style="color:#22d3bf" href="opdrive:stagnation_from_centerline">stagnation_from_centerline</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_disparity_to_depth — LIGHTFIELD <code style="color:#22d3bf">depth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lightfield; lightfield.lf_disparity_to_depth(slope, focal_px=1000.0, baseline=1.0, *, far_depth=None, min_slope=1e-06)</code>, registry से लेना हो तो <code style="color:#22d3bf">opslightfield.get(&quot;lf_disparity_to_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>slope (हर angular step पर px) -&gt; metric depth, camera-array model।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>For a rectified array of viewpoints spaced *baseline* apart with focal length *focal_px* expressed <b>in pixels of the sub-aperture image</b>, a point at distance <code style="color:#22d3bf">Z</code> shifts by <code style="color:#22d3bf">|s| = focal_px * baseline / Z</code> pixels per step. Inverting: <code style="color:#22d3bf">Z = focal_px * baseline / |s|</code>, returned in whatever length unit *baseline* was given in (mm in, mm out).</p>
+<p>Only <code style="color:#22d3bf">|s|</code> enters, deliberately. The *sign* of the slope says which side of the focal plane a point is on, and which sign means &quot;nearer&quot; depends on how the angular axis was oriented when the field was decoded — a convention this module cannot know and refuses to guess. If your decode puts near objects at negative slope, negate before calling.</p>
+<p>*far_depth* is the fail-closed switch for the <code style="color:#22d3bf">s -&gt; 0</code> pole (a point at infinity has zero parallax). <code style="color:#22d3bf">None</code> (default) makes any <code style="color:#22d3bf">|s| &lt; min_slope</code> a <code style="color:#22d3bf">ValueError</code> naming how many pixels were affected — mask them, or pass an explicit saturation distance as *far_depth* and get that value there. There is no silent <code style="color:#22d3bf">inf</code> and no silent clamp.</p>
+<p>Accepts a scalar or any array; returns the same shape (a scalar in gives a 0-d array out, so downstream code has one type to handle).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: non-finite *slope* / *focal_px* / *baseline*, a non-positive *focal_px* / *baseline* / *min_slope*, a negative *far_depth*, and <code style="color:#22d3bf">|slope| &lt; min_slope</code> anywhere when *far_depth* is <code style="color:#22d3bf">None</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_lightfield_depth">poc_lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">depth</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_depth_from_focus">lf_depth_from_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi_slope">lf_epi_slope</a> · <a style="color:#22d3bf" href="oplightfield:lf_all_in_focus">lf_all_in_focus</a> · <a style="color:#22d3bf" href="oplightfield:lf_plenoptic_design">lf_plenoptic_design</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

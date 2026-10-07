@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1298. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1299. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -2302,19 +2302,20 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `tools/gen_design_notes.py`
 
-- **L45** — ★Die Übersetzungstabelle liegt in **einer anderen Datei als die Operatordokumentation**. Mit `opdocs.T` landete jeder abgefragte Originaltext in `opdocs.SEEN_STRINGS`, und das bestehende Tor „Löcher in den Rahmenübersetzungen“ würde alle 604 als Löcher zählen und die CI rot färben — jenes Tor sorgt dafür, dass Rahmentexte in allen fünf Sprachen vollständig sind, während dies hier eine nach und nach gefüllte Sammlung ist. **In einer gemeinsamen Tabelle zerstört die eine Disziplin die andere.**
-- **L79** — ★Ein Block = eine Folge von `#`-Kommentarzeilen, die von einer Zeile mit ★ ausgeht und mit derselben Einrueckung fortfaehrt. Auch Kommentare im Sphinx-Stil `#:` werden aufgenommen. Streift man nur `#` und Leerraum ab, bleibt vorne ein `:`
-- **L81** — uebrig, und im Artefakt erscheint "‎: ★…" (ist tatsaechlich passiert). Streife `:` hier ebenfalls ab.
-- **L105** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
-- **L197** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
+- **L48** — ★Die Übersetzungstabelle liegt in **einer anderen Datei als die Operatordokumentation**. Mit `opdocs.T` landete jeder abgefragte Originaltext in `opdocs.SEEN_STRINGS`, und das bestehende Tor „Löcher in den Rahmenübersetzungen“ würde alle 604 als Löcher zählen und die CI rot färben — jenes Tor sorgt dafür, dass Rahmentexte in allen fünf Sprachen vollständig sind, während dies hier eine nach und nach gefüllte Sammlung ist. **In einer gemeinsamen Tabelle zerstört die eine Disziplin die andere.**
+- **L82** — ★Ein Block = eine Folge von `#`-Kommentarzeilen, die von einer Zeile mit ★ ausgeht und mit derselben Einrueckung fortfaehrt. Auch Kommentare im Sphinx-Stil `#:` werden aufgenommen. Streift man nur `#` und Leerraum ab, bleibt vorne ein `:`
+- **L84** — uebrig, und im Artefakt erscheint "‎: ★…" (ist tatsaechlich passiert). Streife `:` hier ebenfalls ab.
+- **L108** — ★Wenn das naechste ★ kommt, schneide es als separaten Block ab (ein Anspruch pro Block).
+- **L200** — ★Uebersetze die Markierung nicht; fixiere sie auf `_(ja)_`. Sie pro Sprache zu uebersetzen macht sie **fuer die Maschine unzaehlbar** -- `tools/i18n_status.py` ist ein Werkzeug, das "Japanisch ohne Markierung" zaehlt, sodass 593 Zeilen zu "verstecktem Japanisch" mutieren, wenn sich die Markierung pro Sprache aendert (ist tatsaechlich passiert). `ja` ist ein Sprachcode und vermittelt dem Leser zugleich "dies ist Japanisch".
 
 ## `tools/gen_docs_index_ops.py`
 
-- **L280** — ★Nimm die Menge der Notizen **aus dem Register** (zaehle nicht die Dateien auf). Im adversarialen Review vom 2026-09-06 (Codex) mischte eine Version, die Dateien globt und Stems zaehlt, ein `docs/ops/SAMPLES.md` (keine op-Notiz) hinein, und der Index nannte 1,842, der RAG-Leitfaden 1,843 -- **es wurden gleichzeitig widerspruechliche Zahlen veroeffentlicht**. Notizen werden 1:1 aus records erzeugt, daher ist ein Name in records selbst die Definition von "ein Name, der eine Notiz hat". Die Uebereinstimmung mit den Dateien prueft separat `tests/test_docs_index_reachable.py` (erkennt Fehlende / Ueberzaehlige).
-- **L290** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
-- **L339** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
-- **L493** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
-- **L658** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L253** _(ja)_ — ★2026-10-07: 言語版の目次 INDEX.<lang>.md もノートではない(以前は 5 本を数えて 3089 本を 3094 本と書いていた)
+- **L281** — ★Nimm die Menge der Notizen **aus dem Register** (zaehle nicht die Dateien auf). Im adversarialen Review vom 2026-09-06 (Codex) mischte eine Version, die Dateien globt und Stems zaehlt, ein `docs/ops/SAMPLES.md` (keine op-Notiz) hinein, und der Index nannte 1,842, der RAG-Leitfaden 1,843 -- **es wurden gleichzeitig widerspruechliche Zahlen veroeffentlicht**. Notizen werden 1:1 aus records erzeugt, daher ist ein Name in records selbst die Definition von "ein Name, der eine Notiz hat". Die Uebereinstimmung mit den Dateien prueft separat `tests/test_docs_index_reachable.py` (erkennt Fehlende / Ueberzaehlige).
+- **L291** — ★`__all__`, nicht `dir(fullseye)`. dir enthaelt Modulattribute (os / sys / warnings / annotations) und **erhoeht sich zudem um eins, nachdem ein anderer Test importiert hat** (1094 → 1095), sodass das Drift-Gate nur in der Gesamt-Suite fiel (2026-09-06). Die oeffentliche Oberflaeche sind die 1,091 Namen, die die Fassade in `__all__` deklariert.
+- **L340** — ★Der Index ist nicht nur fuer Menschen, sondern auch **die Suchoberflaeche der KI** (die Bemerkung des Nutzers vom 2026-09-06 "der Index ist doch auch der Teil, der als RAG genutzt wird, oder?"). Da op-Notizen zugleich der Suchkorpus fuer KI-Coding-Unterstuetzung sind, mache den **maschinenlesbaren Einstiegspunkt** im Index explizit. Schreibt man "alle op" fuer etwas, das nur die Haelfte hat, irrt sich das RAG ueber die andere Haelfte selbstsicher -- deshalb werden die gemessenen Zeilen aus `_honest()` nicht aus diesem Abschnitt entfernt.
+- **L494** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
+- **L659** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 

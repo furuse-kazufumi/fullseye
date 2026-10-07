@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vifp — IMGMETRICS <code style="color:#22d3bf">perceptual</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vifp(ref, dist, data_range: &#x27;float&#x27; = 255.0, sigma_nsq: &#x27;float&#x27; = 2.0, nscales: &#x27;int&#x27; = 4) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqafsim; iqafsim.vifp(ref, dist, data_range: &#x27;float&#x27; = 255.0, sigma_nsq: &#x27;float&#x27; = 2.0, nscales: &#x27;int&#x27; = 4) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;vifp&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>VIF का pixel domain रूप (Sheikh &amp; Bovik 2006 §V का scalar GSM, सार्वजनिक vifp_mscale की परिपाटी)। 1 = समान, <b>higher is better</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各スケール s = 1..4: 窓 N = 2^(4−s+1)+1、ガウス σ = N/5(17/3.4、9/1.8、5/1.0、3/0.6)。s &gt; 1 では窓で平滑して 2 間引き。局所統計(μ、σ²、σ12)は &#x27;valid&#x27; 相関、g = σ12/(σ1²+1e-10)、σ_v² = σ2² − g σ12、σ1² &lt; 1e-10・σ2² &lt; 1e-10・g &lt; 0 の画素は規約どおり潰す、σ_v² ≤ 1e-10 → 1e-10。VIF = Σ log10(1 + g² σ1²/(σ_v² + σ_n²)) / Σ log10(1 + σ1²/σ_n²)。<b>非対称</b>(参照の情報量で割る: vif(a, b) ≠ vif(b, a))、コントラスト強調で <b>1 を超える</b>(TID2013 の作者値も最大 1.1379 = 歪み 17)—— 忠実度でなく情報量の比。入力 (H, W) か (H, W, 3)(3-ch は Y)。TID2013 の VIFP.txt(論文の「VIFP」、steerable 版の「VIF」とは別行)と 4 桁一致するのは <b>Y′ limited の灰色画像</b> (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, vifp, luma=&quot;limited_u8&quot;)</code>、3,000 組 max |差| 6.8e-5)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、最小スケールで窓より小さい、参照が平坦(分母 0)、sigma_nsq ≤ 0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_fsim_gmsd_vif">poc_iqa_fsim_gmsd_vif</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_fsim_gmsd_vif.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">perceptual</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:fsim">fsim</a> · <a style="color:#22d3bf" href="opimgmetrics:fsimc">fsimc</a> · <a style="color:#22d3bf" href="opimgmetrics:fsim_pair">fsim_pair</a> · <a style="color:#22d3bf" href="opimgmetrics:gmsd">gmsd</a> · <a style="color:#22d3bf" href="opimgmetrics:gmsd_map">gmsd_map</a> · <a style="color:#22d3bf" href="opimgmetrics:phase_congruency_pc">phase_congruency_pc</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: iqafsim.py — IMGMETRICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">noise_inconsistency_map — IMGFORENSICS <code style="color:#22d3bf">noise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.noise_inconsistency_map(image, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;noise_inconsistency_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर block के <b>noise standard deviation</b> का map। <code style="color:#22d3bf">image2d</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Immerkær 1996 の 3x3 マスクで高周波成分を取り、<code style="color:#22d3bf">block</code> 角の非重複ブロックごとに <code style="color:#22d3bf">sigma = sqrt(pi/2) / 6 * mean(|conv|)</code> を出してブロック定数で戻す。貼り付けた領域が別の露出・別の圧縮率・別のカメラから来ていれば、この値がまわりと <b>段差</b>になる。</p>
+<p><b>精度は良い</b>(<code style="color:#22d3bf">tests/test_imgforensics.py</code> が固定)。真の σ が上半分 0.01・下半分 0.04(8 bit で 2.55 と 10.20、比 4.0)の合成画像で、推定は <b>2.533 と 10.214、比 4.033</b> —— 絶対値も比も 1% 以内。</p>
+<p><b>この地図が言えないこと</b>:</p>
+<p style="margin:2px 0 2px 12px">• <b>テクスチャは雑音として数えられる</b>。Immerkær のマスクはラプラシアン風なので、細かい模様の領域は σ が高く出る。実測:<b>雑音は上下とも同じ σ=0.01</b> で、下半分にだけ市松模様を足した画像では、模様側 15.97 / 平坦側 2.58 = <b>6.2 倍</b>。段差があっても「改竄」ではなく「模様」かもしれない。</p>
+<p style="margin:2px 0 2px 12px">• 逆に <b>平滑化された改竄は σ が下がる</b>ので見えるが、平坦な背景に平坦な物を貼った場合は差が出ない。</p>
+<p style="margin:2px 0 2px 12px">• JPEG は雑音をブロックごとに削るので、圧縮済みの画像では <code style="color:#22d3bf">block</code> を 8 の倍数にしないとブロック格子と干渉して縞が出る(既定 16 は 8 の倍数)。</p>
+<p style="margin:2px 0 2px 12px">• ★ <b>画像の縁に、改竄と無関係な段差が必ず出る</b>(2026-09-06 実測)。畳み込みが <code style="color:#22d3bf">mode=&quot;reflect&quot;</code> で折り返すため、外周のブロックでは高周波が減って σ が低く出る。<b>改竄ゼロ・一様雑音</b>の 256x256 で、最外ブロック帯 8.815 に対し中心 9.537(<b>-7.6 %</b>)。同じ画像の生の局所 std は 0.03491 と 0.03563(-2.0 %)しか違わないので、差の大半は推定器が作っている。中央値からの隔たりで見ると最外 0.7173 / 中心 0.5948 = <b>1.21 倍</b>。画素ごとの ROC を取るとこれだけでゼロ点 AUC が 0.5 から外れる(<code style="color:#22d3bf">examples/poc_forensics_roc.py</code> の実測で 0.447)。<b>外周 1 ブロックを判定から外す</b>か、中央値を場所ごとに取ること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_forensics_roc">poc_forensics_roc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_forensics_roc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_extract">watermark_extract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">noise</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">powder_flowability_class — DRIVE <code style="color:#22d3bf">granular</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import granular; granular.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;powder_flowability_class&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>angle of repose → flowability class (USP &lt;1174&gt; Table 1, मूल स्रोत Carr 1965)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返り: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor)、<code style="color:#22d3bf">phi_int</code>(表を引いた整数の度 = 四捨五入)、<code style="color:#22d3bf">tabulated</code>(表の下限 25 度以上か)、<code style="color:#22d3bf">band_upper_deg</code>(その区分の上限; 上限の無い最後の区分は None —— 返りに inf を入れない、JSON に載らないため)。表は整数の度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 角が (0, 90) の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">granular</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:heap_volume_cone">heap_volume_cone</a> · <a style="color:#22d3bf" href="opdrive:heap_mass">heap_mass</a> · <a style="color:#22d3bf" href="opdrive:heap_volume_heightmap">heap_volume_heightmap</a> · <a style="color:#22d3bf" href="opdrive:beverloo_rate">beverloo_rate</a> · <a style="color:#22d3bf" href="opdrive:beverloo_fit">beverloo_fit</a> · <a style="color:#22d3bf" href="opdrive:discharge_synth">discharge_synth</a> · <a style="color:#22d3bf" href="opdrive:dispense_mass_from_video">dispense_mass_from_video</a> · <a style="color:#22d3bf" href="opdrive:hopper_discharge_rate">hopper_discharge_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: granular.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

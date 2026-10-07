@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">indices_to_labels — REPRCONV <code style="color:#22d3bf">index</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">indices</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.indices_to_labels(indices)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.indices_to_labels(indices)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;indices_to_labels&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>index <code style="color:#22d3bf">(N,)</code> → selection mask <code style="color:#22d3bf">labels</code>। <code style="color:#22d3bf">indices</code> से निकास (<b>उलटने योग्य</b>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">max(indices) + 1</code> 長の 1-D ラベル配列を作り、選ばれた位置に 1 を置く。<code style="color:#22d3bf">indices -&gt; labels -&gt; indices</code> は <b>bit 一致</b>(重複と順序を除く)。逆向き <code style="color:#22d3bf">labels -&gt; indices -&gt; labels</code> は<b>末尾の背景を落とす</b> (長さが <code style="color:#22d3bf">max_index + 1</code> に切り詰まる)—— これは情報の損失であって</p>
+<p>バグではないので、<code style="color:#22d3bf">labels_to_indices</code> の docstring に量を書いてある。</p>
+<p>Args:</p>
+<p>indices: (N,) の非負整数配列。</p>
+<p>Returns:</p>
+<p>(max + 1,) の int64 ラベル配列(選択 = 1、背景 = 0)。</p>
+<p>Raises:</p>
+<p>ValueError: 1-D でない / 負 / 空 / 上限超。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:labels_to_indices">labels_to_indices</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">index</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:labels_to_indices">labels_to_indices</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

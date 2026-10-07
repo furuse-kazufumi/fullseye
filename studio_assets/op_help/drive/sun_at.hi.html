@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sun_at — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>दिनांक-समय (timezone वाला datetime या Julian day) पर सूर्य की ऊँचाई और azimuth। सूत्र <code style="color:#22d3bf">geocam.sun_position</code> (NOAA के सूर्य-स्थिति सूत्र = Meeus &quot;Astronomical Algorithms&quot; अध्याय 25 का कम-precision रूप, NOAA का atmospheric refraction) से जैसे के तैसे लिए गए हैं, दिनांक-समय लेने का तरीका और पृथ्वी–सूर्य की दूरी जोड़ी गई है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
+<p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>
+<p>NOAA が述べる精度は、日の出入りの時刻で緯度 ±72° 以内 1 分以内(1800〜2100 年)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 素朴な datetime・範囲外の緯度経度。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a> · <a style="color:#22d3bf" href="opdrive:road_row_distance">road_row_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

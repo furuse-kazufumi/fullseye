@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tac_surface_normal — 2D <code style="color:#22d3bf">tactile</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">image</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tac_surface_normal&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tac_surface_normal.png" alt="tac_surface_normal: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_surface_normal.a.jpg">tac_surface_normal: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Knob b को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_surface_normal.b.jpg">tac_surface_normal: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tac_surface_normal.inputs.jpg">tac_surface_normal: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Shading gradients से surface normal का z-component (slope map), Horn के shape-from-shading normal parameterisation <code style="color:#22d3bf">n = (-p, -q, 1)/sqrt(1+p^2+q^2)</code> का इस्तेमाल करके, ताकि <code style="color:#22d3bf">p = gain*gx</code>, <code style="color:#22d3bf">q = gain*gy</code> के साथ <code style="color:#22d3bf">nz = 1/sqrt(1+p^2+q^2)</code> हो। समतल (बिना contact वाला) gel nz = 1 देता है, खड़ी indentation दीवारें 0 की ओर जाती हैं, इसलिए map पहले से ही वैध [0,1] encoding है। <code style="color:#22d3bf">a</code> = gradient gain (1..21x -- shading को कितना खड़ा माना जाए), <code style="color:#22d3bf">b</code> = sensor noise काबू करने के लिए image की pre-smoothing sigma (0..3)। Constant इनपुट -&gt; सब 1 (पूरी तरह समतल gel)।</p>
+<p><b>खाली frame (मापा गया)</b>: एक समान brightness वाली image देने पर <b>brightness चाहे जो हो, सभी pixels foreground (1) बन जाते हैं</b>। जिस frame में रोशनी उड़ गई हो, कुछ रास्ते में आ गया हो, या कोई subject न हो, वह &quot;<b>100% defective</b>&quot; के रूप में लौटता है, इसलिए upstream में ही जाँचें कि frame एक समान है या नहीं और ऐसे frames को हटा दें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">tac_surface_normal 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:tac_surface_normal%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:tac_surface_normal%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:sim2real_and_alife">sim2real_and_alife</a> — <code style="color:#22d3bf">py -3.11 examples/sim2real_and_alife.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:gaussian">gaussian</a> · <a style="color:#22d3bf" href="op:mean_box">mean_box</a> · <a style="color:#22d3bf" href="op:bilateral">bilateral</a> · <a style="color:#22d3bf" href="op:unsharp">unsharp</a> · <a style="color:#22d3bf" href="op:median">median</a> · <a style="color:#22d3bf" href="op:min_filter">min_filter</a> · <a style="color:#22d3bf" href="op:max_filter">max_filter</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">tactile</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tac_contact_mask">tac_contact_mask</a> · <a style="color:#22d3bf" href="op:tac_height_from_shading">tac_height_from_shading</a> · <a style="color:#22d3bf" href="op:tac_pressure_proxy">tac_pressure_proxy</a> · <a style="color:#22d3bf" href="op:tac_shear_field">tac_shear_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

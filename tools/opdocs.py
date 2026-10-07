@@ -358,7 +358,7 @@ _COPYRIGHT = f"© 2026 {_AUTHOR} — Fullseye operator documentation. Licensed u
 #: 出力する言語。``ja`` が**原文**(ベース言語)で、残りは対訳表からの差し替え。
 #: 半導体サプライチェーンの主要国を見て選んだ: 台湾(繁体字)・韓国・ドイツ。
 #: 追加は :data:`I18N_PATH` に 1 列足すだけ ―― 生成器のコード変更は要らない。
-LANGS = ("ja", "en", "zh", "tw", "ko", "de")
+LANGS = ("ja", "en", "zh", "tw", "ko", "de", "hi")
 
 #: 言語コード -> 自称表記(切替リンクに出す。英語名ではなく**その言語での名前**)。
 LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文",

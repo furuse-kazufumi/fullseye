@@ -1,0 +1,44 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tb_companding_mu_law — 2D <code style="color:#22d3bf">typed</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_companding_mu_law&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/tb_companding_mu_law.png" alt="tb_companding_mu_law: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.a.jpg">tb_companding_mu_law: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Knob b को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.b.jpg">tb_companding_mu_law: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.chain.jpg">tb_companding_mu_law: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_companding_mu_law.inputs.jpg">tb_companding_mu_law: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>mu-law companding — G.711 curve, यहाँ किसी भी 1-D signal पर उपयोग किया गया।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Compress with <code style="color:#22d3bf">F(v) = sign(v) * ln(1 + mu|v|) / ln(1 + mu)</code> on the signal scaled to <code style="color:#22d3bf">[-1, 1]</code>, quantise uniformly, expand back. The steps end up fine near zero and coarse near full scale, which is the right allocation when the interesting part of the signal is small compared with its peaks — speech, vibration, anything with a large crest factor.</p>
+<p><b>This is where mu-law comes from</b>: the image operator <code style="color:#22d3bf">companding_mu_law</code> is the same curve applied to intensity. Reporting both keeps the family honest about which dimension the technique was designed for.</p>
+<p><b>Applicability — it is the crest factor that decides.</b> Measured on a sine of amplitude *A* with one sample pinned at full scale, so the crest factor is exactly <code style="color:#22d3bf">1/A</code> (mean square error relative to a uniform quantiser):</p>
+<p>crest 50    4 bit 0.011   6 bit 0.014     (about 90x better)</p>
+<p>crest 20    4 bit 0.122   6 bit 0.101</p>
+<p>crest 6.7   4 bit 0.613   6 bit 0.616</p>
+<p>crest 2.0   4 bit 4.22    6 bit 6.03      (several times WORSE)</p>
+<p>So the rule is <b>crest factor above roughly 7</b> — speech, vibration, impact. Below that, a plain uniform quantiser wins and mu-law actively hurts. ★Note the peak is a <b>single sample</b>: on random signals of the same family the advantage swung between 0.55 and 0.87 purely with the seed, because the largest excursion sets the scale. Measure the crest factor of *your* signal, do not assume it from the distribution.</p>
+<p>Other limits: <code style="color:#22d3bf">mu</code> near 0 degenerates to uniform quantisation (that is how you check the curve is doing anything), and the curve is fixed — unlike a Lloyd-Max codebook fitted to the signal — which is the point when values must stay comparable across recordings.</p>
+<p>Typed bridge of the 1d op <code style="color:#22d3bf">companding_mu_law</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> drives <code style="color:#22d3bf">mu</code> (default 255) and <code style="color:#22d3bf">b</code> drives <code style="color:#22d3bf">bits</code> (default 8).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_signal 0.50 0.50
+tb_companding_mu_law 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_signal%200.50%200.50%0Atb_companding_mu_law%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_signal%200.50%200.50%0Atb_companding_mu_law%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p>नीचे के उदाहरण मूल ledger op <code style="color:#22d3bf">companding_mu_law</code> को call करते हैं। यह bridge op वही implementation है, बस <code style="color:#22d3bf">fn(v, a, b)</code> convention के अनुसार ढाला गया है, इसलिए व्यवहार वैसा ही लागू होता है (केवल call का रूप अलग है)।</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_gray_arith">gallery2d_gray_arith</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_gray_arith.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:tb_create_funct_1d_array">tb_create_funct_1d_array</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_gauss">tb_smooth_funct_1d_gauss</a> · <a style="color:#22d3bf" href="op:tb_smooth_funct_1d_mean">tb_smooth_funct_1d_mean</a> · <a style="color:#22d3bf" href="op:tb_derivate_funct_1d">tb_derivate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_integrate_funct_1d">tb_integrate_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_zero_crossings_funct_1d">tb_zero_crossings_funct_1d</a> · <a style="color:#22d3bf" href="op:tb_abs_funct_1d">tb_abs_funct_1d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">typed</code>)</h3>
+<p><a style="color:#22d3bf" href="op:tb_points_to_voxel">tb_points_to_voxel</a> · <a style="color:#22d3bf" href="op:tb_estimate_point_normals">tb_estimate_point_normals</a> · <a style="color:#22d3bf" href="op:tb_iss_keypoints">tb_iss_keypoints</a> · <a style="color:#22d3bf" href="op:tb_project_points">tb_project_points</a> · <a style="color:#22d3bf" href="op:tb_render_point_depth">tb_render_point_depth</a> · <a style="color:#22d3bf" href="op:tb_statistical_outlier_removal">tb_statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_radius_outlier_removal">tb_radius_outlier_removal</a> · <a style="color:#22d3bf" href="op:tb_voxel_grid_downsample">tb_voxel_grid_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

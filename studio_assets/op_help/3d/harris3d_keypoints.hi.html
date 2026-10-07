@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">harris3d_keypoints — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_harris; feat_harris.harris3d_keypoints(vol, device=&#x27;cpu&#x27;, k=0.005, nms=3, topn=64, sigma_i=1.5, response=&#x27;mineig&#x27;, rel_thresh=0.01, border=2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;harris3d_keypoints&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">keypoints</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.harris3d_keypoints.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">feat_harris.harris3d_keypoints</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(keypoints, scores)</code></p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D Harris keypoint detection (2D Harris corner detection का 3D संस्करण)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>voxel 密度場の 3D 勾配 g=(gz,gy,gx) から、各ボクセルで局所構造テンソル M=Σ_w w·g gᵀ(3x3 対称、gaussian 窓 sigma_i で積和)を組み、コーナー性を測る。応答が周囲で極大かつ閾値超のボクセルを keypoint とする(初期姿勢推定なしに検出できるため、大回転+部分重なりの対応付けや ICP の coarse init 供給に使える)。</p>
+<p>コーナー性の指標:</p>
+<p style="margin:2px 0 2px 12px">• &quot;mineig&quot;(既定): 3x3 対称行列の最小固有値(Shi-Tomasi 流)。3 方向すべてに構造がある(=角)ほど最小固有値が大きい。閉形式(三角関数法)で算出。k 調整不要で頑健(実測 mean repeatability 85%、min 72.5%)。</p>
+<p style="margin:2px 0 2px 12px">• &quot;harris&quot;: R = det(M) - k·tr(M)³。3D では固有値 3 個なので tr の 3 乗で</p>
+<p>無次元化。★注意: 密度 voxel の角では det/tr³ 比が経験的に ~0.01 しか</p>
+<p>ないため、2D 標準の k=0.04〜0.06 では全応答が負になり検出 0 になる。</p>
+<p>3D では k≈0.005 が必要(実測 k=0.005 で mean 89.6%)。</p>
+<p>引数:</p>
+<p>vol: (D,H,W) 密度 voxel(numpy / torch)。points_to_voxel の出力を想定。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。全演算をこのデバイス上で行う。</p>
+<p>k: Harris の感度係数(response=&quot;harris&quot; 時のみ有効)。3D 密度場では</p>
+<p>0.005 前後(2D 慣習の 0.04〜0.06 は 3D では強すぎ検出 0 になる)。</p>
+<p>nms: 非最大抑制の立方体窓の一辺(奇数、標準 3 = 3x3x3 近傍)。</p>
+<p>topn: 応答降順で返す keypoint の最大数。</p>
+<p>sigma_i: 構造テンソルの積分窓(gaussian)の標準偏差(voxel)。</p>
+<p>response: &quot;mineig&quot;(既定, 頑健)か &quot;harris&quot;。</p>
+<p>rel_thresh: 応答の閾値 = rel_thresh × 有効領域の最大応答(雑音抑制)。</p>
+<p>border: 端から border ボクセル以内は検出しない(勾配の端効果を除去)。</p>
+<p>返り値:</p>
+<p>keypoints: (M,3) float64。keypoint の voxel 座標 (z,y,x)(sobel3d と</p>
+<p>同じ軸順)。応答降順、最大 topn 個。</p>
+<p>responses: (M,) float64。対応する応答値(降順)。</p>
+<p>依存: sobel3d(3D 勾配)、_gauss3d(積分窓平滑)。いずれも device 上で動作。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">keypoints</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:dlt_pose">dlt_pose</a> · <a style="color:#22d3bf" href="op3d:pnp_ransac">pnp_ransac</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_shot">register_shot</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_harris.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

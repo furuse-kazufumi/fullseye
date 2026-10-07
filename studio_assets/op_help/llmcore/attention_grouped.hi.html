@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">attention_grouped — LLMCORE <code style="color:#22d3bf">attend</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>head को समूहित करने वाला attention (GQA) → tokens। <b>n_kv_heads == n_heads पर MHA से, और == 1 पर MQA से बिल्कुल मेल खाता है</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
+<p>Args:</p>
+<p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>
+<p>key: (S, n_kv_heads·dh) float。</p>
+<p>value: (S, n_kv_heads·dh) float。</p>
+<p>n_heads: query の頭の数。<code style="color:#22d3bf">n_kv_heads</code> の倍数であること。</p>
+<p>n_kv_heads: key/value の頭の数。1 なら MQA、<code style="color:#22d3bf">n_heads</code> なら MHA。</p>
+<p>mask: None / <code style="color:#22d3bf">&quot;causal&quot;</code> / <code style="color:#22d3bf">&quot;window&quot;</code> / (T, S) の bool 配列。</p>
+<p>window: <code style="color:#22d3bf">mask=&quot;window&quot;</code> のときの窓幅。</p>
+<p>Returns:</p>
+<p>tokens (T, n_heads·dh) float: 頭ごとの出力を横に連結したもの。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidellmcore:llmcore">llmcore family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_attention_identities">poc_attention_identities</a> — <code style="color:#22d3bf">py -3.11 examples/poc_attention_identities.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">tokens</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:rms_norm">rms_norm</a> · <a style="color:#22d3bf" href="opllmcore:rope_rotate">rope_rotate</a> · <a style="color:#22d3bf" href="opllmcore:attention_scores">attention_scores</a> · <a style="color:#22d3bf" href="opllmcore:attention_apply">attention_apply</a> · <a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a> · <a style="color:#22d3bf" href="opllmcore:kv_cache_decode">kv_cache_decode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">attend</code>)</h3>
+<p><a style="color:#22d3bf" href="opllmcore:attention_softmax">attention_softmax</a> · <a style="color:#22d3bf" href="opllmcore:attention_tiled">attention_tiled</a> · <a style="color:#22d3bf" href="opllmcore:attention_linear">attention_linear</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: llmcore.py — LLMCORE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

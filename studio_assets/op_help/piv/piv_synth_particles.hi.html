@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_particles — PIV <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">image2d</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_synth_particles(shape, density=0.02, diameter_px=2.5, seed=0, intensity=(0.6, 1.0), background=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_particles&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">pivops.piv_synth_particles</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>tracer particle बिखेरी गई 1 image बनाता है। <code style="color:#22d3bf">(image, positions)</code> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
+<p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
+<p>Args:</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>density: 画素あたりの粒子数(&gt; 0)。</p>
+<p>diameter_px: 粒子像の直径 [px] (&gt; 0)。</p>
+<p>seed: 乱数種。</p>
+<p>intensity: 粒子の明るさの範囲 <code style="color:#22d3bf">(lo, hi)</code>。</p>
+<p>background: 一様な下駄。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(image (H, W) float64, positions (N, 2) の (row, col))</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_deform_pass">piv_deform_pass</a> · <a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:correlation_quality">correlation_quality</a> · <a style="color:#22d3bf" href="oppiv:speckle_quality">speckle_quality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_synth_pair">piv_synth_pair</a> · <a style="color:#22d3bf" href="oppiv:piv_synth_sequence">piv_synth_sequence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

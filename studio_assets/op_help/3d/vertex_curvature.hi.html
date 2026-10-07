@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vertex_curvature — 3D <code style="color:#22d3bf">mesh_process</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">curvature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mesh_props; mesh_props.vertex_curvature(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vertex_curvature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>triangle mesh के हर vertex पर <b>mean curvature का परिमाण</b> (mean curvature magnitude)। → (N,)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Meyer et al. (2003) の離散 Laplace-Beltrami 作用素:</p>
+<p>K(x_i) = (1 / (2·A_mixed_i)) · Σ_{j∈1-ring} (cot α_ij + cot β_ij)·(x_i − x_j)</p>
+<p>は平均曲率法線ベクトル K = 2·H·n に等しい(H=平均曲率, n=単位法線)。ここでは向きに依らない <b>大きさ</b> H_i = |K(x_i)| / 2 を返す。α_ij, β_ij は辺 (i,j) に相対する 2 つの角、A_mixed は Meyer の混合面積(非鈍角三角形は Voronoi 面積、鈍角三角形は面積の 1/2 か 1/4)で、素朴な重心面積より曲率推定が正確になる。</p>
+<p>半径 R の球(閉じた多様体)では全頂点で H ≈ 1/R(離散化誤差内)。平面の内部頂点では H ≈ 0。<b>限界(honest)</b>: cotangent Laplace-Beltrami は閉多様体/内部頂点でのみ妥当で、開いたメッシュの<b>境界頂点</b>(1-ring が閉じない)では値が発散的に不正確になる。閉じたメッシュ、または開メッシュの内部頂点にのみ意味がある。</p>
+<p>Args:</p>
+<p>mesh: (vertices (N,3), faces (M,3)) のタプル。</p>
+<p>Returns:</p>
+<p>(N,) の平均曲率の大きさ(非負)。境界頂点の値は上記の理由で信頼できない。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正・範囲外 index、または混合面積がゼロの頂点(退化)があるとき。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_curvature">dl_mesh_curvature</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_curvature.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_props">mesh_props</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_props.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">curvature</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">mesh_process</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:laplacian_smooth">laplacian_smooth</a> · <a style="color:#22d3bf" href="op3d:taubin_smooth">taubin_smooth</a> · <a style="color:#22d3bf" href="op3d:decimate_qem">decimate_qem</a> · <a style="color:#22d3bf" href="op3d:face_normals">face_normals</a> · <a style="color:#22d3bf" href="op3d:vertex_normals">vertex_normals</a> · <a style="color:#22d3bf" href="op3d:mesh_area">mesh_area</a> · <a style="color:#22d3bf" href="op3d:face_areas">face_areas</a> · <a style="color:#22d3bf" href="op3d:mesh_volume">mesh_volume</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mesh_props.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

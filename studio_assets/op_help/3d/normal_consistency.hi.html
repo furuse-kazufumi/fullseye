@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normal_consistency — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_consistency(points_a, normals_a, points_b, normals_b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrics3d; metrics3d.normal_consistency(points_a, normals_a, points_b, normals_b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;normal_consistency&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>nearest-neighbour correspondence पर normal agreement = mean|cos(na, nb)| (orientation अनदेखा)। → [0,1]। 1=पूरा मेल।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Raises ValueError: 点群が空 or (N,3) でない/法線が点と 1 対 1 でない場合。</p>
+<p>計算: <code style="color:#22d3bf">points_a</code> の各点について <code style="color:#22d3bf">points_b</code> の最近傍(<code style="color:#22d3bf">cKDTree</code>、<code style="color:#22d3bf">k=1</code>)を取り、その点の法線 <code style="color:#22d3bf">nb</code> と自分の法線 <code style="color:#22d3bf">na</code> を単位化(ノルム + 1e-12 で割る) して <code style="color:#22d3bf">|na · nb|</code> を平均する。絶対値を取るので法線の向き(表裏)の不一致は無視される。<b>非対称</b>(<code style="color:#22d3bf">a</code> → <code style="color:#22d3bf">b</code> の一方向のみ。逆向きが要るなら引数を入れ替えてもう一度呼ぶ)。</p>
+<p>引数: <code style="color:#22d3bf">points_a</code> <code style="color:#22d3bf">(N, 3)</code>、<code style="color:#22d3bf">normals_a</code> <code style="color:#22d3bf">(N, 3)</code>、<code style="color:#22d3bf">points_b</code> <code style="color:#22d3bf">(M, 3)</code>、<code style="color:#22d3bf">normals_b</code> <code style="color:#22d3bf">(M, 3)</code>。4 つとも空でない <code style="color:#22d3bf">(*, 3)</code> であること、法線の行数が対応する点群の行数と一致することを検査する(違反は <code style="color:#22d3bf">ValueError</code>)。ゼロ法線は <code style="color:#22d3bf">1e-12</code> で割られてほぼ 0 の寄与になる(エラーにしない)。</p>
+<p>返り値: Python <code style="color:#22d3bf">float</code>、<code style="color:#22d3bf">[0, 1]</code>。1 = 全対応で法線が平行。乱雑な法線対なら 3-D では期待値 0.5 程度になる(cos の絶対値の平均)。</p>
+<p>注意: 位置の近さは見ない(遠い最近傍でも法線だけ比べる)。位置と合わせて評価するなら <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code> と併用する。法線が無い雲は <code style="color:#22d3bf">estimate_point_normals</code>(局所 PCA)で作ってから渡す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:metrics_eval">metrics_eval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/metrics_eval.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:m3c2_distance">m3c2_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hist_distance — MATH <code style="color:#22d3bf">estimation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathestimation; mathestimation.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;hist_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 histograms (non-negative, योग से normalise) के बीच distance/divergence।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;kl&quot;</code> —— Kullback–Leibler D(p‖q) = Σ p log(p/q)(非対称。q が 0 で p が正だと無限大 → eps で床)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;js&quot;</code> —— Jensen–Shannon(対称、0..log 2、平方根は距離の公理を満たす)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bhattacharyya&quot;</code> —— −log Σ √(pq)。 <code style="color:#22d3bf">&quot;hellinger&quot;</code> —— √(1 − Σ √(pq))(0..1)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;chi2&quot;</code> —— ½ Σ (p−q)²/(p+q)。</p>
+<p>門: 正規分布どうしの KL の閉じた式 / KL ≥ 0 で等号は同一分布 / MI = KL(p_xy ‖ p_x p_y)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array (masked elements वाला) से <code style="color:#22d3bf">ValueError</code></b> — mask हटाकर नीचे के raw values इस्तेमाल करने वाला implicit conversion अस्वीकार है। भरना है या हटाना है, यह स्पष्ट रूप से बताएँ।</p>
+<p style="margin:2px 0 2px 12px">• <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b> (गिनती बताकर अस्वीकार — क्योंकि यह पूरे परिणाम में फैल जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Shape सख़्त है</b>: 1-D और 2-D को implicit रूप से promote या broadcast नहीं किया जाता (vector slot में matrix या matrix slot में vector देने पर <code style="color:#22d3bf">ValueError</code>; reshape स्पष्ट रूप से करें)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: matrix लेने वाले ops और <code style="color:#22d3bf">stat_histogram</code> के bins, <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 6.7 करोड़ elements) से अधिक होने पर <code style="color:#22d3bf">ValueError</code> देते हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">estimation</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:assign_hungarian">assign_hungarian</a> · <a style="color:#22d3bf" href="opmath:stat_ttest_paired">stat_ttest_paired</a> · <a style="color:#22d3bf" href="opmath:stat_ttest_welch">stat_ttest_welch</a> · <a style="color:#22d3bf" href="opmath:stat_ks_test">stat_ks_test</a> · <a style="color:#22d3bf" href="opmath:stat_chi2_gof">stat_chi2_gof</a> · <a style="color:#22d3bf" href="opmath:crlb_gaussian">crlb_gaussian</a> · <a style="color:#22d3bf" href="opmath:kalman_smooth">kalman_smooth</a> · <a style="color:#22d3bf" href="opmath:mat_expm">mat_expm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathestimation.py — MATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

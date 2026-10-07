@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">course_s_curve — DRIVE <code style="color:#22d3bf">course</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>curve course (S-आकार): सीधा E → बायाँ arc (central angle 2π·f) → दायाँ arc (वैसा ही) → सीधा E।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>外径 R_o = <code style="color:#22d3bf">radius_outer</code>、内径 R_i = R_o − w、中心線の半径 R_c = (R_o + R_i)/2。2 つの弧は共通接線点で曲率の向きが反転する。多角形は中心線の標本点を法線方向に ±w/2 ずらして作る(弧の標本点は外円・内円の上に厳密に乗る)。面積 = 2πf(R_o² − R_i²) + 2Ew。規格: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・外径が正でない、R_o ≤ w(内径が 0 以下)、arc_fraction ∉ (0, 1)、E &lt; 0、arc_pts が 1 以上の整数でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">course</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a> · <a style="color:#22d3bf" href="opdrive:course_loop_bend">course_loop_bend</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecourse.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

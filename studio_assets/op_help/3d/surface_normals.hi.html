@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_normals — 3D <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">normalmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_normals(z)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photometric; photometric.surface_normals(z)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;surface_normals&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>height field z (HxW) → unit normals (H,W,3)। n ∝ (-dz/dx, -dz/dy, 1)। depth→normal का forward conversion।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">np.gradient</code> の中心差分(端は片側差分)で行方向の <code style="color:#22d3bf">dz/dy</code> と列方向の <code style="color:#22d3bf">dz/dx</code> を取り、<code style="color:#22d3bf">n = (-dz/dx, -dz/dy, 1)</code> を長さ 1 に正規化する(<code style="color:#22d3bf">+1e-12</code> で零割を避ける)。格子間隔を 1 画素とみなすので、<code style="color:#22d3bf">z</code> の単位が画素と異なる(mm 等)場合は事前に <code style="color:#22d3bf">z / 画素ピッチ</code> へ換算しないと傾きが実際より強く/弱く出る。法線の z 成分は常に正(カメラ向き)。返り値は float32 の <code style="color:#22d3bf">(H,W,3)</code>、第 3 軸は (x, y, z) 成分で x は列方向、y は行方向。入力検証は無く、2-D 以外を渡すと <code style="color:#22d3bf">np.gradient</code> の展開で失敗する。<code style="color:#22d3bf">integrate_normals</code> の逆変換にあたり、<code style="color:#22d3bf">photometric_stereo</code> の出力と同じ法線規約なので、そのまま <code style="color:#22d3bf">render_lambertian</code> に渡して陰影画像を合成できる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:photometric_stereo">photometric_stereo</a> — <code style="color:#22d3bf">py -3.11 examples_3d/photometric_stereo.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">normalmap</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:phong_shade">phong_shade</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a> · <a style="color:#22d3bf" href="op3d:brdf_lommel_seeliger">brdf_lommel_seeliger</a> · <a style="color:#22d3bf" href="op3d:brdf_hapke">brdf_hapke</a> · <a style="color:#22d3bf" href="op3d:bump_normals_fbm">bump_normals_fbm</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:integrate_normals">integrate_normals</a> · <a style="color:#22d3bf" href="op3d:render_lambertian">render_lambertian</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photometric.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

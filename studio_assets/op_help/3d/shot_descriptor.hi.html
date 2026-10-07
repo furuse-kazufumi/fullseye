@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shot_descriptor — 3D <code style="color:#22d3bf">feature_register</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × normals</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import feat_shot; feat_shot.shot_descriptor(points, normals, kp_idx, tree, radius, n_azim=8, n_elev=2, n_rad=2, n_cos=11)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;shot_descriptor&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SHOT descriptor (Tombari 2010)। हर keypoint पर LRF बनाता है, spherical support को</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>径2×仰角2×方位8=32 空間セルに分割、各セルで「LRF z 軸と近傍点法線の cos角」を n_cos=11 ビンのヒストグラムに quadrilinear 補間で蓄積 → 32×11=352 次元を L2 正規化。返り値 (Kp,352)。LRF 不能な点は零ベクトル。</p>
+<p>Raises ValueError: normals の行数が points と一致しない場合(別点群の法線を混ぜると近傍 index が範囲を越え生 IndexError になる — compute_fpfh と同クラス)。</p>
+<p>引数: <code style="color:#22d3bf">points</code> (N,3)、<code style="color:#22d3bf">normals</code> (N,3) 単位法線、<code style="color:#22d3bf">kp_idx</code> はキーポイントの点インデックス(<code style="color:#22d3bf">iss_keypoints</code> の出力)、<code style="color:#22d3bf">tree</code> は <code style="color:#22d3bf">points</code> から作った <code style="color:#22d3bf">scipy.spatial.cKDTree</code>(呼び出し側で用意する)、<code style="color:#22d3bf">radius</code> は支持半径(LRF 推定と近傍集めの両方に使う)。<code style="color:#22d3bf">n_azim</code>・<code style="color:#22d3bf">n_elev</code>・<code style="color:#22d3bf">n_rad</code>・<code style="color:#22d3bf">n_cos</code> を変えると次元は <code style="color:#22d3bf">n_azim*n_elev*n_rad*n_cos</code> になる。</p>
+<p>手順: LRF は距離重み <code style="color:#22d3bf">max(radius-d, 0)</code> 付き共分散の固有ベクトル(x=最大、z=最小固有値)を近傍多数派の符号に揃えて右手系化する。近傍が 5 点未満、または LRF が縮退したキーポイントは零ベクトルのまま(マッチング側で除外される)。各近傍点は径・仰角(<code style="color:#22d3bf">arccos(qz/r)/π</code>)・法線 cos 角をビン中心 0.5 基準で線形補間、方位は円環で wrap して蓄積し、最後に行ごと L2 正規化する。返り値は float64 <code style="color:#22d3bf">(len(kp_idx), 次元)</code>。2 雲を比較するときは両側で同じ <code style="color:#22d3bf">radius</code> と同じ法線符号則を使うこと(法線の向きが反転すると cos 角ヒストグラムが裏返る)。<code style="color:#22d3bf">register_shot</code> がこの関数を両雲に適用し、マッチングと RANSAC まで行う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:feature_register">feature_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/feature_register.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">descriptor</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">feature_register</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:harris3d_keypoints">harris3d_keypoints</a> · <a style="color:#22d3bf" href="op3d:iss_keypoints">iss_keypoints</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_spin">register_spin</a> · <a style="color:#22d3bf" href="op3d:register_fpfh">register_fpfh</a> · <a style="color:#22d3bf" href="op3d:register_shot">register_shot</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: feat_shot.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">grid_coords — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">coordgrid</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_coords(bounds, res)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.grid_coords(bounds, res)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;grid_coords&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.grid_coords(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">coordgrid</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.grid_coords.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">sdf_ops.grid_coords</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>CSG evaluation के लिए voxel-centre coordinates का grid बनाता है (occupancy जैसी ही grid परिपाटी)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">bounds=((xmin,xmax),(ymin,ymax),(zmin,zmax))</code>、<code style="color:#22d3bf">res</code> は各軸のボクセル数(スカラ=立方 or 長さ3)。voxel <code style="color:#22d3bf">i</code> の中心は world <code style="color:#22d3bf">lo + (i+0.5)/res * span</code>(<code style="color:#22d3bf">occupancy.query_distance</code> の <code style="color:#22d3bf">c=(q-lo)/span*res-0.5</code> と整合 = 中心アライン)。返り値は <code style="color:#22d3bf">coords</code> shape <code style="color:#22d3bf">(nx,ny,nz,3)</code> と <code style="color:#22d3bf">extent=(xmin,xmax,ymin,ymax,zmin,zmax)</code>。</p>
+<p>こうして作った座標に <code style="color:#22d3bf">sphere_sdf</code>/<code style="color:#22d3bf">box_sdf</code> を評価し CSG 合成すれば、<code style="color:#22d3bf">recon3d</code> の marching cubes や <code style="color:#22d3bf">occupancy</code> のゼロ交差抽出へそのまま渡せる。</p>
+<p>Raises ValueError for degenerate bounds or res&lt;=0。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gear_metrology">gear_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gear_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:molecule_atom_count">molecule_atom_count</a> — <code style="color:#22d3bf">py -3.11 examples_3d/molecule_atom_count.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:procedural_hand">procedural_hand</a> — <code style="color:#22d3bf">py -3.11 examples_3d/procedural_hand.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:render_beauty">render_beauty</a> — <code style="color:#22d3bf">py -3.11 examples_3d/render_beauty.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">coordgrid</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:plane_sdf">plane_sdf</a> · <a style="color:#22d3bf" href="op3d:cylinder_sdf">cylinder_sdf</a> · <a style="color:#22d3bf" href="op3d:torus_sdf">torus_sdf</a> · <a style="color:#22d3bf" href="op3d:capsule_sdf">capsule_sdf</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sdf_csg</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:plane_sdf">plane_sdf</a> · <a style="color:#22d3bf" href="op3d:cylinder_sdf">cylinder_sdf</a> · <a style="color:#22d3bf" href="op3d:torus_sdf">torus_sdf</a> · <a style="color:#22d3bf" href="op3d:capsule_sdf">capsule_sdf</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sdf_ops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

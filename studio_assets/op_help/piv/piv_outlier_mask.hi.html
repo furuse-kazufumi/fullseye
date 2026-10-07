@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_outlier_mask — PIV <code style="color:#22d3bf">validate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">mask</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_outlier_mask(flow, threshold=2.0, epsilon=0.1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_outlier_mask&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>normalised median test (Westerweel &amp; Scarano 2005) से outlier vector खोजता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各ベクトルについて、8 近傍の中央値からの残差を<b>近傍残差の中央値</b>で割る。分母に <code style="color:#22d3bf">epsilon</code>(既定 0.1 px、PIV の測定不確かさの目安)を足すのは、一様な場で分母が 0 になって全部が外れ値になるのを防ぐため —— この項が無いと、<b>理想的な入力ほど検定が壊れる</b>。</p>
+<p>★<b>勾配の急な場では害になる</b>(2026-09-06 実測)。Rankine 型の渦(芯の半径 28 px)で多段 PIV を掛けたところ、閾値 2 が拾った 5 本はすべて<b>芯の縁</b>(中心から 32 px)に並び、実際の誤差は 0.07-0.45 px —— 外れ値ではなく<b>速度分布が折れている場所</b>だった。近傍中央値で均すと RMS が 0.134 から 0.230 へ<b>悪化</b>する(閾値 5 では 1 本も拾わず 0.134 のまま)。</p>
+<p>検定は「近傍と違う = 間違い」という仮定に立つので、<b>本物の不連続を間違いと呼ぶ</b>。掛けるかどうかは場の性質を見て決めること。</p>
+<p>Args:</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>threshold: この値を超えたら外れ値。慣行は 2。</p>
+<p>epsilon: 分母の下駄 [px]。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(h, w)</code> の bool。<code style="color:#22d3bf">True</code> が外れ値(<code style="color:#22d3bf">nan</code> も <code style="color:#22d3bf">True</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_change_detection_misreg">poc_change_detection_misreg</a> — <code style="color:#22d3bf">py -3.11 examples/poc_change_detection_misreg.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mask</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">validate</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

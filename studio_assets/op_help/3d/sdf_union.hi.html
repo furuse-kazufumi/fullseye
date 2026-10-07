@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sdf_union — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sdf × sdf</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_union(a, b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_union(a, b)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_union&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 SDFs का union A∪B = element-wise min(a, b) (किसी एक में भी अंदर=ऋणात्मक हो तो अंदर)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>ゼロ等値面は両形状の境界の和集合に厳密一致。外側では厳密な SDF(最近表面までの距離)、内側は保守的下界。<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> はブロードキャスト整合すればよい。</p>
+<p>計算: <code style="color:#22d3bf">np.minimum(np.asarray(a, float64), np.asarray(b, float64))</code>。それ以外の検査はしない — shape がブロードキャストできなければ numpy の <code style="color:#22d3bf">ValueError</code>、NaN は要素ごとに伝播する(<code style="color:#22d3bf">np.minimum</code> は NaN を返す)。<code style="color:#22d3bf">±inf</code> は厳密に伝播(<code style="color:#22d3bf">min(a, +inf) = a</code>:<code style="color:#22d3bf">esdf</code> の「全自由なら +inf」契約と相互運用できる)。</p>
+<p>入力: 同一グリッド上で評価した 2 つの SDF(<code style="color:#22d3bf">sphere_sdf</code> / <code style="color:#22d3bf">box_sdf</code> / <code style="color:#22d3bf">esdf</code> の出力など、内側負・外側正)。形は <code style="color:#22d3bf">grid_coords</code> の <code style="color:#22d3bf">(nx, ny, nz)</code> でも <code style="color:#22d3bf">(N,)</code> の点列でもよい。距離の単位は入力と同じ。</p>
+<p>返り値: ブロードキャスト後の shape の float64。ゼロ交差(<code style="color:#22d3bf">&lt;= 0</code>)が A∪B の占有。</p>
+<p>注意: 内側の値は「どちらか近い方の表面までの距離」の下界であり、重なり領域では真の距離より小さめ(絶対値が大きめ)に出る。CSG の標準的性質で、等値面抽出(marching cubes)や <code style="color:#22d3bf">sdf_offset</code> の膨張には影響しない。継ぎ目を丸めたい場合は <code style="color:#22d3bf">sdf_smooth_union</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gear_metrology">gear_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gear_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:render_beauty">render_beauty</a> — <code style="color:#22d3bf">py -3.11 examples_3d/render_beauty.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sdf_csg">sdf_csg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sdf_csg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sdf</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a> · <a style="color:#22d3bf" href="op3d:sdf_smooth_union">sdf_smooth_union</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sdf_csg</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:grid_coords">grid_coords</a> · <a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:plane_sdf">plane_sdf</a> · <a style="color:#22d3bf" href="op3d:cylinder_sdf">cylinder_sdf</a> · <a style="color:#22d3bf" href="op3d:torus_sdf">torus_sdf</a> · <a style="color:#22d3bf" href="op3d:capsule_sdf">capsule_sdf</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sdf_ops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normal_from_reflection — 3D <code style="color:#22d3bf">optics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">vector × vector</code> → <code style="color:#22d3bf">vector</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_from_reflection(incident, reflected)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.normal_from_reflection(incident, reflected)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;normal_from_reflection&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>incident + reflected से mirror surface का normal वापस निकालता है (deflectometry)। n ∝ (r − d), incident के विपरीत दिशा में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>既知パターンの反射を観測 → 面法線 → 積分して鏡面形状。鏡面(反射)物体の形状計測の要。</p>
+<p><code style="color:#22d3bf">incident</code>(面へ向かう入射方向)と <code style="color:#22d3bf">reflected</code>(面から出る反射方向)を単位化し、<code style="color:#22d3bf">n = unit(r − d)</code> を <b><code style="color:#22d3bf">n·d &lt;= 0</code>(入射に逆らう=入射側外向き)</b> になるよう符号を決めて返す(単位ベクトル)。<code style="color:#22d3bf">r == d</code> なら零ベクトル。最後の軸をベクトルとするので <code style="color:#22d3bf">(N,3)</code> バッチも通る(符号判定は全体の内積和で 1 回だけ行う)。</p>
+<p>用途: 既知パターンの反射像から画素ごとに法線を作り(法線マップ)、<code style="color:#22d3bf">integrate_normals</code> で高さに積分、<code style="color:#22d3bf">render_shaded</code> で見た目を再現、<code style="color:#22d3bf">reflect</code> で検算。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sensor_seg">sensor_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sensor_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">vector</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:shadow_raycast">shadow_raycast</a> · <a style="color:#22d3bf" href="op3d:carve_look_at">carve_look_at</a> · <a style="color:#22d3bf" href="op3d:sample_surface">sample_surface</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">optics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

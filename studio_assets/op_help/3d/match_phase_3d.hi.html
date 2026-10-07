@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">match_phase_3d — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">shift</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.match_phase_3d(a, b, device=&#x27;cpu&#x27;, window=&#x27;tukey&#x27;, whitening=0.25)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;match_phase_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D phase correlation (FFT)। b को a से align करने वाला integer shift (dz,dy,dx) लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Reddy &amp; Chatterji の 3D 版。相互パワースペクトル R = A·conj(B) を |R|^<code style="color:#22d3bf">whitening</code> で割って逆 FFT したピーク = 平行移動。テンプレート不要・全 volume・O(N log N)。回転/スケールは別途(PCA / log-polar)。</p>
+<p>引数: <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は同形の 3-D 配列(違えば ValueError)。float32 に落として FFT する。<code style="color:#22d3bf">window</code>: <code style="color:#22d3bf">&quot;tukey&quot;</code>(既定、α 0.5)・ <code style="color:#22d3bf">&quot;hann&quot;</code>・<code style="color:#22d3bf">None</code>(掛けない)—— 窓は平均を引いてから掛け、長さ 8 未満の軸には掛けない。<code style="color:#22d3bf">whitening</code>: |R| の指数(0〜1、1 = 古典的な位相相関の全白色化、0 = 素の相互相関、既定 0.25)。</p>
+<p>返り値: int の tuple <code style="color:#22d3bf">(dz, dy, dx)</code>、各軸 <code style="color:#22d3bf">(−N/2, N/2]</code> に折り返し済み。意味は <code style="color:#22d3bf">np.roll(b, (dz,dy,dx), axis=(0,1,2)) ≈ a</code>(b をこれだけ動かすと a に重なる)。</p>
+<p>★既定を替えた理由(2026-10-06、<code style="color:#22d3bf">filters_freq.phase_correlation_fft</code> と同じ罠): 0.4.0 までの「窓なし + 全白色化(eps 1e-9)」は、帯域の限られた volume の <b>周期的でない切り出し</b>(重なりが部分的な 2 つの撮像という普通の使い方)で、信号の無い周波数のビン(切り出しの縁の不連続の漏れと丸め)が白色化で信号のあるビンと同じ重みになり、正しいずれを返さなかった —— 低域通過した 32³ の切り出しでずれ 10 通りが 0 / 10、64³ でも 0 / 10。np.roll の周期的なずれでは厳密なので、それだけの門では見えなかった。3 次元では 2 次元(既定 Hann + 0.5)より窓が重なりを削り、白色化が雑音のビンを持ち上げやすい: 測った当たり(ずれ 10 通り × 種 3 組)で、32³・ずれ ±6 の低域の切り出しは Hann + 0.5 が 11 / 30、Hann + 0.25 が 19 / 30、Tukey + 0.25 が 28 / 30、周期的なずれはそれぞれ 9 / 30・18 / 30・27 / 30(旧 30 / 30)。64³ と (1, 256, 256) では 3 つとも全部当たる(旧は低域の切り出しで 0)。さらに低い帯域(遮断 0.10)の 32³ はどれも 6 / 10 以下で、ここは苦しいまま。だから既定は Tukey(α 0.5)+ 0.25。旧の挙動は <code style="color:#22d3bf">window=None, whitening=1.0</code>(数値も同じ経路)。</p>
+<p style="margin:2px 0 2px 12px">• 循環相関なので、はみ出した部分は反対側から回り込む。シフトが volume の半分を超えると符号が反転して見える。窓つきの既定では、小さい volume(32³)の大きな周期的なずれ(辺の 2 割)で外すことがある(上の 27 / 30)—— 周期的なずれだと分かっているなら <code style="color:#22d3bf">window=None, whitening=1.0</code>。</p>
+<p style="margin:2px 0 2px 12px">• 全 0 の volume は 0 になり index 0 を返す。</p>
+<p style="margin:2px 0 2px 12px">• 整数精度。サブボクセルは <code style="color:#22d3bf">refine_translation_lk</code> / <code style="color:#22d3bf">refine_peak_newton</code> へ。</p>
+<p style="margin:2px 0 2px 12px">• 回転・スケールがあると効かない(<code style="color:#22d3bf">match_logpolar_z</code> → 回転補正 → 本 op の順)。</p>
+<p><b>Raises</b> ValueError: 形が違う、window の綴り違い、whitening が [0, 1] の外、torch の無い環境で device が cpu 以外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">shift</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match_pose</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:match_logpolar_z">match_logpolar_z</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

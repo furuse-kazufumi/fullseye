@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">skyline_extract — GEOCAM <code style="color:#22d3bf">skyline</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>photo से dynamic programming द्वारा <b>हर column के लिए आकाश–terrain सीमा की row</b> वाली 1 line निकालता है → signal (W,)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
+<p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
+<p>Args:</p>
+<p>image: (H, W) float。RGB なら先に灰色にする。</p>
+<p>sky_is_bright: 空が地形より明るい(昼)。夜景・逆光で反転するなら False。</p>
+<p>smooth: 縦方向の Gaussian σ [画素] (雑音)。0 で無効。</p>
+<p>max_jump: 隣の列で許す行の飛び [画素]。</p>
+<p>jump_penalty: 飛び 1 画素あたりのコスト(境界らしさは 0〜1 に正規化してある)。</p>
+<p>Returns:</p>
+<p>signal (W,) float: 列ごとの境界の行(0 が最上段)。<b>空しか写っていない・地形しか写っていない</b>画像では境界の応答が弱く、経路の平均コストが 0 に近いので ValueError</p>
+<p>で止める(黙って雑音の線を返さない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_position">sun_position</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun">camera_orientation_from_sun</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun_candidates">camera_orientation_from_sun_candidates</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">skyline</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:dem_skyline">dem_skyline</a> · <a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

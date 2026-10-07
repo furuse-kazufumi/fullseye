@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ray_box_ranges — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lidarsim; lidarsim.ray_box_ranges(origin, dirs, box) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ray_box_ranges&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>origin <code style="color:#22d3bf">origin</code> से दिशा <code style="color:#22d3bf">dirs (...,3)</code> वाली rays के axis-aligned box में प्रवेश करने तक की दूरी (slab method)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">box = (xmin, ymin, zmin, xmax, ymax, zmax)</code>。外れは <code style="color:#22d3bf">inf</code>。原点が箱の内側なら前方で最初に当たる面(出口)までの距離。距離は <code style="color:#22d3bf">t·‖D‖</code>。<code style="color:#22d3bf">min &lt; max</code> でない箱は <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flight_vacuum">flight_vacuum</a> · <a style="color:#22d3bf" href="opdrive:magnus_lift_coefficient">magnus_lift_coefficient</a> · <a style="color:#22d3bf" href="opdrive:drag_coefficient_sphere">drag_coefficient_sphere</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_apexes">restitution_from_apexes</a> · <a style="color:#22d3bf" href="opdrive:restitution_from_intervals">restitution_from_intervals</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lidar</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:lidar_spec">lidar_spec</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lidarsim.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

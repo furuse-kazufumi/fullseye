@@ -66,7 +66,7 @@ overlaps, where it stops, and which file format or process boundary connects the
 ## Step 1: search by meaning (any language)
 
 Before grepping, ask the search index — it matches **what you want to do** against every op
-summary in six languages (ja / en / zh / tw / ko / de) plus names, HALCON names and types:
+summary in seven languages (ja / en / zh / tw / ko / de / hi — the Hindi keeps technical terms in English) plus names, HALCON names and types:
 
 ```
 fullseye-rag search "remove noise" -k 8            # shell (pip install is enough)

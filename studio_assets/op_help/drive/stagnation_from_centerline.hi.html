@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">stagnation_from_centerline — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>centerline की कमी को linear बनाकर upstream टक्कर बिंदु (stagnation point), बाधा का केंद्र और त्रिज्या पढ़ता है (implementation 1, केवल upstream point)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p style="margin:2px 0 2px 12px">1. 欠損(3 × 3 の平均)が <code style="color:#22d3bf">d_range</code> の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
+<p style="margin:2px 0 2px 12px">2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
+<p style="margin:2px 0 2px 12px">3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で <code style="color:#22d3bf">d_range</code> の中にある格子で 1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>
+<p style="margin:2px 0 2px 12px">4. <code style="color:#22d3bf">speed</code> を与えないときは、上流の端の u を閉形式で割り戻して U を推定し直し、3 を繰り返す(U の変化が 1e-9 未満になるか <code style="color:#22d3bf">n_iter</code> 回まで。収束は 1 次で、R = 0.6・端までの距離 3 の場で約 30 回)。上流の端も 1/r² で欠けているので(R = 0.6、距離 3 で 4 %)、端の中央値をそのまま U にすると直線が曲がる。</p>
+<p>Returns:</p>
+<p>dict: <code style="color:#22d3bf">stagnation</code> (x, y)、<code style="color:#22d3bf">center</code> (x, y)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">n_used</code>、<code style="color:#22d3bf">rms_residual</code>(1/√d の当てはめの残差)、</p>
+<p><code style="color:#22d3bf">speed</code>、<code style="color:#22d3bf">ok</code>(点が足りて傾きが負なら True)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_tracks">swarm_field_from_tracks</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

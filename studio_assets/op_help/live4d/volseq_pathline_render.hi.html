@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">volseq_pathline_render — LIVE4D <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_pathline_render(volseq, n_seeds: &#x27;int&#x27; = 200, yaw: &#x27;float&#x27; = 35.0, pitch: &#x27;float&#x27; = 25.0, size: &#x27;int&#x27; = 256, static_alpha: &#x27;float&#x27; = 0.03, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, seed: &#x27;int&#x27; = 0, trail_sigma: &#x27;float&#x27; = 0.7, min_speed: &#x27;float&#x27; = 0.1, min_intensity: &#x27;float&#x27; = 0.3) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import live4d; live4d.volseq_pathline_render(volseq, n_seeds: &#x27;int&#x27; = 200, yaw: &#x27;float&#x27; = 35.0, pitch: &#x27;float&#x27; = 25.0, size: &#x27;int&#x27; = 256, static_alpha: &#x27;float&#x27; = 0.03, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001, seed: &#x27;int&#x27; = 0, trail_sigma: &#x27;float&#x27; = 0.7, min_speed: &#x27;float&#x27; = 0.1, min_intensity: &#x27;float&#x27; = 0.3) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opslive4d.get(&quot;volseq_pathline_render&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>particle को flow के साथ चलाकर बनाया गया <b>trajectory का 3-D रूप</b> <code style="color:#22d3bf">(size, size, 3)</code> (<code style="color:#22d3bf">rgb</code>) — गति को 1 स्थिर image में दिखाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>隣り合うフレームの変位場(<code style="color:#22d3bf">vol_flow_3d</code>)で、動いていて(速さ &gt;= <code style="color:#22d3bf">min_speed</code>)かつ明るい(最初のフレームの値域の <code style="color:#22d3bf">min_intensity</code> 以上 = 構造のある)場所から撒いた <code style="color:#22d3bf">n_seeds</code> 個の粒子を変位場の写像どおりに移流し、軌跡を<b>時刻の色</b>(青 = 始め → 赤 = 終わり)で立方体に描いて <code style="color:#22d3bf">vol_render_transfer</code> で任意視点から合成する。<code style="color:#22d3bf">static_alpha</code> &gt; 0 なら最初のフレームの明るさを薄い灰で重ねる(どこを流れたかの手掛かり)。<code style="color:#22d3bf">trail_sigma</code> は軌跡の太さ(voxel)。テクスチャの無い場所の流れは決まらない(開口問題)ので、種を明るい場所に限る —— 速さだけで選ぶと真っ暗な隅にも種が落ちて立方体が軌跡で埋まる(実測)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="oplive4d:vol_flow_3d">vol_flow_3d</a> · <a style="color:#22d3bf" href="oplive4d:volseq_speed">volseq_speed</a> · <a style="color:#22d3bf" href="oplive4d:volseq_pathline_orbit">volseq_pathline_orbit</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: live4d.py — LIVE4D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

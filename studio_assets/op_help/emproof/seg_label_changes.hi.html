@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_label_changes — EMPROOF <code style="color:#22d3bf">inject</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 label image के अंतर को <b>merge और split के जोड़ों</b> के रूप में लौटाता है (calibration से पहले और बाद, या डाली गई त्रुटियों का उत्तर से मिलान)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">before</code> のラベル b と <code style="color:#22d3bf">after</code> のラベル a が同じ画素を <code style="color:#22d3bf">min_pixels</code> 以上共有する対を数え、</p>
+<p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(対ごとに 1 行。吸った側の id 自身も before の 1 つとして並ぶ)</p>
+<p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同様に残った側の id も並ぶ)</p>
+<p><code style="color:#22d3bf">n_merged</code> / <code style="color:#22d3bf">n_split</code> は誤りの数(after 側・before 側の id で数える)。id の一致は見ない(ラベルを振り直した 2 枚でも使える)。</p>
+<p>&gt;&gt;&gt; ch = seg_label_changes(truth, seg_inject_merge(truth))</p>
+<p>&gt;&gt;&gt; int(ch[&quot;n_merged&quot;])</p>
+<p>1</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_split_merge_score">poc_em_split_merge_score</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_split_merge_score.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_exposure">seg_wiring_exposure</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">inject</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_inject_merge">seg_inject_merge</a> · <a style="color:#22d3bf" href="opemproof:seg_inject_split">seg_inject_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,6 +7,7 @@ title_zh: 变分、主动轮廓与水平集 —— 哪种轮廓停在哪里、�
 title_tw: 變分、主動輪廓與水平集 —— 哪種輪廓停在哪裡、保證什麼
 title_ko: 변분·동적 윤곽과 레벨셋 — 어떤 윤곽이 어디서 멈추고 무엇을 보장하는가
 title_de: Variationelle und aktive Konturen, Level-Sets — welche Kontur wo stoppt und was sie garantiert
+title_hi: Variational और active contours, level sets — कौन-सा contour कहाँ रुकता है, और वह क्या guarantee देता है
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

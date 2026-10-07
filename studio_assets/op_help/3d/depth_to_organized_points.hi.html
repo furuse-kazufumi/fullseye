@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">depth_to_organized_points — 3D <code style="color:#22d3bf">range_image</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">pointmap</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.depth_to_organized_points(depth, fx=None, fy=None, cx=None, cy=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;depth_to_organized_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>organized depth image → grid-aligned 3D points (H,W,3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>fx,fy 指定で透視逆投影 P=((u-cx)/fx*d, (v-cy)/fy*d, d)。未指定は正射(P=(x,y,depth), 格子間隔1)。</p>
+<p><code style="color:#22d3bf">u</code> は列番号 (0..W-1)、<code style="color:#22d3bf">v</code> は行番号 (0..H-1)。<code style="color:#22d3bf">fx</code>・<code style="color:#22d3bf">fy</code> は画素単位の焦点距離、<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code> は主点で、省略時は画像中心 <code style="color:#22d3bf">((W-1)/2, (H-1)/2)</code>。<code style="color:#22d3bf">fx</code> と <code style="color:#22d3bf">fy</code> のどちらか一方でも None なら正射モードになり、<code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code> は無視される。正射モードでは x, y が画素座標そのままなので、深度の単位(mm 等)と x, y の単位(画素)が混在する点に注意。透視モードでは 3 成分とも深度と同じ単位になる。深度 0 や NaN はそのまま伝播する(0 の画素は x=y=0 の原点に集まる)ため、無効画素の除外は呼び出し側で行う。返り値は float64 の <code style="color:#22d3bf">(H,W,3)</code>、第 3 軸は (x, y, z) で x は右、y は下、z は奥行き(画像座標系)。入力検証は無く、2-D 以外は <code style="color:#22d3bf">d.shape</code> の展開で失敗する。<code style="color:#22d3bf">normals_from_depth</code> はこの関数の出力を内部で使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:range_image">range_image</a> — <code style="color:#22d3bf">py -3.11 examples_3d/range_image.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pointmap</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:bump_normals_fbm">bump_normals_fbm</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">range_image</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: range_image.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_signal — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_signal(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_signal(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_signal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>जोड़े <code style="color:#22d3bf">(N,2)</code> → dependent variable का <code style="color:#22d3bf">signal</code> <code style="color:#22d3bf">(N,)</code>। <code style="color:#22d3bf">pairs</code> से 2रा निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>列 1(y)だけを取り出す。<code style="color:#22d3bf">funct_1d_to_pairs</code> が (x, y) を並べた(N,2) を返すので、その逆向きにあたる —— <b>x が等間隔ならば</b> <code style="color:#22d3bf">signal -&gt; pairs -&gt; signal</code> は bit 一致する。等間隔でない x を持つ対を通すと、<b>x の情報が黙って落ちる</b>(<code style="color:#22d3bf">signal</code> は添字が等間隔だという前提の型)。</p>
+<p>だから <code style="color:#22d3bf">pairs_to_table</code> が <code style="color:#22d3bf">x_uniform</code> を必ず一緒に出す。</p>
+<p>Args:</p>
+<p>pairs: (N, 2) または 2 本の等長 1-D のタプル。</p>
+<p>Returns:</p>
+<p>(N,) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pairs</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_table">pairs_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

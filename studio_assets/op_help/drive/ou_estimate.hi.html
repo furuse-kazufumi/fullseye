@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ou_estimate — DRIVE <code style="color:#22d3bf">traffic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>lateral डगमगाहट (mean 0 वाला OU process dX = −θX dt + σ dW) के parameters समान अंतराल dt वाले observations के क्रम से पढ़ता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>厳密離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt}、ε ~ N(0, q²)、q² = σ²(1 − φ²)/(2θ))の条件つき最尤:</p>
+<p>φ̂ = Σ x_k x_{k+1} / Σ x_k²,  q̂² = mean((x_{k+1} − φ̂ x_k)²),  θ̂ = −ln φ̂ / dt,  σ̂ = q̂ sqrt(2θ̂ / (1 − φ̂²))</p>
+<p>(Euler の (1 − φ̂)/dt でなく ln を使うので dt が粗くても偏らない)。標準誤差は漸近式: se(φ̂) = sqrt((1 − φ²)/n)、se(q̂) = q/sqrt(2n)、θ̂・σ̂ はデルタ法。<code style="color:#22d3bf">sigma_increment</code> = sqrt(mean(Δx²)/dt) は θ を使わない粗い推定(E[Δx²] = σ²(1 − φ)/θ なので θ dt → 0 で σ。相関時間の長い系列を短く見るとき、位置の標本 SD より σ を安定に読める)。</p>
+<p>戻り値 dict: <code style="color:#22d3bf">theta</code>, <code style="color:#22d3bf">sigma</code>, <code style="color:#22d3bf">sd</code>(定常 SD σ/√(2θ))、<code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">q</code>, <code style="color:#22d3bf">n</code>(増分の数)、<code style="color:#22d3bf">se_theta</code>, <code style="color:#22d3bf">se_sigma</code>, <code style="color:#22d3bf">sigma_increment</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 1-D でない・3 点未満・非有限、dt ≤ 0、φ̂ ∉ (0, 1)(この dt では平均へ戻る過程に見えない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">traffic</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:idm_accel">idm_accel</a> · <a style="color:#22d3bf" href="opdrive:idm_equilibrium_gap">idm_equilibrium_gap</a> · <a style="color:#22d3bf" href="opdrive:idm_platoon_simulate">idm_platoon_simulate</a> · <a style="color:#22d3bf" href="opdrive:driver_style">driver_style</a> · <a style="color:#22d3bf" href="opdrive:lateral_wobble">lateral_wobble</a> · <a style="color:#22d3bf" href="opdrive:social_force_step">social_force_step</a> · <a style="color:#22d3bf" href="opdrive:pedestrian_crossing">pedestrian_crossing</a> · <a style="color:#22d3bf" href="opdrive:occlusion_reveal_distance">occlusion_reveal_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetraffic.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

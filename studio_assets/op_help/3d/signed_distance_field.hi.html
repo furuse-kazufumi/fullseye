@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signed_distance_field — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.signed_distance_field(vol, device=&#x27;cpu&#x27;, iso=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;signed_distance_field&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>occupancy/density voxel → signed distance field SDF (अंदर&lt;0, बाहर&gt;0)। edt_jfa को दोनों तरफ़ लागू करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>SDF はマッチングに優れた表現(滑らか・勾配=法線・0 等値面=表面)。inside/outside のユークリッド距離差で作る。GPU native。voxel↔SDF↔occupancy を相互変換できる。</p>
+<p>定義: <code style="color:#22d3bf">occ = vol &gt; iso</code> として <code style="color:#22d3bf">d_out = edt_jfa(occ)</code>(各 voxel から最寄りの占有 voxel までの距離、占有内では 0)、<code style="color:#22d3bf">d_in = edt_jfa(~occ)</code>(最寄りの非占有 voxel まで)、<code style="color:#22d3bf">sdf = d_out − d_in</code>。外側は +距離、内側は −距離(voxel 単位、ユークリッド)。voxel 中心同士の距離なので <b>0 になる voxel は無く</b>、境界の占有 voxel は −1、隣接する非占有 voxel は +1(0 等値面は voxel の間)。<code style="color:#22d3bf">iso</code> は密度→占有の閾値(既定 0.5。個数密度なら「1 点以上」)。全占有・全空の volume は seed の無い側の距離が 1e6 に飽和し、全占有では −1e6、全空では +1e6 になる(例外は出ない)。返り値 <code style="color:#22d3bf">(D,H,W)</code> float32 numpy。</p>
+<p>後段: <code style="color:#22d3bf">sdf_to_occupancy</code> で戻す、<code style="color:#22d3bf">voxel_to_mesh(sdf, iso=0.0)</code> で面、<code style="color:#22d3bf">sobel3d</code> で法線場。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:transforms_repr">transforms_repr</a> — <code style="color:#22d3bf">py -3.11 examples_3d/transforms_repr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sdf</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

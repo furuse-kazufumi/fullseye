@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_earth_curvature_drop — DEM <code style="color:#22d3bf">geodesy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">measurement</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_earth_curvature_drop(distance_m, refraction=0.13)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_earth_curvature_drop(distance_m, refraction=0.13)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_earth_curvature_drop&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>line-of-sight गणना के लिए <b>पृथ्वी की curvature से गिरावट</b> [m]। <code style="color:#22d3bf">(1 - k) d^2 / (2 R)</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>遠くの地面は地球の丸みぶん下がって見え、大気屈折はそれを一部打ち消します。標準大気(<code style="color:#22d3bf">k = 0.13</code>)での目安:</p>
+<p>==========  ============  ============</p>
+<p>距離        曲率のみ      屈折込み</p>
+<p>==========  ============  ============</p>
+<p>1 km        0.078 m       0.068 m</p>
+<p>5 km        1.962 m       1.707 m</p>
+<p>10 km       7.848 m       6.828 m</p>
+<p>30 km       70.63 m       61.45 m</p>
+<p>==========  ============  ============</p>
+<p>30 km 先の見通しでは <b>60 m 以上</b>下がるので、平面として扱った可視領域はその距離では意味を持ちません。<code style="color:#22d3bf">refraction</code> は標準大気の慣行値であって定数ではない —— 夜間の逆転層では負にも 0.25 にもなります。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_geodesy_tour">dem_geodesy_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_geodesy_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_height_frames">poc_geodetic_height_frames</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_height_frames.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geodesy</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_geodetic_to_ecef">dem_geodetic_to_ecef</a> · <a style="color:#22d3bf" href="opdem:dem_ecef_to_geodetic">dem_ecef_to_geodetic</a> · <a style="color:#22d3bf" href="opdem:dem_geocentric_grid">dem_geocentric_grid</a> · <a style="color:#22d3bf" href="opdem:dem_cell_size_webmercator">dem_cell_size_webmercator</a> · <a style="color:#22d3bf" href="opdem:dem_geodetic_slope">dem_geodetic_slope</a> · <a style="color:#22d3bf" href="opdem:dem_geoid_height">dem_geoid_height</a> · <a style="color:#22d3bf" href="opdem:dem_height_frame_convert">dem_height_frame_convert</a> · <a style="color:#22d3bf" href="opdem:dem_height_frame_residual">dem_height_frame_residual</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

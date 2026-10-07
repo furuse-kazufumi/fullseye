@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shot_is_legal — DRIVE <code style="color:#22d3bf">racket</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;shot_is_legal&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>shot (p, v, ω) को असली physics से पहले से देखकर तय करता है कि क्या वह net पार करता है, प्रतिद्वंद्वी के court पर ठीक 1 बार गिरता है, और प्रतिद्वंद्वी के plane x = ∓x_r पर मारने योग्य ऊँचाई पर पहुँचता है। <code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">racket</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:racket_params">racket_params</a> · <a style="color:#22d3bf" href="opdrive:racket_impact">racket_impact</a> · <a style="color:#22d3bf" href="opdrive:racket_hit_check">racket_hit_check</a> · <a style="color:#22d3bf" href="opdrive:aim_velocity">aim_velocity</a> · <a style="color:#22d3bf" href="opdrive:racket_plan">racket_plan</a> · <a style="color:#22d3bf" href="opdrive:racket_move">racket_move</a> · <a style="color:#22d3bf" href="opdrive:strategy_attacker">strategy_attacker</a> · <a style="color:#22d3bf" href="opdrive:strategy_feeder">strategy_feeder</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: racket.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

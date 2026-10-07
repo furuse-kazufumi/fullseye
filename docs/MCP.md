@@ -50,7 +50,7 @@ retrieval 無しでは使えない)。
 | tool | 何をするか |
 |---|---|
 | `fullseye_search_ops` | 名前・HALCON 名・カテゴリ・次元の部分一致。返り値の `sources` が出どころ(index / registry / ledger / note / facade)、`by_sources` が層別の内訳 |
-| `fullseye_find_ops` | やりたいことの言葉(日本語・英語・中文 簡/繁・한국어・Deutsch)で探す。op の要約 6 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約(問い合わせの言語)とノートの場所を返す。同義語は拾わない |
+| `fullseye_find_ops` | やりたいことの言葉(日本語・英語・中文 簡/繁・한국어・Deutsch・हिन्दी)で探す。op の要約 7 言語・名前・HALCON 名・型を BM25 で照合し、順位つきで要約(問い合わせの言語)とノートの場所を返す。同義語は拾わない |
 | `fullseye_op_help` | op の知識層ノート(使い方・つまみ a/b の実効・HALCON 相当)+ 生成済みで実行が検証された図を `resource_link` で |
 | `fullseye_catalog_coverage` | カタログ 5 層の交差。検索がどれだけの機能を見えているか |
 | `fullseye_list_samples` | 同梱サンプル(来歴・ライセンスつき) |

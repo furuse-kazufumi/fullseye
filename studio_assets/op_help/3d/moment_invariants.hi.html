@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">moment_invariants — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.moment_invariants(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;moment_invariants&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>translation + rotation + scale invariant shape feature vector (Sadjadi–Hall शैली + higher-order radial distribution)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>★入力は <b><code style="color:#22d3bf">(N,3)</code> の点群</b>。2-D の<b>領域</b>(画像)から同じ趣旨の量が欲しいときは、この op ではなく HALCON 流の <code style="color:#22d3bf">moments_region_2nd_invar</code> / <code style="color:#22d3bf">moments_region_central_invar</code> / <code style="color:#22d3bf">moments_region_3rd_invar</code>(Hu モーメント) を使う。名前が似ているので取り違えやすく、<code style="color:#22d3bf">(H,W)</code> を渡すと「points must be a point cloud of shape (N,3)」で落ちる(2026-09-09、<code style="color:#22d3bf">poc_rotation_invariance_audit</code> を書くときに実際に踏んだ)。</p>
+<p>処方:</p>
+<p style="margin:2px 0 2px 12px">1. 重心中心化(並進を除去)。</p>
+<p style="margin:2px 0 2px 12px">2. RMS 半径 R = sqrt(mean‖p-c‖²) で割ってスケール正規化(R→1)。これで正規化後の中心 2 次モーメントは一様スケール s に依らない。</p>
+<p style="margin:2px 0 2px 12px">3. 正規化共分散 C̃ の主不変量(特性多項式の係数)を並べる:</p>
+<p>λ̂1 &gt;= λ̂2 &gt;= λ̂3   … C̃ の固有値(= 正規化した主 2 次モーメント、</p>
+<p>Σλ̂ = 1、回転不変)</p>
+<p>J2 = λ̂1λ̂2 + λ̂1λ̂3 + λ̂2λ̂3   (Sadjadi–Hall 第 2 不変量 = 2×2 主小行列和)</p>
+<p>J3 = λ̂1λ̂2λ̂3               (第 3 不変量 = det C̃)</p>
+<p style="margin:2px 0 2px 12px">4. 正規化 4 次半径モーメント m4 = mean(‖p̂-c‖⁴)(= mean(r⁴)/mean(r²)²)。r = 重心からの距離なので回転+並進不変、RMS 正規化済でスケール不変。</p>
+<p>返すベクトルは [λ̂1, λ̂2, λ̂3, J2, J3, m4] (長さ 6)。第 1 不変量 J1 = Σλ̂ は正規化で常に 1 になり識別に寄与しないため省く。J2,J3 は固有値の対称式(冗長)だが、Sadjadi–Hall の代数不変量シグネチャとの互換のため併記する。</p>
+<p>識別性の内訳(honest):</p>
+<p style="margin:2px 0 2px 12px">• λ̂1,λ̂2,λ̂3(と対称式 J2,J3)は <b>2 次モーメント(共分散固有値)のみ</b> に由来し、独立自由度は主軸アスペクト比の 2 つだけ。これだけでは 2 次が等方な形状(solid cube と solid sphere は共に λ̂≈(1/3,1/3,1/3))を区別できない。</p>
+<p style="margin:2px 0 2px 12px">• m4 は <b>半径分布の 4 次モーメント</b> で、2 次では潰れる高次の形状差を捉える。一様 solid sphere は m4=75/63≈1.190、一様 solid cube は m4=19/15≈1.267 と異なるため、両者を分離できる。</p>
+<p>球なら概ね (1/3, 1/3, 1/3, 1/3, 1/27, 1.190)、細長い棒なら (≈1, ≈0, ≈0, ≈0, ≈0, 大) に近づく。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>np.ndarray, shape (6,)</p>
+<p>並進・回転・スケール不変な特徴ベクトル。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 2。形状不正・非有限・全点一致(中心化後の広がりが 0)は <code style="color:#22d3bf">ValueError</code>。縮退判定はスケール相対(<code style="color:#22d3bf">rms &lt;= 1e-12 × max|centered|</code>)なので、座標が極小なだけの点群は弾かない。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 (6,)。<code style="color:#22d3bf">λ̂</code> は 0 でクリップ済み、<code style="color:#22d3bf">Σλ̂ = 1</code>。</p>
+<p style="margin:2px 0 2px 12px">• 不変なのは並進・回転・一様スケールのみ。鏡映(反転)にも不変(固有値と半径分布は反転で変わらない)ので鏡像体は区別できない。非一様スケールや点密度の偏り(サンプリングの粗密)は値を変える。</p>
+<p style="margin:2px 0 2px 12px">• 点密度に敏感な用途では前段で <code style="color:#22d3bf">voxel_grid_downsample</code> で密度を均す。比較は <code style="color:#22d3bf">shape_distance</code>(台帳 op、同じ長さの記述子ベクトル同士の距離)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:moment_invariants">moment_invariants</a> — <code style="color:#22d3bf">py -3.11 examples_3d/moment_invariants.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">descriptor</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">moment_invariant</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:principal_moments">principal_moments</a> · <a style="color:#22d3bf" href="op3d:central_moments">central_moments</a> · <a style="color:#22d3bf" href="op3d:inertia_tensor">inertia_tensor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: moments3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

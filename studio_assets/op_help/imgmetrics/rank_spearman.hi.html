@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rank_spearman — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqatid; iqatid.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_spearman&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Spearman का rank correlation ρ = औसत rank के बीच Pearson correlation (बराबर rank होने पर भी सही रूप; पुराना सूत्र 1 − 6Σd²/(n(n²−1)) केवल तब मेल खाता है जब बराबर rank न हों)। monotonic बढ़ने पर 1, उलटने पर −1। कोई एक स्थिर हो तो <code style="color:#22d3bf">nan</code> (rank का variance 0 है, correlation परिभाषित नहीं)। ±inf का केवल क्रम उपयोग होता है (पूर्ण मेल वाला PSNR = inf छोड़ा नहीं जाता)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: लंबाई मेल नहीं खाती, 2 से कम, nan।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_fsim_gmsd_vif">poc_iqa_fsim_gmsd_vif</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_fsim_gmsd_vif.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_tid2013">poc_iqa_tid2013</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_tid2013.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">iqa</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_data">rank_data</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_kendall_b">rank_kendall_b</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_published">tid2013_published</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_root">tid2013_root</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_metric_values">tid2013_metric_values</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_evaluate">tid2013_evaluate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: iqatid.py — IMGMETRICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,7 +3,7 @@
 <!-- 一致することを CI drift テストが強制する(再生成==commit 済み)。手編集しないこと。 -->
 # Fullseye 오퍼레이터 문서 — AI 가 검색해 쓰는 코퍼스
 
-[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · **한국어** · [Deutsch](./INDEX.de.md)
+[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · **한국어** · [Deutsch](./INDEX.de.md) · [hi](./INDEX.hi.md)
 
 **fullseye 0.5.0** 의 오퍼레이터 문서. 오퍼레이터마다 Markdown 노트가 하나씩 있고(1 op = 1 파일, RAD 코퍼스 형태), Studio 의 HTML 도움말은 여기서 일괄 변환합니다(`tools/opdocs.py html`). 이 목차는 폴더 구조에서 자동 생성됩니다.
 

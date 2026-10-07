@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">palette_quantize — GFX2D <code style="color:#22d3bf">post</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.palette_quantize(rgb, colors=None, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.palette_quantize(rgb, colors=None, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;palette_quantize&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर pixel को Euclidean RGB में सबसे निकट palette रंग पर map करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">colors</code> is an <code style="color:#22d3bf">(K, 3)</code> array or a list of <code style="color:#22d3bf">palette</code> role names; the default is the whole Okabe–Ito set plus black and white, so the result stays legible under a colour vision deficiency.</p>
+<p>The search is exhaustive, so the assignment is <b>optimal for this metric</b> and each pixel&#x27;s error equals its distance to the nearest palette entry — there is no approximation to bound. The suite checks optimality by brute force and checks that an image whose colours already lie in the palette comes back unchanged, bit for bit.</p>
+<p>Euclidean distance in (possibly sRGB-encoded) RGB is not perceptual distance. That is a documented choice, not an oversight: a perceptual metric needs a colour-appearance model this module does not own, and quantising in an unstated space would be worse than quantising in a stated one.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">post</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a> · <a style="color:#22d3bf" href="opgfx2d:film_grain">film_grain</a> · <a style="color:#22d3bf" href="opgfx2d:color_lut">color_lut</a> · <a style="color:#22d3bf" href="opgfx2d:color_grade">color_grade</a> · <a style="color:#22d3bf" href="opgfx2d:dither">dither</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

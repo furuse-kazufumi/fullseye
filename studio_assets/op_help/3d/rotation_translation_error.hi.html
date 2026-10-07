@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rotation_translation_error — 3D <code style="color:#22d3bf">registration_metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose × pose</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rotation_translation_error(gt, est)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import registration_eval; registration_eval.rotation_translation_error(gt, est)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;rotation_translation_error&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 4×4 transforms के बीच relative rotation error (geodesic angle [डिग्री], RRE) और relative translation error (RTE)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>RRE = 角度(gt_R^T · est_R) = arccos((tr−1)/2) を度で。任意軸まわりの角 θ の回転差なら RRE=θ。RTE = ‖gt_t − est_t‖。→ (rre_deg, rte)。非 4×4 は ValueError(fail-closed)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">gt</code> / <code style="color:#22d3bf">est</code>: 4×4 同次変換(左上 3×3 が回転、右列が並進)。非有限を含むと <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">rre_deg</code> は [0, 180] の度(cos は [-1,1] にクリップしてから arccos)。<code style="color:#22d3bf">rte</code> は並進列の差のノルムで座標の単位。並進列は回転の原点に依存するので、同じ姿勢誤差でも原点が物体から遠いほど RTE は大きく出る(比較は同じフレーム規約の変換どうしで行う)。</p>
+<p style="margin:2px 0 2px 12px">• 回転行列が直交でなくても検査しないので、<code style="color:#22d3bf">gicp</code> 等の出力 (R,t) を同モジュールの <code style="color:#22d3bf">make_transform</code> で組んだ正しい変換を渡す。<code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">registration_recall</code> が点群上の残差で測るのに対し、こちらは変換パラメータそのものの差を測る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reg_eval">reg_eval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reg_eval.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">registration_metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:inlier_ratio">inlier_ratio</a> · <a style="color:#22d3bf" href="op3d:rmse_inliers">rmse_inliers</a> · <a style="color:#22d3bf" href="op3d:registration_recall">registration_recall</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: registration_eval.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

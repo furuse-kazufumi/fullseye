@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">correlation_score — REPRCONV <code style="color:#22d3bf">score</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">score</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.correlation_score(voxel_a, voxel_b)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.correlation_score(voxel_a, voxel_b)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;correlation_score&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 <code style="color:#22d3bf">voxel</code> → normalised cross-correlation का <code style="color:#22d3bf">score</code> volume। <b>इस type में आने का एकमात्र रास्ता</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">score</code> は <code style="color:#22d3bf">refine_peak_newton</code> が食う型だが、<b>台帳のどの op も <code style="color:#22d3bf">score</code> を産まなかった</b>(実測。生成器の種を置いてようやく到達していた)。ここでは FFT による循環相互相関を返す:</p>
+<p>score[s] = sum_x (a[x] - mean_a) * (b[x + s] - mean_b) / (N * std_a * std_b)</p>
+<p>したがって <code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">a</code> を <code style="color:#22d3bf">s0</code> だけ <code style="color:#22d3bf">np.roll</code> したものなら、ピークは<b>厳密に</b> <code style="color:#22d3bf">s0</code> に立つ(閉形式の真値。テストがこれを使う)。循環相関なので端は巻き込む —— <b>打ち切り相関ではない</b>ことを明記しておく。</p>
+<p>Args:</p>
+<p>voxel_a: (D, H, W)。</p>
+<p>voxel_b: (D, H, W)、<code style="color:#22d3bf">voxel_a</code> と同形。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64、値域は概ね [-1, 1] (完全一致で 1.0)。</p>
+<p>Raises:</p>
+<p>ValueError: 3-D でない / 形が違う / 定数体積(標準偏差 0)/ 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leak_localization">poc_leak_localization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leak_localization.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">score</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:score_to_position">score_to_position</a> · <a style="color:#22d3bf" href="opreprconv:score_to_image2d">score_to_image2d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">score</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:score_to_position">score_to_position</a> · <a style="color:#22d3bf" href="opreprconv:score_to_image2d">score_to_image2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

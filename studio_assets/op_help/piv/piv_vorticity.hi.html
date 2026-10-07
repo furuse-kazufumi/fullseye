@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_vorticity — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>vorticity <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>। <b>वामावर्त धनात्मक है</b> (image coordinate में परिभाषा)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
+<p>Args:</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>
+<p>spacing: 隣り合うベクトルの間隔 [px] (<code style="color:#22d3bf">info[&quot;step&quot;]</code>)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(h, w)</code>。単位は 1/フレーム(<code style="color:#22d3bf">spacing</code> が画素なら)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_flow_from_particles">piv_flow_from_particles</a> — <code style="color:#22d3bf">py -3.11 examples/piv_flow_from_particles.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tactile_dipole_torque">poc_tactile_dipole_torque</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tactile_dipole_torque.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_deform_pass">piv_deform_pass</a> · <a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:correlation_quality">correlation_quality</a> · <a style="color:#22d3bf" href="oppiv:speckle_quality">speckle_quality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_velocity_gradient">piv_velocity_gradient</a> · <a style="color:#22d3bf" href="oppiv:piv_q_criterion">piv_q_criterion</a> · <a style="color:#22d3bf" href="oppiv:piv_swirling_strength">piv_swirling_strength</a> · <a style="color:#22d3bf" href="oppiv:piv_strain_rate">piv_strain_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

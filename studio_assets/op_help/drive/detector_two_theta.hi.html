@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">detector_two_theta — DRIVE <code style="color:#22d3bf">pxrd</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pxrd; pxrd.detector_two_theta(shape, geometry)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;detector_two_theta&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>detector के हर pixel का 2θ, azimuth χ और सापेक्ष solid angle (झुकाव, दूरी और केंद्र सहित)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">shape = (H, W)</code>、<code style="color:#22d3bf">geometry</code> は module の docstring の Fit2D 型。返り値(dict): <code style="color:#22d3bf">two_theta</code> [deg]・<code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>、+列が 0、+行が +90)・<code style="color:#22d3bf">solid_angle</code>(ビームの中心で傾き 0 のとき 1 になる相対値、<code style="color:#22d3bf">cos³</code> で落ちる)。2θ は <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
+<p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、<code style="color:#22d3bf">|tilt| &gt;= 60</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pxrd</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cif_read">cif_read</a> · <a style="color:#22d3bf" href="opdrive:cubic_prototype">cubic_prototype</a> · <a style="color:#22d3bf" href="opdrive:powder_reflections">powder_reflections</a> · <a style="color:#22d3bf" href="opdrive:scherrer_size">scherrer_size</a> · <a style="color:#22d3bf" href="opdrive:debye_ring_image">debye_ring_image</a> · <a style="color:#22d3bf" href="opdrive:detector_calibrate">detector_calibrate</a> · <a style="color:#22d3bf" href="opdrive:azimuthal_integrate">azimuthal_integrate</a> · <a style="color:#22d3bf" href="opdrive:diffraction_peaks">diffraction_peaks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pxrd.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

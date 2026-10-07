@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_nonrigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.register_nonrigid(src, dst, iters=20, lam=1.0, k_smooth=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_nonrigid&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.register_nonrigid(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">points</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.register_nonrigid.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">deform3d.register_nonrigid</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(warped, info, info)</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>non-rigid ICP से <code style="color:#22d3bf">src</code> को <code style="color:#22d3bf">dst</code> की ओर लाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各反復で「現在の変形後 src」から <code style="color:#22d3bf">dst</code> への最近傍対応を張り直し、その対応を制御点対応(制御中心 = 元の src)として TPS を正則化つきで再当てはめし、src を変形する。対応が既知でなくとも滑らかな非線形変形を回復できる。</p>
+<p>実装上の要点(頑健性):</p>
+<p style="margin:2px 0 2px 12px">• <b>スケール不変</b>: λ は dst の重心まわり RMS 半径に対する相対値として扱う(内部で λ_eff = λ·scale)。座標が 100 倍でも同じ λ が同じ挙動を与える。</p>
+<p style="margin:2px 0 2px 12px">• <b>発散ガード</b>: 対応が曖昧だと単純な NN 反復は正のフィードバックで発散し得る。反復ごとの対応 RMS を監視し、<b>最良反復</b>(最小 RMS)の変形とモデルを返す。これにより悪い λ でも「初期より悪い」結果を返さない。</p>
+<p style="margin:2px 0 2px 12px">• λ が大きいほど剛(変形が小さい)。既定 λ=1.0 は保守的(ほぼ剛)なので、大きな非線形変形を回復させたい場合は λ を小さく(例 0.01〜0.05)する。</p>
+<p>引数:</p>
+<p>src: (N,3) 移動側点群。</p>
+<p>dst: (M,3) 固定側(参照)点群。</p>
+<p>iters: 最大反復回数。</p>
+<p>lam: TPS 正則化 λ(スケール相対)。大きいほど変形が滑らか(外れ対応に頑健、</p>
+<p>当てはめは緩い)。小さいほど密着(細かい変形を回復)。</p>
+<p>k_smooth: None なら最近傍1点を目標にする(ハード対応)。整数を与えると</p>
+<p><code style="color:#22d3bf">dst</code> 側の k 近傍の平均を目標にして対応を平滑化する(ノイズに頑健)。</p>
+<p>返り値:</p>
+<p>warped_src: (N,3) 最良反復での変形後 src。</p>
+<p>model: 対応する TPS モデル(制御中心 = 元 src、原座標系でそのまま</p>
+<p><code style="color:#22d3bf">tps_warp</code> に渡せる)。1回も当てはめできなければ None。</p>
+<p>info: dict。&quot;rms&quot;(最良の対応 RMS)、&quot;rms_init&quot;(初期=恒等時の対応 RMS)、</p>
+<p>&quot;rms_history&quot;(list)、&quot;iters&quot;(実反復数)、&quot;best_iter&quot;、&quot;converged&quot;(bool)。</p>
+<p>例外:</p>
+<p>ValueError: 形状不正、点数不足、k_smooth 不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:nonrigid_deform">nonrigid_deform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/nonrigid_deform.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">deform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:tps_fit">tps_fit</a> · <a style="color:#22d3bf" href="op3d:tps_warp">tps_warp</a> · <a style="color:#22d3bf" href="op3d:register_cpd_rigid">register_cpd_rigid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deform3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

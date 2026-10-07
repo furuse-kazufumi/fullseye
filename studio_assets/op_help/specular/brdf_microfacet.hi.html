@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">brdf_microfacet — SPECULAR <code style="color:#22d3bf">reflectance</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import specularity; specularity.brdf_microfacet(normals, light=(0.0, 0.0, 1.0), view=(0.0, 0.0, 1.0), roughness=0.3, f0=0.04)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;brdf_microfacet&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>GGX / Trowbridge-Reitz microfacet specular BRDF। → (H, W), इकाई 1/sr।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">f_s = D * G * F / (4 (n.l) (n.v))</code> with</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">D</code> the Trowbridge-Reitz (1975) / GGX normal distribution, <code style="color:#22d3bf">a^2 / (pi * ((n.h)^2 (a^2 - 1) + 1)^2)</code> for <code style="color:#22d3bf">a = roughness^2</code>, which integrates to 1 against <code style="color:#22d3bf">(n.h) dw</code> over the hemisphere — measured by 20000-point midpoint quadrature in <code style="color:#22d3bf">tests/test_specularity.py</code> at relative errors 3.2e-07, 6.3e-08 and 4.0e-09 for roughness 0.2, 0.3 and 0.6, all of it quadrature error (the 200000-point rule gives 3.2e-09, 6.3e-10, 4.0e-11, exactly the 100x a midpoint rule predicts);</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">G</code> the separable Smith (1967) masking-shadowing term with the GGX lambda;</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">F</code> Schlick&#x27;s (1994) Fresnel approximation, <code style="color:#22d3bf">f0 + (1 - f0) (1 - v.h)^5</code>. *f0* is the normal-incidence reflectance:</p>
+<p>about 0.04 for common dielectrics, 0.5 to 1.0 for metals. When the exact</p>
+<p>Fresnel curve matters, use <code style="color:#22d3bf">match3d.fresnel_reflectance</code> instead — this</p>
+<p>is the approximation the microfacet literature specifies, and it is named</p>
+<p>rather than hidden.</p>
+<p>Exact ground truth it reproduces: at normal incidence with light, view and normal aligned, every geometric factor is 1 and the value collapses to <code style="color:#22d3bf">f0 / (4 pi roughness^4)</code> in closed form — reproduced <b>bit for bit</b> at roughness 0.3, 0.5 and 1.0 and to 3.3e-16 relative at roughness 0.1, which took rewriting the GGX denominator to avoid a cancellation (see the comment at the code; the textbook arrangement was off by 2.2e-13 relative at the peak). The lobe is reciprocal in light and view to machine precision (measured 1.7e-16), and its maximum sits at the half-vector.</p>
+<p><code style="color:#22d3bf">roughness</code> is the perceptual parameter, squared once to reach the GGX <code style="color:#22d3bf">alpha</code> — the convention that makes a linear slider feel linear. A perfectly smooth surface (<code style="color:#22d3bf">roughness = 0</code>) is a delta function, not a finite BRDF, so it is refused rather than returned as an infinity.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: geometry problems as in <code style="color:#22d3bf">brdf_blinn_phong</code>; *roughness* outside <code style="color:#22d3bf">(0, 1]</code>; *f0* outside <code style="color:#22d3bf">[0, 1]</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solder_fillet_aoi">poc_solder_fillet_aoi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solder_fillet_aoi.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">reflectance</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:brdf_blinn_phong">brdf_blinn_phong</a> · <a style="color:#22d3bf" href="opspecular:dichromatic_render">dichromatic_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

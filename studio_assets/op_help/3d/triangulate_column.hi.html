@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">triangulate_column — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.triangulate_column(column, k_cam, k_proj, rot, trans) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;triangulate_column&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर camera pixel के &quot;projector column number&quot; से depth Z को triangulate करता है (structured light का अंतिम stage)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>構造化光スキャナの幾何そのもの: カメラ画素 (u,v) は 1 本の視線を張り、投影機のコラム番号 u_p は 1 枚の平面(投影機中心とそのコラムを含む平面)を張る。視線と平面の交点が表面の 3D 点で、そのカメラ系 Z が深度になる。<b>閉じた式</b>なので反復も最適化も要らない。</p>
+<p>column: (H, W) の投影機コラム番号(<b>サブピクセル実数</b>)。位相から出した値をそのまま</p>
+<p>渡せる。NaN = 未確定画素(出力も NaN)。</p>
+<p>k_cam:  カメラ内部行列 3x3(fx, fy, cx, cy[, skew])。画素中心は整数座標</p>
+<p>(<code style="color:#22d3bf">render3d.render_mesh</code> / <code style="color:#22d3bf">camera.depth_to_points</code> と同じ約束)。</p>
+<p>k_proj: 投影機内部行列 3x3。使うのは第 0 行(コラム方向)と第 2 行だけ。</p>
+<p>rot:    3x3 回転。カメラ系 → 投影機系(X_proj = rot·X_cam + trans)。</p>
+<p>trans:  長さ 3 の並進(同上、単位はシーンと同じ)。<b>ゼロベクトルは禁止</b></p>
+<p>(基線 0 = カメラと投影機が同一点。平面と視線が交わらず深度が定義できない)。</p>
+<p>返り値: (H, W) float64 の深度マップ(カメラ前方の Z、<code style="color:#22d3bf">render_mesh</code> の depth と同じ量)。</p>
+<p>交点が後方(Z&lt;=0)や視線が平面と平行な画素は NaN。</p>
+<p>導出: X_cam = Z·d(d = K_cam⁻¹[u,v,1])。投影機側のコラム条件は(K_proj[0] − u_p·K_proj[2])·X_proj = 0。X_proj = rot·X_cam + trans を代入して Z について解くと Z = −(a·trans) / (a·(rot·d))、a = K_proj[0] − u_p·K_proj[2]。</p>
+<p>Raises: 形状・行列不正、基線ゼロ、特異なカメラ行列で ValueError。</p>
+<p>来歴(公開文献): 光線と平面の交点による構造化光三角測量 — Hartley &amp; Zisserman, *Multiple View Geometry* 2nd ed. §12(射影幾何の交わり)/ Salvi et al., *Pattern Recognition* 43 2010(構造化光パターンの分類と復号)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:structured_light_scan">structured_light_scan</a> — <code style="color:#22d3bf">py -3.11 examples_3d/structured_light_scan.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fringe.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

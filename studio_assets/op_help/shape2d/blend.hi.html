@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blend — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend(a, b, alpha)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.blend(a, b, alpha)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;blend&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>cross-dissolve (1-alpha)·a + alpha·b (a, b का shape समान और मान [0,1] में)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた 2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら <code style="color:#22d3bf">morph</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>、同じ形。float64 に変換する。<b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。値域の検査はせず、結果を <code style="color:#22d3bf">[0, 1]</code> にクリップするだけなので、0〜255 の画像を渡すと白飛びした絵が返る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<code style="color:#22d3bf">[0, 1]</code> に<b>無言でクリップ</b>(0 で <code style="color:#22d3bf">a</code>、1 で <code style="color:#22d3bf">b</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(次元が 2/3 でない、空、形の不一致)。</p>
+<p><code style="color:#22d3bf">morph_sequence</code> の各フレームは、ワープ後の 2 枚をこれと同じ式で混ぜている。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_morph">image_morph</a> — <code style="color:#22d3bf">py -3.11 examples/image_morph.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_live4d">poc_live4d</a> — <code style="color:#22d3bf">py -3.11 examples/poc_live4d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">morph</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:add_frame_corners">add_frame_corners</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imagemorph.py — SHAPE2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

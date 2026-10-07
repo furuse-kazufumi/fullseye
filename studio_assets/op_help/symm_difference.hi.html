@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">symm_difference — 2D <code style="color:#22d3bf">nary</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">region × region</code> → <code style="color:#22d3bf">region</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: यह op 2 inputs लेता है, इसलिए इसे <code style="color:#22d3bf">fullseye.apply</code> से नहीं चलाया जा सकता (वह एक-image model है)। <code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;symm_difference&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code> (<code style="color:#22d3bf">$</code> से शुरू होने वाले नाम बाहर से दिए जाने वाले inputs हैं)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">symm_difference</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 regions का symmetric difference (केवल किसी एक में आने वाले pixels)। HALCON के <code style="color:#22d3bf">symm_difference</code> के समकक्ष। overlap को मिटा देता है, इसलिए 2 masks के बीच का खिसकाव देखने में उपयोग होता है। <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> का उपयोग नहीं होता।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">region</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:reg_erode">reg_erode</a> · <a style="color:#22d3bf" href="op:reg_dilate">reg_dilate</a> · <a style="color:#22d3bf" href="op:reg_open">reg_open</a> · <a style="color:#22d3bf" href="op:reg_close">reg_close</a> · <a style="color:#22d3bf" href="op:fill_holes">fill_holes</a> · <a style="color:#22d3bf" href="op:select_largest">select_largest</a> · <a style="color:#22d3bf" href="op:remove_small">remove_small</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">nary</code>)</h3>
+<p><a style="color:#22d3bf" href="op:add_image">add_image</a> · <a style="color:#22d3bf" href="op:sub_image">sub_image</a> · <a style="color:#22d3bf" href="op:mult_image">mult_image</a> · <a style="color:#22d3bf" href="op:div_image">div_image</a> · <a style="color:#22d3bf" href="op:abs_diff_image">abs_diff_image</a> · <a style="color:#22d3bf" href="op:max_image">max_image</a> · <a style="color:#22d3bf" href="op:min_image">min_image</a> · <a style="color:#22d3bf" href="op:bit_and">bit_and</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgops_nary.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

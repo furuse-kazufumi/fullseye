@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_xbar_r — SPC <code style="color:#22d3bf">chart</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_xbar_r(subgroups)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.spc_xbar_r(subgroups)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;spc_xbar_r&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>subgroup measurements से Shewhart Xbar-R control chart।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">subgroups</code> is a 2-D array of shape <code style="color:#22d3bf">(m, n)</code> — <code style="color:#22d3bf">m</code> subgroups of <code style="color:#22d3bf">n</code> measurements each, <code style="color:#22d3bf">2 &lt;= n &lt;= 10</code> (the range chart is only calibrated for small subgroups). For each subgroup <code style="color:#22d3bf">j</code> the plotted statistics are the mean <code style="color:#22d3bf">Xbar_j</code> and the range <code style="color:#22d3bf">R_j = max - min</code>. The centre lines are the grand mean <code style="color:#22d3bf">Xbarbar</code> and the mean range <code style="color:#22d3bf">Rbar</code>, and with the ISO 8258 constants <code style="color:#22d3bf">(A2, D3, D4)</code> for that <code style="color:#22d3bf">n</code>::</p>
+<p>xbar_ucl = Xbarbar + A2*Rbar   xbar_lcl = Xbarbar - A2*Rbar</p>
+<p>r_ucl    = D4*Rbar             r_lcl    = D3*Rbar</p>
+<p>Returns a dict (a &quot;table&quot;) with the per-subgroup <code style="color:#22d3bf">xbar</code> / <code style="color:#22d3bf">r</code> arrays, the six limits and three centre lines, the integer indices <code style="color:#22d3bf">out_of_control</code> of subgroups outside either chart, and <code style="color:#22d3bf">in_control</code> (True when that list is empty). The constants are fixed by <code style="color:#22d3bf">n</code>: for <code style="color:#22d3bf">n=5</code> they are exactly <code style="color:#22d3bf">A2=0.577, D3=0.000, D4=2.115</code> (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *subgroups*, a subgroup size outside <code style="color:#22d3bf">[2, 10]</code>, or non-finite / mislabelled input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">chart</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

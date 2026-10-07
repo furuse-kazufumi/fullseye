@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">topology_signature — 3D <code style="color:#22d3bf">medial</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.topology_signature(skeleton)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.topology_signature(skeleton)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;topology_signature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>skeleton के 26-neighbourhood degree से topology descriptor बनाता है। end points/branch points/सामान्य points/isolated points की संख्या लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各骨格 voxel について 26 近傍にある骨格 voxel 数(次数)を数え、</p>
+<p>次数 1  = 端点(endpoint)</p>
+<p>次数 2  = 通常点(骨格の途中)</p>
+<p>次数&gt;=3 = 分岐点(branch)</p>
+<p>次数 0  = 孤立点(isolated)</p>
+<p>に分類する。個数は平行移動・回転(90 度)不変で、形状の位相を粗く要約する記述子になる。</p>
+<p>注意(honest): 26 近傍の次数は、分岐近傍で対角隣接により過大に数えられることがある(離散骨格の既知の性質)。端点数は各枝の末端で厳密だが、分岐点数はやや過大側に振れうる。</p>
+<p>Args:</p>
+<p>skeleton: 骨格 voxel(bool / 0-1 の 3D)。</p>
+<p>Returns:</p>
+<p>dict: endpoints, branches, normal, isolated, total(骨格 voxel 総数),</p>
+<p>degree_hist(次数 -&gt; 個数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:medial_topology">medial_topology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/medial_topology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">medial</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:distance_ridge">distance_ridge</a> · <a style="color:#22d3bf" href="op3d:skeletonize_vol">skeletonize_vol</a> · <a style="color:#22d3bf" href="op3d:medial_axis_points">medial_axis_points</a> · <a style="color:#22d3bf" href="op3d:medial_match">medial_match</a> · <a style="color:#22d3bf" href="op3d:skeleton_junctions3d">skeleton_junctions3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_endpoints3d">skeleton_endpoints3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_prune3d">skeleton_prune3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_branches3d">skeleton_branches3d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: medial.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

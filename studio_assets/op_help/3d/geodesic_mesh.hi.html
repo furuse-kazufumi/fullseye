@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_mesh — 3D <code style="color:#22d3bf">geodesic</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geodesic3d; geodesic3d.geodesic_mesh(vertices: numpy.ndarray, faces: numpy.ndarray, source: int) -&gt; numpy.ndarray</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;geodesic_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>triangle mesh के edge graph पर Dijkstra से source से हर vertex तक geodesic distance। → (V,) float।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各三角形の 3 辺 (0,1),(1,2),(2,0) を無向辺として集め、(min,max) で一意化してから辺長 = 両端頂点の Euclid 距離を重みにした疎グラフを作り、<code style="color:#22d3bf">dijkstra(directed=False)</code> で source からの最短路長を返す。<code style="color:#22d3bf">d[source] = 0</code>、source と辺で繋がらない頂点は <code style="color:#22d3bf">inf</code>。単位は頂点座標の単位。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">vertices</code>: (V,3) 頂点座標(float64 に変換)。<code style="color:#22d3bf">faces</code>: (M,3) 頂点添字(int に変換)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>: 始点頂点の添字。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">faces</code> が空のときは全頂点 <code style="color:#22d3bf">inf</code>(source が範囲内ならそこだけ 0)を返し、例外は出さない。</p>
+<p>実装上の要点: <code style="color:#22d3bf">csr_matrix</code> は同じ (i,j) を重複して渡すと重みを黙って加算するため、重複面・非多様体・巻き順が不揃いなメッシュでも距離が膨らまないよう辺を一意化している。退化辺(i==j)は捨てる。距離は辺に沿った折れ線長なので、粗いメッシュでは真の測地距離より長め(辺の走り方に依存する異方性)になる。<code style="color:#22d3bf">voxel_to_mesh</code> や <code style="color:#22d3bf">convex_hull</code> が返す (verts, faces) をそのまま渡せる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pcl_geodesic">pcl_geodesic</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pcl_geodesic.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geodesic</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:geodesic_distances">geodesic_distances</a> · <a style="color:#22d3bf" href="op3d:farthest_point_sampling">farthest_point_sampling</a> · <a style="color:#22d3bf" href="op3d:knn_graph">knn_graph</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geodesic3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

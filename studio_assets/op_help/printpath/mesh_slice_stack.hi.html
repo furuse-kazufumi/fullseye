@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_slice_stack — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.mesh_slice_stack(mesh: &#x27;Any&#x27;, layer_mm: &#x27;float&#x27; = 0.2, px_per_mm: &#x27;float&#x27; = 10.0, bounds=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;mesh_slice_stack&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>mesh को <code style="color:#22d3bf">layer_mm</code> अंतराल पर काटकर बना <b>layer mask का stack</b> <code style="color:#22d3bf">voxel</code> (Z, Y, X) (0 / 1, Z नीचे से)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各層は <code style="color:#22d3bf">mesh_slice_contours</code> の輪郭を <b>nonzero winding</b> で塗る(外向き法線の輪は中身、内向き法線 = 穴の輪は引く。穴だけが残る層は空)。メッシュの面の向きが揃っていることが前提(STL / 3MF の規約)。<code style="color:#22d3bf">bounds</code> は x–y の範囲(mm)、無ければメッシュ全体 + 2 mm。形に触れない層(上下の端)は 0 のまま。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:mesh_slice_contours">mesh_slice_contours</a> · <a style="color:#22d3bf" href="opprintpath:contours_to_gcode">contours_to_gcode</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">optimize_pose_graph — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pose_graph; pose_graph.optimize_pose_graph(poses_init, edges, fix_first=True, max_iter=200)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;optimize_pose_graph&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>relative pose constraints + loop closures से global poses optimise करता है। → dict{poses, rmse, cost}।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>poses_init (N,6)=[rvec|t] の初期推定(ドリフトあり)、edges の相対姿勢制約を満たすよう最適化。fix_first=True で先頭ノードを固定し gauge を除く。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: <code style="color:#22d3bf">(i, j, rvec_ij, t_ij[, w_rot, w_trans])</code> のリスト。<code style="color:#22d3bf">(rvec_ij, t_ij)</code> は「i から見た j」= <code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code> の計測値(<code style="color:#22d3bf">relative_pose</code> と同じ規約)。オドメトリ (i, i+1) とループ閉じ(離れた i, j)を同じ形で混ぜてよい。重みは残差に <code style="color:#22d3bf">sqrt(w)</code> を掛ける(省略時 1)。</p>
+<p style="margin:2px 0 2px 12px">• 各エッジの残差は <code style="color:#22d3bf">measured⁻¹ ∘ predicted</code> を回転ベクトル + 並進の 6 次元にしたもので、<code style="color:#22d3bf">scipy.optimize.least_squares(method=&quot;lm&quot;)</code> で最小化する(<code style="color:#22d3bf">max_nfev = max_iter × パラメータ数</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">poses</code> (N,6)(<code style="color:#22d3bf">fix_first</code> なら先頭は初期値のまま)、<code style="color:#22d3bf">rmse</code> = <code style="color:#22d3bf">mean_edge_error(poses, edges)</code>、<code style="color:#22d3bf">cost</code> = 最終コスト(残差 2 乗和の 1/2)。</p>
+<p>fail-closed: ノード数 &lt; 2、エッジ 0 本、エッジの添字が <code style="color:#22d3bf">[0, N)</code> を外れる(負の添字の黙った折り返しも拒否)場合は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">fix_first=False</code> にすると gauge が残り解は一意でない(LM は初期値近くの 1 つを返す)。回転は rad、並進は座標の単位で、両者を同じ残差ベクトルに並べるため単位が大きく違うときは重みで揃える。3D 点も観測画素も使わない(それらを含めて最適化するのは <code style="color:#22d3bf">bundle_adjust</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pose_graph_slam">pose_graph_slam</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pose_graph_slam.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pose_graph</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pose_graph.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

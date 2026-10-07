@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tcspc_background_subtract — PHOTON <code style="color:#22d3bf">tcspc</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">counts</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoncount; photoncount.tcspc_background_subtract(hist, method=&#x27;median&#x27;, leading_bins=None, quantile=0.5, scale=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsphoton.get(&quot;tcspc_background_subtract&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>arrival-time histogram से ambient-light / dark-count floor हटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Outdoors, most of what a dToF sensor counts is sunlight: a roughly uniform pedestal under the return pulse. It biases the centroid toward the middle of the window (a floor of <code style="color:#22d3bf">b</code> per bin pulls the first moment toward <code style="color:#22d3bf">window/2</code>) and it inflates the apparent signal, so it is removed before any depth or lifetime estimate.</p>
+<p>The level is estimated by *method* and then <b>subtracted</b> (the sign trap:</p>
+<p>the result is <code style="color:#22d3bf">hist - level</code>, clipped at 0, never <code style="color:#22d3bf">hist + level</code>):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;median&quot;</code> (default) — the median of every bin. Robust while the pulse occupies well under half the window, which is the normal dToF case.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;leading&quot;</code> — the mean of the first *leading_bins* bins, the classical choice when the pulse is known to arrive late (a far target).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;trailing&quot;</code> — the mean of the last *leading_bins* bins, for fluorescence decays where the tail is background.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;quantile&quot;</code> — the given *quantile* of all bins, for tuning by hand.</p>
+<p>*leading_bins* defaults to <code style="color:#22d3bf">None</code> = <code style="color:#22d3bf">min(8, len(hist))</code>, so the default call works on a short histogram instead of raising over a constant nobody chose (a fixed default of 8 made <code style="color:#22d3bf">method=&quot;leading&quot;</code> fail on any histogram with fewer than 8 bins).</p>
+<p>*scale* multiplies the estimated level before subtraction (<code style="color:#22d3bf">scale=1.2</code> for a deliberately aggressive removal). Clipping at 0 means the result is a valid non-negative histogram that the rest of this module will accept.</p>
+<p>Ground truth: on a noiseless histogram with a known flat pedestal of 20 counts/bin under a 5000-photon pulse covering 5.1% of the window, the median estimate recovers 20.000000 and the returned histogram equals the pedestal- free pulse <b>exactly</b> (measured area error 0.0, pinned in the tests).</p>
+<p>Returns a float64 1-D histogram of the same length as *hist*.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *hist*, an unknown *method*, a *leading_bins* outside <code style="color:#22d3bf">[1, len(hist)]</code>, a *quantile* outside <code style="color:#22d3bf">[0, 1]</code>, and a negative *scale*.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dtof_ranging">poc_dtof_ranging</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dtof_ranging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">counts</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a> · <a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:lifetime_fit">lifetime_fit</a> · <a style="color:#22d3bf" href="opphoton:lifetime_phasor">lifetime_phasor</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">tcspc</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:tcspc_simulate">tcspc_simulate</a> · <a style="color:#22d3bf" href="opphoton:tcspc_irf_convolve">tcspc_irf_convolve</a> · <a style="color:#22d3bf" href="opphoton:tcspc_stats">tcspc_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

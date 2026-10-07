@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_zernike — 3D <code style="color:#22d3bf">curvilinear</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.fit_zernike(disk_image, n_max=6, device=&#x27;cpu&#x27;, nr=48, nt=72)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_zernike&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>disc image → Zernike coefficients (optics/wavefront मापन का <b>polar coordinate surface approximation</b>)। return value {(n,m): coef}।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>直交多項式で円板上の曲面(波面収差、レンズ形状)を少数係数に。tilt/defocus/astigmatism/ coma/spherical 等が特定の (n,m) に対応し、回転で m が混ざる(帯域=回転不変)。</p>
+<p>honest 開示(2026-08-30 レビュー実測): 離散サンプリング(既定 nr=48, nt=72)では理論上直交のモード間に<b>最大 ~10% のクロストーク</b>が残る(例: 純 (2,0) defocus 入力で係数回収 0.95、リーク先は (4,0))。支配モードの特定には十分だが、係数の定量比較が要るときは nr/nt を上げる(誤差は解像度に対し単調減少)。</p>
+<p>Raises ValueError: 入力が 2-D でない・2x2 未満・NaN/Inf/float32 桁あふれ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvilinear_proj">curvilinear_proj</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvilinear_proj.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">curvilinear</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:cylinder_unwrap">cylinder_unwrap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

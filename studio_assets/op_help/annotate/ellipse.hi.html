@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ellipse — ANNOTATE <code style="color:#22d3bf">shape</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.ellipse(img, center, radii, angle_deg=0.0, color=&#x27;neutral&#x27;, width=2, fill=False, alpha=1.0, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;ellipse&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ellipse (<code style="color:#22d3bf">angle_deg</code> से घुमाया गया, <code style="color:#22d3bf">fill=True</code> से भरा)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>半径が非正、非有限、alpha が [0,1] の外。</p>
+<p>描画: 画素を <code style="color:#22d3bf">angle_deg</code> だけ回した局所座標 <code style="color:#22d3bf">(u, v)</code> に写し、<code style="color:#22d3bf">q = (u/ra)^2 + (v/rb)^2</code> で判定する。<code style="color:#22d3bf">fill=True</code> は <code style="color:#22d3bf">q &lt;= 1</code>、<code style="color:#22d3bf">fill=False</code> は <code style="color:#22d3bf">|sqrt(q) - 1| &lt;= max(1, width) / (2 min(ra, rb))</code> の帯(アンチエイリアス無し)。帯の幅を<b>短軸で正規化</b>しているので、扁平な楕円では長軸の端ほど線が太く見える(近似)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">center</code>: <code style="color:#22d3bf">(x, y)</code>、x = 列・y = 行。画像外でもよい。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: <code style="color:#22d3bf">(ra, rb)</code> [px]。<code style="color:#22d3bf">ra</code> が <code style="color:#22d3bf">angle_deg</code> 方向、<code style="color:#22d3bf">rb</code> がその直交方向。両方とも正。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">angle_deg</code>: 回転角 [度]。x 軸から時計回り(画面座標、y が下向き)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px] (<code style="color:#22d3bf">fill=False</code> のとき)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">img</code> / <code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">alpha</code> / <code style="color:#22d3bf">scheme</code> の扱いは <code style="color:#22d3bf">rounded_rect</code> と同じ(float64 複製、<code style="color:#22d3bf">[0, 1]</code>、役割名か RGB)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 入力と同形の float64。</p>
+<p><code style="color:#22d3bf">ra == rb</code> なら円。計測結果(楕円フィットの <code style="color:#22d3bf">row, col, phi, ra, rb</code>)を重ねるときは <code style="color:#22d3bf">center=(col, row)</code>、<code style="color:#22d3bf">angle_deg=degrees(phi)</code> に読み替える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_machine_condition_fusion">poc_machine_condition_fusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_machine_condition_fusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading_real">poc_public_camera_heading_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">shape</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:rounded_rect">rounded_rect</a> · <a style="color:#22d3bf" href="opannotate:filled_polygon">filled_polygon</a> · <a style="color:#22d3bf" href="opannotate:arc">arc</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

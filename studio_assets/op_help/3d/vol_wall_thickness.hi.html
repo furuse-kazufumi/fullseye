@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_wall_thickness — 3D <code style="color:#22d3bf">probe</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volprobe; volprobe.vol_wall_thickness(vol, p0, p1, sigma=1.0, threshold=0.1, spacing=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_wall_thickness&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">signal</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.vol_wall_thickness.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">volprobe.vol_wall_thickness</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>probe <code style="color:#22d3bf">p0 -&gt; p1</code> के साथ wall thicknesses — industrial-CT</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>measurement itself.</p>
+<p>Runs <code style="color:#22d3bf">vol_edge_probe</code> (all polarities) and pairs consecutive opposite-polarity edges *rising -&gt; falling* in probe order: each pair is one traversal of bright material (entry surface -&gt; exit surface), and its thickness is the difference of the two edges&#x27; <code style="color:#22d3bf">t_mm</code> (physical units — mm with a spacing, voxels without). A probe crossing both walls of a pipe therefore yields two thicknesses.</p>
+<p>Edges that do not complete a rising -&gt; falling pair (a probe starting or ending inside material, consecutive same-polarity edges) are <b>ignored</b>, not paired creatively — the count of returned thicknesses can be smaller than <code style="color:#22d3bf">len(edges) // 2</code>. Dark walls on a bright background need an inverted volume (the pairing convention is bright material).</p>
+<p>Returns a list of float thicknesses, in probe order (possibly empty). Raises <code style="color:#22d3bf">ValueError</code> on the same malformed inputs as <code style="color:#22d3bf">vol_edge_probe</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:wall_thickness_probe">wall_thickness_probe</a> — <code style="color:#22d3bf">py -3.11 examples_3d/wall_thickness_probe.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">probe</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_profile_line">vol_profile_line</a> · <a style="color:#22d3bf" href="op3d:vol_edge_probe">vol_edge_probe</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volprobe.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

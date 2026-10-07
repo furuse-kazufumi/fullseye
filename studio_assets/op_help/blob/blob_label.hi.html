@@ -1,0 +1,65 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_label — BLOB <code style="color:#22d3bf">connect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_label(region: &#x27;Any&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_label&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>binary region को connected component में बाँटकर <code style="color:#22d3bf">int32</code> label image (background 0, object 1..n) लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>region : array_like</p>
+<p>2-D。<code style="color:#22d3bf">&gt; 0</code> が前景(bool でも実数でもよい。NaN は背景)。</p>
+<p>connectivity : {4, 8}</p>
+<p>斜めに触れる 2 画素をつなぐか。既定 8 は <code style="color:#22d3bf">ndimage.label</code> と</p>
+<p>HALCON <code style="color:#22d3bf">connection</code> の既定に一致する。<b>4 にすると斜めに接した塊が別々に数えられる</b>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p><code style="color:#22d3bf">(H, W)</code> の <code style="color:#22d3bf">int32</code>。番号は 1 から連番で歯抜けが無い。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; m = np.zeros((6, 9), bool); m[1:4, 1:4] = True; m[1:4, 5:8] = True</p>
+<p>&gt;&gt;&gt; int(blob_label(m).max())</p>
+<p>2</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:blob_split_tour">blob_split_tour</a> — <code style="color:#22d3bf">py -3.11 examples/blob_split_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bone_trabecular_thickness">poc_bone_trabecular_thickness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bone_trabecular_thickness.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bump_coplanarity">poc_bump_coplanarity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bump_coplanarity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_split_merge_score">poc_em_split_merge_score</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_split_merge_score.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fresco_craquelure">poc_fresco_craquelure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fresco_craquelure.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gear_tooth_metrology">poc_gear_tooth_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gear_tooth_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gravitational_lens_invariants">poc_gravitational_lens_invariants</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gravitational_lens_invariants.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leaf_disease_area">poc_leaf_disease_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leaf_disease_area.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_machine_condition_fusion">poc_machine_condition_fusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_machine_condition_fusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_metal_grain_size">poc_metal_grain_size</a> — <code style="color:#22d3bf">py -3.11 examples/poc_metal_grain_size.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_nuclei_ploidy">poc_nuclei_ploidy</a> — <code style="color:#22d3bf">py -3.11 examples/poc_nuclei_ploidy.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_sizing">poc_particle_sizing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_sizing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_tracking">poc_particle_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pipe_wall_loss">poc_pipe_wall_loss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pipe_wall_loss.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_grinding_ae">poc_powder_grinding_ae</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_grinding_ae.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_warpage_risk">poc_print_warpage_risk</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_warpage_risk.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pv_thermal_survey">poc_pv_thermal_survey</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pv_thermal_survey.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_real_coin_metrology">poc_real_coin_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_real_coin_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_sea_ice_concentration">poc_sea_ice_concentration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_sea_ice_concentration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solar_el_inspection">poc_solar_el_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solar_el_inspection.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solder_fillet_aoi">poc_solder_fillet_aoi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solder_fillet_aoi.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_timelapse_growth">poc_timelapse_growth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_timelapse_growth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_traffic_counting">poc_traffic_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_traffic_counting.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vessel_network">poc_vessel_network</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vessel_network.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_weld_radiograph_porosity">poc_weld_radiograph_porosity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_weld_radiograph_porosity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_wound_area_tracking">poc_wound_area_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_wound_area_tracking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select">blob_select</a> · <a style="color:#22d3bf" href="opblob:blob_select_largest">blob_select_largest</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">connect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">flow_magnitude — REPRCONV <code style="color:#22d3bf">flow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow_dense</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flow_magnitude(flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.flow_magnitude(flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;flow_magnitude&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>dense scene flow <code style="color:#22d3bf">(3,D,H,W)</code> → speed का volume <code style="color:#22d3bf">voxel (D,H,W)</code>। <code style="color:#22d3bf">flow</code> से निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">sqrt(dz^2 + dy^2 + dx^2)</code>。<b>一方向</b>(向きを捨てるので戻せない)。</p>
+<p>捨てた量は明示できる: 3 成分のうち 2 自由度ぶんの方向が消え、残るのは</p>
+<p>大きさだけ。方向まで見たいときは <code style="color:#22d3bf">flow_to_rgbimage</code>。</p>
+<p>Args:</p>
+<p>flow: (3, D, H, W)。成分順は (dz, dy, dx)(<code style="color:#22d3bf">scene_flow_lk</code> の約束)。</p>
+<p>Returns:</p>
+<p>(D, H, W) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 密フローでない / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:perception_on_video">perception_on_video</a> — <code style="color:#22d3bf">py -3.11 examples/perception_on_video.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:correlation_score">correlation_score</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">flow</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:flow_to_rgbimage">flow_to_rgbimage</a> · <a style="color:#22d3bf" href="opreprconv:flow_speed">flow_speed</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

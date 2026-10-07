@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_boundary_membrane_gap — EMPROOF <code style="color:#22d3bf">suspect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import emproof; emproof.seg_boundary_membrane_gap(labels, membrane, tau: &#x27;float&#x27; = 0.2, min_len: &#x27;int&#x27; = 60, normalize: &#x27;bool&#x27; = True, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_boundary_membrane_gap&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><b>split का संदेह</b>: 2 पड़ोसी label के boundary pixel में से जिनका membrane response <code style="color:#22d3bf">tau</code> से कम है उनका अनुपात। हर पड़ोसी जोड़े के लिए 1 row।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>細胞の境目には必ず膜(暗い線)がある。膜が無いのにラベルが変わる境界は、1 細胞を 2 つに切った分断の跡(<code style="color:#22d3bf">seg_inject_split</code> の直線はまさにこれ)。4 近傍で異ラベルが接する画素を数え、境界の膜応答は両側の強い方をとる。CREMI sample A の試作で人工分断 vs 他: <b>AUC 0.99</b>(tau 0.2、境界長 ≥ 60)。</p>
+<p>列: <code style="color:#22d3bf">label_a</code> / <code style="color:#22d3bf">label_b</code>(a &lt; b)/ <code style="color:#22d3bf">length</code> / <code style="color:#22d3bf">gap_fraction</code> / <code style="color:#22d3bf">membrane_mean</code>(gap_fraction 降順)。<code style="color:#22d3bf">min_len</code> px 未満の短い境界は数えない(数画素の接触は膜の有無を言えない)。</p>
+<p>&gt;&gt;&gt; table = seg_boundary_membrane_gap(labels, seg_membrane_response(raw))</p>
+<p>&gt;&gt;&gt; table[&quot;label_a&quot;][0], table[&quot;label_b&quot;][0], table[&quot;gap_fraction&quot;][0]   # いちばん怪しい対</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_second_opinion">poc_em_second_opinion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_second_opinion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_synapse_partners">seg_synapse_partners</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_exposure">seg_wiring_exposure</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">suspect</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_membrane_chord_score">seg_membrane_chord_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: emproof.py — EMPROOF operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

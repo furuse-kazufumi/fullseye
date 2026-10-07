@@ -1,0 +1,50 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_center_of_rotation — TOMOGRAPHY <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.sinogram_center_of_rotation(sinogram, angles_deg=None, min_condition=0.02)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;sinogram_center_of_rotation&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>rotation axis वास्तव में कहाँ है, केंद्र से detector bin में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The centre-of-mass identity, which is exact and needs no reconstruction: the first moment of a projection is the projection of the object&#x27;s centre of mass, so::</p>
+<p>s_cm(theta) = x0 cos(theta) + y0 sin(theta) + c</p>
+<p>with <code style="color:#22d3bf">(x0, y0)</code> the centre of mass in the slice and <code style="color:#22d3bf">c</code> the offset of the rotation axis from the detector centre. Fitting the three unknowns by least squares over all views gives *c* directly. Measured on the Shepp-Logan phantom with 180 views, recovering a deliberately introduced shift, together with the cost of not correcting it (normalised RMS error of the FBP reconstruction against the truth):</p>
+<p>true shift   estimated    error     uncorrected   after this fix</p>
+<p>0.00 px    +0.0029 px   0.0029      0.0250          0.0249</p>
+<p>0.50 px    +0.5029 px   0.0029      0.0537          0.0358</p>
+<p>1.00 px    +1.0029 px   0.0029      0.1016          0.0249</p>
+<p>2.00 px    +2.0029 px   0.0029      0.1630          0.0249</p>
+<p>Three things in that table are worth reading twice. <b>Half a pixel already doubles the error</b> (0.0250 -&gt; 0.0537) and does not look like a mistake — it looks like a slightly soft reconstruction, which is why this is a measurement and not an inspection. The estimator&#x27;s own bias is a <b>constant 0.0029 px</b> across every shift, so it is a property of the phantom and the detector sampling, not of the size of the error being measured. And the half-pixel row is the only one the fix does not fully repair (0.0358 against 0.0249), because correcting a *fractional* shift means resampling, and the linear interpolation costs more than the integer shifts do — see <code style="color:#22d3bf">sinogram_center_shift</code>.</p>
+<p>Two things this needs, both refused rather than assumed. The object must be <b>entirely inside the field of view</b> — the identity is about the whole mass, and a truncated object has a different mass at every angle. And the views must span enough angle for <code style="color:#22d3bf">[cos, sin, 1]</code> to be independent: over a narrow wedge, <code style="color:#22d3bf">cos(theta)</code> and the constant are nearly the same vector and the fit puts the object&#x27;s own offset into *c*. The condition number is checked and a degenerate design is refused.</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>, rows = angles. :param angles_deg: view angles; <code style="color:#22d3bf">None</code> -&gt; uniform <code style="color:#22d3bf">[0, 180)</code>. :param min_condition: smallest acceptable reciprocal condition number of the</p>
+<p><code style="color:#22d3bf">[cos, sin, 1]</code> design matrix. The default of <b>0.02</b> is calibrated,</p>
+<p>not chosen — the reciprocal condition number and the error it lets</p>
+<p>through, on a sinogram with a true 1.00-px shift:</p>
+<p>span      rcond      estimate    error</p>
+<p>180 deg   2.15e-01   +0.9939     0.0061 px</p>
+<p>120 deg   8.92e-02   +0.9900     0.0100 px</p>
+<p>90 deg   4.85e-02   +0.9485     0.0515 px</p>
+<p>60 deg   2.09e-02   +0.8993     0.1007 px   &lt;- the default admits this</p>
+<p>45 deg   1.17e-02   +0.7041     0.2959 px   &lt;- and refuses this</p>
+<p>20 deg   2.26e-03   +1.7113     0.7113 px</p>
+<p>10 deg   5.54e-04   -6.9765     7.9765 px</p>
+<p>The 10-degree row is why the check exists at all: the answer is finite,</p>
+<p>the sign is wrong, and the magnitude is eight pixels on a one-pixel</p>
+<p>error. Nothing about it looks like a failure.</p>
+<p>:returns: <code style="color:#22d3bf">float</code> — the axis offset in detector bins, positive towards</p>
+<p>higher bin indices.</p>
+<p>:raises ValueError: on a sinogram whose total mass is zero, on fewer than 3</p>
+<p>views, or on an angular span too narrow to separate the offset from the</p>
+<p>object&#x27;s own position.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:sinogram_center_shift">sinogram_center_shift</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

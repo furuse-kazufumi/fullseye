@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">msa_attribute_agreement — SPC <code style="color:#22d3bf">msa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.msa_attribute_agreement(table, appraiser=&#x27;appraiser&#x27;, part=&#x27;part&#x27;, rating=&#x27;rating&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;msa_attribute_agreement&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>attribute (pass/fail) inspection की agreement की मात्रा (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>同じ部品を複数の検査員が判定した表から、<b>検査員の対ごとの Cohen のカッパ</b>と全体の <b>Fleiss のカッパ</b>、および素の一致率を返す。</p>
+<p>★カッパは一致率そのものではない。<code style="color:#22d3bf">kappa = (p_o - p_e)/(1 - p_e)</code> で、<b>偶然でも起きる一致 p_e を割り引いた</b>残りを測る —— 合格率 95 % の工程ではでたらめに判を押しても素の一致率は 90 % を超えるので、一致率だけ見ると「よく合っている」と読めてしまう。</p>
+<p>★門にできる厳密な値: 全員が同じ判定 → <code style="color:#22d3bf">kappa = 1</code>(厳密)。2 人 x 2 カテゴリの Cohen のカッパは <code style="color:#22d3bf">2(ad-bc)/((a+b)(b+d)+(a+c)(c+d))</code> という閉形式と一致する。独立でたらめな判定では期待値 0(こちらは標本ごとに揺れるので区間で見る)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">msa</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

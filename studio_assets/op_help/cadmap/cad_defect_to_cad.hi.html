@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cad_defect_to_cad — CADMAP <code style="color:#22d3bf">defect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh × labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cadmap; cadmap.cad_defect_to_cad(mesh, labels, K=None, R=None, t=None, cull_backfaces=True, min_pixels=1, background=0, strict=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opscadmap.get(&quot;cad_defect_to_cad&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2-D defect label image → <b>CAD सतह पर table</b> (face ID / face पर क्षेत्रफल / 3-D centroid)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">labels</code> は (H, W) の整数ラベル画像(<code style="color:#22d3bf">background</code> は無視、bool マスクも可)。ラベルごとに全画素の視線を撃ち、当たった面と、その画素が<b>面の上で占める実面積</b>を積む。面積は画素数ではなく</p>
+<p>dA = Z^2 * cosα / (fx * fy * |cosθ|)</p>
+<p>で、<code style="color:#22d3bf">cosα</code> は光軸からの傾き、<code style="color:#22d3bf">cosθ</code> は視線と面法線のなす角。<b>斜めから見た面ほど 1 画素が広い面積を覆う</b>という透視投影のヤコビアンそのもので、ここを <code style="color:#22d3bf">Z^2/(fx*fy)</code> のままにすると傾いた面の欠陥が小さく出る(60 度でちょうど半分になる)。</p>
+<p>返りはラベルごとの dict の list(<code style="color:#22d3bf">table</code> sort):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">label</code>        ラベル値。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_pixels</code>     そのラベルの画素数。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_hit</code>        CAD に当たった画素数。<code style="color:#22d3bf">hit_fraction</code> = その比。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area</code>         面上の実面積(mesh の長さ単位の 2 乗)。当たった画素分だけの和で、当たらなかった画素は<b>足さない</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">area_naive</code>   <code style="color:#22d3bf">Z^2/(fx*fy)</code> だけの和(= 傾きを無視した値)。両方返すのは、傾き補正が効いているかを利用者が自分で確かめられるようにするため。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_ids</code>     当たった面の昇順一意リスト(int64 配列)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">face_areas</code>   <code style="color:#22d3bf">face_ids</code> と同じ並びの面ごとの面積。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">centroid</code>     面積重みの 3-D 重心(世界座標)。当たり 0 なら <code style="color:#22d3bf">NaN</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth_mean</code>   当たった画素の平均 Z。当たり 0 なら <code style="color:#22d3bf">NaN</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">winding_fixed</code> bool — 内向きに巻かれた閉メッシュを検出して直したか。<b>全レコードに同じ値</b>が入る(mesh 単位の性質なので)。</p>
+<p><code style="color:#22d3bf">min_pixels</code> 未満の領域は落とす。当たり 0 の領域は<b>消さずに</b> <code style="color:#22d3bf">area = 0.0</code>, <code style="color:#22d3bf">hit_fraction = 0.0</code> で残す — 消すと「CAD の外にあった欠陥」が表から静かに消えるため。</p>
+<p>巻き方向の扱いは他の op と同じ(<code style="color:#22d3bf">cull_backfaces=True</code> で閉じた内向きメッシュを検出 → 既定は自動修正 + <code style="color:#22d3bf">winding_fixed</code>、<code style="color:#22d3bf">strict=True</code> で <code style="color:#22d3bf">ValueError</code>)。<b>正直な限界</b>: 返るのがレコードの list なので、<code style="color:#22d3bf">labels</code> が全部背景だったり全領域が <code style="color:#22d3bf">min_pixels</code> 未満だったりして <b>list が空</b>になると、修正の事実を載せる先が無い。その場合はそもそも 1 つも欠陥を写していない(誤った数を返しようがない)。載せる先が要るなら <code style="color:#22d3bf">strict=True</code> にするか、同じ mesh で <code style="color:#22d3bf">cad_pixel_to_surface</code> を 1 画素だけ引くこと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:defect_to_cad">defect_to_cad</a> — <code style="color:#22d3bf">py -3.11 examples/defect_to_cad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">defect</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cadmap.py — CADMAP operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

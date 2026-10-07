@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_mesh — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mesh(vol, iso=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.voxel_to_mesh(vol, iso=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mesh&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">mesh</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.voxel_to_mesh.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">match3d.voxel_to_mesh</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>voxel → mesh (marching cubes, skimage)। return value (verts, faces, normals)। voxel→mesh conversion।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">skimage.measure.marching_cubes(vol, level=iso)</code> の薄い包み(spacing 指定なし = 1 voxel 単位)。<code style="color:#22d3bf">verts</code> (V,3) float は <b>voxel index 座標</b>で、列は入力の軸順(<code style="color:#22d3bf">vol</code> が (D,H,W) なら (z,y,x))。<code style="color:#22d3bf">faces</code> (F,3) int は verts への index、<code style="color:#22d3bf">normals</code> (V,3) は skimage が勾配から与える頂点法線。4 番目の返り値(values)は捨てる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iso</code>: 等値面のレベル。<b>入力の値域の外だと skimage が ValueError</b> を出す(全 0 の</p>
+<p>volume で iso=0.5 など)。個数密度なら 0.5、SDF なら 0.0 を渡す。</p>
+<p style="margin:2px 0 2px 12px">• 境界に接する等値面は開いたまま(端で閉じない)。</p>
+<p style="margin:2px 0 2px 12px">• ★<b>巻き順は内向き</b>。そのまま <code style="color:#22d3bf">mesh_volume</code> に渡すと<b>普通の中身のある形でも負</b>になる(実測: 1000 voxel の立方体で -985.67)。体積が欲しいだけなら</p>
+<p><code style="color:#22d3bf">abs()</code>、向きを揃えたいなら <code style="color:#22d3bf">faces[:, ::-1]</code> で巻き直す。</p>
+<p style="margin:2px 0 2px 12px">• skimage は呼び出し時 import(未導入なら ImportError)。</p>
+<p>後段: <code style="color:#22d3bf">mesh_to_points</code> で点群化、<code style="color:#22d3bf">mesh_area</code> / <code style="color:#22d3bf">face_areas</code> / <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">boundary_vertices</code> / <code style="color:#22d3bf">mesh_edge_stats</code> で計測。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_smooth">mesh_smooth</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_smooth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

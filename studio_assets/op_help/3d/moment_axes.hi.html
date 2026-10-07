@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">moment_axes — 3D <code style="color:#22d3bf">match_pose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">axes</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.moment_axes(points, weights=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.moment_axes(points, weights=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;moment_axes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point cloud/weighted points का <b>centroid + principal axes</b> (inertia tensor के eigenvectors)। pose estimation का आधार।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返り値 (centroid(3,), axes(3,3) 列=主軸, eigvals(3,))。固有値降順。回転の正準化に使う。</p>
+<p>定義: <code style="color:#22d3bf">w</code> を総和 1 に正規化し、重心 <code style="color:#22d3bf">c = Σ w p</code>、散布行列 <code style="color:#22d3bf">C = Σ w (p−c)(p−c)ᵀ</code> (共分散。慣性テンソル <code style="color:#22d3bf">tr(C)I − C</code> と固有ベクトルは共通で固有値の順序が逆)を <code style="color:#22d3bf">eigh</code> で分解する。<code style="color:#22d3bf">axes[:, i]</code> が i 番目に大きい固有値の主軸(降順)。固有値は分散(長さ²)。</p>
+<p style="margin:2px 0 2px 12px">• 固有ベクトルの符号は任意で、<code style="color:#22d3bf">axes</code> は左手系(det=−1)になり得る(<code style="color:#22d3bf">match_pca</code> は第 3 軸を</p>
+<p>反転して右手系にしている)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">weights</code> は長さ N。総和 0 は 0 除算で NaN(例外は出ない)。点数 0 は失敗する(検証は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 主軸が縮退(球など)なら軸の向きは不定。</p>
+<p>後段: <code style="color:#22d3bf">match_pca</code>、<code style="color:#22d3bf">obb</code>(有向 bbox)、正準姿勢への回転。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_pose_canonical">itokawa_pose_canonical</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_pose_canonical.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">axes</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">match_pose</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:match_phase_3d">match_phase_3d</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:match_logpolar_z">match_logpolar_z</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

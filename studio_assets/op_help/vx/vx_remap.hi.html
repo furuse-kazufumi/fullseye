@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vx_remap — VX <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>remap (section 3.44): आउटपुट (x, y) = इनपुट (map_x[y, x], map_y[y, x]) (REQ-0392)। tables का shape आउटपुट जैसा है; coordinates में इनपुट pixel के centre integers पर होते हैं।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / map_x と map_y が同じ形の 2-D の実数でない / interpolation・border が一覧に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_sobel3x3">vx_sobel3x3</a> · <a style="color:#22d3bf" href="opvx:vx_magnitude">vx_magnitude</a> · <a style="color:#22d3bf" href="opvx:vx_phase">vx_phase</a> · <a style="color:#22d3bf" href="opvx:vx_table_lookup">vx_table_lookup</a> · <a style="color:#22d3bf" href="opvx:vx_histogram">vx_histogram</a> · <a style="color:#22d3bf" href="opvx:vx_nonmax_suppression">vx_nonmax_suppression</a> · <a style="color:#22d3bf" href="opvx:vx_warp_affine">vx_warp_affine</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_warp_affine">vx_warp_affine</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vxcore.py — VX operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

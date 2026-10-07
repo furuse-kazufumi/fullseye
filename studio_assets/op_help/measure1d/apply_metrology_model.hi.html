@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">apply_metrology_model — MEASURE1D <code style="color:#22d3bf">apply</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrologymodel × image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrology; metrology.apply_metrology_model(model, image, measure_length=6.0, sigma=1.0, threshold=0.05) -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;apply_metrology_model&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर metrology object के reference shape के normal के साथ subpixel edge मापता है, shape को फिर से fit करता है और परिणाम लौटाता है (apply_metrology_model)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">measure_length</code> = 法線方向の探索半幅 [px]、<code style="color:#22d3bf">sigma</code> = プロファイル平滑化、<code style="color:#22d3bf">threshold</code> = 採用するエッジの最小グレー差(画像のグレー単位)。各結果 dict: <code style="color:#22d3bf">type</code> / <code style="color:#22d3bf">edge_points</code> (M,2) / <code style="color:#22d3bf">amplitudes</code> (M,) 符号つきグレー差 / <code style="color:#22d3bf">score</code> = 平均 |振幅| / <code style="color:#22d3bf">centroid</code> / <code style="color:#22d3bf">params</code>(再フィット形状; 直線は row1,col1,row2,col2,angle_deg / 円は row,col,radius / 楕円は row,col,phi,ra&gt;=rb / 矩形は row,col,phi,l1&gt;=l2)/ <code style="color:#22d3bf">rms</code> = フィット残差 [px]。エッジ点が足りずフィットできない場合は <code style="color:#22d3bf">params=None</code>, <code style="color:#22d3bf">rms=inf</code>, <code style="color:#22d3bf">error</code> に理由を入れる(他オブジェクトの計測は続行)。楕円・矩形の <code style="color:#22d3bf">phi</code> は長軸(ra / l1)の向き。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calipers_under_illusion">poc_calipers_under_illusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calipers_under_illusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">apply</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:align_metrology_model">align_metrology_model</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrology.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

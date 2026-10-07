@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">skeletonize_vol — 3D <code style="color:#22d3bf">medial</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeletonize_vol(vol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.skeletonize_vol(vol)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;skeletonize_vol&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D binary voxel को पतला करके 1 voxel चौड़ा skeleton बनाता है। skimage की Lee (1994) method का wrapper।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>method=&#x27;lee&#x27; は 3D 対応の位相保存細線化。塊も含めて線状の骨格へ潰す(medial *surface* が欲しい場合は distance_ridge を使う)。返り値は入力と同形の bool 配列。</p>
+<p>Args:</p>
+<p>vol: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>Returns:</p>
+<p>skeleton (bool 3D): 骨格 voxel。</p>
+<p>入力の扱い: <code style="color:#22d3bf">_as_binary_volume</code> が 3-D 配列を bool に正規化する(非ゼロ = 前景)。3-D でない・空配列・float で NaN/Inf を含む場合は <code style="color:#22d3bf">ValueError</code>。軸順は <code style="color:#22d3bf">(z, y, x)</code>、距離・太さは voxel 単位で、等方サンプリングを仮定する(異方 voxel のままだと細線化の結果が軸ごとに偏る。先に <code style="color:#22d3bf">vol_resize</code> で等方化する)。</p>
+<p>挙動:</p>
+<p style="margin:2px 0 2px 12px">• 前景が無ければ全 False の同形配列を返す(skimage は呼ばない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">skimage.morphology.skeletonize(mask, method=&quot;lee&quot;)</code> は遅延 import。scikit-image が無い環境ではここで <code style="color:#22d3bf">ImportError</code> になる。</p>
+<p style="margin:2px 0 2px 12px">• Lee 法は位相を保つ(連結成分数・穴・空洞を変えない)が、太い塊は複数の枝に潰れ、表面の凹凸に応じたヒゲ(短い枝)が出る。ヒゲは <code style="color:#22d3bf">skeleton_prune3d</code> で刈る。</p>
+<p>使いどころ: <code style="color:#22d3bf">topology_signature</code>(端点・分岐の数)、<code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> の入力。骨格 voxel の局所半径が要るなら <code style="color:#22d3bf">distance_ridge</code> の <code style="color:#22d3bf">edt</code> を骨格位置で引く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:medial_topology">medial_topology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/medial_topology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">medial</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:distance_ridge">distance_ridge</a> · <a style="color:#22d3bf" href="op3d:medial_axis_points">medial_axis_points</a> · <a style="color:#22d3bf" href="op3d:topology_signature">topology_signature</a> · <a style="color:#22d3bf" href="op3d:medial_match">medial_match</a> · <a style="color:#22d3bf" href="op3d:skeleton_junctions3d">skeleton_junctions3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_endpoints3d">skeleton_endpoints3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_prune3d">skeleton_prune3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_branches3d">skeleton_branches3d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: medial.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

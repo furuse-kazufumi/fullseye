@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graycode_decode — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.graycode_decode(bit_images, thresh=0.5) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;graycode_decode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Gray code bit image series → integer fringe order map (absolute order)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>bit_images: 長さ K のシーケンス(各 2D 画像、明=1 / 暗=0)。<b>MSB first</b>(bit_images[0] が</p>
+<p>最上位ビット)。thresh で二値化する。</p>
+<p>thresh:     二値化しきい値(画素値 &gt;= thresh を 1)。</p>
+<p>処理: 各ビット面を二値化 → MSB first で Gray 値を組み立て → Gray→binary 変換</p>
+<p>(binary = gray ^ (gray&gt;&gt;1) ^ ... ^ (gray&gt;&gt;(K-1)))で絶対次数(整数)を返す。</p>
+<p>返り値: dtype int64 の 2D 次数マップ(値域 0..2**K-1)。</p>
+<p>検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / <code style="color:#22d3bf">(K, H, W)</code> に変換できない / <code style="color:#22d3bf">K &lt; 1</code> / <code style="color:#22d3bf">K &gt; 62</code>(int64 に収まらない) / NaN・Inf を含む。<code style="color:#22d3bf">thresh</code> は検査しない(画素値と同じスケールで与える。<code style="color:#22d3bf">[0, 1]</code> 画像なら 0.5 が既定)。</p>
+<p>二値化は固定閾値 <code style="color:#22d3bf">&gt;= thresh</code> のみ — 反転パターン(ネガ画像)との比較や局所閾値は行わない。影・低反射で暗く出た画素は 0 ビットとして復号され、エラーにならず誤った次数になるので、<code style="color:#22d3bf">modulation</code> などで作った信頼マスクを呼び手が別に持つこと。</p>
+<p>次数の意味: Gray 符号は隣接コードが 1 ビットしか違わないので、境界画素の二値化誤りは次数を ±1 しかずらさない(binary 符号なら大きく飛ぶ)。返る整数を投影機コラム番号や縞の絶対次数として、<code style="color:#22d3bf">absolute_phase</code> の <code style="color:#22d3bf">coarse</code> (<code style="color:#22d3bf">2π * 次数</code> を位相に換算)や <code style="color:#22d3bf">triangulate_column</code> の <code style="color:#22d3bf">column</code> に使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:graycode_structured_light">graycode_structured_light</a> — <code style="color:#22d3bf">py -3.11 examples_3d/graycode_structured_light.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:structured_light_scan">structured_light_scan</a> — <code style="color:#22d3bf">py -3.11 examples_3d/structured_light_scan.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a> · <a style="color:#22d3bf" href="op3d:triangulate_column">triangulate_column</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fringe.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,6 +7,7 @@ title_zh: 深度传感器知识 —— 测距原理、实机数值、缺测的�
 title_tw: 深度感測器知識 —— 測距原理、實機數值、缺測的表現
 title_ko: 깊이 센서 지식 — 측거 원리·실기 수치·결측이 나타나는 방식
 title_de: Tiefensensoren — Messprinzipien, Werte realer Geräte, wie Messlücken entstehen
+title_hi: Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

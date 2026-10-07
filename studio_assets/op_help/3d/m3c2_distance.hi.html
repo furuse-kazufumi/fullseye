@@ -1,0 +1,49 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">m3c2_distance — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrics3d; metrics3d.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;m3c2_distance&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">signal</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">metrics3d.m3c2_distance</code> को सीधे call करें।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 समयों के point clouds का अंतर <b>normal direction में</b> मापता है (M3C2)। → <code style="color:#22d3bf">(distance, lod)</code> के 2 मान।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
+<p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
+<p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>
+<p>Args:</p>
+<p>a: 時点 1 の点群 <code style="color:#22d3bf">(Na,3)</code>。</p>
+<p>b: 時点 2 の点群 <code style="color:#22d3bf">(Nb,3)</code>。</p>
+<p>cores: 測る場所 <code style="color:#22d3bf">(M,3)</code>(a の部分集合でも、別に置いた格子でもよい)。</p>
+<p>normals: core ごとの法線 <code style="color:#22d3bf">(M,3)</code>(未正規化でよい。<b>符号が結果の符号を決める</b>)。</p>
+<p>radius: 円筒の半径(core 周りで平均する範囲。面の粗さより大きく、測りたい</p>
+<p>構造より小さく取る)。</p>
+<p>max_depth: 円筒の長さの半分。<code style="color:#22d3bf">None</code> なら軸方向を制限しない。</p>
+<p>min_points: 片側にこの数だけ点が無い core は <code style="color:#22d3bf">nan</code> を返す(既定 4)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(distance, lod)</code>: どちらも <code style="color:#22d3bf">(M,)</code> float64。<code style="color:#22d3bf">distance</code> は法線方向の</p>
+<p>符号つき差、<code style="color:#22d3bf">lod</code>(level of detection)は</p>
+<p><code style="color:#22d3bf">1.96·sqrt(σa²/na + σb²/nb)</code> —— <b>この値を超えない差は雑音と区別できない</b>。</p>
+<p>点が足りない core は両方 <code style="color:#22d3bf">nan</code>。</p>
+<p>★台帳経由(<code style="color:#22d3bf">fullseye.ledger.m3c2_distance</code>)は宣言 out 型の <code style="color:#22d3bf">distance</code> だけを</p>
+<p>返す。<code style="color:#22d3bf">lod</code> も要るときは <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 点群 / cores が <code style="color:#22d3bf">(N,3)</code> でない、空、<code style="color:#22d3bf">normals</code> の数が cores と</p>
+<p>合わない、<code style="color:#22d3bf">radius &lt;= 0</code>、<code style="color:#22d3bf">max_depth &lt;= 0</code>、<code style="color:#22d3bf">min_points &lt; 1</code> のとき。</p>
+<p><b>限界(honest)</b>: (1) 法線は呼び手が与える —— <code style="color:#22d3bf">estimate_normals</code> の符号は任意なので、向きを揃えないと符号が場所ごとに反転する。(2) <code style="color:#22d3bf">lod</code> は雑音だけを見ており、<b>位置合わせの残差は含まない</b>(Lague の原論文は登録誤差を別項として足す)。</p>
+<p style="margin:2px 0 2px 12px">(3) 円筒に入る点が少ない縁では <code style="color:#22d3bf">nan</code> になる —— 0 を返して「変化なし」に</p>
+<p>見せない。</p>
+<p>Reference (public): D. Lague, N. Brodu, J. Leroux, &quot;Accurate 3D comparison of complex topography with terrestrial laser scanner: application to the Rangitikei canyon (N-Z)&quot;, ISPRS Journal of Photogrammetry and Remote Sensing 82 (2013) 10-26.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:metrics_eval">metrics_eval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/metrics_eval.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:voxel_iou">voxel_iou</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

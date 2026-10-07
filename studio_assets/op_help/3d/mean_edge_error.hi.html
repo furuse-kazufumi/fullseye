@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mean_edge_error — 3D <code style="color:#22d3bf">pose_graph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_edge_error(poses, edges)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pose_graph; pose_graph.mean_edge_error(poses, edges)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mean_edge_error&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>edge residuals का RMS (pose graph की संगति)। → scalar।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各エッジ <code style="color:#22d3bf">(i, j, rvec_meas, t_meas[, w_rot, w_trans])</code> について、予測相対姿勢 <code style="color:#22d3bf">T_i⁻¹ ∘ T_j</code> と計測 <code style="color:#22d3bf">(rvec_meas, t_meas)</code> の食い違い <code style="color:#22d3bf">measured⁻¹ ∘ predicted</code> を回転ベクトル 3 成分 + 並進 3 成分の 6 次元残差にし(それぞれ <code style="color:#22d3bf">sqrt(w_rot)</code>、<code style="color:#22d3bf">sqrt(w_trans)</code> を掛ける。重み省略時は 1)、全エッジ・全成分をまとめた 2 乗平均平方根を返す。<code style="color:#22d3bf">optimize_pose_graph</code> の返り値 <code style="color:#22d3bf">rmse</code> と同じ量で、最適化前後の比較に使う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">poses</code>: (N,6) にリシェイプできる <code style="color:#22d3bf">[rvec | t]</code>(world←body)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">edges</code>: 上記タプルのリスト。空なら 0.0 を返す。</p>
+<p>注意: 回転成分(rad)と並進成分(座標の単位)を同じ配列で平均するため、値の次元は混在する。並進のスケールが大きいシーンでは並進項が支配的になるので、単位を揃えたいときは <code style="color:#22d3bf">w_rot</code> / <code style="color:#22d3bf">w_trans</code> で重み付けする。エッジ添字の範囲検証はこの関数では行わない(負の添字は numpy の折り返しで別ノードを黙って参照する。<code style="color:#22d3bf">optimize_pose_graph</code> は検証する)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pose_graph</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pose_graph.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

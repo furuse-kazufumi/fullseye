@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dlt_pose — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dlt_pose(points_3d, points_2d, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.dlt_pose(points_3d, points_2d, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;dlt_pose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>DLT से 3D-2D correspondences से camera pose वापस निकालता है (K ज्ञात)। → (R (3,3), t (3,))। कम से कम 6 points आवश्यक।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">pnp_pose</code> の (R, t) 部分(正規化 DLT + 平面 PnP 分岐 + LM 精密化)。再投影 RMS も要るなら <code style="color:#22d3bf">pnp_pose</code> を使う。共平面入力(チェッカーボード等)は平面 PnP へ自動で振り分ける(旧実装は fail-closed で拒否していたが、正しく解けるので解く)。</p>
+<p>手順(モジュール関数 <code style="color:#22d3bf">pnp3d.pnp_pose</code> を <code style="color:#22d3bf">refine=True</code> で呼ぶ):</p>
+<p style="margin:2px 0 2px 12px">• 画素を <code style="color:#22d3bf">K⁻¹</code> で正規化画像座標へ、3D 点は Hartley 正規化(重心を原点、平均距離 √3)して DLT(12 未知数の SVD)を解く。</p>
+<p style="margin:2px 0 2px 12px">• 共平面度(共分散の最小/最大固有値比の平方根)が 0.05 未満なら平面 PnP(ホモグラフィ分解)も候補に加え、厳密に平面(3 番目の広がりが 0)なら DLT を省く。</p>
+<p style="margin:2px 0 2px 12px">• 各候補を再投影誤差の Levenberg-Marquardt(最大 30 反復)で精密化し、前方点(深度 &gt; 0)の割合が最大、同点なら再投影 RMS が最小の候補を採る。</p>
+<p>返り値: <code style="color:#22d3bf">R</code> (3,3) 回転(det=+1)、<code style="color:#22d3bf">t</code> (3,)(世界座標と同じ単位)。規約 <code style="color:#22d3bf">Xc = R X + t</code>、<code style="color:#22d3bf">x ≅ K Xc</code>。</p>
+<p>Raises <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">points_2d</code> が (N,2) でない(画像を渡した場合は名指しで拒否)/ <code style="color:#22d3bf">points_3d</code> が (N,3) でない / 非有限 / 6 点未満 / 点数不一致 / 全点が一直線か一点。</p>
+<p>注意: 外れ値には無防備(全点を等しく使う)。誤対応があるなら <code style="color:#22d3bf">pnp_ransac</code>。決定論的(乱数なし)。評価は <code style="color:#22d3bf">reprojection_error</code>、GT との比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pnp_pose_outliers">pnp_pose_outliers</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pnp_pose_outliers.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pose_estimation">pose_estimation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pose_estimation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pose_estimation</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:pnp_ransac">pnp_ransac</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pnp3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

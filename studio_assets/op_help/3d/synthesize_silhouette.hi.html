@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synthesize_silhouette — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import visualhull; visualhull.synthesize_silhouette(points, K, R, t, size: &#x27;Tuple[int, int]&#x27;, *, fill: &#x27;bool&#x27; = True, dilate: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;synthesize_silhouette&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3-D point cloud को (K,R,t) camera पर project करता है और occupied pixels पर True वाली silhouette (H,W bool) लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>GT 生成用。<code style="color:#22d3bf">points</code> (N,3) を <code style="color:#22d3bf">X_cam = R X + t</code> で射影し、depth&gt;0 かつ画像内に落ちた画素を True にする。疎な点群では射影像に穴が空くため、既定で穴埋め(<code style="color:#22d3bf">fill</code>, scipy.ndimage.binary_fill_holes)して中身の詰まった前景マスクにする。さらに <code style="color:#22d3bf">dilate</code> 画素だけ膨張させ「pixel が少しでも物体に触れれば前景」という被覆(coverage)意味のシルエットにする — これが visual hull の recall(物体 voxel を取りこぼさない)を離散化誤差の下でも保証するための保守側の丸め。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : (N, 3) array_like  ワールド座標の点群(物体表面/内部のサンプル)。</p>
+<p>K : (3, 3)  内部パラメータ。</p>
+<p>R, t : (3, 3), (3,)  ワールド-&gt;カメラの回転・並進。</p>
+<p>size : (H, W)  出力画像サイズ。</p>
+<p>fill : bool  射影像の穴を埋めて solid にする(既定 True)。</p>
+<p>dilate : int  被覆マージンとして膨張させる画素数(既定 1、0 で無効)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>(H, W) bool ndarray  前景 True のシルエット。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:space_carving">space_carving</a> — <code style="color:#22d3bf">py -3.11 examples_3d/space_carving.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">space_carving</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:visual_hull">visual_hull</a> · <a style="color:#22d3bf" href="op3d:carve_look_at">carve_look_at</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: visualhull.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

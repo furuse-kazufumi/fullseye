@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">procrustes_fit — SHAPESTAT <code style="color:#22d3bf">procrustes</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.procrustes_fit(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_fit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>*source* को *target* पर बैठाने वाला similarity transform। → <code style="color:#22d3bf">(4, 4)</code> homogeneous matrix।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><b>点の並びが対応していること</b>が前提(i 番目どうしが同じ解剖学的位置)。対応が無い点群では例外は出ず、意味の無い変換が返る —— 対応の有無はこの関数からは見えない。対応が無いなら ICP 系(<code style="color:#22d3bf">registration</code>)を使う。</p>
+<p><code style="color:#22d3bf">scaling=True</code> なら大きさの違いも吸収する。<code style="color:#22d3bf">reflection=False</code>(既定)は <code style="color:#22d3bf">det(R) = +1</code> を強制する —— 許すと左手系の個体が右手系の平均に重なり、左右非対称性という測りたいものが消える。</p>
+<p>行列は同次座標で <code style="color:#22d3bf">target ~ source @ M[:3,:3].T + M[:3,3]</code> の向き。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_change_detection_misreg">poc_change_detection_misreg</a> — <code style="color:#22d3bf">py -3.11 examples/poc_change_detection_misreg.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_die_tilt_tsv_overlay">poc_die_tilt_tsv_overlay</a> — <code style="color:#22d3bf">py -3.11 examples/poc_die_tilt_tsv_overlay.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">procrustes</code>)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:procrustes_align">procrustes_align</a> · <a style="color:#22d3bf" href="opshapestat:procrustes_distance">procrustes_distance</a> · <a style="color:#22d3bf" href="opshapestat:generalized_procrustes">generalized_procrustes</a> · <a style="color:#22d3bf" href="opshapestat:shape_mean">shape_mean</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

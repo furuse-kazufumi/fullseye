@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">img_to_volume — 2D <code style="color:#22d3bf">bridge</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">volume</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;img_to_volume&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/img_to_volume.png" alt="img_to_volume: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_volume.a.jpg">img_to_volume: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>Knob b को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_volume.b.jpg">img_to_volume: knob b को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_volume.inputs.jpg">img_to_volume: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
+<p><b>Motion</b> (GIF: frames / views / slices क्रम से। स्थिर figure ही पूरा रूप है, GIF सहायक है):</p>
+<p><img src="fig/img_to_volume.gif" alt="img_to_volume: animation"></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image को height field के रूप में extrude करके (D,H,W) volume (z पहले) बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>ボクセル <code style="color:#22d3bf">(z, y, x)</code> は、その高さが画素の高さ以下なら画素値、超えていれば 0:</p>
+<p><code style="color:#22d3bf">vol[z, y, x] = img[y, x] if z &lt;= img[y, x] * s * (D - 1) else 0</code>。つまり <b>高さ場の「中身が詰まった」固体</b>(地形・段差・押し出し部品)で、体積の族(<code style="color:#22d3bf">vol_dilate</code> / <code style="color:#22d3bf">vol_erosion_ball</code> / <code style="color:#22d3bf">macro_vol_denoise</code> …)を 1 枚の画像から試せる。軸順は 3-D 台帳の規約どおり <b>(depth, row, col)</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 高さの倍率 <code style="color:#22d3bf">s = 0.25 + 1.75 * a</code>(a=0.5 で 1.125。1 を超えた分は最上段 <code style="color:#22d3bf">D-1</code> で頭打ち)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 段数 <code style="color:#22d3bf">D = 8 + 2 * int(b * 28)</code>(b=0.5 で 36、b=0 で 8、b=1 で 64)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(D, H, W)</code> float64、値域は入力と同じ。<b>z=0 の底面は値 &gt; 0 の画素がすべて詰まる</b>(高さ 0 でも底面には乗る)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_bridge">gallery2d_bridge family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_volume 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_volume%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_volume%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_bridge">gallery2d_bridge</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_bridge.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">volume</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:vol_gaussian">vol_gaussian</a> · <a style="color:#22d3bf" href="op:vol_median">vol_median</a> · <a style="color:#22d3bf" href="op:vol_erode">vol_erode</a> · <a style="color:#22d3bf" href="op:vol_dilate">vol_dilate</a> · <a style="color:#22d3bf" href="op:vol_threshold">vol_threshold</a> · <a style="color:#22d3bf" href="op:vol_reg_dilate">vol_reg_dilate</a> · <a style="color:#22d3bf" href="op:vol_reg_erode">vol_reg_erode</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">bridge</code>)</h3>
+<p><a style="color:#22d3bf" href="op:img_to_points">img_to_points</a> · <a style="color:#22d3bf" href="op:img_to_keypoints">img_to_keypoints</a> · <a style="color:#22d3bf" href="op:img_to_signal">img_to_signal</a> · <a style="color:#22d3bf" href="op:img_to_projection_profile">img_to_projection_profile</a> · <a style="color:#22d3bf" href="op:img_to_counts">img_to_counts</a> · <a style="color:#22d3bf" href="op:img_to_matrix">img_to_matrix</a> · <a style="color:#22d3bf" href="op:img_to_video">img_to_video</a> · <a style="color:#22d3bf" href="op:img_to_lightfield">img_to_lightfield</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

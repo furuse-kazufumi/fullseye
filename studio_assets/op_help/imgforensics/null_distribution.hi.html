@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">null_distribution — IMGFORENSICS <code style="color:#22d3bf">calibration</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.null_distribution(values)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.null_distribution(values)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;null_distribution&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>जिन sample के बारे में पता है कि उनमें <b>छेड़छाड़ नहीं हुई</b>, उनसे evidence statistic का null distribution बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>この族は一貫して判定を返さない。それは正しいが、そのままだと利用者は <code style="color:#22d3bf">PCE 1832</code> のような数値を渡されて<b>解釈する手段が無い</b>。かといってしきい値を同梱すると嘘になる ―― 分離点は枚数・解像度・圧縮率・被写体で動くので、出荷時に決められる値ではない。</p>
+<p>そこで<b>利用者自身の清浄データから分布を測る</b>。同梱するのは「しきい値」ではなく「しきい値の測り方」で、それなら条件が変わっても正しいままでいる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>values : array_like</p>
+<p>改竄が無いと分かっている組で測った証拠量(<code style="color:#22d3bf">hash_distance</code> や</p>
+<p><code style="color:#22d3bf">fingerprint_correlate()[&quot;pce&quot;]</code> など)。<b>同じ条件</b>で集めること。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">quantiles</code></p>
+<p>(5, 25, 50, 75, 95, 99 パーセンタイル)。標本が少ないと裾は測れない</p>
+<p>ので <code style="color:#22d3bf">n &lt; 20</code> は <code style="color:#22d3bf">caveats</code> に出す(黙って外挿しない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_prnu_camera_fingerprint">poc_prnu_camera_fingerprint</a> — <code style="color:#22d3bf">py -3.11 examples/poc_prnu_camera_fingerprint.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">calibration</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">exponential_background — VIDEOSTREAM <code style="color:#22d3bf">recursive</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">video</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import videostream; videostream.exponential_background(video, alpha: &#x27;float&#x27; = 0.05) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvideostream.get(&quot;exponential_background&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर frame पर recursive background <code style="color:#22d3bf">bg ← (1−α)·bg + α·frame</code> → <code style="color:#22d3bf">(T, H, W)</code> (<code style="color:#22d3bf">video</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>最初のフレームで <code style="color:#22d3bf">bg</code> を初期化し、以後 <code style="color:#22d3bf">bg += α (frame - bg)</code> を画素ごとに繰り返す指数移動平均。状態は背景 1 枚だけ(窓を持たない)。フレーム <code style="color:#22d3bf">t</code> の出力はその時点の <code style="color:#22d3bf">bg</code> の写しで、<code style="color:#22d3bf">t = 0</code> は入力の先頭フレームそのもの。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">video</code>: <code style="color:#22d3bf">(T, H, W)</code> 配列か 2-D フレームの list。整数 dtype は最大値で <code style="color:#22d3bf">[0, 1]</code> に正規化、float は <code style="color:#22d3bf">[0, 1]</code> にクリップ。NaN/Inf は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: <code style="color:#22d3bf">[0, 1]</code>。時定数はおよそ <code style="color:#22d3bf">1/α</code> フレーム(0.05 → 約 20 枚)。0 なら背景は先頭フレームのまま固定、1 なら常に現在のフレーム。<b>物体が止まると <code style="color:#22d3bf">1/α</code> 枚ほどで背景に吸収される</b>(選択的更新は無い)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(T, H, W)</code> float64、<code style="color:#22d3bf">[0, 1]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 失敗: <code style="color:#22d3bf">ValueError</code>(形・dtype・<code style="color:#22d3bf">alpha</code> の範囲)。</p>
+<p>前景マスクまで欲しいなら同じモデルの <code style="color:#22d3bf">exponential_foreground</code>。画素ごとの雑音に閾値を合わせたいなら <code style="color:#22d3bf">running_gaussian_background</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:video_streaming">video_streaming family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_cables">mv_cables</a> — Cables (standards, speed, power delivery, robot cables)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_frame_grabbers">mv_frame_grabbers</a> — Frame grabber boards (optics नहीं, पर यही तय करते हैं कि capture हो भी सकता है या नहीं)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevideostream:mv_standards">mv_standards</a> — Camera interface standards और उनके पीछे की संस्थाएँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:video_streaming">video_streaming</a> — <code style="color:#22d3bf">py -3.11 examples/video_streaming.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">video</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:temporal_median_window">temporal_median_window</a> · <a style="color:#22d3bf" href="opvideostream:moving_average_window">moving_average_window</a> · <a style="color:#22d3bf" href="opvideostream:background_subtraction_window">background_subtraction_window</a> · <a style="color:#22d3bf" href="opvideostream:frame_difference_causal">frame_difference_causal</a> · <a style="color:#22d3bf" href="opvideostream:exponential_foreground">exponential_foreground</a> · <a style="color:#22d3bf" href="opvideostream:running_mean_std">running_mean_std</a> · <a style="color:#22d3bf" href="opvideostream:optical_flow_magnitude_stream">optical_flow_magnitude_stream</a> · <a style="color:#22d3bf" href="opvideostream:motion_history_image">motion_history_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">recursive</code>)</h3>
+<p><a style="color:#22d3bf" href="opvideostream:frame_difference_causal">frame_difference_causal</a> · <a style="color:#22d3bf" href="opvideostream:exponential_foreground">exponential_foreground</a> · <a style="color:#22d3bf" href="opvideostream:running_mean_std">running_mean_std</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: videostream.py — VIDEOSTREAM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sdf_offset — 3D <code style="color:#22d3bf">sdf_csg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sdf</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sdf_offset(sdf, r)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import sdf_ops; sdf_ops.sdf_offset(sdf, r)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sdf_offset&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SDF की zero level set को दूरी <code style="color:#22d3bf">r</code> जितना normal direction में खिसकाता है = <code style="color:#22d3bf">sdf - r</code> (r&gt;0 फैलाव, r&lt;0 सिकुड़न)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>新しいゼロ集合は旧 <code style="color:#22d3bf">sdf == r</code> の等値面。全点で距離が一様に <code style="color:#22d3bf">r</code> シフトするので、距離場としての性質(勾配ノルム 1)は保たれる。プリミティブの厚み付け(丸めた殻)や配管のクリアランス確保に使う。</p>
+<p>計算: <code style="color:#22d3bf">np.asarray(sdf, float64) - float(r)</code>。<code style="color:#22d3bf">r</code> はスカラのみ(配列を渡すと <code style="color:#22d3bf">float()</code> で <code style="color:#22d3bf">TypeError</code>)。単位は <code style="color:#22d3bf">sdf</code> の距離単位と同じ。<code style="color:#22d3bf">r = 0</code> は恒等。shape・NaN・inf の検査はしない(<code style="color:#22d3bf">inf - r = inf</code> で契約どおり伝播)。</p>
+<p>幾何的意味: 厳密な SDF に対しては Minkowski 和(<code style="color:#22d3bf">r &gt; 0</code> で半径 <code style="color:#22d3bf">r</code> の球で膨張、<code style="color:#22d3bf">r &lt; 0</code> で収縮)に一致する。<code style="color:#22d3bf">sphere_sdf(g, c, R)</code> に <code style="color:#22d3bf">r</code> を掛けると <code style="color:#22d3bf">sphere_sdf(g, c, R + r)</code> と厳密に等しい。<code style="color:#22d3bf">box_sdf</code> の膨張では角が丸くなる(ユークリッド膨張なので、箱が大きくなるのではなく角 R = r の丸箱になる)。</p>
+<p>注意:</p>
+<p style="margin:2px 0 2px 12px">• 収縮(<code style="color:#22d3bf">r &lt; 0</code>)で <code style="color:#22d3bf">|r|</code> が最小内接半径を超えると形は消える(全要素が正)。エラーにはならない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sdf_union</code> / <code style="color:#22d3bf">sdf_intersect</code> の<b>内側</b>は真の距離の下界なので、合成後に <code style="color:#22d3bf">r &lt; 0</code> で収縮すると、重なり領域で実際より多く削れることがある。</p>
+<p style="margin:2px 0 2px 12px">• 厚さ <code style="color:#22d3bf">t</code> の殻: <code style="color:#22d3bf">sdf_subtract(sdf, sdf_offset(sdf, -t))</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sdf</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sdf_csg</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:grid_coords">grid_coords</a> · <a style="color:#22d3bf" href="op3d:sphere_sdf">sphere_sdf</a> · <a style="color:#22d3bf" href="op3d:box_sdf">box_sdf</a> · <a style="color:#22d3bf" href="op3d:plane_sdf">plane_sdf</a> · <a style="color:#22d3bf" href="op3d:cylinder_sdf">cylinder_sdf</a> · <a style="color:#22d3bf" href="op3d:torus_sdf">torus_sdf</a> · <a style="color:#22d3bf" href="op3d:capsule_sdf">capsule_sdf</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: sdf_ops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

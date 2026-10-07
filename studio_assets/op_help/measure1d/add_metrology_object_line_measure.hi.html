@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">add_metrology_object_line_measure — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_line_measure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>line metrology object जोड़ता है (add_metrology_object_line_measure)। index लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>参照線分 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はこの線分上に <code style="color:#22d3bf">n</code> 点を等間隔(両端を含む)に置き、各点から <b>線分の法線方向</b> に短い測定線を張ってサブピクセルのエッジを探し、得た点に直線を最小二乗で当て直す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル点数(既定 25)。多いほどフィットは安定するが計測時間は比例。</p>
+<p style="margin:2px 0 2px 12px">• 端点が一致する(長さ <code style="color:#22d3bf">&lt; 1e-9</code>)線分は積めるが、<code style="color:#22d3bf">apply</code> 時にサンプル 0 個 → フィット失敗として <code style="color:#22d3bf">params=None</code>、<code style="color:#22d3bf">rms=inf</code> で返る(例外にはならない)。</p>
+<p style="margin:2px 0 2px 12px">• 引数の型・範囲はここでは検証しない(画像外の座標も積める。<code style="color:#22d3bf">apply</code> 時に最近傍で外挿されるだけで例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 追加したオブジェクトの index(0 始まり)。<code style="color:#22d3bf">apply</code> の結果 list の同じ位置に <code style="color:#22d3bf">type=&quot;line&quot;</code> の結果(<code style="color:#22d3bf">row1/col1/row2/col2/angle_deg</code>)が入る。</p>
+<p><code style="color:#22d3bf">align_metrology_model</code> で平行移動するときは両端点が一緒に動く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_calipers_under_illusion">poc_calipers_under_illusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_calipers_under_illusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:create_metrology_model">create_metrology_model</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_circle_measure">add_metrology_object_circle_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_rectangle2_measure">add_metrology_object_rectangle2_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_ellipse_measure">add_metrology_object_ellipse_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_generic">add_metrology_object_generic</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrology.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_select_largest — BLOB <code style="color:#22d3bf">select</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_select_largest&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>क्षेत्रफल के घटते क्रम में केवल <code style="color:#22d3bf">count</code> object रखता है (<b>क्रमांक क्षेत्रफल के घटते क्रम में फिर से दिए जाते हैं</b>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>同じ面積が並んだときは元の番号が小さいほうを先にする(実行ごとに順序が変わらないよう <code style="color:#22d3bf">argsort</code> を安定ソートで固定してある)。<code style="color:#22d3bf">count</code> が物体数より多くても<b>あるだけ</b>返す(足りないことを例外にはしない —— 「上位 3 個」を頼んで 2 個しか無いのは異常ではない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_gear_tooth_metrology">poc_gear_tooth_metrology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_gear_tooth_metrology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_solder_fillet_aoi">poc_solder_fillet_aoi</a> — <code style="color:#22d3bf">py -3.11 examples/poc_solder_fillet_aoi.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_wound_area_tracking">poc_wound_area_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_wound_area_tracking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_features">blob_features</a> · <a style="color:#22d3bf" href="opblob:blob_select">blob_select</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a> · <a style="color:#22d3bf" href="opblob:blob_region">blob_region</a> · <a style="color:#22d3bf" href="opblob:blob_boundaries">blob_boundaries</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">select</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_select">blob_select</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

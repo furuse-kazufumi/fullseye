@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tsdf_from_depth — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">sdf</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.tsdf_from_depth(depth, fx, fy, cx, cy, size=64, bounds=None, trunc=3.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;tsdf_from_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>depth map (2.5D) → TSDF volume (RGB-D reconstruction का मानक representation)। depth→TSDF conversion।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各 voxel を画像へ投影し、視線上の観測深度との符号付き切詰め距離 [-1,1] を格納(表面手前 +・奥 −・表面 0)。KinectFusion 系の基本表現。</p>
+<p>格子: <code style="color:#22d3bf">bounds=(lo, hi)</code> は <b>(X, Y, Z) のカメラ座標</b>(<code style="color:#22d3bf">depth_to_points</code> と同じ)で、None なら深度を逆投影した点群の min−2 / max+2(深度の単位)。出力は <code style="color:#22d3bf">(size,size,size)</code> float32 で <b>軸順は (Z, Y, X)</b>、voxel 中心 <code style="color:#22d3bf">= lo + (i + 0.5)/size·(hi − lo)</code>。bounds の並び (x,y,z) と配列の軸 (z,y,x) が逆なことに注意。</p>
+<p>値: 各 voxel 中心を <code style="color:#22d3bf">u = X·fx/Z + cx</code>、<code style="color:#22d3bf">v = Y·fy/Z + cy</code> で画素へ丸め、その画素の観測深度 <code style="color:#22d3bf">d</code> から <code style="color:#22d3bf">clip((d − Z)/trunc, −1, 1)</code>(<code style="color:#22d3bf">trunc</code> は深度と同じ単位)。画像外に落ちる voxel・観測深度が 0 以下・Z が 0 以下の voxel は <b>+1(未観測=自由)</b> にする(端画素へ clip して観測済みに見せかけない)。深度 0 が無効値の規約。</p>
+<p style="margin:2px 0 2px 12px">• 深度が全て 0 で bounds=None だと点群が空になり numpy の min で例外。</p>
+<p style="margin:2px 0 2px 12px">• 1 視点の TSDF なので視線の裏側は −1 で埋まる(閉じた物体にはならない)。</p>
+<p>後段: <code style="color:#22d3bf">voxel_to_mesh(tsdf, iso=0.0)</code> で面を取る。占有にするなら <code style="color:#22d3bf">sdf_to_occupancy</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:transforms_repr">transforms_repr</a> — <code style="color:#22d3bf">py -3.11 examples_3d/transforms_repr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sdf</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:sdf_to_occupancy">sdf_to_occupancy</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:integrate">integrate</a> · <a style="color:#22d3bf" href="op3d:extract_surface_points">extract_surface_points</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a> · <a style="color:#22d3bf" href="op3d:sdf_union">sdf_union</a> · <a style="color:#22d3bf" href="op3d:sdf_intersect">sdf_intersect</a> · <a style="color:#22d3bf" href="op3d:sdf_subtract">sdf_subtract</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

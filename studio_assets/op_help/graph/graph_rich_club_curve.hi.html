@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_rich_club_curve — GRAPH <code style="color:#22d3bf">core</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club_curve(adj, mode=&#x27;total&#x27;, n_null=20, swaps_per_edge=5, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import graphinv; graphinv.graph_rich_club_curve(adj, mode=&#x27;total&#x27;, n_null=20, swaps_per_edge=5, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgraph.get(&quot;graph_rich_club_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>degree-preserving null के सापेक्ष हर k के लिए rich-club coefficient φ(k)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>φ(k) is the directed density of the subgraph spanned by the nodes whose degree exceeds</p>
+<p>k: <code style="color:#22d3bf">edges among them / (r (r − 1))</code>, <code style="color:#22d3bf">r</code> = their number (Colizza et al. 2006; the same formula as <code style="color:#22d3bf">conngraph.graph_rich_club</code>, here for all k at once). <code style="color:#22d3bf">mode</code> is the degree used to rank nodes: <code style="color:#22d3bf">&quot;total&quot;</code> (in + out), <code style="color:#22d3bf">&quot;in&quot;</code> or <code style="color:#22d3bf">&quot;out&quot;</code> (Yadav &amp; Singh 2026 rank by in- and out-degree separately). A rising φ(k) alone means little — high-degree nodes are dense in any graph — so φ is divided by its mean over <code style="color:#22d3bf">n_null</code> rewirings that keep every node&#x27;s in- and out-degree exactly (Maslov &amp; Sneppen 2002; every sample is checked, fail-closed). <code style="color:#22d3bf">ratio &gt; 1</code> is the rich-club regime; Towlson et al. 2013 call it significant where <code style="color:#22d3bf">ratio &gt; 1 + sd</code>.</p>
+<p>Returns a dict: <code style="color:#22d3bf">k</code> (all integers 0 .. max degree − 1), <code style="color:#22d3bf">count</code> (nodes with degree</p>
+<p>&gt; k), <code style="color:#22d3bf">phi</code>, <code style="color:#22d3bf">null_mean</code>, <code style="color:#22d3bf">null_sd</code>, <code style="color:#22d3bf">ratio</code> (nan where the null mean is 0),</p>
+<p><code style="color:#22d3bf">z</code>, <code style="color:#22d3bf">regime</code> (bool: ratio &gt; 1 + null sd of the ratio), <code style="color:#22d3bf">n_null</code>, <code style="color:#22d3bf">mode</code>.</p>
+<p>Identities: <code style="color:#22d3bf">phi[k] == conngraph.graph_rich_club(adj, k)</code> for every k with <code style="color:#22d3bf">mode=&quot;total&quot;</code>; a complete graph has <code style="color:#22d3bf">phi == 1</code> and <code style="color:#22d3bf">ratio == 1</code> everywhere (no swap can change it); a rewired sample of the graph itself has ratio ≈ 1.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_preserving_null</code> (non-square, negative, ... ; <code style="color:#22d3bf">n_null &lt; 2</code>; <code style="color:#22d3bf">swaps_per_edge &lt; 1</code>; fewer than 2 edges); <code style="color:#22d3bf">mode</code> not in / out / total.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_worm_core_persists">poc_worm_core_persists</a> — <code style="color:#22d3bf">py -3.11 examples/poc_worm_core_persists.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">core</code>)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_kcore">graph_kcore</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

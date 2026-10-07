@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">euclidean_cluster — 3D <code style="color:#22d3bf">segment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segment3d; segment3d.euclidean_cluster(points, tol: &#x27;float&#x27;, min_size: &#x27;int&#x27; = 10) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;euclidean_cluster&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>radius tol वाले proximity graph के connected components से distance clustering (-1=noise)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>互いに <code style="color:#22d3bf">tol</code> 以内の点を(推移的に)同一クラスタへ束ねる。空間的に離れた物体が別クラスタになる(接地面除去後の「どの塊が掴める物か」の分離に使う)。連結成分のうち <code style="color:#22d3bf">min_size</code> 未満のものはノイズとして -1。ラベルはクラスタサイズ降順で 0,1,2,... (決定論)。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>tol: 同一クラスタとみなす近接半径(距離、要 &gt; 0)。</p>
+<p>min_size: これ未満の連結成分はノイズ(-1)。</p>
+<p>Returns:</p>
+<p>labels: (N,) int。0..(n_clusters-1) がクラスタ、-1 がノイズ。空入力は shape (0,)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:object_segmentation">object_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/object_segmentation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">segment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:region_growing">region_growing</a> · <a style="color:#22d3bf" href="op3d:plane_segmentation">plane_segmentation</a> · <a style="color:#22d3bf" href="op3d:vol_watershed">vol_watershed</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segment3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

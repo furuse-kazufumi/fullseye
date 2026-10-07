@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_arrow — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_arrow(img, p0, p1, pose, K, depth=None, color=&#x27;emphasis&#x27;, width=2, head_len=12.0, head_width=9.0, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_arrow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image (image2d) लौटाता है: 3-D <code style="color:#22d3bf">p0</code> से <code style="color:#22d3bf">p1</code> तक, project किया गया तीर draw करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">depth</code> を渡し<b>両端とも隠れている</b>なら破線で描く(矢じりは半透明)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>端点がカメラの後ろ / 一致 / 両端とも画像の外、姿勢・K の不正。</p>
+<p>手順: <code style="color:#22d3bf">img</code> を float64 <code style="color:#22d3bf">[0, 1]</code> の複製にし(<code style="color:#22d3bf">(H, W)</code> / <code style="color:#22d3bf">(H, W, C)</code>、C は 1/3/4。非有限・空は <code style="color:#22d3bf">ValueError</code>)、<code style="color:#22d3bf">p0</code>, <code style="color:#22d3bf">p1</code> を <code style="color:#22d3bf">annotate3d_project</code> と同じ射影で画素にして、<code style="color:#22d3bf">annotate.arrow</code> で <code style="color:#22d3bf">p0</code> の画素から <code style="color:#22d3bf">p1</code> の画素へ矢印を描く。矢じりは <code style="color:#22d3bf">p1</code> 側。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">p0</code>, <code style="color:#22d3bf">p1</code>: object 座標 <code style="color:#22d3bf">(3,)</code>(有限)。<code style="color:#22d3bf">pose</code> は 4x4 object→camera か <code style="color:#22d3bf">(R, t)</code>、<code style="color:#22d3bf">K</code> は 3x3(-Z を見る render3d 慣習)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code>: <code style="color:#22d3bf">(H, W)</code> 前方距離画像(<code style="color:#22d3bf">render3d.render_mesh</code> の <code style="color:#22d3bf">depth</code>)。画像と同じ形でなければ <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">color</code>: 役割名(<code style="color:#22d3bf">&quot;emphasis&quot;</code> など、<code style="color:#22d3bf">scheme</code> のパレットで解決)か RGB。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]、1 以上の整数(<code style="color:#22d3bf">1.5</code> は拒否)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">head_len</code> / <code style="color:#22d3bf">head_width</code>: 矢じりの長さ・幅 [px]。隠れ描画では矢印長の 80 % を超えないよう縮める。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">occlusion_tol</code>: <code style="color:#22d3bf">[0, 1)</code>。</p>
+<p>返り値: 描画済みの新しい画像(float64、入力と同じ形。入力は変更しない)。</p>
+<p>エラーになる条件(実装どおり): どちらかの端点が <code style="color:#22d3bf">z &lt;= 1e-9</code>(カメラ面上/後ろ)/ 2 点が同じ画素に射影される(視線上に並ぶ、長さ 1e-9 px 未満)/ 姿勢・<code style="color:#22d3bf">K</code> の不正。<b>画像の外に出た端点はエラーにしない</b>(<code style="color:#22d3bf">annotate.arrow</code> が枠外まで線を引くだけ。片方が枠内なら見た目は途中で切れる)。</p>
+<p>使いどころ: <code style="color:#22d3bf">render3d.render_mesh</code> の画像に「この頂点がこれ」を示す。長さを数値で示すなら <code style="color:#22d3bf">annotate3d_measure</code>、文字を添えるなら <code style="color:#22d3bf">annotate3d_label</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:annotate3d_figure">annotate3d_figure</a> — <code style="color:#22d3bf">py -3.11 examples_3d/annotate3d_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">annotate3d</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:annotate3d_project">annotate3d_project</a> · <a style="color:#22d3bf" href="op3d:annotate3d_label">annotate3d_label</a> · <a style="color:#22d3bf" href="op3d:annotate3d_scale_bar">annotate3d_scale_bar</a> · <a style="color:#22d3bf" href="op3d:annotate3d_axes">annotate3d_axes</a> · <a style="color:#22d3bf" href="op3d:annotate3d_bbox">annotate3d_bbox</a> · <a style="color:#22d3bf" href="op3d:annotate3d_measure">annotate3d_measure</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

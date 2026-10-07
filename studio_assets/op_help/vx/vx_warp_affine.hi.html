@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vx_warp_affine — VX <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import vxcore; vxcore.vx_warp_affine(image, matrix, *, interpolation, border, constant_value=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvx.get(&quot;vx_warp_affine&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>affine transform (section 3.56)। <b>inverse mapping</b>: आउटपुट का pixel (x, y) इनपुट के (x0, y0) से लिया जाता है (REQ-0498): <code style="color:#22d3bf">x0 = M[0,0]·x + M[0,1]·y + M[0,2]</code>, <code style="color:#22d3bf">y0 = M[1,0]·x + M[1,1]·y + M[1,2]</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>*matrix*: 数学の並びの 2×3(1 行目が x0 の係数 a, b, c)。★規格の C の宣言は <code style="color:#22d3bf">mat[3][2] = { {a,d}, {b,e}, {c,f} }</code> (転置した並び)—— C の配列をそのまま渡すと形が (3, 2) になるので止める。*interpolation*(必須): <code style="color:#22d3bf">&quot;nearest&quot;</code> / <code style="color:#22d3bf">&quot;bilinear&quot;</code>。*border*(必須): <code style="color:#22d3bf">&quot;constant&quot;</code>(*constant_value* で埋める)/ <code style="color:#22d3bf">&quot;undefined&quot;</code>(0 で埋める、値は規格上未定義)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / matrix が 2×3 の有限でない / interpolation・border が一覧に無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_sobel3x3">vx_sobel3x3</a> · <a style="color:#22d3bf" href="opvx:vx_magnitude">vx_magnitude</a> · <a style="color:#22d3bf" href="opvx:vx_phase">vx_phase</a> · <a style="color:#22d3bf" href="opvx:vx_table_lookup">vx_table_lookup</a> · <a style="color:#22d3bf" href="opvx:vx_histogram">vx_histogram</a> · <a style="color:#22d3bf" href="opvx:vx_nonmax_suppression">vx_nonmax_suppression</a> · <a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="opvx:vx_warp_perspective">vx_warp_perspective</a> · <a style="color:#22d3bf" href="opvx:vx_remap">vx_remap</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: vxcore.py — VX operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_synth_sequence — PIV <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">images</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_synth_sequence(shape, displacement, n_frames=8, density=0.02, diameter_px=2.5, seed=0, noise_sigma=0.0, intensity=(0.6, 1.0), background=0.0, jitter=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_synth_sequence&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">images</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">pivops.piv_synth_sequence</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>उन्हीं particle को बार-बार खिसकाकर बना image क्रम। <code style="color:#22d3bf">(frames, truth)</code> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
+<p>Args:</p>
+<p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>
+<p>displacement: 1 コマあたりの変位(<code style="color:#22d3bf">piv_synth_pair</code> と同じ形式)。</p>
+<p>n_frames: コマ数(2 以上)。</p>
+<p>jitter: コマごとに<b>場全体へ</b>加える乱れの標準偏差 [px]。0 なら定常流。</p>
+<p>時間統計(変動・レイノルズ応力)を試すにはここを 0 より大きくする。</p>
+<p>★ 粒子ごとに独立な乱れではなく<b>コマごとに一つ</b>の乱れにしてある。</p>
+<p>粒子ごとに振ると、窓の中で平均されて N の平方根ぶん小さくなり、</p>
+<p>仕込んだ値と測った値が合わない(実測: 仕込み 0.3 に対して 0.15)。</p>
+<p>それは PIV の性質であって間違いではないが、<b>時間統計の検証には使えない</b>ので、ここは非定常な流れそのものを模す形にした。</p>
+<p>density / diameter_px / seed / noise_sigma / intensity / background:</p>
+<p><code style="color:#22d3bf">piv_synth_pair</code> と同じ。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(frames: list of (H, W), truth: (2, H, W))</code>。<code style="color:#22d3bf">truth</code> は</p>
+<p><b>1 コマあたり</b>の平均変位。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_ensemble_correlate">piv_ensemble_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_time_statistics">piv_time_statistics</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_synth_particles">piv_synth_particles</a> · <a style="color:#22d3bf" href="oppiv:piv_synth_pair">piv_synth_pair</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

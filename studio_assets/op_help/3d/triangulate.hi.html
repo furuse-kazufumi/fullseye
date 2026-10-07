@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">triangulate — 3D <code style="color:#22d3bf">two_view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate(pts1, pts2, P1, P2)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.triangulate(pts1, pts2, P1, P2)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;triangulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>DLT triangulation: 2 views के corresponding points + projection matrices → 3D points। → (N,3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><b>無限遠点は <code style="color:#22d3bf">NaN</code> で返す</b>(<code style="color:#22d3bf">±inf</code> にはしない)。同次座標の第 4 成分が 0 = 2 本の視線が平行で、その対応は有限の 3-D 点を決めない。以前はそのまま割って <code style="color:#22d3bf">±inf</code> を出していたが、それだと下流の cheirality 判定 <code style="color:#22d3bf">depth &gt; 0</code> が <b><code style="color:#22d3bf">inf</code> を「カメラ前方」として数える</b>(<code style="color:#22d3bf">inf &gt; 0</code> は <code style="color:#22d3bf">True</code>)。<code style="color:#22d3bf">recover_pose</code> は 4 つの (R, t) 候補のうち前方点が最多のものを選ぶので、無限遠点が票を持つと候補選択が静かに歪む。<code style="color:#22d3bf">NaN</code> なら比較が <code style="color:#22d3bf">False</code> になり、数えられずに済む(2026-09-02、chain_fuzz が到達して発覚)。</p>
+<p>ほぼ平行だが厳密には平行でない対応は、<b>大きな有限値</b>として返る。これは NaN では拾えないので、呼び手側で距離の妥当性を見る必要がある。</p>
+<p>Raises ValueError: 点が (N,2) でない/非有限/対応数不一致。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">P1</code>, <code style="color:#22d3bf">P2</code> は (3,4) の射影行列(<code style="color:#22d3bf">K[R|t]</code>)。対応点はその P と同じ画素座標系の (N,2)。cam1 を基準にするなら <code style="color:#22d3bf">P1 = K1[I|0]</code>。</p>
+<p style="margin:2px 0 2px 12px">• 各点ごとに 4×4 の係数行列を SVD する Python ループ(点数に比例)。返り値は float64 (N,3)。</p>
+<p style="margin:2px 0 2px 12px">• 深度の正負(cheirality)は検査しない。前後判定が要るなら結果の z と <code style="color:#22d3bf">R X + t</code> の z を見る(<code style="color:#22d3bf">recover_pose</code> が内部で行う)。</p>
+<p style="margin:2px 0 2px 12px">• 解の単位は P の並進 t と同じ。<code style="color:#22d3bf">recover_pose</code> 由来の P なら |t|=1 のスケール。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的。(N,2) でない・非有限・点数不一致は <code style="color:#22d3bf">ValueError</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sfm_recon">sfm_recon</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sfm_recon.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">two_view</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fundamental_8point">fundamental_8point</a> · <a style="color:#22d3bf" href="op3d:essential_8point">essential_8point</a> · <a style="color:#22d3bf" href="op3d:recover_pose">recover_pose</a> · <a style="color:#22d3bf" href="op3d:sampson_distance">sampson_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: twoview.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

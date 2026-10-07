@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_layout_spectral — CONNGRAPH <code style="color:#22d3bf">view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>spectral layout: दिशा हटाए गए Laplacian के Fiedler vector (2..dim+1 वें eigenvector) को coordinate बनाकर point cloud (n, 3), हर axis [0, 1]।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">dim</code> は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結のグラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_edges_as_lines">graph_edges_as_lines</a> · <a style="color:#22d3bf" href="opconngraph:graph_activity_spread">graph_activity_spread</a> · <a style="color:#22d3bf" href="opconngraph:points_activity_video">points_activity_video</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">view</code>)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:graph_edges_as_lines">graph_edges_as_lines</a> · <a style="color:#22d3bf" href="opconngraph:graph_adjacency_image">graph_adjacency_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

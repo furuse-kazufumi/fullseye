@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mat_lu — MATH <code style="color:#22d3bf">linalg</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_lu(a, pivoting=&#x27;partial&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathops; mathops.mat_lu(a, pivoting=&#x27;partial&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;mat_lu&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>LU factorisation <code style="color:#22d3bf">P @ A = L @ U</code> (<code style="color:#22d3bf">L</code> unit lower, <code style="color:#22d3bf">U</code> upper)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">pivoting=&quot;partial&quot;</code> (default, LAPACK <code style="color:#22d3bf">getrf</code>) swaps rows so every multiplier is <code style="color:#22d3bf">|l| &lt;= 1</code>. <code style="color:#22d3bf">pivoting=&quot;none&quot;</code> is plain Gaussian elimination, kept <b>on purpose</b> as the classic failure: on <code style="color:#22d3bf">[[1e-20, 1], [1, 1]]</code> the multiplier is 1e20, <code style="color:#22d3bf">U[1,1]</code> rounds to −1e20 and <code style="color:#22d3bf">L @ U</code> loses the original <code style="color:#22d3bf">A[1,1] = 1</code> entirely (Trefethen &amp; Bau, Lecture 20).</p>
+<p>Returns a dict: <code style="color:#22d3bf">P</code>, <code style="color:#22d3bf">L</code>, <code style="color:#22d3bf">U</code>, <code style="color:#22d3bf">growth</code> = max|U| / max|A| (the growth factor; huge growth means the factorisation is numerically meaningless) and <code style="color:#22d3bf">residual</code> = max|P A − L U| / max|A|.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array (masked elements वाला) से <code style="color:#22d3bf">ValueError</code></b> — mask हटाकर नीचे के raw values इस्तेमाल करने वाला implicit conversion अस्वीकार है। भरना है या हटाना है, यह स्पष्ट रूप से बताएँ।</p>
+<p style="margin:2px 0 2px 12px">• <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b> (गिनती बताकर अस्वीकार — क्योंकि यह पूरे परिणाम में फैल जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Shape सख़्त है</b>: 1-D और 2-D को implicit रूप से promote या broadcast नहीं किया जाता (vector slot में matrix या matrix slot में vector देने पर <code style="color:#22d3bf">ValueError</code>; reshape स्पष्ट रूप से करें)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: matrix लेने वाले ops और <code style="color:#22d3bf">stat_histogram</code> के bins, <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 6.7 करोड़ elements) से अधिक होने पर <code style="color:#22d3bf">ValueError</code> देते हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">linalg</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:mat_solve">mat_solve</a> · <a style="color:#22d3bf" href="opmath:mat_lstsq">mat_lstsq</a> · <a style="color:#22d3bf" href="opmath:mat_svd">mat_svd</a> · <a style="color:#22d3bf" href="opmath:mat_eigh">mat_eigh</a> · <a style="color:#22d3bf" href="opmath:mat_pinv">mat_pinv</a> · <a style="color:#22d3bf" href="opmath:mat_cond">mat_cond</a> · <a style="color:#22d3bf" href="opmath:mat_qr">mat_qr</a> · <a style="color:#22d3bf" href="opmath:mat_cholesky">mat_cholesky</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathops.py — MATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_mt_sn_ratio — SPC <code style="color:#22d3bf">mt</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_mt_sn_ratio(md)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.spc_mt_sn_ratio(md)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;spc_mt_sn_ratio&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>abnormal-sample distances का larger-the-better SN ratio, decibels में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>MT-method item selection asks which features earn their place: run the unit space with a subset of features, score the *abnormal* samples, and keep the subset whose distances are largest. The figure of merit is the larger-the-better signal-to-noise ratio</p>
+<p>eta = -10 log10( (1/n) sum_i 1 / MD_i^2 )</p>
+<p>an inverse-square average, so one abnormal sample that the subset fails to separate drags the whole score down — which is the behaviour wanted when the cost of a miss dominates. The caller drives the subsets (classically by an orthogonal array); this operator is the closed-form score for one subset.</p>
+<p><code style="color:#22d3bf">md</code> is a 1-D array of distances for the abnormal samples. Returns a dict with <code style="color:#22d3bf">sn_ratio_db</code>, the <code style="color:#22d3bf">harmonic_mean_md_sq</code> it came from, and <code style="color:#22d3bf">n</code>.</p>
+<p>For a constant <code style="color:#22d3bf">MD == d</code> the sum collapses and <code style="color:#22d3bf">eta == 20 log10(d)</code> exactly — pinned in the tests, and the reason a subset that puts every abnormal sample at distance 10 scores exactly 20 dB.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: an empty or non-1-D *md*, a non-positive entry (a zero distance would divide by zero: an abnormal sample sitting exactly on the unit-space centre means the subset separates nothing), or non-finite input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">mt</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:spc_mt_unit_space">spc_mt_unit_space</a> · <a style="color:#22d3bf" href="opspc:spc_mt_distance">spc_mt_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

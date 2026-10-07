@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 1dbad79b7ed1 -->
+<!-- i18n-source-sha: 7254141ce9cd -->
 # 將 Fullseye 用作 AI 助理 RAG 的方法（針對 Claude Code）
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · **繁體中文** · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -22,7 +22,7 @@ import fullseye
 fullseye.search_ops("邊緣", k=5, lang="tw")    # Python；MCP 中為 fullseye_find_ops
 ```
 
-所有 op 的摘要都以**六種語言**(日文原文 + 英文、簡體中文、繁體中文、韓文、德文譯文)建立索引，
+所有 op 的摘要都以**七種語言**(日文原文 + 英文、簡體中文、繁體中文、韓文、德文、印地文譯文；印地文譯文的專業術語保留英文)建立索引，
 並與 op 名稱、HALCON 名稱、輸入/輸出型別一起比對，依排名回傳「摘要 + 筆記位置」。繁體與簡體無法從
 文字種類區分，請以 `--lang tw` 指定。筆記本文為日文，用 grep 搜尋母語詞彙常得到 0 筆，而此搜尋可以用
 母語查找。不使用嵌入向量或外部服務(BM25，僅標準函式庫)。**不辨識同義詞**(摘要寫「偵測」時，

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">deformation_to_points — REPRCONV <code style="color:#22d3bf">algebra</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">deformation</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.deformation_to_points(deformation)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.deformation_to_points(deformation)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;deformation_to_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>TPS deformation <code style="color:#22d3bf">deformation</code> → control point <code style="color:#22d3bf">points (N,3)</code>। <code style="color:#22d3bf">deformation</code> से निकास।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">tps_fit</code> が返す dict の <code style="color:#22d3bf">ctrl</code> を取り出す。「この歪みはどこに固定されているか」を点群語彙で見るためのもので、<b>一方向</b> (制御点だけからは重み <code style="color:#22d3bf">w</code> とアフィン項 <code style="color:#22d3bf">a</code> は復元できない)。</p>
+<p>Args:</p>
+<p>deformation: <code style="color:#22d3bf">ctrl</code> を持つ dict(<code style="color:#22d3bf">tps_fit</code> の返り)。</p>
+<p>Returns:</p>
+<p>(N, 3) float64。</p>
+<p>Raises:</p>
+<p>ValueError: dict でない / <code style="color:#22d3bf">ctrl</code> が無い / 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:points_zyx_to_keypoints_uv">points_zyx_to_keypoints_uv</a> · <a style="color:#22d3bf" href="opreprconv:points_to_position">points_to_position</a> · <a style="color:#22d3bf" href="opreprconv:select_points">select_points</a> · <a style="color:#22d3bf" href="opreprconv:flow_apply">flow_apply</a> · <a style="color:#22d3bf" href="opreprconv:points_to_gaussians">points_to_gaussians</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">algebra</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:angle_to_matrix">angle_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:rot_scale_to_matrix">rot_scale_to_matrix</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a> · <a style="color:#22d3bf" href="opreprconv:shift_to_vector">shift_to_vector</a> · <a style="color:#22d3bf" href="opreprconv:vector_to_shift">vector_to_shift</a> · <a style="color:#22d3bf" href="opreprconv:cscalar_to_polar">cscalar_to_polar</a> · <a style="color:#22d3bf" href="opreprconv:polar_to_cscalar">polar_to_cscalar</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

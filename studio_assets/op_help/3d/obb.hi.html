@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">obb — 3D <code style="color:#22d3bf">bounds</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obb(points) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcseg; pcseg.obb(points) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;obb&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>PCA से oriented bounding box।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns <code style="color:#22d3bf">{center, axes (3,3 columns = box axes), extents (3, half-widths), corners (8,3)}</code>. The tight-fitting box a manipulator uses to reason about an object&#x27;s size and grasp width once it has been segmented out.</p>
+<p>手順: 重心 <code style="color:#22d3bf">c</code> を引いた点群の SVD(<code style="color:#22d3bf">full_matrices=False</code>)で主軸 <code style="color:#22d3bf">axes</code>(列 = 特異値の降順、第 1 列が最も広がる方向)を取り、点を主軸座標に写して各軸の min/max から半幅 <code style="color:#22d3bf">extents</code> と箱中心 <code style="color:#22d3bf">center</code>(重心とは一般に異なる)を求める。<code style="color:#22d3bf">corners</code> は <code style="color:#22d3bf">center + (±extents) @ axes.T</code> の 8 点で、符号の組合せは <code style="color:#22d3bf">meshgrid([-1,1],[-1,1],[-1,1])</code> の順。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) 以外は <code style="color:#22d3bf">ValueError</code>、2 点未満も <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• PCA の主軸は「最小体積の箱」を保証しない(点の分布に沿うだけ)。主軸の符号は SVD の任意性で決まり、点の分布が等方に近い(特異値が縮退する)と軸の向きは不安定になる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">extents</code> は半幅なので辺長は <code style="color:#22d3bf">2 * extents</code>。単位は座標の単位。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:hull_bounds">hull_bounds</a> — <code style="color:#22d3bf">py -3.11 examples_3d/hull_bounds.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">bounds</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:convex_hull">convex_hull</a> · <a style="color:#22d3bf" href="op3d:aabb">aabb</a> · <a style="color:#22d3bf" href="op3d:min_enclosing_sphere">min_enclosing_sphere</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pcseg.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

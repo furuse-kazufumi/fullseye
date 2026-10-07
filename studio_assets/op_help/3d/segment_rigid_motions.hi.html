@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">segment_rigid_motions — 3D <code style="color:#22d3bf">motion_segment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motion_seg3d; motion_seg3d.segment_rigid_motions(pts0, pts1, thresh, max_bodies: &#x27;int&#x27; = 5, min_inliers=None, n_iter: &#x27;int&#x27; = 100, k_sample: &#x27;int&#x27; = 6, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;segment_rigid_motions&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">labels</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.segment_rigid_motions.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">motion_seg3d.segment_rigid_motions</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">{&quot;labels&quot;, &quot;motions&quot;} → labels</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 point clouds को उन rigid bodies में बाँटता है जिनकी motion मेल खाती है (बार-बार RANSAC से multi-body segmentation)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>まず <code style="color:#22d3bf">estimate_flow</code> で観測フロー(各 pts0 点 -&gt; pts1 最近傍)を取り、<code style="color:#22d3bf">target = pts0 + flow</code> を対応先として固定する。以後、残り点集合に対して:</p>
+<p style="margin:2px 0 2px 12px">1. 空間的に近い <code style="color:#22d3bf">k_sample</code> 点(seed + その最近傍)を種に Kabsch で剛体仮説を立て、</p>
+<p style="margin:2px 0 2px 12px">2. フロー整合 <code style="color:#22d3bf">|| (R·s + t) - target(s) || &lt; thresh</code> を満たす inlier を数え、</p>
+<p style="margin:2px 0 2px 12px">3. <code style="color:#22d3bf">n_iter</code> 試行で <b>有意性ゲートを満たす</b> 最良仮説を選び(inlier 残差中央値が <code style="color:#22d3bf">thresh</code> の一定割合未満 = 真の剛体らしく残差が 0 近傍に集中。無相関/ノイズの偶然適合は許容球を満たし残差 ≈ 0.6*thresh なので弾かれる)、その inlier で Kabsch 再フィット(refine)、</p>
+<p style="margin:2px 0 2px 12px">4. inlier 数が <code style="color:#22d3bf">min_inliers</code> 以上 <b>かつ</b> refine 後も有意性を保つならそれを 1 剛体として確定・除去。満たさなければ body を作らず残余は -1 のまま終了(偽の剛体を捏造しない)。</p>
+<p>を <code style="color:#22d3bf">max_bodies</code> 個または残り点が閾値を下回るまで繰り返す。どの剛体にも属さない残り点は <code style="color:#22d3bf">labels = -1</code>(outlier / 未対応、詐称しない)。近傍種サンプリングは空間的に連続な物体をまとめて掴むための locality prior で、閾値ではなく相対順位だけを使うためスケール不変。</p>
+<p>Args:</p>
+<p>pts0: (N, 3) 時刻 0 の点群。</p>
+<p>pts1: (M, 3) 時刻 1 の点群(N と一致不要)。</p>
+<p>thresh: フロー整合の inlier 距離しきい値。<b>座標スケール相対</b>で与えること</p>
+<p>(絶対 epsilon をモジュール内に持たないため、呼び手が座標系に合わせる)。</p>
+<p>max_bodies: 抽出する剛体数の上限(&gt;= 1)。</p>
+<p>min_inliers: 1 剛体と認める最小 inlier 数。None なら <code style="color:#22d3bf">max(3, round(0.1*N))</code>。</p>
+<p>outlier の塊を偽の剛体にしないための下限。</p>
+<p>n_iter: 剛体 1 個あたりの RANSAC 試行回数。</p>
+<p>k_sample: 1 仮説を作る種サンプルの点数(seed + 最近傍、&gt;= 3)。</p>
+<p>seed: RANSAC 乱数シード(再現性)。</p>
+<p>Returns:</p>
+<p>dict: <code style="color:#22d3bf">{&quot;labels&quot;: (N,) int(各点の剛体 id、0..K-1 / outlier=-1), &quot;motions&quot;: [(R, t), ...] (id 順の剛体変換、K 個)}</code>。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限 / pts1 空 / thresh &lt;= 0 / max_bodies &lt; 1 /</p>
+<p>k_sample &lt; 3。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:motion_seg">motion_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/motion_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">motion_segment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:estimate_flow">estimate_flow</a> · <a style="color:#22d3bf" href="op3d:fit_rigid">fit_rigid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motion_seg3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

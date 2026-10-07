@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">contours_to_gcode — PRINTPATH <code style="color:#22d3bf">slice</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.contours_to_gcode(contours: &#x27;Any&#x27;, z: &#x27;float&#x27;, layer: &#x27;int&#x27; = 0, layer_mm: &#x27;float&#x27; = 0.2, line_width_mm: &#x27;float&#x27; = 0.4, filament_mm: &#x27;float&#x27; = 1.75, feed_mm_min: &#x27;float&#x27; = 1800.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;contours_to_gcode&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>contour (<code style="color:#22d3bf">mesh_slice_contours</code> की table) को <b>उनके चारों ओर घूमने वाले path की table</b> में बदलता है (<code style="color:#22d3bf">gcode_read</code> जैसे ही column)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>最小のスライサ: 各輪を順に一周し、押し出し量は <code style="color:#22d3bf">線分長 × 線幅 × 層厚 / フィラメント断面積</code>。輪と輪の間は移動(e = 0)。真値つきの合成 G-code を作るための道具で、インフィルやリトラクトは持たない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_one_stroke_epicycles">poc_one_stroke_epicycles</a> — <code style="color:#22d3bf">py -3.11 examples/poc_one_stroke_epicycles.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:gcode_extrusion_volume">gcode_extrusion_volume</a> · <a style="color:#22d3bf" href="opprintpath:gcode_time_estimate">gcode_time_estimate</a> · <a style="color:#22d3bf" href="opprintpath:gcode_layer_image">gcode_layer_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">slice</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:mesh_slice_contours">mesh_slice_contours</a> · <a style="color:#22d3bf" href="opprintpath:mesh_slice_stack">mesh_slice_stack</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

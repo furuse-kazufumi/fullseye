@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">morph_sequence — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × pairs × pairs</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>alpha को 0→1 तक n step में बदलकर बना morph क्रम (A से B तक smooth रूप से बदलते frame)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
+<p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
+<p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>
+<p>コストは <code style="color:#22d3bf">n</code> に比例する(<code style="color:#22d3bf">n=7</code> で 14 回)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">imgA</code>, <code style="color:#22d3bf">imgB</code>: <code style="color:#22d3bf">(H, W[, C])</code>、同じ形、<code style="color:#22d3bf">[0, 1]</code>。NaN/Inf は無言で 0 / 1 に置換される。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ptsA</code>, <code style="color:#22d3bf">ptsB</code>: <code style="color:#22d3bf">(K, 2)</code> の <b>(x, y)</b>、同数・同順の対応点。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 2 以上(1 以下は <code style="color:#22d3bf">ValueError</code>)。<code style="color:#22d3bf">int</code> に切られる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">&quot;affine&quot;</code>(Delaunay 区分アフィン、速い)/ <code style="color:#22d3bf">&quot;tps&quot;</code>(薄板スプライン、滑らか)。それ以外は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">lam</code> は TPS の平滑化係数(0 で厳密補間)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">with_corners</code>: True で <code style="color:#22d3bf">add_frame_corners</code> を両点群に足し、枠の外側の穴を防ぐ。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: float64 配列 <code style="color:#22d3bf">n</code> 枚の list(<code style="color:#22d3bf">images</code> 型)。<code style="color:#22d3bf">[0, 1]</code> にクリップ済み。</p>
+<p>1 枚だけ欲しい(例: <code style="color:#22d3bf">α = 0.5</code> の中間顔)なら <code style="color:#22d3bf">morph</code> を直接。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_morph">image_morph</a> — <code style="color:#22d3bf">py -3.11 examples/image_morph.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">morph</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:add_frame_corners">add_frame_corners</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:blend">blend</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imagemorph.py — SHAPE2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

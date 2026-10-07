@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_aspect — DEM <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_aspect(dem, cell_size, method=&#x27;horn&#x27;, flat_tol=1e-12)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_aspect&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>slope aspect [degree]। <b>उत्तर 0 degree, पूर्व की ओर बढ़ता</b>। समतल cell को <code style="color:#22d3bf">ASPECT_FLAT</code> मिलता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>平坦を 0 で返さないのは、0 が「北向き斜面」を意味してしまうため —— 区別できない値を返すのは、例外を出さずに間違える典型。</p>
+<p>手順: <code style="color:#22d3bf">dem_slope</code> と同じ 3x3 勾配 <code style="color:#22d3bf">(dz/dx, dz/dy)</code> を取り、<b>下り勾配</b>の向き <code style="color:#22d3bf">atan2(-dz/dx, -dz/dy)</code> を度にして <code style="color:#22d3bf">[0, 360)</code> に折り返す。行 0 が北・列が増える向きが東という前提で、北 0 / 東 90 / 南 180 / 西 270。行 0 が南の格子(上下反転した配列)を渡すと南北が入れ替わり、<b>例外は出ない</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>, <code style="color:#22d3bf">cell_size</code>, <code style="color:#22d3bf">method</code>: <code style="color:#22d3bf">dem_slope</code> と同じ契約(3x3 以上、<code style="color:#22d3bf">nan</code> で欠測、番兵値は拒否、<code style="color:#22d3bf">cell_size</code> は正の [m])。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flat_tol</code>: 勾配の大きさ <code style="color:#22d3bf">hypot(dz/dx, dz/dy)</code> [m/m] がこれ以下なら平坦とみなし <code style="color:#22d3bf">ASPECT_FLAT</code>(= -1.0)を返す。既定 1e-12 は「数値的に厳密に平坦」だけ。整数標高の平地でも微小勾配で方位が付くことがあるので、意味のある閾(例 1e-3)を明示するとよい。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64。<code style="color:#22d3bf">[0, 360)</code> または <code style="color:#22d3bf">-1.0</code>。<code style="color:#22d3bf">nan</code> セルの周りは <code style="color:#22d3bf">nan</code>。</p>
+<p style="margin:2px 0 2px 12px">• 方位のヒストグラムや平均を取るときは <code style="color:#22d3bf">-1</code> を先に除く(<code style="color:#22d3bf">out &gt;= 0</code>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dem_terrain">poc_dem_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dem_terrain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_geodetic_height_frames">poc_geodetic_height_frames</a> — <code style="color:#22d3bf">py -3.11 examples/poc_geodetic_height_frames.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_slope">dem_slope</a> · <a style="color:#22d3bf" href="opdem:dem_curvature">dem_curvature</a> · <a style="color:#22d3bf" href="opdem:dem_roughness">dem_roughness</a> · <a style="color:#22d3bf" href="opdem:dem_tpi">dem_tpi</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

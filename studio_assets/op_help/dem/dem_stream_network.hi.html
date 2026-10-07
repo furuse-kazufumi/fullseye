@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dem_stream_network — DEM <code style="color:#22d3bf">hydrology</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdem.get(&quot;dem_stream_network&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>binary mask जो उन cell को stream channel मानता है जिनका flow accumulation threshold से अधिक है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>手順: <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code> で各セルの集水セル数(自セルを 1 と数える)を取り、<code style="color:#22d3bf">acc &gt;= threshold_cells</code> を 1、それ以外を 0 にする。欠測セルは <code style="color:#22d3bf">nan</code> のまま。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>: 河道とみなす集水セル数。正の有限値(<code style="color:#22d3bf">ValueError</code>)。面積で決めたいなら <code style="color:#22d3bf">面積 [m^2] / cell_size^2</code> に換算して渡す(この op はセル数しか受けない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(既定): 先に priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>、<code style="color:#22d3bf">epsilon=1e-6</code>)で窪地を埋める。埋めないと窪地で流れが止まり、下流の集水量が小さく出て河道が途切れる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">nodata</code>: <code style="color:#22d3bf">&quot;error&quot;</code>(既定、<code style="color:#22d3bf">nan</code> があれば拒否)/ <code style="color:#22d3bf">&quot;outlet&quot;</code>(欠測 = 流出口、水域向き)/ <code style="color:#22d3bf">&quot;barrier&quot;</code>(欠測 = 壁)。定数で穴埋めする選択肢は無い。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code> / <code style="color:#22d3bf">cell_size</code> の契約は <code style="color:#22d3bf">dem_slope</code> と同じ(3x3 以上、番兵値拒否、[m])。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(H, W)</code> float64 の 0 / 1(欠測は <code style="color:#22d3bf">nan</code>)。bool ではないので <code style="color:#22d3bf">blob_label</code> 等に渡すなら <code style="color:#22d3bf">== 1</code> で二値化する。</p>
+<p style="margin:2px 0 2px 12px">• 計算量: 集水量のトポロジカル走査がセル数ぶんの Python ループ。</p>
+<p>D8 流向(<code style="color:#22d3bf">dem_flow_direction</code>)に基づくので、平坦な埋立地では流れが一箇所に集まりやすい ―― 閾値を下げすぎると格子状の偽河道が出る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">dem_terrain_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:dem_terrain_analysis_tour">dem_terrain_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/dem_terrain_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">hydrology</code>)</h3>
+<p><a style="color:#22d3bf" href="opdem:dem_fill_sinks">dem_fill_sinks</a> · <a style="color:#22d3bf" href="opdem:dem_flow_direction">dem_flow_direction</a> · <a style="color:#22d3bf" href="opdem:dem_flow_accumulation">dem_flow_accumulation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: demops.py — DEM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

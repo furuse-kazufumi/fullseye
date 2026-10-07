@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">rank_data — IMGMETRICS <code style="color:#22d3bf">iqa</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import iqatid; iqatid.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_data&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>औसत rank (1 से शुरू)। बराबर rank वालों को उनके rank का औसत मिलता है (scipy.stats.rankdata के &#x27;average&#x27; जैसी ही परिभाषा)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>例: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf は最大 / 最小の順位(互いに同順位)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ 2 未満・nan。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_iqa_tid2013">poc_iqa_tid2013</a> — <code style="color:#22d3bf">py -3.11 examples/poc_iqa_tid2013.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:rgb_to_lab">rgb_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:lab_to_rgb">lab_to_rgb</a> · <a style="color:#22d3bf" href="opimgmetrics:rgb_to_xyz">rgb_to_xyz</a> · <a style="color:#22d3bf" href="opimgmetrics:xyz_to_lab">xyz_to_lab</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_2000">delta_e_2000</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_76">delta_e_76</a> · <a style="color:#22d3bf" href="opimgmetrics:delta_e_map">delta_e_map</a> · <a style="color:#22d3bf" href="opimgmetrics:mse">mse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">iqa</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgmetrics:luma_limited_u8">luma_limited_u8</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_spearman">rank_spearman</a> · <a style="color:#22d3bf" href="opimgmetrics:rank_kendall_b">rank_kendall_b</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_published">tid2013_published</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_root">tid2013_root</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_index">tid2013_index</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_metric_values">tid2013_metric_values</a> · <a style="color:#22d3bf" href="opimgmetrics:tid2013_evaluate">tid2013_evaluate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: iqatid.py — IMGMETRICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spad_deadtime_correct — PHOTON <code style="color:#22d3bf">spad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">countrate</code> → <code style="color:#22d3bf">countrate</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spad_deadtime_correct(measured_hz, dead_time_ns=50.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoncount; photoncount.spad_deadtime_correct(measured_hz, dead_time_ns=50.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsphoton.get(&quot;spad_deadtime_correct&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>dead time से विकृत मापी गई rate से असली photon rate वापस निकालता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The exact inverse of the <b>non-paralysable</b> law of <code style="color:#22d3bf">spad_deadtime_apply</code>::</p>
+<p>n = m / (1 - m*tau)</p>
+<p>A round trip <code style="color:#22d3bf">apply -&gt; correct</code> is exact to machine precision (measured max elementwise relative error 6.0e-16 over 2000 rates spanning 1e3 to 5e7 Hz at <code style="color:#22d3bf">tau = 50 ns</code>, where the measured rate reaches 71.4% of the 20 MHz saturation rate).</p>
+<p><b>There is deliberately no paralysable inverse.</b> <code style="color:#22d3bf">m = n*exp(-n*tau)</code> is not injective — every measured rate below the maximum <code style="color:#22d3bf">1/(e*tau)</code> corresponds to *two* true rates, one below and one above <code style="color:#22d3bf">1/tau</code> — so returning one of them would be a fabrication dressed as a correction. Resolve the branch with an independent measurement (e.g. an attenuator step) and invert it yourself.</p>
+<p>*measured_hz* is a 1-D array of measured rates in counts per second; *dead_time_ns* the dead time in nanoseconds (default 50, the same</p>
+<p>placeholder <code style="color:#22d3bf">spad_deadtime_apply</code> uses — replace it with the datasheet value). Returns the corrected true rates as a float64 1-D array.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite or non-1-D *measured_hz*, a non-positive *dead_time_ns*, and — instead of returning <code style="color:#22d3bf">inf</code> or a negative rate — any measured rate at or above the saturation rate <code style="color:#22d3bf">1/tau</code>, which no non-paralysable detector can ever produce.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">countrate</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opphoton:spad_deadtime_apply">spad_deadtime_apply</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">spad</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:spad_deadtime_apply">spad_deadtime_apply</a> · <a style="color:#22d3bf" href="opphoton:tcspc_coates_correct">tcspc_coates_correct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

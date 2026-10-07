@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">reflect_points — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reflect_points(points, plane_point, plane_normal)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry3d; symmetry3d.reflect_points(points, plane_point, plane_normal)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;reflect_points&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point cloud को plane (point plane_point, normal plane_normal) के पार mirror करता है। → (N,3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各点 p の平面からの符号付き距離 <code style="color:#22d3bf">d = (p - plane_point) · n</code>(n は正規化した法線)を取り、<code style="color:#22d3bf">p&#x27; = p - 2 d n</code> を返す(Householder 鏡映)。平面上の点は動かず、平面の両側の点が入れ替わる。点の並び順は保たれるので <code style="color:#22d3bf">p&#x27;[i]</code> は <code style="color:#22d3bf">p[i]</code> の鏡像。座標の単位はそのまま。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">points</code>: (N,3) の配列(float に変換)。形状検証はしない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">plane_point</code>: 平面上の 1 点 (3,)。<code style="color:#22d3bf">plane_normal</code>: 法線 (3,)(長さは任意、内部で正規化。符号は結果に影響しない)。</p>
+<p>注意: 法線はノルムに 1e-12 を足して割るため、ゼロベクトルを渡しても例外にならず点群がほぼそのまま返る(fail-closed ではない)。<code style="color:#22d3bf">reflection_symmetry_score</code> / <code style="color:#22d3bf">detect_reflection_symmetry</code> の内部で使うほか、検出した対称面で欠損側を埋める(鏡像を元の点群に連結する)形状補完にも使える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reflection_symmetry">reflection_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reflection_symmetry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:detect_reflection_symmetry">detect_reflection_symmetry</a> · <a style="color:#22d3bf" href="op3d:detect_rotational_symmetry">detect_rotational_symmetry</a> · <a style="color:#22d3bf" href="op3d:reflection_symmetry_score">reflection_symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bundle_adjust — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pose × points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bundle3d; bundle3d.bundle_adjust(cameras, points, obs_cam, obs_pt, obs_uv, K, fix_first=True, max_iter=200)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;bundle_adjust&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>reprojection error को न्यूनतम करके camera poses और 3D points को एक साथ optimise करता है। → dict{cameras, points, rmse, cost}।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>cameras (nc,6)=[rvec(3)|t(3)] の初期値、points (m,3) の初期値、観測 obs_cam/obs_pt/obs_uv。fix_first=True で先頭カメラを [I|0] 相当(初期値のまま)に固定し gauge を除く。</p>
+<p><b>scale gauge</b>: 再投影誤差は「カメラ 0 の中心を基準にシーン全体を相似拡大」しても厳密に変わらないので、それだけでは解の scale が定まらず LM が任意の倍率へ滑る(実測 ×0.7〜×213、rmse≈0 のまま)。本関数は <b>構造のカメラ 0 中心からの RMS 距離(<code style="color:#22d3bf">scale_anchor</code>)を初期値に保つ残差</b> <code style="color:#22d3bf">w·(rms/rms0 − 1)</code> を 1 本足して固定する。再投影コストは scale 方向に勾配ゼロなので、この残差は最適解で厳密に 0 になり、返る scale は初期構造のそれと一致する(基線長 <code style="color:#22d3bf">‖t₁‖</code> で固定するより、点数で平均される分だけ初期摂動の影響が小さい)。初期構造が退化(全点がカメラ 0 中心に一致)していれば拘束は掛けない。返り dict の <code style="color:#22d3bf">scale_anchor</code> に採用した RMS 距離を載せる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bundle_adjust">bundle_adjust</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bundle_adjust.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">bundle_adjust</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:project">project</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: bundle3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

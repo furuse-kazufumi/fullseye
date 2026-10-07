@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gs_render_fn — DRIVE <code style="color:#22d3bf">gsplat</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code> (<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> की rendering बदलने का plug-in point) लौटाता है: हर call पर <code style="color:#22d3bf">gs_update</code> से Gaussians को world के वर्तमान vertices पर फिर से लगाता है, और <code style="color:#22d3bf">cam</code> (dict: pose, K, width, height) से <code style="color:#22d3bf">gs_render</code> करता है। <code style="color:#22d3bf">render_kw</code> gs_render को जैसे का तैसा दिया जाता है। attributes <code style="color:#22d3bf">n_calls</code> और <code style="color:#22d3bf">n_pairs</code> (cumulative) रखता है।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">gsplat</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:gs_from_world">gs_from_world</a> · <a style="color:#22d3bf" href="opdrive:gs_update">gs_update</a> · <a style="color:#22d3bf" href="opdrive:gs_render">gs_render</a> · <a style="color:#22d3bf" href="opdrive:gs_read_file">gs_read_file</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gsplatnp.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

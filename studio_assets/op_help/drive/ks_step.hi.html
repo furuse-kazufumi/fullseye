@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ks_step — DRIVE <code style="color:#22d3bf">commonroad</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>kinematic single-track (KS) model को piecewise-constant इनपुट u = (δ̇, a) से dt जितना RK4 द्वारा आगे बढ़ाता है। reference point = पिछले axle का केंद्र।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>、入力の飽和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> も同じ)。</p>
+<p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば <code style="color:#22d3bf">vehicle_dynamics_ks</code> の odeint と 1 step で 1e-6 一致。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_commonroad">poc_driving_commonroad</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_commonroad.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">commonroad</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cr_synthetic">cr_synthetic</a> · <a style="color:#22d3bf" href="opdrive:cr_read">cr_read</a> · <a style="color:#22d3bf" href="opdrive:cr_route">cr_route</a> · <a style="color:#22d3bf" href="opdrive:cr_drive">cr_drive</a> · <a style="color:#22d3bf" href="opdrive:cr_drive_sweep">cr_drive_sweep</a> · <a style="color:#22d3bf" href="opdrive:cr_feasible">cr_feasible</a> · <a style="color:#22d3bf" href="opdrive:cr_collision">cr_collision</a> · <a style="color:#22d3bf" href="opdrive:cr_solution_xml">cr_solution_xml</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecommonroad.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

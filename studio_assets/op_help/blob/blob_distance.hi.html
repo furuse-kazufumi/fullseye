@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">blob_distance — BLOB <code style="color:#22d3bf">split</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mask</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import blob2d; blob2d.blob_distance(region: &#x27;Any&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsblob.get(&quot;blob_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>foreground के हर pixel से <b>सबसे निकट background तक</b> की दूरी। इकाई <code style="color:#22d3bf">spacing</code> का गुणज है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">scipy.ndimage.distance_transform_edt</code> そのもの。<b>わざわざ口を作った理由</b>は、進化 op の <code style="color:#22d3bf">distance_transform</code> が最大値で正規化して返すため(<code style="color:#22d3bf">poc_cell_counting</code> の実測: 出力の最大が常に 1.0)、<b>画素単位の距離が取れない</b>こと。分水嶺の種を作るには絶対値が要る。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np</p>
+<p>&gt;&gt;&gt; m = np.zeros((21, 21), bool); m[5:16, 5:16] = True</p>
+<p>&gt;&gt;&gt; float(blob_distance(m).max())      # 11x11 の正方形の中心まで</p>
+<p>6.0</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:blob_split_tour">blob_split_tour</a> — <code style="color:#22d3bf">py -3.11 examples/blob_split_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_bone_trabecular_thickness">poc_bone_trabecular_thickness</a> — <code style="color:#22d3bf">py -3.11 examples/poc_bone_trabecular_thickness.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a> · <a style="color:#22d3bf" href="opblob:blob_overlay">blob_overlay</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">split</code>)</h3>
+<p><a style="color:#22d3bf" href="opblob:blob_seeds">blob_seeds</a> · <a style="color:#22d3bf" href="opblob:blob_split">blob_split</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: blob2d.py — BLOB operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

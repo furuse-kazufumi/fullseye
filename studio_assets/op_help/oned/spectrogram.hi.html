@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spectrogram — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spectrogram(x, rate=1.0, win=256, hop=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.spectrogram(x, rate=1.0, win=256, hop=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;spectrogram&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.spectrogram(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">image2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.spectrogram.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">dsp.spectrogram</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(freqs, times, S) — S が本体</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>STFT magnitude spectrogram -&gt; <code style="color:#22d3bf">(freqs, times, S)</code>, जहाँ <code style="color:#22d3bf">S</code> का shape <code style="color:#22d3bf">(n_freqs, n_frames)</code> है। Hann window वाला; *hop* का default <code style="color:#22d3bf">win//2</code> है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><b>Same raw convention as <code style="color:#22d3bf">spectrum</code>, but a different divisor.</b> Each column is the unnormalised <code style="color:#22d3bf">|rfft(frame * hann(win))|</code>, so it is not an amplitude either — and dividing by <code style="color:#22d3bf">2/win</code> is *wrong* here, because the Hann window has already thrown away part of the signal. The correct one-sided amplitude conversion divides by the window&#x27;s coherent gain::</p>
+<p>w = np.hanning(win)</p>
+<p>amp = S * (2.0 / w.sum())        # bins 1 .. win/2-1; DC / Nyquist: 1/w.sum()</p>
+<p>Measured on a unit sine at a bin centre (<code style="color:#22d3bf">rate = 16000</code> Hz, 1000 Hz, amplitude exactly 1.0, <code style="color:#22d3bf">win = 256</code>): the raw column peak is <code style="color:#22d3bf">63.7497786196906</code>; <code style="color:#22d3bf">* 2/win</code> gives <code style="color:#22d3bf">0.49804514546633283</code> (too small by exactly the Hann coherent gain <code style="color:#22d3bf">sum(w)/win = 0.498046875</code>), while <code style="color:#22d3bf">* 2/sum(w)</code> gives <code style="color:#22d3bf">0.9999965273676957</code>. Only the second one is the amplitude that was actually in the signal.</p>
+<p>Peak *positions*, frame-to-frame ratios and any dB *difference* are unaffected by either factor. This function returns magnitudes only — the phase is discarded, so it cannot be inverted; use <code style="color:#22d3bf">acoustics.stft</code> / <code style="color:#22d3bf">acoustics.istft</code> for a round-trip.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:local_std">local_std</a> · <a style="color:#22d3bf" href="oponed:quantize">quantize</a> · <a style="color:#22d3bf" href="oponed:companding_mu_law">companding_mu_law</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

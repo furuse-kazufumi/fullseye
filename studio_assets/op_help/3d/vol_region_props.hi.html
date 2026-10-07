@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_region_props — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_region_props(labels, spacing=None, surface=&#x27;auto&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_region_props(labels, spacing=None, surface=&#x27;auto&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_region_props&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>label volume से हर component के quantitative descriptors।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>*labels* is the <code style="color:#22d3bf">int</code> volume returned by <code style="color:#22d3bf">vol_label</code> (or any integer labelling; voxels <code style="color:#22d3bf">&lt;= 0</code> are background). Pass *spacing* <code style="color:#22d3bf">(sz, sy, sx)</code> (or</p>
+<p>a <code style="color:#22d3bf">volio.VolumeMeta</code>) to report physical volume in mm**3 and physical surface area in mm**2. *surface* selects the surface-area estimator:</p>
+<p><code style="color:#22d3bf">&quot;auto&quot;</code> (marching cubes when <code style="color:#22d3bf">scikit-image</code> is importable, else exposed faces), <code style="color:#22d3bf">&quot;marching&quot;</code> (require marching cubes), or <code style="color:#22d3bf">&quot;faces&quot;</code> (always the face count).</p>
+<p>Returns a <code style="color:#22d3bf">list[dict]</code> (one per label <code style="color:#22d3bf">1..n</code>, in ascending label order), each with:</p>
+<p><code style="color:#22d3bf">label</code> id · <code style="color:#22d3bf">voxel_count</code> · <code style="color:#22d3bf">volume</code> (voxels, or mm**3 with spacing) · <code style="color:#22d3bf">centroid</code> <code style="color:#22d3bf">(z, y, x)</code> in voxel-index coordinates · <code style="color:#22d3bf">bbox</code> <code style="color:#22d3bf">(z0, z1, y0, y1, x0, x1)</code> with <b>exclusive</b> upper bounds (slice <code style="color:#22d3bf">stop</code>) · <code style="color:#22d3bf">surface_area</code> (voxel-face units, or mm**2 with spacing) · <code style="color:#22d3bf">sphericity</code> (Wadell, ~1 for a sphere, lower for a slab; approximate — see module note).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:vessel_metrology">vessel_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/vessel_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_select_lod">mesh_select_lod</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">regionprops</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:region_props">region_props</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:filter_by_volume">filter_by_volume</a> · <a style="color:#22d3bf" href="op3d:inner_box3">inner_box3</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

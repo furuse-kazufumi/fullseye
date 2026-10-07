@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">geodesic_dome — 3D <code style="color:#22d3bf">polyhedron</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">mesh</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.geodesic_dome(frequency=3, radius=1.0, hemisphere=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;geodesic_dome&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>subdivided icosahedron से geodesic sphere — shape Euler तय करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Each icosahedron face is cut into <code style="color:#22d3bf">frequency**2</code> triangles and every vertex is pushed out to the sphere. The counts are then <b>forced</b>, not chosen:</p>
+<p><code style="color:#22d3bf">F = 20*f**2</code>, <code style="color:#22d3bf">E = 30*f**2</code>, <code style="color:#22d3bf">V = 10*f**2 + 2</code>, and Euler&#x27;s formula <code style="color:#22d3bf">V - E + F == 2</code> holds exactly.</p>
+<p>★<b>Why this earns its place</b>: Euler also forces the *irregularity*. If every vertex had degree 6 then <code style="color:#22d3bf">2E = 6V</code>, which contradicts <code style="color:#22d3bf">V - E + F = 2</code>; counting degrees gives <code style="color:#22d3bf">sum(6 - deg(v)) == 12</code> over all vertices, so a triangulated sphere built from hexagons must contain <b>exactly twelve</b> pentagons — no more, no fewer, at any frequency. That is why a football has twelve black patches, and it is an integer this operator must reproduce exactly. Nothing about the drawing can be &quot;close enough&quot;.</p>
+<p>Returns a <code style="color:#22d3bf">mesh</code> <code style="color:#22d3bf">(V, F)</code>: <code style="color:#22d3bf">V</code> is <code style="color:#22d3bf">(n, 3)</code> float, <code style="color:#22d3bf">F</code> is <code style="color:#22d3bf">(m, 3)</code> int. With <code style="color:#22d3bf">hemisphere=True</code> the vertices below <code style="color:#22d3bf">z = 0</code> and the faces touching them are dropped (then Euler no longer gives 2, and the twelve-pentagon count applies to the full sphere only — said here rather than letting the gate quietly change meaning).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">frequency &lt; 1</code>; <code style="color:#22d3bf">radius &lt;= 0</code>; the mesh would exceed the cap.</p>
+<p>HALCON: no operator (<code style="color:#22d3bf">gen_sphere_object_model_3d</code> makes a UV sphere, whose poles are degenerate — a different object).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:geodesic_dome">geodesic_dome</a> — <code style="color:#22d3bf">py -3.11 examples_3d/geodesic_dome.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">polyhedron</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

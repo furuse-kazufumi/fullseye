@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">detect_reflection_symmetry — 3D <code style="color:#22d3bf">symmetry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detect_reflection_symmetry(points)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import symmetry3d; symmetry3d.detect_reflection_symmetry(points)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;detect_reflection_symmetry&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>PCA principal axes को normal मानने वाले candidate planes (centroid से गुज़रते) में से सबसे अच्छा reflection symmetry plane चुनता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>→ dict{plane_point, plane_normal, score, all_scores, margin}。score が小さいほど対称。</p>
+<p>★ <b><code style="color:#22d3bf">score</code> だけで採否を決めない。<code style="color:#22d3bf">margin</code> を見ること</b>(2026-09-06 追加)。<code style="color:#22d3bf">margin</code> は 2 位と 1 位の score の差で、<b>候補が団子なら答えはくじ引き</b> である、という警告になる。実測(1500 点):</p>
+<p>==================  ========  ========  =========</p>
+<p>形状                best      2 位      margin</p>
+<p>==================  ========  ========  =========</p>
+<p>箱(鏡映面が 3 枚)     0.9397    0.9499     0.0102</p>
+<p>角柱つきの箱          0.9876    0.9918     0.0043</p>
+<p>球                    1.0490    1.0551     0.0062</p>
+<p>一様乱数の立方体      1.0608    1.3435     0.2828</p>
+<p>==================  ========  ========  =========</p>
+<p>対称面が複数ある形ほど margin は小さい —— これは不具合ではなく、そういう形だという情報である。点群位置合わせの PoC が同じ構造を測っていて、PCA の候補は<b>素の直方体で 83 % が反転した象限を掴む</b>が、そのとき先に潰れるのは残差ではなく候補どうしの margin だった(0.42 → 0.066 → 0.039)。<b>残差でなく margin で採否を見る</b>、が両方に共通する結論。</p>
+<p>★ <b><code style="color:#22d3bf">score</code> は 0 に近づかない。</b> 厳密に対称な形でも点の間隔が床を作る(上の表で箱が 0.94)。「0 に近いか」ではなく「同じ形を鏡映せずに測った値」や「点間隔」と比べること。</p>
+<p>★ <b>候補は PCA の 3 軸だけ</b>。真の対称面が主軸のどれとも一致しない形では見つからず、しかも黙って 3 つのうち最良を返す。密に振った候補が要るなら <code style="color:#22d3bf">reflection_symmetry_score</code> を直接掃引すること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:dl_mesh_symmetry">dl_mesh_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/dl_mesh_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_symmetry_honest">itokawa_symmetry_honest</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_symmetry_honest.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:reflection_symmetry">reflection_symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/reflection_symmetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:symmetry">symmetry</a> — <code style="color:#22d3bf">py -3.11 examples_3d/symmetry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">symmetry</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:detect_rotational_symmetry">detect_rotational_symmetry</a> · <a style="color:#22d3bf" href="op3d:reflect_points">reflect_points</a> · <a style="color:#22d3bf" href="op3d:reflection_symmetry_score">reflection_symmetry_score</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: symmetry3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

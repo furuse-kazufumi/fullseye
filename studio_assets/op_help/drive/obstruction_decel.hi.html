@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">obstruction_decel — DRIVE <code style="color:#22d3bf">crossing</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivecrossing; drivecrossing.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;obstruction_decel&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>cross road के वाहन (zone तक dist, गति speed) के t_free से पहले zone में प्रवेश न करने के लिए आवश्यक स्थिर deceleration (closed form, arrays भी चलते हैं)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>T = t_free。speed·T ≤ dist なら 0(減速しなくても間に合う)。T ≤ 2 dist / speed なら 2(speed·T − dist)/T²、それより後なら speed² / (2 dist)(領域の手前で止まる)。<code style="color:#22d3bf">obstructs</code> = 減速度 &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、2 条 22 号「速度又は方向を急に変更しなければならない」)。dist ≤ 0(もう領域にいる)で T &gt; 0 は ∞。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">crossing</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:crossing_timing_check">crossing_timing_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_gate_state">crossing_gate_state</a> · <a style="color:#22d3bf" href="opdrive:crossing_lamp_signal">crossing_lamp_signal</a> · <a style="color:#22d3bf" href="opdrive:lamp_pair_phase">lamp_pair_phase</a> · <a style="color:#22d3bf" href="opdrive:crossing_clear_time">crossing_clear_time</a> · <a style="color:#22d3bf" href="opdrive:exit_room_check">exit_room_check</a> · <a style="color:#22d3bf" href="opdrive:crossing_stop_check">crossing_stop_check</a> · <a style="color:#22d3bf" href="opdrive:track_sight_distance">track_sight_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivecrossing.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

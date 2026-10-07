@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_design — TOMOGRAPHY <code style="color:#22d3bf">layout</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.sinogram_design(n_angles=180, n_detectors=None, size=256, detector_pitch_mm=1.0, span_deg=180.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;sinogram_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>scan geometry क्या resolve कर सकती है और क्या नहीं — कुछ भी बनाने से <b>पहले</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The axial counterpart of <code style="color:#22d3bf">visiondesign.imaging_budget</code> and of <code style="color:#22d3bf">interferometry.csi_design</code>: no data goes in, only the geometry, and what comes out are the limits that the geometry has already decided.</p>
+<p>Returns a dict with, among others:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">resolvable_feature_mm</code> — <code style="color:#22d3bf">2 * pitch</code>: two detector samples per cycle is the Nyquist floor, and no reconstruction algorithm recovers a detail finer than the detector saw.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">views_for_full_sampling</code> — <code style="color:#22d3bf">ceil(pi/2 * n_detectors)</code>, the classical matching of angular to radial sampling (<code style="color:#22d3bf">VIEWS_PER_DETECTOR</code>).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">undersampling_factor</code> — that number over <code style="color:#22d3bf">n_angles</code>. <b>1.0 or below is a fully sampled scan.</b> Above it you are doing sparse-view CT on purpose and the reconstruction algorithm has to make up the difference; the measured cost is in this module&#x27;s docstring and in the test suite&#x27;s break table.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">streak_free_radius_px</code> — <code style="color:#22d3bf">1 / d(theta)</code> with <code style="color:#22d3bf">d(theta)</code> in radians: the radius, in pixels, at which the *azimuthal* sample spacing between neighbouring views (<code style="color:#22d3bf">r * d(theta)</code>) grows past one sample. Outside it, filtered back-projection lays down visible streaks. For 180 views over 180 degrees this is 57.3 px, i.e. a 256-px phantom is already streaking at its corners. It does <b>not</b> depend on the detector pitch: the radius is quoted in the same unit the sample spacing is, so the pitch cancels (<code style="color:#22d3bf">pitch / d(theta)</code> is the same radius in millimetres, which is what an earlier version returned under the pixel label — 28.6 &quot;px&quot; at 0.5 mm, 114.6 at 2 mm, for a geometry whose streak radius had not changed).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sinogram_bytes</code> / <code style="color:#22d3bf">elements</code> — what you are about to allocate.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">verdict</code> — <code style="color:#22d3bf">&quot;fully sampled&quot;</code> / <code style="color:#22d3bf">&quot;sparse view&quot;</code>.</p>
+<p>:param n_angles: planned number of views. :param n_detectors: planned detector bins; <code style="color:#22d3bf">None</code> -&gt; enough to cover the</p>
+<p>diagonal of a *size* x *size* image.</p>
+<p>:param size: reconstruction grid side in pixels. :param detector_pitch_mm: physical detector bin spacing. :param span_deg: angular range of the scan. :returns: dict of floats / ints / str. :raises ValueError: on non-int counts, non-positive pitch or span.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:tomography_reconstruct">tomography_reconstruct</a> — <code style="color:#22d3bf">py -3.11 examples/tomography_reconstruct.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">layout</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:projection_angles">projection_angles</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

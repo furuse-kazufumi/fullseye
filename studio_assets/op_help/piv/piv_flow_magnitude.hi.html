@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_flow_magnitude — PIV <code style="color:#22d3bf">field</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_flow_magnitude(flow)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_flow_magnitude(flow)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_flow_magnitude&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">sqrt(dy^2 + dx^2)</code>। दिशा फेंक देने वाला <b>एक-तरफ़ा</b> रूपांतरण।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">reprconv.flow_magnitude</code> の 2 次元版。あちらは <code style="color:#22d3bf">(3, D, H, W)</code> 専用で、ここへ渡すと形で弾かれる(型を分けてある理由がこれ)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_what_a_picture_cannot_check">poc_what_a_picture_cannot_check</a> — <code style="color:#22d3bf">py -3.11 examples/poc_what_a_picture_cannot_check.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_deform_pass">piv_deform_pass</a> · <a style="color:#22d3bf" href="oppiv:strain_from_displacement">strain_from_displacement</a> · <a style="color:#22d3bf" href="oppiv:correlation_quality">correlation_quality</a> · <a style="color:#22d3bf" href="oppiv:speckle_quality">speckle_quality</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">field</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_velocity_gradient">piv_velocity_gradient</a> · <a style="color:#22d3bf" href="oppiv:piv_q_criterion">piv_q_criterion</a> · <a style="color:#22d3bf" href="oppiv:piv_swirling_strength">piv_swirling_strength</a> · <a style="color:#22d3bf" href="oppiv:piv_strain_rate">piv_strain_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

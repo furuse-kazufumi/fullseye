@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_hotelling_t2 — SPC <code style="color:#22d3bf">multivariate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.spc_hotelling_t2(data, alpha=0.0027, mean=None, cov=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;spc_hotelling_t2&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>F-distributed control limit के साथ Hotelling के T² द्वारा multivariate SPC।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">data</code> is a 2-D array of shape <code style="color:#22d3bf">(m, p)</code> — <code style="color:#22d3bf">m</code> observations of <code style="color:#22d3bf">p</code> correlated features. With the sample mean vector <code style="color:#22d3bf">mu</code> and covariance <code style="color:#22d3bf">S</code> (unless passed in explicitly), each row&#x27;s statistic is::</p>
+<p>T^2_i = (x_i - mu)&#x27; S^-1 (x_i - mu)</p>
+<p>charted against the phase-II control limit::</p>
+<p>UCL = p (m+1)(m-1) / (m (m-p)) * F_{alpha, p, m-p}</p>
+<p>at false-alarm rate <code style="color:#22d3bf">alpha</code> (default 0.0027, the 3-sigma-equivalent). Returns a dict with the per-row <code style="color:#22d3bf">t2</code> array, the <code style="color:#22d3bf">ucl</code>, the integer indices <code style="color:#22d3bf">out_of_control</code>, and <code style="color:#22d3bf">in_control</code>. The mean row (<code style="color:#22d3bf">x == mu</code>) has <code style="color:#22d3bf">T^2 == 0</code> (pinned in the tests).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D / empty *data*, fewer observations than features plus one (covariance not invertible), <code style="color:#22d3bf">alpha</code> outside <code style="color:#22d3bf">(0, 1)</code>, a singular covariance, or non-finite / mislabelled input.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">multivariate</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

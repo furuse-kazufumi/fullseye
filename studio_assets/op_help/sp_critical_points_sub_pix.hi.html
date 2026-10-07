@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sp_critical_points_sub_pix — 2D <code style="color:#22d3bf">subpix</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image</code> → <code style="color:#22d3bf">contour</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;sp_critical_points_sub_pix&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>HALCON समकक्ष</b>: <code style="color:#22d3bf">critical_points_sub_pix</code> (अर्थ और parameters समझने के लिए HALCON reference उपयोगी है)</p>
+<p><img src="fig/sp_critical_points_sub_pix.png" alt="sp_critical_points_sub_pix: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sp_critical_points_sub_pix.a.jpg">sp_critical_points_sub_pix: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/sp_critical_points_sub_pix.inputs.jpg">sp_critical_points_sub_pix: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*चौथा column colour (H,W,3) input है। यह op channels को पार किए बिना colour संभालता है (colour channel को तीसरे spatial axis की तरह convolve नहीं करता)।*</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Maxima, minima और saddle points की sub-pixel positions एक साथ पहचानता है (HALCON <code style="color:#22d3bf">critical_points_sub_pix</code> के समकक्ष)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">sp_local_max_sub_pix</code> / <code style="color:#22d3bf">sp_local_min_sub_pix</code> / <code style="color:#22d3bf">sp_saddle_points_sub_pix</code> の 3 つを同じしきい値 <code style="color:#22d3bf">a</code> で実行し、検出点を極大→極小→鞍点の順で 1 つの CONTOUR に連結する。<code style="color:#22d3bf">b</code> は未使用。戻り値の座標単位は入力画像のピクセル（サブピクセル小数値）。個々の種類を区別せず「臨界点がどこにあるか」だけを知りたい場合に使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">sp_critical_points_sub_pix 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:sp_critical_points_sub_pix%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:sp_critical_points_sub_pix%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">contour</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:select_contours">select_contours</a> · <a style="color:#22d3bf" href="op:smooth_contours">smooth_contours</a> · <a style="color:#22d3bf" href="op:fit_line_contours">fit_line_contours</a> · <a style="color:#22d3bf" href="op:contours_to_region">contours_to_region</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:select_contours_xld">select_contours_xld</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">subpix</code>)</h3>
+<p><a style="color:#22d3bf" href="op:sp_local_max_sub_pix">sp_local_max_sub_pix</a> · <a style="color:#22d3bf" href="op:sp_local_min_sub_pix">sp_local_min_sub_pix</a> · <a style="color:#22d3bf" href="op:sp_saddle_points_sub_pix">sp_saddle_points_sub_pix</a> · <a style="color:#22d3bf" href="op:sp_plateaus">sp_plateaus</a> · <a style="color:#22d3bf" href="op:sp_lowlands_center">sp_lowlands_center</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,7 +3,7 @@
 <!-- 一致することを CI drift テストが強制する(再生成==commit 済み)。手編集しないこと。 -->
 # Fullseye 運算子文件 —— 供 AI 檢索的語料庫
 
-[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · **繁體中文** · [한국어](./INDEX.ko.md) · [Deutsch](./INDEX.de.md)
+[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · **繁體中文** · [한국어](./INDEX.ko.md) · [Deutsch](./INDEX.de.md) · [hi](./INDEX.hi.md)
 
 **fullseye 0.5.0** 的運算子文件。每個運算子各有一份 Markdown 說明(一運算子一檔案,RAD 語料形態),Studio 的 HTML 說明由此批次轉換產生(`tools/opdocs.py html`)。本目錄由資料夾階層自動產生。
 

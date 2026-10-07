@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_materials — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table × matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;world_materials&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>rendering परिणाम <code style="color:#22d3bf">view</code> (world_camera से, &quot;shade&quot; सहित) पर सड़क की सतह के materials हर pixel पर लगाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>路面(ラベル 0)と地形(10)の画素は世界座標で材質を評価し直す: アスファルトの粒(Perlin 8 周期/m)、草の色むら、染み(暗い斑、ラベルは 0 のまま)、水溜り(空の写り込み、ラベル 11)。白線・横断歩道(9・12)は摩耗率 wear で路面の色に混ぜる(ラベルは不変、真値 &quot;wear&quot; に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 &quot;refl&quot;。返り値 = <code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">terrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_params">fbm_params</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a> · <a style="color:#22d3bf" href="opdrive:spectral_slope">spectral_slope</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:terrain_params">terrain_params</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveterrain.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">building_prisms — DRIVE <code style="color:#22d3bf">japan</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>इमारतों की सूची को extruded prism mesh में मिलाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Args:</p>
+<p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
+<p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>
+<p>base_z: 全建物の底 z [m]。None なら各建物の <code style="color:#22d3bf">ground_z</code> を使う(起伏のある世界向け)。</p>
+<p>自前の平らな道路世界には 0.0 が合う。</p>
+<p>roof_shade: 屋根面の色の倍率(側面と見分けるための控えめな陰)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(V (n,3) float64, F (m,3) int64, colors (m,3) float64 0..1, ids (m,) int64)</code>。<code style="color:#22d3bf">ids[f]</code> は面 f が属する建物の番号(入力列の添字)。建物が 0 件なら各配列は空。</p>
+<p>Raises:</p>
+<p>ValueError: color_fn の返り値が RGB 3 要素 0..1 でない、建物の footprint/height が不正。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">japan</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:osm_synthetic">osm_synthetic</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a> · <a style="color:#22d3bf" href="opdrive:osm_road_graph">osm_road_graph</a> · <a style="color:#22d3bf" href="opdrive:osm_road_mask">osm_road_mask</a> · <a style="color:#22d3bf" href="opdrive:osm_road_loops">osm_road_loops</a> · <a style="color:#22d3bf" href="opdrive:osm_route">osm_route</a> · <a style="color:#22d3bf" href="opdrive:japan_world">japan_world</a> · <a style="color:#22d3bf" href="opdrive:japan_stats">japan_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveplateau.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

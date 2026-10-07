@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_stats — LIGHTFIELD <code style="color:#22d3bf">decode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">lightfield</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_stats(lf)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lightfield; lightfield.lf_stats(lf)</code>, registry से लेना हो तो <code style="color:#22d3bf">opslightfield.get(&quot;lf_stats&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>light field का विवरण देता है: shape, angular centre, और वह slope range जो यह संभाल सकता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns a dict — <code style="color:#22d3bf">angular_v</code> / <code style="color:#22d3bf">angular_u</code> · <code style="color:#22d3bf">height</code> / <code style="color:#22d3bf">width</code> · <code style="color:#22d3bf">n_views = V*U</code> · <code style="color:#22d3bf">center_v</code> / <code style="color:#22d3bf">center_u</code> (<code style="color:#22d3bf">(N-1)/2</code>, a half-integer when the axis is even, so <code style="color:#22d3bf">center_is_a_view</code> says whether a single view actually sits at the centre) · <code style="color:#22d3bf">min</code> / <code style="color:#22d3bf">max</code> / <code style="color:#22d3bf">mean</code> of the samples · <code style="color:#22d3bf">max_slope_px</code>, the largest <code style="color:#22d3bf">|s|</code> for which the extreme view is still displaced by less than half the frame, i.e. the honest limit of what this array can measure (<code style="color:#22d3bf">min(H, W) / max(V-1, U-1, 1)</code>; reported as <code style="color:#22d3bf">float(min(H, W))</code> when the array has a single view in both directions, since then no shift happens at all) · <code style="color:#22d3bf">baseline_views</code>, the angular span <code style="color:#22d3bf">(V-1, U-1)</code> that any disparity is measured over.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *lf* is not a finite 4-D array within the shape and element caps.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">decode</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_from_mla">lf_from_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

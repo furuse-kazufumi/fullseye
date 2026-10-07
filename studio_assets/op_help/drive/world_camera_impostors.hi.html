@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">world_camera_impostors — DRIVE <code style="color:#22d3bf">humanoid</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;world_camera_impostors&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">driveworld.world_camera</code> से world की image लेता है और <code style="color:#22d3bf">actors</code> के impostors को <b>depth से आगे-पीछे की तुलना करके</b> चिपकाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">actors</code> = <code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>。向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。返り値は world_camera と同じ鍵。貼った画素は <code style="color:#22d3bf">label</code> = 物体のラベル(7)、<code style="color:#22d3bf">face</code> = −2(三角形が無い)、<code style="color:#22d3bf">shade</code> = 1。加えて <code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>(貼った画素の数)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_humanoids">poc_driving_humanoids</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_humanoids.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">humanoid</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:humanoid_clip_mesh">humanoid_clip_mesh</a> · <a style="color:#22d3bf" href="opdrive:world_pose_humanoid">world_pose_humanoid</a> · <a style="color:#22d3bf" href="opdrive:humanoid_impostors">humanoid_impostors</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivehumanoid.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

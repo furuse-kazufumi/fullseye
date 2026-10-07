@@ -1,0 +1,34 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_quiver — PIV <code style="color:#22d3bf">visualise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>तीर वाला plot (MATLAB का <code style="color:#22d3bf">quiver</code>)। <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
+<p>Args:</p>
+<p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>
+<p>spacing: 矢印の間隔 [格子]。<code style="color:#22d3bf">None</code> で長い辺に約 20 本。</p>
+<p>scale: 矢印の長さ = <code style="color:#22d3bf">scale * 速さ</code> [格子]。</p>
+<p>upsample: 出力の倍率(矢じりを描ける大きさにする)。</p>
+<p>background: <code style="color:#22d3bf">(h*upsample, w*upsample)</code> か <code style="color:#22d3bf">(…, 3)</code>。<code style="color:#22d3bf">None</code> で白。</p>
+<p>色相図(<code style="color:#22d3bf">piv_flow_to_rgbimage</code> を拡大したもの)や LIC を敷ける。</p>
+<p>color / width: 矢印の色(palette の役割名か RGB)と軸の太さ [px]。</p>
+<p>既定は黒に近い墨色(色相図を敷いても読める)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code> float64、値域 [0, 1]。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">visualise</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_flow_to_rgbimage">piv_flow_to_rgbimage</a> · <a style="color:#22d3bf" href="oppiv:piv_line_integral_convolution">piv_line_integral_convolution</a> · <a style="color:#22d3bf" href="oppiv:piv_streamlines">piv_streamlines</a> · <a style="color:#22d3bf" href="oppiv:piv_streamline_image">piv_streamline_image</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

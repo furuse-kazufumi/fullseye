@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mesh_edge_lengths — 3D <code style="color:#22d3bf">terrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.mesh_edge_lengths(V, F, *, per: &#x27;str&#x27; = &#x27;vertex&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mesh_edge_lengths&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>triangle mesh की local edge length → हर vertex के लिए <code style="color:#22d3bf">(N,)</code> (जुड़े edges का औसत),</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">(M,)</code> per face (mean of its 3 edges) or <code style="color:#22d3bf">(E,)</code> per unique edge.</p>
+<p>This is the resolution map of the mesh in its own units: the shortest wavelength a region can carry as *geometry* is about twice the local edge (Nyquist), which is what <code style="color:#22d3bf">mesh_subdivide</code> (<code style="color:#22d3bf">target_edge</code>) and <code style="color:#22d3bf">displacement_band_weights</code> use. Deterministic; fail-closed on degenerate meshes / unknown <code style="color:#22d3bf">per</code>.</p>
+<p>無向の一意な辺 <code style="color:#22d3bf">(E,2)</code> を取り、各辺の長さ(メッシュ単位、float64)を集計する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">per=&#x27;vertex&#x27;</code>: 頂点に接する辺長の平均 <code style="color:#22d3bf">(N,)</code>。どの面にも属さない孤立頂点は辺を持たないので、無言で <b>全辺の平均値</b> が入る(ゼロにはならない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">per=&#x27;face&#x27;</code>: 面の 3 辺の平均 <code style="color:#22d3bf">(M,)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">per=&#x27;edge&#x27;</code>: 一意辺そのものの長さ <code style="color:#22d3bf">(E,)</code>。辺の並びは <code style="color:#22d3bf">np.unique</code> の辞書順(頂点 index の小さい順)で、<code style="color:#22d3bf">F</code> の順とは対応しない。</p>
+<p><code style="color:#22d3bf">per</code> が上記 3 つ以外、頂点/面が空、face index 範囲外、非有限座標は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">displacement_band_weights</code> の <code style="color:#22d3bf">local_edge</code> や <code style="color:#22d3bf">mesh_subdivide</code> の <code style="color:#22d3bf">target_edge</code> を決める(例: 中央値の半分)ために使う。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_regolith_hero">itokawa_regolith_hero</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_regolith_hero.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">terrain</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_displace_fbm">mesh_displace_fbm</a> · <a style="color:#22d3bf" href="op3d:terrain_region_mask">terrain_region_mask</a> · <a style="color:#22d3bf" href="op3d:mesh_scatter_boulders">mesh_scatter_boulders</a> · <a style="color:#22d3bf" href="op3d:mesh_subdivide">mesh_subdivide</a> · <a style="color:#22d3bf" href="op3d:displacement_band_weights">displacement_band_weights</a> · <a style="color:#22d3bf" href="op3d:mesh_displace_spectrum">mesh_displace_spectrum</a> · <a style="color:#22d3bf" href="op3d:bump_normals_fbm">bump_normals_fbm</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

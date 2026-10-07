@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">invariants — SHAPE2D <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.invariants(model, scale_invariant=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;invariants&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>rotation, translation, आरंभ बिंदु और (वैकल्पिक रूप से) scale के प्रति invariant shape descriptor ((N,2))।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各高調波の楕円の (長軸, 短軸) = 特異値を並べたもの。DC を含まないので平行移動に不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール不変。形状マッチング(<code style="color:#22d3bf">descriptor_distance</code>)の土台。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape2d_morph_descriptor_tour">shape2d_morph_descriptor_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shape2d_morph_descriptor_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a> · <a style="color:#22d3bf" href="opshape2d:add_frame_corners">add_frame_corners</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:reconstruct">reconstruct</a> · <a style="color:#22d3bf" href="opshape2d:normalize">normalize</a> · <a style="color:#22d3bf" href="opshape2d:descriptor_distance">descriptor_distance</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:from_xld">from_xld</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a> · <a style="color:#22d3bf" href="opshape2d:contour_epicycle_chain">contour_epicycle_chain</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fourierdesc.py — SHAPE2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

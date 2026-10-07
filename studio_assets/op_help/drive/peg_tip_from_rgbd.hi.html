@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">peg_tip_from_rgbd — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;peg_tip_from_rgbd&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>कलाई के 1 RGB-D frame से peg के सिरे का केंद्र 3-D (camera coordinates) में: peg के pixels → depth का point cloud → PCA axis → ज्ञात त्रिज्या का cylinder fit; axis के साथ सिरे की स्थिति एक model से तय होती है जो छाया के सिरे (subpixel, coverage) को project किए गए edge वृत्त के सिरे से मिलाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返り: <code style="color:#22d3bf">tip_cam</code>(3,)、<code style="color:#22d3bf">axis</code>(先端 → 上、単位)、<code style="color:#22d3bf">rms_cyl</code>、<code style="color:#22d3bf">n_pts</code>、<code style="color:#22d3bf">uv</code>(先端の投影)、<code style="color:#22d3bf">delta_axial</code>。</p>
+<p>正直に: 試作の 16 姿勢で軸方向の誤差 max 0.83 px(横方向 0.004 px)—— 影の端 1 画素の被覆率だけから軸方向を読む限界で、目標 0.3 px は未達。<b>Raises</b> <code style="color:#22d3bf">RuntimeError</code>: ペグが見えない(芯の画素 &lt; 50)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pegsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:peg_params">peg_params</a> · <a style="color:#22d3bf" href="opdrive:whitney_clearance">whitney_clearance</a> · <a style="color:#22d3bf" href="opdrive:two_point_depth">two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:wedging_check">wedging_check</a> · <a style="color:#22d3bf" href="opdrive:jamming_diagram">jamming_diagram</a> · <a style="color:#22d3bf" href="opdrive:chamfer_capture">chamfer_capture</a> · <a style="color:#22d3bf" href="opdrive:contact_state_predict">contact_state_predict</a> · <a style="color:#22d3bf" href="opdrive:circle_fit_known_radius">circle_fit_known_radius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsim.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

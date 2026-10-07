@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate3d_axes — 3D <code style="color:#22d3bf">annotate3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate3d; annotate3d.annotate3d_axes(img, pose, K, origin=(0.0, 0.0, 0.0), length=1.0, depth=None, labels=(&#x27;X&#x27;, &#x27;Y&#x27;, &#x27;Z&#x27;), colors=(&#x27;wrong&#x27;, &#x27;right&#x27;, &#x27;reference&#x27;), width=2, font_size=11, occlusion_tol=0.01, scheme=&#x27;okabe_ito&#x27;, font_path=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;annotate3d_axes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>image (image2d) लौटाता है: world coordinates के 3 axes (gnomon) को <code style="color:#22d3bf">origin</code> से project करके draw करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>length が非正、原点や軸端がカメラの後ろ、labels/colors が 3 つでない、</p>
+<p>軸の文字が画像に収まらない。</p>
+<p>手順: <code style="color:#22d3bf">origin</code> と、そこから世界座標の +X / +Y / +Z 方向に <code style="color:#22d3bf">length</code> 進んだ 3 点を射影(<code style="color:#22d3bf">annotate3d_project</code> と同じ慣習)し、原点の画素から各軸端の画素へ <code style="color:#22d3bf">annotate.arrow</code>(矢じり 8x6 px)を描く。軸端の先 <code style="color:#22d3bf">0.7 * font_size</code> px の位置に <code style="color:#22d3bf">labels[i]</code> を背景なし(<code style="color:#22d3bf">box_alpha=0</code>)の文字で置く。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">origin</code> <code style="color:#22d3bf">(3,)</code>(object 座標)、<code style="color:#22d3bf">length</code>: 軸の長さ(メッシュ単位、<code style="color:#22d3bf">&gt; 0</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 3 つの文字列(既定 <code style="color:#22d3bf">(&quot;X&quot;, &quot;Y&quot;, &quot;Z&quot;)</code>)。<code style="color:#22d3bf">colors</code>: 3 つの色(役割名か RGB。既定 <code style="color:#22d3bf">(&quot;wrong&quot;, &quot;right&quot;, &quot;reference&quot;)</code> はパレットの役割名)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 線幅 [px]、1 以上の整数。<code style="color:#22d3bf">font_size</code> [px]。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">depth</code> / <code style="color:#22d3bf">occlusion_tol</code>: 射影に渡すが、<b>この op は隠れ表示(破線)をしない</b>(判定は <code style="color:#22d3bf">depth</code> の形検査に使うだけ)。</p>
+<p>返り値: 描画済みの新しい画像(float64 <code style="color:#22d3bf">[0, 1]</code>)。</p>
+<p>エラーになる条件: <code style="color:#22d3bf">length &lt;= 0</code> / <code style="color:#22d3bf">labels</code> か <code style="color:#22d3bf">colors</code> の長さが 3 でない / 原点または軸端のいずれかが <code style="color:#22d3bf">z &lt;= 1e-9</code> / 姿勢・<code style="color:#22d3bf">K</code>・<code style="color:#22d3bf">depth</code> の不正 / 軸の文字が画像に収まらない。<b>枠外の軸端はエラーにしない</b>(矢印は枠外まで引く)。視線と一致して点に潰れた軸(画素長 1e-9 未満)は黙ってスキップする。</p>
+<p>使いどころ: 図の姿勢の説明(gnomon)。<code style="color:#22d3bf">render3d.look_at</code> の <code style="color:#22d3bf">pose</code> をそのまま渡し、<code style="color:#22d3bf">origin</code> にメッシュの重心や <code style="color:#22d3bf">bounds</code> の角を置く。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:annotate3d_figure">annotate3d_figure</a> — <code style="color:#22d3bf">py -3.11 examples_3d/annotate3d_figure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">annotate3d</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:annotate3d_project">annotate3d_project</a> · <a style="color:#22d3bf" href="op3d:annotate3d_arrow">annotate3d_arrow</a> · <a style="color:#22d3bf" href="op3d:annotate3d_label">annotate3d_label</a> · <a style="color:#22d3bf" href="op3d:annotate3d_scale_bar">annotate3d_scale_bar</a> · <a style="color:#22d3bf" href="op3d:annotate3d_bbox">annotate3d_bbox</a> · <a style="color:#22d3bf" href="op3d:annotate3d_measure">annotate3d_measure</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

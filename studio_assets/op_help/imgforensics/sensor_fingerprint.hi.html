@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sensor_fingerprint — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">fingerprint</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.sensor_fingerprint(images, denoiser: &#x27;str&#x27; = &#x27;wiener&#x27;, sigma: &#x27;float&#x27; = 0.02, zero_mean: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;sensor_fingerprint&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>कई image से <b>PRNU sensor fingerprint</b> K का maximum likelihood अनुमान लगाता है (Chen et al. 2008)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">K = Σ_i W_i I_i / Σ_i I_i²</code>(<code style="color:#22d3bf">W_i = I_i - denoise(I_i)</code>)。撮像モデル <code style="color:#22d3bf">I = I⁰ + I⁰·K + Θ</code> の下で、これが K の最尤推定量になる —— 明るい画素ほど PRNU が強く出る(乗法的な欠陥だから)ので、<b>明るさで重み付けした平均</b>である。</p>
+<p>返りは <code style="color:#22d3bf">(H, W)</code> の float64 で、<code style="color:#22d3bf">zero_mean=True</code>(既定)なら行・列平均を抜いたうえで <b>標準偏差 1 に正規化</b>してある。正規化は <code style="color:#22d3bf">fingerprint_correlate</code> の PCE をスケール不変にするためで、指紋の絶対的な強さは <code style="color:#22d3bf">fingerprint_strength_map</code> が別に返す。</p>
+<p><code style="color:#22d3bf">images</code> は同じ shape の 2 枚以上。<b>リサイズして揃えてはいけない</b> —— PRNU は画素の物理位置そのものなので、内挿した瞬間に指紋は消える(shape 不一致は <code style="color:#22d3bf">ValueError</code>)。</p>
+<p>枚数と分離度の実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_prnu_separates_two_sensors</code>、128x128・PRNU 強度 3%・読み出し雑音 σ=0.01、既定 <code style="color:#22d3bf">denoiser=&quot;wiener&quot;</code>):</p>
+<p>====== ======================== ================= =================</p>
+<p>枚数   真の K との相関          同一センサの PCE  別センサの PCE</p>
+<p>====== ======================== ================= =================</p>
+<p>2      +0.727                   5295             16.5</p>
+<p>4      +0.809                   6472             14.5</p>
+<p>8      +0.859                   7246             13.1</p>
+<p>16     +0.892                   7755             -12.3</p>
+<p>====== ======================== ================= =================</p>
+<p><b>「真の K との相関」を測ることが重要</b>である。PCE だけを見ていると、指紋がセンサのパターンをまったく捉えていなくても「分離しているように見える」—— 実際この実装は一度その状態にあった(<code style="color:#22d3bf">_wiener_denoise</code> の docstring)。PCE は「同一センサで一貫して現れる何か」を測るので、それが PRNU である保証は PCE 自体には無い。</p>
+<p><code style="color:#22d3bf">denoiser=&quot;wavelet&quot;</code>(PyWavelets 必須)は同じ条件で相関 +0.745 〜 +0.901、同一センサ PCE 6068 〜 8852 と一貫して強い。既定を <code style="color:#22d3bf">&quot;wiener&quot;</code> にしてあるのは <b>optional 依存を必須にしないため</b>であって、精度で選んだのではない。</p>
+<p><b>これは合成雑音での値</b>であり、実カメラでは被写体の内容が残差に漏れるので桁で小さくなる。この表は「実装が正しく動いている」ことの固定であって、実運用のしきい値ではない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_prnu_camera_fingerprint">poc_prnu_camera_fingerprint</a> — <code style="color:#22d3bf">py -3.11 examples/poc_prnu_camera_fingerprint.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">fingerprint</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_strength_map">fingerprint_strength_map</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sensor</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_strength_map">fingerprint_strength_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

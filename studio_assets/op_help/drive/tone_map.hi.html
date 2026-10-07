@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tone_map — DRIVE <code style="color:#22d3bf">env</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">any</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tone_map(radiance, exposure: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveenv; driveenv.tone_map(radiance, exposure: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;tone_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>HDR camera के लिए रंग बनाए रखने वाला tone compression: m = हर pixel का अधिकतम channel × exposure, display = luminance × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 पर linear, चमकीले भागों में 1 की ओर जाता है (रंगों का अनुपात = chromaticity नहीं बदलती; saturation से lamps सफ़ेद नहीं होतीं; मान्यता: वाहन में लगा HDR camera)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">any</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_crank">course_crank</a> · <a style="color:#22d3bf" href="opdrive:course_s_curve">course_s_curve</a> · <a style="color:#22d3bf" href="opdrive:course_turnaround">course_turnaround</a> · <a style="color:#22d3bf" href="opdrive:course_slope">course_slope</a> · <a style="color:#22d3bf" href="opdrive:course_intersection">course_intersection</a> · <a style="color:#22d3bf" href="opdrive:course_parallel_parking">course_parallel_parking</a> · <a style="color:#22d3bf" href="opdrive:course_crossing">course_crossing</a> · <a style="color:#22d3bf" href="opdrive:course_road">course_road</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">env</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:julian_day">julian_day</a> · <a style="color:#22d3bf" href="opdrive:sun_at">sun_at</a> · <a style="color:#22d3bf" href="opdrive:sun_events">sun_events</a> · <a style="color:#22d3bf" href="opdrive:sun_vector">sun_vector</a> · <a style="color:#22d3bf" href="opdrive:sun_illuminance">sun_illuminance</a> · <a style="color:#22d3bf" href="opdrive:koschmieder">koschmieder</a> · <a style="color:#22d3bf" href="opdrive:mor_from_beta">mor_from_beta</a> · <a style="color:#22d3bf" href="opdrive:beta_from_mor">beta_from_mor</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveenv.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

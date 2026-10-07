@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">medial_match — 3D <code style="color:#22d3bf">medial</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import medial; medial.medial_match(vol_a, vol_b, w_topology=0.6, w_radius=0.4, n_bins=12)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;medial_match&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 voxel shapes के medial (topology + radius distribution) पर आधारित coarse matching score। return value [0,1]।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>骨格の位相記述子(端点/分岐/通常/孤立の割合)の距離と、medial 半径分布(内接半径のヒストグラム)の距離を重み付き合成し、類似度 = 1 - 距離 として返す。1 に近いほど似ている。平行移動・回転(90 度)に対して概ね不変で、位相ベースの初期照合(粗いふるい)に使う。</p>
+<p>Args:</p>
+<p>vol_a, vol_b: バイナリ voxel(bool / 0-1 の 3D)。</p>
+<p>w_topology: 位相距離の重み(既定 0.6)。</p>
+<p>w_radius: 半径分布距離の重み(既定 0.4)。</p>
+<p>n_bins: 半径ヒストグラムの bin 数。</p>
+<p>Returns:</p>
+<p>float: 類似スコア [0,1] (大きいほど類似)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:medial_topology">medial_topology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/medial_topology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">medial</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:distance_ridge">distance_ridge</a> · <a style="color:#22d3bf" href="op3d:skeletonize_vol">skeletonize_vol</a> · <a style="color:#22d3bf" href="op3d:medial_axis_points">medial_axis_points</a> · <a style="color:#22d3bf" href="op3d:topology_signature">topology_signature</a> · <a style="color:#22d3bf" href="op3d:skeleton_junctions3d">skeleton_junctions3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_endpoints3d">skeleton_endpoints3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_prune3d">skeleton_prune3d</a> · <a style="color:#22d3bf" href="op3d:skeleton_branches3d">skeleton_branches3d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: medial.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

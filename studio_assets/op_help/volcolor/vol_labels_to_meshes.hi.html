@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_labels_to_meshes — VOLCOLOR <code style="color:#22d3bf">render</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volcolor; volcolor.vol_labels_to_meshes(labels, ids=None, spacing=None, seed: &#x27;int&#x27; = 0, level: &#x27;float&#x27; = 0.5, axes: &#x27;str&#x27; = &#x27;xyz&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsvolcolor.get(&quot;vol_labels_to_meshes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर component पर marching cubes चलाकर <b>रंगीन mesh का समूह</b> बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返りは <code style="color:#22d3bf">list[dict]</code>、各要素が <code style="color:#22d3bf">{&quot;label&quot;, &quot;vertices&quot; (nv, 3) float64, &quot;faces&quot; (nf, 3) int64, &quot;color&quot; (r, g, b)}</code>。色は <code style="color:#22d3bf">vol_colorize_labels</code> と同じパレットなので、<b>断面図と 3-D 表示で同じ部品が同じ色</b>になる。</p>
+<p>成分ごとに <b>bbox を 1 ボクセル分パディングした部分体</b>だけを切り出して marching cubes を回す(全ボリュームを成分数だけ舐めない)。パディングはボリューム端に接する成分の面を閉じるためで、これをしないと端の成分だけ穴の開いたメッシュになる。</p>
+<p><code style="color:#22d3bf">axes</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;xyz&quot;</code>(既定)―― 頂点を <code style="color:#22d3bf">(x, y, z)</code> で返す。<code style="color:#22d3bf">render3d</code> / <code style="color:#22d3bf">mesh</code> の頂点順がこれで、<code style="color:#22d3bf">render3d.render_mesh</code> へ直接渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;zyx&quot;</code> ―― ボリュームの添字順のまま返す。<code style="color:#22d3bf">vol_label_shape_stats</code> の <code style="color:#22d3bf">centroid</code> と同じ並びになる。</p>
+<p><b>黙って取り違えると例外は出ない</b> ―― 出るのは上下と前後が入れ替わった、</p>
+<p>それらしい絵である。<code style="color:#22d3bf">tests/test_volcolor.py::test_mesh_axes_order_is_explicit</code> が</p>
+<p>両方の重心を stats の重心と突き合わせて固定している。</p>
+<p>*spacing* を渡すと頂点は物理座標(mm)になる。*ids* で成分を絞れる(<code style="color:#22d3bf">None</code> なら実在する全ラベル、ただし <code style="color:#22d3bf">MAX_MESHES</code> 件まで)。</p>
+<p>Raises <code style="color:#22d3bf">ImportError</code> (with the <code style="color:#22d3bf">pip install scikit-image</code> message) when marching cubes is unavailable, and <code style="color:#22d3bf">ValueError</code> for a bad *axes*, a *level* outside <code style="color:#22d3bf">(0, 1)</code>, an *ids* naming an absent label, or more than <code style="color:#22d3bf">MAX_MESHES</code> components.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:voxel_labels_color">voxel_labels_color</a> — <code style="color:#22d3bf">py -3.11 examples/voxel_labels_color.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">render</code>)</h3>
+<p><a style="color:#22d3bf" href="opvolcolor:vol_label_volume_render">vol_label_volume_render</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volcolor.py — VOLCOLOR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

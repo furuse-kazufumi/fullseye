@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">xg_crop_contours — 2D <code style="color:#22d3bf">xldgeom</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">contour</code> → <code style="color:#22d3bf">contour</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;xg_crop_contours&quot;, a=0.5, b=0.5)</code> (2-D model = एक image + दो scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
+<p><img src="fig/xg_crop_contours.png" alt="xg_crop_contours: input → output"></p>
+<p>*Figure synthetic 128×128 input पर सच में चलाकर मिला output है। बाईं ओर input, दाईं ओर output। Point clouds ऊपर से देखे गए scatter के रूप में (brightness = z), 1-D series line के रूप में, volumes z दिशा में maximum-intensity projection के रूप में, videos बीच के frame के रूप में, complex images amplitude के रूप में, और जो return values चित्र नहीं बन सकते वे स्वयं values के रूप में दिखाए जाते हैं।*</p>
+<p><b>Knob a को बदलकर</b> (0.1 / 0.5 / 0.9, दूसरा knob default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.a.jpg">xg_crop_contours: knob a को बदलने का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b output नहीं बदलता (मापा गया: 0.1 / 0.5 / 0.9 पर एक जैसा)।*</p>
+<p><b>Stages</b> (पहले आने वाले ops → यह op, बाएँ से क्रम में):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.chain.jpg">xg_crop_contours: stages का figure</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>दूसरी images पर भी</b> (synthetic scene / photo / coins। ऊपर की row में inputs, नीचे की row में उनके outputs। Knobs default पर):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/xg_crop_contours.inputs.jpg">xg_crop_contours: दूसरी images पर output</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>केवल shape की केंद्रीय a-fraction window के अंदर के contour points रखता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>画像中心に置いた、高さ <code style="color:#22d3bf">a*H</code>、幅 <code style="color:#22d3bf">a*W</code> の矩形窓の内側にある輪郭点だけを残す(<code style="color:#22d3bf">a</code> は [0,1] に clip、<code style="color:#22d3bf">b</code> は未使用)。窓は行 <code style="color:#22d3bf">[(0.5-a/2)H, (0.5+a/2)H]</code>、列 <code style="color:#22d3bf">[(0.5-a/2)W, (0.5+a/2)W]</code> の閉区間。<code style="color:#22d3bf">H, W</code> は辞書の <code style="color:#22d3bf">shape</code> から取り、無ければ全点の最大座標+1 で代用する。</p>
+<p>返り値は <code style="color:#22d3bf">{&quot;shape&quot;: (H, W), &quot;cs&quot;: [...]}</code>。窓内に 1 点も残らない輪郭は捨て、<code style="color:#22d3bf">a=0</code> では中心線上に正確に乗る点しか残らないためほぼ空、<code style="color:#22d3bf">a=1</code> で全点が残る。</p>
+<p>注意: 窓に切られた輪郭は分割されない。残った点をそのまま 1 本の折れ線として繋ぐので、輪郭が窓を出入りするたびに「窓の縁を飛び越える辺」が生まれ、<code style="color:#22d3bf">xg_area_center</code> の面積や折れ線長が実際より大きく出る。切り口を正しく扱いたいなら、領域の段階で <code style="color:#22d3bf">r3_clip_region</code> を掛けてから輪郭を取り直す。座標は (row, col)。長さで輪郭ごと選別するのは <code style="color:#22d3bf">xg_clip_contours</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:gallery2d_geometry">gallery2d_geometry family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio में आज़माएँ</h3>
+<p>नीचे का program सच में चलता है, यह जाँचा गया है (figure वाला ही input)। Studio की help में यह block buttons बन जाता है, जिनसे इसे वहीं load करके चलाया जा सकता है।</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">threshold 0.50 0.50
+sk_find_contours 0.50 0.50
+xg_crop_contours 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_crop_contours%200.50%200.50">▸ यह pipeline load करें</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:threshold%200.50%200.50%0Ask_find_contours%200.50%200.50%0Axg_crop_contours%200.50%200.50">Load करके चलाएँ</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gallery2d_geometry">gallery2d_geometry</a> — <code style="color:#22d3bf">py -3.11 examples/gallery2d_geometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">contour</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op:identity">identity</a> · <a style="color:#22d3bf" href="op:select_contours">select_contours</a> · <a style="color:#22d3bf" href="op:smooth_contours">smooth_contours</a> · <a style="color:#22d3bf" href="op:fit_line_contours">fit_line_contours</a> · <a style="color:#22d3bf" href="op:contours_to_region">contours_to_region</a> · <a style="color:#22d3bf" href="op:count_contours">count_contours</a> · <a style="color:#22d3bf" href="op:total_length">total_length</a> · <a style="color:#22d3bf" href="op:select_contours_xld">select_contours_xld</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">xldgeom</code>)</h3>
+<p><a style="color:#22d3bf" href="op:xg_moments">xg_moments</a> · <a style="color:#22d3bf" href="op:xg_area_center">xg_area_center</a> · <a style="color:#22d3bf" href="op:xg_eccentricity">xg_eccentricity</a> · <a style="color:#22d3bf" href="op:xg_orientation">xg_orientation</a> · <a style="color:#22d3bf" href="op:xg_elliptic_axis">xg_elliptic_axis</a> · <a style="color:#22d3bf" href="op:xg_height_width_ratio">xg_height_width_ratio</a> · <a style="color:#22d3bf" href="op:xg_regress_contours">xg_regress_contours</a> · <a style="color:#22d3bf" href="op:xg_clip_contours">xg_clip_contours</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ops.py — 2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

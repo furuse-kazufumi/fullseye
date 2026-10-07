@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">morph — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;morph&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 image A, B को संगत point से morph करता है और अनुपात alpha पर बीच की image बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
+<p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
+<p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>
+<p style="margin:2px 0 2px 12px">3. warp(A), warp(B) を alpha でクロスディゾルブ。</p>
+<p>alpha=0 で A、alpha=1 で B に一致する。単純な blend(A,B,alpha) と違い、目・鼻などの特徴が二重像にならず 1 つに重なる(=「本物の中間」)。</p>
+<p>引数:</p>
+<p>imgA, imgB: (H,W[,C])、同 shape、[0,1]。</p>
+<p>ptsA, ptsB: (K,2) の (x,y)。A と B の対応点(同数・同順)。</p>
+<p>alpha: 合成比率 [0,1]。</p>
+<p>method: &quot;affine&quot;(区分アフィン, 速い)か &quot;tps&quot;(滑らか)。</p>
+<p>lam: TPS の平滑化係数(method=&quot;tps&quot; のとき)。</p>
+<p>with_corners: True で四隅を固定点に足し、端の穴を防ぐ。</p>
+<p>返り値: (H,W[,C]) の中間画像([0,1])。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_morph">image_morph</a> — <code style="color:#22d3bf">py -3.11 examples/image_morph.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_vanishing_detail_and_morphing_area">poc_vanishing_detail_and_morphing_area</a> — <code style="color:#22d3bf">py -3.11 examples/poc_vanishing_detail_and_morphing_area.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:blend">blend</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">morph</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:add_frame_corners">add_frame_corners</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:blend">blend</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imagemorph.py — SHAPE2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

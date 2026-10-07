@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">refine_peak_newton — 3D <code style="color:#22d3bf">refine</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">score × position</code> → <code style="color:#22d3bf">position</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.refine_peak_newton(score, idx, device=&#x27;cpu&#x27;, max_iter=12, tol=0.0001)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;refine_peak_newton&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">position</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.refine_peak_newton.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">match3d.refine_peak_newton</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>score/correlation volume के integer peak को 3D Newton से sub-voxel स्तर तक refine करता है (iterative optimisation)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>粗いマッチ(整数 NCC / Fourier-Mellin ±3° / Hough ±0.5voxel)が返す整数ピーク idx を、局所の 2 次モデル f(x)≈f0+gᵀΔ+½ΔᵀHΔ の停留点 Δ=-H⁻¹g へ反復更新して連続座標へ収束させる。軸別の放物線サブピクセルと違い <b>全 3x3 Hessian(交差曲率 fzy,fzx,fyx を含む)</b> を使うため、回転した(相互曲率のある)異方性ピークでも座標軸間の結合バイアスを除去できる。</p>
+<p>各反復: 現在位置まわりの 27 近傍を trilinear で取得 → 中心差分で勾配 g と 6 成分 Hessian H を組み、Δ=solve(H,-g)。各成分を ±1 voxel にクリップ(信頼領域)して位置を更新、|Δ|&lt;tol で収束。ガウス山では中心差分勾配の零点が真のピークに一致するため停留点へ収束する(単一ステップでは 2 次モデル誤差が残り ±0.05voxel を割れないが、反復で ~0.02voxel まで収束)。H が負定値でない(=極大でない)real な相関面では上昇方向へ退避(勾配上昇ステップ)して発散を防ぐ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>score : array_like または torch.Tensor</p>
+<p>3D スコア/相関 volume (D,H,W)。値が大きいほどピーク。</p>
+<p>idx : tuple[int,int,int]</p>
+<p>整数ピーク座標 (z,y,x)(通常 argmax の unravel 結果)。</p>
+<p>device : str</p>
+<p>&quot;cpu&quot; / &quot;cuda&quot;。torch 演算の device。</p>
+<p>max_iter : int</p>
+<p>最大反復回数(既定 12)。</p>
+<p>tol : float</p>
+<p>収束判定(更新量 L2 ノルム、既定 1e-4)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray</p>
+<p>[score_peak, z, y, x] (精緻化後)。score_peak は精緻化位置での trilinear 補間スコア。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:refinement">refinement</a> — <code style="color:#22d3bf">py -3.11 examples_3d/refinement.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">position</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">refine</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:refine_rotation_z">refine_rotation_z</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a> · <a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

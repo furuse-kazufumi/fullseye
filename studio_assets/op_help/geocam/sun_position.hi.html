@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sun_position — GEOCAM <code style="color:#22d3bf">sun</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_position(lat_deg, lon_deg, unix_times)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.sun_position(lat_deg, lon_deg, unix_times)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;sun_position&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>latitude, longitude, समय (UNIX second, UTC) → सूर्य का azimuth और elevation [degree] (NOAA का solar position algorithm, Meeus 1998 का कम-सटीकता सूत्र)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>公開された閉形式(NOAA Global Monitoring Laboratory の Solar Calculator と同じ式:</p>
+<p>ユリウス世紀 → 平均黄経・平均近点角・中心差 → 視黄経 → 黄道傾斜 → 赤緯 と均時差 → 時角 → 天頂角・方位角)。精度は 2000 年 ± 1 世紀で <b>0.01° 程度</b>(NOAA の記述)、大気屈折は仰角に足す(NOAA の区分式、水平近くで最大 0.57°)。時刻は UTC の UNIX 秒(1-D、float でよい)。うるう秒・ΔT は無視する(0.01° に効かない)。</p>
+<p>Args:</p>
+<p>lat_deg, lon_deg: 観測点。経度は東が正。</p>
+<p>unix_times: (N,) UNIX 秒(UTC)。スカラも可。</p>
+<p>Returns:</p>
+<p>table: <code style="color:#22d3bf">azimuth_deg</code> (N,)(北 0°、時計回り)/ <code style="color:#22d3bf">elevation_deg</code> (N,)(屈折込み)/</p>
+<p><code style="color:#22d3bf">elevation_true_deg</code> (N,)(屈折なし)/ <code style="color:#22d3bf">declination_deg</code> / <code style="color:#22d3bf">equation_of_time_min</code> /</p>
+<p><code style="color:#22d3bf">hour_angle_deg</code> / <code style="color:#22d3bf">n</code>。</p>
+<p>真値で確かめてある性質(tests/test_geocam.py): 春分の正午に仰角 = 90 − |緯度|、正午の方位は北半球で 180°(南)、方位は東 → 南 → 西と単調、日の出と日の入りの仰角が対称、赤緯は ±23.44° に収まる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading_real">poc_public_camera_heading_real</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading_real.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_skyline">camera_orientation_from_skyline</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sun</code>)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:sun_pixel_position">sun_pixel_position</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun">camera_orientation_from_sun</a> · <a style="color:#22d3bf" href="opgeocam:sun_bloom_fit">sun_bloom_fit</a> · <a style="color:#22d3bf" href="opgeocam:camera_orientation_from_sun_candidates">camera_orientation_from_sun_candidates</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

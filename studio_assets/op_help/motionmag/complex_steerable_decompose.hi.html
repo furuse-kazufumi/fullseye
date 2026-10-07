@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">complex_steerable_decompose — MOTIONMAG <code style="color:#22d3bf">decompose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.complex_steerable_decompose(image, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import motionmag; motionmag.complex_steerable_decompose(image, scales: &#x27;int&#x27; = 4, orientations: &#x27;int&#x27; = 4) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmotionmag.get(&quot;complex_steerable_decompose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक frame का complex oriented sub-band decomposition -&gt; <code style="color:#22d3bf">dict</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Splits the image into <code style="color:#22d3bf">scales * orientations</code> <b>analytic</b> sub-bands plus three residuals (low-pass, high-pass and a small symmetric completion band). Each sub-band is a full-resolution <code style="color:#22d3bf">(H, W)</code> complex array whose modulus is the local contrast of that scale/orientation and whose argument is the local <b>phase</b> — the quantity a translation shifts linearly, which is what the rest of this module is built on. There is no spatial decimation: keeping every band at full resolution costs memory but makes the frame exactly invertible, and exactness is the point.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;bands&quot;: [complex (H, W), ...], &quot;kinds&quot;: [...], &quot;centre_cycles_per_px&quot;: [...], &quot;orientation_rad&quot;: [...], &quot;shape&quot;: (H, W), &quot;scales&quot;: s, &quot;orientations&quot;: k}</code>. <code style="color:#22d3bf">kinds[j]</code> is <code style="color:#22d3bf">&quot;band&quot;</code> for an oriented sub-band and <code style="color:#22d3bf">&quot;lowpass&quot;</code> / <code style="color:#22d3bf">&quot;highpass&quot;</code> / <code style="color:#22d3bf">&quot;residual&quot;</code> otherwise; <code style="color:#22d3bf">centre_cycles_per_px</code> and <code style="color:#22d3bf">orientation_rad</code> are <code style="color:#22d3bf">None</code> for residuals, which have no orientation and no single centre frequency.</p>
+<p>Feed the whole dict back to <code style="color:#22d3bf">complex_steerable_reconstruct</code>. Round trip error, measured on a 64x64 random frame with the defaults, is <code style="color:#22d3bf">max|out - in| = 6.66e-16</code>; on a 31x37 (odd, non-square) frame 7.22e-16; and the worst over every <code style="color:#22d3bf">scales</code> in 1..8 crossed with every <code style="color:#22d3bf">orientations</code> in 1..16 on 32x32 is 7.77e-16 — the tight-frame construction is exact, not approximate (see the notes on the self-conjugate grid points</p>
+<p>in <code style="color:#22d3bf">_filter_bank</code>).</p>
+<p>References: Freeman &amp; Adelson, IEEE PAMI 1991; Simoncelli &amp; Freeman, ICIP 1995; Portilla &amp; Simoncelli, IJCV 2000.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemotionmag:motion_magnification">motion_magnification family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:motion_magnification">motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/motion_magnification.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">decompose</code>)</h3>
+<p><a style="color:#22d3bf" href="opmotionmag:complex_steerable_reconstruct">complex_steerable_reconstruct</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: motionmag.py — MOTIONMAG operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

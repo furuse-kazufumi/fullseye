@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pnp_ransac — 3D <code style="color:#22d3bf">pose_estimation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × keypoints</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pnp3d; pnp3d.pnp_ransac(points_3d, points_2d, K, thresh=2.0, iters=300, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;pnp_ransac&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>outliers के प्रति robust PnP (RANSAC + अंतिम DLT refit)। → (R, t, inlier_mask, info)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>6 点の最小サンプルで DLT(精密化なし)→ 再投影誤差 &lt; thresh の inlier 最大化 → inlier 全体で <code style="color:#22d3bf">pnp_pose</code>(精密化あり)リフィット。</p>
+<p>Raises ValueError: points_2d が (N,2) でない / points_3d が (N,3) でない /</p>
+<p>点数不一致 / 6 点未満 / 非有限。</p>
+<p>引数:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">thresh</code>: 再投影誤差のしきい値 [px] (ユークリッド距離、既定 2.0)。これ未満を inlier とする。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">iters</code>: 反復数(既定 300)。早期終了はせず必ずこの回数回す。各反復は 6 点を非復元抽出し初期姿勢だけを解く(縮退した標本は捨てて次へ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: <code style="color:#22d3bf">numpy.random.default_rng(seed)</code> に渡す。同じ入力と seed なら結果は再現する。</p>
+<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,)(規約 <code style="color:#22d3bf">Xc = R X + t</code>)、<code style="color:#22d3bf">inlier_mask</code> bool (N,)、<code style="color:#22d3bf">info</code> dict。<code style="color:#22d3bf">info</code> のキーは <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">iters</code> / <code style="color:#22d3bf">rms</code>(最終姿勢の再投影 RMS [px]、inlier 集合上)。</p>
+<p style="margin:2px 0 2px 12px">• 最良標本の inlier が 6 未満のときは全点で解き直す fallback に入り、<code style="color:#22d3bf">info[&quot;fallback&quot;] = True</code> が付く。このとき <code style="color:#22d3bf">inlier_mask</code> は fallback 姿勢で数え直した実測値なので、<code style="color:#22d3bf">inlier_ratio</code> が小さいまま返ることがある(合意を捏造しない)。fallback も失敗すれば <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• inlier 数の比較は「より多い」だけを更新するので、同数なら先に見つかった標本が残る。</p>
+<p style="margin:2px 0 2px 12px">• 最終姿勢は inlier 全体でのリフィット(LM 精密化あり)。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 形状不正 / 6 点未満 / 点数不一致 / 非有限(<code style="color:#22d3bf">dlt_pose</code> と同じ入口検査)。</p>
+<p style="margin:2px 0 2px 12px">• 評価は <code style="color:#22d3bf">reprojection_error</code>、GT 比較は <code style="color:#22d3bf">pose_error</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pnp_pose_outliers">pnp_pose_outliers</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pnp_pose_outliers.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pose_estimation">pose_estimation</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pose_estimation.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pose_estimation</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:dlt_pose">dlt_pose</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pnp3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

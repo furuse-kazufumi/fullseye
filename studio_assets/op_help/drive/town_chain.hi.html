@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">town_chain — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>elements को क्रम से जोड़कर रखता है: element k+1 के entry को element k के exit (उससे <code style="color:#22d3bf">overlap</code> पहले) से मिलाने वाली rigid placement closed form में निकालता है और <code style="color:#22d3bf">drivecourse.course_layout</code> को देता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
+<p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>
+<p>overlap : 継ぎ目の食い込み [m] (≥ 0。3-D 化で継ぎ目に縁石が立たないため)。要素の中心線より短いこと。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict : course_layout の dict に <code style="color:#22d3bf">&quot;chain&quot;</code> を足したもの。<code style="color:#22d3bf">chain = {&quot;overlap&quot;, &quot;s_start&quot; (n,) 各要素の entry の弧長, &quot;lengths&quot; (n,) 各要素の centerline_length, &quot;polyline_lengths&quot; (n,) 中心線の折線長, &quot;total_length&quot; (= Σ 折線長 − overlap × (n − 1)), &quot;joints&quot;: [(exit_k, entry_k+1), ...] 世界姿勢}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・layout の入れ子・entry/exit/centerline が無い、start/overlap が非有限、overlap が負、overlap が要素の中心線より長い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_world">town_world</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_stop_lines">town_stop_lines</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a> · <a style="color:#22d3bf" href="opdrive:town_checks">town_checks</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

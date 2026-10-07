@@ -1,0 +1,72 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">axes_transform — ANNOTATE <code style="color:#22d3bf">plot</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">axes</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.axes_transform(rect, xlim, ylim, invert_y=True, xscale=&#x27;linear&#x27;, yscale=&#x27;linear&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;axes_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>data coordinate → pixel coordinate का (<b>closed-form</b>) mapping बनाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">row は下向き</code> という画像の事実と、<code style="color:#22d3bf">y は上向き</code> というグラフの慣習のずれを、<b>この 1 か所だけ</b>で吸収する。図のコードはこの辞書を持ち回る。</p>
+<p>px = x0 + (x - xmin)/(xmax - xmin) * (w - 1)</p>
+<p>py = y0 + (h - 1) - (y - ymin)/(ymax - ymin) * (h - 1)     # invert_y</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>rect : (x, y, w, h)</p>
+<p>描画域(左上基準、画素)。</p>
+<p>xlim, ylim : (lo, hi)</p>
+<p>データ範囲。lo == hi は<b>傾きが無限大</b>になるので ValueError。</p>
+<p><b>lo &gt; hi(反転軸)も許す</b> ―― 深度やランクを上下逆に描くため。</p>
+<p>invert_y : bool</p>
+<p>True(既定)なら <code style="color:#22d3bf">ylim[0]</code> が<b>下端</b>に来る = 普通のグラフ。</p>
+<p>False なら画像そのままの向き(上端が <code style="color:#22d3bf">ylim[0]</code>)。</p>
+<p>xscale, yscale : {&#x27;linear&#x27;,&#x27;log&#x27;}</p>
+<p><code style="color:#22d3bf">&#x27;log&#x27;</code> は常用対数。範囲に 0 以下が入れば ValueError</p>
+<p>(log 軸に 0 を渡して -inf を「端」として描く図は嘘になる)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">{&quot;rect&quot;, &quot;xlim&quot;, &quot;ylim&quot;, &quot;invert_y&quot;, &quot;xscale&quot;, &quot;yscale&quot;}</code>。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>矩形が不正、範囲が非有限か幅ゼロ、w か h が 2 未満、</p>
+<p>未知の scale、log 軸で範囲に 0 以下。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beam_modal_video">poc_beam_modal_video</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beam_modal_video.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_calibration">poc_camera_calibration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_calibration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_shake_deblur">poc_camera_shake_deblur</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_shake_deblur.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_crack_width_timeseries">poc_crack_width_timeseries</a> — <code style="color:#22d3bf">py -3.11 examples/poc_crack_width_timeseries.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dehazing">poc_dehazing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dehazing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dic_strain">poc_dic_strain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dic_strain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_focus_stacking">poc_focus_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_focus_stacking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_interferometry_step">poc_interferometry_step</a> — <code style="color:#22d3bf">py -3.11 examples/poc_interferometry_step.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_motion_magnification">poc_motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/poc_motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_panorama_drift">poc_panorama_drift</a> — <code style="color:#22d3bf">py -3.11 examples/poc_panorama_drift.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_tracking">poc_particle_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_photoelasticity">poc_photoelasticity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_photoelasticity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_registration_basin">poc_registration_basin</a> — <code style="color:#22d3bf">py -3.11 examples/poc_registration_basin.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_strain_history">poc_strain_history</a> — <code style="color:#22d3bf">py -3.11 examples/poc_strain_history.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_structure_4d_deterioration">poc_structure_4d_deterioration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_structure_4d_deterioration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_superresolution_limits">poc_superresolution_limits</a> — <code style="color:#22d3bf">py -3.11 examples/poc_superresolution_limits.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_template_tracking">poc_template_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_template_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_timelapse_growth">poc_timelapse_growth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_timelapse_growth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_wound_area_tracking">poc_wound_area_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_wound_area_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_xyt_event_surface">poc_xyt_event_surface</a> — <code style="color:#22d3bf">py -3.11 examples/poc_xyt_event_surface.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">axes</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">plot</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:data_to_pixel">data_to_pixel</a> · <a style="color:#22d3bf" href="opannotate:nice_ticks">nice_ticks</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a> · <a style="color:#22d3bf" href="opannotate:grid_lines">grid_lines</a> · <a style="color:#22d3bf" href="opannotate:ticks">ticks</a> · <a style="color:#22d3bf" href="opannotate:plot_series">plot_series</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

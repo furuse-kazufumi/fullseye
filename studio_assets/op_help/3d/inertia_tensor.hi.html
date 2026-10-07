@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">inertia_tensor — 3D <code style="color:#22d3bf">moment_invariant</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import moments3d; moments3d.inertia_tensor(points) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inertia_tensor&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point cloud का inertia tensor (3,3) (central 2nd-order moments से, समान mass, कुल mass 1)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>I_xx = mean(y²+z²), I_yy = mean(x²+z²), I_zz = mean(x²+y²), I_xy = -mean(xy), I_xz = -mean(xz), I_yz = -mean(yz)。共分散 C を使うと I = tr(C)·E₃ − C(E₃ は単位行列)と等価。対称・半正定値。重心中心化のため並進不変。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>np.ndarray, shape (3, 3)</p>
+<p>対称な慣性テンソル。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 単位は長さ²(質量 1 の等質量点とみなすので密度は入らない)。点群を回転で回すと <code style="color:#22d3bf">R I Rᵀ</code> に写り、固有値(<code style="color:#22d3bf">principal_moments</code>)が回転不変量、固有ベクトルが主軸(<code style="color:#22d3bf">moment_axes</code>)。</p>
+<p style="margin:2px 0 2px 12px">• 入力は (N,3)、N &gt;= 1(1 点なら零行列)。形状不正・非有限は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 共分散 C とは <code style="color:#22d3bf">I = tr(C)·E₃ - C</code> の関係で、C と I の固有ベクトルは同じ、固有値は <code style="color:#22d3bf">tr(C) - c_i</code>。</p>
+<p style="margin:2px 0 2px 12px">• 実体(体積)のモーメントではなく <b>サンプル点</b> のモーメントなので、同じ形でも点密度の偏りで値が変わる。密度を均すなら前段で <code style="color:#22d3bf">voxel_grid_downsample</code>。決定論的。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:moment_invariants">moment_invariants</a> — <code style="color:#22d3bf">py -3.11 examples_3d/moment_invariants.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">moment_invariant</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:moment_invariants">moment_invariants</a> · <a style="color:#22d3bf" href="op3d:principal_moments">principal_moments</a> · <a style="color:#22d3bf" href="op3d:central_moments">central_moments</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: moments3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

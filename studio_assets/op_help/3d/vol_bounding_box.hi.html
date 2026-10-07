@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_bounding_box — 3D <code style="color:#22d3bf">domain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_bounding_box(domain, margin=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_bounding_box(domain, margin=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_bounding_box&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>mask के foreground का tight axis-aligned bounding box, voxel indices में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Returns <code style="color:#22d3bf">(z0, y0, x0, z1, y1, x1)</code> with <b>exclusive</b> upper bounds, i.e. <code style="color:#22d3bf">vol[z0:z1, y0:y1, x0:x1]</code> is the smallest sub-volume containing every foreground voxel. *margin* (an int <code style="color:#22d3bf">&gt;= 0</code>) grows the box by that many voxels per side, clipped to the volume — headroom for operators with a spatial footprint (a Gaussian of sigma s needs ~<code style="color:#22d3bf">3*s</code> voxels of context). A non-<code style="color:#22d3bf">{0, 1}</code> input is thresholded at <code style="color:#22d3bf">&gt; 0.5</code>.</p>
+<p>An <b>empty</b> mask raises <code style="color:#22d3bf">ValueError</code> (fail-closed): there is no box, and silently returning the full volume would defeat the point of cropping.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:rle_region_efficiency">rle_region_efficiency</a> — <code style="color:#22d3bf">py -3.11 examples_3d/rle_region_efficiency.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:roi_domain_boundary">roi_domain_boundary</a> — <code style="color:#22d3bf">py -3.11 examples_3d/roi_domain_boundary.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">domain</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_reduce_domain">vol_reduce_domain</a> · <a style="color:#22d3bf" href="op3d:vol_crop_domain">vol_crop_domain</a> · <a style="color:#22d3bf" href="op3d:vol_uncrop">vol_uncrop</a> · <a style="color:#22d3bf" href="op3d:vol_tiled_map">vol_tiled_map</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sprite_blit — GFX2D <code style="color:#22d3bf">sprite</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgba × rgba</code> → <code style="color:#22d3bf">rgba</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.sprite_blit(dst, sprite, x=0, y=0, anchor=&#x27;top_left&#x27;, flip_x=False, flip_y=False, opacity=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;sprite_blit&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">sprite</code> को <code style="color:#22d3bf">dst</code> की copy पर integer <code style="color:#22d3bf">(x, y)</code> पर composite करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">x</code> is the column and <code style="color:#22d3bf">y</code> the row of the sprite&#x27;s <code style="color:#22d3bf">anchor</code> point; <code style="color:#22d3bf">anchor</code> is one of <code style="color:#22d3bf">&quot;top_left&quot;</code>, <code style="color:#22d3bf">&quot;top_right&quot;</code>, <code style="color:#22d3bf">&quot;bottom_left&quot;</code>, <code style="color:#22d3bf">&quot;bottom_right&quot;</code>, <code style="color:#22d3bf">&quot;center&quot;</code>.</p>
+<p><b>Out-of-bounds behaviour is to clip silently, and that is a decision, not an oversight.</b> Half a sprite hanging off the edge of the screen is the normal case in this family, and raising there would make the common path the exceptional one. A sprite entirely outside returns <code style="color:#22d3bf">dst</code> unchanged. The contrast with <code style="color:#22d3bf">viewport</code> — which raises for the same situation — is</p>
+<p>deliberate: a camera asking for pixels that do not exist is a bug in the caller&#x27;s arithmetic, a sprite walking off screen is not.</p>
+<p><code style="color:#22d3bf">x</code>/<code style="color:#22d3bf">y</code> must be <b>integers</b>. Sub-pixel placement changes the picture (it resamples), so it is <code style="color:#22d3bf">sprite_transform</code>&#x27;s job and not a silent rounding here.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgba</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:premultiply">premultiply</a> · <a style="color:#22d3bf" href="opgfx2d:alpha_composite">alpha_composite</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sprite</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:sprite_synthesize">sprite_synthesize</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_transform">sprite_transform</a> · <a style="color:#22d3bf" href="opgfx2d:sprite_sheet_slice">sprite_sheet_slice</a> · <a style="color:#22d3bf" href="opgfx2d:nine_slice">nine_slice</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

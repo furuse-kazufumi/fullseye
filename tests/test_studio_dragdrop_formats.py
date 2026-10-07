@@ -508,4 +508,4 @@ def test_quick_guide_mentions_drag_and_drop_in_every_language():
         assert ".splat" in guide and "MJCF" in guide, lang
         want = names.get(lang) or studio.STRINGS_I18N["Files you can open"][lang]
         assert want in guide, lang
-    assert len(studio.HELP_I18N) == 6
+    assert len(studio.HELP_I18N) == len(studio.LANGUAGES) >= 7     # 2026-10-07: hi を足した

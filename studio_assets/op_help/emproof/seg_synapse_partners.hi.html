@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">seg_synapse_partners — EMPROOF <code style="color:#22d3bf">wiring</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import segcompare; segcompare.seg_synapse_partners(labels, synapses, spacing=None, background=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsemproof.get(&quot;seg_synapse_partners&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>segmentation जिस wiring diagram को दर्शाता है उसे पढ़ता है: हर synapse किस object को जोड़ता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">synapses</code> is a table <code style="color:#22d3bf">{&quot;pre&quot;: (n, ndim), &quot;post&quot;: (n, ndim)}</code> (or an <code style="color:#22d3bf">(n, 2, ndim)</code> array) holding the two ends of <code style="color:#22d3bf">n</code> synapses in physical units (divided by <code style="color:#22d3bf">spacing</code> per axis, default 1, then floored to a voxel). Returns <code style="color:#22d3bf">pre_ids</code> / <code style="color:#22d3bf">post_ids</code> (the object under each end), <code style="color:#22d3bf">connection</code> (index of each synapse&#x27;s connection in <code style="color:#22d3bf">edges</code>), <code style="color:#22d3bf">edges</code> (<code style="color:#22d3bf">(k, 2)</code> distinct (pre object, post object) pairs), <code style="color:#22d3bf">synapses_per_edge</code>, <code style="color:#22d3bf">n_background</code> (synapses with an end on <code style="color:#22d3bf">background</code>) and <code style="color:#22d3bf">n_autapse</code> (both ends in the same non-background object — a merge, or a real autapse).</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: bad labels (as <code style="color:#22d3bf">seg_contingency</code>); <code style="color:#22d3bf">synapses</code> not a table with <code style="color:#22d3bf">pre</code> / <code style="color:#22d3bf">post</code> nor an <code style="color:#22d3bf">(n, 2, ndim)</code> array; points not <code style="color:#22d3bf">(n, ndim)</code>, non-finite, of different counts or outside the volume; bad spacing.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideemproof:emproof">emproof family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_em_wiring_errors">poc_em_wiring_errors</a> — <code style="color:#22d3bf">py -3.11 examples/poc_em_wiring_errors.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_exposure">seg_wiring_exposure</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">wiring</code>)</h3>
+<p><a style="color:#22d3bf" href="opemproof:seg_wiring_variation">seg_wiring_variation</a> · <a style="color:#22d3bf" href="opemproof:seg_synapse_nri">seg_synapse_nri</a> · <a style="color:#22d3bf" href="opemproof:seg_wiring_exposure">seg_wiring_exposure</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: segcompare.py — EMPROOF operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,143 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">text_box — ANNOTATE <code style="color:#22d3bf">text</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.text_box(img, text, xy, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, anchor=&#x27;lt&#x27;, pad=5, font_size=14, min_font_size=9, max_width=None, font_path=None, line_spacing=1.15, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, border=0, border_color=None, style=None, wrap=True, bold=False, italic=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;text_box&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>backing plate (अर्ध-पारदर्शी पट्टी) सहित text। <b>बाहर निकलने पर चुपचाप काटा नहीं जाता, exception आता है</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>img : ndarray</p>
+<p><code style="color:#22d3bf">(H,W)</code> か <code style="color:#22d3bf">(H,W,C)</code>、float [0,1]。</p>
+<p>text : str</p>
+<p>描く文字列。</p>
+<p>xy : (x, y)</p>
+<p>アンカーの位置(<b>x=col, y=row</b>、row は下向き)。</p>
+<p>color : str or sequence</p>
+<p>役割名または RGB。<code style="color:#22d3bf">text_color</code> 未指定ならこれが<b>枠の色</b>として</p>
+<p>使われ、文字は読みやすい既定色になる。</p>
+<p>text_color, box_color : str/sequence or None</p>
+<p>文字色・板の色。None なら既定(明るい文字 × 暗い板)。文字色が None の</p>
+<p>ときは、<b>実際に下に出る色</b>に対して明るい既定色が <code style="color:#22d3bf">min_contrast</code> を</p>
+<p>割る場合に限り、暗い文字(板の色)へ自動で切り替える ―― 板なし</p>
+<p>(<code style="color:#22d3bf">box_alpha=0</code>)で白地に置く目盛り・カラーバー・凡例のラベルが</p>
+<p>白に溶けないため。<code style="color:#22d3bf">text_color</code> を明示したときは切り替えない</p>
+<p>(色は図の意味なので勝手に変えず、読めなければ例外にする)。</p>
+<p>box_alpha : float</p>
+<p>板の不透明度 [0,1]。<code style="color:#22d3bf">0</code> なら板を描かない(目盛りラベル向け)。</p>
+<p>anchor : str</p>
+<p><code style="color:#22d3bf">&#x27;lt&#x27;,&#x27;ct&#x27;,&#x27;rt&#x27;,&#x27;lm&#x27;,&#x27;cm&#x27;,&#x27;rm&#x27;,&#x27;lb&#x27;,&#x27;cb&#x27;,&#x27;rb&#x27;</code> の 9 通り。</p>
+<p>pad : int</p>
+<p>板の内側余白[px]。</p>
+<p>max_width : int or None</p>
+<p>文字の折り返し幅。None なら 1 行のまま。</p>
+<p>wrap : bool</p>
+<p>False なら折り返さず 1 行のまま縮めて <code style="color:#22d3bf">max_width</code> に収める。</p>
+<p>min_contrast : float</p>
+<p>文字と「実際にその下に出る色」のコントラスト比の下限。下回れば</p>
+<p><b>ValueError</b>(背景と同化した文字は誰も気づけないので通さない)。</p>
+<p><b>限界(正直に)</b>: 比べる相手は板の下の<b>平均色</b>なので、</p>
+<p>白と黒が半々に混じった写真の上に <code style="color:#22d3bf">box_alpha=0</code> で置くと、平均は</p>
+<p>中間灰になり検査を通ってしまう(白い部分の上の文字は読めない)。</p>
+<p>地が荒れている場所では <code style="color:#22d3bf">box_alpha</code> を上げて板を効かせること ――</p>
+<p>この検査は「板を忘れた」を捕まえるためのもので、</p>
+<p>「板があっても読めない」まで保証はしない。</p>
+<p>border : int</p>
+<p>板の枠線の太さ(0 で枠なし)。色は <code style="color:#22d3bf">border_color</code> か <code style="color:#22d3bf">color</code>。</p>
+<p>style : dict or None</p>
+<p>枠線を引く <code style="color:#22d3bf">imagedraw.draw_polyline</code> へ<b>素通し</b>する引数。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray</p>
+<p>同じ shape の新しい配列。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>板が画像からはみ出す / 文字が収まらない / コントラスト不足 /</p>
+<p>未知の役割名・アンカー / 負の余白。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:drawlist_deferred">drawlist_deferred</a> — <code style="color:#22d3bf">py -3.11 examples/drawlist_deferred.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_active_contours">poc_active_contours</a> — <code style="color:#22d3bf">py -3.11 examples/poc_active_contours.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ball_bounce">poc_ball_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ball_bounce.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_beam_modal_video">poc_beam_modal_video</a> — <code style="color:#22d3bf">py -3.11 examples/poc_beam_modal_video.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_cad_scan_deviation">poc_cad_scan_deviation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_cad_scan_deviation.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_calibration">poc_camera_calibration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_calibration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_camera_shake_deblur">poc_camera_shake_deblur</a> — <code style="color:#22d3bf">py -3.11 examples/poc_camera_shake_deblur.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_connectome_across_worms">poc_connectome_across_worms</a> — <code style="color:#22d3bf">py -3.11 examples/poc_connectome_across_worms.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_crack_width_timeseries">poc_crack_width_timeseries</a> — <code style="color:#22d3bf">py -3.11 examples/poc_crack_width_timeseries.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ct_void_morphology">poc_ct_void_morphology</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ct_void_morphology.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dehazing">poc_dehazing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dehazing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dem_terrain">poc_dem_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dem_terrain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_diabolo_model_and_vision">poc_diabolo_model_and_vision</a> — <code style="color:#22d3bf">py -3.11 examples/poc_diabolo_model_and_vision.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dic_strain">poc_dic_strain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dic_strain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_crossing">poc_driving_crossing</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_crossing.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_decisions">poc_driving_decisions</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_decisions.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_endless_map">poc_driving_endless_map</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_endless_map.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_lateral">poc_driving_lateral</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_lateral.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_longitudinal">poc_driving_longitudinal</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_longitudinal.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_traffic">poc_driving_traffic</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_traffic.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_weather">poc_driving_weather</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_weather.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_emva1288_sensor">poc_emva1288_sensor</a> — <code style="color:#22d3bf">py -3.11 examples/poc_emva1288_sensor.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_eye_to_brain">poc_eye_to_brain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_eye_to_brain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_focus_stacking">poc_focus_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_focus_stacking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_granular_heap_repose">poc_granular_heap_repose</a> — <code style="color:#22d3bf">py -3.11 examples/poc_granular_heap_repose.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_graph_hierarchy_segmentation">poc_graph_hierarchy_segmentation</a> — <code style="color:#22d3bf">py -3.11 examples/poc_graph_hierarchy_segmentation.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_interferometry_step">poc_interferometry_step</a> — <code style="color:#22d3bf">py -3.11 examples/poc_interferometry_step.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_kendama">poc_kendama</a> — <code style="color:#22d3bf">py -3.11 examples/poc_kendama.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_leak_localization">poc_leak_localization</a> — <code style="color:#22d3bf">py -3.11 examples/poc_leak_localization.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_lidar_terrain_change">poc_lidar_terrain_change</a> — <code style="color:#22d3bf">py -3.11 examples/poc_lidar_terrain_change.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_livestock_body_volume">poc_livestock_body_volume</a> — <code style="color:#22d3bf">py -3.11 examples/poc_livestock_body_volume.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_machine_condition_fusion">poc_machine_condition_fusion</a> — <code style="color:#22d3bf">py -3.11 examples/poc_machine_condition_fusion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_malecns_activity_wave">poc_malecns_activity_wave</a> — <code style="color:#22d3bf">py -3.11 examples/poc_malecns_activity_wave.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_mesh_quality_repair">poc_mesh_quality_repair</a> — <code style="color:#22d3bf">py -3.11 examples/poc_mesh_quality_repair.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_motion_magnification">poc_motion_magnification</a> — <code style="color:#22d3bf">py -3.11 examples/poc_motion_magnification.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_multibeam_bathymetry">poc_multibeam_bathymetry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_multibeam_bathymetry.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_panorama_drift">poc_panorama_drift</a> — <code style="color:#22d3bf">py -3.11 examples/poc_panorama_drift.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_particle_tracking">poc_particle_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_particle_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_failure_recovery">poc_peg_failure_recovery</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_failure_recovery.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_peg_insertion_tactile">poc_peg_insertion_tactile</a> — <code style="color:#22d3bf">py -3.11 examples/poc_peg_insertion_tactile.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_photoelasticity">poc_photoelasticity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_photoelasticity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_warpage_risk">poc_print_warpage_risk</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_warpage_risk.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_pxrd_phase_peel">poc_pxrd_phase_peel</a> — <code style="color:#22d3bf">py -3.11 examples/poc_pxrd_phase_peel.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_registration_basin">poc_registration_basin</a> — <code style="color:#22d3bf">py -3.11 examples/poc_registration_basin.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_river_surface_velocity">poc_river_surface_velocity</a> — <code style="color:#22d3bf">py -3.11 examples/poc_river_surface_velocity.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rotation_invariance_audit">poc_rotation_invariance_audit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rotation_invariance_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_rover_slip_risk_path">poc_rover_slip_risk_path</a> — <code style="color:#22d3bf">py -3.11 examples/poc_rover_slip_risk_path.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_segmentation_gauntlet">poc_segmentation_gauntlet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_segmentation_gauntlet.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_stockpile_volume">poc_stockpile_volume</a> — <code style="color:#22d3bf">py -3.11 examples/poc_stockpile_volume.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_strain_history">poc_strain_history</a> — <code style="color:#22d3bf">py -3.11 examples/poc_strain_history.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_structure_4d_deterioration">poc_structure_4d_deterioration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_structure_4d_deterioration.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_superresolution_limits">poc_superresolution_limits</a> — <code style="color:#22d3bf">py -3.11 examples/poc_superresolution_limits.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_bounce">poc_table_tennis_bounce</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_bounce.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_rally_loop">poc_table_tennis_rally_loop</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_rally_loop.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_table_tennis_spin">poc_table_tennis_spin</a> — <code style="color:#22d3bf">py -3.11 examples/poc_table_tennis_spin.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_template_tracking">poc_template_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_template_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_timelapse_growth">poc_timelapse_growth</a> — <code style="color:#22d3bf">py -3.11 examples/poc_timelapse_growth.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_traffic_counting">poc_traffic_counting</a> — <code style="color:#22d3bf">py -3.11 examples/poc_traffic_counting.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_ttc_rss">poc_ttc_rss</a> — <code style="color:#22d3bf">py -3.11 examples/poc_ttc_rss.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_wound_area_tracking">poc_wound_area_tracking</a> — <code style="color:#22d3bf">py -3.11 examples/poc_wound_area_tracking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_xyt_event_surface">poc_xyt_event_surface</a> — <code style="color:#22d3bf">py -3.11 examples/poc_xyt_event_surface.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a> · <a style="color:#22d3bf" href="opannotate:axes_frame">axes_frame</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">text</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:measure_text">measure_text</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

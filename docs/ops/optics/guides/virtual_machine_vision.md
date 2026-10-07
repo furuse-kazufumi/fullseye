@@ -7,6 +7,7 @@ title_zh: 虚拟机器视觉 —— 梳理参数与对象模型
 title_tw: 虛擬機器視覺 —— 梳理參數與物件模型
 title_ko: 가상 머신 비전 — 파라미터 도출과 객체 모형
 title_de: Virtuelle Bildverarbeitung — Parameter erfassen und Objektmodell
+title_hi: Virtual machine vision — parameters की सूची और एक object model
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

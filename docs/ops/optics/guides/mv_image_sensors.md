@@ -7,6 +7,7 @@ title_zh: 工业图像传感器(以现行产品为主)
 title_tw: 工業影像感測器(以現行產品為主)
 title_ko: 산업용 이미지 센서(현행 제품 중심)
 title_de: Industrielle Bildsensoren (vorwiegend aktuelle Produkte)
+title_hi: Industrial image sensors (मुख्यतः मौजूदा products)
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

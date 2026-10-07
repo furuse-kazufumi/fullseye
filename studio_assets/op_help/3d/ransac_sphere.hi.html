@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ransac_sphere — 3D <code style="color:#22d3bf">robust_fit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ransac_sphere(points, thresh, iters=500, seed=0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import ransac_fit; ransac_fit.ransac_sphere(points, thresh, iters=500, seed=0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;ransac_sphere&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>outliers के प्रति robust RANSAC sphere fitting।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>4 点をサンプル → 線形法(代数フィット)で球中心・半径 → |‖p-c‖ - r| &lt; <code style="color:#22d3bf">thresh</code> の inlier を最大化 → 最終 inlier で最小二乗リフィット。配管ボール/球面計測用。</p>
+<p>Args:</p>
+<p>points: (N,3) 点群。</p>
+<p>thresh: inlier とみなす |距離-r| のしきい値。</p>
+<p>iters: RANSAC 反復数。</p>
+<p>seed: 乱数シード(決定論)。</p>
+<p>Returns:</p>
+<p>(params, inlier_mask, info)。params = {&quot;center&quot;: (3,), &quot;radius&quot;: float}。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:ransac_prim">ransac_prim</a> — <code style="color:#22d3bf">py -3.11 examples_3d/ransac_prim.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">robust_fit</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:ransac_plane">ransac_plane</a> · <a style="color:#22d3bf" href="op3d:ransac_line">ransac_line</a> · <a style="color:#22d3bf" href="op3d:ransac_cylinder">ransac_cylinder</a> · <a style="color:#22d3bf" href="op3d:fit_cone">fit_cone</a> · <a style="color:#22d3bf" href="op3d:fit_torus">fit_torus</a> · <a style="color:#22d3bf" href="op3d:fit_ellipsoid">fit_ellipsoid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: ransac_fit.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

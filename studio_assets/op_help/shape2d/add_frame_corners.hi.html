@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">add_frame_corners — SHAPE2D <code style="color:#22d3bf">morph</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point set में image के चारों कोने (+ किनारों के मध्यबिंदु) fixed point के रूप में जोड़ता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>ワープの三角形分割が画像全体を覆い、凸包の外側にできる穴を防ぐための定番処置。src/dst の両方に同じ順序で足せば、四隅は「動かない対応点」として働く。</p>
+<p>足す 8 点は画素中心座標 <code style="color:#22d3bf">(x, y)</code> で、<code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> を端とする:</p>
+<p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>、<code style="color:#22d3bf">ym = (H-1)/2</code>)。この順で末尾に連結する。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">pts</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>(x = 列、y = 行)、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと x と y が入れ替わったまま通る(例外は出ない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>: 画像の <code style="color:#22d3bf">shape</code>(<code style="color:#22d3bf">(H, W)</code> でも <code style="color:#22d3bf">(H, W, C)</code> でも先頭 2 つを使う)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(N + 8, 2)</code> float64。</p>
+<p style="margin:2px 0 2px 12px">• 元の点が既に枠上や枠外にあっても検査しない。枠外の対応点は Delaunay 分割で枠の三角形と交差し、ワープが歪む。</p>
+<p><code style="color:#22d3bf">morph</code> / <code style="color:#22d3bf">morph_sequence</code> は <code style="color:#22d3bf">with_corners=True</code> で内部的にこれを両方の点群に掛ける。<code style="color:#22d3bf">warp_piecewise_affine</code> / <code style="color:#22d3bf">warp_tps_image</code> を直接呼ぶときは自分で <code style="color:#22d3bf">src</code> と <code style="color:#22d3bf">dst</code> の両方に足すこと。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">shape_description_2d family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shape2d_morph_descriptor_tour">shape2d_morph_descriptor_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shape2d_morph_descriptor_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:elliptic_fourier">elliptic_fourier</a> · <a style="color:#22d3bf" href="opshape2d:fourier_smooth">fourier_smooth</a> · <a style="color:#22d3bf" href="opshape2d:contour_fourier_complex">contour_fourier_complex</a> · <a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">morph</code>)</h3>
+<p><a style="color:#22d3bf" href="opshape2d:warp_tps_image">warp_tps_image</a> · <a style="color:#22d3bf" href="opshape2d:warp_piecewise_affine">warp_piecewise_affine</a> · <a style="color:#22d3bf" href="opshape2d:blend">blend</a> · <a style="color:#22d3bf" href="opshape2d:morph">morph</a> · <a style="color:#22d3bf" href="opshape2d:morph_sequence">morph_sequence</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imagemorph.py — SHAPE2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

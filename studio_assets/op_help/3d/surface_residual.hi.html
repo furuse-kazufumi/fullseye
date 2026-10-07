@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">surface_residual — 3D <code style="color:#22d3bf">freeform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × image2d × bspline_surface</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_residual(x, y, z, tck)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bspline_surf; bspline_surf.surface_residual(x, y, z, tck)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;surface_residual&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.surface_residual(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">measurement</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.surface_residual.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">bspline_surf.surface_residual</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">{&quot;rms&quot;,&quot;max&quot;,&quot;pv&quot;} → pv float</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>scattered data और surface tck के बीच residual statistics लौटाता है (form error = fit से विचलन)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各サンプル位置で曲面高さを評価し、観測 z との差の RMS / 最大絶対値 / PV (peak-to-valley = 最大 - 最小)を計測する。検査ではこれが自由曲面からのずれ量(打痕・うねり・欠肉)の定量指標になる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>dict</p>
+<p><code style="color:#22d3bf">{&quot;rms&quot;: float, &quot;max&quot;: float, &quot;pv&quot;: float}</code>。max は最大絶対残差、</p>
+<p>pv は符号付き残差の最大 - 最小(片側だけの凸/凹も捉える)。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 残差の符号は <code style="color:#22d3bf">resid = z - zhat</code>(観測 − 曲面)。正 = 曲面より高い(盛り上がり)、負 = 低い(欠肉)。<code style="color:#22d3bf">max</code> は絶対値なので向きは分からず、向きが要るなら <code style="color:#22d3bf">eval_bspline_surface</code> で <code style="color:#22d3bf">zhat</code> を取り自分で差を取る。</p>
+<p style="margin:2px 0 2px 12px">• x, y, z は任意 shape を受け、内部で <code style="color:#22d3bf">eval_bspline_surface(tck, x, y, grid=False)</code> を通す(tck の種類検査もそこで行われ、曲線 tck や多項式 dict は <code style="color:#22d3bf">ValueError</code>)。z と x の要素数が違うと numpy の形状エラーになる(専用の検査は無く、z が 1 要素だと黙って broadcast される)。</p>
+<p style="margin:2px 0 2px 12px">• 単位は z と同じ。<code style="color:#22d3bf">rms</code> は全点の二乗平均平方根なので局所的な打痕は平均で薄まる。局所欠陥は <code style="color:#22d3bf">max</code> か <code style="color:#22d3bf">pv</code> で見る。</p>
+<p style="margin:2px 0 2px 12px">• 典型: <code style="color:#22d3bf">fit_bspline_surface</code> → 本 op。フィットに使った点で評価すると smooth が小さいほど残差は 0 に近づく(過適合の指標にもなる)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bspline_freeform">bspline_freeform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bspline_freeform.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">freeform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_bspline_surface">fit_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:fit_bspline_curve">fit_bspline_curve</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_curve">eval_bspline_curve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: bspline_surf.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

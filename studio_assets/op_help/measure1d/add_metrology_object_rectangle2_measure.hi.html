@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">add_metrology_object_rectangle2_measure — MEASURE1D <code style="color:#22d3bf">model</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_rectangle2_measure(model, row, col, phi, l1, l2, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_rectangle2_measure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>rectangle metrology object जोड़ता है (add_metrology_object_rectangle2_measure)। <code style="color:#22d3bf">phi</code> = <code style="color:#22d3bf">l1</code> भुजा की दिशा (col axis से, radian में), <code style="color:#22d3bf">l1</code>/<code style="color:#22d3bf">l2</code> = आधी भुजा की लंबाई।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>参照矩形(中心 <code style="color:#22d3bf">(row, col)</code> [px]、<code style="color:#22d3bf">phi</code> 方向の半辺長 <code style="color:#22d3bf">l1</code>、直交方向の半辺長 <code style="color:#22d3bf">l2</code>)を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は 4 辺それぞれに <code style="color:#22d3bf">max(2, n // 4)</code> 点を <b>角を避けて</b> 等間隔に置き、各辺の外向き法線に沿ってエッジを測り、矩形フィットで中心・向き・半辺長を出し直す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: col 軸(x)から row 軸(画像下向き)へ測ったラジアン(<code style="color:#22d3bf">gen_measure_rectangle2</code> と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">l1</code>, <code style="color:#22d3bf">l2</code>: 半辺長 [px] (全長ではない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 総サンプル数の目安(既定 40 → 各辺 10 点)。4 未満でも各辺 2 点は置く。</p>
+<p style="margin:2px 0 2px 12px">• 引数は検証しない。返り値は追加位置の index(0 始まり)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">apply</code> 結果の <code style="color:#22d3bf">params</code> は <code style="color:#22d3bf">row / col / phi / l1 / l2</code> で、再フィット後は <b><code style="color:#22d3bf">l1 &gt;= l2</code>(長辺が <code style="color:#22d3bf">l1</code>)に並び替えられる</b> ―― 参照で <code style="color:#22d3bf">l1 &lt; l2</code> と与えても結果の <code style="color:#22d3bf">phi</code> は長辺の向きになる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">model</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:create_metrology_model">create_metrology_model</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_line_measure">add_metrology_object_line_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_circle_measure">add_metrology_object_circle_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_ellipse_measure">add_metrology_object_ellipse_measure</a> · <a style="color:#22d3bf" href="opmeasure1d:add_metrology_object_generic">add_metrology_object_generic</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrology.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

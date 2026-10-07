@@ -1,0 +1,35 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">align_frames — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_frames(frames, reference=0, order=3, **align_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.align_frames(frames, reference=0, order=3, **align_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;align_frames&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.align_frames(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">images</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.align_frames.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">astrostack.align_frames</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(aligned, matrices) -&gt; images</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>frame की श्रृंखला को 1 reference पर register करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各フレームについて <code style="color:#22d3bf">frame_align</code> で変換を推定し、<code style="color:#22d3bf">scipy.ndimage.affine_transform</code> で逆写像・再標本化する。</p>
+<p><b>正直な注意</b>: 補間は像を保存しない。ノイズ無しの 64x64 / 12 星を <code style="color:#22d3bf">(0.5, 0.5)</code> px だけずらして戻した実測::</p>
+<p>order=1 (双一次)   総フラックス -0.016 %   星のピーク -11.437 %</p>
+<p>order=3 (スプライン) 総フラックス -0.016 %   星のピーク  -0.312 %</p>
+<p>総フラックスはどちらでもほぼ保たれるのに、<b>星のピークは双一次だと 1 割以上落ちる</b> —— 0.5 px ずらしは双一次にとって最悪の位相で、隣り合う 4 画素の単純平均になるからである。既定を <code style="color:#22d3bf">order=3</code> にしてあるのはこの実測による(<code style="color:#22d3bf">order=3</code> は星の周りに極小の負の縁を作るが、上の測定では最小値 -0.0000 で目に見える量ではなかった)。</p>
+<p><b>フラックスもピークも厳密に保ちたいなら補間せず</b> <code style="color:#22d3bf">drizzle_resample</code> へ渡すこと —— 補間しないことが drizzle の存在理由そのもの。ただし</p>
+<p><b>推定シフトをそのまま渡してはいけない</b>: ここで返す <code style="color:#22d3bf">matrices</code> の並進は「基準へ戻す」向きで、drizzle が要る向きとは符号が逆。<code style="color:#22d3bf">drizzle_shifts</code> を通すこと::</p>
+<p>aligned, mats = align_frames(frames)</p>
+<p>sci, wht = drizzle_resample(frames, drizzle_shifts(mats), scale=2.0)</p>
+<p>Returns <code style="color:#22d3bf">(aligned, matrices)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">aligned</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(H, W)</code> float64(<code style="color:#22d3bf">images</code> 語彙)。基準フレームは<b>変換を通さずそのまま</b>返す(恒等変換でも補間は像を鈍らせるので、通す理由が無い)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrices</code> —— 長さ <code style="color:#22d3bf">N</code> の list、各 <code style="color:#22d3bf">(3, 3)</code>。基準は単位行列。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *frames* が list / tuple でない / 枚数が 2 未満 / *reference* が範囲外 / *order* が 0〜5 の外 / <code style="color:#22d3bf">frame_align</code> がどれか 1 枚で失敗した場合(<b>失敗を黙って恒等変換に落とさない</b>)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a> · <a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject_stack">cosmic_ray_reject_stack</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">align</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:frame_align">frame_align</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

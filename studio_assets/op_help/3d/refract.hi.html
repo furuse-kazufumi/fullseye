@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">refract — 3D <code style="color:#22d3bf">optics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">vector × normals</code> → <code style="color:#22d3bf">normals</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.refract(d, n, eta1=1.0, eta2=1.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.refract(d, n, eta1=1.0, eta2=1.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;refract&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Snell refraction (vector रूप)। d=incident (surface की ओर), n=incident तरफ़ का बाहरी normal, refractive index eta1→eta2।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>透明体を通る光線の曲がりを厳密に。全反射(TIR)なら None。ガラス/レンズ/水中の像歪み計算に。契約は単一ベクトル。(N,3) バッチも通るが、<b>1 本でも TIR ならバッチ全体が None</b> (per-ray マスクはしない)。★<b>バッチなら 1 本ずつ回すのではなく</b> <code style="color:#22d3bf">glassmirror.refract_rays</code> を使うこと —— あちらは光線ごとに TIR を判定して <code style="color:#22d3bf">(方向, TIR マスク)</code> を返す(TIR の光線は鏡面反射で埋める)。この関数は「1 本でも欠けたら答えを出さない」fail-closed 側の口として残してある。</p>
+<p><code style="color:#22d3bf">d</code>, <code style="color:#22d3bf">n</code> は最後の軸をベクトルとして単位化する。<code style="color:#22d3bf">n</code> は入射側(<code style="color:#22d3bf">d·n &lt; 0</code> になる向き)で渡すこと。逆向きに渡すと <code style="color:#22d3bf">cos θi</code> が負になり、例外なく誤った方向が返る。返り値は単位ベクトル(<code style="color:#22d3bf">eta·d + (eta·cosθi − cosθt)·n</code>、<code style="color:#22d3bf">eta = eta1/eta2</code>)。<code style="color:#22d3bf">eta1 == eta2</code> なら <code style="color:#22d3bf">d</code> がそのまま返る。角度で扱うなら <code style="color:#22d3bf">snell_angle</code>、反射率は <code style="color:#22d3bf">fresnel_reflectance(cos_i, eta1, eta2)</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:snell_refraction">snell_refraction</a> — <code style="color:#22d3bf">py -3.11 examples_3d/snell_refraction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">normals</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a> · <a style="color:#22d3bf" href="op3d:compute_fpfh">compute_fpfh</a> · <a style="color:#22d3bf" href="op3d:shot_descriptor">shot_descriptor</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:ransac_cylinder">ransac_cylinder</a> · <a style="color:#22d3bf" href="op3d:orient_normals">orient_normals</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">optics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:normal_from_reflection">normal_from_reflection</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

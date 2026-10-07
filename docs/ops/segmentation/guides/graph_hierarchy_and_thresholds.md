@@ -7,6 +7,7 @@ title_zh: 用图、层次与阈值定理做分割 —— 什么是严格的,分�
 title_tw: 用圖、階層與閾值定理做分割 —— 什麼是嚴格的,分割在哪裡失效
 title_ko: 그래프·계층·임계값 정리로 만드는 분할 — 무엇이 엄밀하고 어디서 분할이 무너지는가
 title_de: Segmentierung aus Graph-, Hierarchie- und Schwellwertsätzen — was exakt ist und wo die Zerlegung kippt
+title_hi: Graph, hierarchy और threshold theorems से segmentation — क्या exact है, और partition कहाँ टूटता है
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

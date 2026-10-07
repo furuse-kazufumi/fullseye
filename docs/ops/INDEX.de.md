@@ -3,7 +3,7 @@
 <!-- 一致することを CI drift テストが強制する(再生成==commit 済み)。手編集しないこと。 -->
 # Fullseye-Operatordokumentation — ein Retrieval-Korpus für KI-Assistenten
 
-[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · [한국어](./INDEX.ko.md) · **Deutsch**
+[日本語](./INDEX.md) · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · [한국어](./INDEX.ko.md) · **Deutsch** · [hi](./INDEX.hi.md)
 
 Operatordokumentation für **fullseye 0.5.0**. Jeder Operator hat eine eigene Markdown-Notiz (eine Datei pro Operator, RAD-Korpusform); die HTML-Hilfe von Studio wird daraus gesammelt konvertiert (`tools/opdocs.py html`). Dieses Inhaltsverzeichnis entsteht durch Ablaufen des Ordnerbaums.
 

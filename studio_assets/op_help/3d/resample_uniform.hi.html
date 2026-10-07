@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">resample_uniform — 3D <code style="color:#22d3bf">curve</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.resample_uniform(curve, n)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curve3d; curve3d.resample_uniform(curve, n)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;resample_uniform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>arc length के अनुसार समान दूरी पर n points में resample करता है (linear interpolation)। → (n,3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">arc_length</code> の累積弧長をパラメータとして <code style="color:#22d3bf">np.linspace(0, total, n)</code> の位置を取り、x・y・z を独立に <code style="color:#22d3bf">np.interp</code> で線形補間する。出力は float64 の (n,3)。始点と終点は入力の先頭・末尾に一致し、中間点は折れ線上に乗る(元の点を通るとは限らない)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 出力点数。1 なら始点 1 点、0 なら空の (0,3)。入力より多くしても情報は増えず折れ線を細かく刻むだけ。</p>
+<p style="margin:2px 0 2px 12px">• 全長が 1e-12 未満(全点一致)のときは先頭点を n 回複製して返す。</p>
+<p style="margin:2px 0 2px 12px">• 出力列数は 3 に固定されており、入力が (N,3) 以外だと列数不足で失敗するか余剰列が捨てられる。形状検証は無い。</p>
+<p style="margin:2px 0 2px 12px">• 閉曲線は閉じない(終点→始点の区間は補間対象外)。重複点があっても <code style="color:#22d3bf">np.interp</code> は通るが、その区間は長さ 0 として扱われる。</p>
+<p><code style="color:#22d3bf">curvature_torsion</code> / <code style="color:#22d3bf">frenet_frame</code> は index パラメータの差分なので、間隔が不均一な点列はこの op で等間隔化してから渡すと数値微分が安定する。滑らかに補間したい場合は <code style="color:#22d3bf">fit_spline_curve</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bspline_freeform">bspline_freeform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bspline_freeform.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">curve</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:curvature_torsion">curvature_torsion</a> · <a style="color:#22d3bf" href="op3d:frenet_frame">frenet_frame</a> · <a style="color:#22d3bf" href="op3d:arc_length">arc_length</a> · <a style="color:#22d3bf" href="op3d:fit_spline_curve">fit_spline_curve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: curve3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

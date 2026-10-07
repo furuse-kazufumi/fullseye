@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">two_view_volume — DRIVE <code style="color:#22d3bf">scoop</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 लंबवत दिशाओं की side image से volume — हर row की 2 chord <code style="color:#22d3bf">W_a</code> और <code style="color:#22d3bf">W_b</code> को axis मानने वाले ellipse का योग <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>断面が楕円(軸対称でない山、縦長の盛り)なら厳密で、片方だけの回転体の仮定は楕円の扁平さの比で外れる(PoC で</p>
+<p>1.6 : 1 の楕円錐が片方だと −38 % / +60 %)。行の満ち具合 <code style="color:#22d3bf">f</code>(平らな面が行の途中を横切る行、像 a で読む)で弦を</p>
+<p><code style="color:#22d3bf">W = w / f</code> に直してから掛ける(幅の積は <code style="color:#22d3bf">f²</code> で数え落とすため)。雑音は先に消す。2 枚は同じ高さの刻み(同じ行が</p>
+<p>同じ高さ)であること。返り: <code style="color:#22d3bf">V</code>、<code style="color:#22d3bf">V_a</code> / <code style="color:#22d3bf">V_b</code>(片方だけの回転体、Pappus)、<code style="color:#22d3bf">ellipticity</code>(弦の比の中央値 max/min)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行数が違う / 被覆率でない / 空。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_scoop_pour">poc_powder_scoop_pour</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_scoop_pour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">scoop</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spoon_bowl_volume">spoon_bowl_volume</a> · <a style="color:#22d3bf" href="opdrive:scoop_synth_side">scoop_synth_side</a> · <a style="color:#22d3bf" href="opdrive:revolution_volume_side">revolution_volume_side</a> · <a style="color:#22d3bf" href="opdrive:scoop_volume_read">scoop_volume_read</a> · <a style="color:#22d3bf" href="opdrive:scoop_count">scoop_count</a> · <a style="color:#22d3bf" href="opdrive:scoop_image_limit">scoop_image_limit</a> · <a style="color:#22d3bf" href="opdrive:tilt_wedge_retained">tilt_wedge_retained</a> · <a style="color:#22d3bf" href="opdrive:tilt_pour_rate">tilt_pour_rate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: scoop.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

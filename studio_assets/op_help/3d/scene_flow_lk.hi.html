@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scene_flow_lk — 3D <code style="color:#22d3bf">motion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.scene_flow_lk(vol0, vol1, device=&#x27;cpu&#x27;, win=3, levels=3, iters=3, reg=0.001)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;scene_flow_lk&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Lucas-Kanade scene flow (2D optical flow का 3D संस्करण)। हर voxel का motion field d=(dz,dy,dx)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>テンプレ照合と違い <b>密な運動/変形</b>を推定する。明るさ一定 ∇I·d + I_t = 0 を窓内最小二乗で per-voxel に解く(3x3 構造テンソル A=Σ∇I∇Iᵀ, b=-Σ∇I·I_t を窓和 conv3d で)。pyramid + warp の coarse-to-fine で大変位に対応(各 level で I1 を現 flow で戻し残差を反復補正=Gauss-Newton)。vol1(x) ≈ vol0(x - d)。返り値 flow (3,D,H,W)。並進・拡大(発散)・回転(渦)場を捉える。</p>
+<p>実測: 一様並進 [1.5,-2,1] を中央領域平均で誤差 0.044 voxel、拡大場で外向き発散を正しく検出。grad_scale=32 は sobel3d(deriv[-1,0,1]×smooth[1,2,1]²)の実測スケール。GPU 対応(全 conv3d)。</p>
+<p>引数: <code style="color:#22d3bf">vol0</code>, <code style="color:#22d3bf">vol1</code> は同形の 3-D(違えば ValueError。NaN/Inf や float32 桁あふれも ValueError)。<code style="color:#22d3bf">win</code> は窓の半幅(窓は一辺 <code style="color:#22d3bf">2·win+1</code>)、<code style="color:#22d3bf">levels</code> はピラミッド段数(各段 <code style="color:#22d3bf">avg_pool3d</code> で 2 倍縮小。大変位ほど段数を増やす)、<code style="color:#22d3bf">iters</code> は各段の warp 反復、<code style="color:#22d3bf">reg</code> は構造テンソル対角への正則化(平坦部の 0 除算回避。大きいほど平坦部の flow が 0 に寄る)。1 反復の更新は各軸 ±2 voxel に clamp される。返り値 <code style="color:#22d3bf">(3, D, H, W)</code> float32 numpy、<code style="color:#22d3bf">flow[0]</code>=dz, <code style="color:#22d3bf">flow[1]</code>=dy, <code style="color:#22d3bf">flow[2]</code>=dx (voxel 単位)。<code style="color:#22d3bf">vol1(x) ≈ vol0(x − d)</code>、すなわち vol0 の構造が <code style="color:#22d3bf">+d</code> 動いて vol1 になる。端は border 補間で埋まるので端 1〜2 voxel の値は信用しない。剛体運動の R,t が欲しいなら点群にして <code style="color:#22d3bf">icp_point2point_3d</code> / <code style="color:#22d3bf">fit_rigid</code> へ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:motion_scene">motion_scene</a> — <code style="color:#22d3bf">py -3.11 examples_3d/motion_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">flow_dense</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">motion</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

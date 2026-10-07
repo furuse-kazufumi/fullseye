@@ -1,0 +1,41 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_conductance_states — CONNGRAPH <code style="color:#22d3bf">circuit</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import conngraph; conngraph.graph_conductance_states(W: &#x27;Any&#x27;, drive: &#x27;Any&#x27;, dt_s: &#x27;float&#x27; = 0.001, tau_s: &#x27;float&#x27; = 0.02, e_rest: &#x27;float&#x27; = 0.0, e_exc: &#x27;float&#x27; = 1.0, e_inh: &#x27;float&#x27; = -1.0, release: &#x27;str&#x27; = &#x27;relu&#x27;, v_half: &#x27;float&#x27; = 0.5, slope: &#x27;float&#x27; = 4.0, gain: &#x27;float&#x27; = 1.0, v0: &#x27;Any&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsconngraph.get(&quot;graph_conductance_states&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>wiring <code style="color:#22d3bf">W</code> को <b>सीधे circuit के रूप में चलाकर</b> मिली membrane potential की time series <code style="color:#22d3bf">(T, n)</code> (<code style="color:#22d3bf">matrix</code>, learning नहीं)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>ハエの視葉で「掛け算」に見えていた非線形の正体は、樹状突起のコンダクタンス比だった(Groschner ら 2022: 定常では <code style="color:#22d3bf">Vm = Σgᵢ Eᵢ / Σgᵢ</code>)。同じ形の式が、コネクトームを配線として固定した全脳モデルの標準形でもある(Lappalainen ら 2024:</p>
+<p><code style="color:#22d3bf">τᵢ V̇ᵢ = −Vᵢ + Σ sᵢⱼ + V_rest</code>)。この op はその<b>動的な版</b>を、<code style="color:#22d3bf">conn_graph</code> 1 枚と外部入力 1 枚だけで回す:</p>
+<p>τ dVᵢ/dt = −(Vᵢ − e_rest) + g⁺ᵢ (e_exc − Vᵢ) + g⁻ᵢ (e_inh − Vᵢ)</p>
+<p><code style="color:#22d3bf">g⁺</code> は <code style="color:#22d3bf">W</code> の<b>正の重み</b>、<code style="color:#22d3bf">g⁻</code> は<b>負の重み</b>の絶対値を、前シナプス側の放出 <code style="color:#22d3bf">f(V)</code> で重みづけて足したもの(<code style="color:#22d3bf">drive</code> の正負も同じ向きに足す)。重みは与えられたまま使う —— <b>学習も当てはめも一切しない</b>。時定数が入力で縮む(実効 τ = <code style="color:#22d3bf">τ/(1+g⁺+g⁻)</code>)ので、これは liquid time-constant 型の力学そのものだが、パラメータは配線と定数だけで、勾配で決めた数は 1 つも無い。</p>
+<p>W: <code style="color:#22d3bf">(n, n)</code> の重みつき隣接行列(<code style="color:#22d3bf">W[pre, post]</code>、正 = 興奮性、負 = 抑制性)。</p>
+<p>drive: <code style="color:#22d3bf">(T, n)</code> の外部入力。正はそのノードを <code style="color:#22d3bf">e_exc</code> へ、負は <code style="color:#22d3bf">e_inh</code> へ引く</p>
+<p>コンダクタンスとして入る(電流ではない —— 電流だと下の有界性が壊れる)。</p>
+<p>dt_s / tau_s: 刻みと膜時定数[秒]。e_rest / e_exc / e_inh: 静止電位と 2 つの反転電位。</p>
+<p>release: 前シナプス放出 <code style="color:#22d3bf">f(V)</code>。<code style="color:#22d3bf">&quot;relu&quot;</code> は <code style="color:#22d3bf">gain·max(V, 0)</code>、<code style="color:#22d3bf">&quot;sigmoid&quot;</code> は</p>
+<p><code style="color:#22d3bf">gain/(1+exp(−slope(V−v_half)))</code>。<b>どちらも非負</b>で、負のコンダクタンス</p>
+<p>(物理的に存在しない)を作らない —— それが下の有界性の前提。</p>
+<p>v_half / slope: シグモイドの半値と傾き。gain: 放出の利得(非負)。</p>
+<p>v0: 初期状態 <code style="color:#22d3bf">(n,)</code>。既定は全ノード <code style="color:#22d3bf">e_rest</code>。</p>
+<p>各段は<b>コンダクタンスを固定した厳密解</b>で進める(<code style="color:#22d3bf">V ← V∞ + (V − V∞)e^{−dt·g_tot/τ}</code>) ので、刻みを粗くしても発散しない。</p>
+<p>閉じた式で検査できること:</p>
+<p style="margin:2px 0 2px 12px">• <b>有界性</b>: 放出が非負である限り、<code style="color:#22d3bf">V∞</code> は 3 つの反転電位の<b>凸結合</b>なので <code style="color:#22d3bf">[min(e_rest, e_exc, e_inh), max(...)]</code> の中にある。各段は <code style="color:#22d3bf">V</code> をその <code style="color:#22d3bf">V∞</code> へ指数で寄せるだけなので、<b>箱の中から始めれば必ず箱の中に留まり、箱の外から始めても外へは行かず箱へ向かう</b>。どんな配線・どんな入力でも発散しない、が構造で保証される(<code style="color:#22d3bf">v0</code> の既定は <code style="color:#22d3bf">e_rest</code> = 箱の中)。</p>
+<p style="margin:2px 0 2px 12px">• <b>減衰</b>: 入力も結合も無ければ <code style="color:#22d3bf">V(t) = e_rest + (V₀ − e_rest)e^{−t/τ}</code> ちょうど。</p>
+<p style="margin:2px 0 2px 12px">• <b>定常</b>: 一定の入力 <code style="color:#22d3bf">d &gt; 0</code> を 1 ノードに入れると <code style="color:#22d3bf">V∞ = (e_rest + d·e_exc)/(1 + d)</code>、そこへ向かう実効時定数は <code style="color:#22d3bf">τ/(1 + d)</code> ちょうど(入力で時定数が縮む、の数値)。</p>
+<p><b>ValueError</b>: 正方でない / 非有限の <code style="color:#22d3bf">W</code>、<code style="color:#22d3bf">(T, n)</code> でない <code style="color:#22d3bf">drive</code>、非正の <code style="color:#22d3bf">dt_s</code> / <code style="color:#22d3bf">tau_s</code>、負の <code style="color:#22d3bf">gain</code>、未知の <code style="color:#22d3bf">release</code>、長さの合わない <code style="color:#22d3bf">v0</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_fly_optomotor_steering">poc_fly_optomotor_steering</a> — <code style="color:#22d3bf">py -3.11 examples/poc_fly_optomotor_steering.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opconngraph:reservoir_states">reservoir_states</a> · <a style="color:#22d3bf" href="opconngraph:reservoir_encode">reservoir_encode</a> · <a style="color:#22d3bf" href="opconngraph:ridge_readout">ridge_readout</a> · <a style="color:#22d3bf" href="opconngraph:ridge_predict">ridge_predict</a> · <a style="color:#22d3bf" href="opconngraph:graph_activation_latency">graph_activation_latency</a> · <a style="color:#22d3bf" href="opconngraph:graph_activity_spread">graph_activity_spread</a> · <a style="color:#22d3bf" href="opconngraph:points_activity_video">points_activity_video</a> · <a style="color:#22d3bf" href="opconngraph:graph_layer_propagate">graph_layer_propagate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">circuit</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: conngraph.py — CONNGRAPH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

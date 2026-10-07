@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">register_cpd_rigid — 3D <code style="color:#22d3bf">deform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import deform3d; deform3d.register_cpd_rigid(src, dst, iters=50, w=0.0, tol=1e-08)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;register_cpd_rigid&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Coherent Point Drift (CPD) के rigid संस्करण से rotation + translation का EM estimate करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">src</code>(移動側 Y, M点)を <code style="color:#22d3bf">dst</code>(固定側 X, N点)へ剛体変換で合わせる。CPD は dst を、src を中心に置いた等方ガウス混合の重心と見なし、E ステップで軟対応(posterior)を、M ステップで最尤の剛体変換と分散を更新する。ICP と違い対応をハードに決めないため、初期ずれ・部分的外れ値に頑健。スケールは 1 固定(純剛体)。</p>
+<p>参考: Myronenko &amp; Song, &quot;Point Set Registration: Coherent Point Drift&quot;, 2010。</p>
+<p>引数:</p>
+<p>src: (M,3) 移動側点群。</p>
+<p>dst: (N,3) 固定側点群。</p>
+<p>iters: 最大 EM 反復回数。</p>
+<p>w: 外れ値(一様分布)混合比 0≤w&lt;1。0 で外れ無し。</p>
+<p>tol: 分散 σ² の相対変化がこの値未満で収束打ち切り。</p>
+<p>返り値:</p>
+<p>R: (3,3) 回転(<code style="color:#22d3bf">dst ≈ src @ R.T + t</code>)。</p>
+<p>t: (3,) 並進。</p>
+<p>info: dict。&quot;sigma2&quot;(最終分散)、&quot;iters&quot;、&quot;converged&quot;、&quot;rmse&quot;</p>
+<p>(変換後 src の最近傍 RMSE)。</p>
+<p>例外:</p>
+<p>ValueError: 形状不正、点数不足、w 範囲外、または <code style="color:#22d3bf">N*M</code> が</p>
+<p><code style="color:#22d3bf">CPD_MAX_PAIRS</code>(25M)超(密な (N,M) 責務行列を毎反復組むため。</p>
+<p>両点群を間引いてから渡す)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:motion_scene">motion_scene</a> — <code style="color:#22d3bf">py -3.11 examples_3d/motion_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">deform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:tps_fit">tps_fit</a> · <a style="color:#22d3bf" href="op3d:tps_warp">tps_warp</a> · <a style="color:#22d3bf" href="op3d:register_nonrigid">register_nonrigid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: deform3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

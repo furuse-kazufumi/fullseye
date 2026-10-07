@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">normal_error_map — DRIVE <code style="color:#22d3bf">tacscalib</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap × normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacscalib; tacscalib.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;normal_error_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 normal fields के बीच हर pixel का कोण [degrees] = atan2(|a × b|, a · b) (normalise नहीं —— लंबाई atan2 के अनुपात में कट जाती है)। acos(a · b) का उपयोग नहीं होता क्योंकि unit vectors के पास उसमें rounding floor है (1e-7° को 1e-4° बताता है)। <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shapes अलग / अंतिम axis 3 नहीं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_tacscalib_sphere_lut">poc_tacscalib_sphere_lut</a> — <code style="color:#22d3bf">py -3.11 examples/poc_tacscalib_sphere_lut.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:flow_from_depth_motion">flow_from_depth_motion</a> · <a style="color:#22d3bf" href="opdrive:ttc_truth">ttc_truth</a> · <a style="color:#22d3bf" href="opdrive:ttc_from_flow">ttc_from_flow</a> · <a style="color:#22d3bf" href="opdrive:foe_from_flow">foe_from_flow</a> · <a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">tacscalib</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:calib_pack_load">calib_pack_load</a> · <a style="color:#22d3bf" href="opdrive:sphere_normals_known">sphere_normals_known</a> · <a style="color:#22d3bf" href="opdrive:lights_fit_from_sphere">lights_fit_from_sphere</a> · <a style="color:#22d3bf" href="opdrive:membrane_predict_rgb">membrane_predict_rgb</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_build">gradient_lut_build</a> · <a style="color:#22d3bf" href="opdrive:gradient_lut_invert">gradient_lut_invert</a> · <a style="color:#22d3bf" href="opdrive:sphere_cap_height">sphere_cap_height</a> · <a style="color:#22d3bf" href="opdrive:field_position_sweep">field_position_sweep</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacscalib.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

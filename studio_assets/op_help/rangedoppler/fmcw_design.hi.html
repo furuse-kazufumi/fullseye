@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fmcw_design — RANGEDOPPLER <code style="color:#22d3bf">design</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, n_antennas=1, element_spacing_m=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import rangedoppler; rangedoppler.fmcw_design(n_samples=64, n_chirps=32, sample_rate_hz=10000000.0, slope_hz_per_s=20000000000000.0, chirp_period_s=5e-05, wavelength_m=0.0038934, n_antennas=1, element_spacing_m=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsrangedoppler.get(&quot;fmcw_design&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>FMCW configuration की bin widths, resolutions और aliasing सीमाएँ।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The paper answer to &quot;will this waveform see what I care about?&quot;, with no data and no simulation — the stance <code style="color:#22d3bf">visiondesign</code> takes for optics. Every number is closed form:</p>
+<p>==============================  ============================================</p>
+<p>quantity                        formula</p>
+<p>==============================  ============================================</p>
+<p>swept bandwidth                 <code style="color:#22d3bf">B = S * N_s / f_s</code></p>
+<p>range bin / resolution          <code style="color:#22d3bf">dR = c / (2B) = c*f_s / (2*S*N_s)</code></p>
+<p>max unambiguous range           <code style="color:#22d3bf">R_max = c*f_s / (2S)</code> (<code style="color:#22d3bf">= N_s * dR</code>)</p>
+<p>beat frequency per metre        <code style="color:#22d3bf">2S/c</code></p>
+<p>velocity bin / resolution       <code style="color:#22d3bf">dv = lambda / (2*N_c*T_c)</code></p>
+<p>max unambiguous velocity        <code style="color:#22d3bf">v_max = lambda / (4*T_c)</code> (<code style="color:#22d3bf">= N_c*dv/2</code>)</p>
+<p>Doppler phase per (m/s)         <code style="color:#22d3bf">4*pi*T_c / lambda</code> rad per chirp</p>
+<p>coherent processing interval    <code style="color:#22d3bf">N_c * T_c</code></p>
+<p>max unambiguous angle           <code style="color:#22d3bf">asin(lambda / (2d))</code></p>
+<p>angular resolution (boresight)  <code style="color:#22d3bf">0.886 * lambda / (N_a * d)</code> ==============================  ============================================</p>
+<p>The two &quot;max&quot; figures are <b>hard aliasing limits</b>, and they are the same</p>
+<p>numbers <code style="color:#22d3bf">fmcw_beat_simulate</code> refuses to cross. The angular resolution is the 3 dB beamwidth of a uniform linear array at boresight (Van Trees 2002, §2.4); it widens as <code style="color:#22d3bf">1/cos(theta)</code> off boresight, which this does not report because it is a function, not a number.</p>
+<p><code style="color:#22d3bf">cube_elements</code> and <code style="color:#22d3bf">cube_mebibytes</code> are included because &quot;small input, huge allocation&quot; is the failure mode of this family: the cube grows as <code style="color:#22d3bf">N_a * N_c * N_s</code> and complex128 is 16 bytes a sample.</p>
+<p>Returns a <code style="color:#22d3bf">dict</code>. Raises <code style="color:#22d3bf">ValueError</code> on a non-positive or non-finite parameter, a wavelength over <code style="color:#22d3bf">MAX_WAVELENGTH_M</code>, or a count outside its cap.</p>
+<p>&gt;&gt;&gt; d = fmcw_design()</p>
+<p>&gt;&gt;&gt; round(d[&quot;range_bin_m&quot;], 6), round(d[&quot;max_unambiguous_velocity_ms&quot;], 6)</p>
+<p>(1.171064, 19.467)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guiderangedoppler:fmcw_range_doppler">fmcw_range_doppler family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:fmcw_range_doppler">fmcw_range_doppler</a> — <code style="color:#22d3bf">py -3.11 examples/fmcw_range_doppler.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">design</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: rangedoppler.py — RANGEDOPPLER operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,31 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">recover_pose — 3D <code style="color:#22d3bf">two_view</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import twoview; twoview.recover_pose(pts1, pts2, K1, K2=None, planar_tol=0.01)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;recover_pose&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>corresponding points + K से relative pose (R,t) और 3D structure वापस निकालता है (cheirality से एकमात्र हल)। → (R, t_unit, points3d)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>t はスケール不定なので単位ベクトル。points3d は cam1 座標系(|t|=1 に対応するスケール)。</p>
+<p>fail-closed: 平面(共平面 3D)/純回転シーンは本質行列分解の<b>退化配置</b>で、Sampson 残差 ~0 のまま並進方向を誤って返す(見かけは完璧)。そうした入力は姿勢を復元できないため ValueError で明示拒否する(ホモグラフィ分解を使うこと)。<code style="color:#22d3bf">planar_tol</code> はスケール不変な平面度しきい値(<code style="color:#22d3bf">_planar_degeneracy_ratio</code> の戻り値がこれ未満なら退化と判定)。</p>
+<p>手順:</p>
+<p style="margin:2px 0 2px 12px">• 入口検査(8 点以上、点数一致、(N,2) かつ有限)。</p>
+<p style="margin:2px 0 2px 12px">• 平面度: 正規化 DLT でホモグラフィ H を当て、対称転送残差の中央値を両画像の点の広がり(重心からの平均距離の和)で割った比を出す。これが <code style="color:#22d3bf">planar_tol</code>(既定 1e-2)未満なら <code style="color:#22d3bf">ValueError</code>。H が特異なら比 0 として同じく拒否。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">essential_8point</code> → 4 候補 <code style="color:#22d3bf">(R, ±t)</code> へ分解 → 各候補で <code style="color:#22d3bf">triangulate</code> し、両カメラで深度 &gt; 0 の点数が最大の候補を採る(同数なら先の候補)。</p>
+<p>返り値: <code style="color:#22d3bf">R</code> (3,3)、<code style="color:#22d3bf">t</code> (3,) 単位ベクトル、<code style="color:#22d3bf">points3d</code> (N,3)。規約は cam1 = K1[I|0]、cam2 = K2[R|t] で <code style="color:#22d3bf">X2 = R X1 + t</code>。<code style="color:#22d3bf">points3d</code> は cam1 座標系で |t|=1 のスケール。視線が平行な対応は NaN 行になる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">K2</code> 省略時は <code style="color:#22d3bf">K1</code> を両画像に使う。</p>
+<p style="margin:2px 0 2px 12px">• 外れ値に無防備(RANSAC は行わない)。前段で誤対応を除く。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的。GT 検証は <code style="color:#22d3bf">pose_error</code>、残差は <code style="color:#22d3bf">sampson_distance</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:two_view_pose">two_view_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/two_view_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">two_view</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fundamental_8point">fundamental_8point</a> · <a style="color:#22d3bf" href="op3d:essential_8point">essential_8point</a> · <a style="color:#22d3bf" href="op3d:triangulate">triangulate</a> · <a style="color:#22d3bf" href="op3d:sampson_distance">sampson_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: twoview.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">adg_build — DRIVE <code style="color:#22d3bf">agv</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>action dependency graph (Hönig, Kiesel, Tinka, Durham, Ayanian 2019)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
+<p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
+<p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_agv_fleet">poc_agv_fleet</a> — <code style="color:#22d3bf">py -3.11 examples/poc_agv_fleet.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">agv</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:warehouse_grid">warehouse_grid</a> · <a style="color:#22d3bf" href="opdrive:grid_distances">grid_distances</a> · <a style="color:#22d3bf" href="opdrive:mapf_cbs">mapf_cbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_ecbs">mapf_ecbs</a> · <a style="color:#22d3bf" href="opdrive:mapf_joint_astar">mapf_joint_astar</a> · <a style="color:#22d3bf" href="opdrive:mapf_prioritized">mapf_prioritized</a> · <a style="color:#22d3bf" href="opdrive:plan_conflicts">plan_conflicts</a> · <a style="color:#22d3bf" href="opdrive:plan_cost">plan_cost</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: agvfleet.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

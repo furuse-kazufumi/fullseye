@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">descriptor_to_matrix — REPRCONV <code style="color:#22d3bf">descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">descriptor</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.descriptor_to_matrix(descriptor)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.descriptor_to_matrix(descriptor)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;descriptor_to_matrix&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>descriptor → <code style="color:#22d3bf">matrix</code>। <code style="color:#22d3bf">descriptor</code> से निकास (<b>उलटने योग्य</b>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>1-D の記述子 (n,) は <b>(1, n)</b> の 1 行行列にする。2-D の記述子束(<code style="color:#22d3bf">sh_descriptor</code> の (12, 9) のような「点 x 次元」)はそのまま通す。こうしておくと記述子バンクに <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> がそのまま掛かる —— 記述子は本質的にベクトルなので、行列語彙へ渡すのは梱包の付け替えであって変形ではない。</p>
+<p><code style="color:#22d3bf">matrix_to_descriptor</code> と往復して <b>bit 一致</b>(実測 max|Δ| = 0.0)。</p>
+<p>Args:</p>
+<p>descriptor: (n,) または (m, n) の実配列。</p>
+<p>Returns:</p>
+<p>(1, n) または (m, n) float64。</p>
+<p>Raises:</p>
+<p>ValueError: 3-D 以上 / 非有限 / dict(<code style="color:#22d3bf">fit_zernike</code> は dict を返すので</p>
+<p>ここで拒否される —— 詳細は本モジュール docstring)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_roundtrip">representation_roundtrip</a> — <code style="color:#22d3bf">py -3.11 examples/representation_roundtrip.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_angle">matrix_to_angle</a> · <a style="color:#22d3bf" href="opreprconv:matrix_to_rot_scale">matrix_to_rot_scale</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:matrix_to_descriptor">matrix_to_descriptor</a> · <a style="color:#22d3bf" href="opreprconv:descriptor_to_table">descriptor_to_table</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

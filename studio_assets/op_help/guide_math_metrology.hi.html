@@ -1,0 +1,217 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">यह guide केवल जापानी में उपलब्ध है (यह मनुष्य द्वारा लिखा गद्य है, इसलिए इसमें कुछ भी machine से बदला नहीं गया है)।</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">数学(計測を支える数値計算) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p>Fullseye の計測を <b>裏で支えている数学</b> を、第一級の op として表に出した族です。カメラ較正は最小二乗問題、ノイズ雲は共分散行列、主軸は固有ベクトル、歪みモデルは多項式、逆引きは補間 — <code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> / <code style="color:#22d3bf">camera</code> の計測 op はすべてこの層の上で動いています。現在 4 分野 26 op(numpy + scipy のみ、台帳は <code style="color:#22d3bf">opsmath.py</code>):</p>
+<p style="margin:2px 0 2px 12px">• <b>linalg(6)</b> — <code style="color:#22d3bf">mat_solve</code> / <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_svd</code> / <code style="color:#22d3bf">mat_eigh</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code>: 密行列の線形代数。数値の健全性の見張り役(<code style="color:#22d3bf">mat_cond</code>)を隠さず明示。</p>
+<p style="margin:2px 0 2px 12px">• <b>stats(5)</b> — <code style="color:#22d3bf">stat_describe</code> / <code style="color:#22d3bf">stat_histogram</code> / <code style="color:#22d3bf">stat_covariance</code> / <code style="color:#22d3bf">stat_correlation</code> / <code style="color:#22d3bf">stat_zscore</code>: 残差・ノイズの特徴づけ。</p>
+<p style="margin:2px 0 2px 12px">• <b>interp / poly(5)</b> — <code style="color:#22d3bf">interp_linear</code> / <code style="color:#22d3bf">interp_cubic</code> / <code style="color:#22d3bf">poly_fit</code> / <code style="color:#22d3bf">poly_eval</code> / <code style="color:#22d3bf">poly_roots</code>: 較正曲線とその逆引き。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex(10、tier2)</b> — <code style="color:#22d3bf">cplx_contour_circle</code> / <code style="color:#22d3bf">cplx_poly_eval</code> / <code style="color:#22d3bf">cplx_contour_integral</code> / <code style="color:#22d3bf">cplx_winding_number</code> / <code style="color:#22d3bf">cplx_cauchy_value</code> / <code style="color:#22d3bf">cplx_argument_principle</code> / <code style="color:#22d3bf">cplx_laurent_coeffs</code> / <code style="color:#22d3bf">cplx_joukowski</code> / <code style="color:#22d3bf">cplx_mobius</code> / <code style="color:#22d3bf">cplx_cr_residual</code>: 複素解析の <b>計算可能な切り口</b>。閉曲線を点列として持つだけで、Cauchy の積分公式・偏角の原理(零点と極を数える)・Laurent 係数/留数・古典的な等角写像がすべて numpy の和に落ちます。op は Python の関数を呼び戻さない(輪郭上の <code style="color:#22d3bf">f</code> は呼び手がサンプルする)ので、<b>式でも実測データ(位相画像・伝達関数)でも同じ形</b>で扱えます。</p>
+<p style="margin:2px 0 2px 12px">• <b>complex field(8、2026-09-22)</b> — <code style="color:#22d3bf">cplx_plane_grid</code> / <code style="color:#22d3bf">cplx_rational_field</code> / <code style="color:#22d3bf">cplx_domain_colour</code> / <code style="color:#22d3bf">cplx_newton_basins</code> / <code style="color:#22d3bf">cplx_escape_time</code> / <code style="color:#22d3bf">mandelbrot_interior</code> / <code style="color:#22d3bf">potential_flow_joukowski</code> / <code style="color:#22d3bf">joukowski_circulation</code>: 上の complex が <b>曲線の上</b>の話(輪郭を点列で持つ層)なのに対して、こちらは <b>領域の上</b>の話。有理関数の値の場、その位相彩色、ニュートン法の吸引域、脱出時間、そして翼まわりのポテンシャル流。新しい型の語は 1 つも作らず、<code style="color:#22d3bf">cimage</code> / <code style="color:#22d3bf">rgbimage</code> / <code style="color:#22d3bf">labels2d</code> / <code style="color:#22d3bf">mask</code> / <code style="color:#22d3bf">roots</code> / <code style="color:#22d3bf">signal</code> だけで閉じます。★<b>この層の価値は絵ではなく、絵が定理に照らして採点できること</b>です —— 位相彩色の色相が回る回数は零点の位数(偏角の原理)で、<code style="color:#22d3bf">z²−1</code> のニュートン吸引域は<b>2 つの半平面</b>という Cayley の厳密解(512² 画素で 1 画素も外れない)、主カージオイドと周期 2 球は<b>反復せずに</b>内側と言える閉形式、<code style="color:#22d3bf">c = 0</code> のジュリア集合は単位円、翼まわりの場は翼の外で正則なので <code style="color:#22d3bf">cplx_cr_residual</code> がそのまま真値になります(2.06e-04)。★★<b>行の向きに注意</b>: この族の <code style="color:#22d3bf">cplx_cr_residual</code> は「行が虚部の<b>増える</b>向き」を要求しますが、<code style="color:#22d3bf">cplx_plane_grid</code> は画像の並び(行 0 が上)で返します。そのまま渡すと<b>共役の場</b>を測って厳密に 2.0000 が出るので、<code style="color:#22d3bf">f[::-1]</code> で反転してください —— PoC はこの両方の値を印字して罠を門にしています。</p>
+<p>データ種は画像ではなく数値配列: <b>matrix</b>(厳密に 2-D)、<b>signal</b>(厳密に 1-D)、標本集合は <b>(N, D)</b>(行 = 観測、列 = 変数)。<b>table</b>(dict)・<b>pairs</b>(counts, edges)・<b>measurement</b>(スカラ)・<b>roots</b>(complex 配列)を返す op もあります。FFT / 複素演算(<code style="color:#22d3bf">complexops</code> / <code style="color:#22d3bf">volfreq</code> / <code style="color:#22d3bf">dsp</code>)、1-D フィルタ(<code style="color:#22d3bf">dsp</code> / <code style="color:#22d3bf">funct1d</code>)、幾何フィット(<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> / <code style="color:#22d3bf">pcseg</code>)、codegen 参照実装の数値計算(<code style="color:#22d3bf">algo</code>)は既存モジュールの持ち場なので、ここには <b>重複させていません</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
+<p>全 op が入力を検証してから計算します(2026-08 の敵対監査で確定したバグ族を、黙って通さず明示拒否):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex 入力は <code style="color:#22d3bf">ValueError</code></b> — float64 への強制変換は虚部を黙って捨てる(numpy は ComplexWarning だけ出して「もっともらしく間違った」実数を返す)。<code style="color:#22d3bf">.real</code> / <code style="color:#22d3bf">.imag</code> / <code style="color:#22d3bf">abs()</code> を明示するか、複素対応の <code style="color:#22d3bf">complexops</code> を使う。</p>
+<p style="margin:2px 0 2px 12px">• <b>例外は <code style="color:#22d3bf">cplx_*</code> 族だけ</b> — こちらは虚部こそがデータなので複素(実数も昇格して)を受けます。代わりに <b>str/bytes を拒否</b>(numpy は <code style="color:#22d3bf">&quot;0&quot;</code> を 0 と解釈してしまう)、そして <b>op の内部で溢れた結果</b>(Inf/NaN)も <code style="color:#22d3bf">ValueError</code>: 「積分が発散した」と「float64 が尽きた」は別の主張なので、後者を前者の顔で返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array(masked 要素あり)は <code style="color:#22d3bf">ValueError</code></b> — マスクを剥がして下の生値を使う暗黙変換を拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>NaN/Inf は全入力で <code style="color:#22d3bf">ValueError</code></b>(非有限の件数を明示して拒否)。</p>
+<p style="margin:2px 0 2px 12px">• <b>形状は厳格</b>: 1-D↔2-D の暗黙昇格・ブロードキャスト無し。vector 枠に matrix(逆も)は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>サイズ上限</b>: 行列を取る op と <code style="color:#22d3bf">stat_histogram</code> の bins は <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code>(2^26 ≈ 6700 万要素)超で <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 特異行列・定数列・空入力・範囲外クエリなどの数学的に未定義/危険なケースは、silent NaN・silent clamp・silent 0 除算ではなく <b>問題を名指しする <code style="color:#22d3bf">ValueError</code></b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">代表的なパイプライン(op の繋がり)</h3>
+<p>深度カメラで平面(定盤)を測る計測ワークフロー(検証済み <code style="color:#22d3bf">examples/math_metrology.py</code> そのもの)。フィット → 残差統計 → 主軸化 → 較正 → 逆引きと、データ種が <code style="color:#22d3bf">matrix/signal → table → matrix → table → signal</code> で繋がります。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    A[点群 x,y,z] --&gt;|設計行列 A| B[mat_lstsq 平面フィット]
+    B --&gt;|残差 z - Ax| C[stat_describe / stat_histogram / stat_zscore]
+    A --&gt;|2D ノイズ雲| D[stat_covariance]
+    D --&gt;|対称 PSD 行列| E[mat_eigh 主軸・楕円]
+    B2[較正データ r, r_meas] --&gt; F[poly_fit 3次]
+    F --&gt;|coeffs| G[poly_eval 往路 / poly_roots 逆算]
+    B2 --&gt; H[interp_linear / interp_cubic 逆引き表]</pre>
+<p>族の内部構造(裏の共有機構)。<code style="color:#22d3bf">mat_cond</code> は linalg 全体の健全性の見張り、SVD は <code style="color:#22d3bf">mat_lstsq</code> / <code style="color:#22d3bf">mat_pinv</code> / <code style="color:#22d3bf">mat_cond</code> / <code style="color:#22d3bf">poly_fit</code>(Vandermonde の条件数)の共通土台です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TB
+    SVD[&quot;SVD(gesdd)&quot;] --&gt; LSQ[&quot;mat_lstsq(gelsd)&quot;]
+    SVD --&gt; PINV[&quot;mat_pinv(rcond 明示)&quot;]
+    SVD --&gt; COND[&quot;mat_cond = smax/smin&quot;]
+    COND -.-&gt;|&quot;log10(cond) 桁が消える&quot;| SOLVE[&quot;mat_solve(gesv LU)&quot;]
+    COND -.-&gt;|&quot;Vandermonde 条件数を記録&quot;| PF[&quot;poly_fit&quot;]
+    COV[&quot;stat_covariance(対称 PSD)&quot;] --&gt; EIGH[&quot;mat_eigh(syevd・対称限定)&quot;]
+    COV --&gt; CORR[&quot;stat_correlation(定数列は拒否)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方(op グループ別)</h3>
+<p>呼び出しは直接呼び: <code style="color:#22d3bf">import mathops; mathops.mat_lstsq(A, b)</code>(または <code style="color:#22d3bf">opsmath.get(&quot;mat_lstsq&quot;)</code>)。<b>HALCON 対応</b>は各 op ノート参照(linalg は *Matrix* 章、記述統計は *Tuple* 章が相当。共分散・相関・多項式フィット・求根は HALCON に公開 tuple op が無く、較正内部に隠れているものをここでは明示 op 化)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">linalg(密行列 — 条件数を見てから信じる)</h3>
+<p style="margin:2px 0 2px 12px">• <b>mat_solve</b><code style="color:#22d3bf">(a, b)</code> — 正方系 <code style="color:#22d3bf">A x = b</code> を LU(LAPACK <code style="color:#22d3bf">gesv</code>)で解く。厳密に特異なら <code style="color:#22d3bf">ValueError</code>。<b>準特異は「解けてしまう」</b>のが罠: 解は <code style="color:#22d3bf">log10(cond(A))</code> 桁を失うので、先に <code style="color:#22d3bf">mat_cond</code> を見る。過剰決定系は <code style="color:#22d3bf">mat_lstsq</code> へ(エラーメッセージも誘導)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_lstsq</b><code style="color:#22d3bf">(a, b, rcond=None)</code> — 過剰決定系 <code style="color:#22d3bf">A x ≈ b</code> の SVD 最小二乗(<code style="color:#22d3bf">gelsd</code>)。<code style="color:#22d3bf">m &gt;= n</code> 必須(劣決定系は拒否 → 最小ノルム解は <code style="color:#22d3bf">mat_pinv</code> の仕事)。戻りは dict <code style="color:#22d3bf">{x, residual_ss, rank, singular_values}</code> — フィットと健全性テレメトリを不可分に返す。<code style="color:#22d3bf">rank &lt; n</code> は「データがパラメータを決め切れていない」印。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_svd</b><code style="color:#22d3bf">(a, full_matrices=False)</code> — 特異値分解 <code style="color:#22d3bf">(U, s, Vt)</code>(<code style="color:#22d3bf">s</code> は降順)。既定は thin SVD。<b>符号の罠</b>: 特異ベクトル対は符号(縮退ブロック内は回転)まで しか決まらない — 検証は <code style="color:#22d3bf">s</code> や <code style="color:#22d3bf">U diag(s) Vt</code> で行い、<code style="color:#22d3bf">U</code>/<code style="color:#22d3bf">Vt</code> の生の値を比較しない。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_eigh</b><code style="color:#22d3bf">(a)</code> — <b>対称行列専用</b>(検証つき)の固有分解(<code style="color:#22d3bf">syevd</code>)。<code style="color:#22d3bf">max|A - A.T|</code> がスケールの 1e-10 を超えると <code style="color:#22d3bf">ValueError</code> — 非対称行列を対称ソルバに食わせると片三角だけ読んで「もっともらしく間違う」+ 複素固有値をこの実数 API は表現できない、の二重の罠を fail-closed。ノイズで非対称なら <code style="color:#22d3bf">(A + A.T)/2</code> を明示。戻りは昇順 <code style="color:#22d3bf">w</code> と列固有ベクトル <code style="color:#22d3bf">V</code>。固有ベクトルにも符号不定あり。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_pinv</b><code style="color:#22d3bf">(a, rcond=1e-12)</code> — Moore-Penrose 擬似逆行列。カットオフ <code style="color:#22d3bf">rcond</code>(= 正則化そのもの)を隠さず名前付き引数に。任意の <code style="color:#22d3bf">(m, n)</code> で動き、<code style="color:#22d3bf">m &gt; n</code> は最小二乗解、<code style="color:#22d3bf">m &lt; n</code> は最小ノルム解。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_cond</b><code style="color:#22d3bf">(a)</code> — スペクトル条件数 <code style="color:#22d3bf">smax/smin</code>。族全体の数値カナリア: <code style="color:#22d3bf">~1e3</code> は快適、<code style="color:#22d3bf">~1e8</code> で半分の桁が消え、<code style="color:#22d3bf">&gt; 1e12</code> では <code style="color:#22d3bf">mat_solve</code> を信じない(厳密特異は raise ではなく <b>inf を返す</b> — 「どれだけ悪条件か」への正直な答え)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_lu</b><code style="color:#22d3bf">(a, pivoting=&quot;partial&quot;)</code> — <code style="color:#22d3bf">P A = L U</code>。<code style="color:#22d3bf">growth</code>(増大率)と <code style="color:#22d3bf">residual</code> も返す。★<code style="color:#22d3bf">pivoting=&quot;none&quot;</code> は教科書の失敗例として残してある: <code style="color:#22d3bf">[[1e-20, 1], [1, 1]]</code> で増大率 1e20、<code style="color:#22d3bf">L U</code> から <code style="color:#22d3bf">A[1,1]</code> が消える(残差 1.0)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_qr</b><code style="color:#22d3bf">(a, method=&quot;householder&quot;)</code> — <code style="color:#22d3bf">A = Q R</code>。<code style="color:#22d3bf">method</code> に <code style="color:#22d3bf">&quot;mgs&quot;</code>・<code style="color:#22d3bf">&quot;cgs&quot;</code>(修正・古典 Gram–Schmidt)。★直交性の損失 <code style="color:#22d3bf">max|QᵀQ − I|</code> は古典が ε·κ²(κ = 1e9 で完全に崩れる)、修正が ε·κ、Householder は ε のまま。3 つとも <code style="color:#22d3bf">A = QR</code> 自体は成り立つ —— 崩れるのは Q だけ(図: numerics_tour の qr_orthogonality)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_cholesky</b><code style="color:#22d3bf">(a)</code> — <code style="color:#22d3bf">A = L Lᵀ</code>(対称正定値)。正定値かどうかの一番安い検査でもある(正定値でなければ ValueError)。<code style="color:#22d3bf">log_det</code> = 2 Σ log L_ii(ガウスの対数尤度の安定な行列式)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_eig</b><code style="color:#22d3bf">(a)</code> — <b>一般の</b>行列の固有分解(複素)。回転は e^{±iθ}、Markov 行列は固有値 1 と定常分布。<code style="color:#22d3bf">cond_V</code> = κ(V): 1e-10 だけ崩した Jordan ブロックでは固有値が √ の 1e-5 動き、κ(V) ≈ 1e5 で知らせる。LU/QR は以前 HALCON 名 <code style="color:#22d3bf">decompose_matrix</code>・<code style="color:#22d3bf">orthogonal_decompose_matrix</code> でしか呼べなかった。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">stats(残差・ノイズの特徴づけ)</h3>
+<p style="margin:2px 0 2px 12px">• <b>stat_describe</b><code style="color:#22d3bf">(x)</code> — 1-D 標本の要約 dict <code style="color:#22d3bf">{n, mean, std, min, max, percentiles{p5..p95}}</code>。<code style="color:#22d3bf">std</code> は母集団版(<code style="color:#22d3bf">ddof=0</code>)。計測では裾が重要: RMS で合格でも <code style="color:#22d3bf">p5</code>/<code style="color:#22d3bf">p95</code> で不合格のフィットがある — 両方報告する。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_histogram</b><code style="color:#22d3bf">(x, bins=10, range=None, density=False)</code> — ビニングを明示したヒストグラム。戻りは <code style="color:#22d3bf">(counts, edges)</code>(<code style="color:#22d3bf">edges</code> は <code style="color:#22d3bf">bins + 1</code> 個)。明示 <code style="color:#22d3bf">range</code> の外の値は <b>どのビンにも数えられない</b>(比較目的なら range 明示が正直)。<code style="color:#22d3bf">density=True</code> で全標本が range 外なら 0/0 になるため <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">density=False</code> は正直な全ゼロを返す)。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_covariance</b><code style="color:#22d3bf">(x)</code> — <code style="color:#22d3bf">(N, D)</code> 観測(行 = 観測。<code style="color:#22d3bf">np.cov</code> の既定とは転置の関係)の標本共分散 <code style="color:#22d3bf">(D, D)</code>。不偏 <code style="color:#22d3bf">ddof=1</code> なので <code style="color:#22d3bf">N &gt;= 2</code> 必須。構成的に対称 PSD → そのまま <code style="color:#22d3bf">mat_eigh</code> に渡せる(共分散楕円ワークフロー)。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_correlation</b><code style="color:#22d3bf">(x)</code> — Pearson 相関行列。対角は厳密に 1、値は [-1, 1] にクリップ。<b>定数列(分散ゼロ)は列番号を名指しして <code style="color:#22d3bf">ValueError</code></b> — 0/0 の NaN を 3 op 下流に流さない。落とす/揺らすは呼び手が明示。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_zscore</b><code style="color:#22d3bf">(x)</code> — 標準化 <code style="color:#22d3bf">(x - mean)/std</code>(<code style="color:#22d3bf">ddof=0</code>)。外れ値ゲートの共通通貨(<code style="color:#22d3bf">|z| &gt; 3</code>)。<b>定数入力は <code style="color:#22d3bf">ValueError</code></b> — 黙って全ゼロを返すと「全点が完璧に平均的」となり、一定値に張り付いたセンサが外れ値ゲートを素通りしてしまう。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">interp / poly(較正曲線と逆引き)</h3>
+<p style="margin:2px 0 2px 12px">• <b>interp_linear</b><code style="color:#22d3bf">(x, y, xq, out_of_range=&quot;raise&quot;)</code> — 区分線形補間。<code style="color:#22d3bf">x</code> は厳密に単調増加(未ソート・重複は <b>黙ってソートせず</b> <code style="color:#22d3bf">ValueError</code> — 黙ったソートは x と y を脱同期させる)。<b>範囲外は明示選択</b>: 既定 <code style="color:#22d3bf">&#x27;raise&#x27;</code>(較正表を較正範囲外で引くのは誤答予備軍)、<code style="color:#22d3bf">&#x27;clamp&#x27;</code> で端値保持。黙った線形外挿モードは意図的に無い。</p>
+<p style="margin:2px 0 2px 12px">• <b>interp_cubic</b><code style="color:#22d3bf">(x, y, xq, out_of_range=&quot;raise&quot;, bc_type=&quot;not-a-knot&quot;)</code> — 3 次スプライン(<code style="color:#22d3bf">scipy.interpolate.CubicSpline</code>、C² 滑らか、4 点以上)。既定 <code style="color:#22d3bf">&#x27;not-a-knot&#x27;</code> は大域 3 次多項式を<b>厳密に</b>再現(テストが pin する性質)。スプライン外挿は 3 次で発散するため範囲外は同じく拒否。正直な注記: ノード間でオーバーシュートしうる(形状保存ではない)— 単調性が要るなら PCHIP 系(ここには無い、と明記)。</p>
+<p style="margin:2px 0 2px 12px">• <b>poly_fit</b><code style="color:#22d3bf">(x, y, degree)</code> — Vandermonde 行列の SVD 最小二乗フィット。戻り dict <code style="color:#22d3bf">{coeffs(最高次から), degree, cond, rms_residual}</code> — フィットと健康診断を不可分に。<b><code style="color:#22d3bf">cond &gt; POLY_COND_WARN</code>(1e10)で <code style="color:#22d3bf">RuntimeWarning</code></b> かつ数値も結果に同梱。高次 × 生座標は二重の罠(Vandermonde 列の近共線 + Runge 振動)— x を [-1, 1] へ中心化・スケールするか次数 ≤ ~6 に。<code style="color:#22d3bf">degree + 1</code> 点未満(劣決定)は拒否。</p>
+<p style="margin:2px 0 2px 12px">• <b>poly_eval</b><code style="color:#22d3bf">(coeffs, x)</code> — Horner 法(<code style="color:#22d3bf">np.polyval</code>)で評価。係数は最高次から(<code style="color:#22d3bf">poly_fit</code> の <code style="color:#22d3bf">&quot;coeffs&quot;</code> そのまま)。スカラ入力はスカラ、配列は float64 を返す。評価は正しくできても悪条件な<b>フィット</b>は直せない(<code style="color:#22d3bf">poly_fit</code> の <code style="color:#22d3bf">cond</code> を見る)。</p>
+<p style="margin:2px 0 2px 12px">• <b>poly_roots</b><code style="color:#22d3bf">(coeffs, real_only=False, imag_tol=1e-9)</code> — companion 行列の固有値として全根(複素含む)を決定的順序(実部→虚部)で返す。<code style="color:#22d3bf">x² + 1</code> の根は本当に <code style="color:#22d3bf">±i</code> — 隠すと多項式を偽ることになる。<code style="color:#22d3bf">real_only=True</code> で実根のみ float64(<b>空も正解</b>: <code style="color:#22d3bf">x² + 1</code> に実根は無い)。先頭係数 0 は「宣言次数が嘘」なので <code style="color:#22d3bf">ValueError</code>(明示 trim を要求)。高次・接近根の条件数悪化(Wilkinson)にも正直な注記あり。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">complex(複素解析 — 閉曲線は「点列」である)</h3>
+<p>輪郭は <b>複素点の 1-D 配列(<code style="color:#22d3bf">cpoints</code>)</b>、閉じる辺は暗黙(先頭点を末尾で繰り返さない)。向きが答えの符号そのものなので <code style="color:#22d3bf">orientation</code> は明示引数です。</p>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart LR
+    C[cplx_contour_circle 閉曲線] --&gt; P[cplx_poly_eval 輪郭上で f をサンプル]
+    P --&gt; I[cplx_contour_integral ∮f dz]
+    P --&gt; AP[cplx_argument_principle 零点-極の数]
+    P --&gt; CV[cplx_cauchy_value 内部の値 f w]
+    P --&gt; L[cplx_laurent_coeffs 係数・留数]
+    C --&gt; W[cplx_winding_number 巻き数]
+    C --&gt; J[cplx_joukowski / cplx_mobius 等角写像]
+    IMG[cx_fft などの複素場] --&gt; CR[cplx_cr_residual 正則性の残差]</pre>
+<p style="margin:2px 0 2px 12px">• <b>cplx_contour_circle</b><code style="color:#22d3bf">(center=0, radius=1, n=256, orientation=&quot;ccw&quot;)</code> — 積分路の標準形。<code style="color:#22d3bf">n</code> は <code style="color:#22d3bf">MAX_CONTOUR_POINTS</code>(2^22)で頭打ち(<code style="color:#22d3bf">n=10**9</code> を 16 GB の確保にしない)。正直な限界: これは円の<b>多角形近似</b>で、弦の求積は <code style="color:#22d3bf">O(n^-2)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_poly_eval</b><code style="color:#22d3bf">(coeffs, z)</code> — <code style="color:#22d3bf">poly_eval</code> の複素版(Horner)。<code style="color:#22d3bf">poly_eval</code> は複素を意図的に拒否する(虚部の黙った切り捨て)ので、輪郭上のサンプルはこちらで作ります。溢れた結果は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_contour_integral</b><code style="color:#22d3bf">(z, fz)</code> — 弦の台形則による <code style="color:#22d3bf">∮f dz</code>。GT: <code style="color:#22d3bf">∮dz/z = 2πi</code>(実測 n=256 で相対誤差 1.0e-4、n=1024 で 6.3e-6 = 2 次収束)。時計回りなら符号が反転します。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_winding_number</b><code style="color:#22d3bf">(z, w=0)</code> — 巻き数(整数)。輪郭<b>上</b>の点は <code style="color:#22d3bf">ValueError</code>、1 辺が半回転以上を張る(= 粗すぎ)場合も <code style="color:#22d3bf">ValueError</code>。π/2 を超えたら <code style="color:#22d3bf">RuntimeWarning</code>: <b>数え落としは原理的に検出できない</b>(z⁵ を 4 点円で数えると 1)ので、分点を倍にして安定するまで確かめるのが唯一の検算です。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_cauchy_value</b><code style="color:#22d3bf">(z, fz, w)</code> — 境界の値から内部の値を復元。巻き数で割るので時計回り・二重巻きでも同じ答え。外の点(巻き数 0)と、輪郭から 1 標本刻み以内の点は <code style="color:#22d3bf">ValueError</code>(積分の峰が解像されていない)。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_argument_principle</b><code style="color:#22d3bf">(z, fz)</code> — 微分も求根もせず <code style="color:#22d3bf">Z - P</code> を数える(像曲線の原点まわりの巻き数)。<b>差しか出ない</b>(零点と極は分離できない)/ 単純・正の向きの輪郭でのみ <code style="color:#22d3bf">Z - P</code> に一致 / 粗いと低く数える、の 3 点を正直に。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_laurent_coeffs</b><code style="color:#22d3bf">(z, fz, kmin=-1, kmax=4)</code> — 一様サンプルの<b>円限定</b>(任意の輪郭では拒否)。<code style="color:#22d3bf">c₋₁</code> が留数、<code style="color:#22d3bf">k &gt;= 0</code> は Taylor 係数。円上の台形則は指数収束します。標本の<b>順序を使わない</b>ので常に正の向きの係数を返す(<code style="color:#22d3bf">cplx_contour_integral</code> は向きで符号が変わる)— 突き合わせるときは向きを揃えてから。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_joukowski</b><code style="color:#22d3bf">(z, c=1.0)</code> — <code style="color:#22d3bf">w = z + c²/z</code>。単位円 → 実軸線分 <code style="color:#22d3bf">[-2c, 2c]</code>(<code style="color:#22d3bf">w = 2c cos t</code>、厳密)、半径 <code style="color:#22d3bf">R</code> の円 → 半軸 <code style="color:#22d3bf">R ± c²/R</code> の楕円、<code style="color:#22d3bf">z = c</code> を通るずらした円 → 尖った後縁の翼型。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_mobius</b><code style="color:#22d3bf">(z, a, b, c, d)</code> — <code style="color:#22d3bf">(az+b)/(cz+d)</code>。円と直線を円と直線に写す。<code style="color:#22d3bf">ad - bc ≈ 0</code>(定数写像に潰れる)と極 <code style="color:#22d3bf">z = -d/c</code> は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>cplx_cr_residual</b><code style="color:#22d3bf">(f, spacing=1.0)</code> — 標本場の Cauchy-Riemann 残差(0 = 正則、2 = 共役)。<b>行が虚部の増える向き</b>という規約が答えの符号を決めます(画像配列は行が下向きなので、そのまま渡すと共役を測って 2 が出ます — <code style="color:#22d3bf">f[::-1]</code> で反転)。中心差分は 2 次まで厳密(<code style="color:#22d3bf">z²</code> は 0)、それ以上は <code style="color:#22d3bf">O(h²)</code> の床(実測: <code style="color:#22d3bf">z³</code> で h=0.05 のとき 1.7e-3、h/2 で 4.2e-4)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">transform(フーリエ以外の積分変換と s 領域 — 2026-10-03)</h3>
+<p>棚卸しで <b>Laplace 変換の系統が 0 本</b>、Abel・Hankel も 0 本だった(<code style="color:#22d3bf">laplace</code> op は HALCON のラプラシアン、<code style="color:#22d3bf">transfer_function</code> は周波数領域の H(f) で別物)。実装は <code style="color:#22d3bf">mathtransforms.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/transforms_tour.py</code>(図つき)。</p>
+<p style="margin:2px 0 2px 12px">• <b>abel_transform</b><code style="color:#22d3bf">(f, dr)</code> / <b>abel_inverse</b><code style="color:#22d3bf">(A, dr, method=&quot;derivative&quot;|&quot;onion&quot;)</code> — 軸対称な物(炎・プラズマ)の断面 f(r) と、横から撮った投影 A(y)。門はガウスの対 <code style="color:#22d3bf">exp(−r²/σ²) ↔ √π σ exp(−y²/σ²)</code>。<b>逆は 2 経路</b>を持つ: 微分の求積は滑らかな投影に高精度だが雑音の誤差が <code style="color:#22d3bf">1/dr</code> で増え、殻剥きは <code style="color:#22d3bf">1/√dr</code> —— <b>標本数で優劣が逆転する</b>(雑音 1%: n=60 では微分、n=960 では殻剥きが良い)。</p>
+<p style="margin:2px 0 2px 12px">• <b>abel_inverse_image</b><code style="color:#22d3bf">(image, dr, center=None, method=&quot;onion&quot;)</code> / <b>abel_revolve</b><code style="color:#22d3bf">(slice, dr)</code> — 次元を上げた Abel: 横から撮った写真(縦 = 対称軸)の各行を逆 Abel して断面画像に、断面を軸のまわりに回して 3-D ボリュームに。左右の非対称は <code style="color:#22d3bf">asymmetry</code> に出る(軸対称の仮定の検算)。3-D を横から足し直すと写真に戻る。</p>
+<p style="margin:2px 0 2px 12px">• <b>hankel_transform</b><code style="color:#22d3bf">(r, f, order=0, n=256)</code> — 軸対称な関数の 2 次元フーリエ変換 = 動径の Hankel 変換(2π 規約)。quasi-discrete 法で核が対合(<code style="color:#22d3bf">T·T = I</code>)。門: <code style="color:#22d3bf">exp(−π r²)</code> は自己双対、円板 → <code style="color:#22d3bf">a·J₁(2πaν)/ν</code>(最初の暗い輪 <code style="color:#22d3bf">0.61/a</code> = 分解能 <code style="color:#22d3bf">1.22λ/D</code> の正体)、2-D FFT の動径断面と一致。</p>
+<p style="margin:2px 0 2px 12px">• <b>hankel_image</b><code style="color:#22d3bf">(image, center=None, spacing=1)</code> — 軸対称な画像(円い穴・ガウスの塊)の 2-D フーリエ変換を、動径の分布 1 本の Hankel 変換で。中心は省略すると明るさの重心。門: 円板 → Airy(山の高さの 0.3%)、ガウス → σ² exp(−πσ²ν²)、2-D FFT の断面と一致。<code style="color:#22d3bf">asymmetry</code> = ‖画像 − 軸対称に作り直した画像‖ / ‖画像‖(円 0.06、楕円 1:1.3 で 0.33)で「この方法を使ってよいか」を返す。★周波数の刻みは FFT と同じ 1/(2·半径) 程度で、細かくはならない。</p>
+<p style="margin:2px 0 2px 12px">• <b>tf_poles_zeros / tf_freq_response / tf_impulse_response / tf_step_response</b><code style="color:#22d3bf">(num, den, …)</code> — 有理伝達関数 <code style="color:#22d3bf">H(s) = num/den</code>(係数は降べき、<code style="color:#22d3bf">poly_eval</code> と同じ並び)。応答は部分分数でなく<b>拡大行列の指数関数</b>で厳密に解くので、重根・原点の極(積分器)でも分岐しない。非プロパー(分子の次数 &gt; 分母)は <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>tf_bilinear</b><code style="color:#22d3bf">(num, den, fs, prewarp_hz=None)</code> — Tustin 変換。<code style="color:#22d3bf">scipy.signal.bilinear</code> と係数が一致し、前歪みを与えた周波数で連続系と応答が厳密に一致する。左半面の極は単位円内へ。</p>
+<p style="margin:2px 0 2px 12px">• <b>laplace_inverse_talbot</b><code style="color:#22d3bf">(num, den, t, M=32)</code> / <b>laplace_inverse_func</b><code style="color:#22d3bf">(F, t, M=32)</code>(<code style="color:#22d3bf">fs.&lt;名前&gt;</code> のみ)— 固定 Talbot 法の数値逆ラプラス。有理関数では行列指数と別経路で一致(1e-8)。<code style="color:#22d3bf">1/√s ↔ 1/√(πt)</code> のような分岐点つきも戻せる。<b>M は増やせば良いわけではない</b>: M≈20 で 1e-12、M=68 では丸めで 1e-4 に悪化。</p>
+<p style="margin:2px 0 2px 12px">• <b>dct_transform</b><code style="color:#22d3bf">(x, axes=None, inverse=False)</code> — 正規直交 DCT-II を N 次元で(画像・ボリューム)。返す <code style="color:#22d3bf">compaction</code> は大きい順の係数のエネルギー累積(滑らかな画像は 2% の係数で 99.9%、白色雑音は 15% 未満)。既存の <code style="color:#22d3bf">xsp_dct</code> は画像 → 見せる画像で係数を返さない。</p>
+<p style="margin:2px 0 2px 12px">• <b>wavelet_filters</b><code style="color:#22d3bf">(order)</code> — Daubechies dbN のフィルタを教科書の構成(スペクトル分解)で作る。表を写さない。門は直交性 Σ h_i h_{i+2s} = δ_s と N 個の消失モーメント、db2 の閉形式。</p>
+<p style="margin:2px 0 2px 12px">• <b>dwt_transform</b><code style="color:#22d3bf">(x, order=2, levels=1, axes=None)</code> / <b>dwt_inverse</b><code style="color:#22d3bf">(coeffs)</code> — 多段・N 次元の DWT(周期境界で厳密に正規直交)。2-D の帯は <code style="color:#22d3bf">ad</code>・<code style="color:#22d3bf">da</code>・<code style="color:#22d3bf">dd</code>、3-D は 7 個。★係数を 5% 残す圧縮は DCT より 8 dB 良いが、0.5% では DCT が上 —— 勝ち負けは残す量で決まる。dbN は N−1 次までの多項式を詳細係数から消す(2 次式は db3 で 1e-14、db2 では残る)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">numerics(数値計算の古典と特殊関数 — 2026-10-03)</h3>
+<p>実装は <code style="color:#22d3bf">mathnumerics.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/numerics_tour.py</code>(失敗例と並べた図つき)。</p>
+<p style="margin:2px 0 2px 12px">• <b>gauss_quadrature</b><code style="color:#22d3bf">(n, kind=&quot;legendre&quot;|&quot;hermite&quot;|&quot;laguerre&quot;|&quot;chebyshev&quot;, a=None, b=None)</code> — 節点と重み。n 点で <b>2n−1 次まで厳密</b>、2n 次で初めて誤差(門は両向き)。</p>
+<p style="margin:2px 0 2px 12px">• <b>gauss_cubature</b><code style="color:#22d3bf">(n, dim=2, a=-1, b=1)</code> — テンソル積の求積(2-D 画像の画素平均、3-D の体積積分)。軸ごとに 2n−1 次まで厳密。点の数 n^dim(dim &gt; 6 は低食い違い列へ)。</p>
+<p style="margin:2px 0 2px 12px">• <b>low_discrepancy</b><code style="color:#22d3bf">(n, dim=2, kind=&quot;halton&quot;|&quot;sobol&quot;|&quot;random&quot;)</code> — 低食い違い列。積分誤差の傾きは乱数 −0.5、Sobol ≈ −1。★傾きは<b>非対称な被積分関数</b>で測ること: 0.5 に対称な sin(πx) だとスクランブル無しの Sobol が打ち消し合って −2.2 という「良すぎる」値が出る。</p>
+<p style="margin:2px 0 2px 12px">• <b>chebyshev_nodes</b><code style="color:#22d3bf">(n, a, b)</code> / <b>interp_barycentric</b><code style="color:#22d3bf">(xk, yk, x)</code> — 重心公式(係数を経由しない)。等間隔の点では Runge 現象(41 点で誤差 1e5)、Chebyshev 点なら収束(3e-4)。</p>
+<p style="margin:2px 0 2px 12px">• <b>chebyshev_coeffs_nd</b><code style="color:#22d3bf">(values, box=None)</code> / <b>chebyshev_eval_nd</b><code style="color:#22d3bf">(coeffs, points)</code> — Chebyshev 補間を N 次元に(テンソル積の Chebyshev–Lobatto 格子、係数は DCT-I)。<code style="color:#22d3bf">points</code> は散在点 (M, d) か軸ごとの 1-D 配列の組(格子)。門: 次数内の多項式を任意の箱で 1e-11 で再現 / 1/(a − x) の係数は Bernstein の楕円 ρ = a + √(a² − 1) で落ちる(6 桁一致)/ 3-D でも点を倍にするごとに桁で減る。★2-D の Runge: 等間隔 25×25 は誤差 8e5、Chebyshev は 8e-3。<code style="color:#22d3bf">tail</code> が打ち切り誤差の目安。</p>
+<p style="margin:2px 0 2px 12px">• <b>integrate_hamiltonian</b><code style="color:#22d3bf">(q0, p0, dt, n_steps, system=&quot;harmonic&quot;|&quot;pendulum&quot;|&quot;kepler&quot;, method=&quot;verlet&quot;|&quot;euler&quot;|&quot;rk4&quot;)</code> — Verlet はエネルギー誤差が有界で時間反転で戻る。Euler は毎歩 (1+ω²dt²) 倍。<b>RK4 は短時間は Verlet より正確だが誤差が時間に比例して増え、いずれ抜かれる</b>(dt=0.2 で t≈2300、dt=0.1 では約 18 万歩目)。</p>
+<p style="margin:2px 0 2px 12px">• <b>erf / erfc / bessel</b><code style="color:#22d3bf">(x, order, kind)</code> — 値は scipy.special。ガウスでぼけた段差の断面は ½(1+erf(x/σ√2))。大きな x の 1−erf は桁落ちするので erfc を使う。門は奇関数性・導関数・Wronskian・漸化式。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">spectral(FFT では足りないスペクトル推定 — 2026-10-03)</h3>
+<p>実装は <code style="color:#22d3bf">mathspectral.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/spectral_tour.py</code>。規約: 等間隔線形アレイ、間隔 d は波長単位(既定 0.5)、到来角は正面から、<code style="color:#22d3bf">a(θ)_m = exp(−2πi·d·m·sin θ)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <b>lomb_scargle</b><code style="color:#22d3bf">(t, y, freqs)</code> — 時刻が不等間隔な観測の周期図(Scargle の τ つき)。等間隔ならフーリエ周波数で <code style="color:#22d3bf">|DFT|²/N</code> と恒等的に一致。時刻を無視して並び順のまま FFT するのが典型的な間違い(峰がずれる)。</p>
+<p style="margin:2px 0 2px 12px">• <b>music_doa</b><code style="color:#22d3bf">(X, n_sources=None)</code> / <b>esprit_doa</b><code style="color:#22d3bf">(X, n_sources=None)</code> — 部分空間法の到来方向推定。遅延和(<code style="color:#22d3bf">rangedoppler.beamform_doa</code>)は 1 ビーム幅の中の 2 波を分けられないが、こちらは分ける。<b>前提</b>: 波源の数が正しい・波どうしが無相関。同じ信号の反射(相関した波)では共分散の階数が潰れて割れない(門で確かめてある)。<code style="color:#22d3bf">n_sources=None</code> は MDL で推定。</p>
+<p style="margin:2px 0 2px 12px">• <b>n_sources_mdl</b><code style="color:#22d3bf">(X)</code> — 波源の数の推定(Wax &amp; Kailath 1985)。白色雑音・スナップショット数 ≫ 素子数が前提。</p>
+<p style="margin:2px 0 2px 12px">• <b>hilbert_analytic</b><code style="color:#22d3bf">(x, fs=1)</code> — 解析信号 x + i·H[x] と振幅(包絡線)・連続位相・瞬時周波数。門: H[cos] = sin(周期が窓に収まれば 2e-13)、線形チャープの周波数、Bedrosian の定理(包絡線が搬送波より遅ければ振幅が 5e-13 で戻る、速いと 0.40 ずれる)。端は FFT の周期の仮定で乱れる。2-D 版は <code style="color:#22d3bf">monogenic_signal</code>(Riesz)。</p>
+<p style="margin:2px 0 2px 12px">• <b>ula_snapshots</b><code style="color:#22d3bf">(angles_deg, n_elements, n_snapshots, snr_db=None)</code> — 答えの決まる入力(無相関の複素ガウス信号 + 白色雑音)。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">estimation(推定と統計の古典 — 2026-10-03)</h3>
+<p>実装は <code style="color:#22d3bf">mathestimation.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/estimation_tour.py</code>。門は第 2 実装(scipy・総当たり・一括最小二乗)と定理。</p>
+<p style="margin:2px 0 2px 12px">• <b>assign_hungarian</b><code style="color:#22d3bf">(cost, maximize=False)</code> — 割当問題。貪欲な最近傍(近い組から結ぶ)は追跡を取り違えることがある。禁止の組は inf でなく大きな有限値で。</p>
+<p style="margin:2px 0 2px 12px">• <b>hist_distance</b><code style="color:#22d3bf">(p, q, metric=&quot;kl&quot;|&quot;js&quot;|&quot;bhattacharyya&quot;|&quot;hellinger&quot;|&quot;chi2&quot;)</code> — 和で正規化する。★KL の床(eps)は q が<b>ちょうど 0</b> の所だけ(q 全体を床上げした最初の版は KL(p‖p) = −3e-10 を返した)。</p>
+<p style="margin:2px 0 2px 12px">• <b>stat_ttest_paired / stat_ttest_welch / stat_ks_test / stat_chi2_gof</b> — scipy と p 値が一致。帰無仮説の下で p は一様 = 「有意」の 5% は偶然。χ² は期待度数 &lt; 5 の区分の数も返す。</p>
+<p style="margin:2px 0 2px 12px">• <b>crlb_gaussian</b><code style="color:#22d3bf">(x, theta, sigma, model=&quot;constant&quot;|&quot;line&quot;|&quot;gaussian_peak&quot;|&quot;exp_decay&quot;|&quot;sinusoid&quot;)</code> — 白色ガウス雑音での Cramér–Rao 下界。最小二乗(効率的)はこれに一致し、どんな不偏推定もこれより良くならない。</p>
+<p style="margin:2px 0 2px 12px">• <b>kalman_smooth</b><code style="color:#22d3bf">(z, F, H, Q, R, x0, P0)</code> — Kalman フィルタ + RTS 平滑化。NaN の観測は欠測。平滑化 = 一括の最小二乗(定理、共分散も一致)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mat_expm / mat_logm / se3_exp / se3_log</b> — 行列の指数・主対数(負の実固有値は拒否)、SE(3) の閉じた式。姿勢の補間は行列でなく ξ = se3_log の上で混ぜる。</p>
+<h3 style="color:#17b8a6;margin:8px 0 2px 0">geometry(離散幾何と位相 — 2026-10-03、2-D/3-D)</h3>
+<p>実装は <code style="color:#22d3bf">mathgeometry.py</code>、例は <code style="color:#22d3bf">py -3.11 examples/geometry_tour.py</code>。メッシュは <code style="color:#22d3bf">(vertices, faces)</code> でも mesh の組でもよい。</p>
+<p style="margin:2px 0 2px 12px">• <b>mesh_euler_characteristic</b><code style="color:#22d3bf">(mesh)</code> — V − E + F、閉じた曲面なら種数。境界辺・非多様体辺の数も。</p>
+<p style="margin:2px 0 2px 12px">• <b>angle_defect</b><code style="color:#22d3bf">(mesh)</code> — 頂点ごとの離散 Gauss 曲率。<b>閉じたメッシュでは総和が厳密に 2πχ</b>(Descartes の定理)— どんなに歪めても穴の数だけで決まる。境界は π − Σθ の項を含めて Gauss–Bonnet。</p>
+<p style="margin:2px 0 2px 12px">• <b>delaunay_triangulate</b><code style="color:#22d3bf">(points)</code> — (N,2) は三角形、(N,3) は四面体。門は空円性・空球性、2-D の三角形の数 2n − h − 2、3-D の V − E + F − T = 1。</p>
+<p style="margin:2px 0 2px 12px">• <b>geodesic_heat</b><code style="color:#22d3bf">(mesh, source=0)</code> — 熱法の測地距離(Crane 2013)。辺をたどる <code style="color:#22d3bf">geodesic_mesh</code>(Dijkstra)は細かくしても 7.7% で止まるが、熱法は真値へ収束する。</p>
+<p style="margin:2px 0 2px 12px">• <b>geodesic_heat_grid</b><code style="color:#22d3bf">(mask, source=None, spacing=1)</code> — 2-D 画像・3-D ボリュームの格子の上で、障害物を避けた距離。8 近傍の Dijkstra は等距離線が八角形に歪み(何も無くても 4.5%)、熱法は円。★実装の要点: 発散と Laplacian を<b>同じ差分行列 G から</b>作る(別々に作った最初の版は隅で距離が 0.52 倍に縮んだ)/ 熱の段は直接法(熱は遠くで 1e-30 まで落ち、反復法の絶対誤差が向きを壊した)。</p>
+<p style="margin:2px 0 2px 12px">• <b>mesh_torus</b><code style="color:#22d3bf">(R, r, n_u, n_v)</code> — 種数 1 の見本(χ = 0)。</p>
+<p style="margin:2px 0 2px 12px">• <b>nurbs_curve</b><code style="color:#22d3bf">(control_points, weights=None, degree=3, knots=None, n=200)</code> — 重みつきの有理 B スプライン曲線(Piegl &amp; Tiller)。重みが全部 1 なら普通の B スプライン、重みを上げるとその制御点に寄る。端点以外の制御点は通らない。返す <code style="color:#22d3bf">basis</code> は有理基底(各行の和が 1)。</p>
+<p style="margin:2px 0 2px 12px">• <b>nurbs_circle</b><code style="color:#22d3bf">(radius, center)</code> — 円を<b>厳密に</b>描く 9 点・2 次の NURBS(隅の重み 1/√2)。多項式の B スプラインは隅の向きで最大 6.1% 膨らむ。</p>
+<p style="margin:2px 0 2px 12px">• <b>nurbs_surface</b><code style="color:#22d3bf">(control_net, weights, degree=(3,3))</code> — テンソル積の曲面。<code style="color:#22d3bf">mesh</code> = (V, F) を返すので <code style="color:#22d3bf">geodesic_heat</code> や <code style="color:#22d3bf">angle_defect</code> にそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <b>nurbs_revolve</b><code style="color:#22d3bf">(profile, weights, degree=2)</code> — 断面 (r, z) を z 軸のまわりに回した回転面。断面が円弧なら球・トーラスが丸め誤差で厳密。★NURBS は射影変換と可換(同次座標の制御点を変換してから描く = 描いてから変換する)。旧 <code style="color:#22d3bf">gen_contour_nurbs_xld</code> は補間 B スプラインで、0.4.0 で削除する。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">動く最小例(検証済み)</h3>
+<p>repo 直下で <code style="color:#22d3bf">py -3.11</code> の対話環境か、<code style="color:#22d3bf">PYTHONPATH</code> に repo を通して実行。フィット厳密復元・PSD/直交性・SVD⇔固有値の交差検証・fail-closed(範囲外拒否)を数値で確認して <code style="color:#22d3bf">PASS</code> を出します(本ガイド作成時に実行し PASS を確認済み。16 op 全てを通すフル版は <code style="color:#22d3bf">py -3.11 examples/math_metrology.py</code>)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import mathops as M
+
+# GT: 直線 y = 2x + 1(ノイズ無し・決定的)を最小二乗で厳密復元
+x = np.linspace(0.0, 1.0, 21)
+y = 2.0 * x + 1.0
+A = np.column_stack([x, np.ones_like(x)])     # (21, 2) 設計行列
+
+fit = M.mat_lstsq(A, y)                       # SVD 最小二乗(健全性テレメトリ付き)
+assert np.allclose(fit[&quot;x&quot;], [2.0, 1.0], atol=1e-12) and fit[&quot;rank&quot;] == 2
+assert M.mat_cond(A) &lt; 1e2                    # 条件数を必ず見る(健全)
+assert fit[&quot;residual_ss&quot;] &lt; 1e-24             # ノイズ無しデータ → 残差ゼロ
+
+d = M.stat_describe(y - A @ fit[&quot;x&quot;])         # 残差統計: 実質ゼロ
+assert d[&quot;n&quot;] == 21 and abs(d[&quot;mean&quot;]) &lt; 1e-12
+
+# 共分散 → 固有分解(主軸): 相関のある 2 変数の雲(seed 固定・決定的)
+rng = np.random.default_rng(0)
+u = rng.standard_normal(500)
+cloud = np.column_stack([u, 0.5 * u + 0.1 * rng.standard_normal(500)])
+C = M.stat_covariance(cloud)                  # (2,2) 対称・半正定値
+w, V = M.mat_eigh(C)                          # 対称行列専用(対称性を検証してから解く)
+assert w[0] &gt;= -1e-12                         # PSD → 固有値は非負
+assert np.allclose(V.T @ V, np.eye(2), atol=1e-12)   # 固有ベクトルは正規直交
+assert M.stat_correlation(cloud)[0, 1] &gt; 0.9  # 強い正相関(構成通り)
+assert np.abs(M.stat_zscore(cloud[:, 0])).max() &lt; 5.0  # 正規サンプルの z-score
+
+# SVD 交差検証: centered データの s^2/(N-1) は covariance の固有値と一致
+centered = cloud - cloud.mean(axis=0)
+_, s, _ = M.mat_svd(centered)
+assert np.allclose(sorted((s ** 2) / (cloud.shape[0] - 1)), w, rtol=1e-10)
+
+# 較正曲線: y = 0.15 x^3 + x を 3 次 poly_fit で厳密復元(条件数もその場で確認)
+pf = M.poly_fit(x, 0.15 * x ** 3 + x, 3)
+assert np.allclose(pf[&quot;coeffs&quot;], [0.15, 0.0, 1.0, 0.0], atol=1e-9)
+assert pf[&quot;cond&quot;] &lt; M.POLY_COND_WARN          # 1e10 を超えると RuntimeWarning
+assert abs(M.poly_eval(pf[&quot;coeffs&quot;], 0.5) - (0.15 * 0.125 + 0.5)) &lt; 1e-12
+r = M.poly_roots([1.0, 0.0, 1.0])             # x^2 + 1 = 0 → ±i(複素も正直に返す)
+assert np.allclose(sorted(r.imag), [-1.0, 1.0], atol=1e-12)
+assert M.poly_roots([1.0, 0.0, 1.0], real_only=True).size == 0  # 実根は無し(空が正解)
+
+# 補間: 範囲外クエリは既定で ValueError(clamp は明示指定)
+tbl_x = np.array([0.0, 1.0, 2.0, 3.0])
+tbl_y = tbl_x ** 2
+assert M.interp_linear(tbl_x, tbl_y, 1.5) == 2.5   # 区分線形: (1+4)/2
+assert abs(M.interp_cubic(tbl_x, tbl_y, 1.5) - 2.25) &lt; 1e-12  # 3 次多項式は厳密再現
+try:
+    M.interp_linear(tbl_x, tbl_y, 9.0)             # fail-closed(外挿は既定拒否)
+    raise AssertionError(&quot;out-of-range must raise&quot;)
+except ValueError:
+    pass
+assert M.interp_cubic(tbl_x, tbl_y, 9.0, out_of_range=&quot;clamp&quot;) == 9.0  # 端値を保持
+
+# ヒストグラム: 度数和 = サンプル数(明示ビニング)
+counts, edges = M.stat_histogram(cloud[:, 0], bins=12)
+assert int(counts.sum()) == 500 and edges.size == 13
+
+print(&quot;PASS&quot;)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">数式(必要な op のみ)</h3>
+<p>最小二乗(<code style="color:#22d3bf">mat_lstsq</code>)と擬似逆行列(<code style="color:#22d3bf">mat_pinv</code>)は同じ問題の二つの顔:</p>
+<p>$$ \hat{x} = \arg\min_x \lVert A x - b \rVert_2^2, \qquad A^{+} = V \, \Sigma^{+} U^{\top} \ \ (\sigma_i &lt; \mathrm{rcond}\cdot\sigma_{\max} \text{ は } 0 \text{ 扱い}) $$</p>
+<p>条件数(<code style="color:#22d3bf">mat_cond</code>)と「消える桁数」(Golub &amp; Van Loan §2.6 — <code style="color:#22d3bf">mat_solve</code> を信じてよいかの判定):</p>
+<p>$$ \kappa_2(A) = \frac{\sigma_{\max}(A)}{\sigma_{\min}(A)}, \qquad \text{失う有効桁数} \approx \log_{10} \kappa_2(A) $$</p>
+<p>標本共分散(<code style="color:#22d3bf">stat_covariance</code>、<code style="color:#22d3bf">ddof=1</code>)と Pearson 相関(<code style="color:#22d3bf">stat_correlation</code>)、z-score(<code style="color:#22d3bf">stat_zscore</code>、<code style="color:#22d3bf">ddof=0</code>):</p>
+<p>$$ C = \frac{1}{N-1} \sum_{i=1}^{N} (x_i - \bar{x})(x_i - \bar{x})^{\top}, \qquad R_{jk} = \frac{C_{jk}}{\sigma_j \sigma_k}, \qquad z_i = \frac{x_i - \bar{x}}{\sigma} $$</p>
+<p>多項式(<code style="color:#22d3bf">poly_fit</code> / <code style="color:#22d3bf">poly_eval</code>、係数は最高次から)と、そのフィットの条件数(Vandermonde 行列 $V_{ij} = x_i^{\,d-j}$ の $\kappa_2$ — <code style="color:#22d3bf">POLY_COND_WARN</code> = 1e10 超で警告):</p>
+<p>$$ p(x) = \sum_{k=0}^{d} c_k \, x^{\,d-k}, \qquad \hat{c} = \arg\min_c \lVert V c - y \rVert_2^2 $$</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">サンプルデータ</h3>
+<p>この族の入力は画像ではなく数値配列なので、<b>seed 固定の合成データ + 解析的グラウンドトゥルース</b>(真の係数・真の固有値・厳密根)がそのまま最良のテストデータです — 上の最小例と <code style="color:#22d3bf">examples/math_metrology.py</code> がその作り方の見本(平面 + 既知ノイズ、回転楕円雲、樽型歪み風の較正曲線)。実測データに繋ぐなら、<code style="color:#22d3bf">measure</code> / <code style="color:#22d3bf">measure3d</code> の出力(残差列・点群座標)をそのまま <code style="color:#22d3bf">signal</code> / <code style="color:#22d3bf">(N, D)</code> として渡せます。画像系サンプルの台帳は <code style="color:#22d3bf">../../SAMPLES.md</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">参考文献(正典)</h3>
+<p>台帳は <code style="color:#22d3bf">../../../REFERENCES.md</code>。この族の数値解析の古典(各 op の docstring が引用しているもの):</p>
+<p style="margin:2px 0 2px 12px">• Golub, G. H. &amp; Van Loan, C. F., *Matrix Computations* (4th ed., 2013), §2.6 — 条件数と桁落ち(<code style="color:#22d3bf">mat_cond</code> / <code style="color:#22d3bf">mat_solve</code> の警告の根拠)。</p>
+<p style="margin:2px 0 2px 12px">• Anderson, E. et al. (1999), *LAPACK Users&#x27; Guide* (3rd ed.) — <code style="color:#22d3bf">gesv</code> / <code style="color:#22d3bf">gelsd</code> / <code style="color:#22d3bf">gesdd</code> / <code style="color:#22d3bf">syevd</code>(linalg 族の実体)。</p>
+<p style="margin:2px 0 2px 12px">• Runge, C. (1901), &quot;Über empirische Funktionen und die Interpolation zwischen äquidistanten Ordinaten&quot; — 等間隔ノード高次補間の発散(<code style="color:#22d3bf">poly_fit</code> の次数警告の根拠)。</p>
+<p style="margin:2px 0 2px 12px">• Wilkinson, J. H. (1984), &quot;The perfidious polynomial&quot; — 係数摂動に対する根の条件数悪化(<code style="color:#22d3bf">poly_roots</code> の注記の根拠)。</p>
+<p style="margin:2px 0 2px 12px">• Pearson, K. (1896), &quot;Mathematical Contributions to the Theory of Evolution. III. Regression, Heredity, and Panmixia&quot; — 積率相関係数(<code style="color:#22d3bf">stat_correlation</code>)。</p>
+<p style="margin:2px 0 2px 12px">• de Boor, C. (1978), *A Practical Guide to Splines*, Springer — 3 次スプラインと not-a-knot 境界条件(<code style="color:#22d3bf">interp_cubic</code>)。</p>
+<p style="margin:2px 0 2px 12px">• Cauchy, A.-L. (1831), *Mémoire sur la mécanique céleste et sur un nouveau calcul appelé calcul des limites* — 積分公式と偏角の原理(<code style="color:#22d3bf">cplx_cauchy_value</code> / <code style="color:#22d3bf">cplx_argument_principle</code>)。</p>
+<p style="margin:2px 0 2px 12px">• Trefethen, L. N. &amp; Weideman, J. A. C. (2014), &quot;The exponentially convergent trapezoidal rule&quot;, *SIAM Review* 56(3) — 円周上の台形則が指数収束する根拠(<code style="color:#22d3bf">cplx_laurent_coeffs</code>)。</p>
+<p style="margin:2px 0 2px 12px">• Zhukovsky, N. E. (1910), &quot;Über die Konturen der Tragflächen der Drachenflieger&quot; — Joukowski 翼型写像(<code style="color:#22d3bf">cplx_joukowski</code>)。</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

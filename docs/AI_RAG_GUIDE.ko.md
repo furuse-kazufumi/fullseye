@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 1dbad79b7ed1 -->
+<!-- i18n-source-sha: 7254141ce9cd -->
 # Fullseye를 AI 어시스턴트의 RAG로 사용하는 방법(Claude Code용)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · **한국어** · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -22,7 +22,7 @@ import fullseye
 fullseye.search_ops("에지 검출", k=5)          # Python. MCP 에서는 fullseye_find_ops
 ```
 
-모든 op 요약을 **6개 언어**(일본어 원문 + 영어·중국어 간체/번체·한국어·독일어 번역)로 색인하고,
+모든 op 요약을 **7개 언어**(일본어 원문 + 영어·중국어 간체/번체·한국어·독일어·힌디어 번역. 힌디어 번역은 전문 용어를 영어로 둡니다)로 색인하고,
 op 이름·HALCON 이름·입출력 타입과 함께 대조해 순위대로 "요약(질의 언어) + 노트 위치"를 돌려줍니다.
 노트 본문은 일본어라 grep 으로 "잡음"을 찾으면 0건이지만, 이 검색으로는 모국어로 찾을 수 있습니다.
 임베딩이나 외부 서비스는 쓰지 않습니다(BM25, 표준 라이브러리만). **동의어는 인식하지 않으므로**

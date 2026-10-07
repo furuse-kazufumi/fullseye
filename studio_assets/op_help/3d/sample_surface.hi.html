@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sample_surface — 3D <code style="color:#22d3bf">superquadric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">vector</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import superquadric; superquadric.sample_surface(a, eps, n_u: &#x27;int&#x27; = 40, n_v: &#x27;int&#x27; = 40, R=None, t=None) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;sample_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>superquadric surface के surface points को (eta, omega) parametric रूप से sample करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">x = a1 * sgn|cos eta|^eps1 * sgn|cos omega|^eps2</code> などの符号付きべきで全 8 象限を張る(eta in [-pi/2, pi/2], omega in [-pi, pi])。生成点は厳密に <code style="color:#22d3bf">F = 1</code> を満たす(cos^2+sin^2=1 が指数を打ち消すため)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>a, eps : inside_outside と同じ</p>
+<p>n_u : omega(経度)方向サンプル数</p>
+<p>n_v : eta(緯度)方向サンプル数</p>
+<p>R, t : 姿勢(body→world: X_world = R @ X_body + t)</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>np.ndarray, shape (n_u*n_v, 3)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:mesh_lod_download">mesh_lod_download</a> — <code style="color:#22d3bf">py -3.11 examples_3d/mesh_lod_download.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:superquadric_fit">superquadric_fit</a> — <code style="color:#22d3bf">py -3.11 examples_3d/superquadric_fit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">superquadric</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_superquadric">fit_superquadric</a> · <a style="color:#22d3bf" href="op3d:inside_outside">inside_outside</a> · <a style="color:#22d3bf" href="op3d:superquadric_residual">superquadric_residual</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: superquadric.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

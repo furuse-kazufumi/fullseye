@@ -1,0 +1,40 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">weighting_response — ACOUSTICS <code style="color:#22d3bf">level</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import acoustics; acoustics.weighting_response(freqs, kind=&#x27;A&#x27;, floor_db=-200.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;weighting_response&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>दी गई frequencies पर A / C / Z frequency-weighting curve, dB में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Computed from the four pole frequencies that *define* the networks and normalised so that the response at 1 kHz is exactly 0 dB <b>by construction</b> — the curve is divided by its own value at 1 kHz rather than having a published offset constant added to it. That is why the tests can assert equality at 1 kHz to 0.0 rather than to a tolerance, and why no standard&#x27;s table of attenuations appears anywhere in this repository.</p>
+<p>The response depends on <code style="color:#22d3bf">f</code> only through <code style="color:#22d3bf">f**2</code>, so it is an even function and negative frequencies are evaluated at <code style="color:#22d3bf">|f|</code> — that is the definition, not a repair. <code style="color:#22d3bf">f = 0</code> has zero response (both curves have a zero at DC) and is reported as <code style="color:#22d3bf">floor_db</code> rather than <code style="color:#22d3bf">-inf</code>.</p>
+<p>Measured (computed, then printed — these are outputs, not transcriptions):</p>
+<p>========  =========  =========</p>
+<p>f (Hz)    A (dB)     C (dB)</p>
+<p>========  =========  =========</p>
+<p>10        -70.4304   -14.3300</p>
+<p>31.5      -39.5250    -3.0305</p>
+<p>100       -19.1428    -0.2996</p>
+<p>1000        0.0000     0.0000</p>
+<p>4000        0.9633    -0.8260</p>
+<p>10000      -2.4918    -4.4055</p>
+<p>20000      -9.3469   -11.2786</p>
+<p>========  =========  =========</p>
+<p><code style="color:#22d3bf">A(1000)</code> and <code style="color:#22d3bf">C(1000)</code> are exactly <code style="color:#22d3bf">0.0</code> — the Python float, not a rounding — because of the construction. The low-frequency asymptote is a closed form and is asserted in the tests: <code style="color:#22d3bf">A</code> falls at exactly 80 dB/decade as <code style="color:#22d3bf">f -&gt; 0</code> (<code style="color:#22d3bf">f**4</code> over three constants) and <code style="color:#22d3bf">C</code> at exactly 40 dB/decade (<code style="color:#22d3bf">f**2</code>). Measured between 0.001 and 0.01 Hz with the floor lowered out of the way: <b>79.999998</b> and <b>39.999998</b> dB/decade.</p>
+<p>That last caveat is real and is why the floor is an argument: with the default <code style="color:#22d3bf">floor_db = -200</code> the A curve reaches the floor below about 0.35 Hz (unfloored, <code style="color:#22d3bf">A(0.1) = -228.55</code> dB), so the asymptote measured against the default floor comes out as 0.0 dB/decade between 0.01 and 0.1 Hz — a clamp, correctly reported, that would look like a bug if the floor were not visible.</p>
+<p>Returns a float64 array the same shape as *freqs*.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / non-finite / complex / masked <code style="color:#22d3bf">freqs</code>, an unknown <code style="color:#22d3bf">kind</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:stft">stft</a> · <a style="color:#22d3bf" href="opacoustics:envelope_spectrum">envelope_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:spectral_kurtosis">spectral_kurtosis</a> · <a style="color:#22d3bf" href="opacoustics:cepstrum">cepstrum</a> · <a style="color:#22d3bf" href="opacoustics:angular_resample">angular_resample</a> · <a style="color:#22d3bf" href="opacoustics:order_spectrum">order_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:apply_weighting">apply_weighting</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">level</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:octave_bands">octave_bands</a> · <a style="color:#22d3bf" href="opacoustics:octave_spectrum">octave_spectrum</a> · <a style="color:#22d3bf" href="opacoustics:apply_weighting">apply_weighting</a> · <a style="color:#22d3bf" href="opacoustics:equivalent_level">equivalent_level</a> · <a style="color:#22d3bf" href="opacoustics:percentile_level">percentile_level</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

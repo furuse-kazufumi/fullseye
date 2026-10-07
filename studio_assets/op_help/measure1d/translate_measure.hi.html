@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">translate_measure — MEASURE1D <code style="color:#22d3bf">caliper</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurehandle</code> → <code style="color:#22d3bf">measurehandle</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.translate_measure(measure, drow, dcol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import measuring1d; measuring1d.translate_measure(measure, drow, dcol)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmeasure1d.get(&quot;translate_measure&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>measurement object को translate करता है (translate_measure)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> に <code style="color:#22d3bf">(drow, dcol)</code> [px] を足した <b>浅い複製</b> を返す(入力の dict は変えない)。<code style="color:#22d3bf">gen_measure_rectangle2</code> の <code style="color:#22d3bf">origin</code> と <code style="color:#22d3bf">gen_measure_arc</code> の <code style="color:#22d3bf">center</code> も同じだけ動かすので、両端延長(<code style="color:#22d3bf">_extended_coords</code>)の幾何がずれない。<code style="color:#22d3bf">phi</code> / <code style="color:#22d3bf">dir</code> / <code style="color:#22d3bf">angles</code> / <code style="color:#22d3bf">radius</code> / <code style="color:#22d3bf">width</code> / <code style="color:#22d3bf">spacing</code> はそのまま ―― <b>回転や半径変更はしない</b>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measure</code>: <code style="color:#22d3bf">gen_measure_rectangle2</code> / <code style="color:#22d3bf">gen_measure_arc</code> の dict。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> を持つ任意の dict でも動く(他キーは素通し)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 変位 [px]。小数可。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">shape</code>(画像サイズ)は再検査しないので、画像外へ出しても例外は出ず、<code style="color:#22d3bf">measure_pos</code> が端の値で外挿するだけになる。</p>
+<p style="margin:2px 0 2px 12px">• 返り値: 同じ構造の dict(<code style="color:#22d3bf">measurehandle</code> 型)。</p>
+<p>典型: 位置合わせで得たワークのずれを測定線に反映してから <code style="color:#22d3bf">measure_pos</code> / <code style="color:#22d3bf">measure_pairs</code> を掛ける。傾きが変わる場合は <code style="color:#22d3bf">gen_measure_rectangle2</code> を新しい <code style="color:#22d3bf">phi</code> で作り直す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dimensional_inspection">poc_dimensional_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dimensional_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurehandle</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:measure_pos">measure_pos</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pairs">measure_pairs</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">caliper</code>)</h3>
+<p><a style="color:#22d3bf" href="opmeasure1d:gen_measure_rectangle2">gen_measure_rectangle2</a> · <a style="color:#22d3bf" href="opmeasure1d:gen_measure_arc">gen_measure_arc</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pos">measure_pos</a> · <a style="color:#22d3bf" href="opmeasure1d:measure_pairs">measure_pairs</a> · <a style="color:#22d3bf" href="opmeasure1d:fuzzy_measure_pairing">fuzzy_measure_pairing</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: measuring1d.py — MEASURE1D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">largedef_c1_coefficient — DRIVE <code style="color:#22d3bf">tacdome</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_c1_coefficient(n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tacdome; tacdome.largedef_c1_coefficient(n: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;largedef_c1_coefficient&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>समीकरण (3) का क्रम 1 का गुणांक c₁: <code style="color:#22d3bf">&quot;derived&quot;</code> = 2n/(1+n) (व्युत्पत्ति), <code style="color:#22d3bf">&quot;printed&quot;</code> = (4+2n)/(1+n) (मूल पाठ में छपा हुआ), <code style="color:#22d3bf">&quot;memo&quot;</code> = 2/(1+n)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 知らない読み、n が [1, 3] の外。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">tacdome</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:powerlaw_linear_contact">powerlaw_linear_contact</a> · <a style="color:#22d3bf" href="opdrive:largedef_correction">largedef_correction</a> · <a style="color:#22d3bf" href="opdrive:largedef_radius_ratio">largedef_radius_ratio</a> · <a style="color:#22d3bf" href="opdrive:largedef_universal_correction">largedef_universal_correction</a> · <a style="color:#22d3bf" href="opdrive:large_deformation_contact">large_deformation_contact</a> · <a style="color:#22d3bf" href="opdrive:large_deformation_inverse">large_deformation_inverse</a> · <a style="color:#22d3bf" href="opdrive:mdr_spring_bed">mdr_spring_bed</a> · <a style="color:#22d3bf" href="opdrive:neohookean_cylinder_exact">neohookean_cylinder_exact</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tacdome.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">illusion_checker_shadow — GENERATIVE <code style="color:#22d3bf">illusion</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">rgb</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import illusion; illusion.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_checker_shadow&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Checker shadow। <b>चिह्नित 2 खानों का pixel मान बिल्कुल समान है</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>影の係数を <code style="color:#22d3bf">dark / light</code> に取ると、影の中の明マスは影の外の暗マスと <b>数として同じ</b>になる。★この図は <code style="color:#22d3bf">aa=0</code>(反エイリアスなし)で描く —— 縁の混色が入ると「厳密に同値」という主張のほうが嘘になるため。</p>
+<p>不変量: <code style="color:#22d3bf">CHECKER_PATCHES</code> の 2 マス —— <b>影の外の暗マス</b> (2,3) と <b>影の中の明マス</b> (5,5) —— の画素値が完全に一致(差が厳密に 0)。</p>
+<p>★ここは一度間違えた。対にすべきは「暗マス × 影なし」と「明マス × 影あり」で、同じ明暗のマスを 2 つ選んでも当然ながら一致しない(実測 0.31 の差が出た)。絵は「それらしく」見えてしまうので、<b>数で確かめるまで気づけない</b> —— この族が守ろうとしているのと同じ型の事故。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">illusion</code>)</h3>
+<p><a style="color:#22d3bf" href="opgenerative:illusion_cafe_wall">illusion_cafe_wall</a> · <a style="color:#22d3bf" href="opgenerative:illusion_muller_lyer">illusion_muller_lyer</a> · <a style="color:#22d3bf" href="opgenerative:illusion_ponzo">illusion_ponzo</a> · <a style="color:#22d3bf" href="opgenerative:illusion_zollner">illusion_zollner</a> · <a style="color:#22d3bf" href="opgenerative:illusion_poggendorff">illusion_poggendorff</a> · <a style="color:#22d3bf" href="opgenerative:illusion_fraser_spiral">illusion_fraser_spiral</a> · <a style="color:#22d3bf" href="opgenerative:illusion_ebbinghaus">illusion_ebbinghaus</a> · <a style="color:#22d3bf" href="opgenerative:illusion_kanizsa">illusion_kanizsa</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: illusion.py — GENERATIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

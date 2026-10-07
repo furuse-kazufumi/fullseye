@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 1dbad79b7ed1 -->
+<!-- i18n-source-sha: 7254141ce9cd -->
 # Fullseye als RAG eines KI-Assistenten nutzen (für Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · [English](./AI_RAG_GUIDE.en.md) · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · **Deutsch**
@@ -22,8 +22,8 @@ import fullseye
 fullseye.search_ops("Kantenerkennung", k=5)  # Python; über MCP: fullseye_find_ops
 ```
 
-Die Kurzbeschreibung jedes Ops ist in **sechs Sprachen** indiziert (japanisches Original plus englische,
-chinesische (vereinfacht/traditionell), koreanische und deutsche Übersetzung) und wird zusammen mit
+Die Kurzbeschreibung jedes Ops ist in **sieben Sprachen** indiziert (japanisches Original plus englische,
+chinesische (vereinfacht/traditionell), koreanische, deutsche und Hindi-Übersetzung; Hindi behält Fachbegriffe auf Englisch) und wird zusammen mit
 Op-Name, HALCON-Name und Ein-/Ausgabetyp abgeglichen; zurück kommt eine Rangliste mit der Beschreibung in
 der Sprache der Anfrage und dem Pfad der Notiz. Die Notizen selbst sind japanisch — ein grep nach
 „Rauschen" findet 0 Treffer, diese Suche findet Ops in Ihrer Sprache. Keine Embeddings, kein externer

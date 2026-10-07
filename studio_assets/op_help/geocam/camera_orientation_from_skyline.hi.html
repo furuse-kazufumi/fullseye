@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">camera_orientation_from_skyline — GEOCAM <code style="color:#22d3bf">orientation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import geocam; geocam.camera_orientation_from_skyline(skyline_rows, K, sky_table, yaw_step_deg=1.0, pitch_range=(-15.0, 15.0), roll_range=(-10.0, 10.0), coarse_step_deg=2.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgeocam.get(&quot;camera_orientation_from_skyline&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>photo की skyline (हर column की row) और DEM की skyline से (yaw, pitch, roll) तय करता है → table।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>写真の境界画素 (u, v) をカメラ光線にし、仮の姿勢で世界へ回すと、各列は (方位, 仰角) の点になる。その仰角と、DEM のスカイラインをその方位で引いた仰角の差の RMS が姿勢のコスト。yaw を <code style="color:#22d3bf">yaw_step_deg</code> 刻みで一周、pitch・roll を <code style="color:#22d3bf">coarse_step_deg</code> 刻みで格子探索し、最小の点から Nelder–Mead で連続値に詰める(scipy)。Baatz ら 2012 のスカイライン照合を、位置既知・ 1 台のカメラに絞った形。</p>
+<p><b>曖昧さを返す</b>: yaw ごとの最良コストの曲線(<code style="color:#22d3bf">yaw_profile_deg</code> / <code style="color:#22d3bf">yaw_profile_residual_deg</code>) と、最良と 2 番目の谷の差 <code style="color:#22d3bf">margin_deg</code>(2 番目の谷 = 最良から 20° 以上離れた最小)。平地・対称な尾根・半円しか写らない写真では谷が複数あり、margin が小さい。<b>margin が <code style="color:#22d3bf">coarse</code> の残差程度なら向きは決まっていない</b>と読む(黙って 1 つを返さない: <code style="color:#22d3bf">ambiguous</code>)。</p>
+<p>Args:</p>
+<p>skyline_rows: (W,) <code style="color:#22d3bf">skyline_extract</code> の出力(列ごとの行)。</p>
+<p>K: (fx, fy, cx, cy)。</p>
+<p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力。</p>
+<p>yaw_step_deg / coarse_step_deg: 粗い格子の刻み。pitch_range / roll_range: 探索範囲 [度]。</p>
+<p>Returns:</p>
+<p>table: <code style="color:#22d3bf">yaw_deg</code> / <code style="color:#22d3bf">pitch_deg</code> / <code style="color:#22d3bf">roll_deg</code> / <code style="color:#22d3bf">residual_deg</code>(仰角残差 RMS)/</p>
+<p><code style="color:#22d3bf">margin_deg</code> / <code style="color:#22d3bf">runner_up_yaw_deg</code> / <code style="color:#22d3bf">ambiguous</code>(bool)/ <code style="color:#22d3bf">yaw_profile_deg</code> (M,) /</p>
+<p><code style="color:#22d3bf">yaw_profile_residual_deg</code> (M,) / <code style="color:#22d3bf">n_columns</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegeocam:geocam">geocam family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_public_camera_heading">poc_public_camera_heading</a> — <code style="color:#22d3bf">py -3.11 examples/poc_public_camera_heading.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgeocam:render_skyline_view">render_skyline_view</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">orientation</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: geocam.py — GEOCAM operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

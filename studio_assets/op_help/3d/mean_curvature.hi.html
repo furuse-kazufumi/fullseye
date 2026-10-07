@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">mean_curvature — 3D <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mean_curvature(points, k=25, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curvature3d; curvature3d.mean_curvature(points, k=25, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;mean_curvature&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>mean curvature H=(k1+k2)/2। → (N,)। orientation पर निर्भर मात्रा।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>normals(向き付き参照法線, (N,3))未指定時は凸側ヒューリスティクス(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号を出す。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• 計算は <code style="color:#22d3bf">principal_curvatures</code> と同じ(k+1 近傍の PCA 法線 + 局所二次曲面フィット)で、<code style="color:#22d3bf">(k1 + k2) / 2</code> を返す。単位は 1/長さ。</p>
+<p style="margin:2px 0 2px 12px">• 符号は凸を正とする規約で、<code style="color:#22d3bf">normals</code> を渡したときだけ大域的な凹/凸に対応する。未指定では開いた面の H は常に凸側(絶対値相当)。</p>
+<p style="margin:2px 0 2px 12px">• 近傍が 5 点未満の点は 0。<code style="color:#22d3bf">k</code> は N-1 に切り詰められる。</p>
+<p style="margin:2px 0 2px 12px">• 半径 R の球なら <code style="color:#22d3bf">1/R</code>、円柱は <code style="color:#22d3bf">1/(2R)</code>、平面は 0。鞍点(k1 = -k2)も 0 だが <code style="color:#22d3bf">gaussian_curvature</code> は負になるので区別できる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvature_shape_index">curvature_shape_index</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvature_shape_index.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:principal_curvatures">principal_curvatures</a> · <a style="color:#22d3bf" href="op3d:gaussian_curvature">gaussian_curvature</a> · <a style="color:#22d3bf" href="op3d:shape_index">shape_index</a> · <a style="color:#22d3bf" href="op3d:estimate_normals">estimate_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: curvature3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

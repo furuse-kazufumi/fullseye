@@ -1,0 +1,42 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fit_bspline_surface — 3D <code style="color:#22d3bf">freeform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">bspline_surface</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bspline_surf; bspline_surf.fit_bspline_surface(x, y, z, kx=3, ky=3, smooth=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fit_bspline_surface&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>बिखरे (x, y, z) पर bicubic (default) B-spline surface का least squares fit (bisplrep)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>x, y, z : array_like</p>
+<p>同数の散布サンプル座標と高さ。任意形状で与えてよく内部で 1 次元化する。</p>
+<p>kx, ky : int</p>
+<p>x/y 方向の B スプライン次数(1=線形, 3=三次)。点数が (kx+1)*(ky+1) に</p>
+<p>満たない場合は自動で下げる(縮退回避)。</p>
+<p>smooth : float or None</p>
+<p>平滑化係数 s。None は点数ベースの自動値(<code style="color:#22d3bf">_auto_surface_smooth</code>)。</p>
+<p>0.0 で全点通過(補間寄り=過適合しやすい)、大きいほど滑らか。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>tck : list</p>
+<p><code style="color:#22d3bf">[tx, ty, c, kx, ky]</code>。eval_bspline_surface / surface_residual に渡す。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>点数が線形曲面にすら足りない(m&lt;4)、x/y/z の長さ不一致、非有限値、</p>
+<p>あるいは共線・重複による FITPACK 縮退で近似が得られない場合。</p>
+<p>補足(実装の裏取り):</p>
+<p style="margin:2px 0 2px 12px">• 座標系は自由: x, y は任意の平面座標(row/col でも実寸でも可)、z は高さ。3 配列は <code style="color:#22d3bf">ravel</code> で 1 次元化するので格子入力でも散布入力でも同じに扱う。</p>
+<p style="margin:2px 0 2px 12px">• 次数の自動降格は <code style="color:#22d3bf">(kx+1)*(ky+1) &gt; m</code> の間、大きい方(同点なら kx)を 1 ずつ下げ、両方 1 になったら止まる。降格は例外でなく無言で行われるので、実際の次数は返り値 <code style="color:#22d3bf">tck[3]</code>, <code style="color:#22d3bf">tck[4]</code> で確認できる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">smooth=None</code> の自動値は <code style="color:#22d3bf">max(0, m - sqrt(2m))</code>(FITPACK の推奨)。z のノイズ分散が 1 相当という前提の式なので、z の単位が小さく残差二乗和が小さいデータでは過平滑になりやすい。その場合は明示的に小さい <code style="color:#22d3bf">smooth</code> を渡す。</p>
+<p style="margin:2px 0 2px 12px">• FITPACK の警告(反復打ち切り等)は握り潰して tck を返す。例外はすべて <code style="color:#22d3bf">ValueError</code> に翻訳し、係数が空のときも <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• 決定論的(乱数なし)。</p>
+<p style="margin:2px 0 2px 12px">• 後段は <code style="color:#22d3bf">eval_bspline_surface</code>(評価)と <code style="color:#22d3bf">surface_residual</code>(逸脱量)。大域的な低次のうねりだけで良ければ <code style="color:#22d3bf">fit_poly_surface</code> / <code style="color:#22d3bf">eval_poly_surface</code> があるが、tck と多項式 dict は互換でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bspline_freeform">bspline_freeform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bspline_freeform.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">bspline_surface</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:surface_residual">surface_residual</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">freeform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:surface_residual">surface_residual</a> · <a style="color:#22d3bf" href="op3d:fit_bspline_curve">fit_bspline_curve</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_curve">eval_bspline_curve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: bspline_surf.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

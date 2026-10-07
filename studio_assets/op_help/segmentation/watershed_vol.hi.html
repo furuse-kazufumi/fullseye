@@ -1,0 +1,39 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">watershed_vol — SEGMENTATION <code style="color:#22d3bf">watershed3d</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>distance transform seed वाले watershed से 3D foreground को हर object के label में बाँटता है (public op का पतला संयोजन)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は <code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は <code style="color:#22d3bf">volops.vol_watershed</code> に委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成のグルーだけを足す。<code style="color:#22d3bf">markers</code> を省略すると距離変換の局所極大(<code style="color:#22d3bf">min_distance</code> NMS)を自動シードにする。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>binary : array_like</p>
+<p>bool または 0/1 の 3D 前景ボリューム。</p>
+<p>markers : ndarray or None</p>
+<p>シードを外部指定する場合の int ラベル配列(binary と同形状、0=無し, 1..n=シード)。</p>
+<p>None なら距離変換の極大から自動生成する。</p>
+<p>min_distance : float</p>
+<p><code style="color:#22d3bf">markers=None</code> のときのシード最小間隔(voxel)。</p>
+<p>method : {&quot;auto&quot;, &quot;skimage&quot;, &quot;scipy&quot;}</p>
+<p>バックエンド選択。&quot;skimage&quot; 指定で不在なら fail-closed(ImportError)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>labels : ndarray(int32)</p>
+<p>binary と同形状。背景 0、各物体に 1..k のラベル(前景を過不足なく被覆)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>形状不正・退化入力・不正 method のとき(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidesegmentation:halcon_segmentation">halcon_segmentation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:watershed3d_tour">watershed3d_tour</a> — <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">labels</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">watershed3d</code>)</h3>
+<p><a style="color:#22d3bf" href="opsegmentation:distance_peaks">distance_peaks</a> · <a style="color:#22d3bf" href="opsegmentation:separate_touching">separate_touching</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: watershed3d.py — SEGMENTATION operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,26 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">signed_surface_distance — SHAPESTAT <code style="color:#22d3bf">deviation</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>query point से सतह तक <b>sign सहित</b> दूरी। → <code style="color:#22d3bf">(N,)</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>符号は面の法線から決める(外側が正)。1-D の輪郭には <code style="color:#22d3bf">profileops.profile_deviation</code> があるのに 3-D に相当が無かった、というのが 2026-09-06 に PoC が出した穴。</p>
+<p>法線を省くと <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する —— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、回転すると 4 割が裏返る。<code style="color:#22d3bf">pointcloud.fpfh</code> が踏んだのと同じ穴)。</p>
+<p><code style="color:#22d3bf">k</code> は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭けることになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた平均の向きで決める(距離そのものは最近傍のまま)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_am_thermal_to_ct">poc_am_thermal_to_ct</a> — <code style="color:#22d3bf">py -3.11 examples/poc_am_thermal_to_ct.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:shapestat_landmark_tour">shapestat_landmark_tour</a> — <code style="color:#22d3bf">py -3.11 examples/shapestat_landmark_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">signal</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opshapestat:shape_reconstruct">shape_reconstruct</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">deviation</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: shapestats.py — SHAPESTAT operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

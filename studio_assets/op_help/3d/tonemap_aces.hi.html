@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">tonemap_aces — 3D <code style="color:#22d3bf">render</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render_tonemap; render_tonemap.tonemap_aces(hdr, exposure: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;tonemap_aces&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ACES filmic approximation (Narkowicz 2015) से HDR को <code style="color:#22d3bf">[0, 1]</code> के LDR में compress करता है। → float64।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">x = hdr * exposure</code> に対し <code style="color:#22d3bf">f(x) = x(a x + b) / (x(c x + d) + e)</code> を適用する。フィルム的な S 字カーブで暗部を持ち上げハイライトを緩やかに巻き取り、映像制作標準の「見栄え」を出す。<code style="color:#22d3bf">x &lt; ~7.24</code> の範囲では狭義単調増加・出力 &lt; 1(それ以上は 1 に飽和しクリップ)。カラー <code style="color:#22d3bf">(H, W, C)</code> はチャンネル独立に写像する。</p>
+<p>Args:</p>
+<p>hdr: HDR 画像。<code style="color:#22d3bf">(H, W)</code> or <code style="color:#22d3bf">(H, W, C)</code>、放射輝度 &gt;= 0。</p>
+<p>exposure: 写像前に掛ける露出スケール(正)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">[0, 1]</code> の float64 LDR 画像(入力と同形状)。</p>
+<p>Raises:</p>
+<p>ValueError: 空/非有限/負の放射輝度、非正の exposition(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:render_tonemap">render_tonemap</a> — <code style="color:#22d3bf">py -3.11 examples_3d/render_tonemap.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">render</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:project_points">project_points</a> · <a style="color:#22d3bf" href="op3d:render_point_depth">render_point_depth</a> · <a style="color:#22d3bf" href="op3d:render_volume_projection">render_volume_projection</a> · <a style="color:#22d3bf" href="op3d:render_shaded">render_shaded</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:phong_shade">phong_shade</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render_tonemap.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

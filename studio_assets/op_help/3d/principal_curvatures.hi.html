@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">principal_curvatures — 3D <code style="color:#22d3bf">curvature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">curvature</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.principal_curvatures(points, k=25, normals=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import curvature3d; curvature3d.principal_curvatures(points, k=25, normals=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;principal_curvatures&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर point की principal curvatures (k1&gt;=k2)। → (k1 (N,), k2 (N,))।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>normals(向き付き参照法線, (N,3))未指定時は凸側マグニチュード(開面の凹/凸符号は不定)。向き付き法線を渡すと大域向きに整合し正しい符号(凹=負, 凸=正)。</p>
+<p>手順(各点、Python ループ):</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cKDTree</code> で自身を含む k+1 近傍を取る(k は N-1 に切り詰め)。近傍が 5 点未満なら <code style="color:#22d3bf">k1 = k2 = 0</code> を返す(5 係数の二次曲面が組めないため)。</p>
+<p style="margin:2px 0 2px 12px">• 近傍座標をクエリ点原点に平行移動し、<code style="color:#22d3bf">local.T @ local</code> の最小固有ベクトルを法線とする(向きは <code style="color:#22d3bf">normals</code> があればそれに整合、無ければ近傍重心から離れる側)。</p>
+<p style="margin:2px 0 2px 12px">• 接線基底 (t1, t2) に射影し <code style="color:#22d3bf">w = d·u + e·v + a·u² + b·uv + c·v²</code> を最小二乗フィット → 第一/第二基本形式から shape operator の固有値を取り、凸を正にして <code style="color:#22d3bf">k1 &gt;= k2</code> に並べる。</p>
+<p style="margin:2px 0 2px 12px">• 単位は 1/長さ(点群の単位に依存)。半径 R の球なら <code style="color:#22d3bf">k1 = k2 = 1/R</code>、円柱は <code style="color:#22d3bf">(1/R, 0)</code>、平面は 0。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">k</code> は近傍点数(既定 25)。大きいほど平滑で曲率は低め、小さいほどノイズを拾う。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">normals</code> は (N,3) で有限かつ非ゼロ行が必須(<code style="color:#22d3bf">ValueError</code>)。決定論的。</p>
+<p style="margin:2px 0 2px 12px">• 後段: <code style="color:#22d3bf">mean_curvature</code> / <code style="color:#22d3bf">gaussian_curvature</code> / <code style="color:#22d3bf">shape_index</code>(いずれも内部で同じ計算を繰り返す)。shape index と曲がりの対が要るなら 2 本を <code style="color:#22d3bf">(N,2)</code> に並べて <code style="color:#22d3bf">curvature_to_shape_index</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blas_threads_and_memory">blas_threads_and_memory</a> — Matrix decompositions धीमे क्यों हैं — BLAS threads, caches, memory layout</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:curvature_grasp">curvature_grasp</a> — <code style="color:#22d3bf">py -3.11 examples_3d/curvature_grasp.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_curvature">itokawa_curvature</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_curvature.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">curvature</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">curvature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:mean_curvature">mean_curvature</a> · <a style="color:#22d3bf" href="op3d:gaussian_curvature">gaussian_curvature</a> · <a style="color:#22d3bf" href="op3d:shape_index">shape_index</a> · <a style="color:#22d3bf" href="op3d:estimate_normals">estimate_normals</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: curvature3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

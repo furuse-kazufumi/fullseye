@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">bearing_angle_image — 3D <code style="color:#22d3bf">range_image</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bearing_angle_image(depth, direction=&#x27;down&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import range_image; range_image.bearing_angle_image(depth, direction=&#x27;down&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;bearing_angle_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>bearing-angle image: scan direction के साथ line of sight और local surface के बीच का कोण (range image का classic descriptor)। → HxW (डिग्री)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>隣接深度差から局所傾斜角 atan2(Δdepth, step) を計算。斜面の向きに敏感で照明不変。direction ∈ {down,up,right,left}。</p>
+<p><code style="color:#22d3bf">direction</code> が &quot;down&quot;/&quot;up&quot; なら行方向(axis=0)、&quot;right&quot;/&quot;left&quot; なら列方向(axis=1)の <code style="color:#22d3bf">np.gradient</code>(中心差分、端は片側差分)で隣接深度差 Δd を取り、&quot;up&quot;/&quot;left&quot; では符号を反転する。角度は <code style="color:#22d3bf">degrees(atan2(Δd, 1))</code> なので値域は (-90, 90) 度、平坦面で 0、走査方向に遠ざかる面で正。格子間隔を 1 としているため、深度の単位が画素と違う(mm 等)場合は幾何学的な入射角そのものではなく「深度単位あたりの傾き」の角になる。上記 4 語以外の <code style="color:#22d3bf">direction</code> は列方向・符号そのままとして扱われ、エラーにはならない。返り値は float32 の <code style="color:#22d3bf">(H,W)</code>。深度の段差では ±90 度近くまで振れるので遮蔽の目安にもなるが、段差と斜面を区別するには <code style="color:#22d3bf">occlusion_edges</code> を使う。入力検証は無い。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sensor_seg">sensor_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sensor_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">range_image</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: range_image.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

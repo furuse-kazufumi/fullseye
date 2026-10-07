@@ -1,0 +1,36 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dwt_transform — MATH <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import mathtransforms; mathtransforms.dwt_transform(x, *, order: &#x27;int&#x27; = 2, levels: &#x27;int&#x27; = 1, axes=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsmath.get(&quot;dwt_transform&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Daubechies dbN का multi-level, N-dimensional discrete wavelet transform (periodic boundary पर exact रूप से orthonormal)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Args:</p>
+<p>x: 実配列(1-D 信号・2-D 画像・3-D ボリューム)。変換する軸の長さは 2^levels の倍数。</p>
+<p>order: dbN の N(1 = Haar)。</p>
+<p>levels: 段数。各段で近似(全軸ローパス)をさらに分ける。</p>
+<p>axes: 変換する軸(省略で全軸)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">approx</code> 最後の近似、<code style="color:#22d3bf">details</code> = 段ごとの dict(キーは軸ごとの &#x27;a&#x27;/&#x27;d&#x27; の並び、例 2-D なら &#x27;ad&#x27;・&#x27;da&#x27;・&#x27;dd&#x27;)、<code style="color:#22d3bf">energy_in</code>・<code style="color:#22d3bf">energy_out</code>(Parseval で一致)、<code style="color:#22d3bf">order</code>・<code style="color:#22d3bf">levels</code>・<code style="color:#22d3bf">axes</code>。<code style="color:#22d3bf">dwt_inverse</code> に丸ごと渡すと元に戻る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
+<p>mathops के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
+<p style="margin:2px 0 2px 12px">• <b>complex input से <code style="color:#22d3bf">ValueError</code></b> — float64 में ज़बरदस्ती बदलने पर imaginary part चुपचाप छूट जाता है (numpy केवल ComplexWarning देता है और &quot;सही दिखने वाला पर गलत&quot; real number लौटाता है)। <code style="color:#22d3bf">.real</code>/<code style="color:#22d3bf">.imag</code>/<code style="color:#22d3bf">abs()</code> स्पष्ट रूप से लिखें, या complex data संभालने वाले complexops का उपयोग करें।</p>
+<p style="margin:2px 0 2px 12px">• <b>masked array (masked elements वाला) से <code style="color:#22d3bf">ValueError</code></b> — mask हटाकर नीचे के raw values इस्तेमाल करने वाला implicit conversion अस्वीकार है। भरना है या हटाना है, यह स्पष्ट रूप से बताएँ।</p>
+<p style="margin:2px 0 2px 12px">• <b>हर input पर NaN/Inf से <code style="color:#22d3bf">ValueError</code></b> (गिनती बताकर अस्वीकार — क्योंकि यह पूरे परिणाम में फैल जाता है)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Shape सख़्त है</b>: 1-D और 2-D को implicit रूप से promote या broadcast नहीं किया जाता (vector slot में matrix या matrix slot में vector देने पर <code style="color:#22d3bf">ValueError</code>; reshape स्पष्ट रूप से करें)।</p>
+<p style="margin:2px 0 2px 12px">• <b>Size की सीमा</b>: matrix लेने वाले ops और <code style="color:#22d3bf">stat_histogram</code> के bins, <code style="color:#22d3bf">mathops.MAX_ELEMENTS</code> (2^26 ≈ 6.7 करोड़ elements) से अधिक होने पर <code style="color:#22d3bf">ValueError</code> देते हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemath:math_metrology">math_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:transforms_tour">transforms_tour</a> — <code style="color:#22d3bf">py -3.11 examples/transforms_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opmath:dynsys_poincare_section">dynsys_poincare_section</a> · <a style="color:#22d3bf" href="opmath:dwt_inverse">dwt_inverse</a> · <a style="color:#22d3bf" href="opmath:chebyshev_eval_nd">chebyshev_eval_nd</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="opmath:abel_transform">abel_transform</a> · <a style="color:#22d3bf" href="opmath:abel_inverse">abel_inverse</a> · <a style="color:#22d3bf" href="opmath:abel_inverse_image">abel_inverse_image</a> · <a style="color:#22d3bf" href="opmath:abel_revolve">abel_revolve</a> · <a style="color:#22d3bf" href="opmath:hankel_transform">hankel_transform</a> · <a style="color:#22d3bf" href="opmath:tf_poles_zeros">tf_poles_zeros</a> · <a style="color:#22d3bf" href="opmath:tf_freq_response">tf_freq_response</a> · <a style="color:#22d3bf" href="opmath:tf_impulse_response">tf_impulse_response</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: mathtransforms.py — MATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">vol_hessian_blobness — 3D <code style="color:#22d3bf">feature</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_hessian_blobness(vol, scale, black_ridges=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import volops; volops.vol_hessian_blobness(vol, scale, black_ridges=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;vol_hessian_blobness&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>एक *scale* पर Hessian eigenvalues से blob-like (spherical) response।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>A bright blob has all three eigenvalues negative and comparable in magnitude; the response is the geometric mean of their magnitudes, <code style="color:#22d3bf">(|l1| |l2| |l3|)**(1/3)</code>, gated to voxels where the three share the sign of a blob of the requested polarity (all negative for bright, all positive for dark). Normalised to <code style="color:#22d3bf">[0, 1]</code>. Complements the line filters — a Frangi-style <code style="color:#22d3bf">Rb</code> term rejects blobs, this one keeps them. Reference: the second-order (Hessian) blob measure, cf. Frangi et al. 1998 / Lindeberg scale-space blobs.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:vessel_metrology">vessel_metrology</a> — <code style="color:#22d3bf">py -3.11 examples_3d/vessel_metrology.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">feature</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a> · <a style="color:#22d3bf" href="op3d:edt_jfa_vector">edt_jfa_vector</a> · <a style="color:#22d3bf" href="op3d:vol_frangi">vol_frangi</a> · <a style="color:#22d3bf" href="op3d:vol_local_std">vol_local_std</a> · <a style="color:#22d3bf" href="op3d:vol_local_thickness">vol_local_thickness</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: volops.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lidar_scan — DRIVE <code style="color:#22d3bf">lidar</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh × table × matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>mesh world <code style="color:#22d3bf">(V, F)</code> में pose <code style="color:#22d3bf">T_sensor</code> (world ← sensor) वाले LiDAR का 1 sweep चलाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は <code style="color:#22d3bf">ValueError</code>)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> の dict。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">labels</code>: 面ごとの int ラベル (M,) または None(None なら当たったセルのラベルは 0)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code>: ノイズの乱数種(<code style="color:#22d3bf">noise_std == 0</code> なら乱数を一切引かず、ビット単位で決定的)。</p>
+<p>返り値の dict:</p>
+<p><code style="color:#22d3bf">points</code> (K,3) <b>世界座標</b>の反射点(行優先: beam 0 の列 0 から)/ <code style="color:#22d3bf">ranges</code> (n_beams, n_az) [m] (0 = 無返答)/ <code style="color:#22d3bf">hit_face</code> (n_beams, n_az) int(−1 = 無し)/ <code style="color:#22d3bf">labels</code> (n_beams, n_az) int (−1 = 無し)/ <code style="color:#22d3bf">beam</code> (K,) int / <code style="color:#22d3bf">col</code> (K,) int / <code style="color:#22d3bf">n_hits</code> int。最近接の面が <code style="color:#22d3bf">range_min</code> 未満または <code style="color:#22d3bf">range_max</code> 超なら無返答(奥の面へ抜けない)。ノイズは無ノイズ距離で返答の有無を決めた後、<code style="color:#22d3bf">ranges</code> と <code style="color:#22d3bf">points</code> に足す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_school">poc_driving_school</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_school.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_opposite">rss_longitudinal_opposite</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">lidar</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:lidar_spec">lidar_spec</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lidarsim.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

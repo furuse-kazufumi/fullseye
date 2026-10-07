@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_synth_naca4 — PROFILE <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">pairs</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_synth_naca4(code=&#x27;2412&#x27;, n=161, closed_te=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_synth_naca4&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>NACA 4-अंक airfoil closed form में बनाता है। <code style="color:#22d3bf">(N, 2)</code> की एक लगातार stroke वाली outline लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">code</code> は 4 桁(例 <code style="color:#22d3bf">&quot;2412&quot;</code> = キャンバー 2 %、位置 40 %、厚み 12 %)。点は前縁を密にするために余弦分布で置く。</p>
+<p><code style="color:#22d3bf">closed_te</code> は後縁を閉じる係数を使うかどうか。<b>既定は歴史的な係数</b> (0.1015)で、後縁がわずかに開く。閉じる版は 0.1036。どちらを使ったかで後縁付近の計測が変わるので、真値として使うなら固定して書き残すこと。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(2*n-1, 2)</code>。後縁 → 上面 → 前縁 → 下面 → 後縁 の順(Selig 流)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_frame_tour">profile_frame_tour</a> — <code style="color:#22d3bf">py -3.11 examples/profile_frame_tour.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_shape_inspection">profile_shape_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/profile_shape_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a> · <a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_resample">profile_resample</a> · <a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

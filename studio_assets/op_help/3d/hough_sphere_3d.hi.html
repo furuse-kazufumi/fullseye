@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">hough_sphere_3d — 3D <code style="color:#22d3bf">detect</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">primitive</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hough_sphere_3d(vol, device=&#x27;cpu&#x27;, radii=None, mc=0.0, iso=0.5, subvoxel=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.hough_sphere_3d(vol, device=&#x27;cpu&#x27;, radii=None, mc=0.0, iso=0.5, subvoxel=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;hough_sphere_3d&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>GPU</b>: इस op का GPU path है (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>sphere detection (2D Hough circle का 3D lift)। हर radius r के लिए centre = p + sgn·r·n पर vote करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>薄い境界面の各 voxel が法線 n に沿って中心へ投票(符号は明/暗どちらの球でも拾えるよう両方試す)。半径ごとの中心ピーク投票の最大 = 検出球。votes-vs-radius を放物線補間で sub-voxel 半径。</p>
+<p>産業: ボール・球状部品・点群中の球面。返り値 (votes, radius, center(3,))。</p>
+<p>手順: <code style="color:#22d3bf">(vol &gt; iso)</code> の 1 voxel 厚の境界面 voxel <code style="color:#22d3bf">p</code> とその単位法線 <code style="color:#22d3bf">n</code>(<code style="color:#22d3bf">sobel3d</code>、<code style="color:#22d3bf">mc</code> は生出力への閾値)から、半径 <code style="color:#22d3bf">r</code> ごとに <code style="color:#22d3bf">c = round(p ± r·n)</code> へ投票し(± は明球・暗球の両方を試し、多い方を採る)、volume 内に落ちた票の最大値をその r のスコアにする。全 r で最大のものが検出球。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radii</code>: 試す半径(voxel 単位)の列。None なら <code style="color:#22d3bf">range(4, 16)</code>(4〜15)。<code style="color:#22d3bf">subvoxel=True</code></p>
+<p>は最良 r の <b>両隣 r±1 が radii に含まれるとき</b>だけ votes の放物線補間で半径を ±1 以内に精緻化する(端の r や飛び飛びの radii では整数のまま)。</p>
+<p style="margin:2px 0 2px 12px">• 返り値 <code style="color:#22d3bf">(votes, radius, center)</code>: votes は票数(境界 voxel 数が上限)、radius は float、</p>
+<p>center は <b>整数 (z,y,x) の tuple</b>(中心は精緻化しない)。</p>
+<p style="margin:2px 0 2px 12px">• 境界 voxel が 10 未満なら <b>None</b>。<code style="color:#22d3bf">radii</code> が空だと TypeError で落ちる。</p>
+<p style="margin:2px 0 2px 12px">• 1 個しか返さない。複数球は検出した球の voxel を消して再実行するか、点群なら</p>
+<p><code style="color:#22d3bf">ransac_sphere</code> / <code style="color:#22d3bf">fit_sphere_3d</code>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:detect_primitives_3d">detect_primitives_3d</a> — <code style="color:#22d3bf">py -3.11 examples_3d/detect_primitives_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">primitive</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:angle_between_lines">angle_between_lines</a> · <a style="color:#22d3bf" href="op3d:angle_between_planes">angle_between_planes</a> · <a style="color:#22d3bf" href="op3d:angle_line_plane">angle_line_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_plane">distance_point_plane</a> · <a style="color:#22d3bf" href="op3d:distance_point_line">distance_point_line</a> · <a style="color:#22d3bf" href="op3d:distance_line_line">distance_line_line</a> · <a style="color:#22d3bf" href="op3d:distance_segment_segment">distance_segment_segment</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">detect</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:hough_plane_3d">hough_plane_3d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

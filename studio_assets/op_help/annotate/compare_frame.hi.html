@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">compare_frame — ANNOTATE <code style="color:#22d3bf">compose</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.compare_frame(left, right, layout=&#x27;h&#x27;, labels=None, divider=3, gap=0, divider_color=&#x27;neutral&#x27;, background=0.0, label_anchor=&#x27;lt&#x27;, label_margin=8, scheme=&#x27;okabe_ito&#x27;, **text_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;compare_frame&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>2 image साथ-साथ रखता है, सीमा पर <b>divider</b> और <b>label</b> के साथ।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>left, right : ndarray</p>
+<p>比べる 2 枚。大きさが違ってもよい(足りない側は <code style="color:#22d3bf">background</code> で埋める)。</p>
+<p>チャンネル数は揃っていること。</p>
+<p>layout : {&#x27;h&#x27;,&#x27;v&#x27;}</p>
+<p><code style="color:#22d3bf">&#x27;h&#x27;</code> = 左右、<code style="color:#22d3bf">&#x27;v&#x27;</code> = 上下。</p>
+<p>labels : (str, str) or None</p>
+<p>それぞれの見出し。</p>
+<p>divider : int</p>
+<p>仕切りの太さ [px] (0 で無し)。</p>
+<p>gap : int</p>
+<p>仕切りの両側に空ける余白[px]。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray</p>
+<p>新しい合成画像。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Raises</h4>
+<p>ValueError</p>
+<p>チャンネル数の不一致 / 未知の layout / 負の divider・gap /</p>
+<p>labels が 2 要素でない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_gallery">annotate_gallery</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_gallery.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">compose</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:zoom_inset">zoom_inset</a> · <a style="color:#22d3bf" href="opannotate:panel_grid">panel_grid</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

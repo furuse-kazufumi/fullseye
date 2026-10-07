@@ -1,0 +1,70 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">copy_move_regions — IMGFORENSICS <code style="color:#22d3bf">copy_move</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.copy_move_regions(image, method: &#x27;str&#x27; = &#x27;keypoint&#x27;, min_matches: &#x27;int&#x27; = 4, min_offset: &#x27;float&#x27; = 16.0, offset_tol: &#x27;float&#x27; = 2.0, ratio: &#x27;float&#x27; = 0.6, patch: &#x27;int&#x27; = 11, block: &#x27;int&#x27; = 8, step: &#x27;int&#x27; = 1, n_dct: &#x27;int&#x27; = 10, min_variance: &#x27;float&#x27; = 0.0001, max_feature_dist: &#x27;float&#x27; = 0.02, neighbours: &#x27;int&#x27; = 2, ransac_thresh: &#x27;float&#x27; = 3.0, ransac_iters: &#x27;int&#x27; = 300, seed: &#x27;int&#x27; = 0) -&gt; &#x27;list&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;copy_move_regions&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>1 image के अंदर <b>copy-move</b> (स्व-दोहराए गए) region के जोड़े लौटाता है। <code style="color:#22d3bf">table</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">method=&quot;keypoint&quot;</code>(既定)</p>
+<p><code style="color:#22d3bf">features.harris_corners</code> でコーナーを取り、</p>
+<p><code style="color:#22d3bf">features.describe_patches</code> で正規化パッチ記述子を作り、</p>
+<p><b>自分から <code style="color:#22d3bf">min_offset</code> px 以上離れた</b>最近傍と Lowe の比率検定で対応を作る</p>
+<p>(<code style="color:#22d3bf">_self_match</code>)。対応をシフトベクトルで束ね、群ごとに</p>
+<p><code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で幾何整合を確認する。</p>
+<p>相似変換は <code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(Umeyama)で当てて</p>
+<p><code style="color:#22d3bf">similarity</code> に入れる。</p>
+<p><code style="color:#22d3bf">method=&quot;block&quot;</code></p>
+<p>Fridrich, Soukal &amp; Lukáš 2003。<code style="color:#22d3bf">block</code> 角の重なりブロックを <code style="color:#22d3bf">step</code> px</p>
+<p>刻みで取り(既定 <code style="color:#22d3bf">step=1</code> —— <b>これは飾りではない</b>。下の「歩幅」参照)、</p>
+<p>各ブロックの DCT 低周波 <code style="color:#22d3bf">n_dct</code> 係数を特徴にして辞書順に並べ、</p>
+<p>辞書順で近い <code style="color:#22d3bf">neighbours</code> 件までを候補にし、特徴距離が</p>
+<p><code style="color:#22d3bf">max_feature_dist</code> 以下のものだけをシフトベクトルで数える。</p>
+<p>回転・拡大には効かないが、角の少ない画像で keypoint 法より拾える。</p>
+<p>分散が <code style="color:#22d3bf">min_variance</code> 未満のブロックは捨てる(<b>一様な空を空にコピーしても同じ特徴になる</b> = 検出器が必ず作る偽陽性の主因)。</p>
+<p><b>歩幅 (<code style="color:#22d3bf">step</code>) を 1 にしてある理由(実測で決めた)</b>: ブロック法が「同じ特徴」を見つけられるのは、複製元と複製先が <b>同じ格子に乗ったとき</b>だけである。<code style="color:#22d3bf">step=4</code> にすると、シフトが 4 の倍数でない複製(たとえば <code style="color:#22d3bf">(110, 128)</code>)は <b>原理的に一度も一致しない</b>。実測で <code style="color:#22d3bf">step=4</code> は真のシフトを 1 件も返さず、代わりに偽の群を 60 件返した。<code style="color:#22d3bf">step=1</code> なら真のシフトが第 1 群に来る。大きい画像で重いときは <code style="color:#22d3bf">step</code> を上げてよいが、<b>上げた歩幅の倍数のシフトしか見つからなくなる</b>ことを承知の上で上げること。</p>
+<p>返りは領域対の list(対応数の多い順)。各要素:</p>
+<p><code style="color:#22d3bf">offset</code>       シフト <code style="color:#22d3bf">(dy, dx)</code>(row, col)。向きは <b>位置で正規化</b>してある</p>
+<p>(辞書順で正になる向き)—— 添字で決めると同じ複製が</p>
+<p><code style="color:#22d3bf">(110, 128)</code> にも <code style="color:#22d3bf">(-110, -128)</code> にもなる(実測して直した)</p>
+<p><code style="color:#22d3bf">n_matches</code>    その群の対応数</p>
+<p><code style="color:#22d3bf">n_inliers</code>    RANSAC の内点数(<code style="color:#22d3bf">method=&quot;block&quot;</code> では <code style="color:#22d3bf">n_matches</code> と同じ)</p>
+<p><code style="color:#22d3bf">inlier_ratio</code> 内点率 <code style="color:#22d3bf">src_bbox</code> / <code style="color:#22d3bf">dst_bbox</code>  <code style="color:#22d3bf">(r0, c0, r1, c1)</code> <code style="color:#22d3bf">src_points</code> / <code style="color:#22d3bf">dst_points</code>  <code style="color:#22d3bf">(N, 2)</code> の (row, col)</p>
+<p><code style="color:#22d3bf">similarity</code>   Umeyama で当てた <code style="color:#22d3bf">3x3</code>(<code style="color:#22d3bf">method=&quot;keypoint&quot;</code> のみ、なければ <code style="color:#22d3bf">None</code>)</p>
+<p><code style="color:#22d3bf">method</code>       使った方法</p>
+<p><code style="color:#22d3bf">caveats</code>      この結果が言えないこと</p>
+<p><b>正解が手元にあるので当てられることを数で固定してある</b> (<code style="color:#22d3bf">tests/test_imgforensics.py::test_copy_move_finds_the_known_offset</code>、256x256 のテクスチャ画像の <code style="color:#22d3bf">(40, 32)</code> にある 64x64 を <code style="color:#22d3bf">(150, 160)</code> へ複製 = 真のシフト <code style="color:#22d3bf">(110, 128)</code>):</p>
+<p>============ ================= ============ ========= ==============</p>
+<p>method       第 1 群の offset  n_matches    群の数    誤差</p>
+<p>============ ================= ============ ========= ==============</p>
+<p>keypoint     (110.0, 128.0)    15           1         0 px</p>
+<p>block        (110.0, 128.0)    3249         1         0 px</p>
+<p>============ ================= ============ ========= ==============</p>
+<p><b>偽陽性も測ってある</b>: 改竄していない同じ種類の画像 3 枚では、keypoint 法・block 法とも群 <b>0 件</b>(seed 4/5/6)。</p>
+<p><b>言えないこと</b>(すべて同じテストで測ってある):</p>
+<p style="margin:2px 0 2px 12px">• 一様な領域(空・壁)は複製しなくても同じ特徴になる。上半分を一様な「空」にした(<b>改竄していない</b>)画像で、<code style="color:#22d3bf">min_variance=1e-4</code> と <code style="color:#22d3bf">1e-6</code> はどちらも 0 件だが、<code style="color:#22d3bf">min_variance=0</code> にすると <b>264 対の偽の群が 1 件</b>出る(シフト <code style="color:#22d3bf">(1, -247)</code> = 空の中の適当な対応)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;keypoint&quot;</code> は正規化パッチ記述子なので <b>回転に効かない</b>。複製を回して貼ると群の数は 0 度 1 件 → <b>5 度 0 件</b> → 15 度 0 件 → 30 度 0 件。<code style="color:#22d3bf">similarity</code> に回転が入って返ることは実質ない。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">method=&quot;block&quot;</code> も <b>回転にまったく効かない</b>(5 度で 0 件)。</p>
+<p style="margin:2px 0 2px 12px">• 検出ゼロ = 複製が無い、ではない。再圧縮を挟んだ複製は特徴距離が伸びて <code style="color:#22d3bf">max_feature_dist</code> を超える。実測(同じ複製画像を JPEG に通してから検出):</p>
+<p>========== ============================ ==========================</p>
+<p>品質       keypoint 第 1 群の n_matches  block 第 1 群の n_matches</p>
+<p>========== ============================ ==========================</p>
+<p>無圧縮     15                           3249</p>
+<p>95         10                           138</p>
+<p>85          7                           10</p>
+<p>75          7                           <b>0 件(群なし)</b></p>
+<p>========== ============================ ==========================</p>
+<p>シフトはどの品質でも <code style="color:#22d3bf">(110.0, 128.0)</code> のまま正しい。<b>壊れるのは「見つかるかどうか」で、見つかったときの答えではない</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_forensics_roc">poc_forensics_roc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_forensics_roc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:evidence_quantile">evidence_quantile</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">copy_move</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

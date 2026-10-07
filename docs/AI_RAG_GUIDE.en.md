@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 1dbad79b7ed1 -->
+<!-- i18n-source-sha: 7254141ce9cd -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -31,8 +31,8 @@ import fullseye
 fullseye.search_ops("edge detection", k=5)   # Python; over MCP use fullseye_find_ops
 ```
 
-Every op summary is indexed in **six languages** (the Japanese original plus English, Simplified and
-Traditional Chinese, Korean and German translations) together with the op name, HALCON name and in/out
+Every op summary is indexed in **seven languages** (the Japanese original plus English, Simplified and
+Traditional Chinese, Korean, German and Hindi translations; the Hindi keeps technical terms in English, so search those in English) together with the op name, HALCON name and in/out
 types; results come back ranked, with the summary in your query's language and the path of the note.
 The note bodies are Japanese, so a grep for "Rauschen", "降噪" or "잡음" finds nothing — this search finds
 ops in your own language. No embeddings and no external service (BM25, standard library only).

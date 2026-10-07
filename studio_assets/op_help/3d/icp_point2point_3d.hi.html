@@ -1,0 +1,48 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">icp_point2point_3d — 3D <code style="color:#22d3bf">refine</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">pose</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.icp_point2point_3d(src, dst, iters=50, init_R=None, init_t=None, tol=1e-06, max_corr_dist=None, trim_ratio=None, device=&#x27;cpu&#x27;, reproducible=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;icp_point2point_3d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>point cloud को point-to-point ICP (Kabsch/SVD) से refine करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>粗いマッチ推定(整数NCC / Fourier-Mellin±3° / Hough±0.5voxel)で得た初期姿勢 (init_R, init_t) を出発点に、src 側点群を dst 側点群へ剛体変換で位置合わせする。各反復で最近傍対応(cKDTree)を張り直し、Kabsch アルゴリズム(SVD)で相対回転・並進を求めて累積することで、対応が既知でなくてもサブボクセル精度へ収束させる。</p>
+<p>部分重なり・外れ値には Trimmed ICP(距離の小さい対応のみ採用)と絶対距離ゲート(max_corr_dist)で対処する。最終 RMSE は実際に採用した対応(インライア)上で評価するため、部分観測でも姿勢品質を正しく反映する。</p>
+<p>引数:</p>
+<p>src: (N,3) 移動側点群(torch.Tensor か numpy.ndarray)。</p>
+<p>dst: (M,3) 固定側(参照)点群。</p>
+<p>iters: 最大反復回数。</p>
+<p>init_R: (3,3) 初期回転。None なら単位行列。</p>
+<p>init_t: (3,) 初期並進。None なら零ベクトル。</p>
+<p>tol: RMSE の相対改善がこの値を下回れば収束打ち切り。</p>
+<p>max_corr_dist: この距離を超える対応を外れ値として棄却(None で無効)。</p>
+<p>trim_ratio: 0&lt;r&lt;=1。各反復で最近傍距離の小さい上位 r 割の対応のみ</p>
+<p>採用する Trimmed ICP。部分重なり(重なり率 r)に有効。None で無効。</p>
+<p>device: torch デバイス(&quot;cpu&quot; 等)。SVD をこのデバイス上で解く。</p>
+<p>reproducible: True なら点の順・BLAS のスレッド数に依らない縮約にする(既定 False = 従来どおり)。</p>
+<p>平均は math.fsum、相互共分散 H は ozakimm(Ozaki スキーム)、姿勢の適用は要素ごとの演算、RMSE も math.fsum。</p>
+<p>src の点の順を入れ替えても R・t・rmse がビット単位で同じ(同じ計算機・同じ LAPACK の上)。trim_ratio の切れ目で</p>
+<p>距離がちょうど同点の点は、順で選ばれ方が変わりうる。20 万点で 1 反復あたり 0.7 ms が 170 ms 程度になる。</p>
+<p>返り値:</p>
+<p>R: (3,3) 回転。dst ~= src @ R.T + t を満たす。<b>torch がある環境では <code style="color:#22d3bf">torch.Tensor</code>、無ければ同じ値の <code style="color:#22d3bf">numpy.ndarray</code></b>(2026-09-07 に</p>
+<p>本体を numpy 化したときも、互換のため型は据え置いた)。</p>
+<p>★同じ族の <code style="color:#22d3bf">icp_point2plane</code> は<b>常に numpy を返す</b> —— 族の中で</p>
+<p>型が揃っていないので、下流では <code style="color:#22d3bf">np.asarray(R)</code> を通すのが安全</p>
+<p>(どちらでも動く。破壊的変更を避けてこの不揃いを残してある)。</p>
+<p>t: (3,) 並進(R と同じ型)。</p>
+<p>info: dict。&quot;rmse&quot;(採用対応上の最終RMSE), &quot;iters&quot;(実反復数),</p>
+<p>&quot;converged&quot;(bool), &quot;inliers&quot;(採用対応数), &quot;rmse_history&quot;(list)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:gicp_register">gicp_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/gicp_register.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_self_register">itokawa_self_register</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_self_register.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:itokawa_shape_match">itokawa_shape_match</a> — <code style="color:#22d3bf">py -3.11 examples_3d/itokawa_shape_match.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:partial_overlap_icp">partial_overlap_icp</a> — <code style="color:#22d3bf">py -3.11 examples_3d/partial_overlap_icp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pose</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a> · <a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a> · <a style="color:#22d3bf" href="op3d:optimize_pose_graph">optimize_pose_graph</a> · <a style="color:#22d3bf" href="op3d:relative_pose">relative_pose</a> · <a style="color:#22d3bf" href="op3d:mean_edge_error">mean_edge_error</a> · <a style="color:#22d3bf" href="op3d:rotation_translation_error">rotation_translation_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">refine</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:refine_peak_newton">refine_peak_newton</a> · <a style="color:#22d3bf" href="op3d:refine_translation_lk">refine_translation_lk</a> · <a style="color:#22d3bf" href="op3d:refine_lm">refine_lm</a> · <a style="color:#22d3bf" href="op3d:refine_rotation_z">refine_rotation_z</a> · <a style="color:#22d3bf" href="op3d:icp_point2plane">icp_point2plane</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

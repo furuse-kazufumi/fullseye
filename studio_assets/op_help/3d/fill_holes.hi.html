@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fill_holes — 3D <code style="color:#22d3bf">depth_denoise</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">depth</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import depth_bilateral; depth_bilateral.fill_holes(depth: &#x27;np.ndarray&#x27;, max_radius: &#x27;float&#x27;, *, invalid: &#x27;float | None&#x27; = 0.0, max_iter: &#x27;int | None&#x27; = None, rel_tol: &#x27;float&#x27; = 1e-06) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fill_holes&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>invalid pixels (छेद) को पड़ोसी valid pixels से harmonic (Laplace) relaxation द्वारा interpolate करता है। → float64 (H,W)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>各穴画素の最寄り有効画素までの距離が max_radius 以下なら補間対象、超える深い穴は補間せず NaN で残す(fail-closed)。補間は 4 近傍平均の反復(Dirichlet 境界=元の有効画素)で、線形場(平面)は離散調和関数の不動点なので反復収束とともに平面を厳密復元する。初期値は最寄り有効画素値(EDT)。</p>
+<p>max_iter 既定は穴サイズに応じて自動設定、rel_tol は深度スケール相対の収束判定。全画素無効の入力は補間の足場が無いため ValueError(fail-closed)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:depth_denoise">depth_denoise</a> — <code style="color:#22d3bf">py -3.11 examples_3d/depth_denoise.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">depth</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:depth_to_organized_points">depth_to_organized_points</a> · <a style="color:#22d3bf" href="op3d:normals_from_depth">normals_from_depth</a> · <a style="color:#22d3bf" href="op3d:occlusion_edges">occlusion_edges</a> · <a style="color:#22d3bf" href="op3d:bearing_angle_image">bearing_angle_image</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">depth_denoise</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:bilateral_filter_depth">bilateral_filter_depth</a> · <a style="color:#22d3bf" href="op3d:joint_bilateral">joint_bilateral</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: depth_bilateral.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

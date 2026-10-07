@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">gum_propagate — SPC <code style="color:#22d3bf">uncertainty</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.gum_propagate(table, u=&#x27;u&#x27;, sensitivity=&#x27;sensitivity&#x27;, correlation=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;gum_propagate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>uncertainty के propagation का नियम (GUM 5.2, correlation सहित) (<code style="color:#22d3bf">table</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>u_c^2 = sum_i (c_i u_i)^2 + 2 sum_{i&lt;j} c_i c_j u_i u_j r_ij</p>
+<p>*table* は列 *u*(標準不確かさ)と *sensitivity*(感度係数 <code style="color:#22d3bf">c_i = df/dx_i</code>)を持つ表。*correlation* に (n, n) の相関行列を渡すと相関項を含める。</p>
+<p>★門にできる閉形式: <code style="color:#22d3bf">f = x y</code> なら <code style="color:#22d3bf">c_x = y</code> / <code style="color:#22d3bf">c_y = x</code> なので <code style="color:#22d3bf">u_c/|f| = sqrt((u_x/x)^2 + (u_y/y)^2)</code> —— 相対不確かさの二乗和。相関 <code style="color:#22d3bf">r = +1</code> の 2 成分では <code style="color:#22d3bf">u_c = |c1 u1 + c2 u2||</code> に<b>厳密に</b>一致し、<code style="color:#22d3bf">r = -1</code> では <code style="color:#22d3bf">|c1 u1 - c2 u2|</code>(打ち消し)。無相関なら寄与の合計が <code style="color:#22d3bf">u_c^2</code> にぴったり閉じる。</p>
+<p>★★<b>相関を無視した誤りの向きは一定ではない</b>。「独立として扱うと過小評価になる」はよく言われるが、<b>偽である</b>。規格の worked example(電圧・電流・位相差から抵抗とリアクタンスを同時に出す例、3 量すべてに相関がある)で相関を落として測ると:</p>
+<p>u_c(R)  0.0702 -&gt; 0.1945   <b>2.8 倍の過大</b></p>
+<p>u_c(X)  0.2961 -&gt; 0.2009   過小</p>
+<p>u_c(Z)  0.2367 -&gt; 0.2041   過小</p>
+<p>同じ 1 つのデータで、量によって向きが逆に出る —— 感度係数の符号と相関の符号の積で決まるので、当たり前といえば当たり前だが、「安全側に外れる」と思って相関を省くと <b>R では 3 倍近く過大な不確かさを報告</b>することになる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_measurement_system_analysis">poc_measurement_system_analysis</a> — <code style="color:#22d3bf">py -3.11 examples/poc_measurement_system_analysis.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">uncertainty</code>)</h3>
+<p><a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a> · <a style="color:#22d3bf" href="opspc:gum_validate">gum_validate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">zero_crossing_rate — ONED <code style="color:#22d3bf">signal</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.zero_crossing_rate(x)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.zero_crossing_rate(x)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;zero_crossing_rate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>पड़ोसी sample में से sign बदलने वालों का अनुपात — pitch/noisiness का सस्ता संकेत।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Exact zeros are neither a crossing nor a sign: a crossing is counted only when the sign changes between consecutive *non-zero* samples, and the rate divides by the number of adjacent sample pairs <code style="color:#22d3bf">len(x) - 1</code>. So <code style="color:#22d3bf">[1, 0, 1, 0, 1]</code> is <code style="color:#22d3bf">0.0</code> and <code style="color:#22d3bf">[1, 0, -1]</code> is <code style="color:#22d3bf">0.5</code> (before 2026-09-02 <code style="color:#22d3bf">diff(sign(x))</code> counted every touch of zero as a crossing: <code style="color:#22d3bf">1.0</code> for both).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">signal</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:lowpass">lowpass</a> · <a style="color:#22d3bf" href="oponed:highpass">highpass</a> · <a style="color:#22d3bf" href="oponed:bandpass">bandpass</a> · <a style="color:#22d3bf" href="oponed:envelope">envelope</a> · <a style="color:#22d3bf" href="oponed:rms">rms</a> · <a style="color:#22d3bf" href="oponed:local_std">local_std</a> · <a style="color:#22d3bf" href="oponed:quantize">quantize</a> · <a style="color:#22d3bf" href="oponed:companding_mu_law">companding_mu_law</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

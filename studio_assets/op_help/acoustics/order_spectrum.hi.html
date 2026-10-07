@@ -1,0 +1,43 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">order_spectrum — ACOUSTICS <code style="color:#22d3bf">order</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import acoustics; acoustics.order_spectrum(x, rate, rpm, samples_per_rev=64, revolutions=None, max_order=None, n_peaks=5)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsacoustics.get(&quot;order_spectrum&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>shaft order के सापेक्ष amplitude — वह spectrum जिसमें run-up को पढ़ना चाहिए।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">angular_resample</code> followed by an rFFT over a <b>whole number of revolutions</b> (the record is cropped to that). Bin spacing is <code style="color:#22d3bf">1 / whole_revolutions</code> in orders.</p>
+<p><code style="color:#22d3bf">revolutions</code> overrides how many whole revolutions to keep, and it matters more than it looks. An order <code style="color:#22d3bf">o</code> lands exactly on a bin only when <code style="color:#22d3bf">o * revolutions</code> is an integer; otherwise it straddles two and both read low. Measured on the run-up below, which happens to cover 79.994</p>
+<p>revolutions:</p>
+<p>==============  ==========  =============  =============</p>
+<p>revolutions     resolution  amp at o=1.0   amp at o=3.5</p>
+<p>==============  ==========  =============  =============</p>
+<p>79 (default)    0.012658    0.999967       <b>0.636961</b></p>
+<p>78 (even)       0.012821    1.000009       0.999371</p>
+<p>==============  ==========  =============  =============</p>
+<p>That 0.637 is the classic two-bin scallop loss, and nothing raises: the peak is at the right order and 36 % too small, with a second peak of almost equal height one bin away (measured 0.6370 at order 3.4937 and 0.6353 at 3.5063). Cropping to an <b>even</b> number of revolutions puts every half-integer order on a bin. The default is the largest whole number available; pass <code style="color:#22d3bf">revolutions</code> when the order you care about is fractional.</p>
+<p>Returns a dict: <code style="color:#22d3bf">orders</code>, <code style="color:#22d3bf">magnitude</code> (single-sided, <code style="color:#22d3bf">2/N</code>), <code style="color:#22d3bf">peak_order</code>, <code style="color:#22d3bf">peak_amplitude</code>, <code style="color:#22d3bf">peak_orders</code> / <code style="color:#22d3bf">peak_amplitudes</code>, <code style="color:#22d3bf">resolution_order</code>, <code style="color:#22d3bf">whole_revolutions</code>, <code style="color:#22d3bf">samples_per_rev</code>, <code style="color:#22d3bf">mean_rpm</code>, <code style="color:#22d3bf">max_order</code>.</p>
+<p>Measured, and this is the whole argument for the operator. A 4 s run-up from 600 to 1800 rpm at 5 kHz carrying exactly two shaft-locked components (orders 1.0 and 3.5, unit amplitude) plus one fixed 400 Hz resonance, read with <code style="color:#22d3bf">revolutions=78</code>:</p>
+<p>==========================  =====================  ====================</p>
+<p>quantity                    ordinary spectrum      order spectrum</p>
+<p>==========================  =====================  ====================</p>
+<p>order-3.5 peak amplitude    0.070203 (of true 1)   0.999371 (of true 1)</p>
+<p>its -3 dB width             66.50 Hz (= 3.33 ord)  0.00000 order</p>
+<p>400 Hz resonance amplitude  1.0000, one bin        0.0517, over 26.7 ord</p>
+<p>==========================  =====================  ====================</p>
+<p>The ordinary spectrum recovers <b>7 %</b> of the shaft-locked component&#x27;s amplitude, because the energy is spread over 3.3 orders&#x27; worth of bins; the order spectrum recovers <b>99.94 %</b> of it in a single bin whose -3 dB width is one bin. The 400 Hz resonance goes the other way — sharp in hertz, smeared across 26.7 orders after resampling. That <b>reversal</b> is the diagnostic, and it is why both spectra are worth computing: what stays sharp under angular resampling turns with the shaft, and what stays sharp under ordinary transformation does not.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: everything <code style="color:#22d3bf">angular_resample</code> refuses (in particular the aliasing refusal), a <code style="color:#22d3bf">revolutions</code> larger than the record actually contains, and a <code style="color:#22d3bf">max_order</code> above the angular Nyquist <code style="color:#22d3bf">samples_per_rev/2</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideacoustics:acoustic_condition_monitoring">acoustic_condition_monitoring family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:acoustic_condition_monitoring">acoustic_condition_monitoring</a> — <code style="color:#22d3bf">py -3.11 examples/acoustic_condition_monitoring.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:istft">istft</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">order</code>)</h3>
+<p><a style="color:#22d3bf" href="opacoustics:angular_resample">angular_resample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: acoustics.py — ACOUSTICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

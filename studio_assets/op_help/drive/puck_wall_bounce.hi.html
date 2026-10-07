@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">puck_wall_bounce — DRIVE <code style="color:#22d3bf">puck</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>दीवार से टक्कर: normal घटक vₙ&#x27; = −e vₙ, tangential घटक vₜ&#x27; = kₜ vₜ (e = normal coefficient of restitution, kₜ = tangential retention ratio = tangential coefficient of restitution)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の反発係数を書く —— その 2 領域は入れていない)。返り値 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>。法線だけの衝突なら energy_ratio = e²(門)。<code style="color:#22d3bf">v·n ≥ 0</code>(離れていく)なら何もしない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_air_hockey_intercept">poc_air_hockey_intercept</a> — <code style="color:#22d3bf">py -3.11 examples/poc_air_hockey_intercept.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">puck</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:puck_table">puck_table</a> · <a style="color:#22d3bf" href="opdrive:puck_slide_predict">puck_slide_predict</a> · <a style="color:#22d3bf" href="opdrive:puck_state_at">puck_state_at</a> · <a style="color:#22d3bf" href="opdrive:puck_crossing_point">puck_crossing_point</a> · <a style="color:#22d3bf" href="opdrive:puck_mirror_path">puck_mirror_path</a> · <a style="color:#22d3bf" href="opdrive:puck_stop_distance">puck_stop_distance</a> · <a style="color:#22d3bf" href="opdrive:puck_camera">puck_camera</a> · <a style="color:#22d3bf" href="opdrive:puck_pinhole_camera">puck_pinhole_camera</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: puck.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

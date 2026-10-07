@@ -1,0 +1,25 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">spc_capability — SPC <code style="color:#22d3bf">capability</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spc_capability(signal, lsl, usl, sigma=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import spc; spc.spc_capability(signal, lsl, usl, sigma=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspc.get(&quot;spc_capability&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>measurements और spec limits से process capability indices Cp और Cpk।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">signal</code> is a 1-D series of individual measurements; <code style="color:#22d3bf">lsl</code> / <code style="color:#22d3bf">usl</code> are the lower / upper specification limits (<code style="color:#22d3bf">lsl &lt; usl</code>). With the sample mean <code style="color:#22d3bf">mu</code> and standard deviation <code style="color:#22d3bf">sigma</code> (sample std, <code style="color:#22d3bf">ddof=1</code>, unless one is passed in explicitly)::</p>
+<p>Cp  = (USL - LSL) / (6 sigma)</p>
+<p>Cpk = min(USL - mu, mu - LSL) / (3 sigma)</p>
+<p>Returns a dict with <code style="color:#22d3bf">mean</code> / <code style="color:#22d3bf">std</code> / <code style="color:#22d3bf">cp</code> / <code style="color:#22d3bf">cpk</code> and the echoed spec limits and midpoint. <code style="color:#22d3bf">Cpk &lt;= Cp</code> always, with equality exactly when the process is centred (<code style="color:#22d3bf">mu</code> at the spec midpoint) — pinned in the tests.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-1-D / empty *signal*, fewer than two points (no spread to estimate), <code style="color:#22d3bf">lsl &gt;= usl</code>, non-finite limits, or a non-positive standard deviation (a constant series has no capability to report).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_spc">poc_spc</a> — <code style="color:#22d3bf">py -3.11 examples/poc_spc.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspc:msa_anova_table">msa_anova_table</a> · <a style="color:#22d3bf" href="opspc:msa_gauge_rr">msa_gauge_rr</a> · <a style="color:#22d3bf" href="opspc:msa_bias_linearity">msa_bias_linearity</a> · <a style="color:#22d3bf" href="opspc:msa_attribute_agreement">msa_attribute_agreement</a> · <a style="color:#22d3bf" href="opspc:gum_standard_uncertainty">gum_standard_uncertainty</a> · <a style="color:#22d3bf" href="opspc:gum_propagate">gum_propagate</a> · <a style="color:#22d3bf" href="opspc:gum_expanded">gum_expanded</a> · <a style="color:#22d3bf" href="opspc:gum_monte_carlo">gum_monte_carlo</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">capability</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: spc.py — SPC operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

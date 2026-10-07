@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fresnel_reflectance — 3D <code style="color:#22d3bf">optics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">measurement</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.fresnel_reflectance(cos_i, eta1=1.0, eta2=1.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;fresnel_reflectance&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>Fresnel reflectance (unpolarised = s/p औसत)। transparent interface पर reflection/transmission में बँटने वाला हिस्सा।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>垂直入射で ((n1−n2)/(n1+n2))²(air→glass=0.04)。臨界角超で 1.0(全反射)。透明体レンダ/検査に。</p>
+<p><code style="color:#22d3bf">cos_i</code> は入射角の余弦(実数スカラー。配列・None は ValueError)。符号は捨てる(<code style="color:#22d3bf">|cos_i|</code>)。<code style="color:#22d3bf">eta1</code> は入射側、<code style="color:#22d3bf">eta2</code> は透過側の屈折率。s 偏光 <code style="color:#22d3bf">rs</code> と p 偏光 <code style="color:#22d3bf">rp</code> の平均を float で返す(<b>[0, 1]</b>)。Brewster 角では <code style="color:#22d3bf">rp = 0</code> になるが平均は 0 にならない。<code style="color:#22d3bf">cos_i = 0</code>(かすめ入射)で 1.0。透過率は <code style="color:#22d3bf">1 −</code> 反射率(吸収なし)。</p>
+<p>用途: <code style="color:#22d3bf">refract</code> で曲げた光線の重み、透明体の輝度予測。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:snell_refraction">snell_refraction</a> — <code style="color:#22d3bf">py -3.11 examples_3d/snell_refraction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">optics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:reflect">reflect</a> · <a style="color:#22d3bf" href="op3d:refract">refract</a> · <a style="color:#22d3bf" href="op3d:normal_from_reflection">normal_from_reflection</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

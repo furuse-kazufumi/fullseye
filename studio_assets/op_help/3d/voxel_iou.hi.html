@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_iou — 3D <code style="color:#22d3bf">metrics</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel × voxel</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_iou(vol_a, vol_b, iso=0.5)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import metrics3d; metrics3d.voxel_iou(vol_a, vol_b, iso=0.5)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;voxel_iou&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>voxel occupancy का IoU (intersection over union)। → [0,1]। volume का मेल।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>両 volume は同一 shape が必須。異形状は numpy broadcasting で見かけ上一致し誤った IoU(例: (10,1,10) vs (1,10,10) → 1.0)を静かに返すので、fail-closed で shape 不一致は ValueError で拒否する。</p>
+<p>計算: 両 volume を <code style="color:#22d3bf">&gt;= iso</code> で二値化し(<code style="color:#22d3bf">iso</code> 既定 0.5、等号を含む)、<code style="color:#22d3bf">|A∩B| / |A∪B|</code>。和集合が空(両方とも占有ゼロ)なら <code style="color:#22d3bf">1.0</code> を返す(「どちらも空」は一致とみなす。エラーにしない)。</p>
+<p>引数: <code style="color:#22d3bf">vol_a</code>, <code style="color:#22d3bf">vol_b</code> は同じ shape の配列(3-D に限らず、次元数は検査しない。bool / 0-1 / 密度 grid のいずれでもよい)。<code style="color:#22d3bf">iso</code> は占有とみなす閾値で、<code style="color:#22d3bf">fuse_to_voxel</code> や <code style="color:#22d3bf">points_to_voxel</code> の密度 grid(値は点数)に使うなら <code style="color:#22d3bf">iso=1</code> 以上を明示する。NaN は <code style="color:#22d3bf">&gt;=</code> で False(非占有)になる。</p>
+<p>返り値: Python <code style="color:#22d3bf">float</code>、<code style="color:#22d3bf">[0, 1]</code>。1 = 完全一致、0 = 重なりなし。</p>
+<p>注意: 同じ格子(<code style="color:#22d3bf">bounds</code> と <code style="color:#22d3bf">size</code>)に載っていないと比較にならない — <code style="color:#22d3bf">fuse_to_voxel</code> / <code style="color:#22d3bf">points_to_voxel</code> には同じ <code style="color:#22d3bf">bounds</code> を渡す。薄い殻同士は 1 voxel ずれるだけで IoU が大きく落ちるので、表面の評価には <code style="color:#22d3bf">chamfer_distance</code> / <code style="color:#22d3bf">fscore</code> の方が向く。体積が小さい対象は Dice (<code style="color:#22d3bf">voxel_dice</code>、同モジュールの関数)の方が慣習として使われる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:metrics_eval">metrics_eval</a> — <code style="color:#22d3bf">py -3.11 examples_3d/metrics_eval.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:vol_gaussian_psf">vol_gaussian_psf</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fresnel_reflectance">fresnel_reflectance</a> · <a style="color:#22d3bf" href="op3d:snell_angle">snell_angle</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">metrics</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:chamfer_distance">chamfer_distance</a> · <a style="color:#22d3bf" href="op3d:hausdorff_distance">hausdorff_distance</a> · <a style="color:#22d3bf" href="op3d:m3c2_distance">m3c2_distance</a> · <a style="color:#22d3bf" href="op3d:fscore">fscore</a> · <a style="color:#22d3bf" href="op3d:rmse_correspondence">rmse_correspondence</a> · <a style="color:#22d3bf" href="op3d:normal_consistency">normal_consistency</a> · <a style="color:#22d3bf" href="op3d:pose_error">pose_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: metrics3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

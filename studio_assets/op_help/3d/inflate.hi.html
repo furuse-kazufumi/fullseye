@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">inflate — 3D <code style="color:#22d3bf">occupancy</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.inflate(occupancy, radius, voxel_size=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import occupancy; occupancy.inflate(occupancy, radius, voxel_size=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;inflate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>obstacles को <code style="color:#22d3bf">radius</code> (world units) से फैलाया गया occupancy grid bool (= ESDF&lt;=radius को occupied)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>planner の安全マージン: 点ロボットが膨張格子上で衝突回避すれば、半径 radius の実ロボットが障害物から離隔を保つ(configuration-space obstacle)。ESDF は外で正の最近占有距離なので、<code style="color:#22d3bf">ESDF&lt;=radius</code> は「占有(負)∪ 障害物から radius 以内の自由」を捕らえる。radius を増やすと単調に占有が増える(下流テストの GT)。</p>
+<p>Raises ValueError for radius&lt;0 or voxel_size&lt;=0 (both validated up-front, before the radius==0 / empty-occupancy short-circuit — otherwise an invalid voxel_size slips through unchecked when esdf is never reached).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:sensor_seg">sensor_seg</a> — <code style="color:#22d3bf">py -3.11 examples_3d/sensor_seg.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">occupancy</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:occupancy_grid">occupancy_grid</a> · <a style="color:#22d3bf" href="op3d:esdf">esdf</a> · <a style="color:#22d3bf" href="op3d:query_distance">query_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: occupancy.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

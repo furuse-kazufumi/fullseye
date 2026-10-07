@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">wrapped_phase — 3D <code style="color:#22d3bf">structured_light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wrapped_phase(images) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import fringe; fringe.wrapped_phase(images) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;wrapped_phase&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>N-step phase-shift fringe images से wrapped phase (-π, π] निकालता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>標準 N-step 公式 φ = atan2(Σ_n I_n sin(2πn/N), Σ_n I_n cos(2πn/N))。N &gt;= 3 の等間隔位相シフトを仮定。返り値は各画素の巻き込み位相(-π,π] の 2D 配列。</p>
+<p>images: 長さ N のシーケンス(各 2D [0,1] 画像)または (N, H, W) 配列。</p>
+<p>計算: 位相シフト量を等間隔 <code style="color:#22d3bf">δ_n = 2πn/N</code>(<code style="color:#22d3bf">n = 0..N-1</code>)とし、<code style="color:#22d3bf">s = Σ_n I_n sin δ_n</code>、<code style="color:#22d3bf">c = Σ_n I_n cos δ_n</code> を <code style="color:#22d3bf">tensordot</code> で取って <code style="color:#22d3bf">np.arctan2(s, c)</code>。<code style="color:#22d3bf">I_n = a + b cos(φ - δ_n)</code> のモデル(<code style="color:#22d3bf">synthesize_fringes</code> と同じ符号規約)なら <code style="color:#22d3bf">φ</code> が符号反転なしで戻る。平均輝度 <code style="color:#22d3bf">a</code> は消えるのでバイアスの影響を受けない。</p>
+<p>入力と検証(<code style="color:#22d3bf">ValueError</code>): <code style="color:#22d3bf">None</code> / 3-D <code style="color:#22d3bf">(N, H, W)</code> に変換できない / <code style="color:#22d3bf">N &lt; 3</code> / NaN・Inf を含む。値域 <code style="color:#22d3bf">[0, 1]</code> は前提であって検査はしない(範囲外でも計算は通る)。</p>
+<p>返り値: <code style="color:#22d3bf">(H, W)</code> float64、値域 <code style="color:#22d3bf">(-π, π]</code>。<code style="color:#22d3bf">s = c = 0</code> の画素(縞が無い・変調ゼロ)は <code style="color:#22d3bf">arctan2(0, 0) = 0</code> を返し、エラーにも NaN にもならない — 信頼できる画素を選ぶには <code style="color:#22d3bf">modulation</code>(同モジュールの関数)で変調度を見る(<code style="color:#22d3bf">decode_fringe</code> の <code style="color:#22d3bf">min_modulation</code> がそれを行う)。</p>
+<p>注意: 位相シフト量が等間隔でない・枚数と順序が合っていない画像列を渡すと、エラーにならず「もっともらしく間違った」位相が出る。次段は <code style="color:#22d3bf">unwrap_phase_2d</code>(空間展開)か <code style="color:#22d3bf">absolute_phase</code>(粗い絶対位相で次数確定)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:structured_light">structured_light</a> — <code style="color:#22d3bf">py -3.11 examples_3d/structured_light.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:structured_light_scan">structured_light_scan</a> — <code style="color:#22d3bf">py -3.11 examples_3d/structured_light_scan.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:fit_poly_surface">fit_poly_surface</a> · <a style="color:#22d3bf" href="op3d:eval_poly_surface">eval_poly_surface</a> · <a style="color:#22d3bf" href="op3d:surface_form_error">surface_form_error</a> · <a style="color:#22d3bf" href="op3d:background_flatten">background_flatten</a> · <a style="color:#22d3bf" href="op3d:polar_unwrap">polar_unwrap</a> · <a style="color:#22d3bf" href="op3d:fit_zernike">fit_zernike</a> · <a style="color:#22d3bf" href="op3d:matcap_shade">matcap_shade</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">structured_light</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:unwrap_phase_2d">unwrap_phase_2d</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:synthesize_fringes">synthesize_fringes</a> · <a style="color:#22d3bf" href="op3d:absolute_phase">absolute_phase</a> · <a style="color:#22d3bf" href="op3d:triangulate_column">triangulate_column</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: fringe.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -1,0 +1,47 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">annotate_invert_path — ANNOTATE <code style="color:#22d3bf">overlay</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import annotate; annotate.annotate_invert_path(img, points, width=1.5, closed=False, dash=None, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_path&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>polyline (line) को <b>inverted रंग</b> से बनाता है। anti-aliasing सहित।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>線は領域より不利で、そこがこの op を分けている理由 —— 太さ 1.5 画素の線は端の画素の被覆率が 0.3 程度しかないため、<b>反転しても被覆の分しか動かない</b>。中間調の地では領域よりさらに先に消える。判定は「被覆率 0.5 以上の画素」で行う(それ未満は元から半透明なので、見えなくてもそれは反転のせいではない)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : (N,2)</p>
+<p>折れ線の頂点 <code style="color:#22d3bf">(x, y)</code>(画素座標)。</p>
+<p>width : float</p>
+<p>線の太さ(画素、0.5 以上)。</p>
+<p>closed : bool</p>
+<p>真なら最後の点と最初の点を結ぶ。</p>
+<p>dash : (on, off) or None</p>
+<p>破線の刻み(画素)。<code style="color:#22d3bf">_dash_pieces</code> と同じ規則。</p>
+<p>mode, alpha, min_contrast, on_invisible :</p>
+<p><code style="color:#22d3bf">annotate_invert</code> と同じ。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>(H,W[,C]) float64</p>
+<p>反転を乗せた複製。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Examples</h4>
+<p>&gt;&gt;&gt; import numpy as np, annotate</p>
+<p>&gt;&gt;&gt; img = np.zeros((16, 32))</p>
+<p>&gt;&gt;&gt; out = annotate.annotate_invert_path(img, [(2, 8), (29, 8)], width=3)</p>
+<p>&gt;&gt;&gt; float(out[8, 15])                       # 黒地の上なので白い線になる</p>
+<p>1.0</p>
+<p>&gt;&gt;&gt; float(out[2, 15])                       # 線から離れたところは元のまま</p>
+<p>0.0</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:figure_annotation">figure_annotation family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideannotate:dataset_conventions">dataset_conventions</a> — Training dataset के conventions — COCO / YOLO / VOC और visual inspection में सावधानियाँ</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:annotate_paper_tour">annotate_paper_tour</a> — <code style="color:#22d3bf">py -3.11 examples/annotate_paper_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opannotate:text_box">text_box</a> · <a style="color:#22d3bf" href="opannotate:arrow">arrow</a> · <a style="color:#22d3bf" href="opannotate:leader_line">leader_line</a> · <a style="color:#22d3bf" href="opannotate:label_points">label_points</a> · <a style="color:#22d3bf" href="opannotate:crosshair">crosshair</a> · <a style="color:#22d3bf" href="opannotate:legend_box">legend_box</a> · <a style="color:#22d3bf" href="opannotate:color_bar">color_bar</a> · <a style="color:#22d3bf" href="opannotate:scale_bar">scale_bar</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">overlay</code>)</h3>
+<p><a style="color:#22d3bf" href="opannotate:overlay_mask">overlay_mask</a> · <a style="color:#22d3bf" href="opannotate:overlay_labels">overlay_labels</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert_visibility">annotate_invert_visibility</a> · <a style="color:#22d3bf" href="opannotate:annotate_invert">annotate_invert</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: annotate.py — ANNOTATE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

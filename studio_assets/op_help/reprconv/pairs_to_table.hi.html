@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">pairs_to_table — REPRCONV <code style="color:#22d3bf">pairs</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pairs_to_table(pairs)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import reprconv; reprconv.pairs_to_table(pairs)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsreprconv.get(&quot;pairs_to_table&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>जोड़े <code style="color:#22d3bf">(N,2)</code> → सारांश <code style="color:#22d3bf">table</code>। <b>एक-तरफ़ा</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">x_uniform</code> は「列 0 が等間隔か」の判定で、これが False の対を <code style="color:#22d3bf">pairs_to_signal</code> に通すと x が黙って落ちる(上の docstring 参照)。判定は最大差分と最小差分の比で行い、閾値は 1e-9(相対)。</p>
+<p>Args:</p>
+<p>pairs: (N, 2)。</p>
+<p>Returns:</p>
+<p>dict(<code style="color:#22d3bf">n</code> / <code style="color:#22d3bf">x_min</code> / <code style="color:#22d3bf">x_max</code> / <code style="color:#22d3bf">y_min</code> / <code style="color:#22d3bf">y_max</code> /</p>
+<p><code style="color:#22d3bf">y_mean</code> / <code style="color:#22d3bf">x_uniform</code> / <code style="color:#22d3bf">x_step</code>(等間隔のときのみ) /</p>
+<p><code style="color:#22d3bf">pearson_r</code>(N &gt;= 2 かつ両列が定数でないとき))。</p>
+<p>Raises:</p>
+<p>ValueError: 形状不正 / 非有限。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:representation_conversion">representation_conversion</a> — <code style="color:#22d3bf">py -3.11 examples/representation_conversion.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pairs</code>)</h3>
+<p><a style="color:#22d3bf" href="opreprconv:pairs_to_signal">pairs_to_signal</a> · <a style="color:#22d3bf" href="opreprconv:pairs_to_image2d">pairs_to_image2d</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: reprconv.py — REPRCONV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

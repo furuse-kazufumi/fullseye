@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">eval_bspline_curve — 3D <code style="color:#22d3bf">freeform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">bspline_curve</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.eval_bspline_curve(tck, n=200)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bspline_surf; bspline_surf.eval_bspline_curve(tck, n=200)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;eval_bspline_curve&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>curve tck को parameter u∈[0,1] पर n समान दूरी वाले points पर evaluate करता है (splev)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>tck : tuple</p>
+<p>fit_bspline_curve が返した <code style="color:#22d3bf">(t, c, k)</code>。</p>
+<p>n : int</p>
+<p>評価点数(既定 200)。2 以上。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>numpy.ndarray, shape (n, D)</p>
+<p>曲線上の点列。D は fit 時の入力次元(3D 入力なら (n, 3))。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• u は <code style="color:#22d3bf">linspace(0, 1, n)</code> なので <b>パラメータ等間隔</b> であって弧長等間隔ではない。点の密度は元の点列の疎密に依存する。弧長で等間隔にしたければ本 op の出力を <code style="color:#22d3bf">resample_uniform</code> に通す。</p>
+<p style="margin:2px 0 2px 12px">• 両端点 u=0, u=1 を含む。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: tck が曲線モデル <code style="color:#22d3bf">(t, c, k)</code> でない(曲面 tck / 多項式 dict を名指しで拒否)、または n &lt; 2。</p>
+<p style="margin:2px 0 2px 12px">• 返り値は float64 の <code style="color:#22d3bf">(n, D)</code>。決定論的。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bspline_freeform">bspline_freeform</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bspline_freeform.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">freeform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:fit_bspline_surface">fit_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:eval_bspline_surface">eval_bspline_surface</a> · <a style="color:#22d3bf" href="op3d:surface_residual">surface_residual</a> · <a style="color:#22d3bf" href="op3d:fit_bspline_curve">fit_bspline_curve</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: bspline_surf.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

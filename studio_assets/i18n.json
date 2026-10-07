@@ -6,7 +6,8 @@
   "zh": "简体中文",
   "tw": "繁體中文",
   "ko": "한국어",
-  "de": "Deutsch"
+  "de": "Deutsch",
+  "hi": "हिन्दी"
  },
  "tooltips": {
   "Load an image file (Ctrl+O)": {
@@ -14,252 +15,288 @@
    "zh": "加载图像文件 (Ctrl+O)",
    "tw": "載入影像檔 (Ctrl+O)",
    "ko": "이미지 파일 불러오기 (Ctrl+O)",
-   "de": "Bilddatei laden (Strg+O)"
+   "de": "Bilddatei laden (Strg+O)",
+   "hi": "image फ़ाइल लोड करें (Ctrl+O)"
   },
   "Load the synthetic demo scene (Ctrl+D)": {
    "ja": "合成デモ画像を読み込む (Ctrl+D)",
    "zh": "加载合成演示场景 (Ctrl+D)",
    "tw": "載入合成示範場景 (Ctrl+D)",
    "ko": "합성 데모 장면 불러오기 (Ctrl+D)",
-   "de": "Synthetische Demoszene laden (Strg+D)"
+   "de": "Synthetische Demoszene laden (Strg+D)",
+   "hi": "synthetic demo scene लोड करें (Ctrl+D)"
   },
   "Save the displayed result (Ctrl+S)": {
    "ja": "表示中の結果を保存 (Ctrl+S)",
    "zh": "保存显示的结果 (Ctrl+S)",
    "tw": "儲存顯示的結果 (Ctrl+S)",
    "ko": "표시된 결과 저장 (Ctrl+S)",
-   "de": "Angezeigtes Ergebnis speichern (Strg+S)"
+   "de": "Angezeigtes Ergebnis speichern (Strg+S)",
+   "hi": "दिखाया गया परिणाम सेव करें (Ctrl+S)"
   },
   "Filter operators by category": {
    "ja": "オペレータをカテゴリで絞り込む",
    "zh": "按类别筛选算子",
    "tw": "依類別篩選運算子",
    "ko": "카테고리로 연산자 거르기",
-   "de": "Operatoren nach Kategorie filtern"
+   "de": "Operatoren nach Kategorie filtern",
+   "hi": "operators को category के अनुसार filter करें"
   },
   "Filter by op name, HALCON alias or category": {
    "ja": "op 名・HALCON 別名・カテゴリで絞り込む",
    "zh": "按算子名、HALCON 别名或类别筛选",
    "tw": "依運算子名稱、HALCON 別名或類別篩選",
    "ko": "연산자 이름·HALCON 별칭·카테고리로 거르기",
-   "de": "Nach Operatorname, HALCON-Alias oder Kategorie filtern"
+   "de": "Nach Operatorname, HALCON-Alias oder Kategorie filtern",
+   "hi": "op नाम, HALCON alias या category से filter करें"
   },
   "Double-click an operator to insert it into the pipeline": {
    "ja": "オペレータをダブルクリックでパイプラインに挿入",
    "zh": "双击算子即可插入流水线",
    "tw": "按兩下運算子即可插入管線",
    "ko": "연산자를 두 번 누르면 파이프라인에 삽입됩니다",
-   "de": "Doppelklick auf einen Operator fügt ihn in die Pipeline ein"
+   "de": "Doppelklick auf einen Operator fügt ihn in die Pipeline ein",
+   "hi": "किसी operator को pipeline में डालने के लिए उस पर double-click करें"
   },
   "The selected operator's input→output sorts, HALCON alias and knob roles": {
    "ja": "選択中 op の入力→出力の型・HALCON 別名・ノブの意味",
    "zh": "所选算子的输入→输出类别、HALCON 别名与旋钮含义",
    "tw": "所選運算子的輸入→輸出類別、HALCON 別名與旋鈕含義",
    "ko": "선택한 연산자의 입력→출력 종류, HALCON 별칭, 노브의 역할",
-   "de": "Eingabe-→Ausgabe-Sorten, HALCON-Alias und Reglerbedeutung des gewählten Operators"
+   "de": "Eingabe-→Ausgabe-Sorten, HALCON-Alias und Reglerbedeutung des gewählten Operators",
+   "hi": "चुने गए operator के input→output sorts, HALCON alias और knobs की भूमिकाएँ"
   },
   "Append the selected operator to the pipeline (or press Enter / double-click)": {
    "ja": "選択中 op をパイプライン末尾に追加(Enter / ダブルクリックでも可)",
    "zh": "把所选算子追加到流水线(或按 Enter / 双击)",
    "tw": "把所選運算子附加到管線(或按 Enter / 按兩下)",
    "ko": "선택한 연산자를 파이프라인에 추가(Enter 또는 더블클릭으로도 가능)",
-   "de": "Gewählten Operator an die Pipeline anhängen (oder Enter / Doppelklick)"
+   "de": "Gewählten Operator an die Pipeline anhängen (oder Enter / Doppelklick)",
+   "hi": "चुने गए operator को pipeline के अंत में जोड़ें (या Enter दबाएँ / double-click करें)"
   },
   "Replace the pipeline with a ready-made sample recipe": {
    "ja": "既成のサンプルレシピでパイプラインを置き換える",
    "zh": "用现成的示例配方替换流水线",
    "tw": "用現成的範例配方取代管線",
    "ko": "미리 만들어 둔 샘플 레시피로 파이프라인을 교체",
-   "de": "Pipeline durch ein fertiges Beispielrezept ersetzen"
+   "de": "Pipeline durch ein fertiges Beispielrezept ersetzen",
+   "hi": "pipeline को एक तैयार sample recipe से बदलें"
   },
   "Remove the selected stage (Del)": {
    "ja": "選択中ステージを削除 (Del)",
    "zh": "删除所选阶段 (Del)",
    "tw": "刪除所選階段 (Del)",
    "ko": "선택한 단계 삭제 (Del)",
-   "de": "Gewählte Stufe entfernen (Entf)"
+   "de": "Gewählte Stufe entfernen (Entf)",
+   "hi": "चुना गया stage हटाएँ (Del)"
   },
   "Move the selected stage earlier (Ctrl+Up)": {
    "ja": "選択中ステージを前へ移動 (Ctrl+Up)",
    "zh": "把所选阶段前移 (Ctrl+Up)",
    "tw": "把所選階段前移 (Ctrl+Up)",
    "ko": "선택한 단계를 앞으로 이동 (Ctrl+Up)",
-   "de": "Gewählte Stufe nach vorn (Strg+Auf)"
+   "de": "Gewählte Stufe nach vorn (Strg+Auf)",
+   "hi": "चुने गए stage को पहले ले जाएँ (Ctrl+Up)"
   },
   "Move the selected stage later (Ctrl+Down)": {
    "ja": "選択中ステージを後ろへ移動 (Ctrl+Down)",
    "zh": "把所选阶段后移 (Ctrl+Down)",
    "tw": "把所選階段後移 (Ctrl+Down)",
    "ko": "선택한 단계를 뒤로 이동 (Ctrl+Down)",
-   "de": "Gewählte Stufe nach hinten (Strg+Ab)"
+   "de": "Gewählte Stufe nach hinten (Strg+Ab)",
+   "hi": "चुने गए stage को बाद में ले जाएँ (Ctrl+Down)"
   },
   "Show the raw image (Home)": {
    "ja": "元画像を表示 (Home)",
    "zh": "显示原始图像 (Home)",
    "tw": "顯示原始影像 (Home)",
    "ko": "원본 이미지 표시 (Home)",
-   "de": "Rohbild anzeigen (Pos1)"
+   "de": "Rohbild anzeigen (Pos1)",
+   "hi": "raw image दिखाएँ (Home)"
   },
   "Advance one stage (Ctrl+Right)": {
    "ja": "1 ステージ進める (Ctrl+Right)",
    "zh": "前进一个阶段 (Ctrl+Right)",
    "tw": "前進一個階段 (Ctrl+Right)",
    "ko": "한 단계 진행 (Ctrl+Right)",
-   "de": "Eine Stufe weiter (Strg+Rechts)"
+   "de": "Eine Stufe weiter (Strg+Rechts)",
+   "hi": "एक stage आगे बढ़ें (Ctrl+Right)"
   },
   "Show the final result (Ctrl+Enter)": {
    "ja": "最終結果を表示 (Ctrl+Enter)",
    "zh": "显示最终结果 (Ctrl+Enter)",
    "tw": "顯示最終結果 (Ctrl+Enter)",
    "ko": "최종 결과 표시 (Ctrl+Enter)",
-   "de": "Endergebnis anzeigen (Strg+Eingabe)"
+   "de": "Endergebnis anzeigen (Strg+Eingabe)",
+   "hi": "अंतिम परिणाम दिखाएँ (Ctrl+Enter)"
   },
   "Knob a (0..1) — meaning depends on the selected op": {
    "ja": "ノブ a (0..1) — 意味は選択中 op に依存",
    "zh": "旋钮 a (0..1) —— 含义取决于所选算子",
    "tw": "旋鈕 a (0..1) —— 含義取決於所選運算子",
    "ko": "노브 a (0..1) —— 의미는 선택한 연산자에 따라 다름",
-   "de": "Regler a (0..1) — Bedeutung hängt vom gewählten Operator ab"
+   "de": "Regler a (0..1) — Bedeutung hängt vom gewählten Operator ab",
+   "hi": "Knob a (0..1) — इसका अर्थ चुने गए op पर निर्भर है"
   },
   "Knob b (0..1) — meaning depends on the selected op": {
    "ja": "ノブ b (0..1) — 意味は選択中 op に依存",
    "zh": "旋钮 b (0..1) —— 含义取决于所选算子",
    "tw": "旋鈕 b (0..1) —— 含義取決於所選運算子",
    "ko": "노브 b (0..1) —— 의미는 선택한 연산자에 따라 다름",
-   "de": "Regler b (0..1) — Bedeutung hängt vom gewählten Operator ab"
+   "de": "Regler b (0..1) — Bedeutung hängt vom gewählten Operator ab",
+   "hi": "Knob b (0..1) — इसका अर्थ चुने गए op पर निर्भर है"
   },
   "Copy this pipeline as an --ops string and Python (Ctrl+E)": {
    "ja": "パイプラインを --ops 文字列と Python として書き出す (Ctrl+E)",
    "zh": "把该流水线复制为 --ops 字符串与 Python 代码 (Ctrl+E)",
    "tw": "把該管線複製為 --ops 字串與 Python 程式碼 (Ctrl+E)",
    "ko": "이 파이프라인을 --ops 문자열과 Python 코드로 복사 (Ctrl+E)",
-   "de": "Diese Pipeline als --ops-String und Python kopieren (Strg+E)"
+   "de": "Diese Pipeline als --ops-String und Python kopieren (Strg+E)",
+   "hi": "इस pipeline को --ops string और Python के रूप में कॉपी करें (Ctrl+E)"
   },
   "Colour-map the current 2-D result for display": {
    "ja": "現在の 2D 結果を疑似カラー表示",
    "zh": "为当前 2-D 结果着色以便显示",
    "tw": "為目前 2-D 結果著色以便顯示",
    "ko": "현재 2-D 결과에 색을 입혀 표시",
-   "de": "Aktuelles 2-D-Ergebnis zur Anzeige einfärben"
+   "de": "Aktuelles 2-D-Ergebnis zur Anzeige einfärben",
+   "hi": "display के लिए current 2-D परिणाम पर colour map लगाएँ"
   },
   "Rotatable 3-D surface (Ctrl+3)": {
    "ja": "回転可能な 3D サーフェス (Ctrl+3)",
    "zh": "可旋转的 3-D 曲面 (Ctrl+3)",
    "tw": "可旋轉的 3-D 曲面 (Ctrl+3)",
    "ko": "회전 가능한 3-D 표면 (Ctrl+3)",
-   "de": "Drehbare 3-D-Oberfläche (Strg+3)"
+   "de": "Drehbare 3-D-Oberfläche (Strg+3)",
+   "hi": "घुमाई जा सकने वाली 3-D surface (Ctrl+3)"
   },
   "Two-frame perception mode": {
    "ja": "2 フレーム知覚モード",
    "zh": "双帧感知模式",
    "tw": "雙影格感知模式",
    "ko": "두 프레임 지각 모드",
-   "de": "Zwei-Bild-Wahrnehmungsmodus"
+   "de": "Zwei-Bild-Wahrnehmungsmodus",
+   "hi": "Two-frame perception mode"
   },
   "Open an image file (Ctrl+O)": {
    "ja": "画像ファイルを開く (Ctrl+O)",
    "zh": "打开图像文件 (Ctrl+O)",
    "tw": "開啟影像檔 (Ctrl+O)",
    "ko": "이미지 파일 열기 (Ctrl+O)",
-   "de": "Bilddatei öffnen (Strg+O)"
+   "de": "Bilddatei öffnen (Strg+O)",
+   "hi": "image फ़ाइल खोलें (Ctrl+O)"
   },
   "Edit the pipeline as code — one `op a b` per line (# starts a comment).\nType for autocomplete; click the gutter to toggle a breakpoint.": {
    "ja": "パイプラインをコードとして編集 — 1 行 1 op「op a b」(# 以降はコメント)。\n入力で自動補完・行番号左をクリックでブレークポイント切替。",
    "zh": "以代码方式编辑流水线 —— 每行一个 `op a b`(# 开始注释)。\n输入时自动补全;点击行号槽切换断点。",
    "tw": "以程式碼方式編輯管線 —— 每行一個 `op a b`(# 開始註解)。\n輸入時自動完成;點擊行號槽切換中斷點。",
    "ko": "파이프라인을 코드로 편집 —— 한 줄에 `op a b` 하나(# 부터는 주석).\n입력하면 자동 완성되고, 여백을 누르면 중단점이 켜집니다.",
-   "de": "Pipeline als Code bearbeiten — ein `op a b` pro Zeile (# beginnt einen Kommentar).\nTippen vervollständigt automatisch; Klick auf den Rand setzt einen Haltepunkt."
+   "de": "Pipeline als Code bearbeiten — ein `op a b` pro Zeile (# beginnt einen Kommentar).\nTippen vervollständigt automatisch; Klick auf den Rand setzt einen Haltepunkt.",
+   "hi": "pipeline को code के रूप में edit करें — हर line में एक `op a b` (# से comment शुरू होता है)।\nautocomplete के लिए टाइप करें; breakpoint on/off करने के लिए gutter पर क्लिक करें।"
   },
   "Run every line, timing each; stops at a breakpoint (Ctrl+Shift+Return)": {
    "ja": "全行を実行し各行を計時・ブレークポイントで停止 (Ctrl+Shift+Return)",
    "zh": "逐行运行并计时;遇断点停止 (Ctrl+Shift+Return)",
    "tw": "逐行執行並計時;遇中斷點停止 (Ctrl+Shift+Return)",
    "ko": "모든 줄을 실행하며 시간을 재고, 중단점에서 멈춥니다 (Ctrl+Shift+Return)",
-   "de": "Jede Zeile ausführen und messen; hält am Haltepunkt (Strg+Umschalt+Eingabe)"
+   "de": "Jede Zeile ausführen und messen; hält am Haltepunkt (Strg+Umschalt+Eingabe)",
+   "hi": "हर line रन करें और हर line का समय मापें; breakpoint पर रुकता है (Ctrl+Shift+Return)"
   },
   "Execute one more line and show its result (F10)": {
    "ja": "1 行実行して結果を表示 (F10)",
    "zh": "再执行一行并显示结果 (F10)",
    "tw": "再執行一行並顯示結果 (F10)",
    "ko": "한 줄 더 실행하고 결과를 표시 (F10)",
-   "de": "Eine weitere Zeile ausführen und ihr Ergebnis zeigen (F10)"
+   "de": "Eine weitere Zeile ausführen und ihr Ergebnis zeigen (F10)",
+   "hi": "एक और line execute करें और उसका परिणाम दिखाएँ (F10)"
   },
   "Clear the run highlight and per-line timings": {
    "ja": "実行ハイライトと行ごとの計時をクリア",
    "zh": "清除运行高亮与逐行计时",
    "tw": "清除執行高亮與逐行計時",
    "ko": "실행 강조와 줄별 시간 표시를 지웁니다",
-   "de": "Ausführungsmarkierung und Zeilenzeiten löschen"
+   "de": "Ausführungsmarkierung und Zeilenzeiten löschen",
+   "hi": "run highlight और हर line के timings साफ़ करें"
   },
   "Parse the code and replace the pipeline": {
    "ja": "コードを解析してパイプラインを置き換える",
    "zh": "解析代码并替换流水线",
    "tw": "解析程式碼並取代管線",
    "ko": "코드를 해석해 파이프라인을 교체",
-   "de": "Code parsen und Pipeline ersetzen"
+   "de": "Code parsen und Pipeline ersetzen",
+   "hi": "code को parse करें और pipeline बदलें"
   },
   "Regenerate the code from the current pipeline": {
    "ja": "現在のパイプラインからコードを再生成",
    "zh": "从当前流水线重新生成代码",
    "tw": "從目前管線重新產生程式碼",
    "ko": "현재 파이프라인에서 코드를 다시 생성",
-   "de": "Code aus der aktuellen Pipeline neu erzeugen"
+   "de": "Code aus der aktuellen Pipeline neu erzeugen",
+   "hi": "current pipeline से code फिर से generate करें"
   },
   "Every pipeline variable: the input frame and each stage's output.\nSelect one to inspect it; the buttons display it in a graphics window.": {
    "ja": "全パイプライン変数(入力フレームと各ステージ出力)。\n選択で検査・ボタンでグラフィクス窓に表示。",
    "zh": "流水线的全部变量:输入帧与每个阶段的输出。\n选中即可查看;按钮可在图形窗口中显示。",
    "tw": "管線的全部變數:輸入影格與每個階段的輸出。\n選取即可檢視;按鈕可在圖形視窗中顯示。",
    "ko": "파이프라인의 모든 변수: 입력 프레임과 각 단계의 출력.\n선택하면 살펴볼 수 있고, 버튼으로 그래픽 창에 표시합니다.",
-   "de": "Alle Pipeline-Variablen: das Eingabebild und die Ausgabe jeder Stufe.\nEine auswählen, um sie zu prüfen; die Schaltflächen zeigen sie im Grafikfenster."
+   "de": "Alle Pipeline-Variablen: das Eingabebild und die Ausgabe jeder Stufe.\nEine auswählen, um sie zu prüfen; die Schaltflächen zeigen sie im Grafikfenster.",
+   "hi": "pipeline के सभी variables: input frame और हर stage का output।\nजाँचने के लिए किसी एक को चुनें; buttons उसे graphics window में दिखाते हैं।"
   },
   "Open the selected variable in a new graphics window": {
    "ja": "選択中の変数を新しいグラフィクス窓で開く",
    "zh": "在新图形窗口中打开所选变量",
    "tw": "在新圖形視窗中開啟所選變數",
    "ko": "선택한 변수를 새 그래픽 창에서 열기",
-   "de": "Gewählte Variable in einem neuen Grafikfenster öffnen"
+   "de": "Gewählte Variable in einem neuen Grafikfenster öffnen",
+   "hi": "चुने गए variable को नई graphics window में खोलें"
   },
   "Show the selected variable in the main graphics window": {
    "ja": "選択中の変数をメイングラフィクス窓に表示",
    "zh": "在主图形窗口中显示所选变量",
    "tw": "在主圖形視窗中顯示所選變數",
    "ko": "선택한 변수를 메인 그래픽 창에 표시",
-   "de": "Gewählte Variable im Hauptgrafikfenster anzeigen"
+   "de": "Gewählte Variable im Hauptgrafikfenster anzeigen",
+   "hi": "चुने गए variable को main graphics window में दिखाएँ"
   },
   "Open another image / result window": {
    "ja": "別の画像/結果ウィンドウを開く",
    "zh": "再打开一个图像 / 结果窗口",
    "tw": "再開啟一個影像 / 結果視窗",
    "ko": "이미지 / 결과 창을 하나 더 열기",
-   "de": "Ein weiteres Bild-/Ergebnisfenster öffnen"
+   "de": "Ein weiteres Bild-/Ergebnisfenster öffnen",
+   "hi": "एक और image / result window खोलें"
   },
   "Restore the default tool-panel layout": {
    "ja": "ツールパネル配置を初期状態に戻す",
    "zh": "恢复默认工具面板布局",
    "tw": "還原預設工具面板配置",
    "ko": "도구 패널 배치를 기본값으로 되돌리기",
-   "de": "Standardlayout der Werkzeugpanels wiederherstellen"
+   "de": "Standardlayout der Werkzeugpanels wiederherstellen",
+   "hi": "tool panels का default layout वापस लाएँ"
   },
   "Detach every tool panel to its own window — move them across monitors": {
    "ja": "各ツールパネルを独立ウィンドウに分離 — 複数モニタへ移動可",
    "zh": "把每个工具面板拆成独立窗口 —— 可跨显示器摆放",
    "tw": "把每個工具面板拆成獨立視窗 —— 可跨螢幕擺放",
    "ko": "모든 도구 패널을 각각의 창으로 분리 —— 여러 모니터에 나눠 놓을 수 있습니다",
-   "de": "Jedes Werkzeugpanel in ein eigenes Fenster lösen — über mehrere Monitore verteilen"
+   "de": "Jedes Werkzeugpanel in ein eigenes Fenster lösen — über mehrere Monitore verteilen",
+   "hi": "हर tool panel को उसकी अपनी window में अलग करें — उन्हें अलग-अलग monitors पर ले जाएँ"
   },
   "Re-dock every floated tool panel": {
    "ja": "分離した全パネルを再ドック",
    "zh": "把浮动的工具面板全部重新停靠",
    "tw": "把浮動的工具面板全部重新停駐",
    "ko": "떠 있는 도구 패널을 모두 다시 도킹",
-   "de": "Alle gelösten Werkzeugpanels wieder andocken"
+   "de": "Alle gelösten Werkzeugpanels wieder andocken",
+   "hi": "हर floated tool panel को फिर से dock करें"
   },
   "Show the selected operator's HTML help (image-processing details)": {
    "ja": "選択中 op の HTML ヘルプを表示(画像処理の詳細)",
    "zh": "显示所选算子的 HTML 帮助(图像处理细节)",
    "tw": "顯示所選運算子的 HTML 說明(影像處理細節)",
    "ko": "선택한 연산자의 HTML 도움말 표시(영상 처리 상세)",
-   "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)"
+   "de": "HTML-Hilfe des gewählten Operators anzeigen (Details zur Bildverarbeitung)",
+   "hi": "चुने गए operator की HTML help दिखाएँ (image-processing का विवरण)"
   }
  },
  "guide": {
@@ -268,7 +305,8 @@
   "zh": "Fullseye Studio — 快速指南\n\n• 算子面板:选择算子,查看其签名与 HTML 帮助,点击 Insert 加入流水线。\n• 程序(代码)面板:以文本编辑流水线,输入即自动补全,\n  点击行号槽设断点,Run(计时)显示每行毫秒。\n• 变量与对象:每个阶段的输出;可在图形窗口中显示任意变量。\n• Windows 菜单:显示/浮动各面板、打开多个图形窗口,\n  或用「Float all panels」进行多显示器工作。\n• 拖放:图像、.py 脚本、流水线(.json)、3-D 文件(ASCII 或二进制的 PLY / STL / PCD / OBJ、\n  3DGS .ply / .splat、glTF、LAS、MJCF / URDF、BVH、SWC、体数据)、视频、事件相机数据、Markdown / SVG\n  和音频都会在合适的窗口打开。全部类型见 Help ▸ 可打开的文件。\n• 窗口位置、面板布局与语言会在会话之间保存。",
   "tw": "Fullseye Studio — 快速指南\n\n• 運算子面板:挑一個運算子,讀它的簽章 + HTML 說明,再 Insert 進管線。\n• Program(程式碼)面板:以文字編輯管線,輸入時自動完成,\n  點擊行號槽設中斷點,Run(計時)會顯示每行的 ms。\n• Variables & Objects:每個階段的輸出;任何一個都能顯示在圖形視窗。\n• Windows 選單:顯示/浮動各面板,開多個圖形視窗,\n  或用 'Float all panels' 做多螢幕作業。\n• 拖放:影像、.py 腳本、管線(.json)、3-D 檔案(ASCII 或二進位的 PLY / STL / PCD / OBJ、\n  3DGS .ply / .splat、glTF、LAS、MJCF / URDF、BVH、SWC、體積資料)、影片、事件相機資料、Markdown / SVG\n  與音訊都會在合適的視窗開啟。全部類型見 Help ▸ 可開啟的檔案。\n• 視窗位置、面板配置與語言會在下次啟動時還原。",
   "ko": "Fullseye Studio — 빠른 안내\n\n• 연산자 패널: 연산자를 고르고, 시그니처와 HTML 도움말을 읽고, Insert 로 파이프라인에 넣습니다.\n• Program(코드) 패널: 파이프라인을 텍스트로 편집합니다. 입력하면 자동 완성되고,\n  여백을 누르면 중단점이 켜지며, Run(계측)은 각 줄의 ms 를 보여 줍니다.\n• Variables & Objects: 각 단계의 출력. 어느 것이든 그래픽 창에 표시할 수 있습니다.\n• Windows 메뉴: 패널을 표시/분리하고, 그래픽 창을 여러 개 열고,\n  여러 모니터로 작업하려면 'Float all panels' 를 씁니다.\n• 드래그 앤 드롭: 이미지, .py 스크립트, 파이프라인(.json), 3-D 파일(ASCII 또는 바이너리 PLY / STL / PCD / OBJ,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, 볼륨), 동영상, 이벤트 카메라 데이터, Markdown / SVG,\n  오디오가 각각 알맞은 창에서 열립니다. 전체 종류는 Help ▸ 열 수 있는 파일.\n• 창 위치, 패널 배치, 언어는 다음 실행 때 복원됩니다.",
-  "de": "Fullseye Studio — Kurzanleitung\n\n• Operatoren-Panel: einen Operator wählen, seine Signatur und HTML-Hilfe lesen,\n  mit Insert in die Pipeline übernehmen.\n• Program-Panel (Code): die Pipeline als Text bearbeiten, Autovervollständigung\n  beim Tippen, Klick auf den Rand setzt Haltepunkte, Run (gemessen) zeigt die ms je Zeile.\n• Variables & Objects: die Ausgabe jeder Stufe; jede lässt sich in einem Grafikfenster anzeigen.\n• Windows-Menü: Panels ein-/ausblenden und lösen, mehrere Grafikfenster öffnen\n  oder 'Float all panels' für die Arbeit an mehreren Monitoren.\n• Drag & Drop: Bilder, .py-Skripte, Pipelines (.json), 3-D-Dateien (PLY / STL / PCD / OBJ in ASCII oder binär,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, Volumen), Videos, Eventkamera-Daten, Markdown / SVG\n  und Audio öffnen sich jeweils im passenden Fenster. Alle Typen: Help ▸ Öffnebare Dateien.\n• Fensterposition, Panel-Layout und Sprache bleiben zwischen den Sitzungen erhalten."
+  "de": "Fullseye Studio — Kurzanleitung\n\n• Operatoren-Panel: einen Operator wählen, seine Signatur und HTML-Hilfe lesen,\n  mit Insert in die Pipeline übernehmen.\n• Program-Panel (Code): die Pipeline als Text bearbeiten, Autovervollständigung\n  beim Tippen, Klick auf den Rand setzt Haltepunkte, Run (gemessen) zeigt die ms je Zeile.\n• Variables & Objects: die Ausgabe jeder Stufe; jede lässt sich in einem Grafikfenster anzeigen.\n• Windows-Menü: Panels ein-/ausblenden und lösen, mehrere Grafikfenster öffnen\n  oder 'Float all panels' für die Arbeit an mehreren Monitoren.\n• Drag & Drop: Bilder, .py-Skripte, Pipelines (.json), 3-D-Dateien (PLY / STL / PCD / OBJ in ASCII oder binär,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, Volumen), Videos, Eventkamera-Daten, Markdown / SVG\n  und Audio öffnen sich jeweils im passenden Fenster. Alle Typen: Help ▸ Öffnebare Dateien.\n• Fensterposition, Panel-Layout und Sprache bleiben zwischen den Sitzungen erhalten.",
+  "hi": "Fullseye Studio — क्विक गाइड\n\n• Operators panel: कोई op चुनें, उसका signature + HTML help पढ़ें, Insert से pipeline में डालें।\n• Program (code) panel: pipeline को text के रूप में edit करें, टाइप करते समय autocomplete,\n  breakpoints के लिए gutter पर क्लिक करें, Run (timed) हर line का ms दिखाता है।\n• Variables & Objects: हर stage का output; इनमें से किसी को भी graphics window में दिखाएँ।\n• Windows मेनू: हर panel को दिखाएँ/float करें, कई graphics windows खोलें,\n  या multi-monitor काम के लिए 'Float all panels'।\n• Drag & drop: images, .py scripts, pipelines (.json), 3-D फ़ाइलें (PLY / STL / PCD / OBJ, ASCII या binary में,\n  3DGS .ply / .splat, glTF, LAS, MJCF / URDF, BVH, SWC, volumes), videos, event-camera data, Markdown / SVG\n  और audio — हर एक सही window में खुलता है। सहायता ▸ खोली जा सकने वाली फ़ाइलें हर प्रकार की सूची देता है।\n• Window की position, panel layout और भाषा sessions के बीच याद रखी जाती हैं।"
  },
  "strings": {
   "&File": {
@@ -276,756 +314,864 @@
    "zh": "文件(&F)",
    "tw": "檔案(&F)",
    "ko": "파일(&F)",
-   "de": "&Datei"
+   "de": "&Datei",
+   "hi": "फ़ाइल (&F)"
   },
   "&Edit": {
    "ja": "編集(&E)",
    "zh": "编辑(&E)",
    "tw": "編輯(&E)",
    "ko": "편집(&E)",
-   "de": "&Bearbeiten"
+   "de": "&Bearbeiten",
+   "hi": "संपादन (&E)"
   },
   "&View": {
    "ja": "表示(&V)",
    "zh": "视图(&V)",
    "tw": "檢視(&V)",
    "ko": "보기(&V)",
-   "de": "&Ansicht"
+   "de": "&Ansicht",
+   "hi": "व्यू (&V)"
   },
   "&Run": {
    "ja": "実行(&R)",
    "zh": "运行(&R)",
    "tw": "執行(&R)",
    "ko": "실행(&R)",
-   "de": "&Ausführen"
+   "de": "&Ausführen",
+   "hi": "रन (&R)"
   },
   "&Window": {
    "ja": "ウィンドウ(&W)",
    "zh": "窗口(&W)",
    "tw": "視窗(&W)",
    "ko": "창(&W)",
-   "de": "&Fenster"
+   "de": "&Fenster",
+   "hi": "विंडो (&W)"
   },
   "&Tools": {
    "ja": "ツール(&T)",
    "zh": "工具(&T)",
    "tw": "工具(&T)",
    "ko": "도구(&T)",
-   "de": "&Werkzeuge"
+   "de": "&Werkzeuge",
+   "hi": "टूल्स (&T)"
   },
   "&Help": {
    "ja": "ヘルプ(&H)",
    "zh": "帮助(&H)",
    "tw": "說明(&H)",
    "ko": "도움말(&H)",
-   "de": "&Hilfe"
+   "de": "&Hilfe",
+   "hi": "सहायता (&H)"
   },
   "Python Editor…": {
    "ja": "Python エディタ…",
    "zh": "Python 编辑器…",
    "tw": "Python 編輯器…",
    "ko": "Python 편집기…",
-   "de": "Python-Editor…"
+   "de": "Python-Editor…",
+   "hi": "Python Editor…"
   },
   "2-D Examples…": {
    "ja": "2D サンプル集…",
    "zh": "2-D 示例集…",
    "tw": "2-D 範例集…",
    "ko": "2-D 예제 모음…",
-   "de": "2-D-Beispiele…"
+   "de": "2-D-Beispiele…",
+   "hi": "2-D उदाहरण…"
   },
   "3-D Examples…": {
    "ja": "3D サンプル集…",
    "zh": "3-D 示例集…",
    "tw": "3-D 範例集…",
    "ko": "3-D 예제 모음…",
-   "de": "3-D-Beispiele…"
+   "de": "3-D-Beispiele…",
+   "hi": "3-D उदाहरण…"
   },
   "3-D Operators…": {
    "ja": "3D オペレータ一覧…",
    "zh": "3-D 算子一览…",
    "tw": "3-D 運算子一覽…",
    "ko": "3-D 연산자 목록…",
-   "de": "3-D-Operatoren…"
+   "de": "3-D-Operatoren…",
+   "hi": "3-D operators…"
   },
   "System settings…": {
    "ja": "環境設定…",
    "zh": "系统设置…",
    "tw": "系統設定…",
    "ko": "환경 설정…",
-   "de": "Systemeinstellungen…"
+   "de": "Systemeinstellungen…",
+   "hi": "सिस्टम सेटिंग्स…"
   },
   "Feedback / Report an issue…": {
    "ja": "フィードバック / 問題を報告…",
    "zh": "反馈 / 报告问题…",
    "tw": "意見回饋 / 回報問題…",
    "ko": "피드백 / 문제 신고…",
-   "de": "Feedback / Problem melden…"
+   "de": "Feedback / Problem melden…",
+   "hi": "फ़ीडबैक / समस्या रिपोर्ट करें…"
   },
   "dev_* visualization demo": {
    "ja": "dev_* 可視化デモ",
    "zh": "dev_* 可视化演示",
    "tw": "dev_* 視覺化示範",
    "ko": "dev_* 시각화 데모",
-   "de": "dev_*-Visualisierungsdemo"
+   "de": "dev_*-Visualisierungsdemo",
+   "hi": "dev_* visualization डेमो"
   },
   "New graphics window": {
    "ja": "新しいグラフィクスウィンドウ",
    "zh": "新建图形窗口",
    "tw": "新增圖形視窗",
    "ko": "새 그래픽 창",
-   "de": "Neues Grafikfenster"
+   "de": "Neues Grafikfenster",
+   "hi": "नई graphics window"
   },
   "Tile graphics windows": {
    "ja": "グラフィクスウィンドウを並べて表示",
    "zh": "平铺图形窗口",
    "tw": "並排圖形視窗",
    "ko": "그래픽 창 바둑판 배열",
-   "de": "Grafikfenster nebeneinander"
+   "de": "Grafikfenster nebeneinander",
+   "hi": "graphics windows को tile करें"
   },
   "Cascade graphics windows": {
    "ja": "グラフィクスウィンドウを重ねて表示",
    "zh": "层叠图形窗口",
    "tw": "重疊圖形視窗",
    "ko": "그래픽 창 계단식 배열",
-   "de": "Grafikfenster überlappend"
+   "de": "Grafikfenster überlappend",
+   "hi": "graphics windows को cascade करें"
   },
   "Quick guide (en/ja/zh)": {
    "ja": "クイックガイド (en/ja/zh)",
    "zh": "快速指南 (en/ja/zh)",
    "tw": "快速指南 (en/ja/zh)",
    "ko": "빠른 안내 (en/ja/zh)",
-   "de": "Kurzanleitung (en/ja/zh)"
+   "de": "Kurzanleitung (en/ja/zh)",
+   "hi": "क्विक गाइड (en/ja/zh)"
   },
   "New": {
    "ja": "新規",
    "zh": "新建",
    "tw": "新增",
    "ko": "새로 만들기",
-   "de": "Neu"
+   "de": "Neu",
+   "hi": "नया"
   },
   "Open…": {
    "ja": "開く…",
    "zh": "打开…",
    "tw": "開啟…",
    "ko": "열기…",
-   "de": "Öffnen…"
+   "de": "Öffnen…",
+   "hi": "खोलें…"
   },
   "Save": {
    "ja": "保存",
    "zh": "保存",
    "tw": "儲存",
    "ko": "저장",
-   "de": "Speichern"
+   "de": "Speichern",
+   "hi": "सेव करें"
   },
   "Save as…": {
    "ja": "名前を付けて保存…",
    "zh": "另存为…",
    "tw": "另存新檔…",
    "ko": "다른 이름으로 저장…",
-   "de": "Speichern unter…"
+   "de": "Speichern unter…",
+   "hi": "इस नाम से सेव करें…"
   },
   "Samples ▾": {
    "ja": "サンプル ▾",
    "zh": "示例 ▾",
    "tw": "範例 ▾",
    "ko": "샘플 ▾",
-   "de": "Beispiele ▾"
+   "de": "Beispiele ▾",
+   "hi": "सैंपल ▾"
   },
   "Stop": {
    "ja": "停止",
    "zh": "停止",
    "tw": "停止",
    "ko": "중지",
-   "de": "Stopp"
+   "de": "Stopp",
+   "hi": "रोकें"
   },
   "Run (F5)": {
    "ja": "実行 (F5)",
    "zh": "运行 (F5)",
    "tw": "執行 (F5)",
    "ko": "실행 (F5)",
-   "de": "Ausführen (F5)"
+   "de": "Ausführen (F5)",
+   "hi": "रन (F5)"
   },
   "Run": {
    "ja": "実行",
    "zh": "运行",
    "tw": "執行",
    "ko": "실행",
-   "de": "Ausführen"
+   "de": "Ausführen",
+   "hi": "रन"
   },
   "Copy code": {
    "ja": "コードをコピー",
    "zh": "复制代码",
    "tw": "複製程式碼",
    "ko": "코드 복사",
-   "de": "Code kopieren"
+   "de": "Code kopieren",
+   "hi": "कोड कॉपी करें"
   },
   "Open in editor": {
    "ja": "エディタで開く",
    "zh": "在编辑器中打开",
    "tw": "在編輯器中開啟",
    "ko": "편집기에서 열기",
-   "de": "Im Editor öffnen"
+   "de": "Im Editor öffnen",
+   "hi": "editor में खोलें"
   },
   "Open in window": {
    "ja": "ウィンドウで開く",
    "zh": "在窗口中打开",
    "tw": "在視窗中開啟",
    "ko": "창에서 열기",
-   "de": "Im Fenster öffnen"
+   "de": "Im Fenster öffnen",
+   "hi": "window में खोलें"
   },
   "Copy all": {
    "ja": "全部コピー",
    "zh": "全部复制",
    "tw": "全部複製",
    "ko": "모두 복사",
-   "de": "Alles kopieren"
+   "de": "Alles kopieren",
+   "hi": "सब कॉपी करें"
   },
   "Execution": {
    "ja": "実行",
    "zh": "执行",
    "tw": "執行",
    "ko": "실행",
-   "de": "Ausführung"
+   "de": "Ausführung",
+   "hi": "एक्ज़िक्यूशन"
   },
   "Windows": {
    "ja": "ウィンドウ",
    "zh": "窗口",
    "tw": "視窗",
    "ko": "창",
-   "de": "Fenster"
+   "de": "Fenster",
+   "hi": "विंडो"
   },
   "Display": {
    "ja": "表示",
    "zh": "显示",
    "tw": "顯示",
    "ko": "표시",
-   "de": "Anzeige"
+   "de": "Anzeige",
+   "hi": "डिस्प्ले"
   },
   "Editor": {
    "ja": "エディタ",
    "zh": "编辑器",
    "tw": "編輯器",
    "ko": "편집기",
-   "de": "Editor"
+   "de": "Editor",
+   "hi": "Editor"
   },
   "Threads (thread_num)": {
    "ja": "スレッド数 (thread_num)",
    "zh": "线程数 (thread_num)",
    "tw": "執行緒數 (thread_num)",
    "ko": "스레드 수 (thread_num)",
-   "de": "Threads (thread_num)"
+   "de": "Threads (thread_num)",
+   "hi": "Threads (thread_num)"
   },
   "Operator timeout": {
    "ja": "オペレータタイムアウト",
    "zh": "算子超时",
    "tw": "運算子逾時",
    "ko": "연산자 제한 시간",
-   "de": "Operator-Zeitlimit"
+   "de": "Operator-Zeitlimit",
+   "hi": "Operator timeout"
   },
   "Max graphics windows": {
    "ja": "グラフィクスウィンドウ上限",
    "zh": "图形窗口上限",
    "tw": "圖形視窗上限",
    "ko": "그래픽 창 최대 개수",
-   "de": "Max. Grafikfenster"
+   "de": "Max. Grafikfenster",
+   "hi": "अधिकतम graphics windows"
   },
   "Default display mode": {
    "ja": "既定の表示モード",
    "zh": "默认显示模式",
    "tw": "預設顯示模式",
    "ko": "기본 표시 모드",
-   "de": "Standard-Anzeigemodus"
+   "de": "Standard-Anzeigemodus",
+   "hi": "डिफ़ॉल्ट display mode"
   },
   "Region draw (dev_set_draw)": {
    "ja": "Region 描画 (dev_set_draw)",
    "zh": "Region 绘制 (dev_set_draw)",
    "tw": "Region 繪製 (dev_set_draw)",
    "ko": "Region 그리기 (dev_set_draw)",
-   "de": "Region-Zeichnung (dev_set_draw)"
+   "de": "Region-Zeichnung (dev_set_draw)",
+   "hi": "Region ड्रॉ (dev_set_draw)"
   },
   "Region line width": {
    "ja": "Region 線幅",
    "zh": "Region 线宽",
    "tw": "Region 線寬",
    "ko": "Region 선 두께",
-   "de": "Region-Linienbreite"
+   "de": "Region-Linienbreite",
+   "hi": "Region line की चौड़ाई"
   },
   "Editor font size": {
    "ja": "エディタのフォントサイズ",
    "zh": "编辑器字号",
    "tw": "編輯器字級",
    "ko": "편집기 글꼴 크기",
-   "de": "Editor-Schriftgröße"
+   "de": "Editor-Schriftgröße",
+   "hi": "Editor का font size"
   },
   "Python Editor interpreter": {
    "ja": "Python エディタの実行インタプリタ",
    "zh": "Python 编辑器解释器",
    "tw": "Python 編輯器直譯器",
    "ko": "Python 편집기 인터프리터",
-   "de": "Python-Editor-Interpreter"
+   "de": "Python-Editor-Interpreter",
+   "hi": "Python Editor का interpreter"
   },
   "Error checking (set_check)": {
    "ja": "エラー検査 (set_check)",
    "zh": "错误检查 (set_check)",
    "tw": "錯誤檢查 (set_check)",
    "ko": "오류 검사 (set_check)",
-   "de": "Fehlerprüfung (set_check)"
+   "de": "Fehlerprüfung (set_check)",
+   "hi": "Error जाँच (set_check)"
   },
   "Language": {
    "ja": "言語",
    "zh": "语言",
    "tw": "語言",
    "ko": "언어",
-   "de": "Sprache"
+   "de": "Sprache",
+   "hi": "भाषा"
   },
   "Files you can open (drag & drop)…": {
    "ja": "開けるファイル(ドラッグ・アンド・ドロップ)…",
    "zh": "可打开的文件(拖放)…",
    "tw": "可開啟的檔案(拖放)…",
    "ko": "열 수 있는 파일(드래그 앤 드롭)…",
-   "de": "Öffnebare Dateien (Drag & Drop)…"
+   "de": "Öffnebare Dateien (Drag & Drop)…",
+   "hi": "खोली जा सकने वाली फ़ाइलें (drag & drop)…"
   },
   "Files you can open": {
    "ja": "開けるファイル",
    "zh": "可打开的文件",
    "tw": "可開啟的檔案",
    "ko": "열 수 있는 파일",
-   "de": "Öffnebare Dateien"
+   "de": "Öffnebare Dateien",
+   "hi": "खोली जा सकने वाली फ़ाइलें"
   },
   "Drop files or folders onto the main window (or open them from the File menu). Several files at once open several windows.": {
    "ja": "ファイルやフォルダをメイン画面に落とします(File メニューからも開けます)。複数まとめて落とすと複数の窓が開きます。",
    "zh": "将文件或文件夹拖放到主窗口(也可从 File 菜单打开)。一次拖放多个文件会打开多个窗口。",
    "tw": "將檔案或資料夾拖放到主視窗(也可從 File 選單開啟)。一次拖放多個檔案會開啟多個視窗。",
    "ko": "파일이나 폴더를 메인 창에 끌어다 놓습니다(File 메뉴에서도 열 수 있음). 여러 개를 한꺼번에 놓으면 여러 창이 열립니다.",
-   "de": "Dateien oder Ordner auf das Hauptfenster ziehen (oder über das Menü File öffnen). Mehrere Dateien öffnen mehrere Fenster."
+   "de": "Dateien oder Ordner auf das Hauptfenster ziehen (oder über das Menü File öffnen). Mehrere Dateien öffnen mehrere Fenster.",
+   "hi": "फ़ाइलें या फ़ोल्डर main window पर drop करें (या File मेनू से खोलें)। एक साथ कई फ़ाइलें drop करने पर कई windows खुलती हैं।"
   },
   "Opens in": {
    "ja": "開く先",
    "zh": "打开方式",
    "tw": "開啟方式",
    "ko": "여는 곳",
-   "de": "Öffnet in"
+   "de": "Öffnet in",
+   "hi": "कहाँ खुलती है"
   },
   "Extensions": {
    "ja": "拡張子",
    "zh": "扩展名",
    "tw": "副檔名",
    "ko": "확장자",
-   "de": "Endungen"
+   "de": "Endungen",
+   "hi": "Extensions"
   },
   "Notes": {
    "ja": "補足",
    "zh": "说明",
    "tw": "說明",
    "ko": "비고",
-   "de": "Hinweise"
+   "de": "Hinweise",
+   "hi": "टिप्पणी"
   },
   "Image viewer": {
    "ja": "画像ビューア",
    "zh": "图像查看器",
    "tw": "影像檢視器",
    "ko": "이미지 뷰어",
-   "de": "Bildbetrachter"
+   "de": "Bildbetrachter",
+   "hi": "Image viewer"
   },
   "Python editor (one tab per file)": {
    "ja": "Python エディタ(1 ファイル 1 タブ)",
    "zh": "Python 编辑器(每个文件一个标签页)",
    "tw": "Python 編輯器(每個檔案一個分頁)",
    "ko": "Python 편집기(파일마다 탭 하나)",
-   "de": "Python-Editor (ein Tab pro Datei)"
+   "de": "Python-Editor (ein Tab pro Datei)",
+   "hi": "Python editor (हर फ़ाइल के लिए एक tab)"
   },
   "Pipeline (replaces the current one)": {
    "ja": "パイプライン(今のものと置き換え)",
    "zh": "流水线(替换当前的)",
    "tw": "管線(取代目前的)",
    "ko": "파이프라인(현재 것을 교체)",
-   "de": "Pipeline (ersetzt die aktuelle)"
+   "de": "Pipeline (ersetzt die aktuelle)",
+   "hi": "Pipeline (मौजूदा pipeline की जगह लेती है)"
   },
   "3-D viewer: point clouds and meshes": {
    "ja": "3-D ビューア: 点群とメッシュ",
    "zh": "3-D 查看器:点云与网格",
    "tw": "3-D 檢視器:點雲與網格",
    "ko": "3-D 뷰어: 점군과 메시",
-   "de": "3-D-Ansicht: Punktwolken und Netze"
+   "de": "3-D-Ansicht: Punktwolken und Netze",
+   "hi": "3-D viewer: point clouds और meshes"
   },
   "3-D viewer: 3-D Gaussian splats": {
    "ja": "3-D ビューア: 3D ガウシアン・スプラッティング",
    "zh": "3-D 查看器:3D 高斯泼溅",
    "tw": "3-D 檢視器:3D 高斯潑濺",
    "ko": "3-D 뷰어: 3D 가우시안 스플래팅",
-   "de": "3-D-Ansicht: 3D Gaussian Splats"
+   "de": "3-D-Ansicht: 3D Gaussian Splats",
+   "hi": "3-D viewer: 3-D Gaussian splats"
   },
   "3-D viewer: medical volumes": {
    "ja": "3-D ビューア: 医用ボリューム",
    "zh": "3-D 查看器:医学体数据",
    "tw": "3-D 檢視器:醫學體積資料",
    "ko": "3-D 뷰어: 의료 볼륨",
-   "de": "3-D-Ansicht: medizinische Volumen"
+   "de": "3-D-Ansicht: medizinische Volumen",
+   "hi": "3-D viewer: medical volumes"
   },
   "3-D viewer: glTF scenes and LiDAR": {
    "ja": "3-D ビューア: glTF のシーンと LiDAR",
    "zh": "3-D 查看器:glTF 场景与 LiDAR",
    "tw": "3-D 檢視器:glTF 場景與 LiDAR",
    "ko": "3-D 뷰어: glTF 장면과 LiDAR",
-   "de": "3-D-Ansicht: glTF-Szenen und LiDAR"
+   "de": "3-D-Ansicht: glTF-Szenen und LiDAR",
+   "hi": "3-D viewer: glTF scenes और LiDAR"
   },
   "3-D viewer: robot models (MJCF / URDF)": {
    "ja": "3-D ビューア: ロボットのモデル(MJCF / URDF)",
    "zh": "3-D 查看器:机器人模型(MJCF / URDF)",
    "tw": "3-D 檢視器:機器人模型(MJCF / URDF)",
    "ko": "3-D 뷰어: 로봇 모델(MJCF / URDF)",
-   "de": "3-D-Ansicht: Robotermodelle (MJCF / URDF)"
+   "de": "3-D-Ansicht: Robotermodelle (MJCF / URDF)",
+   "hi": "3-D viewer: robot models (MJCF / URDF)"
   },
   "3-D viewer: motion capture (BVH) and neuron morphology (SWC)": {
    "ja": "3-D ビューア: モーションキャプチャ(BVH)と神経細胞の形(SWC)",
    "zh": "3-D 查看器:动作捕捉(BVH)与神经元形态(SWC)",
    "tw": "3-D 檢視器:動作擷取(BVH)與神經元形態(SWC)",
    "ko": "3-D 뷰어: 모션 캡처(BVH)와 뉴런 형태(SWC)",
-   "de": "3-D-Ansicht: Motion Capture (BVH) und Neuronenmorphologie (SWC)"
+   "de": "3-D-Ansicht: Motion Capture (BVH) und Neuronenmorphologie (SWC)",
+   "hi": "3-D viewer: motion capture (BVH) और neuron morphology (SWC)"
   },
   "Video cube": {
    "ja": "動画の立方体",
    "zh": "视频立方体",
    "tw": "影片立方體",
    "ko": "비디오 큐브",
-   "de": "Videowürfel"
+   "de": "Videowürfel",
+   "hi": "Video cube"
   },
   "Event camera: frames in the video cube": {
    "ja": "イベントカメラ: コマにして動画の立方体へ",
    "zh": "事件相机:转成帧放入视频立方体",
    "tw": "事件相機:轉成影格放入影片立方體",
    "ko": "이벤트 카메라: 프레임으로 만들어 비디오 큐브로",
-   "de": "Eventkamera: Frames im Videowürfel"
+   "de": "Eventkamera: Frames im Videowürfel",
+   "hi": "Event camera: video cube में frames"
   },
   "NumPy array": {
    "ja": "NumPy 配列",
    "zh": "NumPy 数组",
    "tw": "NumPy 陣列",
    "ko": "NumPy 배열",
-   "de": "NumPy-Array"
+   "de": "NumPy-Array",
+   "hi": "NumPy array"
   },
   "Document viewer": {
    "ja": "文書ビューア",
    "zh": "文档查看器",
    "tw": "文件檢視器",
    "ko": "문서 뷰어",
-   "de": "Dokumentbetrachter"
+   "de": "Dokumentbetrachter",
+   "hi": "Document viewer"
   },
   "Audio window": {
    "ja": "音声の窓",
    "zh": "音频窗口",
    "tw": "音訊視窗",
    "ko": "오디오 창",
-   "de": "Audiofenster"
+   "de": "Audiofenster",
+   "hi": "Audio window"
   },
   "Robot player": {
    "ja": "ロボットの再生",
    "zh": "机器人回放",
    "tw": "機器人重播",
    "ko": "로봇 재생",
-   "de": "Roboter-Player"
+   "de": "Roboter-Player",
+   "hi": "Robot player"
   },
   "List, zoom, pixel values, histogram, 'Use as pipeline input'. A folder opens the images directly inside it; a single-frame GIF is an image.": {
    "ja": "一覧・拡大・画素値・ヒストグラム・「パイプラインの入力にする」。フォルダは直下の画像を開く。1 コマの GIF は画像。",
    "zh": "列表、缩放、像素值、直方图、“用作流水线输入”。文件夹会打开其中直接包含的图像;单帧 GIF 视为图像。",
    "tw": "清單、縮放、像素值、直方圖、「用作管線輸入」。資料夾會開啟其中直接包含的影像;單格 GIF 視為影像。",
    "ko": "목록, 확대, 픽셀 값, 히스토그램, '파이프라인 입력으로 사용'. 폴더는 바로 안의 이미지를 엽니다. 한 프레임 GIF는 이미지입니다.",
-   "de": "Liste, Zoom, Pixelwerte, Histogramm, „Als Pipeline-Eingabe verwenden“. Ein Ordner öffnet die Bilder direkt darin; ein GIF mit einem Frame ist ein Bild."
+   "de": "Liste, Zoom, Pixelwerte, Histogramm, „Als Pipeline-Eingabe verwenden“. Ein Ordner öffnet die Bilder direkt darin; ein GIF mit einem Frame ist ein Bild.",
+   "hi": "सूची, zoom, pixel values, histogram, 'Use as pipeline input'। फ़ोल्डर उसके सीधे अंदर की images खोलता है; एक frame वाली GIF को image माना जाता है।"
   },
   "ASCII and binary both: PLY (ASCII / binary little- and big-endian), STL (ASCII / binary), PCD (ASCII / binary / binary_compressed).": {
    "ja": "ASCII とバイナリの両方: PLY(ASCII / バイナリのリトル・ビッグエンディアン)、STL(ASCII / バイナリ)、PCD(ASCII / binary / binary_compressed)。",
    "zh": "ASCII 与二进制皆可:PLY(ASCII / 二进制小端与大端)、STL(ASCII / 二进制)、PCD(ASCII / binary / binary_compressed)。",
    "tw": "ASCII 與二進位皆可:PLY(ASCII / 二進位小端與大端)、STL(ASCII / 二進位)、PCD(ASCII / binary / binary_compressed)。",
    "ko": "ASCII와 바이너리 모두: PLY(ASCII / 바이너리 리틀·빅 엔디언), STL(ASCII / 바이너리), PCD(ASCII / binary / binary_compressed).",
-   "de": "ASCII und binär: PLY (ASCII / binär Little- und Big-Endian), STL (ASCII / binär), PCD (ASCII / binary / binary_compressed)."
+   "de": "ASCII und binär: PLY (ASCII / binär Little- und Big-Endian), STL (ASCII / binär), PCD (ASCII / binary / binary_compressed).",
+   "hi": "ASCII और binary दोनों: PLY (ASCII / binary little- और big-endian), STL (ASCII / binary), PCD (ASCII / binary / binary_compressed)।"
   },
   "A PLY with f_dc / opacity / scale / rot is recognised from its header. Colour = SH DC term; splats with opacity < 0.05 are hidden.": {
    "ja": "f_dc / opacity / scale / rot を持つ PLY はヘッダで見分ける。色 = 球面調和の DC 項。不透明度 0.05 未満は隠す。",
    "zh": "带有 f_dc / opacity / scale / rot 的 PLY 由文件头识别。颜色 = 球谐 DC 项;不透明度 < 0.05 的泼溅被隐藏。",
    "tw": "帶有 f_dc / opacity / scale / rot 的 PLY 由檔頭辨識。顏色 = 球諧 DC 項;不透明度 < 0.05 的潑濺會隱藏。",
    "ko": "f_dc / opacity / scale / rot 가 있는 PLY는 헤더로 판별합니다. 색 = 구면 조화 DC 항. 불투명도 0.05 미만은 숨깁니다.",
-   "de": "Ein PLY mit f_dc / opacity / scale / rot wird am Header erkannt. Farbe = SH-DC-Term; Splats mit Deckkraft < 0.05 werden ausgeblendet."
+   "de": "Ein PLY mit f_dc / opacity / scale / rot wird am Header erkannt. Farbe = SH-DC-Term; Splats mit Deckkraft < 0.05 werden ausgeblendet.",
+   "hi": "f_dc / opacity / scale / rot वाली PLY को उसके header से पहचाना जाता है। रंग = SH DC term; opacity < 0.05 वाले splats छिपा दिए जाते हैं।"
   },
   "Needs SimpleITK (or nibabel / pydicom).": {
    "ja": "SimpleITK(または nibabel / pydicom)が要る。",
    "zh": "需要 SimpleITK(或 nibabel / pydicom)。",
    "tw": "需要 SimpleITK(或 nibabel / pydicom)。",
    "ko": "SimpleITK(또는 nibabel / pydicom)가 필요합니다.",
-   "de": "Benötigt SimpleITK (oder nibabel / pydicom)."
+   "de": "Benötigt SimpleITK (oder nibabel / pydicom).",
+   "hi": "SimpleITK (या nibabel / pydicom) आवश्यक है।"
   },
   "glTF needs pygltflib; LAS needs laspy (LAZ also lazrs or laszip). LAS colours are used when present.": {
    "ja": "glTF は pygltflib、LAS は laspy が要る(LAZ はさらに lazrs か laszip)。LAS に色があれば使う。",
    "zh": "glTF 需要 pygltflib;LAS 需要 laspy(LAZ 还需 lazrs 或 laszip)。LAS 带颜色时会使用。",
    "tw": "glTF 需要 pygltflib;LAS 需要 laspy(LAZ 還需 lazrs 或 laszip)。LAS 帶顏色時會使用。",
    "ko": "glTF는 pygltflib, LAS는 laspy가 필요합니다(LAZ는 lazrs 또는 laszip도). LAS에 색이 있으면 사용합니다.",
-   "de": "glTF benötigt pygltflib; LAS benötigt laspy (LAZ zusätzlich lazrs oder laszip). LAS-Farben werden genutzt, falls vorhanden."
+   "de": "glTF benötigt pygltflib; LAS benötigt laspy (LAZ zusätzlich lazrs oder laszip). LAS-Farben werden genutzt, falls vorhanden.",
+   "hi": "glTF के लिए pygltflib और LAS के लिए laspy आवश्यक है (LAZ के लिए साथ में lazrs या laszip भी)। LAS में रंग हों तो उनका उपयोग होता है।"
   },
   ".xml only when its root element is <mujoco> or <robot>. Needs mujoco (and open3d for the geom meshes).": {
    "ja": ".xml は根の要素が <mujoco> か <robot> の時だけ。mujoco が要る(geom のメッシュには open3d も)。",
    "zh": ".xml 仅当根元素为 <mujoco> 或 <robot> 时。需要 mujoco(geom 网格还需 open3d)。",
    "tw": ".xml 僅當根元素為 <mujoco> 或 <robot> 時。需要 mujoco(geom 網格還需 open3d)。",
    "ko": ".xml은 루트 요소가 <mujoco> 또는 <robot>일 때만. mujoco가 필요합니다(geom 메시에는 open3d도).",
-   "de": ".xml nur, wenn das Wurzelelement <mujoco> oder <robot> ist. Benötigt mujoco (und open3d für die Geom-Netze)."
+   "de": ".xml nur, wenn das Wurzelelement <mujoco> oder <robot> ist. Benötigt mujoco (und open3d für die Geom-Netze).",
+   "hi": ".xml केवल तब, जब उसका root element <mujoco> या <robot> हो। mujoco आवश्यक है (और geom meshes के लिए open3d)।"
   },
   "BVH: joint paths coloured by time. SWC: coloured by compartment type.": {
    "ja": "BVH: 関節の軌跡を時刻で色分け。SWC: 部位の種類で色分け。",
    "zh": "BVH:关节轨迹按时间着色。SWC:按区段类型着色。",
    "tw": "BVH:關節軌跡依時間著色。SWC:依區段類型著色。",
    "ko": "BVH: 관절 궤적을 시간으로 색칠. SWC: 구획 종류로 색칠.",
-   "de": "BVH: Gelenkbahnen nach Zeit eingefärbt. SWC: nach Kompartimenttyp eingefärbt."
+   "de": "BVH: Gelenkbahnen nach Zeit eingefärbt. SWC: nach Kompartimenttyp eingefärbt.",
+   "hi": "BVH: joint paths समय के अनुसार रंगे जाते हैं। SWC: compartment type के अनुसार रंगे जाते हैं।"
   },
   "An animated GIF opens here; HDF5 stacks too.": {
    "ja": "アニメーション GIF はこちら。HDF5 のスタックも。",
    "zh": "动画 GIF 在此打开;HDF5 堆栈也是。",
    "tw": "動畫 GIF 在此開啟;HDF5 堆疊也是。",
    "ko": "애니메이션 GIF는 여기서 열립니다. HDF5 스택도.",
-   "de": "Animierte GIFs öffnen sich hier, ebenso HDF5-Stapel."
+   "de": "Animierte GIFs öffnen sich hier, ebenso HDF5-Stapel.",
+   "hi": "Animated GIF यहाँ खुलती है; HDF5 stacks भी।"
   },
   "Recognised from the content: four columns x, y, t, p (header names, or inferred from the values).": {
    "ja": "中身で見分ける: 4 列 x, y, t, p(見出しの名前、または値から推定)。",
    "zh": "按内容识别:四列 x, y, t, p(列名,或由数值推断)。",
    "tw": "依內容辨識:四欄 x, y, t, p(欄名,或由數值推斷)。",
    "ko": "내용으로 판별: 네 열 x, y, t, p(헤더 이름 또는 값에서 추정).",
-   "de": "Am Inhalt erkannt: vier Spalten x, y, t, p (Kopfzeilennamen oder aus den Werten erschlossen)."
+   "de": "Am Inhalt erkannt: vier Spalten x, y, t, p (Kopfzeilennamen oder aus den Werten erschlossen).",
+   "hi": "सामग्री से पहचाना जाता है: चार columns x, y, t, p (header के नाम, या values से अनुमानित)।"
   },
   "2-D or (H, W, 3|4): pipeline input image. (N, 3|6): point cloud. Other 3-D: volume.": {
    "ja": "2-D か (H, W, 3|4): パイプラインの入力画像。(N, 3|6): 点群。その他の 3-D: ボリューム。",
    "zh": "2-D 或 (H, W, 3|4):流水线输入图像。(N, 3|6):点云。其他 3-D:体数据。",
    "tw": "2-D 或 (H, W, 3|4):管線輸入影像。(N, 3|6):點雲。其他 3-D:體積資料。",
    "ko": "2-D 또는 (H, W, 3|4): 파이프라인 입력 이미지. (N, 3|6): 점군. 그 밖의 3-D: 볼륨.",
-   "de": "2-D oder (H, W, 3|4): Pipeline-Eingabebild. (N, 3|6): Punktwolke. Sonstiges 3-D: Volumen."
+   "de": "2-D oder (H, W, 3|4): Pipeline-Eingabebild. (N, 3|6): Punktwolke. Sonstiges 3-D: Volumen.",
+   "hi": "2-D या (H, W, 3|4): pipeline की input image। (N, 3|6): point cloud। अन्य 3-D: volume।"
   },
   "Markdown is rendered; SVG is drawn.": {
    "ja": "Markdown は整形して、SVG は絵として表示。",
    "zh": "Markdown 渲染显示;SVG 绘制显示。",
    "tw": "Markdown 渲染顯示;SVG 繪製顯示。",
    "ko": "Markdown은 렌더링, SVG는 그림으로 표시.",
-   "de": "Markdown wird gerendert, SVG gezeichnet."
+   "de": "Markdown wird gerendert, SVG gezeichnet.",
+   "hi": "Markdown render होता है; SVG ड्रॉ होता है।"
   },
   "Waveform, spectrogram (dB) and playback. Formats other than WAV need soundfile.": {
    "ja": "波形・スペクトログラム(dB)・再生。WAV 以外は soundfile が要る。",
    "zh": "波形、频谱图(dB)与播放。WAV 以外的格式需要 soundfile。",
    "tw": "波形、頻譜圖(dB)與播放。WAV 以外的格式需要 soundfile。",
    "ko": "파형, 스펙트로그램(dB), 재생. WAV 이외 형식은 soundfile이 필요합니다.",
-   "de": "Wellenform, Spektrogramm (dB) und Wiedergabe. Andere Formate als WAV benötigen soundfile."
+   "de": "Wellenform, Spektrogramm (dB) und Wiedergabe. Andere Formate als WAV benötigen soundfile.",
+   "hi": "Waveform, spectrogram (dB) और playback। WAV के अलावा अन्य formats के लिए soundfile आवश्यक है।"
   },
   "Drop a robot model together with a qpos trajectory .npy of shape (T, nq): slider + play.": {
    "ja": "ロボットのモデルと形 (T, nq) の qpos 軌跡 .npy を一緒に落とす: スライダ + 再生。",
    "zh": "将机器人模型与形状为 (T, nq) 的 qpos 轨迹 .npy 一起拖放:滑块 + 播放。",
    "tw": "將機器人模型與形狀為 (T, nq) 的 qpos 軌跡 .npy 一起拖放:滑桿 + 播放。",
    "ko": "로봇 모델과 형태 (T, nq) 의 qpos 궤적 .npy 를 함께 놓습니다: 슬라이더 + 재생.",
-   "de": "Ein Robotermodell zusammen mit einer qpos-Trajektorie (.npy, Form (T, nq)) ablegen: Schieberegler + Wiedergabe."
+   "de": "Ein Robotermodell zusammen mit einer qpos-Trajektorie (.npy, Form (T, nq)) ablegen: Schieberegler + Wiedergabe.",
+   "hi": "robot model के साथ shape (T, nq) वाली qpos trajectory .npy drop करें: slider + play।"
   },
   "flow2d %d×%d: zero everywhere (no motion)": {
    "ja": "flow2d %d×%d: どこも 0(動きなし)",
    "zh": "flow2d %d×%d：处处为 0(没有运动)",
    "tw": "flow2d %d×%d：處處為 0(沒有運動)",
    "ko": "flow2d %d×%d: 모든 곳이 0(움직임 없음)",
-   "de": "flow2d %d×%d: überall 0 (keine Bewegung)"
+   "de": "flow2d %d×%d: überall 0 (keine Bewegung)",
+   "hi": "flow2d %d×%d: हर जगह शून्य (कोई motion नहीं)"
   },
   "flow2d %d×%d: hue = direction, brightness = speed; the longest arrow is 0.9 × the spacing (max speed %s)": {
    "ja": "flow2d %d×%d: 色相 = 向き・明るさ = 速さ。いちばん長い矢印が間隔の 0.9 倍(最大の速さ %s)",
    "zh": "flow2d %d×%d：色相 = 方向，亮度 = 速度；最长的箭头为间距的 0.9 倍(最大速度 %s)",
    "tw": "flow2d %d×%d：色相 = 方向，亮度 = 速度；最長的箭頭為間距的 0.9 倍(最大速度 %s)",
    "ko": "flow2d %d×%d: 색상 = 방향, 밝기 = 속도. 가장 긴 화살표가 간격의 0.9배(최대 속도 %s)",
-   "de": "flow2d %d×%d: Farbton = Richtung, Helligkeit = Geschwindigkeit; der längste Pfeil ist 0,9 × der Abstand (max. Geschwindigkeit %s)"
+   "de": "flow2d %d×%d: Farbton = Richtung, Helligkeit = Geschwindigkeit; der längste Pfeil ist 0,9 × der Abstand (max. Geschwindigkeit %s)",
+   "hi": "flow2d %d×%d: hue = दिशा, brightness = गति; सबसे लंबा arrow spacing का 0.9 × है (अधिकतम गति %s)"
   },
   "RGBA composited over white": {
    "ja": "RGBA を白地に合成して表示",
    "zh": "RGBA 合成到白底上显示",
    "tw": "RGBA 合成到白底上顯示",
    "ko": "RGBA를 흰 바탕에 합성해 표시",
-   "de": "RGBA über Weiß komponiert"
+   "de": "RGBA über Weiß komponiert",
+   "hi": "RGBA को सफ़ेद पृष्ठभूमि पर composite किया गया"
   },
   "single channel shown as grey": {
    "ja": "1 チャンネルを濃淡で表示",
    "zh": "单通道以灰度显示",
    "tw": "單通道以灰階顯示",
    "ko": "단일 채널을 회색조로 표시",
-   "de": "Einzelner Kanal als Graustufen"
+   "de": "Einzelner Kanal als Graustufen",
+   "hi": "single channel को grey में दिखाया गया"
   },
   "complex values: |z| divided by its maximum %s": {
    "ja": "複素数: 絶対値 |z| を最大値 %s で割って表示",
    "zh": "复数：|z| 除以其最大值 %s",
    "tw": "複數：|z| 除以其最大值 %s",
    "ko": "복소수: |z|를 최댓값 %s로 나눔",
-   "de": "Komplexe Werte: |z| geteilt durch das Maximum %s"
+   "de": "Komplexe Werte: |z| geteilt durch das Maximum %s",
+   "hi": "complex values: |z| को उसके अधिकतम %s से भाग दिया गया"
   },
   "1-D series of %d points as a line (%d non-finite points left out)": {
    "ja": "1-D 系列 %d 点を折れ線で表示(非有限の %d 点は省いた)",
    "zh": "将 %d 点的一维序列画成折线(省略 %d 个非有限点)",
    "tw": "將 %d 點的一維序列畫成折線(省略 %d 個非有限點)",
    "ko": "%d점의 1차원 계열을 꺾은선으로(비유한 %d점 제외)",
-   "de": "1-D-Reihe mit %d Punkten als Linie (%d nicht-endliche Punkte ausgelassen)"
+   "de": "1-D-Reihe mit %d Punkten als Linie (%d nicht-endliche Punkte ausgelassen)",
+   "hi": "%d points की 1-D series line के रूप में (%d non-finite points छोड़ दिए गए)"
   },
   "%d 1-D columns of the table (length %d) as lines": {
    "ja": "表の 1-D 欄 %d 本(長さ %d)を折れ線で表示",
    "zh": "表中 %d 个一维列(长度 %d)画成折线",
    "tw": "表中 %d 個一維欄(長度 %d)畫成折線",
    "ko": "표의 1차원 열 %d개(길이 %d)를 꺾은선으로",
-   "de": "%d 1-D-Spalten der Tabelle (Länge %d) als Linien"
+   "de": "%d 1-D-Spalten der Tabelle (Länge %d) als Linien",
+   "hi": "table के %d 1-D columns (लंबाई %d) lines के रूप में"
   },
   " (%d more left out)": {
    "ja": "(ほか %d 本は省略)",
    "zh": "(另有 %d 列省略)",
    "tw": "(另有 %d 欄省略)",
    "ko": " (나머지 %d개 생략)",
-   "de": " (%d weitere ausgelassen)"
+   "de": " (%d weitere ausgelassen)",
+   "hi": " (%d और छोड़ दिए गए)"
   },
   "Run a ledger op…": {
    "ja": "台帳の op を実行…",
    "zh": "运行台账 op…",
    "tw": "執行台帳 op…",
    "ko": "대장 op 실행…",
-   "de": "Ledger-Op ausführen…"
+   "de": "Ledger-Op ausführen…",
+   "hi": "ledger op रन करें…"
   },
   "Run a ledger op": {
    "ja": "台帳の op を実行",
    "zh": "运行台账 op",
    "tw": "執行台帳 op",
    "ko": "대장 op 실행",
-   "de": "Ledger-Op ausführen"
+   "de": "Ledger-Op ausführen",
+   "hi": "ledger op रन करें"
   },
   "Search ops (name or words)": {
    "ja": "op を探す(名前か言葉で)",
    "zh": "搜索 op(名称或词语)",
    "tw": "搜尋 op(名稱或詞語)",
    "ko": "op 검색(이름 또는 단어)",
-   "de": "Ops suchen (Name oder Wörter)"
+   "de": "Ops suchen (Name oder Wörter)",
+   "hi": "ops खोजें (नाम या शब्द)"
   },
   "Re-run when a value changes": {
    "ja": "値を変えたら自動で再実行",
    "zh": "值改变时自动重新运行",
    "tw": "值改變時自動重新執行",
    "ko": "값이 바뀌면 자동으로 다시 실행",
-   "de": "Bei Wertänderung neu ausführen"
+   "de": "Bei Wertänderung neu ausführen",
+   "hi": "value बदलने पर फिर से रन करें"
   },
   "Copy image": {
    "ja": "画像をコピー",
    "zh": "复制图像",
    "tw": "複製影像",
    "ko": "이미지 복사",
-   "de": "Bild kopieren"
+   "de": "Bild kopieren",
+   "hi": "image कॉपी करें"
   },
   "required": {
    "ja": "必須",
    "zh": "必填",
    "tw": "必填",
    "ko": "필수",
-   "de": "erforderlich"
+   "de": "erforderlich",
+   "hi": "आवश्यक"
   },
   "No current image — open one or use the sample": {
    "ja": "いまの画像がありません —— 画像を開くか、見本を使ってください",
    "zh": "当前没有图像 —— 请打开图像或使用样本",
    "tw": "目前沒有影像 —— 請開啟影像或使用樣本",
    "ko": "현재 이미지가 없습니다 —— 이미지를 열거나 샘플을 사용하세요",
-   "de": "Kein aktuelles Bild — eines öffnen oder das Beispiel verwenden"
+   "de": "Kein aktuelles Bild — eines öffnen oder das Beispiel verwenden",
+   "hi": "कोई current image नहीं है — कोई image खोलें या sample का उपयोग करें"
   },
   "No result yet — run once first": {
    "ja": "まだ結果がありません —— 先に 1 回実行してください",
    "zh": "还没有结果 —— 请先运行一次",
    "tw": "還沒有結果 —— 請先執行一次",
    "ko": "아직 결과가 없습니다 —— 먼저 한 번 실행하세요",
-   "de": "Noch kein Ergebnis — zuerst einmal ausführen"
+   "de": "Noch kein Ergebnis — zuerst einmal ausführen",
+   "hi": "अभी कोई परिणाम नहीं — पहले एक बार रन करें"
   },
   "Nothing to draw — see the text below": {
    "ja": "絵にできるものがありません —— 下の文字を見てください",
    "zh": "没有可绘制的内容 —— 请看下方文字",
    "tw": "沒有可繪製的內容 —— 請看下方文字",
    "ko": "그릴 것이 없습니다 —— 아래 글을 보세요",
-   "de": "Nichts zu zeichnen — siehe Text unten"
+   "de": "Nichts zu zeichnen — siehe Text unten",
+   "hi": "ड्रॉ करने के लिए कुछ नहीं है — नीचे का text देखें"
   },
   "values [%s, %s] stretched to [0, 1] for display": {
    "ja": "値域 [%s, %s] を [0, 1] に伸ばして表示",
    "zh": "值域 [%s, %s] 拉伸到 [0, 1] 显示",
    "tw": "值域 [%s, %s] 拉伸到 [0, 1] 顯示",
    "ko": "값 범위 [%s, %s]를 [0, 1]로 늘려 표시",
-   "de": "Werte [%s, %s] für die Anzeige auf [0, 1] gestreckt"
+   "de": "Werte [%s, %s] für die Anzeige auf [0, 1] gestreckt",
+   "hi": "display के लिए values [%s, %s] को [0, 1] तक stretch किया गया"
   },
   "sample (synthetic)": {
    "ja": "見本(合成)",
    "zh": "样本(合成)",
    "tw": "樣本(合成)",
    "ko": "샘플(합성)",
-   "de": "Beispiel (synthetisch)"
+   "de": "Beispiel (synthetisch)",
+   "hi": "sample (synthetic)"
   },
   "current image": {
    "ja": "いまの画像",
    "zh": "当前图像",
    "tw": "目前影像",
    "ko": "현재 이미지",
-   "de": "aktuelles Bild"
+   "de": "aktuelles Bild",
+   "hi": "current image"
   },
   "last result": {
    "ja": "直前の結果",
    "zh": "上一次结果",
    "tw": "上一次結果",
    "ko": "직전 결과",
-   "de": "letztes Ergebnis"
+   "de": "letztes Ergebnis",
+   "hi": "पिछला परिणाम"
   },
   "sample value: ": {
    "ja": "見本の値: ",
    "zh": "样本值：",
    "tw": "樣本值：",
    "ko": "샘플 값: ",
-   "de": "Beispielwert: "
+   "de": "Beispielwert: ",
+   "hi": "sample value: "
   },
   "Insert into editor": {
    "ja": "エディタに差し込む",
    "zh": "插入到编辑器",
    "tw": "插入到編輯器",
    "ko": "에디터에 넣기",
-   "de": "In Editor einfügen"
+   "de": "In Editor einfügen",
+   "hi": "editor में डालें"
   },
   "Put this code at the cursor of the Python Editor (opens it if needed)": {
    "ja": "このコードを Python エディタのカーソル位置に入れる(無ければ開く)",
    "zh": "把这段代码放到 Python 编辑器的光标处(需要时打开编辑器)",
    "tw": "把這段程式碼放到 Python 編輯器的游標處(需要時開啟編輯器)",
    "ko": "이 코드를 Python 에디터의 커서 위치에 넣기(없으면 열기)",
-   "de": "Diesen Code an der Cursorposition des Python-Editors einfügen (öffnet ihn bei Bedarf)"
+   "de": "Diesen Code an der Cursorposition des Python-Editors einfügen (öffnet ihn bei Bedarf)",
+   "hi": "यह कोड Python Editor में cursor की जगह पर डालें (ज़रूरत हो तो Editor खोलता है)"
   },
   "Session as script": {
    "ja": "履歴をスクリプトに",
    "zh": "把历史作为脚本",
    "tw": "把歷史作為腳本",
    "ko": "기록을 스크립트로",
-   "de": "Sitzung als Skript"
+   "de": "Sitzung als Skript",
+   "hi": "Session को script के रूप में"
   },
   "Every successful run in this window, in order, as one script": {
    "ja": "この窓で成功した実行を順に 1 本のスクリプトにする",
    "zh": "把此窗口中成功的运行按顺序合成一个脚本",
    "tw": "把此視窗中成功的執行依序合成一個腳本",
    "ko": "이 창에서 성공한 실행을 순서대로 하나의 스크립트로",
-   "de": "Alle erfolgreichen Läufe in diesem Fenster der Reihe nach als ein Skript"
+   "de": "Alle erfolgreichen Läufe in diesem Fenster der Reihe nach als ein Skript",
+   "hi": "इस window में हर सफल run, क्रम से, एक script के रूप में"
   },
   "Try %s in the ledger op window": {
    "ja": "%s を台帳 op の実行窓で試す",
    "zh": "在台账 op 窗口中试运行 %s",
    "tw": "在台帳 op 視窗中試跑 %s",
    "ko": "%s를 대장 op 창에서 시험",
-   "de": "%s im Ledger-Op-Fenster ausprobieren"
+   "de": "%s im Ledger-Op-Fenster ausprobieren",
+   "hi": "%s को ledger op window में आज़माएँ"
   },
   "Complete fs. / fs.ledger. name": {
    "ja": "fs. / fs.ledger. の名前を補完",
    "zh": "补全 fs. / fs.ledger. 名称",
    "tw": "補全 fs. / fs.ledger. 名稱",
    "ko": "fs. / fs.ledger. 이름 완성",
-   "de": "fs.- / fs.ledger.-Namen vervollständigen"
+   "de": "fs.- / fs.ledger.-Namen vervollständigen",
+   "hi": "fs. / fs.ledger. नाम पूरा करें"
   },
   "Pipeline as code → editor": {
    "ja": "パイプラインをコードとしてエディタへ",
    "zh": "把流水线作为代码送到编辑器",
    "tw": "把管線作為程式碼送到編輯器",
    "ko": "파이프라인을 코드로 에디터에",
-   "de": "Pipeline als Code → Editor"
+   "de": "Pipeline als Code → Editor",
+   "hi": "Pipeline को code के रूप में → editor"
   },
   "Send this result to a ledger op…": {
    "ja": "この結果を台帳の op へ…",
    "zh": "把此结果交给台账 op…",
    "tw": "把此結果交給台帳 op…",
    "ko": "이 결과를 대장 op로…",
-   "de": "Dieses Ergebnis an eine Ledger-Op…"
+   "de": "Dieses Ergebnis an eine Ledger-Op…",
+   "hi": "यह परिणाम किसी ledger op को भेजें…"
   }
  }
 }

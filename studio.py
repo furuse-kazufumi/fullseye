@@ -2075,7 +2075,7 @@ def mesh_edges(F, cap=60000):
 
 THEME = f"""
 QWidget {{ background:{NAVY_0}; color:{TEXT}; font-size:12px;
-    font-family:"Segoe UI","Yu Gothic UI","Meiryo",system-ui,sans-serif; }}
+    font-family:"Segoe UI","Yu Gothic UI","Meiryo","Nirmala UI","Noto Sans Devanagari",system-ui,sans-serif; }}
 QMainWindow, QDialog {{ background:{NAVY_0}; }}
 QLabel {{ color:{TEXT}; background:transparent; }}
 QLabel[muted="true"] {{ color:{MUTED}; }}
@@ -4035,13 +4035,13 @@ def tr(text):
 #: を出すので、生成していない言語は勝手に消える(空リンクを出さない)。台湾向け繁体字は
 #: ファイル名を 2 文字にそろえて ``tw``(標準タグ ``zh-TW`` との対応は
 #: ``tools/opdocs.py`` の ``LANG_ALIASES``)。
-HELP_LANG_ORDER = ("ja", "en", "zh", "tw", "ko", "de")
+HELP_LANG_ORDER = ("ja", "en", "zh", "tw", "ko", "de", "hi")
 
 
 #: i18n.json の 'languages' に無い言語コードの表示名(最後の砦。i18n.json 側に
 #: 足せばそちらが優先される)。
 HELP_LANG_NAMES = {"ja": "日本語", "en": "English", "zh": "简体中文",
-                   "tw": "繁體中文", "ko": "한국어", "de": "Deutsch"}
+                   "tw": "繁體中文", "ko": "한국어", "de": "Deutsch", "hi": "हिन्दी"}
 
 
 def help_langs_available(name, dim="2d", kind="op"):

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">profile_resample — PROFILE <code style="color:#22d3bf">frame</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import profileops; profileops.profile_resample(contour, n=200, kind=&#x27;arclength&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprofile.get(&quot;profile_resample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>contour को बराबर अंतराल पर फिर से sample करता है। <code style="color:#22d3bf">kind</code> केवल <code style="color:#22d3bf">&quot;arclength&quot;</code> (अभी के लिए)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>点の密度が場所で違うと、厚みやキャンバーの当てはめが密なところに引きずられる。比較する 2 本は<b>同じ取り方</b>で取り直してから比べること。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprofile:profile_metrology">profile_metrology family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:profile_frame_tour">profile_frame_tour</a> — <code style="color:#22d3bf">py -3.11 examples/profile_frame_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">pairs</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_perturb">profile_perturb</a> · <a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a> · <a style="color:#22d3bf" href="opprofile:profile_sides">profile_sides</a> · <a style="color:#22d3bf" href="opprofile:profile_thickness">profile_thickness</a> · <a style="color:#22d3bf" href="opprofile:profile_camber">profile_camber</a> · <a style="color:#22d3bf" href="opprofile:profile_leading_edge_radius">profile_leading_edge_radius</a> · <a style="color:#22d3bf" href="opprofile:profile_trailing_edge_gap">profile_trailing_edge_gap</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">frame</code>)</h3>
+<p><a style="color:#22d3bf" href="opprofile:profile_chord_frame">profile_chord_frame</a> · <a style="color:#22d3bf" href="opprofile:profile_normalise">profile_normalise</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: profileops.py — PROFILE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

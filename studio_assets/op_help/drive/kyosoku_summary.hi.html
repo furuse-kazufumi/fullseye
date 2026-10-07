@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">kyosoku_summary — DRIVE <code style="color:#22d3bf">town</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">table</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivetown; drivetown.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;kyosoku_summary&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>traffic rules guide (Kyosoku) के दृश्यों के पुनर्निर्माण वाला ledger (docs/drive/kyosoku_scenarios.json) पढ़ता है और उसे category × status की गिनती table में बदलता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">path</code> = None なら repo の <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(このモジュールの場所から引く)。返り値 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い・JSON でない・<code style="color:#22d3bf">scenarios</code> が無い・場面に id/category/status が無い・ status が <code style="color:#22d3bf">KYOSOKU_STATUSES</code> に無い・id が重複。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_town">poc_driving_town</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_town.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">town</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:town_layout">town_layout</a> · <a style="color:#22d3bf" href="opdrive:town_world">town_world</a> · <a style="color:#22d3bf" href="opdrive:town_centerline">town_centerline</a> · <a style="color:#22d3bf" href="opdrive:town_stop_lines">town_stop_lines</a> · <a style="color:#22d3bf" href="opdrive:town_rules">town_rules</a> · <a style="color:#22d3bf" href="opdrive:town_crossing_state">town_crossing_state</a> · <a style="color:#22d3bf" href="opdrive:town_run">town_run</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivetown.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

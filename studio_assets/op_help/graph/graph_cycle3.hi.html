@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">graph_cycle3 — GRAPH <code style="color:#22d3bf">motif</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_cycle3(adj)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import graphinv; graphinv.graph_cycle3(adj)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgraph.get(&quot;graph_cycle3&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>directed 3-cycles <code style="color:#22d3bf">i -&gt; j -&gt; k -&gt; i</code> की संख्या, <code style="color:#22d3bf">tr(B^3) / 3</code> के रूप में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Each cycle is counted once (the trace visits it from each of its three starting nodes). Self-loops are removed first. Returns a dict with <code style="color:#22d3bf">cycles3</code> and <code style="color:#22d3bf">n</code>.</p>
+<p>A second, independent implementation (brute-force enumeration) agrees exactly on small graphs — pinned in the tests, because a single implementation of a counting formula cannot catch its own off-by-three.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: as <code style="color:#22d3bf">graph_degree_summary</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:graphinv_three_phyla">graphinv_three_phyla</a> — <code style="color:#22d3bf">py -3.11 examples/graphinv_three_phyla.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgraph:graph_edge_consensus">graph_edge_consensus</a> · <a style="color:#22d3bf" href="opgraph:graph_core_persistence">graph_core_persistence</a> · <a style="color:#22d3bf" href="opgraph:tree_morphometry">tree_morphometry</a> · <a style="color:#22d3bf" href="opgraph:tree_sholl">tree_sholl</a> · <a style="color:#22d3bf" href="opgraph:tree_run_length">tree_run_length</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">motif</code>)</h3>
+<p>—</p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: graphinv.py — GRAPH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

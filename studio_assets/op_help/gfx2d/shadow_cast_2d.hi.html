@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">shadow_cast_2d — GFX2D <code style="color:#22d3bf">light</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.shadow_cast_2d(occluder, x, y, steps=None, softness=0.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;shadow_cast_2d&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">(x, y)</code> पर point light से हर pixel की visibility, <code style="color:#22d3bf">image2d</code> के रूप में।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Ray-marches the segment from each pixel to the light, sampling <code style="color:#22d3bf">occluder</code> (2-D, <code style="color:#22d3bf">[0, 1]</code>, 1 = fully blocking) at <code style="color:#22d3bf">steps</code> points with nearest lookup, and returns <code style="color:#22d3bf">1 - max(occluder along the ray)</code>. For a binary occluder that is exactly 0 or 1 — no tolerance involved.</p>
+<p>The sample <b>excludes</b> the pixel itself, so an occluder is lit on its own light-facing surface and casts behind itself.</p>
+<p><code style="color:#22d3bf">softness &gt; 0</code> blurs the visibility map by that sigma afterwards, which is a penumbra-shaped lie rather than a penumbra: a real one widens with distance from the occluder. It is offered because it looks right and named so it cannot be mistaken for physics.</p>
+<p><code style="color:#22d3bf">steps</code> defaults to the image diagonal, which samples about once per pixel. <b>An occluder thinner than the step spacing can be missed</b>; that is the honest limit of a fixed-step march and the reason <code style="color:#22d3bf">steps</code> is an argument.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:gfx2d_scene">gfx2d_scene</a> — <code style="color:#22d3bf">py -3.11 examples/gfx2d_scene.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:dither">dither</a> · <a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_demosaic_bilinear">raw_demosaic_bilinear</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">light</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:radial_light">radial_light</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_shade">normal_map_shade</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

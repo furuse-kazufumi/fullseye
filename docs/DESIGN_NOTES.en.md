@@ -5,7 +5,7 @@
 
 This repository records *why* things are the way they are in **comments in the source**. The ones marked `★` are the load-bearing ones — what was measured, what went wrong, why it is built this way. This page is collected from them mechanically; the source is the single copy of record, so the two cannot drift apart.
 
-**Translation status**: 626 of 1298. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
+**Translation status**: 626 of 1299. Untranslated entries are shown in the original Japanese — falling back silently would look like a translation, so a missing translation is shown as missing.
 
 
 ## `accel.py`
@@ -2302,19 +2302,20 @@ This repository records *why* things are the way they are in **comments in the s
 
 ## `tools/gen_design_notes.py`
 
-- **L45** — ★The translation table lives in **a separate file from the op docs**. Using `opdocs.T` would register every source string in `opdocs.SEEN_STRINGS`, and the existing "holes in the frame translations" gate would count all 604 of them as holes and turn CI red — that gate exists to keep frame strings complete in all five languages, while this one is a fill-as-you-go collection. **Mixing them into one table lets one discipline break the other.**
-- **L79** — ★One block = a run of `#` comment lines that starts from a line containing ★ and continues at the same indentation. Sphinx-style `#:` comments are also picked up. Stripping only `#` and whitespace leaves a `:` at the front
-- **L81** — left behind, and "‎: ★…" appears in the output artifact (it actually did). Strip `:` here as well.
-- **L105** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
-- **L197** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
+- **L48** — ★The translation table lives in **a separate file from the op docs**. Using `opdocs.T` would register every source string in `opdocs.SEEN_STRINGS`, and the existing "holes in the frame translations" gate would count all 604 of them as holes and turn CI red — that gate exists to keep frame strings complete in all five languages, while this one is a fill-as-you-go collection. **Mixing them into one table lets one discipline break the other.**
+- **L82** — ★One block = a run of `#` comment lines that starts from a line containing ★ and continues at the same indentation. Sphinx-style `#:` comments are also picked up. Stripping only `#` and whitespace leaves a `:` at the front
+- **L84** — left behind, and "‎: ★…" appears in the output artifact (it actually did). Strip `:` here as well.
+- **L108** — ★When the next ★ arrives, cut it as a separate block (keep one claim per block).
+- **L200** — ★Don't translate the marker; fix it to `_(ja)_`. Translating it per language makes it **uncountable by machine** -- `tools/i18n_status.py` is a tool that counts "Japanese without a marker", so if the marker changes per language, 593 lines turn into "hidden Japanese" (it actually did). `ja` is a language code and also conveys to the reader "this is Japanese".
 
 ## `tools/gen_docs_index_ops.py`
 
-- **L280** — ★Take the set of notes **from the ledger** (don't enumerate files). In the 2026-09-06 adversarial review (Codex), a version that globs files and counts stems mixed in one `docs/ops/SAMPLES.md` (not an op note), and the index said 1,842 while the RAG guide said 1,843, **publishing conflicting counts at the same time**. Notes are generated 1:1 from records, so a name in records is itself the definition of "a name that has a note". Agreement with the files is checked separately by `tests/test_docs_index_reachable.py` (detecting missing / surplus).
-- **L290** — ★`__all__`, not `dir(fullseye)`. dir includes module attributes (os / sys / warnings / annotations) and moreover **increases by one after another test imports** (1094 → 1095), so the drift gate fell only in the full suite (2026-09-06). The public surface is the 1,091 names the facade declares in `__all__`.
-- **L339** — ★The index is not only for humans but also **AI's search surface** (the user's 2026-09-06 remark "the index is also the part used as RAG, right?"). Since op notes double as the search corpus for AI coding assistance, make the **machine-read entry point** explicit in the index. Writing "all op" for something that has only half will make the RAG confidently wrong about the other half -- that's why the measured lines from `_honest()` are not removed from this section.
-- **L493** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
-- **L658** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
+- **L253** _(ja)_ — ★2026-10-07: 言語版の目次 INDEX.<lang>.md もノートではない(以前は 5 本を数えて 3089 本を 3094 本と書いていた)
+- **L281** — ★Take the set of notes **from the ledger** (don't enumerate files). In the 2026-09-06 adversarial review (Codex), a version that globs files and counts stems mixed in one `docs/ops/SAMPLES.md` (not an op note), and the index said 1,842 while the RAG guide said 1,843, **publishing conflicting counts at the same time**. Notes are generated 1:1 from records, so a name in records is itself the definition of "a name that has a note". Agreement with the files is checked separately by `tests/test_docs_index_reachable.py` (detecting missing / surplus).
+- **L291** — ★`__all__`, not `dir(fullseye)`. dir includes module attributes (os / sys / warnings / annotations) and moreover **increases by one after another test imports** (1094 → 1095), so the drift gate fell only in the full suite (2026-09-06). The public surface is the 1,091 names the facade declares in `__all__`.
+- **L340** — ★The index is not only for humans but also **AI's search surface** (the user's 2026-09-06 remark "the index is also the part used as RAG, right?"). Since op notes double as the search corpus for AI coding assistance, make the **machine-read entry point** explicit in the index. Writing "all op" for something that has only half will make the RAG confidently wrong about the other half -- that's why the measured lines from `_honest()` are not removed from this section.
+- **L494** _(ja)_ — ★2026-09-14: 長らく かな だけを見ていたので、「Studio 北極星」「実測記録」 のように **漢字だけで書かれた題に印が付かなかった** —— 非日本語版の読者は それを英語の題だと思ってクリックする(印を付けないのは「読めない」という 事実を隠すことで、無訳より悪い、というのがこの関数の趣旨そのもの)。 題は常に日本語版ファイルから取る(``_doc_title(rel)``)ので、漢字を足しても 中国語の題を誤って日本語と呼ぶことは起きない。
+- **L659** _(ja)_ — ★Qiita 投稿用の frontmatter(--- で挟んだ YAML)は題ではない。中の `title:` 行は 下の走査では見出しにも読み飛ばし対象にも当たらず、そのまま索引の見出しになって しまう(「title: '…'」と並ぶ)。挟まれた範囲ごと読み飛ばす。
 
 ## `tools/gen_hardening_index.py`
 

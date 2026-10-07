@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">brightness_contrast — GFX2D <code style="color:#22d3bf">isp</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">rgb</code> → <code style="color:#22d3bf">rgb</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.brightness_contrast(rgb, brightness=0.0, contrast=1.0)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import gfx2d; gfx2d.brightness_contrast(rgb, brightness=0.0, contrast=1.0)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsgfx2d.get(&quot;brightness_contrast&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p><code style="color:#22d3bf">out = (rgb - 0.5) * contrast + 0.5 + brightness</code>, <code style="color:#22d3bf">[0, 1]</code> पर clip किया गया।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Contrast pivots about mid-grey so <code style="color:#22d3bf">contrast=2</code> doubles the distance from 0.5 and leaves 0.5 alone; brightness is an additive offset. Ground truth:</p>
+<p><code style="color:#22d3bf">(0, 1)</code> is the exact identity; mid-grey is invariant to any contrast. <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *brightness* outside <code style="color:#22d3bf">[-1, 1]</code> or *contrast* &lt; 0.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:raw_to_display_isp">raw_to_display_isp</a> — <code style="color:#22d3bf">py -3.11 examples/raw_to_display_isp.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">rgb</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:srgb_to_linear">srgb_to_linear</a> · <a style="color:#22d3bf" href="opgfx2d:linear_to_srgb">linear_to_srgb</a> · <a style="color:#22d3bf" href="opgfx2d:blend_mode">blend_mode</a> · <a style="color:#22d3bf" href="opgfx2d:light_mask">light_mask</a> · <a style="color:#22d3bf" href="opgfx2d:normal_map_decode">normal_map_decode</a> · <a style="color:#22d3bf" href="opgfx2d:bloom">bloom</a> · <a style="color:#22d3bf" href="opgfx2d:vignette">vignette</a> · <a style="color:#22d3bf" href="opgfx2d:chromatic_aberration">chromatic_aberration</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">isp</code>)</h3>
+<p><a style="color:#22d3bf" href="opgfx2d:raw_black_level">raw_black_level</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_mask">raw_dead_pixel_mask</a> · <a style="color:#22d3bf" href="opgfx2d:raw_dead_pixel_correct">raw_dead_pixel_correct</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_gain">lens_shading_gain</a> · <a style="color:#22d3bf" href="opgfx2d:lens_shading_correct">lens_shading_correct</a> · <a style="color:#22d3bf" href="opgfx2d:awb_gains">awb_gains</a> · <a style="color:#22d3bf" href="opgfx2d:rgb_apply_gains">rgb_apply_gains</a> · <a style="color:#22d3bf" href="opgfx2d:raw_apply_gains">raw_apply_gains</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: gfx2d.py — GFX2D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

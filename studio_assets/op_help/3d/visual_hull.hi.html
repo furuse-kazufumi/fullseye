@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">visual_hull — 3D <code style="color:#22d3bf">space_carving</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import visualhull; visualhull.visual_hull(silhouettes: &#x27;Sequence[np.ndarray]&#x27;, Ks: &#x27;Sequence[np.ndarray]&#x27;, Rs: &#x27;Sequence[np.ndarray]&#x27;, ts: &#x27;Sequence[np.ndarray]&#x27;, bounds: &#x27;Bounds&#x27;, res: &#x27;int&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;visual_hull&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>multi-view silhouettes का visual hull voxel occupancy के रूप में लौटाता है (<code style="color:#22d3bf">carve</code> का दूसरा नाम)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>引数・返り値・例外は <code style="color:#22d3bf">carve</code> と完全に同じ(内部でそのまま <code style="color:#22d3bf">carve</code> を呼ぶだけ)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">silhouettes</code>: 各カメラの前景マスク (H,W) bool を M 個並べたリスト(サイズはカメラごとに異なってよい)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">Ks</code>/<code style="color:#22d3bf">Rs</code>/<code style="color:#22d3bf">ts</code>: 各カメラの内部行列 (3,3)・回転 (3,3)・並進 (3,)。射影規約は <code style="color:#22d3bf">X_cam = R @ X_world + t</code>、<code style="color:#22d3bf">pixel = (K @ X_cam)[:2] / Z</code>(OpenCV 流)。画素は最近傍に丸める。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">bounds</code>: <code style="color:#22d3bf">((xmin,xmax),(ymin,ymax),(zmin,zmax))</code> の彫刻領域(各軸 max &gt; min 必須)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">res</code>: 各軸の voxel 分割数(正の整数)。voxel 総数 <code style="color:#22d3bf">res**3</code>。</p>
+<p>返り値は (res,res,res) bool。<code style="color:#22d3bf">indexing=&#x27;ij&#x27;</code> で軸は (x,y,z)、<code style="color:#22d3bf">vox[i,j,k]</code> の中心は <code style="color:#22d3bf">(xmin+(i+.5)dx, ymin+(j+.5)dy, zmin+(k+.5)dz)</code>。voxel が残る条件は、全カメラで「カメラ前方(Z&gt;0)・画像内・その画素がシルエット前景」を満たすこと(AND)。1 台でも外れれば削られる。</p>
+<p>fail-closed: リスト長の不一致、カメラ 0 台、<code style="color:#22d3bf">res &lt;= 0</code>、退化 bounds はすべて <code style="color:#22d3bf">ValueError</code> (0 台のときに「全 voxel 占有」を復元結果と偽って返さない)。</p>
+<p>注意: visual hull は物体の上位集合で、どのカメラからも見えない凹みは埋まったまま残る。シルエットは <code style="color:#22d3bf">synthesize_silhouette</code> のように 1 画素太らせた被覆マスクにしておくと、離散化誤差で物体 voxel を削り落とす取りこぼしを避けられる。結果は <code style="color:#22d3bf">voxel_to_mesh</code> でメッシュ化、<code style="color:#22d3bf">esdf</code> の占有入力にもそのまま使える。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:blender_interop">blender_interop</a> — Blender के साथ उपयोग — shape बनाएँ, fullseye से मापें (सावधानियाँ: axes, units, ground truth)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:space_carving">space_carving</a> — <code style="color:#22d3bf">py -3.11 examples_3d/space_carving.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">space_carving</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:synthesize_silhouette">synthesize_silhouette</a> · <a style="color:#22d3bf" href="op3d:carve_look_at">carve_look_at</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: visualhull.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

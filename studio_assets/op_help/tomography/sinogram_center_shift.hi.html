@@ -1,0 +1,30 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">sinogram_center_shift — TOMOGRAPHY <code style="color:#22d3bf">geometry</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">sinogram</code> → <code style="color:#22d3bf">sinogram</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import tomography; tomography.sinogram_center_shift(sinogram, shift_px=None, angles_deg=None)</code>, registry से लेना हो तो <code style="color:#22d3bf">opstomography.get(&quot;sinogram_center_shift&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>sinogram को उसकी rotation axis पर फिर से केंद्रित करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Shifts every projection by <code style="color:#22d3bf">-shift_px</code> along the detector axis with linear interpolation. With <code style="color:#22d3bf">shift_px=None</code> the shift is measured first by <code style="color:#22d3bf">sinogram_center_of_rotation</code>, which makes this the one-call fix.</p>
+<p>Round-trip on the Shepp-Logan phantom, shifting by *d* and back:</p>
+<p>d        max |error|    relative to the peak line integral</p>
+<p>1.00 px   0.0e+00        0.0e+00     (an integer shift is exact)</p>
+<p>0.50 px   1.4e-01        1.2e-01</p>
+<p>0.25 px   1.1e-01        9.2e-02</p>
+<p>A *fractional* shift is <b>not</b> a small operation and this is the operator&#x27;s honest limitation: 12 % of the peak, on a phantom with sharp edges, from one round trip. Interpolation is a low-pass filter and the sinogram of an edge is not band-limited, so there is nothing to recover on the way back. Using a Fourier shift instead would trade this visible blur for invisible ringing at the detector edges, which is worse in the way that matters here. The consequence is in <code style="color:#22d3bf">sinogram_center_of_rotation</code>&#x27;s table: an integer centre error is fully repairable, a half-pixel one is not.</p>
+<p>:param sinogram: <code style="color:#22d3bf">(n_angles, n_detectors)</code>. :param shift_px: axis offset in detector bins; <code style="color:#22d3bf">None</code> -&gt; measure it. :param angles_deg: view angles, used only when *shift_px* is <code style="color:#22d3bf">None</code>. :returns: <code style="color:#22d3bf">(n_angles, n_detectors)</code> float64 sinogram. :raises ValueError: if <code style="color:#22d3bf">|shift_px|</code> is at or past half the detector width —</p>
+<p>past that the object has been shifted out of the field of view and what</p>
+<p>comes back is edge padding, which reconstructs as a plausible, empty slice.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:ct_reconstruction">ct_reconstruction</a> — <code style="color:#22d3bf">py -3.11 examples/ct_reconstruction.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">sinogram</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="optomography:backproject_sinogram">backproject_sinogram</a> · <a style="color:#22d3bf" href="optomography:filtered_backprojection">filtered_backprojection</a> · <a style="color:#22d3bf" href="optomography:sart_reconstruct">sart_reconstruct</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_apply">beam_hardening_apply</a> · <a style="color:#22d3bf" href="optomography:beam_hardening_correct">beam_hardening_correct</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_apply">ring_artifact_apply</a> · <a style="color:#22d3bf" href="optomography:ring_artifact_remove">ring_artifact_remove</a> · <a style="color:#22d3bf" href="optomography:metal_trace_interpolate">metal_trace_interpolate</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">geometry</code>)</h3>
+<p><a style="color:#22d3bf" href="optomography:sinogram_center_of_rotation">sinogram_center_of_rotation</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: tomography.py — TOMOGRAPHY operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

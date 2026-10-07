@@ -1,0 +1,46 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">frame_align — ASTROSTACK <code style="color:#22d3bf">align</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.frame_align(reference, frame, model=&#x27;similarity&#x27;, threshold_sigma=5.0, max_stars=60, tolerance_px=2.0, max_shift_px=None, ransac_iters=500, seed=0, min_inliers=3)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;frame_align&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.frame_align(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">matrix</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.frame_align.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">astrostack.frame_align</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(matrix, info) -&gt; matrix</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>तारों की correspondence से <code style="color:#22d3bf">frame</code> → <code style="color:#22d3bf">reference</code> का 2-D transform अनुमानित करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>工程は 3 段で、<b>推定の本体はどれも既存 op</b>:</p>
+<p style="margin:2px 0 2px 12px">1. <code style="color:#22d3bf">star_detect</code> で両方の星を取る。</p>
+<p style="margin:2px 0 2px 12px">2. 粗い平行移動を<b>オフセット投票</b>で出す(<code style="color:#22d3bf">_vote_translation</code>)。</p>
+<p>ここで <code style="color:#22d3bf">features.match_keypoints</code> を使わないのは実測に基づく判断で、</p>
+<p>星野の 9x9 パッチは互いにほとんど同じ形なので Lowe の比検定</p>
+<p>(既定 ratio=0.8)がほぼ全部を捨てる。128x128 に 40 星、真のずれが</p>
+<p><code style="color:#22d3bf">(+0.590, -0.540)</code> px のフレーム対での実測: <code style="color:#22d3bf">match_keypoints</code> が</p>
+<p>返した対応は <b>4 件、うち真値から 1 px 以内は 0 件</b>(= 使えるものが</p>
+<p>1 つも無い)。同じ対で投票法は <b>26 票 → 26 対応 → 26 内点</b>、推定誤差</p>
+<p><b>0.0155 px</b>。星野は「特徴が無い」のではなく「特徴が全部同じ」なので、</p>
+<p>記述子ではなく<b>配置の幾何</b>を使うのが正しい。</p>
+<p style="margin:2px 0 2px 12px">3. 粗い移動で最近傍の対応を作り、<code style="color:#22d3bf">mosaic.proj_match_points_ransac</code> で誤対応を落とし、<code style="color:#22d3bf">fit_transform.vector_to_similarity</code>(<code style="color:#22d3bf">model</code> に応じて <code style="color:#22d3bf">vector_to_rigid</code> / <code style="color:#22d3bf">vector_to_hom_mat2d</code>)で当てはめる。RANSAC ループも Umeyama もここには書いていない。</p>
+<p>★<b>繰り返し構造には使えない</b>(2026-09-08、<code style="color:#22d3bf">poc_print_registration</code> が発見)。<code style="color:#22d3bf">inlier_ratio</code> は「同じ答えに賛成した対応の割合」であって「答えが正しい確率」ではない。網点・織物・格子のように<b>同じ形が周期的に並ぶ</b>画像では、格子ベクトルぶんずれた対応づけも全員が賛成するので、賛成率は 1.00 のまま答えだけが格子 1 個ぶん(あるいは何個ぶんも)ずれる。</p>
+<p>実測: 256x256 の 133 lpi 相当・15 度の網点を <b>(0.00, +1.30) px</b> だけずらした対で、<code style="color:#22d3bf">inlier_ratio</code> <b>1.00</b> / <code style="color:#22d3bf">rms_px</code> 0.78 を返しながら推定は <b>(+54.24, +30.12) px</b>。星野(128x128、40 星、真値(+0.59, -0.54))では <code style="color:#22d3bf">inlier_ratio</code> は同じ 1.00 で推定は正しい。<b>賛成率では 2 つを区別できない</b>。</p>
+<p>区別できるのは <code style="color:#22d3bf">vote_margin</code> —— 投票の<b>2 番手の山</b>の高さを 1 番手で割った値で、0 なら山は 1 つ、1 に近いほど「同じくらいもっともらしい答えが他にもある」。同じ 2 例で <b>網点 0.857 / 星野 0.143</b>。周期構造を渡すかもしれない経路では、<code style="color:#22d3bf">inlier_ratio</code> ではなくこちらを見ること。</p>
+<p>平行移動そのものが要るだけなら <code style="color:#22d3bf">piv_cross_correlate</code> の相関面を見るほうが素直で、そちらは山が何本立っているかを自分で数えられる。</p>
+<p>*model* <code style="color:#22d3bf">&quot;translation&quot;</code> は対応の差の中央値だけを使う(星が 1 個でも動く)。<code style="color:#22d3bf">&quot;rigid&quot;</code> = 回転 + 並進、<code style="color:#22d3bf">&quot;similarity&quot;</code> = + 等方スケール、<code style="color:#22d3bf">&quot;affine&quot;</code> = 6 自由度。<b>視野が広くなければ <code style="color:#22d3bf">&quot;similarity&quot;</code> で足りる</b> (赤道儀の追尾誤差は回転と並進、大気差はスケールに一次で乗る)。</p>
+<p>Returns <code style="color:#22d3bf">(matrix, info)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">matrix</code> —— <code style="color:#22d3bf">(3, 3)</code> float64。<code style="color:#22d3bf">(row, col, 1)</code> に左から掛けると <code style="color:#22d3bf">reference</code> の座標になる(<code style="color:#22d3bf">fit_transform</code> と同じ規約)。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">info</code> —— dict。<code style="color:#22d3bf">n_stars_ref</code> / <code style="color:#22d3bf">n_stars_src</code> / <code style="color:#22d3bf">n_pairs</code> / <code style="color:#22d3bf">n_inliers</code> / <code style="color:#22d3bf">inlier_ratio</code> / <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code> / <code style="color:#22d3bf">rotation_deg</code> / <code style="color:#22d3bf">scale</code> / <code style="color:#22d3bf">rms_px</code>(内点の残差 RMS)/ <code style="color:#22d3bf">model</code>。</p>
+<p><b>fail-closed</b>: 内点が *min_inliers* に満たなければ <code style="color:#22d3bf">ValueError</code> を送出する。<b>恒等変換を黙って返さない</b> —— 位置合わせに失敗したフレームを「ずれ 0」として合成に混ぜると、例外も警告も無しに二重像ができる。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / 形が違う / *model* が <code style="color:#22d3bf">ALIGN_MODELS</code> にない / どちらかで星が 1 つも見つからない / 対応が作れない / 内点が足りない場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_exoplanet_transit">poc_exoplanet_transit</a> — <code style="color:#22d3bf">py -3.11 examples/poc_exoplanet_transit.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_registration">poc_print_registration</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_registration.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">matrix</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">align</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:align_frames">align_frames</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

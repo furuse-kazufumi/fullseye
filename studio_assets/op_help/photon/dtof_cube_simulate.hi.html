@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dtof_cube_simulate — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">histcube</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoncount; photoncount.dtof_cube_simulate(depth, bins=256, bin_ps=100.0, reflectivity=None, signal_photons=20.0, ambient_photons=5.0, irf_fwhm_ps=200.0, seed=0, noise=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsphoton.get(&quot;dtof_cube_simulate&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>SPAD array द्वारा बनाया जाने वाला <code style="color:#22d3bf">(H, W, T)</code> photon histogram cube synthesise करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The per-pixel version of <code style="color:#22d3bf">tcspc_simulate</code>: every pixel of the *depth* map (metres, one-way distance) gets a Gaussian return at its own round-trip time <code style="color:#22d3bf">2d/c</code>, scaled by *signal_photons* times that pixel&#x27;s *reflectivity*, on a uniform ambient pedestal of <code style="color:#22d3bf">ambient_photons/bins</code> per bin, Poisson sampled with <code style="color:#22d3bf">numpy.random.default_rng(seed)</code>.</p>
+<p>The output is the cube that <code style="color:#22d3bf">dtof_cube_depth</code> inverts, and the axis order is <b>(H, W, T) with time LAST</b> — the same layout a SPAD array streams. That is not the <code style="color:#22d3bf">(D, H, W)</code> of a <code style="color:#22d3bf">volops</code> voxel volume; the two are both 3-D float arrays and swapping them silently produces a plausible-wrong depth map, which is why <code style="color:#22d3bf">dtof_cube_depth</code> checks and says so.</p>
+<p><code style="color:#22d3bf">noise=False</code> returns the exact expectation cube (no sampling).</p>
+<p>Ground truth: with <code style="color:#22d3bf">noise=False</code> the per-pixel centroid of the cube returns the input depth map to an RMS error of 3.2e-16 m (pinned in the tests) — the pulse integral is analytic, so the only error is float round-off.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a non-2-D, non-finite or non-positive *depth*, a *reflectivity* that is negative or not the same shape as *depth*, a *bins* outside <code style="color:#22d3bf">[2, MAX_BINS]</code>, non-positive *bin_ps* / *irf_fwhm_ps*, negative photon budgets, a non-integer *seed*, a cube over <code style="color:#22d3bf">MAX_CUBE_ELEMENTS</code> (<code style="color:#22d3bf">H*W*bins</code> grows fast — 512x512x256 is 8x the cap), and any depth whose round-trip time falls outside the time window (which a real sensor would alias into a short distance).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dtof_ranging">poc_dtof_ranging</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dtof_ranging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">histcube</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">dtof</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_depth">dtof_depth</a> · <a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

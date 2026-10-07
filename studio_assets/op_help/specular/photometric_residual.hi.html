@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">photometric_residual — SPECULAR <code style="color:#22d3bf">photometric</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import specularity; specularity.photometric_residual(images, lights, normals=None, albedo=None, normalize=True)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsspecular.get(&quot;photometric_residual&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर pixel पर Lambertian model कितनी बुरी तरह विफल होता है। → (H, W) RMS residual।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">sqrt(mean_n (albedo * (n.L_n) - I_n)^2)</code> — the root-mean-square disagreement between the linear model and the measurements, in the units of the input radiance. On a synthetic Lambertian surface with the true float64 normals and albedo supplied it measures 1.4e-16 at worst; with them omitted the floor rises to 4.5e-08, because <code style="color:#22d3bf">photometric.photometric_stereo</code> returns float32 and that is its precision, not a modelling error (supplying the *same* truth cast to float32 reproduces 4.5e-08 exactly). It is large where the assumption actually broke: 0.50 at worst on the same scene with 3 of 8 lights blocked by a cast shadow — fifteen orders of magnitude above the clean floor. All four numbers measured in <code style="color:#22d3bf">tests/test_specularity.py</code>.</p>
+<p>This is the diagnostic that tells you *whether* you need <code style="color:#22d3bf">photometric_stereo_robust</code> before you reach for it, and it is the map an inspection routine thresholds to find glossy defects.</p>
+<p>With *normals* and *albedo* omitted it solves them first with <code style="color:#22d3bf">photometric.photometric_stereo</code> and reports the residual of that fit — the honest self-assessment of the plain estimator. Pass them to score an estimate that came from somewhere else (a robust fit, a CAD model, a previous frame).</p>
+<p>Note the residual uses <code style="color:#22d3bf">n.L</code> <b>without</b> the <code style="color:#22d3bf">max(., 0)</code> clamp, because that is the linear system the solver actually inverted; a pixel in attached shadow therefore shows a residual, which is the intended signal rather than an artefact.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *images* / *lights* problems as in <code style="color:#22d3bf">photometric_stereo_robust</code>; *normals* is not <code style="color:#22d3bf">(H, W, 3)</code> matching the images; *albedo* is not <code style="color:#22d3bf">(H, W)</code>; exactly one of *normals* / *albedo* is given (the pair is meaningless apart — the model is <code style="color:#22d3bf">albedo * n</code>).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidespecular:specular_photometric">specular_photometric family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:specular_photometric">specular_photometric</a> — <code style="color:#22d3bf">py -3.11 examples/specular_photometric.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opspecular:polarization_render">polarization_render</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">photometric</code>)</h3>
+<p><a style="color:#22d3bf" href="opspecular:photometric_stereo_robust">photometric_stereo_robust</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: specularity.py — SPECULAR operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

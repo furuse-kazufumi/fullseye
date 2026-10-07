@@ -1,0 +1,19 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">write_wav — ONED <code style="color:#22d3bf">io</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">file</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_wav(path, x, rate=44100)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import dsp; dsp.write_wav(path, x, rate=44100)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops1d.get(&quot;write_wav&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>float <code style="color:#22d3bf">[-1,1]</code> mono signal को 16-bit PCM WAV में लिखता है (stdlib)। non-finite sample error देते हैं (वरना वे बेकार PCM बन जाते)।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:genspark_external_review">genspark_external_review</a> — <code style="color:#22d3bf">py -3.11 examples/genspark_external_review.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">file</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oponed:read_wav">read_wav</a> · <a style="color:#22d3bf" href="oponed:read_audio">read_audio</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">io</code>)</h3>
+<p><a style="color:#22d3bf" href="oponed:read_wav">read_wav</a> · <a style="color:#22d3bf" href="oponed:read_audio">read_audio</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: dsp.py — ONED operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

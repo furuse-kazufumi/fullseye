@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">jitter — 3D <code style="color:#22d3bf">augment</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_augment; pcl_augment.jitter(points, sigma: &#x27;float&#x27;, clip: &#x27;Optional[float]&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;jitter&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>हर point में isotropic Gaussian noise <code style="color:#22d3bf">N(0, sigma)</code> जोड़ता है (sensor position noise की नकल)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">sigma</code> はワールド単位の標準偏差(ユーザ指定パラメータ)。<code style="color:#22d3bf">clip</code> を与えると各成分の変位を <code style="color:#22d3bf">[-clip, clip]</code> に切り詰める(外れ変位の抑制)。大 N ではノイズの平均≈0・標準偏差≈sigma となる。返り値は入力と同形状 <code style="color:#22d3bf">(N,3)</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">sigma &lt; 0</code> は <code style="color:#22d3bf">ValueError</code>。<code style="color:#22d3bf">sigma == 0</code> または空入力は入力のコピーを返す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">clip</code> は与えるなら <code style="color:#22d3bf">&gt; 0</code>(それ以外は <code style="color:#22d3bf">ValueError</code>)。切り詰めは成分ごとなので</p>
+<p>変位ベクトルの長さは最大 <code style="color:#22d3bf">√3·clip</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">seed</code> で決定論的(<code style="color:#22d3bf">np.random.default_rng(seed)</code>)。同 seed・同形状なら同じノイズ。</p>
+<p style="margin:2px 0 2px 12px">• 入力は <code style="color:#22d3bf">(N,3)</code> の有限値のみ(長さ 3 の 1-D は 1 点に昇格、それ以外や NaN は</p>
+<p><code style="color:#22d3bf">ValueError</code>)。返り値は float64。</p>
+<p style="margin:2px 0 2px 12px">• 位置合わせ(<code style="color:#22d3bf">register_fpfh</code> 等)のノイズ耐性を測るとき、<code style="color:#22d3bf">sigma</code> を点間隔</p>
+<p>(<code style="color:#22d3bf">voxel_grid_downsample</code> の格子幅など)に対する比で決めると条件を比較しやすい。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:augment_pointcloud">augment_pointcloud</a> — <code style="color:#22d3bf">py -3.11 examples_3d/augment_pointcloud.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">augment</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:random_rotation">random_rotation</a> · <a style="color:#22d3bf" href="op3d:random_scale">random_scale</a> · <a style="color:#22d3bf" href="op3d:random_dropout">random_dropout</a> · <a style="color:#22d3bf" href="op3d:elastic_deform">elastic_deform</a> · <a style="color:#22d3bf" href="op3d:cutout">cutout</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pcl_augment.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

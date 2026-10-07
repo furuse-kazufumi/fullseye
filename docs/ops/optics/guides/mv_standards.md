@@ -7,6 +7,7 @@ title_zh: 相机接口规格与标准组织
 title_tw: 相機介面規格與標準組織
 title_ko: 카메라 인터페이스 규격과 단체
 title_de: Kameraschnittstellen: Standards und Gremien
+title_hi: Camera interface standards और उनके पीछे की संस्थाएँ
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

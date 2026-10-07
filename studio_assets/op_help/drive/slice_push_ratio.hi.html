@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">slice_push_ratio — DRIVE <code style="color:#22d3bf">cutting</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import cutting; cutting.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_ratio&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>धार के झुकाव θ (x-z, वामावर्त) और blade की velocity (vx, −vz) (vz &gt; 0 नीचे की ओर) से slice/push अनुपात ξ।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>刃先方向 u = (cos θ, sin θ)、法線 n = (−sin θ, cos θ) として ξ = |v·u| / |v·n|。vx = 0 なら ξ = tan|θ|(Atkins 2016 の本文「傾けた刃を縦に動かすと ξ = tan i」)に戻る。刃が自分の刃先に沿って動く(押しが無い)と ValueError。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_food_cutting_measure">poc_food_cutting_measure</a> — <code style="color:#22d3bf">py -3.11 examples/poc_food_cutting_measure.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">scalar</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:spin_from_marker_sequence">spin_from_marker_sequence</a> · <a style="color:#22d3bf" href="opdrive:carla_transform_matrix">carla_transform_matrix</a> · <a style="color:#22d3bf" href="opdrive:carla_pose_to_world">carla_pose_to_world</a> · <a style="color:#22d3bf" href="opdrive:carla_camera_pose">carla_camera_pose</a> · <a style="color:#22d3bf" href="opdrive:carla_xy_yaw">carla_xy_yaw</a> · <a style="color:#22d3bf" href="opdrive:carla_scene_load">carla_scene_load</a> · <a style="color:#22d3bf" href="opdrive:town_chain">town_chain</a> · <a style="color:#22d3bf" href="opdrive:osm_parse">osm_parse</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">cutting</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:cutting_scene">cutting_scene</a> · <a style="color:#22d3bf" href="opdrive:cutting_face_render">cutting_face_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_edge_render">cutting_edge_render</a> · <a style="color:#22d3bf" href="opdrive:cutting_episode_synth">cutting_episode_synth</a> · <a style="color:#22d3bf" href="opdrive:cutting_wrist_mjcf">cutting_wrist_mjcf</a> · <a style="color:#22d3bf" href="opdrive:knife_edge_track">knife_edge_track</a> · <a style="color:#22d3bf" href="opdrive:cut_depth_from_side">cut_depth_from_side</a> · <a style="color:#22d3bf" href="opdrive:slice_thickness_profile">slice_thickness_profile</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: cutting.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

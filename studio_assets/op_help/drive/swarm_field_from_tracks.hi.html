@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">swarm_field_from_tracks — DRIVE <code style="color:#22d3bf">swarmflow</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_field_from_tracks(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), grid_step=None, h=None, threshold: &#x27;float&#x27; = 0.3, max_disp_px=None, min_count: &#x27;int&#x27; = 3, outlier_k: &#x27;int&#x27; = 12, outlier_threshold: &#x27;float&#x27; = 3.0) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_field_from_tracks(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), grid_step=None, h=None, threshold: &#x27;float&#x27; = 0.3, max_disp_px=None, min_count: &#x27;int&#x27; = 3, outlier_k: &#x27;int&#x27; = 12, outlier_threshold: &#x27;float&#x27; = 3.0) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;swarm_field_from_tracks&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ऊपर से देखे frame का क्रम → सदस्यों को detect करना (blob2d के connected component + brightness का centroid) → पड़ोसी frame से mutual nearest neighbor द्वारा जोड़ना → velocity को SPH kernel से grid पर ले जाना।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>つなぐ条件: A の点の最近傍が B の点で、その B の点の最近傍も A の点(相互)、かつ移動が <code style="color:#22d3bf">max_disp_px</code> 以下(既定 = 検出した点どうしの最近傍の間隔の中央値の 0.45 倍。1 コマの移動がこれを超えると取り違える = 追跡の限界)。全部のコマの組の速度を一つの集団にして平均する(定常の流れの前提)。取り違えた組は速度が桁で外れる(実測: 一様に撒いた 1300 個で 2 % の組が 1〜3 m/s ずれ、格子の rms 誤差が U の 16 % になった)ので、格子へ移す前に<b>正規化した中央値の検査</b>(PIV の慣行、近い <code style="color:#22d3bf">outlier_k</code> 個の速度の中央値からのずれ / その近傍のずれの中央値 &gt; <code style="color:#22d3bf">outlier_threshold</code>) で捨てる。</p>
+<p>Args:</p>
+<p>frames: 同じ大きさの (H, W) のコマの列(2 枚以上)。</p>
+<p>res: 画素の大きさ [m/px]。</p>
+<p>frame_dt: コマの間隔 [s]。</p>
+<p>center: 画像の中心の世界座標 [m]。</p>
+<p>grid_step: 格子の間隔 [m] (既定 = 個体の間隔の推定値)。</p>
+<p>h: 格子へ移す核の h [m] (既定 = grid_step)。</p>
+<p>threshold: 2 値化のしきい値(最小〜最大の割合)。</p>
+<p>max_disp_px: 1 コマの移動の上限 [px]。</p>
+<p>min_count: 格子の台の中に要る速度の数。</p>
+<p>outlier_k: 中央値の検査に使う近傍の数(0 で検査しない)。</p>
+<p>outlier_threshold: 検査のしきい値。</p>
+<p>Returns:</p>
+<p>速度場の dict(module の規約)+ <code style="color:#22d3bf">points</code> (M, 2)・<code style="color:#22d3bf">point_velocity</code> (M, 2)(つないだ組の中点と速度)、</p>
+<p><code style="color:#22d3bf">n_detected</code>(コマごと)、<code style="color:#22d3bf">n_linked</code>、<code style="color:#22d3bf">n_outliers</code>(中央値の検査で捨てた組)、<code style="color:#22d3bf">n_rejected_blobs</code>、</p>
+<p><code style="color:#22d3bf">spacing</code>(個体の間隔の推定 [m])。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_swarm_obstacle_from_flow">poc_swarm_obstacle_from_flow</a> — <code style="color:#22d3bf">py -3.11 examples/poc_swarm_obstacle_from_flow.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">swarmflow</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:sph_kernel">sph_kernel</a> · <a style="color:#22d3bf" href="opdrive:sph_density_pressure">sph_density_pressure</a> · <a style="color:#22d3bf" href="opdrive:swarm_simulate">swarm_simulate</a> · <a style="color:#22d3bf" href="opdrive:swarm_render_overhead">swarm_render_overhead</a> · <a style="color:#22d3bf" href="opdrive:swarm_field_from_piv">swarm_field_from_piv</a> · <a style="color:#22d3bf" href="opdrive:potential_flow_cylinder">potential_flow_cylinder</a> · <a style="color:#22d3bf" href="opdrive:velocity_deficit_map">velocity_deficit_map</a> · <a style="color:#22d3bf" href="opdrive:stagnation_from_centerline">stagnation_from_centerline</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: swarmflow.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

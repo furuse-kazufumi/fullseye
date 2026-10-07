@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">ae_size_correspondence — DRIVE <code style="color:#22d3bf">grind</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import grind; grind.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;ae_size_correspondence&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>AE band power और D50 का संबंध (monotonicity, correlation, log–log slope α, <code style="color:#22d3bf">P ∝ D50^α</code>)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">group</code> を渡すと群(材料)ごとに出す(材料で電力の水準が桁で違うので、混ぜた相関は水準の差を拾う —— <code style="color:#22d3bf">pooled</code> は参考)。</p>
+<p>返り: 群 → <code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">spearman</code>(順位相関)・<code style="color:#22d3bf">alpha</code>(ln P を ln D50 に当てた傾き)・<code style="color:#22d3bf">sign_agree</code>(全ての組で「D50 が大きい方が P も大きい」の割合)。<b>点が 2 つなら spearman は ±1 しか取れない</b>(<code style="color:#22d3bf">n</code> を必ず併記する)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_powder_grinding_ae">poc_powder_grinding_ae</a> — <code style="color:#22d3bf">py -3.11 examples/poc_powder_grinding_ae.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">grind</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:particle_size_read">particle_size_read</a> · <a style="color:#22d3bf" href="opdrive:particle_size_dx">particle_size_dx</a> · <a style="color:#22d3bf" href="opdrive:particle_size_oversize">particle_size_oversize</a> · <a style="color:#22d3bf" href="opdrive:particle_size_synth">particle_size_synth</a> · <a style="color:#22d3bf" href="opdrive:comminution_energy">comminution_energy</a> · <a style="color:#22d3bf" href="opdrive:comminution_law_fit">comminution_law_fit</a> · <a style="color:#22d3bf" href="opdrive:breakage_first_order_fit">breakage_first_order_fit</a> · <a style="color:#22d3bf" href="opdrive:replicate_compare">replicate_compare</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: grind.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -3,7 +3,7 @@
 <!-- 一致することを CI drift テストが強制する(再生成==commit 済み)。手編集しないこと。 -->
 # Fullseye Operator Docs — AI 使い方コーパス
 
-**日本語** · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · [한국어](./INDEX.ko.md) · [Deutsch](./INDEX.de.md)
+**日本語** · [English](./INDEX.en.md) · [简体中文](./INDEX.zh.md) · [繁體中文](./INDEX.tw.md) · [한국어](./INDEX.ko.md) · [Deutsch](./INDEX.de.md) · [hi](./INDEX.hi.md)
 
 **fullseye 0.5.0** の op ドキュメント。op ごとの使い方を Markdown で1件1ファイル(RAD コーパス形状)に持ち、Studio の HTML ヘルプはここから一括変換で生成する(`tools/opdocs.py html`)。この目次はフォルダ階層から自動生成。
 

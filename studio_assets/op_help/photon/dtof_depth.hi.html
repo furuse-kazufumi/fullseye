@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">dtof_depth — PHOTON <code style="color:#22d3bf">dtof</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">counts</code> → <code style="color:#22d3bf">measurement</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import photoncount; photoncount.dtof_depth(hist, bin_ps=100.0, mode=&#x27;peak&#x27;, offset_ps=0.0, subtract_background=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsphoton.get(&quot;dtof_depth&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>photon arrival-time histogram से दूरी: <code style="color:#22d3bf">d = c*t/2</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Direct time-of-flight. The light travels to the target and back, so the one-way distance is <b>half</b> the round-trip time times the speed of light. *bin_ps* is the width of one time bin (a 100 ps bin is 1.50 cm of depth).</p>
+<p>Four estimators, from crudest to sharpest:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;peak&quot;</code> — the centre of the fullest bin. Quantised to the bin grid; the error is uniform in <code style="color:#22d3bf">+-half</code> a bin (<code style="color:#22d3bf">+-0.75 cm</code> at 100 ps).</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;centroid&quot;</code> — the first moment of the whole histogram. Exact for a symmetric pulse *with no background*, and badly biased toward the middle of the window with one — pass <code style="color:#22d3bf">subtract_background=True</code>.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;parabolic&quot;</code> — a parabola through the peak bin and its two neighbours. Sub-bin, cheap, and biased for a Gaussian pulse.</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;gaussian&quot;</code> — the same parabola fitted to the <b>log</b> of those three samples, which is the exact vertex for a Gaussian pulse.</p>
+<p>Measured on a <b>noiseless</b> simulated return at 2.4371 m (256 bins x 100 ps, 500 ps IRF), absolute error: <code style="color:#22d3bf">peak</code> 1.29 mm, <code style="color:#22d3bf">centroid</code> 4.4e-16 m, <code style="color:#22d3bf">parabolic</code> 0.067 mm, <code style="color:#22d3bf">gaussian</code> 9.4e-9 m — three orders of magnitude between the crudest and the sharpest.</p>
+<p>With <b>Poisson noise</b> (200 signal + 200 ambient photons, seed 0) the same four give 13.7 mm, 146.5 mm (with <code style="color:#22d3bf">subtract_background=True</code>), 8.5 mm and 8.0 mm. Two honest readings of that: once shot noise dominates the sub-bin estimators buy about 1.6x, not three orders of magnitude, and the centroid <b>collapses</b> because a median-subtracted ambient floor still leaves noise across the whole window that drags the first moment toward the centre. Use <code style="color:#22d3bf">&quot;gaussian&quot;</code> or <code style="color:#22d3bf">&quot;parabolic&quot;</code> on noisy data; use <code style="color:#22d3bf">&quot;centroid&quot;</code> only when the background is genuinely gone.</p>
+<p>*offset_ps* is a <b>system delay to remove</b>: <code style="color:#22d3bf">t_flight = t_measured - offset_ps</code>, so a positive offset makes the answer *closer*. Returns the distance in metres as a float.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: negative, non-finite, non-1-D or all-zero *hist*, a non-positive *bin_ps*, an unknown *mode*, a non-finite *offset_ps*, a <b>flat</b> histogram in a peak-based mode (<code style="color:#22d3bf">argmax</code> would silently pick bin 0 and report the first bin&#x27;s depth), a peak in the first or last bin with a sub-bin *mode* (there is no neighbour to fit to — use <code style="color:#22d3bf">&quot;peak&quot;</code>), a degenerate three-sample fit, and — instead of returning a negative distance — an *offset_ps* larger than the measured arrival time.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidephoton:photon_timeresolved">photon_timeresolved family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:photon_timeresolved">photon_timeresolved</a> — <code style="color:#22d3bf">py -3.11 examples/photon_timeresolved.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_dtof_ranging">poc_dtof_ranging</a> — <code style="color:#22d3bf">py -3.11 examples/poc_dtof_ranging.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">measurement</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">dtof</code>)</h3>
+<p><a style="color:#22d3bf" href="opphoton:dtof_cube_simulate">dtof_cube_simulate</a> · <a style="color:#22d3bf" href="opphoton:dtof_cube_depth">dtof_cube_depth</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: photoncount.py — PHOTON operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

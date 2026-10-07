@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">write_3mf — PRINTPATH <code style="color:#22d3bf">format</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text × mesh</code> → <code style="color:#22d3bf">text</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.write_3mf(path: &#x27;str&#x27;, mesh: &#x27;Any&#x27;) -&gt; &#x27;str&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import printpath; printpath.write_3mf(path: &#x27;str&#x27;, mesh: &#x27;Any&#x27;) -&gt; &#x27;str&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsprintpath.get(&quot;write_3mf&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>triangle mesh को 3MF (न्यूनतम संरचना: <code style="color:#22d3bf">[Content_Types].xml</code> / <code style="color:#22d3bf">_rels/.rels</code> / <code style="color:#22d3bf">3D/3dmodel.model</code>, इकाई mm) में लिखता है। path (<code style="color:#22d3bf">text</code>) लौटाता है।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_print_layer_inspection">poc_print_layer_inspection</a> — <code style="color:#22d3bf">py -3.11 examples/poc_print_layer_inspection.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">text</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:gcode_read">gcode_read</a> · <a style="color:#22d3bf" href="opprintpath:gcode_write">gcode_write</a> · <a style="color:#22d3bf" href="opprintpath:read_3mf">read_3mf</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">format</code>)</h3>
+<p><a style="color:#22d3bf" href="opprintpath:read_3mf">read_3mf</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: printpath.py — PRINTPATH operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

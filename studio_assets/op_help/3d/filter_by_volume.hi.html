@@ -1,0 +1,37 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">filter_by_volume — 3D <code style="color:#22d3bf">regionprops</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import regionprops3d; regionprops3d.filter_by_volume(vol, min_voxels: &#x27;int&#x27;, connectivity: &#x27;int&#x27; = 26) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;filter_by_volume&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>min_voxels से कम वाले connected components हटाकर bool mask लौटाता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>vol : array_like</p>
+<p>bool または 0/1 の 3D 配列。</p>
+<p>min_voxels : int</p>
+<p>この閾値「未満」(&lt; min_voxels)の成分を落とす。閾値 &quot;以上&quot; は残す。</p>
+<p>connectivity : int</p>
+<p>6 / 18 / 26。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray(bool)</p>
+<p>条件を満たす成分のみ True。前景無しや全成分除去なら全 False。</p>
+<p>補足:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">min_voxels</code> は <code style="color:#22d3bf">int()</code> で丸めてから比較する。1 以下ならすべての成分が残る。</p>
+<p style="margin:2px 0 2px 12px">• 内部で <code style="color:#22d3bf">label_components</code> → <code style="color:#22d3bf">bincount</code> → <code style="color:#22d3bf">counts &gt;= min_voxels</code> のラベルを残す。ラベルの再番号付けは行わず bool マスクだけ返すので、番号が要るなら結果をもう一度 <code style="color:#22d3bf">label_components</code> に通す。</p>
+<p style="margin:2px 0 2px 12px">• 入力は 0 以外を前景として bool 化する(NaN も前景)。軸順 (z, y, x)。</p>
+<p style="margin:2px 0 2px 12px">• Raises <code style="color:#22d3bf">ValueError</code>: 3 次元でない入力、<code style="color:#22d3bf">connectivity</code> が 6/18/26 以外。</p>
+<p style="margin:2px 0 2px 12px">• ボクセル数はスペーシング未補正なので、実寸で閾値を切るなら voxel 体積で割ってから渡す。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:measurement_uncertainty">measurement_uncertainty</a> — Measurement uncertainty और calibration — &#x27;हम माप रहे हैं&#x27; कहने के लिए क्या चाहिए</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:region_props_3d">region_props_3d</a> — <code style="color:#22d3bf">py -3.11 examples_3d/region_props_3d.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">voxel</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:voxel_to_mips">voxel_to_mips</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:sobel3d">sobel3d</a> · <a style="color:#22d3bf" href="op3d:hessian3d">hessian3d</a> · <a style="color:#22d3bf" href="op3d:curvature_maps">curvature_maps</a> · <a style="color:#22d3bf" href="op3d:edt_jfa">edt_jfa</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">regionprops</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:label_components">label_components</a> · <a style="color:#22d3bf" href="op3d:region_props">region_props</a> · <a style="color:#22d3bf" href="op3d:largest_component">largest_component</a> · <a style="color:#22d3bf" href="op3d:inner_box3">inner_box3</a> · <a style="color:#22d3bf" href="op3d:vol_label">vol_label</a> · <a style="color:#22d3bf" href="op3d:vol_region_props">vol_region_props</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: regionprops3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

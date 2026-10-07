@@ -1,0 +1,20 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_to_mips — 3D <code style="color:#22d3bf">transform</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">images</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_to_mips(vol)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import match3d; match3d.voxel_to_mips(vol)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;voxel_to_mips&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D → 3 orthogonal directions में maximum-intensity projection (MIP)। 2D methods (जैसे accel का 2D NCC) लागू करने का प्रवेश द्वार।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>入力 <code style="color:#22d3bf">(D,H,W)</code> に対し <code style="color:#22d3bf">[max(axis=0), max(axis=1), max(axis=2)]</code> の list を返す。形はそれぞれ <code style="color:#22d3bf">(H,W)</code>(軸 0=D を潰す)、<code style="color:#22d3bf">(D,W)</code>(軸 1=H を潰す)、<code style="color:#22d3bf">(D,H)</code>(軸 2=W を潰す)、dtype float64。値は入力の最大値そのまま(正規化しない)。負の値も max なので通り、密度 0 の背景は 0 のまま。形の検証は無い(2-D は <code style="color:#22d3bf">axis=2</code> で失敗し、4-D 以上は動いてしまう)ので、呼び手で次元を確かめる。<code style="color:#22d3bf">match_mip_2d</code> はこの 3 枚に 2D NCC を掛けて 3D 位置を冗長推定する。任意視点の投影は <code style="color:#22d3bf">render_volume_projection</code>(mode=&quot;mip&quot;)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:transforms_repr">transforms_repr</a> — <code style="color:#22d3bf">py -3.11 examples_3d/transforms_repr.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:photometric_stereo">photometric_stereo</a> · <a style="color:#22d3bf" href="op3d:wrapped_phase">wrapped_phase</a> · <a style="color:#22d3bf" href="op3d:graycode_decode">graycode_decode</a> · <a style="color:#22d3bf" href="op3d:decode_fringe">decode_fringe</a> · <a style="color:#22d3bf" href="op3d:carve">carve</a> · <a style="color:#22d3bf" href="op3d:visual_hull">visual_hull</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">transform</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:depth_to_points">depth_to_points</a> · <a style="color:#22d3bf" href="op3d:voxel_to_mesh">voxel_to_mesh</a> · <a style="color:#22d3bf" href="op3d:tsdf_from_depth">tsdf_from_depth</a> · <a style="color:#22d3bf" href="op3d:signed_distance_field">signed_distance_field</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: match3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

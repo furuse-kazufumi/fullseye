@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">cylinder_fit_known_radius — DRIVE <code style="color:#22d3bf">pegsim</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pegsim; pegsim.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;cylinder_fit_known_radius&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>ज्ञात त्रिज्या r वाले cylinder को 3-D point cloud (N, 3) पर fit करता है: axis पर एक बिंदु (axis के लंबवत 2 degrees of freedom) और axis की दिशा (2 degrees of freedom) Gauss-Newton से।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>初期値 <code style="color:#22d3bf">axis_point</code>・<code style="color:#22d3bf">axis</code> から出発し、残差 = 軸からの距離 − r。返り: <code style="color:#22d3bf">axis_point</code>(3,)、<code style="color:#22d3bf">axis</code>(単位、入力の向きを保つ)、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 5 未満、r ≤ 0、axis がゼロ。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• (अभी कुछ नहीं)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pegsim</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:peg_params">peg_params</a> · <a style="color:#22d3bf" href="opdrive:whitney_clearance">whitney_clearance</a> · <a style="color:#22d3bf" href="opdrive:two_point_depth">two_point_depth</a> · <a style="color:#22d3bf" href="opdrive:wedging_check">wedging_check</a> · <a style="color:#22d3bf" href="opdrive:jamming_diagram">jamming_diagram</a> · <a style="color:#22d3bf" href="opdrive:chamfer_capture">chamfer_capture</a> · <a style="color:#22d3bf" href="opdrive:contact_state_predict">contact_state_predict</a> · <a style="color:#22d3bf" href="opdrive:circle_fit_known_radius">circle_fit_known_radius</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pegsim.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

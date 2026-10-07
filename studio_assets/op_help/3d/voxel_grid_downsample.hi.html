@@ -1,0 +1,32 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">voxel_grid_downsample — 3D <code style="color:#22d3bf">preprocess</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pcl_filter; pcl_filter.voxel_grid_downsample(points, voxel_size: &#x27;float&#x27;)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;voxel_grid_downsample&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>voxel_size भुजा वाले grid से point cloud को पतला करता है, हर cell को 1 centroid point में समेटता है (deterministic)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>空間を一辺 <code style="color:#22d3bf">voxel_size</code> の立方体セルに区切り、同じセルに落ちた点をその重心 1 点で代表させる。密度ムラを均し、下流(ICP・特徴量)の計算量を点数で抑える標準手法。出力順はボクセル座標の辞書順で固定(同じ入力なら常に同じ出力=決定論的)。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : array_like, shape (N, 3)</p>
+<p>入力点群。</p>
+<p>voxel_size : float</p>
+<p>セルの一辺(&gt; 0)。大きいほど強く間引く。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>ndarray, shape (M, 3)</p>
+<p>各占有セルの重心(M &lt;= N)。すべて入力の軸並行 bounding box 内に収まる。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Notes</h4>
+<p><code style="color:#22d3bf">voxel_size &lt;= 0</code> は ValueError。空入力は空 (0,3) を返す(graceful)。重心はセル内の点の平均なので、必ず入力点の凸包(ゆえに bbox)内に入る。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">पृष्ठभूमि guides (इस op के पीछे की physics और conventions)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guide2d:depth_sensors">depth_sensors</a> — Depth sensors — ranging के सिद्धांत, असली devices के आँकड़े, dropouts कैसे दिखते हैं</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:pointcloud_downsampling">pointcloud_downsampling</a> — <code style="color:#22d3bf">py -3.11 examples_3d/pointcloud_downsampling.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:points_to_voxel">points_to_voxel</a> · <a style="color:#22d3bf" href="op3d:gaussians_to_voxel">gaussians_to_voxel</a> · <a style="color:#22d3bf" href="op3d:estimate_point_normals">estimate_point_normals</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:match_points_ncc">match_points_ncc</a> · <a style="color:#22d3bf" href="op3d:match_pca">match_pca</a> · <a style="color:#22d3bf" href="op3d:moment_axes">moment_axes</a> · <a style="color:#22d3bf" href="op3d:icp_point2point_3d">icp_point2point_3d</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">preprocess</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:statistical_outlier_removal">statistical_outlier_removal</a> · <a style="color:#22d3bf" href="op3d:radius_outlier_removal">radius_outlier_removal</a> · <a style="color:#22d3bf" href="op3d:mls_smooth">mls_smooth</a> · <a style="color:#22d3bf" href="op3d:volume_downsample">volume_downsample</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pcl_filter.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

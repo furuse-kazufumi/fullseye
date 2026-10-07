@@ -1,0 +1,22 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">curve3d_tube_mesh — 3D <code style="color:#22d3bf">surface</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">mesh</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import render3d; render3d.curve3d_tube_mesh(points, radius=0.1, segments=12, closed=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;curve3d_tube_mesh&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>space curve को tube mesh के रूप में — MATLAB का <code style="color:#22d3bf">tubeplot</code>, ऐसे volume के साथ जिसे आप जाँच सकते हैं।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Sweeps a circle of *radius* along the polyline using a <b>parallel-transport</b> frame (no Frenet frame: the normal of a straight segment is undefined and the binormal flips at an inflection, which twists the tube). Returns <code style="color:#22d3bf">(vertices, faces)</code> for the existing 3-D viewers and mesh ops.</p>
+<p>★<b>Why this earns its place</b>: for a closed circular centre line the tube is a torus, whose volume <code style="color:#22d3bf">2 pi^2 R r^2</code> and area <code style="color:#22d3bf">4 pi^2 R r</code> are analytic — and the existing <code style="color:#22d3bf">mesh_volume</code> / <code style="color:#22d3bf">mesh_area</code> ops measure the result. Two independent implementations meeting at a closed form is a real check; &quot;it looks like a tube&quot; is not.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: fewer than 2 points; not (N, 3); radius not positive; fewer than 3 segments; non-finite input; a curve with repeated consecutive points (the direction is undefined there).</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:minimal_surfaces">minimal_surfaces</a> — <code style="color:#22d3bf">py -3.11 examples_3d/minimal_surfaces.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">mesh</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:mesh_to_voxel">mesh_to_voxel</a> · <a style="color:#22d3bf" href="op3d:mesh_to_points">mesh_to_points</a> · <a style="color:#22d3bf" href="op3d:to_points">to_points</a> · <a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:ambient_occlusion">ambient_occlusion</a> · <a style="color:#22d3bf" href="op3d:cast_shadow">cast_shadow</a> · <a style="color:#22d3bf" href="op3d:supersample_mesh">supersample_mesh</a> · <a style="color:#22d3bf" href="op3d:render_beauty">render_beauty</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">surface</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:minimal_surface">minimal_surface</a> · <a style="color:#22d3bf" href="op3d:minimal_surface_bend">minimal_surface_bend</a> · <a style="color:#22d3bf" href="op3d:gyroid_isosurface">gyroid_isosurface</a> · <a style="color:#22d3bf" href="op3d:gyroid_solid_mask">gyroid_solid_mask</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: render3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

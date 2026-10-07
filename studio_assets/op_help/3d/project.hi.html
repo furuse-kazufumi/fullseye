@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">project — 3D <code style="color:#22d3bf">bundle_adjust</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">keypoints</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.project(points, rvec, t, K)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import bundle3d; bundle3d.project(points, rvec, t, K)</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;project&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>3D points (n,3) को camera (rvec,t,K) से 2D (n,2) पर project करता है (perspective division)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p><code style="color:#22d3bf">X_cam = R(rvec) @ X + t</code>、<code style="color:#22d3bf">x = K @ X_cam</code>、<code style="color:#22d3bf">uv = x[:2] / x[2]</code> を全点まとめて計算する(<code style="color:#22d3bf">project_points</code> と同じ規約)。<code style="color:#22d3bf">rvec</code> は回転ベクトル(軸 × 角 [rad]、scipy の <code style="color:#22d3bf">Rotation.from_rotvec</code>)、<code style="color:#22d3bf">t</code> は (3,) 並進、<code style="color:#22d3bf">K</code> は (3,3) 内部行列。返り値は (n,2) float で列 0 が u(横・列方向)、列 1 が v(縦・行方向)、単位は K に従いピクセル。</p>
+<p>注意(検証なし): カメラ後方や像平面上の点(<code style="color:#22d3bf">Z_cam &lt;= 0</code>)を弾かず、そのまま除算する。<code style="color:#22d3bf">Z_cam = 0</code> は 0 割で inf/NaN、負の Z は画像内に見える偽の座標になるので、可視性の判定は呼び出し側で行う。形状の検証もしない(<code style="color:#22d3bf">np.asarray</code> で float 化するのみ)。<code style="color:#22d3bf">bundle_adjust</code> / <code style="color:#22d3bf">mean_reprojection_error</code> の再投影残差はこの関数で作られる。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:bundle_adjust">bundle_adjust</a> — <code style="color:#22d3bf">py -3.11 examples_3d/bundle_adjust.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">keypoints</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:dlt_pose">dlt_pose</a> · <a style="color:#22d3bf" href="op3d:pnp_ransac">pnp_ransac</a> · <a style="color:#22d3bf" href="op3d:reprojection_error">reprojection_error</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">bundle_adjust</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:bundle_adjust">bundle_adjust</a> · <a style="color:#22d3bf" href="op3d:mean_reprojection_error">mean_reprojection_error</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: bundle3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

@@ -7,6 +7,7 @@ title_zh: 照明实务知识 —— 波长、偏振、点亮方式、外部光�
 title_tw: 照明實務知識 —— 波長、偏振、點亮方式、外部光、安全
 title_ko: 조명 실무 지식 — 파장·편광·점등 방식·외광·안전
 title_de: Beleuchtung in der Praxis — Wellenlänge, Polarisation, Ansteuerung, Fremdlicht, Sicherheit
+title_hi: Lighting व्यवहार में — wavelength, polarisation, drive modes, ambient light, safety
 author: Kazufumi Furuse
 license: Apache-2.0
 version: 0.1.0

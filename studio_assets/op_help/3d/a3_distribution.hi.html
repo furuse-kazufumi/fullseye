@@ -1,0 +1,28 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">a3_distribution — 3D <code style="color:#22d3bf">shape_descriptor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">descriptor</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.a3_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import descriptors3d; descriptors3d.a3_distribution(points, bins: &#x27;int&#x27; = 64, samples: &#x27;int&#x27; = 100000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">ops3d.get(&quot;a3_distribution&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>random 3 points (A, B, C) द्वारा vertex B पर बने कोण की distribution (Osada 2002 का A3)।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>角度は回転・平行移動・スケールのすべてに不変(スケールしても角は変わらない)ため、D2 と相補的な<b>無次元</b>の形状特徴になる。レンジ [0, π] 固定の正規化ヒストグラム(bins,) を返す(総和 1)。空間的に重なった点(ゼロ長ベクトル)は角が未定義なので除外する。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
+<p>points : array_like, shape (N, 3)</p>
+<p>点群。N &gt;= 3 が必要。</p>
+<p>bins, samples, seed :</p>
+<p>d2_distribution と同義。</p>
+<h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
+<p>np.ndarray, shape (bins,)</p>
+<p>正規化角度ヒストグラム(ラジアン、[0, π])。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example3d:shape_desc_pose">shape_desc_pose</a> — <code style="color:#22d3bf">py -3.11 examples_3d/shape_desc_pose.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">descriptor</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="op3d:fuse_to_voxel">fuse_to_voxel</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">shape_descriptor</code>)</h3>
+<p><a style="color:#22d3bf" href="op3d:d2_distribution">d2_distribution</a> · <a style="color:#22d3bf" href="op3d:extent_signature">extent_signature</a> · <a style="color:#22d3bf" href="op3d:describe">describe</a> · <a style="color:#22d3bf" href="op3d:shape_distance">shape_distance</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: descriptors3d.py — 3D operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

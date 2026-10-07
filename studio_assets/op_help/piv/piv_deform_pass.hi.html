@@ -1,0 +1,33 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">piv_deform_pass — PIV <code style="color:#22d3bf">estimate</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import pivops; pivops.piv_deform_pass(a, b, flow, info, window=32, overlap=0.5, peak=&#x27;gauss3&#x27;, window_func=&#x27;hann&#x27;, order=3)</code>, registry से लेना हो तो <code style="color:#22d3bf">opspiv.get(&quot;piv_deform_pass&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">flow2d</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">pivops.piv_deform_pass</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>window deformation वाला 1 चरण। अनुमानित displacement से <b>पहले image को ही warp करके</b> correlation लेता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
+<p>Args:</p>
+<p>a, b: 画像対。</p>
+<p>flow: 予測変位 <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">piv_multipass</code> などの出力)。</p>
+<p>info: その <code style="color:#22d3bf">info</code>(窓中心の座標が要る)。</p>
+<p>window / overlap / peak / window_func: 新しい段の設定。</p>
+<p>order: 変形に使う補間の次数(3 = 3 次スプライン)。</p>
+<p>Returns:</p>
+<p><code style="color:#22d3bf">(flow (2, h&#x27;, w&#x27;), info)</code>。返る変位は<b>元の画像座標での総変位</b>。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidepiv:piv_displacement">piv_displacement family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:piv_field_analysis_tour">piv_field_analysis_tour</a> — <code style="color:#22d3bf">py -3.11 examples/piv_field_analysis_tour.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">flow2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_outlier_mask">piv_outlier_mask</a> · <a style="color:#22d3bf" href="oppiv:piv_replace_outliers">piv_replace_outliers</a> · <a style="color:#22d3bf" href="oppiv:piv_vorticity">piv_vorticity</a> · <a style="color:#22d3bf" href="oppiv:piv_divergence">piv_divergence</a> · <a style="color:#22d3bf" href="oppiv:piv_flow_magnitude">piv_flow_magnitude</a> · <a style="color:#22d3bf" href="oppiv:piv_to_velocity">piv_to_velocity</a> · <a style="color:#22d3bf" href="oppiv:piv_velocity_gradient">piv_velocity_gradient</a> · <a style="color:#22d3bf" href="oppiv:piv_q_criterion">piv_q_criterion</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">estimate</code>)</h3>
+<p><a style="color:#22d3bf" href="oppiv:piv_cross_correlate">piv_cross_correlate</a> · <a style="color:#22d3bf" href="oppiv:piv_multipass">piv_multipass</a> · <a style="color:#22d3bf" href="oppiv:piv_ensemble_correlate">piv_ensemble_correlate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: pivops.py — PIV operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

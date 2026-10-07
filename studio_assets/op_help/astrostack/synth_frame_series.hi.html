@@ -1,0 +1,29 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">synth_frame_series — ASTROSTACK <code style="color:#22d3bf">synth</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">कोई नहीं</code> → <code style="color:#22d3bf">images</code> (केवल arguments से तय होने वाला op — यह कोई image या data input नहीं लेता)</p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import astrostack; astrostack.synth_frame_series(shape=(128, 128), n_frames=8, dither_px=1.5, fwhm_px=3.2, fwhm_jitter=0.0, n_cosmic=0, seed=0, **starfield_kw)</code>, registry से लेना हो तो <code style="color:#22d3bf">opsastrostack.get(&quot;synth_frame_series&quot;)</code>)</p>
+<p style="margin:2px 0 2px 12px">• <b>Ledger के ज़रिए return value</b>: <code style="color:#22d3bf">fullseye.ledger.synth_frame_series(...)</code> <b>केवल घोषित out type <code style="color:#22d3bf">images</code> का value</b> लौटाता है (मूल function सहायक जानकारी भी लौटाता है)। जो हिस्सा छोड़ दिया गया है उसकी ज़रूरत हो तो <code style="color:#22d3bf">fullseye.ledger.synth_frame_series.raw(...)</code> का उपयोग करें, या <code style="color:#22d3bf">astrostack.synth_frame_series</code> को सीधे call करें।</p>
+<p style="margin:2px 0 2px 12px">• मूल function का return: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>उसी star field को <code style="color:#22d3bf">n_frames</code> बार दोबारा लेता है, <b>हर बार अलग noise और अलग dither के साथ</b>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>星の座標・フラックスは全フレームで同じ(<code style="color:#22d3bf">field_seed</code> を固定して星の抽選を再現し、観測ごとの <code style="color:#22d3bf">seed</code> と <code style="color:#22d3bf">shift_row</code> / <code style="color:#22d3bf">shift_col</code> だけを振る)ので、位置合わせ・合成・drizzle の正解が 1 組で済む。*fwhm_jitter* を与えると FWHM がフレームごとに揺れる —— これが lucky imaging の「シーイングが揺らぐ」条件で、0 のままだと <code style="color:#22d3bf">lucky_select</code> が選ぶ理由が無くなる。</p>
+<p>ディザは <code style="color:#22d3bf">dither_px</code> を半径とする決定的な螺旋(<code style="color:#22d3bf">i</code> 番目のフレームを <code style="color:#22d3bf">dither_px * (i / (n-1))</code> の半径・黄金角の方向へ置く)。乱数でないのでフレーム数を変えても並びが安定し、図が再現する。</p>
+<p>Returns <code style="color:#22d3bf">(frames, truth)</code>:</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">frames</code> —— 長さ <code style="color:#22d3bf">n_frames</code> の list、各要素は <code style="color:#22d3bf">(H, W)</code> float64。<b><code style="color:#22d3bf">images</code> 語彙そのもの</b>なので、合成 op へそのまま渡せる。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">truth</code> —— <code style="color:#22d3bf">synth_starfield</code> の truth に、<code style="color:#22d3bf">shifts</code> <code style="color:#22d3bf">(N, 2)</code> (各フレームの <code style="color:#22d3bf">(dr, dc)</code>)と <code style="color:#22d3bf">fwhms</code> <code style="color:#22d3bf">(N,)</code> を足したもの。<code style="color:#22d3bf">rows</code> / <code style="color:#22d3bf">cols</code> は<b>ディザ前</b>(フレーム 0 の位置)。</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">synth_starfield</code> の条件に加えて、*n_frames* が 1 未満、*dither_px* が負、*fwhm_jitter* が負の場合。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:astro_stacking">astro_stacking</a> — <code style="color:#22d3bf">py -3.11 examples/astro_stacking.py</code></p>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_astro_photometry">poc_astro_photometry</a> — <code style="color:#22d3bf">py -3.11 examples/poc_astro_photometry.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">images</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:lucky_select">lucky_select</a> · <a style="color:#22d3bf" href="opastrostack:sigma_clip_stack">sigma_clip_stack</a> · <a style="color:#22d3bf" href="opastrostack:drizzle_resample">drizzle_resample</a> · <a style="color:#22d3bf" href="opastrostack:cosmic_ray_reject_stack">cosmic_ray_reject_stack</a> · <a style="color:#22d3bf" href="opastrostack:align_frames">align_frames</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">synth</code>)</h3>
+<p><a style="color:#22d3bf" href="opastrostack:synth_starfield">synth_starfield</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: astrostack.py — ASTROSTACK operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

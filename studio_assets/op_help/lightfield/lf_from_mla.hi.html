@@ -1,0 +1,27 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">lf_from_mla — LIGHTFIELD <code style="color:#22d3bf">decode</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">lightfield</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import lightfield; lightfield.lf_from_mla(raw, angular=(5, 5), *, offset=(0, 0), crop=False)</code>, registry से लेना हो तो <code style="color:#22d3bf">opslightfield.get(&quot;lf_from_mla&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>microlens-array raw frame को <code style="color:#22d3bf">(V, U, H, W)</code> light field में decode करता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>The plenoptic sensor stores, for microlens <code style="color:#22d3bf">(t, s)</code>, a <code style="color:#22d3bf">V x U</code> block of pixels — one per direction through the main lens&#x27; exit pupil. So raw pixel <code style="color:#22d3bf">(offset_y + t*V + v, offset_x + s*U + u)</code> is exactly <code style="color:#22d3bf">L[v, u, t, s]</code>:</p>
+<p>the decode is a pure re-sort, no interpolation, no data invented. <code style="color:#22d3bf">lf_to_mla</code> inverts it <b>bit-exactly</b>.</p>
+<p>*offset* is the integer position of the first whole microlens; a real MLA is never aligned to pixel <code style="color:#22d3bf">(0, 0)</code>. Sub-pixel MLA calibration is out of scope (see the module docstring) — this operator works on an already-rectified frame.</p>
+<p>By default a raw frame whose usable size is not a whole multiple of the microlens pitch is a <code style="color:#22d3bf">ValueError</code>, because the alternative — quietly dropping the last partial row of microlenses — shifts every subsequent microlens centre and produces a light field that looks right and is wrong. Pass <code style="color:#22d3bf">crop=True</code> to opt in to that crop explicitly.</p>
+<p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: *raw* not 2-D or non-finite, *angular* outside <code style="color:#22d3bf">[1, MAX_ANGULAR]</code>, a negative *offset*, an *offset* that leaves fewer than one whole microlens, a size that is not a multiple of the pitch (unless <code style="color:#22d3bf">crop=True</code>), a decoded sub-aperture image over <code style="color:#22d3bf">MAX_SPATIAL</code> on a side, and a decoded size over <code style="color:#22d3bf">MAX_LF_ELEMENTS</code>.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग की विस्तृत guide</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelightfield:lightfield_depth">lightfield_depth family guide</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:lightfield_depth">lightfield_depth</a> — <code style="color:#22d3bf">py -3.11 examples/lightfield_depth.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">lightfield</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_stats">lf_stats</a> · <a style="color:#22d3bf" href="oplightfield:lf_subaperture">lf_subaperture</a> · <a style="color:#22d3bf" href="oplightfield:lf_center_view">lf_center_view</a> · <a style="color:#22d3bf" href="oplightfield:lf_views">lf_views</a> · <a style="color:#22d3bf" href="oplightfield:lf_epi">lf_epi</a> · <a style="color:#22d3bf" href="oplightfield:lf_refocus">lf_refocus</a> · <a style="color:#22d3bf" href="oplightfield:lf_focal_stack">lf_focal_stack</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">decode</code>)</h3>
+<p><a style="color:#22d3bf" href="oplightfield:lf_to_mla">lf_to_mla</a> · <a style="color:#22d3bf" href="oplightfield:lf_stats">lf_stats</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: lightfield.py — LIGHTFIELD operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

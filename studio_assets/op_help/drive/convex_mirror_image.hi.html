@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">convex_mirror_image — DRIVE <code style="color:#22d3bf">pass</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>convex दर्पण का virtual image (paraxial, arrays भी चलते हैं)। दृश्य S064, S130।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(<code style="color:#22d3bf">eye_distance</code>)のとき像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_driving_pass">poc_driving_pass</a> — <code style="color:#22d3bf">py -3.11 examples/poc_driving_pass.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_layout">course_layout</a> · <a style="color:#22d3bf" href="opdrive:course_occupancy">course_occupancy</a> · <a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:world_build">world_build</a> · <a style="color:#22d3bf" href="opdrive:world_camera">world_camera</a> · <a style="color:#22d3bf" href="opdrive:world_move">world_move</a> · <a style="color:#22d3bf" href="opdrive:lidar_scan">lidar_scan</a> · <a style="color:#22d3bf" href="opdrive:rss_longitudinal_same">rss_longitudinal_same</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">pass</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:overtake_requirement">overtake_requirement</a> · <a style="color:#22d3bf" href="opdrive:overtake_return_gap">overtake_return_gap</a> · <a style="color:#22d3bf" href="opdrive:no_overtaking_zones">no_overtaking_zones</a> · <a style="color:#22d3bf" href="opdrive:overtake_permitted">overtake_permitted</a> · <a style="color:#22d3bf" href="opdrive:overtaken_conduct_check">overtaken_conduct_check</a> · <a style="color:#22d3bf" href="opdrive:lane_change_follower_decel">lane_change_follower_decel</a> · <a style="color:#22d3bf" href="opdrive:lane_change_permitted">lane_change_permitted</a> · <a style="color:#22d3bf" href="opdrive:roundabout_entry_check">roundabout_entry_check</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: drivepass.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

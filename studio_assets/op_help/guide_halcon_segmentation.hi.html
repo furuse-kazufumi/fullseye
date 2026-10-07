@@ -1,0 +1,100 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<p style="color:#f5a524;font-size:11px;margin:0 0 8px 0">यह guide केवल जापानी में उपलब्ध है (यह मनुष्य द्वारा लिखा गद्य है, इसलिए इसमें कुछ भी machine से बदला नहीं गया है)।</p>
+<h2 style="color:#f5a524;margin:0 0 4px 0">画素分類・領域成長・マーカー分水嶺(HALCON Segmentation 章の 9 op) — 使い方ガイド</h2>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">この族は何をする道具箱か</h3>
+<p><b>グレー値・特徴空間から領域を作る</b>層です。入力は画像 1 枚(<code style="color:#22d3bf">image2d</code>)、2 枚、または多チャネルの特徴画像(<code style="color:#22d3bf">images</code> = 2-D の list)と、参照領域・学習済みクラス・マーカー画像。出力は画素ごとの真偽(<code style="color:#22d3bf">mask</code>)かラベル画像(<code style="color:#22d3bf">labels2d</code>)。</p>
+<p>HALCON の &quot;Segmentation&quot; 章にある 9 演算子の genuine 実装(numpy + scipy、分水嶺だけ skimage)で、<code style="color:#22d3bf">segmentation.py</code> が実体、<code style="color:#22d3bf">opssegmentation.py</code> が台帳です。</p>
+<p>9 op / 4 カテゴリ:</p>
+<p style="margin:2px 0 2px 12px">• <b>compare(1)</b> — <code style="color:#22d3bf">check_difference</code>: 基準画像との差が <code style="color:#22d3bf">tol</code> を超える画素。</p>
+<p style="margin:2px 0 2px 12px">• <b>classify(5)</b> — <code style="color:#22d3bf">class_2dim_sup</code>(参照領域の 2 特徴の箱)/ <code style="color:#22d3bf">class_2dim_unsup</code> (2 特徴の k-means、ラベル 0..k−1)/ <code style="color:#22d3bf">learn_ndim_norm</code> → <code style="color:#22d3bf">class_ndim_norm</code> (N 次元の正規分布クラスを学習し、マハラノビス距離 &lt; <code style="color:#22d3bf">thresh</code> で分類)/ <code style="color:#22d3bf">classify_image_class_lut</code>(グレー値 → LUT 引き)。</p>
+<p style="margin:2px 0 2px 12px">• <b>grow(2)</b> — <code style="color:#22d3bf">expand_gray</code>(種から |Δ| &lt; <code style="color:#22d3bf">tol</code> で膨張)/ <code style="color:#22d3bf">regiongrowing_n</code> (多チャネル特徴の近さで全画素をラベル付け)。</p>
+<p style="margin:2px 0 2px 12px">• <b>watershed(1)</b> — <code style="color:#22d3bf">watersheds_marker</code>(マーカー制御の分水嶺、skimage immersion 型)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">なぜ台帳に載せたか —— 在庫を数えた結果</h3>
+<p><code style="color:#22d3bf">segmentation.py</code> は 2026-08 から wheel に同梱され、<code style="color:#22d3bf">fullseye.vision.segment.&lt;名前&gt;</code> (HALCON 名の facade)からは届いていました。しかし <code style="color:#22d3bf">fullseye.ledger</code> / <code style="color:#22d3bf">fullseye.op</code> / <code style="color:#22d3bf">fullseye.&lt;名前&gt;</code> のどれにも無く、<code style="color:#22d3bf">tests/test_public_reachability.py</code> の数え方では 9 本とも「公開経路から呼べない関数」でした。<code style="color:#22d3bf">examples/poc_cell_counting.py</code> と <code style="color:#22d3bf">examples/poc_particle_sizing.py</code> は揃って「2-D の分水嶺が公開経路に無い」を道具の穴に挙げ、<code style="color:#22d3bf">docs/ops/blob/guides/blob_analysis.md</code> も同じ行を持っていました。</p>
+<p>| 引いた先 | 何が在ったか | なぜ代わりにならないか |</p>
+<p>|---|---|---|</p>
+<p>| <code style="color:#22d3bf">fullseye.op.watersheds</code> / <code style="color:#22d3bf">regiongrowing</code> / <code style="color:#22d3bf">regiongrowing_mean</code> | 2-D レジストリの分水嶺・領域成長 | <b>画像 1 枚 + a/b ノブ</b>の形で、マーカー画像・参照画像・学習済みクラスを渡せない |</p>
+<p>| <code style="color:#22d3bf">fullseye.ledger.blob_split</code> | 距離の降順で回す分水嶺 | 目的は同じだが別算法(numpy/scipy だけで閉じる)。<code style="color:#22d3bf">blob2d</code> の docstring が「skimage 不在時に黙って別算法に落ちる <code style="color:#22d3bf">watersheds_marker</code> は使わない」と書いている —— 同じ台帳に混ぜると「割る」が同名の別物を 2 本持つ |</p>
+<p>| <code style="color:#22d3bf">fullseye.vision.segment.watersheds_marker</code> | facade(統一 registry) | HALCON 名で引く層で、docs/ops のノート・連鎖ファザー・<code style="color:#22d3bf">op_run</code> の入力補助には乗らない |</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">流れ</h3>
+<p style="color:#8b91a0;font-size:11px;margin:6px 0 0 0">Mermaid diagram (source):</p><pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">flowchart TD
+    IMG[&quot;image2d (H, W)&quot;]
+    REF[&quot;基準画像 image2d&quot;]
+    IMG --&gt; CD[&quot;check_difference&lt;br/&gt;|a − b| &gt; tol&quot;]
+    REF --&gt; CD
+    CD --&gt; M1[&quot;mask&quot;]
+    F1[&quot;特徴 1 image2d&quot;] --&gt; SUP[&quot;class_2dim_sup&lt;br/&gt;参照領域の箱&quot;]
+    F2[&quot;特徴 2 image2d&quot;] --&gt; SUP
+    RR[&quot;参照領域 mask&quot;] --&gt; SUP
+    SUP --&gt; M2[&quot;mask&quot;]
+    F1 --&gt; UNS[&quot;class_2dim_unsup&lt;br/&gt;k-means&quot;]
+    F2 --&gt; UNS
+    UNS --&gt; L1[&quot;labels2d (0..k−1)&quot;]
+    X[&quot;特徴ベクトル群 matrix (N, D)&quot;] --&gt; LN[&quot;learn_ndim_norm&quot;]
+    LN --&gt; MODEL[&quot;table {mean, cov, inv}&quot;]
+    FS[&quot;特徴画像 images (D 枚)&quot;] --&gt; CN[&quot;class_ndim_norm&lt;br/&gt;マハラノビス距離 &lt; thresh&quot;]
+    MODEL --&gt; CN
+    CN --&gt; M3[&quot;mask&quot;]
+    IMG --&gt; LUT[&quot;classify_image_class_lut&quot;]
+    SIG[&quot;LUT signal&quot;] --&gt; LUT
+    LUT --&gt; L2[&quot;labels2d&quot;]
+    IMG --&gt; EG[&quot;expand_gray&lt;br/&gt;種から |Δ| &lt; tol で膨張&quot;]
+    SEED[&quot;種 mask&quot;] --&gt; EG
+    EG --&gt; M4[&quot;mask&quot;]
+    FS --&gt; RG[&quot;regiongrowing_n&quot;]
+    RG --&gt; L3[&quot;labels2d (1..n)&quot;]
+    IMG --&gt; WS[&quot;watersheds_marker&quot;]
+    MK[&quot;markers labels2d&quot;] --&gt; WS
+    WS --&gt; L4[&quot;labels2d(マーカー番号)&quot;]</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">最短の使い方</h3>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import numpy as np
+import fullseye as fs
+
+rng = np.random.default_rng(0)
+im = rng.random((64, 64))
+im[16:48, 16:48] = 0.5 + rng.normal(0.0, 0.01, (32, 32))        # 平坦な島
+
+# 種から育てる(|im − 種の平均| &lt; tol の 4 連結成分)
+seed = np.zeros((64, 64), bool)
+seed[30:34, 30:34] = True
+island = fs.ledger.expand_gray(im, seed, tol=0.05)
+
+# マーカー制御の分水嶺(尾根で割れる)
+y, x = np.mgrid[0:64, 0:64]
+valley = -np.abs(x - 32).astype(float)
+markers = np.zeros((64, 64), int)
+markers[32, 4] = 1
+markers[32, 60] = 2
+basins = fs.ledger.watersheds_marker(valley, markers)             # 左 = 1、右 = 2
+
+# N 次元の正規分布クラス: 学習 → 分類
+X = rng.normal(size=(500, 2)) * np.array([2.0, 0.5])
+model = fs.ledger.learn_ndim_norm(X)
+inside = fs.ledger.class_ndim_norm([im, im ** 2], model, thresh=2.0)</pre>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">罠(実測、直していない)</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">regiongrowing_n</code> の <code style="color:#22d3bf">min_size</code> は<b>受け取るが使われない</b>。小さな領域も残る。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">expand_gray</code> と <code style="color:#22d3bf">regiongrowing_n</code> は<b>種(走査で最初に当たった画素)の値</b>と比べる。HALCON は隣接画素どうしの差で判定するので、なだらかな勾配では<b>この実装のほうが早く止まる</b>(勾配 0.04/px・tol 0.05 で 2 列ずつ切れる)。参照値で比べる形は HALCON の <code style="color:#22d3bf">expand_gray_ref</code> に近い。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">class_2dim_sup</code> は参照領域の特徴を<b>外接箱</b>で近似する(HALCON は特徴空間の領域そのもの)。L 字の参照は全域に膨らむ。参照領域が空だと理由の無い <code style="color:#22d3bf">ValueError</code>。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">class_2dim_unsup</code> の初期中心は一様に引く(k-means++ 無し・再試行無し)。よく離れた 3 クラスタでも 1 つを割り 2 つを併せる局所解に落ちうる。<code style="color:#22d3bf">n_clusters</code> &gt; 画素数で理由の無い <code style="color:#22d3bf">ValueError</code>。返りのラベル 0 は<b>クラス</b>であって背景ではない —— <code style="color:#22d3bf">blob_features</code> に渡す前に 1 から振り直すこと。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">class_ndim_norm</code> に <b>1 枚の 2-D 画像</b>を渡すと <code style="color:#22d3bf">(H, W, D)</code> の unpack で落ちる(<code style="color:#22d3bf">regiongrowing_n</code> は受ける)。list か <code style="color:#22d3bf">(H, W, D)</code> で渡す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">watersheds_marker</code> は skimage 不在時に<b>マーカーからの最近傍</b>(画像を見ない)へ黙って落ちる。同じ関数名で別物が返るので、本番では skimage の有無を確かめること。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">classify_image_class_lut</code> は float 画像を <code style="color:#22d3bf">[0, 1]</code> とみなして <code style="color:#22d3bf">round(v·(L−1))</code> で引く(HALCON は byte 画像 + LUT ハンドル)。2-D の LUT を渡すと <code style="color:#22d3bf">(H, W, k)</code> が返り、台帳の <code style="color:#22d3bf">labels2d</code> にならない。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">同じ台帳の他のカテゴリ(採点・真値つき世界・動的輪郭・グラフと階層・閾値・3-D 分水嶺)</h3>
+<p>この台帳(<code style="color:#22d3bf">opssegmentation</code>)には HALCON 章の 9 op の後に、分けた結果を<b>採点する</b>側・<b>真値を作る</b>側・<b>輪郭で分ける</b>側・ <b>グラフと階層・閾値の定理で分ける</b>側が同居している。詳しくは <a style="color:#22d3bf" href="op:segmentation_scoring_and_worlds">分割の採点と真値つき合成世界</a>、<a style="color:#22d3bf" href="op:active_contours_and_level_sets">動的輪郭とレベルセット</a>、<a style="color:#22d3bf" href="op:graph_hierarchy_and_thresholds">グラフ・階層・閾値の定理でつくる分割</a>。</p>
+<p>| カテゴリ | op |</p>
+<p>|---|---|</p>
+<p>| score(採点) | <code style="color:#22d3bf">seg_confusion_table</code> / <code style="color:#22d3bf">seg_dice_jaccard</code> / <code style="color:#22d3bf">seg_boundary_f</code> / <code style="color:#22d3bf">seg_hausdorff</code> / <code style="color:#22d3bf">seg_mean_surface_distance</code> / <code style="color:#22d3bf">seg_under_over_segmentation</code> / <code style="color:#22d3bf">seg_object_counts_match</code> / <code style="color:#22d3bf">seg_score_card</code> |</p>
+<p>| world(真値つき合成世界) | <code style="color:#22d3bf">world_blobs_touching</code> / <code style="color:#22d3bf">world_grains_voronoi</code> / <code style="color:#22d3bf">world_parts_with_shadow</code> / <code style="color:#22d3bf">world_texture_regions</code> / <code style="color:#22d3bf">world_gradient_illumination</code> / <code style="color:#22d3bf">world_thin_structures</code> / <code style="color:#22d3bf">lens_area</code> / <code style="color:#22d3bf">voronoi_cells</code> |</p>
+<p>| contour(動的輪郭・レベルセット) | <code style="color:#22d3bf">snake_evolve</code> / <code style="color:#22d3bf">gvf_field</code> / <code style="color:#22d3bf">chan_vese_energy</code> / <code style="color:#22d3bf">chan_vese_evolve</code> / <code style="color:#22d3bf">morph_chan_vese</code> / <code style="color:#22d3bf">morph_geodesic_ac</code> / <code style="color:#22d3bf">edge_stop_g</code> / <code style="color:#22d3bf">level_set_reinit</code> / <code style="color:#22d3bf">drle_evolve</code> / <code style="color:#22d3bf">curvature_flow</code> |</p>
+<p>| graph(グラフ・階層・超画素) | <code style="color:#22d3bf">graph_cut_binary</code> / <code style="color:#22d3bf">alpha_expansion</code> / <code style="color:#22d3bf">statistical_region_merging</code> / <code style="color:#22d3bf">max_tree</code> / <code style="color:#22d3bf">area_opening_attr</code> / <code style="color:#22d3bf">quasi_flat_zones</code> / <code style="color:#22d3bf">alpha_tree</code> / <code style="color:#22d3bf">hierarchical_watershed</code> / <code style="color:#22d3bf">ultrametric_contour_map</code> / <code style="color:#22d3bf">snic_superpixels</code> / <code style="color:#22d3bf">quickshift</code> / <code style="color:#22d3bf">superpixel_quality</code> |</p>
+<p>| threshold(閾値の 4 定理) | <code style="color:#22d3bf">threshold_triangle</code> / <code style="color:#22d3bf">threshold_isodata</code> / <code style="color:#22d3bf">threshold_kittler</code> / <code style="color:#22d3bf">threshold_kapur</code> |</p>
+<p>| watershed3d(接触した 3-D 物体を割る) | <code style="color:#22d3bf">distance_peaks</code> / <code style="color:#22d3bf">watershed_vol</code> / <code style="color:#22d3bf">separate_touching</code> |</p>
+<p><code style="color:#22d3bf">watershed3d</code> は 2-D の <code style="color:#22d3bf">watersheds_marker</code> の 3-D 版ではなく、<b>距離変換の極大をシードにして接した物体を割る</b> 定型(<code style="color:#22d3bf">volops</code> の距離変換・極大・分水嶺の薄い合成 + skimage が無いときの純 scipy の代替)。入口は <code style="color:#22d3bf">voxel</code> (2 値の (D, H, W))、出口は <code style="color:#22d3bf">labels</code>(3-D の int ラベル)。門は鏡映対称な 2 球で体積が厳密に等しいこと、scipy と skimage の 2 実装が同じ分割になること(<code style="color:#22d3bf">tests/test_watershed3d_ledger.py</code>)。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">import fullseye as fs
+lab = fs.ledger.separate_touching(volume &gt; 0, min_distance=5.0)   # 接した粒を 1 個ずつのラベルに
+seeds = fs.ledger.distance_peaks(volume &gt; 0, min_distance=5.0)     # 割る前にシードの数を見る</pre>
+<p>走る例: <code style="color:#22d3bf">py -3.11 examples/watershed3d_tour.py</code>(接した 2 球が連結成分では 1 個、分水嶺では体積の等しい 2 個)。</p>
+<p>HALCON 側の op で分けた結果は、そのまま <code style="color:#22d3bf">seg_score_card</code> に真値と一緒に渡せる(背景 0 の約束だけ揃える)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">関連</h3>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">blob_analysis</code>(<code style="color:#22d3bf">opsblob</code>): 分けたあとに<b>物体ごとに測って選ぶ</b>側。<code style="color:#22d3bf">watersheds_marker</code> / <code style="color:#22d3bf">regiongrowing_n</code> のラベルは背景 0 の約束が違うので、<code style="color:#22d3bf">blob_features</code> の前に振り直す。</p>
+<p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fullseye.op.watersheds</code> / <code style="color:#22d3bf">regiongrowing</code> / <code style="color:#22d3bf">segment_image_mser</code>: 画像 1 枚で済むときの 2-D レジストリ側。</p>

@@ -1,0 +1,23 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">fingerprint_strength_map — IMGFORENSICS <code style="color:#22d3bf">sensor</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">fingerprint</code> → <code style="color:#22d3bf">image2d</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import imgforensics; imgforensics.fingerprint_strength_map(fingerprint, block: &#x27;int&#x27; = 16) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsimgforensics.get(&quot;fingerprint_strength_map&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>fingerprint की <b>हर block की प्रभावी शक्ति</b> (standard deviation) का map। <code style="color:#22d3bf">image2d</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>PRNU は飽和した画素と真っ暗な画素では出ない(乗法的な欠陥なので信号が要る)。この地図は「<b>指紋がどこで何も言えないか</b>」を見るためのもので、値が低い領域の照合結果は弱い。<code style="color:#22d3bf">block</code> 角の非重複ブロックごとの標準偏差を、元の <code style="color:#22d3bf">(H, W)</code> へブロック定数で戻して返す(端は端のブロックの値で埋める)。</p>
+<p>実測(<code style="color:#22d3bf">tests/test_imgforensics.py::test_strength_map_marks_the_saturated_half</code>、128x128 の左半分だけを飽和させた 8 枚から指紋を作る):飽和側の平均強度 <b>0.075</b> に対し通常側 <b>1.409</b> = <b>18.8 倍</b>。左半分では PRNU が乗る余地が無い(乗法的な欠陥なので信号が要る)ことがそのまま出ている。</p>
+<p>これは <code style="color:#22d3bf">fingerprint</code> 語彙の <b>出口</b> でもある(袋小路を作らないため)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:image_forensics_audit">image_forensics_audit</a> — <code style="color:#22d3bf">py -3.11 examples/image_forensics_audit.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">image2d</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:perceptual_hash">perceptual_hash</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a> · <a style="color:#22d3bf" href="opimgforensics:error_level_map">error_level_map</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_quality_estimate">jpeg_quality_estimate</a> · <a style="color:#22d3bf" href="opimgforensics:jpeg_ghost_map">jpeg_ghost_map</a> · <a style="color:#22d3bf" href="opimgforensics:noise_inconsistency_map">noise_inconsistency_map</a> · <a style="color:#22d3bf" href="opimgforensics:copy_move_regions">copy_move_regions</a> · <a style="color:#22d3bf" href="opimgforensics:watermark_embed">watermark_embed</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">sensor</code>)</h3>
+<p><a style="color:#22d3bf" href="opimgforensics:sensor_fingerprint">sensor_fingerprint</a> · <a style="color:#22d3bf" href="opimgforensics:fingerprint_correlate">fingerprint_correlate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: imgforensics.py — IMGFORENSICS operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

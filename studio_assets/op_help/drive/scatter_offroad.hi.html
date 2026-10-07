@@ -1,0 +1,21 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">scatter_offroad — DRIVE <code style="color:#22d3bf">terrain</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">points</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import driveterrain; driveterrain.scatter_offroad(course, bounds, n: &#x27;int&#x27; = 60, r_min: &#x27;float&#x27; = 4.0, margin: &#x27;float&#x27; = 3.0, seed: &#x27;int&#x27; = 0, max_tries: &#x27;int&#x27; = 20000) -&gt; &#x27;np.ndarray&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsdrive.get(&quot;scatter_offroad&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>सड़क के बाहर वस्तुएँ बिखेरता है (dart throwing): हर बिंदु course से कम से कम <code style="color:#22d3bf">margin</code> और एक-दूसरे से कम से कम <code style="color:#22d3bf">r_min</code> दूर होता है।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>返り値 (n&#x27;, 3) = (x, y, yaw)。<code style="color:#22d3bf">max_tries</code> で n に届かなければあるだけ返す(n&#x27; ≤ n)。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_world_terrain">poc_world_terrain</a> — <code style="color:#22d3bf">py -3.11 examples/poc_world_terrain.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">points</code> को input के रूप में लेते हैं)</h3>
+<p><a style="color:#22d3bf" href="opdrive:course_contains">course_contains</a> · <a style="color:#22d3bf" href="opdrive:ray_plane_range">ray_plane_range</a> · <a style="color:#22d3bf" href="opdrive:ray_box_ranges">ray_box_ranges</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:mesh_signed_volume">mesh_signed_volume</a> · <a style="color:#22d3bf" href="opdrive:fit_parabola">fit_parabola</a> · <a style="color:#22d3bf" href="opdrive:flight_fit">flight_fit</a> · <a style="color:#22d3bf" href="opdrive:fit_aero">fit_aero</a></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">terrain</code>)</h3>
+<p><a style="color:#22d3bf" href="opdrive:perlin2">perlin2</a> · <a style="color:#22d3bf" href="opdrive:fbm_params">fbm_params</a> · <a style="color:#22d3bf" href="opdrive:fbm_height">fbm_height</a> · <a style="color:#22d3bf" href="opdrive:fbm_gradient">fbm_gradient</a> · <a style="color:#22d3bf" href="opdrive:radial_periodogram">radial_periodogram</a> · <a style="color:#22d3bf" href="opdrive:spectral_slope">spectral_slope</a> · <a style="color:#22d3bf" href="opdrive:course_distance">course_distance</a> · <a style="color:#22d3bf" href="opdrive:terrain_params">terrain_params</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: driveterrain.py — DRIVE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>

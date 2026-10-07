@@ -1,0 +1,24 @@
+<!-- opdocs:generated — do not edit; source of truth is docs/ops/*.md (tools/opdocs.py html) -->
+<h2 style="color:#f5a524;margin:0 0 4px 0">residue_crt — RESIDUE <code style="color:#22d3bf">robust</code> op</h2>
+<p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × signal</code> → <code style="color:#22d3bf">table</code></p>
+<p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -&gt; &#x27;dict&#x27;</code> (implementation को सीधे call करना हो तो <code style="color:#22d3bf">import residue; residue.residue_crt(residues, periods, weights=None, lo=0.0, hi=None) -&gt; &#x27;dict&#x27;</code>, registry से लेना हो तो <code style="color:#22d3bf">opsresidue.get(&quot;residue_crt&quot;)</code>)</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">उपयोग</h3>
+<p>real periods पर weighted robust CRT -&gt; <code style="color:#22d3bf">dict</code>।</p>
+<p>&gt; नीचे का विस्तृत विवरण मूल text में है — सारांश और headings का अनुवाद हो चुका है।</p>
+<p>Solve <code style="color:#22d3bf">v ≡ residues[i] (mod periods[i])</code> for <code style="color:#22d3bf">v</code> in <code style="color:#22d3bf">[lo, hi)</code>. <code style="color:#22d3bf">residues</code> has the band axis first, shape <code style="color:#22d3bf">(N,)</code> or <code style="color:#22d3bf">(N, ...)</code> — every trailing element is solved independently (one pixel, one sample). <code style="color:#22d3bf">weights</code> (same shape, or <code style="color:#22d3bf">(N,)</code>) say how much each band is trusted — typically the product of the two amplitudes the phase came from, so a band with no contrast gets no vote.</p>
+<p>Method: every candidate <code style="color:#22d3bf">v = r_ref + k p_ref</code> of the longest period inside the range is scored by phasor agreement <code style="color:#22d3bf">sum_i w_i cos(2 pi (v - r_i)/p_i)</code> (the maximum-likelihood criterion for von-Mises phase noise); the best one is refined by the inverse-variance-weighted mean of the signed residuals.</p>
+<p>Returns <code style="color:#22d3bf">{&quot;value&quot;, &quot;score&quot;, &quot;margin&quot;, &quot;residual&quot;, &quot;n_candidates&quot;, &quot;unambiguous_range&quot;}</code>: <code style="color:#22d3bf">score</code> in <code style="color:#22d3bf">[-1, 1]</code> (1 = all bands agree exactly), <code style="color:#22d3bf">margin</code> = best minus runner-up score (small = the answer was a near tie — treat as unreliable), <code style="color:#22d3bf">residual</code> per band in the units of <code style="color:#22d3bf">v</code>. <code style="color:#22d3bf">hi</code> defaults to <code style="color:#22d3bf">lo</code> + the least common multiple of the periods (when they are commensurate); a range wider than that is refused, because two values in it would have identical residues.</p>
+<p>Exactness: integer residues of pairwise-coprime integer periods reproduce <code style="color:#22d3bf">residue_integer_crt</code> exactly. Robustness: with periods <code style="color:#22d3bf">Γ M_i</code> (<code style="color:#22d3bf">M_i</code> coprime integers) a value is recovered exactly whenever every residue error is below <code style="color:#22d3bf">Γ/4</code> (Wang &amp; Xia&#x27;s bound); beyond it the margin collapses first.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">संदर्भ (sample data, साहित्य)</h3>
+<p style="margin:2px 0 2px 12px">• Sample data catalog (DL URL / license) — 2-D के लिए skimage.data (BSD/public) + synthetic, 3-D के लिए real data sources (Stanford/PDS आदि) के DL URL।</p>
+<p style="margin:2px 0 2px 12px">• Operators का स्रोत और संदर्भ — इस op family के मूल research/methods के स्रोत।</p>
+<p style="margin:2px 0 2px 12px">• Algorithm का मानक स्रोत (लेखक, वर्ष) और उपयोग ऊपर की <b>family usage guide</b> में दिए गए हैं।</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">चलाए जा सकने वाले उदाहरण (verified samples जो सच में यह op call करते हैं)</h3>
+<p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="example2d:poc_residue_crt">poc_residue_crt</a> — <code style="color:#22d3bf">py -3.11 examples/poc_residue_crt.py</code></p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">वे अगले ops जिनसे type जुड़ता है (<code style="color:#22d3bf">table</code> को input के रूप में लेते हैं)</h3>
+<p>—</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">इसी category के (<code style="color:#22d3bf">robust</code>)</h3>
+<p><a style="color:#22d3bf" href="opresidue:residue_fault_locate">residue_fault_locate</a></p>
+<hr style="border:0;border-top:1px solid #2c313f">
+<p>*Provenance: residue.py — RESIDUE operator registry. यह per-op note <code style="color:#22d3bf">tools/opdocs.py md</code> से अपने-आप generate होता है (हाथ से edit न करें)।*</p>
+<p>© 2026 Kazufumi Furuse — Fullseye operator documentation. Licensed under Apache-2.0.</p>
