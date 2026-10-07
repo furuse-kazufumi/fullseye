@@ -26,7 +26,10 @@ there too, but together they fix ``d`` over the least common multiple —
 693 px for 7/9/11 — so the limit becomes ``max_disp``, the search half-width.
 
 ``image1`` is ``image0`` with its content moved by ``d(y, x)`` along ``axis``
-(``"x"`` = columns, ``"y"`` = rows; positive towards increasing index). For each
+(``"x"`` = columns, ``"y"`` = rows; positive towards increasing index) —
+``image1 = np.roll(image0, +d)`` gives ``+d``. Note that
+``filters_freq.phase_correlation_fft(image0, image1)`` uses the *opposite* sign
+(it returns ``-d``); flip one when swapping methods. For each
 wavelength a Gaussian band-pass (analytic, one-sided, spatial std ``sigma_px``)
 gives a local phase and a *local* wavelength (measured, not nominal — see
 ``_band_measure``); their phase differences are residues of ``d``; amplitude

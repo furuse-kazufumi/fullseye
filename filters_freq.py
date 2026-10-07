@@ -44,6 +44,9 @@ def phase_correlation_fft(image1, image2, window: str | None = "hann", whitening
     返した。np.roll の周期的なずれでは厳密だったので、それだけの門では見えなかった。場面 6 種 × 60 通りのずれ(64 × 64)で、
     旧の既定は帯域の限られた切り出し 0 %・低域の切り出し 0 % の当たり、新しい既定はどの場面も 100 %(周期的なずれも 100 %)。
     窓だけでは直らない(白色化が主因)。旧の挙動は ``window=None, whitening=1.0``。
+    **符号**: ``image2 = np.roll(image1, (dr, dc))`` のとき ``(row_shift, col_shift) = (−dr, −dc)``(image1 を image2 に
+    重ねるのに要る移動)。``residue.crt_displacement(image0, image1)`` は**逆向き**(image0 から image1 への移動 ``+d``)
+    なので、2 つを取り替えるときは符号を反転すること(``tests/test_displacement_sign_conventions.py`` が両方を固定)。
     **Raises** ValueError: 形が違う・2 次元でない、window の綴り違い、whitening が [0, 1] の外。"""
     a = _img(image1); b = _img(image2)
     if a.ndim != 2 or a.shape != b.shape:
