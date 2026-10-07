@@ -1,4 +1,4 @@
-<!-- i18n-source-sha: 928c616b6081 -->
+<!-- i18n-source-sha: 1dbad79b7ed1 -->
 # Using Fullseye as an AI assistant's RAG (for Claude Code)
 
 [日本語](./AI_RAG_GUIDE.md) · **English** · [简体中文](./AI_RAG_GUIDE.zh.md) · [繁體中文](./AI_RAG_GUIDE.tw.md) · [한국어](./AI_RAG_GUIDE.ko.md) · [Deutsch](./AI_RAG_GUIDE.de.md)
@@ -24,7 +24,7 @@ in the Fullseye repository).
 
 ```
 fullseye-rag search "remove noise"          # command (works with just pip install fullseye)
-fullseye-rag search "ノイズ除去" -k 5 --lang en
+fullseye-rag search "Rauschen entfernen" -k 5 --lang en
 ```
 ```python
 import fullseye
