@@ -43,23 +43,23 @@
 
 ## `api.py`
 
-- **L164** — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
-- **L846** — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
-- **L862** — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
-- **L917** — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
-- **L1053** — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
-- **L1591** — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
-- **L1609** — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
-- **L1678** — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
-- **L1973** — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
-- **L2004** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
-- **L2288** — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
-- **L2324** — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
-- **L2645** — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
-- **L2885** — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
-- **L2889** — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
-- **L3010** — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
-- **L3020** — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
+- **L165** — ★2026-10-02: 合成パイプライン 6 本を fs.<名前> から出す。以前は ``fs.pipeline3d.<fn>`` でしか届かず、 公開経路の門では「1 本も届かない島」として _INTERNAL に置かれていた。import 自体は torch が無くても 通る(torch_lazy)。torch を要るのは呼んだときの FPFH / ICP の側だけ。
+- **L847** — ★名前はすべて glyph_ で始める。1-D / 2-D / 3-D でレジストリが分かれている repo なので、接頭辞の無い名前は公開経路ごとに別物を指す事故を起こす。
+- **L863** — ★JSON 一枚で受ける入口。op ではなく API 層の関数(レジストリの op は (画像, a, b) 固定でノブ 2 つなので、文字列も JSON も渡せない)。
+- **L918** — ★ ``annotate.overlay_mask`` は **意図的にトップレベルへ出していない**。同名の ``imgio.overlay_mask`` が既に ``fs.overlay_mask`` として公開されており、引数も 意味も違う(imgio = 生 RGB・mask>0.5・fill/margin / annotate = 役割名の色・ 重み [0,1] も可・形の不一致を拒否)。同じ名前に別の約束を載せると、呼び手は 例外ではなく**もっともらしく違う絵**を受け取る。公開 API の破壊的変更は 独断でしないので、役割つきの方は ``fs.annotate.overlay_mask`` で引く。
+- **L1054** — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
+- **L1592** — ★空・空白だけの名前は「無い」(2026-09-20、GenSpark N27): 多くの op は halcon 別名が "" なので、 `name == halcon` の一致で "" が **lowpass に解決**し、保存したパイプラインに空名が混ざると 別の op が黙って走っていた。名前の照合はこの先で行うので、ここで先に切る。
+- **L1617** — ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは GAUSS_FILTER のように大文字で書かれることが多く、`GAUSS_FILTER` / `Gauss-Filter` が unknown だった。 正規化して 1 度だけ引き直す(元の綴りに一致が無いときだけなので、既存の解決は変わらない)。
+- **L1686** — ★2026-09-20(GenSpark 第 35 報 N124): 台帳 op の名前を apply に渡すと「unknown operator」と言い、 op_names() を案内していた(そこにも無い)。索引は tier を知っているので、正しい入口を言う。
+- **L1981** — ★2026-09-20(GenSpark 第 55 報 N199): `with strict_mode(): apply(gray, "access_channel")` が例外にならず、 入力型の fallback(source="input")が台帳に残っていた。strict は op 本体の例外と GPU / 高速路だけが見ていて、 `_guard_input` と非有限出力の門は `on_error` しか見ていなかった —— 「厳密」が経路ごとに別の意味だった。 strict(strict_mode / set_strict / FULLSEYE_STRICT)は on_error=None のとき "raise" と同じ。明示の on_error は文脈より強い(引数 > 文脈 > 環境変数 > 既定)。
+- **L2012** — ★ **いまのところカラー画像に対して正しい呼び方が存在しない**: まとめて渡すと 色が混ざり、チャネルごとに 3 回呼ぶと自己正規化する op が各チャネルを 自分の最大で割ってチャネル間の比を壊す(灰色エッジ法の角度誤差が 自前 Sobel 1.03 度 -> 画像ごと 4.17 度 -> ch ごと 27.86 度、ゼロ点 29.14 度)。 どちらに倒すかは**契約の決め**なので、ここでは既定の数値は 1 つも変えず、 `on_error="raise"` のときだけ拒否し、既定では台帳に記録して見えるようにする。 詳細と選択肢は docs/KNOWN_ISSUES.md。
+- **L2296** — ★2026-09-20(GenSpark 第 26 報 N97): 素の str / dict / スカラーは ndarray でないのでここを素通りし、 既定の fallback 方針では**入力がそのまま**返っていた(``apply("abc", "gaussian") == "abc"``)。 raster を取る op には、配列にしてから同じ検査を掛ける。list / tuple は数値の入れ子として下で配列化される。
+- **L2332** — ★float16 / float32 → float64 の昇格は無損失(値も範囲も変わらない)なので記録しない(2026-09-20、 GenSpark N29): float16 は scipy.ndimage が扱えず op が RuntimeError → fallback で**入力のコピー**が 返っていた。float32 は op が float32 で走り float32 を返していた(契約は float64)。
+- **L2653** — ★形状不一致(2026-09-19 外部レビュー #13): ラスタ同士の n-ary で形が違うと numpy の 「could not be broadcast」がそのまま台帳に残り、既定の方針では**第 1 入力が そのまま返る**(sort として妥当な fallback)。返り値の形だけ見た利用者には 「(32,32)+(32,16) が (32,32) で成功した」と映った。何が要るかを文で言う。
+- **L2893** — ★2026-09-20(GenSpark 第 15・16 報 N67): 4 op の入口の関門(ops.NATIVE_CRASHES_ON_DEGENERATE)は 効いているのに、その事実は ops.py の中にしか無く、registry を使う側からは見えなかった。 行に載せる(None = 関門なし。理由の文がそのまま値)。
+- **L2897** — ★2026-09-20(GenSpark 第 20 報 N84): 同じ HALCON 別名を複数の op が名乗る(cv_ / sk_ の移植と コアの実装)。どれが走るかは find_op の規則(完全一致 → name == halcon → _ALIAS_CANONICAL)で 決まっていて曖昧ではないが、その事実が行に無かった。halcon_peers = 同じ別名を名乗る他の op。
+- **L3018** — ★2026-09-20(GenSpark 第 24 報 N95): 綴り違いの sort が黙って 0 行だった(「該当なし」と区別できない)。
+- **L3028** — ★台帳には**入力ゼロ**の op(カタログを返すだけ)が在り ``in_sort`` が None になる。 生の None を並べ替えの鍵に混ぜると TypeError で落ちる —— レジストリと n-ary だけ だった頃は None が現れなかったので、この鍵は 2026-09-25 まで壊れずに済んでいた。
 
 ## `astrostack.py`
 
@@ -1270,9 +1270,9 @@
 
 - **L439** — ★2026-10-02: 「名前の無い非公開関数」の棚卸しで、op として振る舞うのに公開経路が 1 本も無かった 18 本。 どれも既存の型つき台帳の約束(台帳 = 実装モジュールの集合)に合わないので、facade(fs.<名前>)から出す。 門は tests/test_hidden_ops_exposed_2026_10_02.py(定理か第 2 実装)。
 - **L478** — ★1-D 版は **signal_ 接頭辞**で出す。素の名前で出すと `fs.local_std`(1-D)と `fs.ledger.local_std`(2-D)が別物を指す —— 既に `lowpass` がその状態になっており(facade=dsp / ledger=2-D)、 同じ罠を増やさない。次元をまたぐ同名は、呼ぶ側で見分けがつく形にする。
-- **L668** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
-- **L1104** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
-- **L1130** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
+- **L708** — ★ 宣言 out 型に合わせる adapter は、タプルを返す op の**2 番目以降を 捨てる**(``drizzle_resample`` の ``wht``、``piv_cross_correlate`` の ``info``)。捨てられた側が必要なとき、台帳の入口からは届かなかった。 2026-09-06、超解像の PoC が ``flow, info = fs.ledger.piv_cross_correlate(...)`` と書いて (2,R,C) を第 1 軸で開き、dy の 2 行目を dx として使い、 ずれ推定を 0.12 → 0.74 画素にした(例外は出ない)。 ``.raw`` で素の返りに届く: ``fs.ledger.piv_cross_correlate.raw(a, b)``。
+- **L1179** — ★字の検証・修正(glyph_*)。**dir() でなく __all__ が一次情報**なので ここに載せる —— dir は環境依存で、載せ忘れは全体スイートでしか出ない。
+- **L1238** — ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った 道具(os / sys / warnings と __future__ の annotations)は facade の名前ではない。tab 補完と dir() を汚さない。
 
 ## `fullseye/mcp/catalog.py`
 
@@ -1352,10 +1352,10 @@
 - **L48** — ★module / requires(2026-09-19): 「unknown operator」が backend 不足を隠していた (外部レビュー #1)。索引が出自と optional 依存を持てば、core 環境の ``api._resolve`` が同梱の複製(fullseye/data/OP_INDEX.json)から不足 extra を 案内できる。requires は AST で静的に読むので、生成環境に依らず同じ値。
 - **L57** — ★握り潰さない(2026-09-06 の敵対的レビュー)。`imgops_nary` は numpy と scipy しか要らない一次モジュールなので、import に失敗するのは「壊れた checkout」であって「その環境には無い機能」ではない。以前は `except Exception: pass` で、**この関数が生成器と検査の両方を兼ねている** ため、17 op が丸ごと消えた索引を CI が緑のまま公開できた。
 - **L147** — ★2026-09-20(GenSpark 第 37 報 N131): 台帳 op(`color_lut`)と汎用アルゴリズム(`quicksort`)は索引に 載っているのに `has` が「unknown」と答えていた —— 発見面(索引)と判定面(registry + nary)が別だった。 索引(同梱複製)の台帳行と algo 層をここで引く。
-- **L340** — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
-- **L347** — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
-- **L521** — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
-- **L630** — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
+- **L345** — ★os.path.basename は実行 OS の区切りしか知らない —— Linux では ``C:\\...\\fullseye.exe`` が丸ごと 1 要素になり 「fullseye で始まらない」と判定された(手元 Windows 緑・CI Linux 赤)。両方の区切りで最後の要素を取る。
+- **L352** — ★parity.main() は自分で sys.argv を読む —— サブコマンド名 "parity" が残っていると 「unrecognized arguments: parity」で落ちていた(GenSpark 第 6 報 N6)。accel / bench と同じく argv を差し替える。
+- **L526** — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
+- **L635** — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
 ## `imgio.py`
 
@@ -1436,25 +1436,25 @@
 
 ## `opassist.py`
 
-- **L57** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに、docs にも op_run / op_assist / op_find にも出ていなかった —— 「登録した」と 「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
-- **L279** — ★ 設計(2026-09-04、ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も 大事です」): 最初は `kind` に "seq" や "matrix" を混ぜていた ―― つまり**値の型** (数値か整数か選択肢か)と**容器の形**(1 個かベクトルか行列か)が 1 つの欄で 競合していた。UI から見ると「int の 3 ベクトル」が表現できず、行列だけ構造が `seq` キーの下にあるなど、扱いがばらける。ここを直交させ、`kind` は値型だけ、 容器は常に `container` に入れる形へ統一した。スカラも例外にしない (`{"form": "scalar", "shape": ()}`)ので、UI は分岐を 1 本に書ける。
-- **L394** — ★ 最長一致。短い順に見ると `sigma_per_mm` が `_mm` に当たって "mm" になる (実際は 1/mm)。単位を間違えると UI の数字が黙って別物になる。
-- **L476** — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
-- **L509** — ★ ここが要点: **既定値が tuple で与えられていない**引数がある。 `center=None`(省略可の (row,col))、必須の `trans`(3 ベクトル)、 `k_cam`(3x3 行列)…… 既定値だけを見ると「数値 1 個」に見えてしまい、 UI が spin box を 1 個出して破綻する。名前で構造を補う。
-- **L723** — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
-- **L727** — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
-- **L737** — ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと 「波長は正の値」で弾かれ、**サンプルが動かない op** になっていた。単位が分かる なら、その量として妥当な範囲を種にする方が「押せば動く」に近い。
-- **L930** — 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` / ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
-- **L983** — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
-- **L993** — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
-- **L1089** — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
-- **L1263** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
-- **L1291** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
-- **L1343** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
-- **L1363** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
-- **L1376** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
-- **L1386** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
-- **L1404** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
+- **L59** — ★2026-09-08: ops1d(dsp 16 + funct1d 23)は登録済みなのに、docs にも op_run / op_assist / op_find にも出ていなかった —— 「登録した」と 「引ける」は別。opdocs に足したら、この門が引けない側を鳴らした。
+- **L281** — ★ 設計(2026-09-04、ユーザー「色々なコンテナ型は扱えるほうが良いけど、統一感も 大事です」): 最初は `kind` に "seq" や "matrix" を混ぜていた ―― つまり**値の型** (数値か整数か選択肢か)と**容器の形**(1 個かベクトルか行列か)が 1 つの欄で 競合していた。UI から見ると「int の 3 ベクトル」が表現できず、行列だけ構造が `seq` キーの下にあるなど、扱いがばらける。ここを直交させ、`kind` は値型だけ、 容器は常に `container` に入れる形へ統一した。スカラも例外にしない (`{"form": "scalar", "shape": ()}`)ので、UI は分岐を 1 本に書ける。
+- **L415** — ★ 最長一致。短い順に見ると `sigma_per_mm` が `_mm` に当たって "mm" になる (実際は 1/mm)。単位を間違えると UI の数字が黙って別物になる。
+- **L498** — ★2026-09-20(GenSpark 第 15 報 N71): ``write_wav(path, x, rate)`` は in=["signal"] なので、 第 1 引数の ``path`` に signal が割り当てられ、``op_run("write_wav")`` が配列をファイル名として 開こうとしていた。パス名の引数は、宣言 sort が "file" のときだけデータ(読む側)で、 それ以外は書き先のパラメータ —— データ型は次の引数へ送る。
+- **L531** — ★ ここが要点: **既定値が tuple で与えられていない**引数がある。 `center=None`(省略可の (row,col))、必須の `trans`(3 ベクトル)、 `k_cam`(3x3 行列)…… 既定値だけを見ると「数値 1 個」に見えてしまい、 UI が spin box を 1 個出して破綻する。名前で構造を補う。
+- **L745** — ★一様乱数の行列にしない —— 成分・モジュラリティ・rich club は構造が無いと 「どのノブでも同じ数」になり、押して動いても意味のある絵にならない。
+- **L749** — llmcore(2026-09-24): ★一様乱数にしない —— どの行も似た向きになり、 注意の重みが全行ほぼ一様になって「押しても何も起きない」種になる。 滑らかな画像を 8x8 パッチに切ると、近い場所が近い向きを向く。
+- **L759** — ★ 実測で判明: `prism_min_deviation_deg` の波長入力に 0..1 の汎用 signal を渡すと 「波長は正の値」で弾かれ、**サンプルが動かない op** になっていた。単位が分かる なら、その量として妥当な範囲を種にする方が「押せば動く」に近い。
+- **L952** — 和文(CJK)の連なり。★``_WORD_RE`` は ``[a-z0-9]+`` なので、日本語のクエリは **語が 1 つも取れない**(``_WORD_RE.findall("点 検出") == []``)。語幹の段が 死に、部分一致は空白ごと含む文字列を探すので、**和文の複数語クエリは構造的に 必ず 0 件**だった —— docstring の大半が日本語で、6 言語を配っている製品で。 2026-09-08 に `poc_search_sweep_width` が踏んで判明(``op_find("点 検出")`` / ``("スポット 検出")`` / ``("小さい目標")`` がいずれも 0 件で、副画素重心つきの 点目標検出は ``star_detect`` しか無いのに和文から辿り着けなかった)。
+- **L1005** — 語幹一致とみなす共通接頭辞の長さ。★4 にすると "median"/"medial" や "contrast"/"contour" が繋がってしまい、5 で切ると "correlation"/"correlate"(8)・"segmentation"/"segment"(7)・ "rotation"/"rotate"(5)・"gaussian"/"gauss"(5) は拾えて、上の 2 組は拾わない。
+- **L1015** — 共通接頭辞の**後ろに許す語尾**。★接頭辞の長さだけで判定すると "median"/"medial" が繋がる(共通 "media" が 5 文字ある)。語尾が 屈折語尾らしいかどうかを見ると、"correlation"/"correlate"(ion / e)は 通り、"median"/"medial"(n / l)と "corner"/"cornea"(r / a)は落ちる。
+- **L1111** — ★床。無い状態だと "zzz-nothing-matches" が `histogram_match` を返す ("matches" が `match_*` に語幹一致するため)。当たった語の重みが クエリ全体の 15 % に満たなければ「当たっていない」とみなす。 実測: "digital image correlation" は 0.19(通す)、 "zzz-nothing-matches" は 0.10(落とす)。
+- **L1285** — ★2026-09-19(GenSpark N2): ``fullseye.apply([x, y], "add_image")`` で**動く**のに、 ``op_names()`` にも ``op_find()`` にも載っていなかった(op_names は 1 入力のレジストリだけ、 op_find は台帳 + レジストリだけを見ていた)。呼べるものは探せなければならない。
+- **L1313** — ★2026-09-20: 何で当たったかを ``match`` に(exact = 名前の完全一致 / name = 名前の部分一致 / stem = 語幹 /
+- **L1365** — ★2026-09-20(GenSpark 第 55 報 N200): op_run(img, "gaussian") が `unhashable type: 'numpy.ndarray'`、 op_run("gaussian", img) が「not in any ledger」で終わり、registry op は apply で走ることを言わなかった。
+- **L1385** — ★2026-09-20(GenSpark 第 20 報 N87): 種を作れない型(mesh / lab / matrix …)は None のまま 関数に渡り、IndexError / AttributeError / AxisError が利用者に届いていた(11 op)。 呼ばずに、どの入力を渡せばよいかを言う。
+- **L1398** — ★2026-09-20(N71): データ引数が署名の先頭に無い op(write_wav(path, x))は名前で渡す —— 位置で渡すと 配列が path に入る。データ引数の名前は param_spec が知っている。
+- **L1408** — ★2026-09-20(GenSpark 第 34 報 N122、再現): 入力を一部だけ渡すと(blend_mode(base) で top 無し)Python の生の 「missing 1 required positional argument」が届いていた。0 個のときは上で種を作って言うのに、1 個以上のときは 検査が無かった。必須のデータ引数が位置でも名前でも来ていなければ、期待する形を 1 文で言う。
+- **L1426** — ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
 
 ## `ops.py`
 

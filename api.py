@@ -38,6 +38,7 @@ if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
 
 import ops as _ops  # noqa: E402  (the engine registry; imports its backends on load)
+import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
 import backend_safe as _bs  # noqa: E402  (fallback ledger / strict mode — the one mediator)
 from backend_safe import FullseyeFallbackWarning  # noqa: E402,F401  (re-exported)
 import stereo  # noqa: E402  (numpy+scipy depth building blocks)
@@ -1604,6 +1605,13 @@ def find_op(name: str):
     for o in _ops.REGISTRY:
         if o.name == name:
             return o
+    # Canonical alias (opnames.REGISTRY_ALIASES, phase 1 of the naming cleanup, 2026-10-07): a lookup
+    # name for an EXISTING op, never a new Op - evolution genomes decode by ops.REGISTRY index order.
+    # Checked after the exact name and before the HALCON alias; tests forbid a canonical name that
+    # equals any op name or HALCON alias, so the order cannot change an existing resolution.
+    target = _opnames.REGISTRY_ALIASES.get(name)
+    if target is not None:
+        return find_op(target)
     hits = [o for o in _ops.REGISTRY if o.halcon == name]
     if not hits:
         # ★大小文字とハイフンだけ違う名前は同じ op(2026-09-20、GenSpark N50): HALCON のリファレンスは
@@ -1670,7 +1678,7 @@ def _resolve(name: str):
                 "fullseye.apply([%s], %r, a, b) with a list of inputs"
                 % (name, nop.arity, list(nop.in_sorts),
                    ", ".join("x%d" % i for i in range(nop.arity)), name))
-        hint = _explain_unregistered(name)
+        hint = _explain_unregistered(_opnames.REGISTRY_ALIASES.get(name, name))
         if hint is not None:
             raise MissingBackendError(hint)
         row = _shipped_index().get(name) or {}

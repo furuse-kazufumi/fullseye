@@ -199,6 +199,11 @@ def _find_op(ops, key):
     for o in ops.REGISTRY:
         if o.name == key:
             return o
+    # Canonical alias (opnames.REGISTRY_ALIASES, phase 1): same rule and order as api.find_op.
+    import opnames as _opnames
+    target = _opnames.REGISTRY_ALIASES.get(key)
+    if target is not None:
+        return _find_op(ops, target)
     halcon_hits = [o for o in ops.REGISTRY if o.halcon == key]
     if not halcon_hits:
         return None

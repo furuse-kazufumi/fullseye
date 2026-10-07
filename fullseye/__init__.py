@@ -511,6 +511,27 @@ def capabilities() -> dict:
             "acquire": acquire.capabilities(),
             "device": device.capabilities()}
 
+import opnames as _opnames  # noqa: E402  (canonical op-name aliases, phase 1 of the naming cleanup)
+
+
+def _warn_ambiguous_ledger_name(name):
+    """Opt-in FutureWarning for a bare name that means different functions behind different doors.
+
+    Off unless the environment variable ``FULLSEYE_WARN_AMBIGUOUS_NAMES`` is set (and not ``0``):
+    phase 1 keeps every old name working silently. The message names the canonical alternatives.
+    """
+    import os as _os
+    flag = _os.environ.get("FULLSEYE_WARN_AMBIGUOUS_NAMES", "")
+    if not flag or flag == "0":
+        return
+    import warnings as _warnings
+    alts = ", ".join("%s: %s" % kv for kv in sorted(_opnames.RENAMED.get(name, {}).items()))
+    _warnings.warn(
+        "fullseye.ledger.%s: this name means different functions behind different doors (%s); "
+        "use the canonical name to say which one you mean" % (name, alts),
+        FutureWarning, stacklevel=3)
+
+
 class _OpNamespace:
     """進化する 2-D op(``ops.REGISTRY``)を**属性で**呼ぶ入口。
     ★数は版ごとに動くのでここに書かない —— 数えるなら ``fullseye.op_names()``。
@@ -614,9 +635,15 @@ class _LedgerNamespace:
 
     ``fullseye`` 直下に既にある 499 個は**そのまま**にしてある。名前を消すのは
     利用者のコードを壊すし、ここに全部あるので探すには困らない。台帳をまたぐ
-    同名は ``gaussians_to_voxel`` の 1 つだけで(``ops3d`` と ``opsreprconv``)、
-    :data:`_LEDGER_ORDER` の先頭にある族が勝つ。2-D レジストリの 882 名前とは
-    **1 つも衝突しない**(実測)。
+    同名は ``gaussians_to_voxel`` の 1 つで(``ops3d`` と ``opsreprconv``)、
+    ``opassist._LEDGERS`` の先に並ぶ ``ops3d`` が勝つ(``opsreprconv`` 側は正準名
+    ``gaussian_set_to_voxel`` で引ける)。2-D レジストリとは**衝突する** ——
+    ``lowpass`` / ``highpass`` / ``local_std`` / ``companding_mu_law`` は台帳では 1-D の
+    ``dsp``、レジストリでは 2-D 画像の op で、``fill_holes`` は台帳では深度マップ、
+    レジストリでは領域の穴埋め(以前ここに「1 つも衝突しない」と書いていたのは誤り)。
+    4 つの入口(レジストリ / 台帳 / facade / vision)をまたいで同名が別関数を指すのは
+    2026-10-07 の実測で 27 名。どれも ``opnames.py`` に入口ごとの正準名があり、
+    ``tests/test_op_names_phase1.py`` がこの集合を増やさない。
     """
 
     __slots__ = ()
@@ -637,11 +664,22 @@ class _LedgerNamespace:
                 out.append((mod, entries))
         return out
 
-    def _lookup(self, name):
+    def _resolve(self, name):
+        """``(module, entry, key)`` for *name*; *key* is the name the ledger table itself uses."""
         for mod, entries in self._tables():
             if name in entries:
-                return mod, entries[name]
-        return None, None
+                return mod, entries[name], name
+        # Canonical alias (opnames.LEDGER_ALIASES, phase 1): pinned to one ledger module.
+        target = _opnames.LEDGER_ALIASES.get(name)
+        if target is not None:
+            for mod, entries in self._tables():
+                if mod.__name__ == target[0] and target[1] in entries:
+                    return mod, entries[target[1]], target[1]
+        return None, None, None
+
+    def _lookup(self, name):
+        mod, entry, _key = self._resolve(name)
+        return mod, entry
 
     def __dir__(self):
         names = set()
@@ -652,15 +690,17 @@ class _LedgerNamespace:
     def __getattr__(self, name):
         if name.startswith("_"):
             raise AttributeError(name)
-        mod, entry = self._lookup(name)
+        mod, entry, key = self._resolve(name)
         if mod is None:
             raise AttributeError(
                 "fullseye.ledger: '%s' という台帳 op は無い。"
                 "2-D の進化 op なら fullseye.op.%s、探すなら fullseye.op_find('%s')"
                 % (name, name, name))
+        if name in _opnames.AMBIGUOUS_NAMES:
+            _warn_ambiguous_ledger_name(name)
 
         def _call(*args, **kw):
-            return mod.call(name, *args, **kw)
+            return mod.call(key, *args, **kw)
 
         _call.__name__ = name
         _call.__qualname__ = "fullseye.ledger." + name
@@ -697,6 +737,41 @@ class _LedgerNamespace:
 
 #: 型つき台帳 op の属性アクセス入口(:class:`_LedgerNamespace`)。
 ledger = _LedgerNamespace()
+
+# Canonical op names, phase 1 of the naming cleanup (2026-10-07). opnames.FACADE_ALIASES is the single
+# source; this literal block exists so IDEs and static analysis see the names, and
+# tests/test_op_names_phase1.py checks it against the table both ways. Each line binds the canonical
+# name to the SAME object as the old facade name - the old names stay, unchanged.
+camera_depth_to_points = depth_to_points  # opnames
+camera_normals_from_depth = normals_from_depth  # opnames
+camera_project_points = project_points  # opnames
+camera_triangulate = triangulate  # opnames
+cplx_domain_color = cplx_domain_colour  # opnames
+estimate_normals_pca = estimate_normals  # opnames
+euclidean_farthest_point_sampling = farthest_point_sampling  # opnames
+glass_from_abbe = glass  # opnames
+glyph_normalize = glyph_normalise  # opnames
+histogram_match_nearest_rank = match_histogram  # opnames
+histogram_match_transport = histogram_match  # opnames
+image_global_entropy = image_entropy  # opnames
+image_paint_mask = overlay_mask  # opnames
+lens_trace_rays = trace_rays  # opnames
+mesh_fill_holes = fill_holes  # opnames
+mesh_mass_properties = inertia_tensor  # opnames
+mesh_sample_surface = sample_surface  # opnames
+mesh_vertices_taubin_smooth = smooth_taubin  # opnames
+neighbor_index_gaps = neighbour_index_gaps  # opnames
+optical_flow_magnitude = flow_magnitude  # opnames
+points_euclidean_cluster_indices = euclidean_clusters  # opnames
+points_region_growing_smoothness = region_growing  # opnames
+recover_pose_from_essential = recover_pose  # opnames
+reprojection_error_per_point = reprojection_error  # opnames
+signal_bandpass = bandpass  # opnames
+signal_highpass = highpass  # opnames
+signal_lowpass = lowpass  # opnames
+terrain_surface_normals = surface_normals  # opnames
+vol_marker_watershed = vol_watershed  # opnames
+wet_surface_color = wetness  # opnames
 
 # op の返り値(型つき)を JSON に出し、bit そのままで戻す橋(fullseye/jsonio.py)。
 # 台帳 op ではなく facade の入出力ユーティリティ(sort ごとに 1 つの JSON 形)。
@@ -1125,6 +1200,39 @@ __all__ = [
     "rotational_symmetry_score",
     "register_pointclouds", "align_cad_to_scan", "measure_plane", "inspect_roundness", "match_sdf",
     "register_auto",
+]
+# Canonical op names, phase 1 (bound above; opnames.FACADE_ALIASES is the source).
+__all__ += [
+    "camera_depth_to_points",
+    "camera_normals_from_depth",
+    "camera_project_points",
+    "camera_triangulate",
+    "cplx_domain_color",
+    "estimate_normals_pca",
+    "euclidean_farthest_point_sampling",
+    "glass_from_abbe",
+    "glyph_normalize",
+    "histogram_match_nearest_rank",
+    "histogram_match_transport",
+    "image_global_entropy",
+    "image_paint_mask",
+    "lens_trace_rays",
+    "mesh_fill_holes",
+    "mesh_mass_properties",
+    "mesh_sample_surface",
+    "mesh_vertices_taubin_smooth",
+    "neighbor_index_gaps",
+    "optical_flow_magnitude",
+    "points_euclidean_cluster_indices",
+    "points_region_growing_smoothness",
+    "recover_pose_from_essential",
+    "reprojection_error_per_point",
+    "signal_bandpass",
+    "signal_highpass",
+    "signal_lowpass",
+    "terrain_surface_normals",
+    "vol_marker_watershed",
+    "wet_surface_color",
 ]
 
 # ★2026-09-20(GenSpark 第 50 報 N175 / N176): `import fullseye; fullseye.os` が通っていた —— import に使った

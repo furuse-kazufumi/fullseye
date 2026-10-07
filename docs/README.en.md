@@ -70,7 +70,7 @@ Every one carries a closed-form or synthetic ground truth and a null model. Fail
 
 **3,089 per-operator notes** (call form, type contract, HALCON counterpart, references, provenance) and **63 family guides**. Entry points by dimension:
 
-**Measured coverage**: evolvable ops 936/936, typed ledger 2132/2144, one-line facade `fullseye.<name>` 671/1387 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
+**Measured coverage**: evolvable ops 936/936, typed ledger 2132/2144, one-line facade `fullseye.<name>` 671/1417 — **the facade is only half covered** (the rest are helpers, classes and re-exported modules).
 
 **Measured substance**: of 3094 notes, **2901** link at least one runnable example (193 have none) and **2915** have a usage section of 120+ characters (179 are a one-line summary). The structure (call form, types, ops that chain next) is present in all 3094.
 

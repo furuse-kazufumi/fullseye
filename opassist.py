@@ -30,6 +30,8 @@ import os
 import re
 from typing import Any
 
+import opnames as _opnames
+
 #: 台帳(registry モジュール名, テーブル属性)。`tools/opdocs.LEDGER_DIMS` と同じ並び。
 _LEDGERS = (
     ("ops3d", "OPS3D"), ("opsmath", "OPSMATH"), ("opsoptics", "OPSOPTICS"),
@@ -364,7 +366,26 @@ def _ledger_entry(op_name: str):
         entries = getattr(mod, table, None)
         if isinstance(entries, dict) and op_name in entries:
             return mod_name, entries[op_name]
+    # Canonical alias (opnames.LEDGER_ALIASES, phase 1 of the naming cleanup): pinned to one ledger
+    # module, so an op that ledger order hides under its bare name (gaussians_to_voxel of
+    # opsreprconv) is reachable by its canonical name too.
+    target = _opnames.LEDGER_ALIASES.get(op_name) if isinstance(op_name, str) else None
+    if target is not None:
+        table = dict(_LEDGERS).get(target[0])
+        try:
+            mod = importlib.import_module(target[0])
+        except Exception:                            # noqa: BLE001 - optional-dependency ledger
+            return None, None
+        entries = getattr(mod, table, None) if table else None
+        if isinstance(entries, dict) and target[1] in entries:
+            return target[0], entries[target[1]]
     return None, None
+
+
+def _ledger_key(op_name):
+    """The name the ledger table itself uses: a canonical alias maps to its ledger op name."""
+    target = _opnames.LEDGER_ALIASES.get(op_name) if isinstance(op_name, str) else None
+    return target[1] if target is not None else op_name
 
 
 def known_ops() -> list[str]:
@@ -417,6 +438,7 @@ def _doc_line(doc: str, param: str):
 
 
 def _choices_for(op_name: str, param: str):
+    op_name = _ledger_key(op_name)
     lit = _CHOICE_LITERAL.get((op_name, param))
     if lit is not None:
         return list(lit)
@@ -537,7 +559,7 @@ def presets(op_name: str) -> dict:
     """
     if _ledger_entry(op_name)[1] is None:
         raise ValueError(f"opassist: unknown op {op_name!r} (not in any ledger)")
-    return {k: dict(v) for k, v in PRESETS.get(op_name, {}).items()}
+    return {k: dict(v) for k, v in PRESETS.get(_ledger_key(op_name), {}).items()}
 
 
 def known_sorts() -> list[str]:
@@ -641,7 +663,7 @@ def preflight(op_name: str, kwargs=None) -> list[str]:
         return []
     notes = []
     for name, test, message in _PREFLIGHT:
-        if name != op_name:
+        if name != _ledger_key(op_name):
             continue
         try:
             if test(kw):
@@ -1399,7 +1421,7 @@ def run(op_name: str, *data, preset=None, strict: bool = False, **kwargs):
     mod = importlib.import_module(mod_name)
     caller = getattr(mod, "call", None)
     try:
-        result = caller(op_name, *args, **kw) if caller else entry["func"](*args, **kw)
+        result = caller(_ledger_key(op_name), *args, **kw) if caller else entry["func"](*args, **kw)
     except (IndexError, AttributeError, TypeError) as e:
         # ★2026-09-20(N87): 自動の数値サンプル(1.0)が座標や行列を要する引数に合わないと、op の中の
         # IndexError がそのまま利用者に届いていた(scene_box の center_mm 等)。自動値が原因なら言う。
