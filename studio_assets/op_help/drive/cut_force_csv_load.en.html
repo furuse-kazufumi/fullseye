@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>有限要素の切断シミュレーションが書いた刃の力の CSV を読む(1 行目に <code style="color:#22d3bf">Rcforc</code>、2 行目が列名、列 = 時刻と力の 3 成分が交互)。</p>
+<p>Reads the CSV of blade forces written by a finite element cutting simulation (line 1 is <code style="color:#22d3bf">Rcforc</code>, line 2 the column names, columns alternate between time and the 3 force components).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>想定しているのは arXiv:2105.12244 が公開したデータセット(CC BY-NC 4.0 = 非商用)。<code style="color:#22d3bf">license</code> は呼び手が<b>必ず</b>書く(データの使い道を返り値に残すため、空なら ValueError)。データは repo に入れず、置き場所は環境変数で渡す。</p>
 <p>返り値: <code style="color:#22d3bf">t_s</code>、<code style="color:#22d3bf">F_xyz</code>(N、(N, 3))、<code style="color:#22d3bf">license</code>、<code style="color:#22d3bf">path</code> は返さない(ローカルパスを記録に残さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

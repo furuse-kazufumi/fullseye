@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>曲線コース(S 字): 直線 E → 左弧(中心角 2π·f)→ 右弧(同じ)→ 直線 E。</p>
+<p>Curved course (S-shaped): straight E → left arc (central angle 2π·f) → right arc (same) → straight E.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>外径 R_o = <code style="color:#22d3bf">radius_outer</code>、内径 R_i = R_o − w、中心線の半径 R_c = (R_o + R_i)/2。2 つの弧は共通接線点で曲率の向きが反転する。多角形は中心線の標本点を法線方向に ±w/2 ずらして作る(弧の標本点は外円・内円の上に厳密に乗る)。面積 = 2πf(R_o² − R_i²) + 2Ew。規格: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・外径が正でない、R_o ≤ w(内径が 0 以下)、arc_fraction ∉ (0, 1)、E &lt; 0、arc_pts が 1 以上の整数でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

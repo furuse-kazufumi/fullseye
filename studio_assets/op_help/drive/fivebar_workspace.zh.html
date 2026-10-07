@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_workspace&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>作業域: 格子の各点で IK が解けて FK∘IK が tol で戻る所(枝 out/forward で矛盾しない所だけを「届く」とする)。返り値 <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code>(x_max = 届く最前の x)。</p>
+<p>工作空间：网格各点中 IK 可解且 FK∘IK 在 tol 内回到原处的点(只把在分支 out/forward 上不矛盾的点视为&quot;可达&quot;)。返回值 <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code>(x_max = 可达的最前方 x)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

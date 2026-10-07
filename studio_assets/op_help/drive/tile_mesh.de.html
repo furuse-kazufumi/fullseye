@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_mesh(i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveinf; driveinf.tile_mesh(i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;tile_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>区画 (i, j) の地面の格子メッシュ(区画の中の座標)と道の面。返り値 <code style="color:#22d3bf">{&quot;V&quot; (N, 3), &quot;F&quot; (M, 3), &quot;label&quot; (M,), &quot;color&quot; (M, 3), &quot;roads&quot; (tile_roads の返り値)}</code>。地面 = ラベル 0、道 = ラベル 1(道は地面の少し上の帯)。</p>
+<p>Geländegitter-Mesh der Kachel (i, j) (Koordinaten in der Kachel) und die Straßenflächen. Rückgabewert <code style="color:#22d3bf">{&quot;V&quot; (N, 3), &quot;F&quot; (M, 3), &quot;label&quot; (M,), &quot;color&quot; (M, 3), &quot;roads&quot; (Rückgabewert von tile_roads)}</code>. Gelände = Label 0, Straße = Label 1 (Straßen sind Streifen knapp über dem Gelände).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.stagnation_from_centerline(field, speed=None, d_range=(0.04, 0.6), min_points: &#x27;int&#x27; = 4, n_iter: &#x27;int&#x27; = 80) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;stagnation_from_centerline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>中心線の欠損を直線化して、上流の衝突点(よどみ点)・障害物の中心・半径を読む(実装 1、上流の点だけ)。</p>
+<p>중심선의 결손을 직선화하여 상류의 충돌점(정체점)·장애물의 중심·반경을 읽습니다(구현 1, 상류의 점만).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p style="margin:2px 0 2px 12px">1. 欠損(3 × 3 の平均)が <code style="color:#22d3bf">d_range</code> の上限を超える格子のうち、最も上流のものを「衝突点のそば」とする。</p>
 <p style="margin:2px 0 2px 12px">2. その少し上流の列(4 列)で、欠損が最大の行を放物線で副格子に求め、平均を中心線 y_c とする(上流の欠損 R²(Δx² − Δy²)/(Δx² + Δy²)² は Δy = 0 で最大)。</p>
 <p style="margin:2px 0 2px 12px">3. y_c の高さで欠損を行の間の 1 次補間で取り、衝突点のそばより上流で <code style="color:#22d3bf">d_range</code> の中にある格子で 1/√d = (x_c − x)/R を重みつき最小二乗で引く(速さの雑音 σ_d は 1/√d では σ_d/(2d^{3/2}) に増えるので、重み d^{3/2} —— 欠損の小さい遠くの点は雑音で暴れる): R = −1/傾き、x_c = 切片 × R。よどみ点 = (x_c − R, y_c)。</p>

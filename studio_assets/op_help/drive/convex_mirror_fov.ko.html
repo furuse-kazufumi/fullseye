@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>凸面鏡(球面、半径 <code style="color:#22d3bf">radius</code>、開口の直径 <code style="color:#22d3bf">aperture</code>)を軸上 <code style="color:#22d3bf">eye_distance</code>(頂点から)の眼で見たときの視野角。</p>
+<p>볼록 거울(구면, 반경 <code style="color:#22d3bf">radius</code>, 개구 지름 <code style="color:#22d3bf">aperture</code>)을 축 위 <code style="color:#22d3bf">eye_distance</code>(꼭짓점에서) 위치의 눈으로 볼 때의 시야각.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、<b>全視野角 = 2(β + 2α)</b>。<code style="color:#22d3bf">radius = inf</code> は平面鏡 2 atan(h/D)。</p>
 <p>近軸: ≈ a (1/D + 2/R)(誤差は h³ の桁。h/R ≲ 0.2 かつ h/D ≲ 0.2 で相対誤差が数 % 以内が目安)。</p>
 <p>返り値: <code style="color:#22d3bf">fov_rad</code> / <code style="color:#22d3bf">fov_deg</code>(厳密)、<code style="color:#22d3bf">fov_paraxial_rad</code>、<code style="color:#22d3bf">flat_fov_rad</code>(同じ開口の平面鏡)、<code style="color:#22d3bf">widening</code>(= fov / flat_fov、凸面で何倍広く見えるか)、<code style="color:#22d3bf">edge_tilt_rad</code> = α、<code style="color:#22d3bf">eye_angle_rad</code> = β。h ≥ R(半球より大きい開口)は ValueError。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.understeer_gradient(params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;understeer_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>アンダーステア勾配 K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)] と、特性速度 / 臨界速度。</p>
+<p>Understeer gradient K = (m/L)(l_r/C_f − l_f/C_r) [rad/(m/s²)], and the characteristic / critical speed.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">params</code>: <code style="color:#22d3bf">mass</code> [kg]、<code style="color:#22d3bf">l_f</code>・<code style="color:#22d3bf">l_r</code>(重心から前・後車軸)[m]、<code style="color:#22d3bf">c_f</code>・<code style="color:#22d3bf">c_r</code>(軸ごとのコーナリングパワー)[N/rad]。</p>
 <p>返り値: <code style="color:#22d3bf">K</code>、<code style="color:#22d3bf">kind</code>(&quot;understeer&quot; / &quot;neutral&quot; / &quot;oversteer&quot;)、<code style="color:#22d3bf">characteristic_speed</code>(K &gt; 0 で √(L/K)、ヨーレートゲインが最大の速さ)、<code style="color:#22d3bf">critical_speed</code>(K &lt; 0 で √(−L/K)、これを超えると不安定)。無いものは <code style="color:#22d3bf">inf</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欠けた / 正でない母数。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;skill_test_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>技能試験の減点を集計する(警察庁 丙運発第 12 号 令和 4 年の減点細目)。</p>
+<p>Totals the demerit points of the driving skill test (National Police Agency, notice Hei-Un-Hatsu No. 12, Reiwa 4, detailed demerit items).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>events : dict の列。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code> → gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code> → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>

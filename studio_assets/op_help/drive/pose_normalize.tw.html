@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">any</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveinf; driveinf.pose_normalize(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, tile: &#x27;float&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pose_normalize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>(区画, 区画の中の座標) を、座標が [0, tile) に入るように区画を繰り上げ・繰り下げる。返り値 (i, j, x, y)。★全体の座標に足してから割り直すのでなく、区画の中の座標だけを動かす —— 刻みが距離に依らない。</p>
+<p>對 (區塊, 區塊內座標) 進位或借位區塊編號，使座標落入 [0, tile)。回傳值 (i, j, x, y)。★不是加到全域座標後再重新除，而只移動區塊內座標 —— 步長與距離無關。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

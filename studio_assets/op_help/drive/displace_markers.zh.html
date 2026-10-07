@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.displace_markers(pts, fx, fy, pitch: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;displace_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>変位場 fx, fy (n, n) [m] でマーカー中心 (N, 2) [px] を移す(場は中心位置で双線形標本化、画素に換算して足す)。<b>Raises</b> ValueError: pts が (N, 2) でない、fx と fy の形が違う、pitch ≤ 0。</p>
+<p>用位移场 fx, fy (n, n) [m] 移动标记中心 (N, 2) [px] (在中心位置双线性采样场，换算为像素后相加)。<b>Raises</b> ValueError：pts 不是 (N, 2)，fx 与 fy 形状不同，pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

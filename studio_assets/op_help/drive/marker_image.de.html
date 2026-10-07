@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × rgb</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_image(rgb, bg) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.marker_image(rgb, bg) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;marker_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>マーカーだけの像 m = 1 − gray/gray_bg ∈ [0, 1] (H, W)。bg = マーカーの無い同じ照明の像 = 実機の参照フレーム較正に当たる。<b>Raises</b> ValueError: 2 枚の形が違う、(H, W, 3) でない。</p>
+<p>Reines Markierungsbild m = 1 − gray/gray_bg ∈ [0, 1] (H, W). bg = Bild bei gleicher Beleuchtung ohne Markierungen = entspricht der Referenzbild-Kalibrierung am realen Gerät. <b>Raises</b> ValueError: die 2 Bilder haben unterschiedliche Formen oder sind nicht (H, W, 3).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

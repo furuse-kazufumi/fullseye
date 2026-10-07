@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>行動依存グラフ(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。</p>
+<p>Action dependency graph (Hönig, Kiesel, Tinka, Durham, Ayanian 2019).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
 <p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
 <p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>

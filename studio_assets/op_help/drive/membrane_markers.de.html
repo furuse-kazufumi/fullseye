@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacslip; tacslip.membrane_markers(n: &#x27;int&#x27;, pitch_px: &#x27;float&#x27;, ox: &#x27;float&#x27; = 0.3, oy: &#x27;float&#x27; = 0.6) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;membrane_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>n×n 画素の視野に撒くマーカー中心 (N, 2) = (x, y) [px] の規則格子(ピッチ pitch_px、副画素位相 (ox, oy))。視野の外にも 1 周だけ撒く(変位で入ってくるぶん)。<b>Raises</b> ValueError: n &lt; 8、pitch_px &lt; 2。</p>
+<p>Regelmäßiges Gitter von Markierungsmittelpunkten (N, 2) = (x, y) [px], verteilt über ein Sichtfeld von n×n Pixeln (Abstand pitch_px, Subpixel-Phase (ox, oy)). Auch außerhalb des Sichtfelds wird genau 1 zusätzlicher Ring verteilt (für durch Verschiebung hereinkommende Markierungen). <b>Raises</b> ValueError: n &lt; 8, pitch_px &lt; 2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

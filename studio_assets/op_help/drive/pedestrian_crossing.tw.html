@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pedestrian_crossing(intent: &#x27;str&#x27;, *, start_xy=(0.0, -3.0), road_width: &#x27;float&#x27; = 7.0, speed: &#x27;float&#x27; = 1.2, wait_time: &#x27;float&#x27; = 3.0, curb_offset: &#x27;float&#x27; = 0.3, along_heading: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.1, t_end: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.pedestrian_crossing(intent: &#x27;str&#x27;, *, start_xy=(0.0, -3.0), road_width: &#x27;float&#x27; = 7.0, speed: &#x27;float&#x27; = 1.2, wait_time: &#x27;float&#x27; = 3.0, curb_offset: &#x27;float&#x27; = 0.3, along_heading: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.1, t_end: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pedestrian_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>横断の意図を真値に持つ歩行者の軌跡(区分ごとの閉形式。積分しない)。</p>
+<p>以穿越意圖為真值的行人軌跡(分段閉合式，不做積分)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>道路は x 方向、車道 0 ≤ y ≤ road_width、歩道 y &lt; 0 から始める(<code style="color:#22d3bf">start_xy</code> の y &lt; −curb_offset)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">cross</code>: (x0, y0) → 縁 (x0, −curb_offset) まで歩き、止まらずに向こうの縁 (x0, road_width + curb_offset) まで横断して止まる。向きは +π/2(車道の方)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">wait_then_cross</code>: 縁まで歩き、<b>縁で車道を向いて</b> (+π/2) <code style="color:#22d3bf">wait_time</code> 秒止まり、それから横断する。</p>

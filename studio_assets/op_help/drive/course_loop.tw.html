@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_loop(straight=80.0, radius=30.0, width=8.0, arc_pts=64, overlap=0.05)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_loop&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>周回コース(長円形): 直線 2 本 + 半円 2 つを原点中心に置いた <code style="color:#22d3bf">{&quot;elements&quot;: [...], &quot;placements&quot;: [...]}</code> を返す(そのまま <code style="color:#22d3bf">course_layout</code> に渡す)。反時計回りに、南の直線(東行き, y = −R)→ 東の半円 → 北の直線(西行き, y = +R)→ 西の半円。直線は両端を <code style="color:#22d3bf">overlap</code> だけ半円に食い込ませる(3-D 化で継ぎ目に縁石が立たないための重なり; 面積の和はその分だけ二重に数える)。規格(普通免許): 80 m 以上の直線走行部分、幅 8 m 以上。</p>
+<p>環形路線(長圓形)：回傳以原點為中心放置 2 條直線 + 2 個半圓的 <code style="color:#22d3bf">{&quot;elements&quot;: [...], &quot;placements&quot;: [...]}</code>(可直接傳給 <code style="color:#22d3bf">course_layout</code>)。依逆時針：南側直線(向東，y = −R)→ 東側半圓 → 北側直線(向西，y = +R)→ 西側半圓。直線兩端各以 <code style="color:#22d3bf">overlap</code> 嵌入半圓(為 3-D 化時接縫處不立起路緣石而設的重疊；面積總和對該部分重複計算)。規格(普通駕照)：80 m 以上的直線行駛部分，寬 8 m 以上。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 直線が正でない、半円の条件(course_loop_bend)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

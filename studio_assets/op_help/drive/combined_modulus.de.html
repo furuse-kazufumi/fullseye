@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;combined_modulus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>複合弾性率 E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。<code style="color:#22d3bf">E2=None</code> は剛体の押し込み子(第 2 項 0)。</p>
+<p>Effektiver E-Modul E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2 (Johnson 1985 Gl. 4.9). <code style="color:#22d3bf">E2=None</code> bedeutet einen starren Eindringkörper (2. Term gleich 0).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: E ≤ 0、|ν| ≥ 1(Poisson 比は (−1, 0.5] が物理的だが上限は見ない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

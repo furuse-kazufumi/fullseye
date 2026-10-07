@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.punch_surface_uz(r, a: &#x27;float&#x27;, P: &#x27;float&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;punch_surface_uz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>平頭円形押し込み子(法線力 P)の半空間表面の法線変位 [m] (沈む向き正): 円内は一様 δ = P(1−ν)/(4Ga)、外側は (2δ/π) arcsin(a/r) (Johnson 1985 §3.4 の平頭押し込み子。式番号は本文で確認できず <b>unverified</b> —— Boussinesq 核 <code style="color:#22d3bf">Kz</code> の畳み込みと 0.35 % で一致することで数値検証した)。<b>Raises</b> ValueError: a, P, G ≤ 0。</p>
+<p>平頭圓形壓頭(法向力 P)作用下半空間表面的法向位移 [m] (下沉方向為正)：圓內為均勻的 δ = P(1−ν)/(4Ga)，圓外為 (2δ/π) arcsin(a/r)(Johnson 1985 §3.4 的平頭壓頭。正文中未能確認式號，<b>unverified</b> —— 透過與 Boussinesq 核 <code style="color:#22d3bf">Kz</code> 的卷積在 0.35 % 內一致做了數值驗證)。<b>Raises</b> ValueError：a, P, G ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

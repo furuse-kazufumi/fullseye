@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;wheel_traction_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1 輪の荷重 <code style="color:#22d3bf">load</code> [N] を一定に保ったときの、滑り率ごとの沈下・牽引力・トルク(牽引–滑り曲線)。</p>
+<p>Sinkage, drawbar pull and torque for each slip ratio with the load <code style="color:#22d3bf">load</code> [N] of 1 wheel held constant (drawbar pull–slip curve).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">slips</code> の既定は 0〜0.95 の 40 点。返り値 <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = 牽引の仕事率 / 駆動の仕事率 = DP (1 − s) r / T、T ≤ 0 の点は 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

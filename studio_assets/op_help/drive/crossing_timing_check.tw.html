@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_timing_check(t_warning, t_closed, t_arrival, *, timing: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_timing_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>踏切の 3 つの時刻(警報開始・遮断動作の終了・列車の到達)を解釈基準の標準と最小に照らす(配列 = 列車ごと)。</p>
+<p>將平交道的 3 個時刻(警報開始、柵欄動作結束、列車抵達)與解釋基準的標準值及最小值對照(陣列 = 每列列車)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>警報→到達の 30 / 20 秒は解釈基準 5(3) の<b>踏切警報機</b>(遮断機なし)の値。遮断機のある踏切では 4(3)(5) の 2 つ(15 + 20 = 35 秒が標準)が効き、30 / 20 秒の側は自動的に満たされる。</p>
 <p>返り値: <code style="color:#22d3bf">warn_to_closed</code> / <code style="color:#22d3bf">closed_to_arrival</code> / <code style="color:#22d3bf">warn_to_arrival</code>(各 [s])、<code style="color:#22d3bf">meets_minimum</code>(3 つとも最小以上)、<code style="color:#22d3bf">deviation</code>(標準からのずれ、3 つ)、<code style="color:#22d3bf">spread</code>(列車ごとの警報開始→到達の最大 − 最小。解釈基準 5(4)「速度等により大きく異なるものでない」の量)。時刻の順が逆(遮断終了が警報より前など)は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

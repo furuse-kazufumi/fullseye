@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_edge_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>区画 (i, j) の辺を道が横切る位置(区画の中の座標、辺に沿った 0..tile)。無ければ None。<code style="color:#22d3bf">side</code> ∈ {&quot;E&quot;, &quot;W&quot;, &quot;N&quot;, &quot;S&quot;}。★辺の番号で決める: 区画 (i, j) の E と区画 (i+1, j) の W は同じ辺(同じハッシュ)。</p>
+<p>Position where a road crosses an edge of tile (i, j) (in-tile coordinates, 0..tile along the edge). None if there is none. <code style="color:#22d3bf">side</code> ∈ {&quot;E&quot;, &quot;W&quot;, &quot;N&quot;, &quot;S&quot;}. ★Determined by the edge index: E of tile (i, j) and W of tile (i+1, j) are the same edge (same hash).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

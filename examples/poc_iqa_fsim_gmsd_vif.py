@@ -23,7 +23,7 @@ FSIMc.txt は色 BMP → YIQ(full range)。つまり FSIM.txt は FSIMc 計算�
 steerable 版 VIF(論文の「VIF」0.677)は配布物に値ファイルが無く未実装。歪み 16–18(平均シフト・コントラスト・彩度)は 4 指標とも弱く、
 彩度変化では輝度しか見ない FSIM / VIFP / GMSD の順位相関が 0.2 / −0.16 / 0.19 に落ちる(FSIMc は 0.84)。踏んだ罠: 偶数核の 'same' の半画素、
 round(1.5)、ε の置き場(分母に足すと利得不変が 3e-5 崩れる)、GMSD の符号(lower is better、公表表は |ρ|)、公表表は 4 桁丸めの値から計算されている。
-Run: set FULLSEYE_TID2013_DATA=C:\\dev\\data\\tid2013\\tid2013 & py -3.11 examples/poc_iqa_fsim_gmsd_vif.py [--full] [--pairs N]
+Run: set FULLSEYE_TID2013_DATA=<TID2013 の展開先>\\tid2013 & py -3.11 examples/poc_iqa_fsim_gmsd_vif.py [--full] [--pairs N]
 """
 from __future__ import annotations
 

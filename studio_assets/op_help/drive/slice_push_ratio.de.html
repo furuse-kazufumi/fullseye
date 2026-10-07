@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.slice_push_ratio(theta_deg: &#x27;float&#x27;, vx: &#x27;float&#x27;, vz: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>刃先の傾き θ(x-z、反時計回り)と刃の速度 (vx, −vz)(vz &gt; 0 で下へ)から slice/push 比 ξ。</p>
+<p>Slice/Push-Verhältnis ξ aus der Neigung θ der Schneide (x-z, gegen den Uhrzeigersinn) und der Klingengeschwindigkeit (vx, −vz) (vz &gt; 0 ist abwärts).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>刃先方向 u = (cos θ, sin θ)、法線 n = (−sin θ, cos θ) として ξ = |v·u| / |v·n|。vx = 0 なら ξ = tan|θ|(Atkins 2016 の本文「傾けた刃を縦に動かすと ξ = tan i」)に戻る。刃が自分の刃先に沿って動く(押しが無い)と ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

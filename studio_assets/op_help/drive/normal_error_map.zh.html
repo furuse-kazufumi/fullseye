@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">normalmap × normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacscalib; tacscalib.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;normal_error_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2 つの法線場の画素ごとの角度 [度] = atan2(|a × b|, a · b)(正規化しない —— 長さは atan2 の比で消える)。acos(a · b) は単位ベクトルの近くで丸めの床を持つ(1e-7° を 1e-4° と答える)ので使わない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う / 最後の軸が 3 でない。</p>
+<p>2 个法线场逐像素的夹角 [度] = atan2(|a × b|, a · b)(不归一化 —— 长度在 atan2 的比值中消去)。acos(a · b) 在单位向量彼此接近时存在舍入下限(把 1e-7° 答成 1e-4°)，因此不使用。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：形状不同 / 最后一个轴不是 3。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>凸面鏡の虚像(近軸、配列可)。場面 S064・S130。</p>
+<p>Virtuelles Bild eines Konvexspiegels (paraxial, Arrays möglich). Szenarien S064, S130.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(<code style="color:#22d3bf">eye_distance</code>)のとき像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

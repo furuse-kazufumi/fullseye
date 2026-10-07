@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points × points</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>social force の 1 歩(単位質量あたり。Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000 の形)。</p>
+<p>1 Schritt des Social-Force-Modells (pro Masseneinheit; in der Form von Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
 <p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
 <p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>

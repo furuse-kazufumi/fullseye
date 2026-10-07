@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.boussinesq_surface_displacement(p, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;boussinesq_surface_displacement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>法線圧 p (n, n) [Pa] → 表面変位 <code style="color:#22d3bf">ux</code>・<code style="color:#22d3bf">uy</code>(核に <code style="color:#22d3bf">Kz</code> があれば <code style="color:#22d3bf">uz</code>、沈む向きが正)(n, n) [m]。零詰め 2n の線形畳み込み。<b>Raises</b> ValueError: p が (n, n) でない、kern が <code style="color:#22d3bf">boussinesq_kernel</code> の表でない。</p>
+<p>法向压力 p (n, n) [Pa] → 表面位移 <code style="color:#22d3bf">ux</code>、<code style="color:#22d3bf">uy</code>(核中有 <code style="color:#22d3bf">Kz</code> 时还有 <code style="color:#22d3bf">uz</code>，下沉方向为正)(n, n) [m]。补零到 2n 的线性卷积。<b>Raises</b> ValueError：p 不是 (n, n)，kern 不是 <code style="color:#22d3bf">boussinesq_kernel</code> 的表。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

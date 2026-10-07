@@ -21,9 +21,13 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 *出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*
 
-*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+![tb_temporal_band_power: knob a sweep](../../_fig/tb_temporal_band_power.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_temporal_band_power: knob b sweep](../../_fig/tb_temporal_band_power.b.jpg)
 
 **段階**(前置きの op → この op。左から順):
 
@@ -45,7 +49,7 @@ Per-pixel mean-square power inside a temporal band -> ``(H, W)`` map.
     This is an *analysis map*, not a displayable image: it is a power and is not
     bounded by 1. Pixels with no in-band content read 0.
 
-Typed bridge of the motionmag op ``temporal_band_power`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
+Typed bridge of the motionmag op ``temporal_band_power`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` picks the centre of the pass-band among the clip's own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and ``b`` its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)
 
 ## 参考(サンプルデータ・文献)
 

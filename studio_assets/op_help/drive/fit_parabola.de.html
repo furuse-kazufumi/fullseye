@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_parabola(t, p) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ballistics; ballistics.fit_parabola(t, p) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;fit_parabola&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>観測 (t_i, p_i) に p = p₀ + v₀ t − ½ g t² ẑ を最小二乗で当てる(線形、閉形式)。<code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;g&quot;, &quot;rms&quot;}</code>。真空の真値なら 1e-9 で戻る(門)。</p>
+<p>Kleinste-Quadrate-Anpassung von p = p₀ + v₀ t − ½ g t² ẑ an Beobachtungen (t_i, p_i) (linear, geschlossene Form). <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;g&quot;, &quot;rms&quot;}</code>. Stellt eine Vakuum-Ground-Truth auf 1e-9 wieder her (Gate).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

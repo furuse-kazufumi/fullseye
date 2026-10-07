@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.potential_flow_cylinder(x, y, cylinder, speed: &#x27;float&#x27; = 1.0, grid: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import swarmflow; swarmflow.potential_flow_cylinder(x, y, cylinder, speed: &#x27;float&#x27; = 1.0, grid: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;potential_flow_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>円柱まわりのポテンシャル流(閉形式)。u − i v = U (1 − R²/(z − z_c)²)、円の内側は NaN。</p>
+<p>圓柱繞流的勢流(閉合式)。u − i v = U (1 − R²/(z − z_c)²)，圓內為 NaN。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">grid=True</code> なら <code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code> を格子の軸(1 次元、行 = y の順)とみなし、速度場の dict(module の規約)を返す。既定の <code style="color:#22d3bf">grid=False</code> は要素ごと(同じ形に broadcast)に <code style="color:#22d3bf">u</code>・<code style="color:#22d3bf">v</code>・<code style="color:#22d3bf">inside</code> を返す —— 軸か点の列かを形で推し量らない(同じ長さの 1 次元の x と y はどちらにも読めて、点の列が黙って格子になる)。どちらにも <code style="color:#22d3bf">stagnation</code>(上流の衝突点(x_c − R, y_c))と <code style="color:#22d3bf">rear_stagnation</code> と <code style="color:#22d3bf">surface_speed_max</code>(= 2U)を付ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_crossing(width=7.0, gauge=1.1, rail_outer=0.75, approach=6.0, stop_setback=0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>踏切: 幅 w の道路(x 軸沿い)を線路が直角に横切る。踏切面(軌間 + レール外側 2 つ = 2.6 m)の両側に <code style="color:#22d3bf">approach</code> の直線。<code style="color:#22d3bf">rails</code> (2, 2, 2) はレール 2 本の線分(x = L/2 ± gauge/2、道路幅いっぱい)、<code style="color:#22d3bf">crossing_zone</code> = (x0, x1) 踏切面、<code style="color:#22d3bf">stop_lines</code> (1, 2, 2) は踏切面の <code style="color:#22d3bf">stop_setback</code> 手前の左車線。多角形は矩形(レールはメタデータ)。規格: 軌間 1.1、レール外側 0.75 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·(2(rail_outer + gauge/2) + 2·approach)。</p>
+<p>平交道：鐵軌以直角橫越寬 w 的道路(沿 x 軸)。平交道面(軌距 + 2 條鋼軌外側 = 2.6 m)兩側為長 <code style="color:#22d3bf">approach</code> 的直線。<code style="color:#22d3bf">rails</code> (2, 2, 2) 是 2 條鋼軌的線段(x = L/2 ± gauge/2，橫貫整個路寬)，<code style="color:#22d3bf">crossing_zone</code> = (x0, x1) 為平交道面，<code style="color:#22d3bf">stop_lines</code> (1, 2, 2) 位於平交道面前方 <code style="color:#22d3bf">stop_setback</code> 處的左車道。多邊形為矩形(鋼軌為中繼資料)。規格：軌距 1.1，鋼軌外側 0.75 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·(2(rail_outer + gauge/2) + 2·approach)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・軌間・approach が正でない、rail_outer &lt; 0、stop_setback &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

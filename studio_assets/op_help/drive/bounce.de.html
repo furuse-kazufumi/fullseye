@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bounce(v, omega, normal, bp: &#x27;dict&#x27;, ip: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import ballistics; ballistics.bounce(v, omega, normal, bp: &#x27;dict&#x27;, ip: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>剛体球が平面に当たる瞬間の速度・角速度の更新(クーロン摩擦、Cross 2002 / Garwin 1969 の 2 領域)。</p>
+<p>Aktualisierung von Geschwindigkeit und Winkelgeschwindigkeit im Moment des Aufpralls einer starren Kugel auf eine Ebene (Coulomb-Reibung, die 2 Regime nach Cross 2002 / Garwin 1969).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>接触点の滑り速度 s = v_t − r(ω × n)_t。必要な接線力積が μJ_n 以下なら滑りが止まって転がりに移る(grip)、超えるなら滑ったまま(slip、接線力積 = μJ_n)。法線は v_n&#x27; = −e v_n(e は定数か |v_n| の関数)。返り値 <code style="color:#22d3bf">{&quot;v&quot;, &quot;omega&quot;, &quot;regime&quot; (&quot;grip&quot;|&quot;slip&quot;|&quot;none&quot;), &quot;J_n&quot;, &quot;J_t&quot;, &quot;slip_speed&quot;, &quot;e&quot;}</code>。<code style="color:#22d3bf">v·n ≥ 0</code>(離れていく)なら何もしない(regime &quot;none&quot;)。定理: 接触点まわりの角運動量は保存(<code style="color:#22d3bf">contact_angular_momentum</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

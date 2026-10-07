@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_fractions(two_theta, intensity, dictionary, background_order=4, sigma=None, lattice_tolerance=0.0, phases=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.phase_fractions(two_theta, intensity, dictionary, background_order=4, sigma=None, lattice_tolerance=0.0, phases=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;phase_fractions&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>非負の最小二乗(NNLS)で混合物の相分率を出す(背景は Chebyshev の多項式で同時に当てる)。</p>
+<p>以非負最小平方(NNLS)求混合物的物相分率(背景以 Chebyshev 多項式同時擬合)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">y ≈ Σ sₚ Rₚ(2θ) + Σ cₖ Tₖ(2θ)</code>、<code style="color:#22d3bf">sₚ &gt;= 0</code>、<code style="color:#22d3bf">cₖ</code> は符号自由(<code style="color:#22d3bf">scipy.optimize.lsq_linear</code> の BVLS)。体積分率 <code style="color:#22d3bf">vₚ ∝ sₚ</code>、重量分率 <code style="color:#22d3bf">Wₚ ∝ sₚ ρₚ</code>(module の docstring)。<code style="color:#22d3bf">sigma</code> を渡せば 1/σ で重みを付ける。<code style="color:#22d3bf">lattice_tolerance</code> &gt; 0 なら相ごとに格子の倍率を <code style="color:#22d3bf">1 ± tolerance</code> の中で黄金分割の座標降下で追い込む(参照の格子定数と試料の格子定数がずれていると、山が半分ずれた参照は倍率が下がり分率が偏る —— 罠の門を参照)。<code style="color:#22d3bf">phases</code> で辞書の一部の名前だけを使う。</p>
 <p>返り値(dict): <code style="color:#22d3bf">names</code>・<code style="color:#22d3bf">scale</code>・<code style="color:#22d3bf">volume_fraction</code>・<code style="color:#22d3bf">weight_fraction</code>・<code style="color:#22d3bf">lattice_scale</code>・<code style="color:#22d3bf">fit</code>・ <code style="color:#22d3bf">background</code>・<code style="color:#22d3bf">residual</code>・<code style="color:#22d3bf">rwp</code>(重みつきの相対残差)・<code style="color:#22d3bf">two_theta</code>・<code style="color:#22d3bf">wavelength</code>。</p>
 <p>Raises ValueError: 長さの不一致、辞書の格子と 2θ の不一致、背景の次数が負、未知の相の名前。</p>

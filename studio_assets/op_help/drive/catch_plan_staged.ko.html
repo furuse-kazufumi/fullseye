@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.catch_plan_staged(kp: &#x27;dict&#x27;, *, v_max: &#x27;float&#x27; = 2.0, a_max: &#x27;float&#x27; = 20.0, g: &#x27;float&#x27; = None, margin: &#x27;float&#x27; = 0.005, absorb_time: &#x27;float&#x27; = None, absorb_depth: &#x27;float&#x27; = 0.02)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;catch_plan_staged&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>段階を明示した捕球の制御(大皿・小皿・中皿・ろうそくに同じ計画を使う: 皿の向きは kp の技の姿勢から)。返り値は <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code> の <code style="color:#22d3bf">catch_plan</code>)。</p>
+<p>단계를 명시한 받기 제어(큰 접시·작은 접시·중간 접시·촛대에 같은 계획을 사용: 접시의 방향은 kp의 기술 자세에서). 반환값은 <code style="color:#22d3bf">plan(t, p, v, cup_state) → dict</code>(<code style="color:#22d3bf">kendama_simulate</code>의 <code style="color:#22d3bf">catch_plan</code>)입니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>段階(人のコツ「膝で真上に引き上げ、糸が弛んでから皿を玉の真下へ水平に運び、着地で下げて衝撃を吸う(すくいに行かず待つ)」を写す):</p>
 <p style="margin:2px 0 2px 12px">0. <b>lift / wait</b>(<code style="color:#22d3bf">kendama_simulate</code> 側): 振り上げの間と、弛む前は計画を呼ばない = 弛んでから動かす。</p>
 <p style="margin:2px 0 2px 12px">1. <b>hold</b>: 玉の下端がけん玉のいちばん高い所(手元 + kp[&quot;top_offset&quot;]、+ <code style="color:#22d3bf">margin</code>)より上に出るまで皿を動かさない(けんは玉を押せないので、昇ってくる玉にけんを寄せない。玉がそこまで昇らない軌道なら hold のまま = 捕らない)。</p>

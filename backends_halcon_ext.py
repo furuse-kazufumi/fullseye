@@ -1498,7 +1498,15 @@ def _select_xld_point(v, a, b):
 
 
 # ── 第 11 バッチ: shape-from-shading の光源推定(3D Reconstruction, image -> feature)── #
+def _require_pixels(v, what):
+    """0 画素の画像を明示の拒否にする(平均輝度・平均勾配の 0/0 を NaN として出さない)。"""
+    if np.size(v) == 0:
+        raise ValueError("%s: empty image (0 pixels) — the mean is 0/0" % what)
+    return v
+
+
 def _img_grads(v):
+    _require_pixels(v, "light-source estimate (mean gradient)")
     return ndimage.sobel(v, axis=1), ndimage.sobel(v, axis=0)   # Ex, Ey
 
 
@@ -1544,6 +1552,7 @@ def _estimate_tilt_zc(v, a, b):
 
 def _estimate_slant(v):
     """slant(光源天頂角)推定: 平均輝度と勾配統計から。Lambertian の <I>=albedo*cos(slant)。"""
+    _require_pixels(v, "slant estimate (mean brightness)")
     mu = float(np.clip(v.mean(), 0, 1))
     return float(np.arccos(np.clip(mu, 0, 1)))          # cos(slant)=<I>/albedo(albedo~1 近似)
 

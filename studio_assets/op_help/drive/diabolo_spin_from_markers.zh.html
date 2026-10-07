@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spin_from_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>コマごとの位相 ψ_k(mod 2π)とぶれの弧の幅 → 回転の速さ ω、単位 rad/s(軸のまわり、右ねじ)。</p>
+<p>每帧的相位 ψ_k(mod 2π)与模糊弧宽 → 旋转速度 ω，单位 rad/s(绕轴，右手螺旋)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>隣のコマの差を (−π, π] に包むと |ω| dt &lt; π までしか読めない(ナイキストで折り返す、車輪の錯視)。<code style="color:#22d3bf">use_smear</code> なら弧の幅 / 露光 = |ω| の粗い値で 2π k の枝を選ぶ(折り返さない粗い値 × 折り返す精しい値)。枝の間隔 2π/dt に対して弧の幅の誤差が半分より小さいことを前提にする。返り <code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_wrapped&quot;, &quot;omega_smear&quot;, &quot;branch&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 位相が 2 コマ未満、長さが違う、dt ≤ 0、露光 &lt; 0、有限でない値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

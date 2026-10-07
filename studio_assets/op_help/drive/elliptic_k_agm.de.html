@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">scalar</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendama; kendama.elliptic_k_agm(k) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;elliptic_k_agm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>第 1 種完全楕円積分 K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) を算術幾何平均で: K(k) = π / (2·AGM(1, √(1 − k²)))。|k| &lt; 1(それ以外は ValueError)。門: K(0) = π/2、K(0.5) = 1.685750354812596(公表値、パラメータ m = k² = 0.25)。</p>
+<p>Vollständiges elliptisches Integral erster Art K(k) = ∫₀^{π/2} dφ / √(1 − k² sin² φ) über das arithmetisch-geometrische Mittel: K(k) = π / (2·AGM(1, √(1 − k²))). |k| &lt; 1 (sonst ValueError). Gate: K(0) = π/2, K(0.5) = 1.685750354812596 (veröffentlichter Wert, Parameter m = k² = 0.25).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>拡大の中心(FoE)の画素 <code style="color:#22d3bf">(col, row)</code>: 相対運動の並進 <code style="color:#22d3bf">t</code> を無限遠で投影した点。</p>
+<p>擴張焦點(FoE)的像素 <code style="color:#22d3bf">(col, row)</code>：將相對運動的平移 <code style="color:#22d3bf">t</code> 於無窮遠處投影所得的點。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">T_rel</code> の回転が単位でないと FoE は定義されない(<code style="color:#22d3bf">ValueError</code>)。奥行き方向の並進が 0(純粋な横滑り)なら <code style="color:#22d3bf">(nan, nan)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

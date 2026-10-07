@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.world_apply_terrain(world: &#x27;dict&#x27;, p: &#x27;dict&#x27;, step: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;world_apply_terrain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>world_build の出力(平らな世界)に地形を掛ける(その場で書き換え、同じ dict を返す)。</p>
+<p>对 world_build 的输出(平坦的世界)施加地形(原地修改，返回同一个 dict)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>路面の升(objects[0] &quot;ground&quot;)を terrain_mesh に置き換え、姿勢を持つ物体(資産・木・歩行者)は姿勢の(x, y) の高さだけ剛体で持ち上げ、持たない物体(縁石・白線・停止線・レール・坂)は頂点ごとに持ち上げる。<code style="color:#22d3bf">world[&quot;terrain&quot;] = p</code> を記録する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

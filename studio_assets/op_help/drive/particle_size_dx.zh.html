@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import grind; grind.particle_size_dx(psd: &#x27;dict&#x27;, q: &#x27;float&#x27; = 50.0, convention: &#x27;str&#x27; = &#x27;log_edges&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_dx&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>体積累積 <code style="color:#22d3bf">q</code> % の径 Dq [µm] (D10 / D50 / D90 は <code style="color:#22d3bf">q</code> = 10 / 50 / 90)。</p>
+<p>体积累积 <code style="color:#22d3bf">q</code> % 处的粒径 Dq [µm] (D10 / D50 / D90 对应 <code style="color:#22d3bf">q</code> = 10 / 50 / 90)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">convention</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;log_edges&quot;</code>(既定、装置のヘッダの <code style="color:#22d3bf">Dx (50)</code> と一致): 端 i の累積に対して log(径) を線形補間。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;linear_edges&quot;</code>: 端の累積に対して径そのものを線形補間(区間内の体積が径について一様、の仮定)。</p>

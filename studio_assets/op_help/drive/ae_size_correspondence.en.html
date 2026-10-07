@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import grind; grind.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ae_size_correspondence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>AE の帯域電力と D50 の対応(単調性・相関・log–log の傾き α、<code style="color:#22d3bf">P ∝ D50^α</code>)。</p>
+<p>Correspondence between AE band power and D50 (monotonicity, correlation, log–log slope α, <code style="color:#22d3bf">P ∝ D50^α</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">group</code> を渡すと群(材料)ごとに出す(材料で電力の水準が桁で違うので、混ぜた相関は水準の差を拾う —— <code style="color:#22d3bf">pooled</code> は参考)。</p>
 <p>返り: 群 → <code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">spearman</code>(順位相関)・<code style="color:#22d3bf">alpha</code>(ln P を ln D50 に当てた傾き)・<code style="color:#22d3bf">sign_agree</code>(全ての組で「D50 が大きい方が P も大きい」の割合)。<b>点が 2 つなら spearman は ±1 しか取れない</b>(<code style="color:#22d3bf">n</code> を必ず併記する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × matrix × matrix</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.peg_measure_overlay(rgb, truth_uv, est_uv, edge_uv=None, size: &#x27;int&#x27; = 12, zoom: &#x27;int&#x27; = 3, crop: &#x27;int&#x27; = 40) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;peg_measure_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>計測の重ね図(numpy だけ): 真値 = 緑の大きな十字、推定 = 赤の小さな十字、円当てはめに使った縁の点 = 黄の点(imagedraw)。右下に真値の重心まわり <code style="color:#22d3bf">crop</code> px 四方を <code style="color:#22d3bf">zoom</code> 倍にした拡大を貼る(副画素の一致を目で見るため)。</p>
+<p>量測疊加圖(僅用 numpy)：真值 = 綠色大十字，估計 = 紅色小十字，用於圓擬合的邊緣點 = 黃點(imagedraw)。在右下角貼上將真值重心周圍 <code style="color:#22d3bf">crop</code> px 見方區域放大 <code style="color:#22d3bf">zoom</code> 倍的圖(用於目視檢查次像素一致)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">rgb</code> は (H, W, 3) uint8、<code style="color:#22d3bf">truth_uv</code>・<code style="color:#22d3bf">est_uv</code> は (N, 2) の (u, v)。返りは同じ大きさの uint8。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: rgb の形が違う、点が無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

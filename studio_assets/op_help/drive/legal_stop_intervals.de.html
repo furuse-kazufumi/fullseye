@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.legal_stop_intervals(merged, road_start: &#x27;float&#x27;, road_end: &#x27;float&#x27;, car_length: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;legal_stop_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>駐停車禁止の区間(併せた (k, 2))を避けて、車体 [rear, rear + car_length] が丸ごと入る <b>後端の位置</b> の区間 (m, 2)。</p>
+<p>Intervalle (m, 2) der <b>Heckpositionen</b>, bei denen die Karosserie [rear, rear + car_length] vollständig außerhalb der Abschnitte mit Halt- und Parkverbot (zusammengefasst (k, 2)) liegt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>区間の端ちょうど(距離がちょうど 5 m など)は禁止の側に含める(「以内」)ので、車体が端に触れるだけなら許す(閉区間の補集合の閉包)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

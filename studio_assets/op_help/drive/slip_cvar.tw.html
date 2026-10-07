@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slip_cvar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>滑り率の CVaR_α(上側 1 − α の尾の条件付き期待値)。<code style="color:#22d3bf">sign = −1</code> で −s の CVaR(下りの空走・横滑りの大きさ)。</p>
+<p>滑移率的 CVaR_α(上側 1 − α 尾部的條件期望值)。<code style="color:#22d3bf">sign = −1</code> 時為 −s 的 CVaR(下坡空走、側滑的大小)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>ガウス過程は閉形式 <code style="color:#22d3bf">μ + σ φ(Φ⁻¹(α)) / (1 − α)</code>(α = 0 で平均、σ は観測の予測分布)。分位点回帰は <code style="color:#22d3bf">(1/(1 − α)) ∫_α^{q_max} Q(u) du</code> を当てはめた段で台形則に、<code style="color:#22d3bf">q_max</code> より上の尾は最上段の値で埋める(尾を細く見積もる向きの近似 —— 段の外の分布は分からない)。返り値 (n,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

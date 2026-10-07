@@ -15,7 +15,23 @@ version: 0.5.0  # fullseye lib version this note was generated for
 - **データ種**: `cimage` → `cimage`
 - **呼び出し**: `fullseye.apply(img, "tb_cx_apply_transfer_function", a=0.5, b=0.5)` (2-D は 1 画像 + 2 スカラつまみ `a,b∈[0,1]` のモデル)
 
-*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない。下の「実行できる例」で使い方を見ること。*
+![tb_cx_apply_transfer_function: input → output](../../_fig/tb_cx_apply_transfer_function.png)
+
+*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
+
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_cx_apply_transfer_function: knob a sweep](../../_fig/tb_cx_apply_transfer_function.a.jpg)
+
+*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+
+**段階**(前置きの op → この op。左から順):
+
+![tb_cx_apply_transfer_function: stages](../../_fig/tb_cx_apply_transfer_function.chain.jpg)
+
+**別の画像でも**(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):
+
+![tb_cx_apply_transfer_function: other inputs](../../_fig/tb_cx_apply_transfer_function.inputs.jpg)
 
 ## 使い方
 
@@ -29,12 +45,21 @@ Multiply a **centred** spectrum by a filter ``H`` -> ``(H, W)`` complex128.
     (a magnitude mask) or complex (a phase-shifting filter). A real ``cx`` is
     FFT'd first (module convenience).
 
-Typed bridge of the 2d op ``cx_apply_transfer_function`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
+Typed bridge of the 2d op ``cx_apply_transfer_function`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` sets the width of the transfer function ``H``, which the bridge builds **per call at the spectrum's own shape**: a centred Gaussian low-pass ``H = exp(-r^2 / (2 sigma^2))`` with ``sigma = 0.02 + 0.48 a`` cycles/pixel (0.26 at a=0.5). ``b`` is unused. (Until 2026-10-07 ``H`` was bound once as a fixed 32x32 array, so every other image size was refused.)
 
 ## 参考(サンプルデータ・文献)
 
 - [サンプルデータ カタログ(DL URL / ライセンス)](../../SAMPLES.md) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。
 - [演算子の来歴・参考文献](../../../REFERENCES.md) — この op 族の元になった研究/手法の出典。
+
+## Studio で試す
+
+下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。
+
+```program
+img_to_cimage 0.50 0.50
+tb_cx_apply_transfer_function 0.50 0.50
+```
 
 ## 実行できる例(この op を実際に呼ぶ検証済みサンプル)
 

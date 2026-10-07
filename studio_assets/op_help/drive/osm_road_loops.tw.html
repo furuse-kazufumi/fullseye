@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_loops&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>道路の和集合の境界ループ。外側(道路の縁)と穴(街区)に分け、Douglas–Peucker で間引く。</p>
+<p>道路聯集的邊界環。分為外環(道路邊緣)與孔(街廓)，並以 Douglas–Peucker 簡化。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>追跡は画素の辺に沿う(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step² (外側 − 穴)が厳密に成り立つ(<code style="color:#22d3bf">area_check</code>)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。返り値 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

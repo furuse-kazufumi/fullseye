@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.hertz_force(R: &#x27;float&#x27;, Estar: &#x27;float&#x27;, a: &#x27;float | None&#x27; = None, delta: &#x27;float | None&#x27; = None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;hertz_force&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Hertz の逆算: 接触半径 a か押し込み δ のどちらか一方から荷重 F。F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}。</p>
+<p>Hertzsche Umkehrung: Last F aus entweder dem Kontaktradius a oder der Eindrückung δ. F = 4E*a³/(3R) = (4/3) E* √R δ^{3/2}.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a と δ の両方(または両方なし)、値が ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_camera(*, position=(1.4, 0.0, 0.75), look_at=(0.0, 0.0, 0.75), shape=(480, 640), fovy_deg: &#x27;float&#x27; = 30.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>透視カメラ(既定 = 前 1.4 m から −x を見る、世界の z が上)。返り <code style="color:#22d3bf">{&quot;C&quot;, &quot;R&quot;(行 = 右・下・前), &quot;K&quot;, &quot;shape&quot;, &quot;look_at&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 位置と注視点が重なる、視線が鉛直、画の大きさや画角が不正。</p>
+<p>透视相机(默认 = 从前方 1.4 m 处朝 −x 看，世界的 z 朝上)。返回 <code style="color:#22d3bf">{&quot;C&quot;, &quot;R&quot;(行 = 右、下、前), &quot;K&quot;, &quot;shape&quot;, &quot;look_at&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：位置与注视点重合、视线竖直、图像尺寸或视场角不合法。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.cylinder_fit_known_radius(points, r: &#x27;float&#x27;, axis_point, axis, iters: &#x27;int&#x27; = 25) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cylinder_fit_known_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>半径 r が既知の円柱を 3-D 点群 (N, 3) に当てる: 軸上の点(軸に垂直な 2 自由度)と軸の向き(2 自由度)を Gauss-Newton で。</p>
+<p>將已知半徑 r 的圓柱擬合到 3-D 點雲 (N, 3)：以 Gauss-Newton 求軸上的點(垂直於軸的 2 個自由度)與軸向(2 個自由度)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>初期値 <code style="color:#22d3bf">axis_point</code>・<code style="color:#22d3bf">axis</code> から出発し、残差 = 軸からの距離 − r。返り: <code style="color:#22d3bf">axis_point</code>(3,)、<code style="color:#22d3bf">axis</code>(単位、入力の向きを保つ)、<code style="color:#22d3bf">rms</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 点が 5 未満、r ≤ 0、axis がゼロ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

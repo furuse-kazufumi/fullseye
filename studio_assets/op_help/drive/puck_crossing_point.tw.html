@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_crossing_point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>予測経路が守備線 x = <code style="color:#22d3bf">x_line</code> を最初に横切る時刻と場所(閉形式: 区間ごとに d(τ)·uₓ = 必要距離 を解く)。</p>
+<p>預測路徑首次穿過防守線 x = <code style="color:#22d3bf">x_line</code> 的時刻與位置(閉合式：逐區間求解 d(τ)·uₓ = 所需距離)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>、横切らなければ <code style="color:#22d3bf">None</code>(fail-closed —— 止まる・ゴールに入る・時間切れ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

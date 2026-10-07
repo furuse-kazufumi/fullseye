@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveinf; driveinf.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;tile_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>区画 (i, j) の中の点 (x, y) の地面の高さ [m]: 全体の整数格子の Perlin 雑音 × relief、道の周りは平ら(<code style="color:#22d3bf">flat</code> m まで 0、<code style="color:#22d3bf">blend</code> m で smoothstep)。格子の番号 = 区画の番号 × cells + 升目の番号(整数で厳密)、補間は升目の中の小数だけ —— 継ぎ目で連続し、遠くでも桁が落ちない。</p>
+<p>區塊 (i, j) 內點 (x, y) 的地面高度 [m]: 全域整數網格上的 Perlin 雜訊 × relief，道路周圍平坦 (<code style="color:#22d3bf">flat</code> m 內為 0，<code style="color:#22d3bf">blend</code> m 內 smoothstep)。網格編號 = 區塊編號 × cells + 單元編號(整數精確)，內插只用單元內的小數部分 —— 接縫處連續，遠處也不損失有效位數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

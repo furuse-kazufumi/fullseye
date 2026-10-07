@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_from_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>刃の 1 点の軌跡 (x, z)(画像から)と刃先の傾き θ(画像から)で ξ を出す。速度は軌跡の直線当てはめの向き(ξ は比)。</p>
+<p>由刀刃上 1 点的轨迹 (x, z)(来自图像)和刃口倾角 θ(来自图像)求 ξ。速度取轨迹直线拟合的方向(ξ 是比值)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>押している区間だけを渡すこと。入り始め(手首が縮む途中)を混ぜると刃が指令より遅れて ξ が偏る —— 刃が食材の全幅を切っている定常区間を使う(PoC で 0.63 → 0.57 = 真値に戻ることを確かめた)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

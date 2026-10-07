@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_bvh(path) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import motionio; motionio.read_bvh(path) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;read_bvh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>BVH を読み、骨格と全コマの関節の世界座標を返す。</p>
+<p>讀取 BVH，回傳骨架以及所有影格中關節的世界座標。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">names</code> 関節名(End Site は <code style="color:#22d3bf">&lt;親&gt;_end</code>)、<code style="color:#22d3bf">parents</code>(根は −1)、<code style="color:#22d3bf">offsets</code> (J, 3)、<code style="color:#22d3bf">positions</code> (T, J, 3) 世界座標、<code style="color:#22d3bf">frame_time</code> [s]、<code style="color:#22d3bf">channels</code>(関節ごとの CHANNELS の名前)、<code style="color:#22d3bf">motion</code> (T, C) の生の値。</p>
 <p>Raises:</p>

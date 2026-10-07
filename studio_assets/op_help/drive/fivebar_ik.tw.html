@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.fivebar_ik(E, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;out&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_ik&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>逆運動学: 先端 E → (q₁, q₂)。腕 i の肘 = 円(Aᵢ, l₁) ∩ 円(E, l₂)、&quot;out&quot; は肘が外側(腕 1 は −y 側、腕 2 は +y 側)、&quot;in&quot; はその逆。届かなければ <code style="color:#22d3bf">None</code>(fail-closed)。FK∘IK = 恒等になる領域が作業域(<code style="color:#22d3bf">fivebar_workspace</code>)。</p>
+<p>逆向運動學：末端 E → (q₁, q₂)。臂 i 的肘 = 圓(Aᵢ, l₁) ∩ 圓(E, l₂)，&quot;out&quot; 為肘在外側(臂 1 在 −y 側，臂 2 在 +y 側)，&quot;in&quot; 則相反。搆不到時為 <code style="color:#22d3bf">None</code>(fail-closed)。FK∘IK = 恆等的區域即工作空間(<code style="color:#22d3bf">fivebar_workspace</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

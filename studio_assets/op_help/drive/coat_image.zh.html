@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coat_image(depth_map, coat: &#x27;float&#x27;, optical_depth: &#x27;float&#x27; = 1.3862943611198906, bare: &#x27;float&#x27; = 0.85, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.coat_image(depth_map, coat: &#x27;float&#x27;, optical_depth: &#x27;float&#x27; = 1.3862943611198906, bare: &#x27;float&#x27; = 0.85, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;coat_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>除去の深さの地図 → 汚れ(膜)の残った板を真上から撮った画像 [0, 1]。残った厚さ t = clip(h0 − h, 0, h0)、明るさ I = bare · exp(−τ t/h0)(Beer–Lambert、τ = <code style="color:#22d3bf">optical_depth</code> は膜全体の光学的厚さ)+ 正規の雑音 <code style="color:#22d3bf">noise</code>。<b>Raises</b> ValueError: 地図が 2-D でない・非有限、coat ≤ 0、τ ≤ 0、bare が (0, 1] の外、noise &lt; 0。</p>
+<p>去除深度图 → 从正上方拍摄的残留污垢(膜)板的图像 [0, 1]。残留厚度 t = clip(h0 − h, 0, h0)，亮度 I = bare · exp(−τ t/h0)(Beer–Lambert，τ = <code style="color:#22d3bf">optical_depth</code> 为整个膜的光学厚度)+ 高斯噪声 <code style="color:#22d3bf">noise</code>。<b>Raises</b> ValueError：图不是 2-D 或非有限，coat ≤ 0，τ ≤ 0，bare 在 (0, 1] 之外，noise &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ball_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>コマごとの候補列 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、<code style="color:#22d3bf">max_jump</code> px 以内)。</p>
+<p>将逐帧候选列表 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> 连成 1 条轨迹(取最接近等速预测的候选，且在 <code style="color:#22d3bf">max_jump</code> px 以内)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

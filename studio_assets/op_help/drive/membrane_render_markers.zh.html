@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × matrix × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>RGB (H, W, 3) に黒い円盤のマーカー(中心 pts (N, 2) [px]、半径 r_px)を描く: 画素の被覆率で rgb *= 1 − dark·coverage。被覆率は円盤の縁の画素だけ sub² の副標本(内側 1・外側 0)。像を補間して歪めないので真値が厳密。<b>Raises</b> ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。</p>
+<p>在 RGB (H, W, 3) 上绘制黑色圆盘标记(中心 pts (N, 2) [px]，半径 r_px)：按像素覆盖率 rgb *= 1 − dark·coverage。覆盖率只对圆盘边缘的像素做 sub² 的子采样(内侧 1、外侧 0)。不对图像插值变形，因此真值严格。<b>Raises</b> ValueError：rgb 不是 (H, W, 3)，pts 不是 (N, 2)，r_px ≤ 0，dark 在 [0, 1] 之外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

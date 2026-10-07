@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。総コストが最適な衝突なしの計画。</p>
+<p>Conflict-Based Search (Sharon, Stern, Felner, Sturtevant 2015). A collision-free plan with optimal sum of costs.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>上段は「衝突を 1 つ選び、2 台のどちらかに制約を足す」二分木の最良優先探索、下段は 1 台の時空間 A*。返りは dict: <code style="color:#22d3bf">paths</code>(各車両のマスの列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展開した節の数)、<code style="color:#22d3bf">solved</code>。節の上限に達したら <code style="color:#22d3bf">solved=False</code>(<b>黙って最適でない解を返さない</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

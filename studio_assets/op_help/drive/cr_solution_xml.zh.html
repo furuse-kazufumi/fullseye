@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_solution_xml(scene, run, *, vehicle_model: &#x27;str&#x27; = &#x27;KS&#x27;, vehicle_type: &#x27;str&#x27; = &#x27;BMW_320i&#x27;, cost: &#x27;str&#x27; = &#x27;JB1&#x27;, benchmark_version: &#x27;str&#x27; = &#x27;2020a&#x27;, date=None) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_solution_xml(scene, run, *, vehicle_model: &#x27;str&#x27; = &#x27;KS&#x27;, vehicle_type: &#x27;str&#x27; = &#x27;BMW_320i&#x27;, cost: &#x27;str&#x27; = &#x27;JB1&#x27;, benchmark_version: &#x27;str&#x27; = &#x27;2020a&#x27;, date=None) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cr_solution_xml&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>公式 solution XML(commonroad-io <code style="color:#22d3bf">CommonRoadSolutionWriter</code> と同じ形)を文字列で返す。</p>
+<p>以字符串返回官方 solution XML(与 commonroad-io <code style="color:#22d3bf">CommonRoadSolutionWriter</code> 相同的形式)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">&lt;CommonRoadSolution benchmark_id=&quot;KS2:JB1:&lt;scenario id&gt;:2020a&quot; date=&quot;YYYY-MM-DDTHH:MM:SS&quot;&gt;</code> の中に <code style="color:#22d3bf">&lt;ksTrajectory planningProblem=&quot;&lt;pp id&gt;&quot;&gt;</code> と <code style="color:#22d3bf">ksState{x, y, steeringAngle, velocity, orientation, time}</code>。位置は <b>車両中心</b>(run[&quot;x&quot;], run[&quot;y&quot;])。<code style="color:#22d3bf">date</code> を渡すと再現可能(省略で今)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: vehicle_model が &quot;KS&quot; 以外(状態が KS の物なので)、vehicle_type が未知、run が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

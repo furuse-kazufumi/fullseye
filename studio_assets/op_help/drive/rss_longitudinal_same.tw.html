@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_same&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>同方向(論文 Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>)の最小安全距離 [m]。</p>
+<p>同向(論文 Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>)的最小安全距離 [m]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">d_min = [ v_r ρ + ½ a ρ² + (v_r + a ρ)²/(2 b_min) − v_f²/(2 b_max) ]_+ + min_distance</code>。後続車 c_r のパラメータが <code style="color:#22d3bf">p</code>(ρ, accel_max, brake_min, v_max_accel, min_distance)、先行車 c_f の <code style="color:#22d3bf">brake_max</code> は <code style="color:#22d3bf">p_front</code>(None なら <code style="color:#22d3bf">p</code>)から取る。v_rear, v_front ≥ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

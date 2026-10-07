@@ -1,6 +1,6 @@
 """roadjp の門: 公表寸法を頂点から測る / 灯の色順 / 法線の向き / 標識画像の色の面積比 / 板の面色 = 区画平均 / 状態切替 / fail-closed。
 
-実行: PYTHONPATH="C:/dev/projects/imgevolve_wt_conn5" py -3.11 -m pytest test_roadjp.py(driveworld・annotate は worktree から)。"""
+実行: PYTHONPATH=<worktree> py -3.11 -m pytest test_roadjp.py(driveworld・annotate は worktree から)。"""
 import math
 import os
 import sys

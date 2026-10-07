@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。</p>
+<p>Steady-state circular cornering of the linear 2-wheel equivalent (bicycle) model (speed u, turning radius R = u/r, left turn positive).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r = R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
 <p>返り値: <code style="color:#22d3bf">steer</code> δ = L/R + K u²/R [rad]、<code style="color:#22d3bf">yaw_rate</code> r = u/R、<code style="color:#22d3bf">lateral_accel</code> u²/R、<code style="color:#22d3bf">sideslip</code> β = l_r/R − m l_f u²/(C_r L R)、<code style="color:#22d3bf">yaw_gain</code> r/δ = (u/L)/(1 + K u²/L)、<code style="color:#22d3bf">front_slip</code>・<code style="color:#22d3bf">rear_slip</code> (軸の横すべり角)、<code style="color:#22d3bf">K</code>。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>

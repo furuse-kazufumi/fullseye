@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_turnaround&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>方向変換コース(T 字): 幅 w の道路(x ∈ [0, 2E + bay_width])の側方中央に車庫(道路沿いの幅 bay_width、奥行 depth)、車庫口の両側に出入口部 E ずつ。</p>
+<p>Wendestrecke (T-förmig): seitlich mittig an einer Straße der Breite w (x ∈ [0, 2E + bay_width]) eine Parkbucht (Breite bay_width entlang der Straße, Tiefe depth), beiderseits der Buchtöffnung je ein Ein-/Ausfahrtsabschnitt E.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>別表第三の図(3JH00000217784)そのもの: 道路(幅 A)の途中に車庫(幅 B × 奥行 C)が直角に付き、車庫口の両側の道路が出入口部 D、車庫口の凹頂点 2 つがすみ切り E。図は上向きの道路の右側に車庫があるが、ここでは <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)を既定にし <code style="color:#22d3bf">&quot;right&quot;</code> で鏡映する。車は道路を進み、後退で車庫に入れ、来た方向へ出る(exit = (0, 0, π); 反対側へ出るときは配置側で向きを選ぶ)。centerline は道路の軸 → 車庫の軸。面積 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>
 <p>規格: A = 3.5, B = 3.5, C = 5, D ≥ 5, E = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・車庫幅・奥行・E が正でない、r &lt; 0、E &lt; r または depth &lt; r(すみ切りが辺に収まらない)、arc_pts が 1 以上の整数でない、side が left/right でない。</p>

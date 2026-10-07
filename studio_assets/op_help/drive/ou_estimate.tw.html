@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.ou_estimate(x, dt: &#x27;float&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ou_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>横ふらつき(平均 0 の OU 過程 dX = −θX dt + σ dW)の母数を、等間隔 dt の観測の列から読む。</p>
+<p>從等間隔 dt 的觀測序列讀出橫向擺動(平均 0 的 OU 過程 dX = −θX dt + σ dW)的參數。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>厳密離散化 x_{k+1} = φ x_k + ε_k(φ = e^{−θ dt}、ε ~ N(0, q²)、q² = σ²(1 − φ²)/(2θ))の条件つき最尤:</p>
 <p>φ̂ = Σ x_k x_{k+1} / Σ x_k²,  q̂² = mean((x_{k+1} − φ̂ x_k)²),  θ̂ = −ln φ̂ / dt,  σ̂ = q̂ sqrt(2θ̂ / (1 − φ̂²))</p>
 <p>(Euler の (1 − φ̂)/dt でなく ln を使うので dt が粗くても偏らない)。標準誤差は漸近式: se(φ̂) = sqrt((1 − φ²)/n)、se(q̂) = q/sqrt(2n)、θ̂・σ̂ はデルタ法。<code style="color:#22d3bf">sigma_increment</code> = sqrt(mean(Δx²)/dt) は θ を使わない粗い推定(E[Δx²] = σ²(1 − φ)/θ なので θ dt → 0 で σ。相関時間の長い系列を短く見るとき、位置の標本 SD より σ を安定に読める)。</p>

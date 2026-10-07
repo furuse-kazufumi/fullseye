@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp64_emulation_probe()</code> (to call the implementation directly, <code style="color:#22d3bf">import ozakimm; ozakimm.fp64_emulation_probe()</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;fp64_emulation_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。</p>
+<p>Returns a table showing whether cuBLAS FP64 emulation (CUDA 13.0 Update 2 or later) is usable on this machine.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ <code style="color:#22d3bf">available=False</code> と理由を返す(重い依存は持たない。ctypes でライブラリを開いて版を読むだけ)。返り: <code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(候補ごとの <code style="color:#22d3bf">library</code>・<code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">loaded</code>・ <code style="color:#22d3bf">cublas_version</code>・<code style="color:#22d3bf">emulation_api</code>(<code style="color:#22d3bf">cublasSetEmulationStrategy</code> があるか)・<code style="color:#22d3bf">gpu</code>(ハンドルを作れたか)・ <code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(有効にする方法)、<code style="color:#22d3bf">note</code>。</p>
 <p>有効にする方法は opt-in: math mode <code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>、またはコードを変えずに <code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く —— 再現が要るなら <code style="color:#22d3bf">matmul_reproducible</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

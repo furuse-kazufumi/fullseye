@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × scalar × scalar × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_surface_roughness(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band, n_sampling: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_surface_roughness(image, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, z_band, n_sampling: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_surface_roughness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>切った後の端面のシルエット(行ごと副画素)を断面とみなし、最小二乗の直線を引いて ISO 4287 のパラメータ(µm)を出す。</p>
+<p>將切割後端面的輪廓(逐列次像素)視為截面，擬合最小平方直線，輸出 ISO 4287 參數(µm)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>パラメータは <code style="color:#22d3bf">roughness.profile_params</code>(Ra / Rq / Rz / Rt …)をそのまま呼ぶ。断面は行の高さ 1 px で平均されるので、正弦の凹凸は箱型の閉形式 <code style="color:#22d3bf">sinc(πΔ/λ)</code>(Δ = 1 px)倍に弱まる。平らな面でも測りの床(雑音と肌理による Rq)が残るので、比べるときは床を二乗で引く。Rz は雑音の山に引っ張られる(床の扱いは Rq でだけ意味がある)。</p>
 <p>返り値: <code style="color:#22d3bf">profile_um</code>(行ごとの偏差)、<code style="color:#22d3bf">z_mm</code>、<code style="color:#22d3bf">params</code>、<code style="color:#22d3bf">dz_um</code>(標本間隔)、<code style="color:#22d3bf">n_rows</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

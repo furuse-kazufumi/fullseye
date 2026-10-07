@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">scalar</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_stopping_distance(v: &#x27;float&#x27;, rho: &#x27;float&#x27;, accel: &#x27;float&#x27;, brake: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, direction: &#x27;float&#x27; = 1.0) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import rsssafety; rsssafety.rss_stopping_distance(v: &#x27;float&#x27;, rho: &#x27;float&#x27;, accel: &#x27;float&#x27;, brake: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, direction: &#x27;float&#x27; = 1.0) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;rss_stopping_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ad-rss-lib の stated braking pattern による <b>符号つき位置オフセット</b>(縦・横共通の 1 つの式)。</p>
+<p>ad-rss-lib의 stated braking pattern에 따른 <b>부호 있는 위치 오프셋</b>(종방향·횡방향 공통의 1개 식).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>ρ の間 <code style="color:#22d3bf">accel</code> で加速(<code style="color:#22d3bf">v_max</code> で頭打ち)し、ρ 後の速度 v_ρ が <b>相手へ向いている</b> (<code style="color:#22d3bf">direction · v_ρ &gt; 0</code>)ときだけ停止距離 <code style="color:#22d3bf">direction · v_ρ² / (2 brake)</code> を足す。離れる向きなら足さない(lib <code style="color:#22d3bf">calculateLongitudinalDistanceOffsetAfterStatedBrakingPattern</code> / <code style="color:#22d3bf">calculateLateralDistanceOffsetAfterStatedBrakingPattern</code> の <code style="color:#22d3bf">signbit</code> 判定)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">符号規約</h4>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">direction</code> = 相手へ向かう向き(+1 か −1)。縦方向は +1(進行方向 = +x)。横方向は左の車が +1、右の車が −1。</p>

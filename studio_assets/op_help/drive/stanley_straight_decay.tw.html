@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">signal</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;stanley_straight_decay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。</p>
+<p>直線路徑上 Stanley(不限幅)的前軸橫向偏差 e(t) 的閉合式。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

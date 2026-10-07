@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cif_read(cif, name=None, default_b=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.cif_read(cif, name=None, default_b=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cif_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>CIF(結晶構造の標準書式)を読んで、単位格子の中の全原子に展開した「相」を返す。</p>
+<p>CIF(결정 구조의 표준 서식)를 읽어 단위 격자 안의 모든 원자로 전개한 &quot;상&quot;을 반환합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">cif</code> はファイルのパスか CIF の本文(文字列。<code style="color:#22d3bf">data_</code> か <code style="color:#22d3bf">_cell_length_a</code> を含むなら本文とみなす)。</p>
 <p>読むもの: <code style="color:#22d3bf">_cell_length_a/b/c</code>・<code style="color:#22d3bf">_cell_angle_alpha/beta/gamma</code>、対称操作のループ(<code style="color:#22d3bf">_space_group_symop_operation_xyz</code> か <code style="color:#22d3bf">_symmetry_equiv_pos_as_xyz</code>、無ければ恒等だけ)、原子のループ(<code style="color:#22d3bf">_atom_site_fract_x/y/z</code>、<code style="color:#22d3bf">_atom_site_type_symbol</code>(無ければラベルの先頭の元素記号)、<code style="color:#22d3bf">_atom_site_occupancy</code> (既定 1)、<code style="color:#22d3bf">_atom_site_U_iso_or_equiv</code> か <code style="color:#22d3bf">_atom_site_B_iso_or_equiv</code>(無ければ <code style="color:#22d3bf">default_b</code> [Å²]))。数値の不確かさの括弧(<code style="color:#22d3bf">4.76050(5)</code>)は落とす。対称操作は自前の小さな構文解析で読み、<code style="color:#22d3bf">eval</code> しない。</p>
 <p>返り値(dict、相): <code style="color:#22d3bf">name</code>・<code style="color:#22d3bf">cell</code>(a, b, c [Å], α, β, γ [deg])・<code style="color:#22d3bf">volume</code> [Å³]・<code style="color:#22d3bf">atoms</code>(展開後の原子の</p>

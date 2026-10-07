@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.add_mesh_object(world: &#x27;dict&#x27;, mesh: &#x27;dict&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, *, name: &#x27;str&#x27; = &#x27;&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;add_mesh_object&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>手続き的なメッシュ(tree_mesh / pedestrian_mesh …、原点 = 底面中心)を姿勢に置いて世界に足す。</p>
+<p>将程序化网格(tree_mesh / pedestrian_mesh …，原点 = 底面中心)按位姿放置并加入世界。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>資産と同じ <code style="color:#22d3bf">pose</code>/<code style="color:#22d3bf">dims</code> を持たせるので <code style="color:#22d3bf">driveworld.world_move</code> で動かせる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

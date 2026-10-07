@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;diffraction_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。</p>
+<p>1차원 회절 프로파일에서 피크를 골라, 가우스 + 직선의 국소 피팅으로 위치·높이·FWHM·면적을 구합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>手順: 窓 <code style="color:#22d3bf">baseline_window</code> [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の局所の最大のうち <code style="color:#22d3bf">min_snr</code> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。<code style="color:#22d3bf">noise</code> に</p>
 <p>数か、<code style="color:#22d3bf">azimuthal_integrate</code> の <code style="color:#22d3bf">sigma</code> のようなビンごとの配列を渡してもよい —— 中心の近くや隅のように画素の少ないビンの揺れを山と取り違えないためには配列が要る)。各候補の半値幅を目で測る代わりに半値の交点で見積もり、隣の候補との中点で切った窓でガウス + 直線を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で当てる。重なった山は窓が切られるぶん偏る(分けたいなら <code style="color:#22d3bf">phase_fractions</code>)。</p>
 <p>返り値(dict): <code style="color:#22d3bf">two_theta</code>・<code style="color:#22d3bf">height</code>・<code style="color:#22d3bf">fwhm</code> [deg]・<code style="color:#22d3bf">area</code>・<code style="color:#22d3bf">snr</code>・<code style="color:#22d3bf">fit_ok</code>(当てはめが収束し窓の中に収まったか)、<code style="color:#22d3bf">noise</code>、<code style="color:#22d3bf">baseline</code>(格子と同じ長さ)。山が無ければ長さ 0 の配列(空 = 失敗ではない)。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.grid_distances(grid, goal)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.grid_distances(grid, goal)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;grid_distances&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p><code style="color:#22d3bf">goal</code> までの格子上の最短手数(BFS、障害物は通れない)。届かないマスは <code style="color:#22d3bf">inf</code>。</p>
+<p>Kürzeste Zugzahl auf dem Gitter bis <code style="color:#22d3bf">goal</code> (BFS; Hindernisse sind unpassierbar). Unerreichbare Zellen sind <code style="color:#22d3bf">inf</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

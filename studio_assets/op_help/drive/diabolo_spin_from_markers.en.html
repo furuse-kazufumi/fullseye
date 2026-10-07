@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spin_from_markers(phases, smears, dt: &#x27;float&#x27;, exposure: &#x27;float&#x27;, *, use_smear: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spin_from_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>コマごとの位相 ψ_k(mod 2π)とぶれの弧の幅 → 回転の速さ ω、単位 rad/s(軸のまわり、右ねじ)。</p>
+<p>Per-frame phase ψ_k (mod 2π) and blur arc width → rotation speed ω, in rad/s (about the axis, right-handed).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>隣のコマの差を (−π, π] に包むと |ω| dt &lt; π までしか読めない(ナイキストで折り返す、車輪の錯視)。<code style="color:#22d3bf">use_smear</code> なら弧の幅 / 露光 = |ω| の粗い値で 2π k の枝を選ぶ(折り返さない粗い値 × 折り返す精しい値)。枝の間隔 2π/dt に対して弧の幅の誤差が半分より小さいことを前提にする。返り <code style="color:#22d3bf">{&quot;omega&quot;, &quot;omega_wrapped&quot;, &quot;omega_smear&quot;, &quot;branch&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 位相が 2 コマ未満、長さが違う、dt ≤ 0、露光 &lt; 0、有限でない値。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

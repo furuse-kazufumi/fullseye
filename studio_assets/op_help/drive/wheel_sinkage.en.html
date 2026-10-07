@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × table × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.wheel_sinkage(load, wheel, soil, slip=0.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;wheel_sinkage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1 輪の垂直荷重 <code style="color:#22d3bf">load</code> [N] を滑り率 <code style="color:#22d3bf">slip</code> で支える沈下 z [m] (F_z(z, s) = load の二分法)。</p>
+<p>Sinkage z [m] at which 1 wheel supports the vertical load <code style="color:#22d3bf">load</code> [N] at slip ratio <code style="color:#22d3bf">slip</code> (bisection on F_z(z, s) = load).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">load</code>・<code style="color:#22d3bf">slip</code> は放送できる配列。車輪の半径まで沈んでも支えられない荷重は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

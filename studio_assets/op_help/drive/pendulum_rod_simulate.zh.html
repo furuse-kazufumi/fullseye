@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pendulum_rod_simulate(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, omega0: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.pendulum_rod_simulate(L: &#x27;float&#x27;, theta0: &#x27;float&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001, g: &#x27;float&#x27; = 9.81, omega0: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pendulum_rod_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>棒の振り子(拘束が両側に効く: 弛まない)θ̈ = −(g/L) sin θ を RK4 で。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;theta&quot;, &quot;omega&quot;, &quot;energy&quot;}</code> (energy = ½L²ω² − gL cos θ、単位質量)。ひもでは弛む θ₀ &gt; π/2 の周期の定理を確かめる比較用。</p>
+<p>用 RK4 积分杆摆(约束双向作用：不会松弛)θ̈ = −(g/L) sin θ。返回 <code style="color:#22d3bf">{&quot;t&quot;, &quot;theta&quot;, &quot;omega&quot;, &quot;energy&quot;}</code>(energy = ½L²ω² − gL cos θ，单位质量)。用于对比，以验证绳会松弛的 θ₀ &gt; π/2 时的周期定理。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

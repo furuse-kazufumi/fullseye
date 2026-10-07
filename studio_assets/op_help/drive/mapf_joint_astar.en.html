@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>全台の位置を 1 つの状態にした A*。<b>小さな問題専用</b>の最適解(CBS の門の真値)。</p>
+<p>A* with the positions of all vehicles as 1 single state. Optimal solution <b>for small problems only</b> (the ground truth for the CBS gate).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>sum of costs を厳密に数えるため、各車両に「終わった(以後は目的地に居続ける)」の旗を持たせる:</p>
 <p>目的地に居る車両はその手の前に終わってよく、1 手の費用 = まだ終わっていない台数。ヒューリスティック = 終わっていない車両の BFS 距離の和(許容的)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>黄信号のジレンマゾーン(Gazis, Herman, Maradudin 1960)。</p>
+<p>Dilemma zone of the amber (yellow) signal (Gazis, Herman, Maradudin 1960).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>速度 <code style="color:#22d3bf">v</code> で停止線の手前 x にいるとき黄が点いた:</p>
 <p>止まれる     ⇔ x ≥ x_c = v δ + v²/(2a)                         (δ = reaction、a = decel)</p>
 <p>抜けられる   ⇔ x ≤ x_0 = v τ + ½ a₁ (τ − δ)² − (w + L)          (τ = amber、a₁ = accel ≥ 0、w = 交差点の幅、L = 車長)</p>

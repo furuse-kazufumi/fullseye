@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_check(order)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_check(order)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>VDA 5050 の order の<b>構造の規則</b>を検査する(公式 JSON スキーマとは別の、自前の第 2 実装)。</p>
+<p>检查 VDA 5050 order 的<b>结构规则</b>(独立于官方 JSON 模式的自研第二实现(独立实现))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>規則: 必須キー / ノードの sequenceId は 0 から偶数で連番、エッジは奇数で連番 / エッジ数 = ノード数 − 1 / 各エッジの始点・終点が前後のノード / released は base の先頭から連続(base → horizon の 1 回の切替のみ)/ エッジの released はその終点ノードと同じ。返りは違反の文言のリスト(空 = 合格)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

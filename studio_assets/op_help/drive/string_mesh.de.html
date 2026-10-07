@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">any</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code> (die Implementierung direkt: <code style="color:#22d3bf">import kendamaworld; kendamaworld.string_mesh(p_ball, p_cup, radius: &#x27;float&#x27; = 0.0015)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;string_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 点(玉の糸穴 p_ball と皿胴の糸穴 p_cup)を結ぶ細い角柱(4 面 + 両端、8 頂点 12 面、外向き)。断面は 2·radius 角。両点が一致すると ValueError。</p>
+<p>Ein dünnes Prisma zwischen 2 Punkten (dem Schnurloch der Kugel p_ball und dem Schnurloch des Querstücks p_cup) (4 Seiten + beide Enden, 8 Vertices, 12 Flächen, nach außen gerichtet). Quadratischer Querschnitt mit Kantenlänge 2·radius. ValueError, wenn beide Punkte zusammenfallen.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

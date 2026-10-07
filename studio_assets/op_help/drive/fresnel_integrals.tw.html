@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fresnel_integrals(x)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.fresnel_integrals(x)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fresnel_integrals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>フレネル積分 C(x) = ∫₀ˣ cos(π t²/2) dt、S(x) = ∫₀ˣ sin(π t²/2) dt(奇関数)。</p>
+<p>菲涅耳積分 C(x) = ∫₀ˣ cos(π t²/2) dt、S(x) = ∫₀ˣ sin(π t²/2) dt(奇函數)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>|x| ≤ 3.5 はべき級数、それより大きいと漸近展開(補助関数 f, g)。誤差は 1e-8 以下(門: 数値積分)。</p>
 <p>返り値: (C, S)(x と同じ形)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限。</p>

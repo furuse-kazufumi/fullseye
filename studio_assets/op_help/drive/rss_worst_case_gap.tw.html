@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap(d0: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>同方向の最悪ケース(論文 Definition 4)を時間で追う。</p>
+<p>依時間追蹤同向的最壞情況(論文 Definition 4)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>先行車は t = 0 から <code style="color:#22d3bf">brake_max</code> で停止まで減速。後続車は ρ の間 <code style="color:#22d3bf">accel_max</code>(<code style="color:#22d3bf">v_max_accel</code> で頭打ち)、その後 <code style="color:#22d3bf">brake_min</code> で停止まで減速。各時刻の位置は区分ごとの等加速度の厳密式で、時刻列には ρ・頭打ち時刻・各車の停止時刻を必ず含める(<code style="color:#22d3bf">dt</code> は表示密度で、min_gap は dt に依らない)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">t, x_rear, x_front, v_rear, v_front, gap</code> (ndarray)、<code style="color:#22d3bf">min_gap, t_min</code> (float)、</p>

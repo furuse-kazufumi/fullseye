@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetown; drivetown.town_layout(name: &#x27;str&#x27; = &#x27;default&#x27;, *, overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;town_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>既定の町。<code style="color:#22d3bf">&quot;default&quot;</code> = road(30) → intersection → road(20) → crossing(踏切) → road(20) → slope → road(20) → parallel_parking → road(30)(全部幅 7 m、停止線は交差点 1 本と踏切 1 本)。<code style="color:#22d3bf">&quot;short&quot;</code> = road(20) → crossing → road(20) (テストの速い門)。</p>
+<p>默认城镇。<code style="color:#22d3bf">&quot;default&quot;</code> = road(30) → intersection → road(20) → crossing(铁路道口) → road(20) → slope → road(20) → parallel_parking → road(30)(全部宽 7 m，停止线为交叉口 1 条、铁路道口 1 条)。<code style="color:#22d3bf">&quot;short&quot;</code> = road(20) → crossing → road(20) (用于测试的快速门禁)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 名前が <code style="color:#22d3bf">TOWN_NAMES</code> に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">any</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code> (to call the implementation directly, <code style="color:#22d3bf">import kendama; kendama.tether_slack_angle(theta0: &#x27;float&#x27;, L: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tether_slack_angle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>真下で速さ v₀ = √(2gL(1 − cos θ₀)) をもつ玉(棒なら θ₀ で止まるエネルギー)のひもが弛む角 θ_s(真下から)。</p>
+<p>Angle θ_s (from straight down) at which the string goes slack for a ball with speed v₀ = √(2gL(1 − cos θ₀)) at the bottom (the energy at which a rod would stop at θ₀).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>導出: v² = 2gL(cos θ − cos θ₀)、T = m(v²/L + g cos θ) = m g (3 cos θ − 2 cos θ₀) = 0 → <b>cos θ_s = (2/3) cos θ₀</b>。上半分(cos θ_s &lt; 0)に達するのは cos θ₀ &lt; 0 ⇔ θ₀ &gt; π/2 のときだけ。θ₀ ≤ π/2 なら張力は θ₀ で m g cos θ₀ ≥ 0 まで下がるだけで弛まない → None。θ₀ = π(頂点にちょうど届くエネルギー)で θ_s = arccos(−2/3) = 131.8°。θ₀ ∈ (0, π] 以外は ValueError。θ₀ &gt; π/2 の玉を静止から放すと最初から弛む(張力 m g cos θ₀ &lt; 0)ので、θ₀ は真下での速さで与える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

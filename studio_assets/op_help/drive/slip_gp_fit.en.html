@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;slip_gp_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>斜面の角 → 滑り率のガウス過程(RBF の核 + 一様な観測雑音)。超パラメータは対数周辺尤度の格子探索。</p>
+<p>Gaussian process from slope angle to slip ratio (RBF kernel + homoscedastic observation noise). Hyperparameters by grid search on the log marginal likelihood.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>y は平均を引いて標準偏差で割ってから当てはめる(信号の分散 σ_f² = 1 に固定、ℓ と雑音 σ_n を探す)。<code style="color:#22d3bf">length_scales</code> の既定は角の範囲の 0.05〜2 倍の 16 段(対数)、<code style="color:#22d3bf">noise_levels</code> は 0.01〜1(正規化した y の単位)の 16 段。返り値は予測に使う dict(<code style="color:#22d3bf">kind = &quot;gp&quot;</code>、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">alpha</code>・<code style="color:#22d3bf">L</code>・<code style="color:#22d3bf">ell</code>・<code style="color:#22d3bf">noise</code>・<code style="color:#22d3bf">y_mean</code>・<code style="color:#22d3bf">y_scale</code>・ <code style="color:#22d3bf">log_marginal_likelihood</code>)。雑音が角によって変わる(異分散)データでは、帯は全体の平均の幅になる(門の罠)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

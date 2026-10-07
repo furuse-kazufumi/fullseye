@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveworld; driveworld.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;world_move&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。</p>
+<p>将物体 i(由资产放置的物体)移到新位姿 (x, y, yaw)(只改写顶点；面、标签、颜色不变)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は <code style="color:#22d3bf">ValueError</code>。</p>
 <p>姿勢の意味は <code style="color:#22d3bf">add_asset</code> と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

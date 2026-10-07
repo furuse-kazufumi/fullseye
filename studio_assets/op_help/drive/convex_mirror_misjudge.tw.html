@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>凸面鏡に映った車の距離と速さを平面鏡のつもりで読んだときの見誤り(近軸の閉形式、配列可)。場面 S064・S130。</p>
+<p>把凸面鏡中車輛的距離與速度當作平面鏡來判讀時的誤判(近軸閉合式，可用陣列)。場景 S064、S130。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>k = 1 + 2e/R。距離(大きさから): â = k a。速さは読み方で 3 つ:</p>
 <p><code style="color:#22d3bf">speed_size_consistent</code> = k v(大きさの変化を、大きさから読んだ距離と矛盾なく読む → 速く見える)、<code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(本当の距離 a にある物の大きさの変化として読む → a &gt; e/√k で遅い)、<code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(横切る動きの角の速さを本当の距離で読む → 遅い)。<code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(大きさとその変化率の比 = 見かけの到達時間)、<code style="color:#22d3bf">tau_true</code> = a / v。遠く見える(k &gt; 1)は読み方によらないが、<b>遅く見えるのは本当の距離に錨を置いたときだけ</b> —— 返り値の 3 つで分かる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">scalar</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tether_tension_fixed(v: &#x27;float&#x27;, theta: &#x27;float&#x27;, L: &#x27;float&#x27;, mass: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import kendama; kendama.tether_tension_fixed(v: &#x27;float&#x27;, theta: &#x27;float&#x27;, L: &#x27;float&#x27;, mass: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tether_tension_fixed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>手元固定・伸びないひもの張力 T = m(v²/L + g cos θ)(v = 速さ、θ = 真下からの角)。負なら「ひもは押せない」= 弛む。</p>
+<p>手端固定、不可伸长的绳的张力 T = m(v²/L + g cos θ)(v = 速度，θ = 与正下方的夹角)。为负则&quot;绳不能推&quot; = 松弛。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

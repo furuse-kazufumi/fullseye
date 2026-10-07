@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.overtake_return_gap(*, lane_offset: &#x27;float&#x27;, lead_width: &#x27;float&#x27;, eye_xy=(0.0, -0.35), mirror_center_xy=(0.55, 0.0), mirror_normal_xy=None, mirror_width: &#x27;float&#x27; = 0.25, eye_to_rear: &#x27;float&#x27; = 2.8) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.overtake_return_gap(*, lane_offset: &#x27;float&#x27;, lead_width: &#x27;float&#x27;, eye_xy=(0.0, -0.35), mirror_center_xy=(0.55, 0.0), mirror_normal_xy=None, mirror_width: &#x27;float&#x27; = 0.25, eye_to_rear: &#x27;float&#x27; = 2.8) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;overtake_return_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>追い越した前車の <b>全体がルームミラーに映る</b> ときの車間(自車の後端と前車の前端の間)。場面 S086・S145。</p>
+<p>被超越的前車<b>整體映入車內後視鏡</b>時的車距(本車車尾與前車車頭之間)。場景 S086、S145。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>教則 5-6-3(6)「追い越した車がルームミラーで見えるくらいの距離までそのまま進み」・7-2-3「追い越した車全体がルームミラーに映ってから」を幾何にする。座標は自車(x = 前、y = 左、原点 = 眼の真横の車の中心線)。前車は左の車線(横の中心 = <code style="color:#22d3bf">lane_offset</code>、幅 <code style="color:#22d3bf">lead_width</code>)で自車の後ろ。ルームミラーは平面鏡(中心 <code style="color:#22d3bf">mirror_center_xy</code>、幅 <code style="color:#22d3bf">mirror_width</code>、法線は眼の側)。法線を省くと、眼から鏡の中心への光線を真後ろ(−x)へ返す向き(<code style="color:#22d3bf">drivedecide.mirror_aim_normal</code>)。</p>
 <p>映る ⇔ 仮想の眼 E&#x27;(眼を鏡の直線で折り返した点)と点を結ぶ線分が鏡の線分を通る。道に平行な直線の上では境目は 1 次方程式の根で、前の辺の両端(2 隅)で決まる。返り値: <code style="color:#22d3bf">gap</code> = 眼の後ろ <code style="color:#22d3bf">eye_to_rear</code> の自車の後端から、前の 2 隅が映る前車の前端までの距離、<code style="color:#22d3bf">corner_limit_x</code>(各隅が映る x の上限)、<code style="color:#22d3bf">straight_back_s</code>(真後ろの方向が鏡のどこを通るか。鏡の外なら真後ろが映らない = ValueError)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.neohookean_cylinder_exact(d, mu: &#x27;float&#x27; = 1.0, area: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;neohookean_cylinder_exact&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>非圧縮 neo-Hookean の円柱を摩擦なしで一軸に圧縮する厳密解(連続体の教科書の結果、模型と独立)。</p>
+<p>不可壓縮 neo-Hookean 圓柱無摩擦單軸壓縮的精確解(連體力學教科書的結果，與模型獨立)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>伸び λ = 1 − d、横は λ^{−1/2}(体積一定)。公称応力 P = μ(λ⁻² − λ)(圧縮を正)、Cauchy 応力 σ = μ(λ⁻¹ − λ²)、力 F = P·area、線形の力 3μ·d·area(E = 3μ)、<code style="color:#22d3bf">kappa</code> = F/線形、<code style="color:#22d3bf">radius_ratio</code> = λ^{−1/2}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、μ・area ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

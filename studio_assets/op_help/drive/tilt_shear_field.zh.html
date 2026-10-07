@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tilt_shear_field(p_before, p_after, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.tilt_shear_field(p_before, p_after, kern: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tilt_shear_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>「把持後に零点を取る」論文の手順そのまま: 把持直後の圧 p_before とトルク後の圧 p_after の差 Δp を Boussinesq 核で畳み、零点後のマーカー変位 <code style="color:#22d3bf">ux</code>・<code style="color:#22d3bf">uy</code>(・<code style="color:#22d3bf">uz</code>)と <code style="color:#22d3bf">dp</code> を返す。Δp の 0 次モーメントが 0(法線力不変)なら双極子は原点に依らない。<b>Raises</b> ValueError: 2 枚の形が違う。</p>
+<p>完全照搬论文&quot;抓握后取零点&quot;的步骤：将抓握刚完成时的压力 p_before 与施加扭矩后的压力 p_after 之差 Δp 用 Boussinesq 核卷积，返回取零点后的标记位移 <code style="color:#22d3bf">ux</code>、<code style="color:#22d3bf">uy</code>(、<code style="color:#22d3bf">uz</code>)和 <code style="color:#22d3bf">dp</code>。若 Δp 的 0 阶矩为 0(法向力不变)，偶极子与原点无关。<b>Raises</b> ValueError：2 个数组形状不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

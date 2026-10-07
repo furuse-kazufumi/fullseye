@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.no_stopping_zones(features: &#x27;Iterable[dict]&#x27;, *, in_service: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;no_stopping_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>道に沿った施設から、44 条 1 項の駐停車禁止の区間を作る。</p>
+<p>根据道路沿线设施生成第44条第1款的禁止停车区间。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(バス停は &quot;at&quot; = 標示板の位置でもよい)。kind ∈ <code style="color:#22d3bf">NO_STOP_DISTANCE</code>。区間 = [start − d, end + d] (d = その号の距離)。バス停は運行時間中(<code style="color:#22d3bf">in_service</code>)だけ。</p>
 <p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)] (元の順)、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2) の配列(昇順・互いに素)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

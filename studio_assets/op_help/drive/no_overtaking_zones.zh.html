@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.no_overtaking_zones(features: &#x27;Iterable[dict]&#x27;, *, priority_road: &#x27;bool&#x27; = False, vicinity: &#x27;Optional[dict]&#x27; = None, steep_grade: &#x27;float&#x27; = 0.1, zone: &#x27;float&#x27; = 30.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;no_overtaking_zones&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>道に沿った施設から、30 条の追越し(のための進路変更・側方通過)の禁止区間を作る。場面 S081・S009・S130。</p>
+<p>根据道路沿线设施生成第30条禁止超车(为超车而变更车道、从侧方通过)的区间。场景 S081、S009、S130。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>features[i] = {&quot;kind&quot;, &quot;start&quot;, &quot;end&quot;}(点の施設は &quot;at&quot;)。kind:</p>
 <p><code style="color:#22d3bf">sign</code>(標識等で禁止された区間をそのまま)、<code style="color:#22d3bf">curve</code>(曲がり角、1 号「付近」= 前後 <code style="color:#22d3bf">vicinity</code>、<b>仮定</b> 30 m)、<code style="color:#22d3bf">crest</code>(上り坂の頂上、同)、<code style="color:#22d3bf">downhill</code>(下り坂、&quot;grade&quot; が <code style="color:#22d3bf">steep_grade</code>(<b>仮定</b> 10 %)以上か grade 無しなら 1 号の「勾配の急な」)、<code style="color:#22d3bf">tunnel</code>(2 号。&quot;has_lanes&quot; が真なら除外)、<code style="color:#22d3bf">intersection</code>(3 号。<code style="color:#22d3bf">priority_road</code> を通行しているなら除外)、<code style="color:#22d3bf">railway_crossing</code> / <code style="color:#22d3bf">crosswalk</code> / <code style="color:#22d3bf">bicycle_crossing</code>(3 号)。3 号は [start − 30, end]。</p>
 <p>返り値: <code style="color:#22d3bf">zones</code> = [(a, b, kind, 号)]、<code style="color:#22d3bf">merged</code> = 重なりを併せた (k, 2)。</p>

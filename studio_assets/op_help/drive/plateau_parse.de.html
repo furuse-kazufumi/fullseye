@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveplateau; driveplateau.plateau_parse(source: &#x27;str | Path | bytes&#x27;, *, origin: &#x27;tuple[float, float] | None&#x27; = None, max_buildings: &#x27;int | None&#x27; = None) -&gt; &#x27;dict[str, Any]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;plateau_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>PLATEAU CityGML から建物の足元多角形・高さ・底面標高をストリーム読みする。</p>
+<p>Liest Grundrisspolygone, Höhen und Geländehöhen der Gebäudebasis aus PLATEAU-CityGML im Streaming-Verfahren.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">iterparse</code> で <code style="color:#22d3bf">Building</code>(ローカル名)の end イベントごとに処理し、処理後 <code style="color:#22d3bf">elem.clear()</code> でメモリを解放する(1 ファイル数百 MB でも動く設計)。</p>
 <p>建物ごとに:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measuredHeight</code> があれば高さに使う。無ければ <code style="color:#22d3bf">lod1Solid</code> の最大標高 − 最小標高。</p>

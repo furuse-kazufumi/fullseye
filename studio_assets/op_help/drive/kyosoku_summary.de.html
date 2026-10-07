@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivetown; drivetown.kyosoku_summary(path=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;kyosoku_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>教則の場面の再現台帳(docs/drive/kyosoku_scenarios.json)を読み、category × status の件数表にする。</p>
+<p>Liest das Register der nachgestellten Szenarien des Verkehrslehrbuchs (Kyōsoku) (docs/drive/kyosoku_scenarios.json) und erstellt daraus eine Häufigkeitstabelle category × status.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">path</code> = None なら repo の <code style="color:#22d3bf">docs/drive/kyosoku_scenarios.json</code>(このモジュールの場所から引く)。返り値 <code style="color:#22d3bf">{&quot;total&quot;, &quot;statuses&quot; (順序つき), &quot;by_status&quot;: {status: n}, &quot;categories&quot;: [...] (件数の多い順), &quot;by_category&quot;: {category: {status: n}}, &quot;table&quot;: [[category, n_reproduced, n_partial, n_pending, n_not_reproducible, total], ...]}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い・JSON でない・<code style="color:#22d3bf">scenarios</code> が無い・場面に id/category/status が無い・ status が <code style="color:#22d3bf">KYOSOKU_STATUSES</code> に無い・id が重複。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

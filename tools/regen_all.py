@@ -208,9 +208,9 @@ EXCLUDED = {
     "tools/gen_synth_samples.py": _IMAGE_REASON + (" studio_assets/sample_images の合成テクスチャ。手元では 2 回で"
                                                    "バイト一致だが、コミット済みの 4 ファイルと一致しない"
                                                    "(作った環境との差か古いかは未判定)。"),
-    "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★出力先が絶対パス"
-                                                       "(C:\\dev\\projects\\imgevolve)で、どの checkout から"
-                                                       "回しても本線の図を書き換える。"),
+    "tools/gen_blas_article_figs.py": _IMAGE_REASON + (" BLAS スレッド数の**実測**を図にする。★2026-10-07 まで"
+                                                       "出力先が手元の絶対パスで、どの checkout から回しても"
+                                                       "本線の図を書き換えていた(今は Path(__file__) から求める)。"),
     "tools/gen_evis_media.py": _IMAGE_REASON + " 入力は手元の evis 実験映像(EVIS_CHOPSTICK_DIR)。",
     "tools/gen_visionlab_video.py": _IMAGE_REASON + " 動画(GIF/MP4)。",
     "tools/gen_studio_screenshots.py": _IMAGE_REASON + " Studio(PySide6)を実際に起動して撮る。CI に画面は無い。",

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.bus_stop_rate(x, *, bus_rear: &#x27;float&#x27;, bus_front: &#x27;float&#x27;, base: &#x27;float&#x27;, peak: &#x27;float&#x27;, spread: &#x27;float&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bus_stop_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>停車中のバスの前後で高い出現率 λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)] [件/m]。バスの陰(前端の先)と後ろから人が出てくる、という形の例(値は呼び出し側の仮定)。上限は base + 2·peak。</p>
+<p>在停靠公車前後較高的出現率 λ(x) = base + peak [exp(−½((x − rear)/spread)²) + exp(−½((x − front)/spread)²)] [次/m]。表示行人從公車的陰影(前端之前)與後方走出的模式範例(值為呼叫端的假定)。上限為 base + 2·peak。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

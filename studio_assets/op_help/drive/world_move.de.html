@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveworld; driveworld.world_move(world: &#x27;dict&#x27;, i: &#x27;int&#x27;, x: &#x27;float&#x27;, y: &#x27;float&#x27;, yaw: &#x27;float&#x27;, z: &#x27;float&#x27; = 0.0) -&gt; &#x27;None&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;world_move&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>物体 i(資産で置いたもの)を新しい姿勢 (x, y, yaw) へ動かす(頂点だけ書き換える。面・ラベル・色は不変)。</p>
+<p>Bewegt Objekt i (aus einem Asset platziert) in eine neue Pose (x, y, yaw) (überschreibt nur die Vertices; Flächen, Labels und Farben bleiben unverändert).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>対向車を 1 コマずつ進める(15 巡目の TTC)ための op。資産でない物体(縁石・路面・信号機)は <code style="color:#22d3bf">ValueError</code>。</p>
 <p>姿勢の意味は <code style="color:#22d3bf">add_asset</code> と同じ(資産の原点 = 箱の底面中心、yaw は +x から反時計回り)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

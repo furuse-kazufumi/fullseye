@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_pressure_kernel(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, res: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None, normalize: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.preston_pressure_kernel(force: &#x27;float&#x27;, radius: &#x27;float&#x27;, res: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, estar=None, normalize: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;preston_pressure_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>工具の下の圧力 [Pa] を画素中心で標本化した窓(奇数 × 奇数、中心の画素が工具の中心)。平板は円の内側で一様 F/(πa²)、Hertz は p0 √(1 − r²/a²)(<code style="color:#22d3bf">radius</code> = 球の半径 R、<code style="color:#22d3bf">estar</code> が要る)。<code style="color:#22d3bf">normalize=True</code> なら Σ p · res² = F に合わせる(画素で数えた円の面積の誤差を消す。FFT の畳み込みで体積を保つため)。<b>Raises</b> ValueError: 力・半径・画素が正でない、kind が不明、Hertz で estar が無い、接触半径が 1 画素より小さい。</p>
+<p>在像素中心采样的工具下方压力 [Pa] 窗口(奇数 × 奇数，中心像素为工具中心)。平板：圆内均匀 F/(πa²)；Hertz：p0 √(1 − r²/a²)(<code style="color:#22d3bf">radius</code> = 球半径 R，需要 <code style="color:#22d3bf">estar</code>)。<code style="color:#22d3bf">normalize=True</code> 时缩放使 Σ p · res² = F(消除按像素计数的圆面积误差，以便 FFT 卷积保持体积)。<b>Raises</b> ValueError：力、半径或像素不为正，kind 未知，Hertz 缺少 estar，接触半径小于 1 像素。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

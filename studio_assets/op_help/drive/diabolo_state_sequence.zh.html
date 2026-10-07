@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × any × table</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_state_sequence(X, sticks, params: &#x27;dict&#x27;, *, flying_rule: &#x27;str&#x27; = &#x27;paper&#x27;, mode0: &#x27;str&#x27; = &#x27;on_string&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_state_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>位置の列 X (N, 3) と棒 (N, 2, 3) から論文の状態遷移だけを回す(観測した軌跡の分類用、力学は解かない)。有限でない行は直前の状態を保つ(追跡が見失ったコマ)。返り (N,) の状態名。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・長さ・綴り。</p>
+<p>由位置序列 X (N, 3) 和棍 (N, 2, 3) 只运行论文的状态转移(用于对观测轨迹分类，不求解动力学)。非有限的行保持前一状态(跟踪丢失的帧)。返回 (N,) 的状态名。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：形状、长度、拼写。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

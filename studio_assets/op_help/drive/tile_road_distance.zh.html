@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveinf; driveinf.tile_road_distance(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tile_road_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>区画 (i, j) の中の点 (x, y)(区画の中の座標)から最寄りの道の中心線までの距離。★隣の 8 区画の道も見る(隣の道を区画の中の座標へずらして)—— 継ぎ目の近くで両側の区画が同じ距離を出すため。</p>
+<p>区块 (i, j) 内的点 (x, y)(区块内坐标)到最近道路中心线的距离。★也查看相邻 8 个区块的道路 (把相邻道路平移到区块内坐标)—— 使接缝附近两侧区块给出相同的距离。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.cubic_prototype(kind, a, species, b_iso=0.5, name=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cubic_prototype&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>立方晶の原型(<code style="color:#22d3bf">sc</code>・<code style="color:#22d3bf">bcc</code>・<code style="color:#22d3bf">fcc</code>・<code style="color:#22d3bf">diamond</code>・<code style="color:#22d3bf">rocksalt</code>・<code style="color:#22d3bf">cscl</code>・<code style="color:#22d3bf">zincblende</code>・<code style="color:#22d3bf">fluorite</code>)から相を作る。</p>
+<p>由立方晶系原型(<code style="color:#22d3bf">sc</code>、<code style="color:#22d3bf">bcc</code>、<code style="color:#22d3bf">fcc</code>、<code style="color:#22d3bf">diamond</code>、<code style="color:#22d3bf">rocksalt</code>、<code style="color:#22d3bf">cscl</code>、<code style="color:#22d3bf">zincblende</code>、<code style="color:#22d3bf">fluorite</code>)构建物相。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>CIF が無いときの相の作り方(教科書の座標だけ)。<code style="color:#22d3bf">species</code> は副格子ごとの散乱体の名前の list(rocksalt は <code style="color:#22d3bf">[&quot;Na&quot;, &quot;Cl&quot;]</code>、fluorite は <code style="color:#22d3bf">[&quot;Ca&quot;, &quot;F&quot;]</code> の順 = 陽イオン、陰イオン)。<code style="color:#22d3bf">a</code> [Å]、<code style="color:#22d3bf">b_iso</code> [Å²] は全原子共通。</p>
 <p>返り値は <code style="color:#22d3bf">cif_read</code> と同じ形の相。</p>
 <p>Raises ValueError: 原型の名前の綴り違い、副格子の数と <code style="color:#22d3bf">species</code> の数の不一致、未知の元素、<code style="color:#22d3bf">a &lt;= 0</code>。</p>

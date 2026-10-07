@@ -1,7 +1,7 @@
 """Learn (not hand-code) a torque policy so the biped *evis*-family humanoid walks — the
 same RL recipe used for the go2 figure-8, transferred to the torque twin.
 
-Runs in the loco_mujoco venv (``C:/dev/venvs/loco``), which provides the ``HumanoidTorque``
+Runs in the loco_mujoco venv (the GPU venv with ``loco_mujoco``), which provides the ``HumanoidTorque``
 environment: a 13-torque, 19-DoF biped on a floor, with **reference-state initialisation**
 (``random_start`` seeds each episode from a mocap walk frame) and a TargetVelocity reward
 that pays for moving forward at a target speed while staying upright. A small neural policy

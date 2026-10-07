@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.racket_plan(v_in, omega_in, v_out, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;, refine: &#x27;int&#x27; = 8) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;racket_plan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>望む v_out を出すラケットの法線 n と速度 v_r(法線方向)。摩擦 0 の閉形式 n ∝ v_out − v_in、v_r·n = |Δv|/(1+e) + v_in·n を初期値に、実際の衝突(摩擦・スピン込み)で <code style="color:#22d3bf">refine</code> 回反復。返り値 <code style="color:#22d3bf">{&quot;normal&quot;, &quot;v_racket&quot;, &quot;v_out_actual&quot;, &quot;omega_out&quot;, &quot;residual&quot;}</code>。Δv ≈ 0 なら ValueError。</p>
+<p>产生期望 v_out 的球拍法线 n 与速度 v_r(法线方向)。以摩擦为 0 的闭式 n ∝ v_out − v_in、v_r·n = |Δv|/(1+e) + v_in·n 为初值，用实际碰撞(含摩擦、旋转)迭代 <code style="color:#22d3bf">refine</code> 次。返回值 <code style="color:#22d3bf">{&quot;normal&quot;, &quot;v_racket&quot;, &quot;v_out_actual&quot;, &quot;omega_out&quot;, &quot;residual&quot;}</code>。Δv ≈ 0 时为 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

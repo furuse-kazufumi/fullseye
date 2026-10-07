@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.ackermann_steer_angles(radius, wheelbase: &#x27;float&#x27;, track: &#x27;float&#x27;) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ackermann_steer_angles&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>アッカーマンの内外輪の舵角(後車軸の中心の旋回半径 R、ホイールベース L、輪距 t)。</p>
+<p>Ackermann inner and outer wheel steering angles (turning radius R at the center of the rear axle, wheelbase L, track width t).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>δ_in = atan(L/(R − t/2))、δ_out = atan(L/(R + t/2))、2 輪等価 δ = atan(L/R)。cot δ_out − cot δ_in = t/L。</p>
 <p>返り値: <code style="color:#22d3bf">inner</code>, <code style="color:#22d3bf">outer</code>, <code style="color:#22d3bf">bicycle</code> [rad]、<code style="color:#22d3bf">front_inner_radius</code> √((R − t/2)² + L²)、<code style="color:#22d3bf">front_outer_radius</code>、<code style="color:#22d3bf">rear_inner_radius</code> R − t/2、<code style="color:#22d3bf">offtracking</code>(定常の内輪差 = 前内輪 − 後内輪の半径)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ t/2(内側の後輪が旋回の中心を越える)、L ≤ 0、t &lt; 0。</p>

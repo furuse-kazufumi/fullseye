@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">normalmap × normalmap</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacscalib; tacscalib.normal_error_map(n_a, n_b) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;normal_error_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 つの法線場の画素ごとの角度 [度] = atan2(|a × b|, a · b)(正規化しない —— 長さは atan2 の比で消える)。acos(a · b) は単位ベクトルの近くで丸めの床を持つ(1e-7° を 1e-4° と答える)ので使わない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う / 最後の軸が 3 でない。</p>
+<p>Pixelweiser Winkel [Grad] zwischen 2 Normalenfeldern = atan2(|a × b|, a · b) (ohne Normierung — die Länge kürzt sich im Verhältnis von atan2). acos(a · b) wird nicht verwendet, da es bei nahezu gleichen Einheitsvektoren eine Rundungsuntergrenze hat (es liefert 1e-4° statt 1e-7°). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Formen verschieden / letzte Achse ist nicht 3.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

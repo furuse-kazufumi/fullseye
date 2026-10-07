@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_episode_summary(ep) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_episode_summary(ep) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_episode_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>1 走行の記録(<code style="color:#22d3bf">pegfail_episode_run</code> の返り、または同じ鍵の dict)を要約: 注入クラス、最初に<b>検出</b>された失敗クラス、検出の遅れ(真の失敗の始まり <code style="color:#22d3bf">failing_onset_tick</code> → 検出の刻、刻 = 10 ms)、回復の回数と成否、最終深さ・最大力。</p>
+<p>汇总 1 次运行的记录(<code style="color:#22d3bf">pegfail_episode_run</code> 的返回值，或具有相同键的 dict)：注入类别、最先<b>检测到</b>的失败类别、检测延迟(真实失败的起点 <code style="color:#22d3bf">failing_onset_tick</code> → 检测时间步，时间步 = 10 ms)、恢复次数与成败、最终深度与最大力。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">ep[&quot;rec&quot;]</code> は列 <code style="color:#22d3bf">depth</code>・<code style="color:#22d3bf">cls_truth</code>・<code style="color:#22d3bf">detected</code>・<code style="color:#22d3bf">force</code> を持つ dict。返り: <code style="color:#22d3bf">injected</code>、<code style="color:#22d3bf">first_cls</code>、<code style="color:#22d3bf">first_cls_tick</code>、<code style="color:#22d3bf">stall_onset_tick</code>(= 使った onset)、<code style="color:#22d3bf">latency_ticks</code>(nan なら検出なし)、<code style="color:#22d3bf">recoveries</code>、<code style="color:#22d3bf">success</code>、<code style="color:#22d3bf">status</code>、<code style="color:#22d3bf">final_depth_mm</code>、<code style="color:#22d3bf">max_force_N</code>、<code style="color:#22d3bf">classes_seen</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

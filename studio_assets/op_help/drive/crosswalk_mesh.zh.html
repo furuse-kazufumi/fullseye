@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_mesh(a, b, length: &#x27;float&#x27; = 4.0, stripe: &#x27;float&#x27; = 0.45, gap: &#x27;float&#x27; = 0.45, z: &#x27;float&#x27; = 0.006) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveterrain; driveterrain.crosswalk_mesh(a, b, length: &#x27;float&#x27; = 4.0, stripe: &#x27;float&#x27; = 0.45, gap: &#x27;float&#x27; = 0.45, z: &#x27;float&#x27; = 0.006) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>横断歩道(ゼブラ): 道を横切る線分 a→b に沿って幅 <code style="color:#22d3bf">stripe</code>・間隔 <code style="color:#22d3bf">gap</code> の縞を、a→b に直交する向きに <code style="color:#22d3bf">length</code> だけ伸ばす(a→b の左手側)。<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot; (12), &quot;n_stripes&quot;, &quot;area&quot;}</code>。</p>
+<p>人行横道(斑马线)：沿横穿道路的线段 a→b，以宽 <code style="color:#22d3bf">stripe</code>、间隔 <code style="color:#22d3bf">gap</code> 排列条纹，并沿与 a→b 正交的方向延伸 <code style="color:#22d3bf">length</code>(在 a→b 的左手侧)。<code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot; (12), &quot;n_stripes&quot;, &quot;area&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

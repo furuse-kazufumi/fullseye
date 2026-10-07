@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>縦列駐車: 幅 <code style="color:#22d3bf">road_width</code> の道路(x ∈ [0, 2·approach + bay_length])の路側に、長さ car_length + extra (既定 7.5 m)× 幅 car_width の車室。<b>法令に数値なし(通達の別添は図)</b> —— 既定は慣行値。</p>
+<p>Parallel parking: a parking bay of length car_length + extra (default 7.5 m) × width car_width at the roadside of a road of width <code style="color:#22d3bf">road_width</code> (x ∈ [0, 2·approach + bay_length]). <b>No figures in the statutes (the attachment to the official notice is a drawing)</b> — the default is a customary value.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない、extra &lt; 0、side が left/right でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scoop; scoop.stream_areal_density(coverage, radius_px: &#x27;float&#x27;, *, c_max: &#x27;float&#x27; = 0.95, mode: &#x27;str&#x27; = &#x27;raise&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;stream_areal_density&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>被覆率から粒の中心の面密度 [個 / px²] を Boolean 模型で逆に解く <code style="color:#22d3bf">n = −ln(1 − c) / (π r²)</code>。</p>
+<p>Inverts the Boolean model to get the areal density of particle centers [particles / px²] from the coverage, <code style="color:#22d3bf">n = −ln(1 − c) / (π r²)</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>独立に置いた半径 <code style="color:#22d3bf">r</code> の円板の和の被覆率は <code style="color:#22d3bf">c = 1 − exp(−n π r²)</code>(重なりを数え落とさない)。素朴な <code style="color:#22d3bf">c / (π r²)</code> は c = 0.8 で 2 倍近く数え落とす(PoC の門)。c が 1 に近いと逆は発散する(厚い流れは向こうが</p>
 <p>見えない): <code style="color:#22d3bf">mode=&quot;raise&quot;</code> は <code style="color:#22d3bf">c ≥ c_max</code> の画素があれば <code style="color:#22d3bf">ValueError</code>、<code style="color:#22d3bf">&quot;clip&quot;</code> は <code style="color:#22d3bf">c_max</code> に切る(下限の推定になる)。粒の位置が独立でない密な流れ(口の近く、粒が接している)では模型が外れる —— 限界。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 被覆率でない / 飽和(<code style="color:#22d3bf">mode=&quot;raise&quot;</code>)/ 綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

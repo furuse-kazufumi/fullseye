@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.container_fill_level(side, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;container_fill_level&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>容器内側の側面像(粉の被覆率、容器の内寸 = 画像)から充填率と粉面の傾きを読む。</p>
+<p>Reads the fill fraction and the tilt of the powder surface from a side image of the container interior (powder coverage; container inner dimensions = image).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>充填率 = 列ごとの粉面(しきい値の交差、副画素)の平均 / 行数。粉面 → <code style="color:#22d3bf">fit_line</code> → <code style="color:#22d3bf">surface_tilt_deg</code>(右が高いほど正)と <code style="color:#22d3bf">surface_rms</code>(平面からのずれ [px])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 空(しきい値以上の画素が無い)/ 満杯で粉面が見えない(最上行が粉)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

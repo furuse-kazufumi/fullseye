@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_check(d: &#x27;float&#x27;, v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>同方向の縦間隔 d(後続の前端 〜 先行の後端、≥ 0)が安全か。</p>
+<p>同向的縱向間距 d(跟隨車前端 ~ 前車後端，≥ 0)是否安全。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Returns <code style="color:#22d3bf">{&quot;safe_distance&quot;, &quot;dangerous&quot; (d ≤ safe_distance), &quot;margin&quot; (d − safe_distance)}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

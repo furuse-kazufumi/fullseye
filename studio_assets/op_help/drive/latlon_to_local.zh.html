@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.latlon_to_local(lat, lon, origin) -&gt; &#x27;Tuple[np.ndarray, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;latlon_to_local&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>緯度経度 [deg] → 原点 origin = (lat0, lon0) まわりの等距円筒近似の平面座標 (x 東, y 北) [m]。</p>
+<p>经纬度 [deg] → 以原点 origin = (lat0, lon0) 为中心的等距圆柱近似平面坐标 (x 东, y 北) [m]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>x = R cos(lat0) Δλ、y = R Δφ(R = 6378137 m)。1 km 四方で 1e-5 の歪み(cos の変化)なので町 1 つには十分。配列可。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 緯度経度が範囲外・非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

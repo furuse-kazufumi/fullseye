@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × table × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_mirror_path(p0, v0, table: &#x27;dict&#x27;, t_end: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_mirror_path(p0, v0, table: &#x27;dict&#x27;, t_end: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_mirror_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>鏡映法(摩擦なし・e = kₜ = 1 専用): 直線 p₀ + v₀ t を壁の格子で折り返した位置を返す(第 2 実装、門の相手)。ゴールは無視(壁として扱う)。返り値 = 終端位置 (2,)。</p>
+<p>Spiegelungsmethode (nur reibungsfrei, e = kₜ = 1): gibt die Position der Geraden p₀ + v₀ t zurück, gefaltet am Gitter der Wände (2. (unabhängige) Implementierung, Gegenstück für das Gate). Tore werden ignoriert (als Wände behandelt). Rückgabewert = Endposition (2,).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

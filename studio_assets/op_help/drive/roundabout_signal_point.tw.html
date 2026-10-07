@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_point(arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>環状交差点を出るときの左の合図を始める位置(右回りに進んだ角)。場面 S069。</p>
+<p>駛出圓環時開始打左轉燈的位置(沿順時針行進的角度)。場景 S069。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>教則 5-5-1(2)・5-7-2(4): 出ようとする地点の直前の出口の側方を通過したとき、入った直後の出口を出るなら入ったとき(53 条 2 項。時期の政令 = 施行令 21 条は未確認)。<code style="color:#22d3bf">arm_angles</code> = 各枝の角、<code style="color:#22d3bf">entry</code> / <code style="color:#22d3bf">exit</code> = 番号。右回りに入口から測った各枝の角 d_i = (θ_entry − θ_i) mod 2π(出口 = 入口なら 2π、転回)。合図の角 = 目的の出口の角より小さい d_i の最大値(無ければ 0 = 入ったとき)。返り値: <code style="color:#22d3bf">signal_angle</code>、<code style="color:#22d3bf">exit_angle</code>、<code style="color:#22d3bf">exits_before</code>(通り過ぎる出口の数)、<code style="color:#22d3bf">signal_theta</code>(環道の上の角)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

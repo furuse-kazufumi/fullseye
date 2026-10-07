@@ -2,16 +2,28 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_cx_apply_transfer_function — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*無圖: 型別可達，但通用合成輸入不在此運算子的定義域內 —— 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない。用法見下方可執行範例。*</p>
+<p><img src="fig/tb_cx_apply_transfer_function.png" alt="tb_cx_apply_transfer_function: input → output"></p>
+<p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.a.jpg">tb_cx_apply_transfer_function: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
+<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.chain.jpg">tb_cx_apply_transfer_function: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
+<p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.inputs.jpg">tb_cx_apply_transfer_function: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>將<b>已置中</b>的頻譜與濾波器 <code style="color:#22d3bf">H</code> 相乘 -&gt; <code style="color:#22d3bf">(H, W)</code> complex128。</p>
 <p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>The honest primitive under <code style="color:#22d3bf">ops.lowpass</code> / <code style="color:#22d3bf">ops.highpass</code>, but</p>
 <p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field (not immediately inverted and real-cast), so it can be chained, inspected, or handed to <code style="color:#22d3bf">cx_ifft</code>. <code style="color:#22d3bf">H</code> is a same-shape transfer function laid out in the *centred* convention of <code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real (a magnitude mask) or complex (a phase-shifting filter). A real <code style="color:#22d3bf">cx</code> is FFT&#x27;d first (module convenience).</p>
-<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> sets the width of the transfer function <code style="color:#22d3bf">H</code>, which the bridge builds <b>per call at the spectrum&#x27;s own shape</b>: a centred Gaussian low-pass <code style="color:#22d3bf">H = exp(-r^2 / (2 sigma^2))</code> with <code style="color:#22d3bf">sigma = 0.02 + 0.48 a</code> cycles/pixel (0.26 at a=0.5). <code style="color:#22d3bf">b</code> is unused. (Until 2026-10-07 <code style="color:#22d3bf">H</code> was bound once as a fixed 32x32 array, so every other image size was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">在 Studio 中試試</h3>
+<p>下面的程式已確認可以執行(與圖相同的輸入)。在 Studio 說明中，此區塊會變成按鈕，可當場載入並執行。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
+tb_cx_apply_transfer_function 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">▸ 載入此管線</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">載入並執行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">可執行的範例(實際呼叫該運算子並已驗證的樣例)</h3>
 <p style="margin:2px 0 2px 12px">• (尚無)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型別可銜接的下一個運算子(可接受 <code style="color:#22d3bf">cimage</code> 作為輸入)</h3>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.rigid_rotation_fit(pts, u, window=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rigid_rotation_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>窓内のマーカー場に剛体変位 u ≈ t + ω ẑ×r を最小二乗で当てる: <code style="color:#22d3bf">t</code> = 平均変位、<code style="color:#22d3bf">omega</code> = Σ (x′u′_y − y′u′_x)/Σ r′² (′ は窓内平均を引いたもの)、<code style="color:#22d3bf">resid_rms</code> = 残差 RMS、<code style="color:#22d3bf">n</code>。無滑りねじりでは円内が剛体回転(u_θ = βr)なので ω = β が真値(平均 curl/2 は円の縁で当てはめが外に漏れて低くなる —— 実測 11 %)。<code style="color:#22d3bf">window</code> = (cx, cy, R)。<b>Raises</b> ValueError: 点が 3 未満。</p>
+<p>用最小二乘对窗口内的标记场拟合刚体位移 u ≈ t + ω ẑ×r：<code style="color:#22d3bf">t</code> = 平均位移，<code style="color:#22d3bf">omega</code> = Σ (x′u′_y − y′u′_x)/Σ r′²(′ 表示减去窗口内平均值)，<code style="color:#22d3bf">resid_rms</code> = 残差 RMS，<code style="color:#22d3bf">n</code>。无滑移扭转中圆内为刚体转动(u_θ = βr)，因此 ω = β 是真值(平均 curl/2 因拟合在圆的边缘漏到外侧而偏低 —— 实测 11 %)。<code style="color:#22d3bf">window</code> = (cx, cy, R)。<b>Raises</b> ValueError：点少于 3 个。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

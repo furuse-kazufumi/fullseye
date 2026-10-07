@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lead_truth_depth(scene) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import carlabridge; carlabridge.lead_truth_depth(scene) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lead_truth_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>記録の姿勢から閉形式: 先行車の後ろ面の中心までの<b>像面距離</b> [m]。後ろ面 = 中心 − 半長 × 先行車の前方向、像面距離 = (後ろ面 − カメラ)·カメラの前方向。先行車なしは inf。</p>
+<p>由紀錄位姿得到的閉合式: 到前車後表面中心的<b>像平面距離</b> [m]。後表面 = 中心 − 半長 × 前車前進方向，像平面距離 = (後表面 − 相機)·相機前向。無前車時為 inf。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

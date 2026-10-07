@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sight_stop_speed(sight: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sight_stop_speed(sight: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sight_stop_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>見える距離 <code style="color:#22d3bf">sight</code> の中で止まれる最大の速さ v*: drivelong.stopping_distance_grade(v*) = sight。</p>
+<p>能在可見距離 <code style="color:#22d3bf">sight</code> 內停下的最大速度 v*: drivelong.stopping_distance_grade(v*) = sight。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>k = 0 では v ρ + v²/(2A) = D の正の根 v* = A (√(ρ² + 2D/A) − ρ)(A = brake + g sin θ + c_rr g cos θ)。k &gt; 0 は停止距離が v に単調なので二分法(1e-12)。A ≤ 0(下りで制動が負ける)なら 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

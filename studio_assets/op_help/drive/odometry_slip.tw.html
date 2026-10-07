@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.odometry_slip(position, wheel_angle, radius: &#x27;float&#x27;, window: &#x27;int&#x27; = 1) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;odometry_slip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>視覚オドメトリの位置の列と車輪の累積回転角から、実際の滑り率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
+<p>由視覺里程計的位置序列與車輪累積轉角求實際滑移率 <code style="color:#22d3bf">s = 1 − Δx / (r Δφ)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">position</code> は (T,) の進んだ距離か (T, 2) の平面の位置 [m]、<code style="color:#22d3bf">wheel_angle</code> は (T,) の車輪の累積回転角 [rad]、<code style="color:#22d3bf">radius</code> = r [m]。<code style="color:#22d3bf">window</code> 個ぶんの区間でまとめて割る(短い区間は雑音を拾う)。車輪がほとんど回らない区間(<code style="color:#22d3bf">r Δφ</code> が全体の中央値の 1 % 未満)は nan。返り値 <code style="color:#22d3bf">{&quot;slip&quot;: (T − window,), &quot;slip_total&quot;: 全区間の 1 個, &quot;distance&quot;: 区間ごとの車体の移動 [m], &quot;wheel_travel&quot;: 区間ごとの r Δφ [m]}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

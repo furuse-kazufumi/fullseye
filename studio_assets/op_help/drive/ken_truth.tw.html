@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ken_truth(world: &#x27;dict&#x27;, i_ken: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import kendamaworld; kendamaworld.ken_truth(world: &#x27;dict&#x27;, i_ken: &#x27;int&#x27;, cam: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ken_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>けん i_ken の真値の投影: 受ける皿の縁の中心(anchors[kp[&quot;catch_cup&quot;] + &quot;_rim&quot;] を姿勢で動かした点)の (col, row)、深度、像での皿の半径 [px] (大皿の半径で)、<code style="color:#22d3bf">visible</code>(カメラの前にあり画素が像の内側)。ballworld.ball_truth と同型。</p>
+<p>劍 i_ken 的真值投影：接球皿邊緣中心(將 anchors[kp[&quot;catch_cup&quot;] + &quot;_rim&quot;] 依位姿移動後的點)的 (col, row)、深度、影像中皿的半徑 [px] (依大皿半徑)、<code style="color:#22d3bf">visible</code>(位於相機前方且像素在影像內)。與 ballworld.ball_truth 同型。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

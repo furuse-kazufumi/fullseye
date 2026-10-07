@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>(要直接呼叫實作,<code style="color:#22d3bf">import gsplatnp; gsplatnp.gs_render_fn(gs: &#x27;dict&#x27;, **render_kw)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;gs_render_fn&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code>(<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> の描画の差し替え口)を返す: 呼ばれるたびに <code style="color:#22d3bf">gs_update</code> で世界のいまの頂点へガウシアンを付け直し、<code style="color:#22d3bf">cam</code>(dict: pose, K, width, height)で <code style="color:#22d3bf">gs_render</code> する。<code style="color:#22d3bf">render_kw</code> は gs_render へそのまま渡す。属性 <code style="color:#22d3bf">n_calls</code>・<code style="color:#22d3bf">n_pairs</code>(累計)を持つ。</p>
+<p>回傳 <code style="color:#22d3bf">render_fn(world, cam) → (H, W, 3)</code>(<code style="color:#22d3bf">kendamaworld.camera_perceiver</code> 繪製的替換介面)：每次呼叫時用 <code style="color:#22d3bf">gs_update</code> 將高斯重新附著到世界目前的頂點，再以 <code style="color:#22d3bf">cam</code>(dict：pose, K, width, height)執行 <code style="color:#22d3bf">gs_render</code>。<code style="color:#22d3bf">render_kw</code> 原樣傳給 gs_render。具有屬性 <code style="color:#22d3bf">n_calls</code>、<code style="color:#22d3bf">n_pairs</code>(累計)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

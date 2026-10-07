@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_collision(scene, run, *, margin: &#x27;float&#x27; = 0.0, lanelets: &#x27;str&#x27; = &#x27;all&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;cr_collision&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>障害物との衝突(矩形同士の SAT、time_step ごと)と道路境界(車両 4 角が lanelet 多角形の和集合に入るか)。</p>
+<p>장애물과의 충돌(사각형 간 SAT, time_step마다)과 도로 경계(차량의 4개 모서리가 lanelet 다각형의 합집합 안에 드는지).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">lanelets=&quot;all&quot;</code>(既定)は場面の全 lanelet(採点器の boundary_collision と同じ範囲)、<code style="color:#22d3bf">&quot;route&quot;</code> は経路の lanelet だけ。<code style="color:#22d3bf">margin</code> は障害物の SAT を膨らませる距離(m)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;obstacle_collision&quot;, &quot;first_collision&quot;: (time_step, obstacle_id) | None, &quot;boundary_violation&quot;, &quot;first_outside&quot;: time_step | None, &quot;n_collisions&quot;, &quot;n_outside&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: scene / run が不正、lanelets が &quot;all&quot;/&quot;route&quot; 以外、margin &lt; 0。</p>

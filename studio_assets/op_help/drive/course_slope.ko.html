@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>坂道コース: 緩坂で高さ <code style="color:#22d3bf">height</code> まで上り、頂上平坦部 <code style="color:#22d3bf">top</code>、急坂で下りる矩形の道(x 軸沿い)。</p>
+<p>언덕 코스: 완만한 경사로 높이 <code style="color:#22d3bf">height</code>까지 오르고, 정상 평탄부 <code style="color:#22d3bf">top</code>을 거쳐 급경사로 내려가는 직사각형 도로(x축 방향).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>多角形は幅 w × 長さ L = height/g_gentle + top + height/g_steep の矩形。<code style="color:#22d3bf">profile</code> = (s, z) の折線 [(0,0), (s1,h), (s1+top,h), (L,0)]、z は <code style="color:#22d3bf">slope_height</code> で補間(driveworld が路面を持ち上げる)。</p>
 <p>規格: 幅 ≥ 7、高さ ≥ 1.5、緩 6.5〜9.0 %、急 10.0〜12.5 %、平坦部 ≥ 4 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·L。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・高さ・勾配・平坦部が正でない、勾配 ≥ 1(45° 超は道ではない)。</p>

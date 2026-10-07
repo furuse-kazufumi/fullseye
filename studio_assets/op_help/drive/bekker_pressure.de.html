@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × scalar × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;bekker_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Bekker の圧力–沈下 <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]。<code style="color:#22d3bf">sinkage</code> [m] はスカラーか配列(≥ 0)、<code style="color:#22d3bf">width</code> = b [m]。</p>
+<p>Bekker-Druck-Einsinkung <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]. <code style="color:#22d3bf">sinkage</code> [m] ist ein Skalar oder ein Array (≥ 0), <code style="color:#22d3bf">width</code> = b [m].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返りは <code style="color:#22d3bf">sinkage</code> と同じ形の配列(スカラーなら 0 次元)。z = 0 で 0、z について単調に増える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

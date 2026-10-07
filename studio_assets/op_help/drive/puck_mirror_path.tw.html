@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_mirror_path(p0, v0, table: &#x27;dict&#x27;, t_end: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_mirror_path(p0, v0, table: &#x27;dict&#x27;, t_end: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_mirror_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>鏡映法(摩擦なし・e = kₜ = 1 専用): 直線 p₀ + v₀ t を壁の格子で折り返した位置を返す(第 2 実装、門の相手)。ゴールは無視(壁として扱う)。返り値 = 終端位置 (2,)。</p>
+<p>鏡像法(僅限無摩擦、e = kₜ = 1)：回傳直線 p₀ + v₀ t 在壁的網格中折返後的位置(第 2 實作，門檻的比對對象)。忽略球門(當作壁)。回傳值 = 終點位置 (2,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

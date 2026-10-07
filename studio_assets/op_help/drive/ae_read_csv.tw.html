@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.ae_read_csv(path, header_lines: &#x27;int&#x27; = 12, offset: &#x27;float&#x27; = 32768.0, full_scale: &#x27;float&#x27; = 32768.0) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ae_read_csv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>AE の生の CSV(ヘッダ <code style="color:#22d3bf">header_lines</code> 行 + 1 行 1 標本の ADC 値)を電圧 [V] の信号にする。</p>
+<p>將 AE 的原始 CSV(標頭 <code style="color:#22d3bf">header_lines</code> 列 + 每 1 列 1 個樣本的 ADC 值)轉換為電壓 [V] 訊號。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>公開データの ADC は 16 bit・±1 V・ストレートオフセットバイナリ(0 → −1 V、32768 → 0 V、65535 → +1 V)なので <code style="color:#22d3bf">(raw − offset) / full_scale</code>(解析コードの変換と同じ)。パスは返り値に残さない。数値でない行・空 → <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

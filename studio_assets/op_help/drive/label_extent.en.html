@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivettc; drivettc.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;label_extent&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ラベル像の中で値 <code style="color:#22d3bf">value</code> の画素の箱: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>。</p>
+<p>Bounding box of the pixels with value <code style="color:#22d3bf">value</code> in a label image: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>幅・高さは画素数(<code style="color:#22d3bf">col1 − col0 + 1</code>)。無ければ全部 0。<code style="color:#22d3bf">ttc_from_scale</code> の入力(完全な検出器の代役)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.coverage_edge_points(gray, inside, outside, min_contrast: &#x27;float&#x27; = 25.0, exclude=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.coverage_edge_points(gray, inside, outside, min_contrast: &#x27;float&#x27; = 25.0, exclude=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;coverage_edge_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>反エイリアスされた境界の明るさ(被覆率)から副画素の縁の点 (u, v) を返す: inside 側の画素 p と 2 画素先が outside の対で、縁の位置 = p から (−0.5 + f_p + f_q) 画素(f = その画素の inside 側の被覆率 = (I − I_out) / (I_in − I_out))。</p>
+<p>由抗锯齿边界的亮度(覆盖率)返回亚像素边缘点 (u, v)：对 inside 侧像素 p 与前方 2 像素处为 outside 的像素对，边缘位置 = 距 p (−0.5 + f_p + f_q) 像素(f = 该像素 inside 侧的覆盖率 = (I − I_out) / (I_in − I_out))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>4 軸方向(上下左右)の対を全部使う。<code style="color:#22d3bf">inside</code> / <code style="color:#22d3bf">outside</code> は bool マスク(同じ形)、<code style="color:#22d3bf">gray</code> は明るさ(float)。<code style="color:#22d3bf">min_contrast</code> 未満の対は捨て、<code style="color:#22d3bf">exclude</code> のマスクに掛かる対も捨てる。返りは (N, 2) の (u, v)(列・行)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、対が 1 つも無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.racket_hit_check(p_ball, center, normal, rp: &#x27;dict&#x27;, radius: &#x27;float&#x27;, up=(0.0, 0.0, 1.0)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;racket_hit_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>球の中心が板の面から <code style="color:#22d3bf">radius</code> 以内で、板の枠(幅 × 高さ + 半径)の中にあるか。<code style="color:#22d3bf">{&quot;hit&quot;, &quot;dist&quot;, &quot;u&quot;, &quot;v&quot;}</code> (u = 幅方向、v = 高さ方向の板の中心からのずれ)。</p>
+<p>球心是否在距拍面 <code style="color:#22d3bf">radius</code> 以内，且在拍板框(宽 × 高 + 半径)之内。<code style="color:#22d3bf">{&quot;hit&quot;, &quot;dist&quot;, &quot;u&quot;, &quot;v&quot;}</code>(u = 宽度方向、v = 高度方向相对拍板中心的偏移)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

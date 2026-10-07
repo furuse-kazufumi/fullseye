@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × matrix × matrix × table × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mindlin_model(hz: &#x27;dict&#x27;, X, Y, kern: &#x27;dict&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.mindlin_model(hz: &#x27;dict&#x27;, X, Y, kern: &#x27;dict&#x27;, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mindlin_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>任意の c/a の Mindlin 変位場を<b>相似則</b>で出す逆算模型(畳み込みは 1 回だけ)。</p>
+<p>以<b>相似律</b>给出任意 c/a 的 Mindlin 位移场的反算模型(卷积只做 1 次)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Hertz 形の接線トラクション(半径 R、頂点 q0)の表面変位は u = q0·R·ĝ(x/R)(線形弾性 + 無次元化)。q′(半径 a、頂点 μp0)と q″(半径 c、頂点 μp0·c/a)の差だから、g(x) = 頂点 1 Pa・半径 a の場として u(x; c) = μp0·[g(x) − (c/a)²·g(x·a/c)]。g は Cerruti 核で格子上に作り、x·a/c が格子の外に出る点は点荷重の漸近形(総力 (2/3)πa²·1 Pa)で補う。順方向の畳み込みとの差は核で 0.05 %、環で 0.13 %。返り <code style="color:#22d3bf">gx</code>・<code style="color:#22d3bf">gy</code>(n, n)、<code style="color:#22d3bf">Qunit</code>、<code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">pitch</code>・<code style="color:#22d3bf">c0</code>(格子中心 [px])、<code style="color:#22d3bf">hz</code>・<code style="color:#22d3bf">G</code>・<code style="color:#22d3bf">nu</code>。c/a の格子を線形補間する模型は場が c に非線形なので c/a を 0.01 ずらした(捨てた)。<b>Raises</b> ValueError: 形の不一致、G ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

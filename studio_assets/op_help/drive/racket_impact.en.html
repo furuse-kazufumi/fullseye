@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import racket; racket.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;racket_impact&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>動くラケット(法線 n、速度 v_r)に球が当たる: ラケット系の相対速度で <code style="color:#22d3bf">ballistics.bounce</code> → 戻す。返り値 = bounce と同じ + <code style="color:#22d3bf">&quot;v_rel_in&quot;</code>。n は球の側を向く(球が n と逆向きに近づく)。</p>
+<p>A ball hits a moving racket (normal n, velocity v_r): <code style="color:#22d3bf">ballistics.bounce</code> with the relative velocity in the racket frame → transform back. Return value = same as bounce + <code style="color:#22d3bf">&quot;v_rel_in&quot;</code>. n points toward the ball&#x27;s side (the ball approaches opposite to n).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

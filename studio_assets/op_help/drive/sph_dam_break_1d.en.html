@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.sph_dam_break_1d(h0: &#x27;float&#x27; = 0.1, length: &#x27;float&#x27; = 1.0, n_particles: &#x27;int&#x27; = 400, t_end: &#x27;float&#x27; = 0.2, g: &#x27;float&#x27; = 9.81, kappa: &#x27;float&#x27; = 1.3, alpha: &#x27;float&#x27; = 0.3, n_out: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sph_dam_break_1d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1 次元 SPH の浅水方程式でダム崩壊(乾いた床)を解く(群れのゲートを開けたときの広がりの模型)。</p>
+<p>Solves the dam break (dry bed) with 1-D SPH shallow-water equations (a model of the spreading when the swarm&#x27;s gate is opened).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>水深 h_i = Σ_j m_j W(x_i − x_j, ℓ_ij)(1 次元の核、m = h₀ Δx)、加速度 du_i/dt = −g Σ_j m_j ∂W_ij/∂x_i(= −g ∂h/∂x、運動量を保存する対称形)+ Monaghan の人工粘性。平滑化の長さは粒子ごとに ℓ_i = κ m/h_i(先端の薄い所で広がる)、組には平均 ℓ_ij。左の壁(x = −length)は鏡像の粒子。真値は <code style="color:#22d3bf">ritter_dam_break</code>(門で照らす)。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">t</code> (K,)、<code style="color:#22d3bf">x</code> (K, N)、<code style="color:#22d3bf">h</code> (K, N)、<code style="color:#22d3bf">u</code> (K, N)(各時刻の粒子)、<code style="color:#22d3bf">front</code> (K,)(最も前の粒子)、</p>

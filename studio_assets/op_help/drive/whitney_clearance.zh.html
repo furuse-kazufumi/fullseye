@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.whitney_clearance(kp=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.whitney_clearance(kp=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;whitney_clearance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Whitney の無次元 clearance と、そこから決まる境目: c = (D − d)/D、c_r = R − r、θ_m = √(2c)、面取りの許容ずれ、くさびの角。</p>
+<p>Whitney 的无量纲间隙(clearance)及由此决定的临界值：c = (D − d)/D、c_r = R − r、θ_m = √(2c)、倒角的容许偏移、楔住角。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">c</code>(clearance ratio、OCW p.11)、<code style="color:#22d3bf">c_r</code>(半径 clearance)、<code style="color:#22d3bf">theta_m</code>(小角の θ_m = √(2c)、p.9)、<code style="color:#22d3bf">theta_m_exact</code> (arccos(d/D): 水平断面の楕円の長半径 r/cos θ が R に達する角 —— √(2c) はその 2 次の近似)、<code style="color:#22d3bf">eps_chamfer_max</code> (W + c_r: 面取りが補正なしで救える初期横ずれ、導出)、<code style="color:#22d3bf">theta_wedge</code>(c/μ: 二点接触の始まりでこれより傾いているとくさびが起こりうる、p.28。μ = 0 なら inf)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

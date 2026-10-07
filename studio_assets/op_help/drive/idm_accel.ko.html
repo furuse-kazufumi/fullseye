@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_accel(v, gap, dv, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, a: &#x27;float&#x27;, b: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_accel(v, gap, dv, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, a: &#x27;float&#x27;, b: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;idm_accel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Intelligent Driver Model の加速度(Treiber, Hennecke, Helbing 2000)。</p>
+<p>Intelligent Driver Model의 가속도(Treiber, Hennecke, Helbing 2000).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>a_IDM = a [ 1 − (v/v0)^δ − (s*/s)² ],   s* = s0 + max(0, v T + v Δv / (2 sqrt(a b)))</p>
 <p><code style="color:#22d3bf">dv</code> = Δv = v − v_lead(近づいていれば正)、<code style="color:#22d3bf">gap</code> = s = 先行車の後端までの距離(&gt; 0、<code style="color:#22d3bf">inf</code> = 前が空き)。<code style="color:#22d3bf">v</code>, <code style="color:#22d3bf">gap</code>, <code style="color:#22d3bf">dv</code> は numpy の放送で配列でも動く(スカラーを渡せば float を返す)。</p>
 <p>門: 平衡車間 <code style="color:#22d3bf">idm_equilibrium_gap</code> で Δv = 0 なら 0、gap = inf で a(1 − (v/v0)^δ)。</p>

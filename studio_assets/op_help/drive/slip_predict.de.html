@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.slip_predict(model, slopes, level: &#x27;float&#x27; = 0.9) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;slip_predict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>滑り率の予測と両側 <code style="color:#22d3bf">level</code> の帯。ガウス過程は観測の予測分布(潜在の分散 + 雑音)、分位点回帰は曲線そのもの。</p>
+<p>Schlupfvorhersage und ein zweiseitiges <code style="color:#22d3bf">level</code>-Band. Beim Gauß-Prozess die prädiktive Verteilung der Beobachtungen (latente Varianz + Rauschen), bei der Quantilsregression die Kurven selbst.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;mean&quot;, &quot;std&quot;, &quot;lower&quot;, &quot;upper&quot;, &quot;median&quot;, &quot;level&quot;}</code>(各 (n,))。分位点回帰の <code style="color:#22d3bf">mean</code> は当てはめた分位点の平均、<code style="color:#22d3bf">std</code> は四分位範囲 / 1.349、帯の端は (1 ± level)/2 の分位点(当てはめた段に無ければ ValueError)に、共形の補正(<code style="color:#22d3bf">slip_quantile_fit</code> の <code style="color:#22d3bf">conformal</code>)があればその幅を足す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

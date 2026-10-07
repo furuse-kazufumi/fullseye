@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ritter_dam_break&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Ritter のダム崩壊解(浅水方程式、乾いた床、ダムは x = 0、水は x &lt; 0)。</p>
+<p>Ritter&#x27;s dam-break solution (shallow-water equations, dry bed, dam at x = 0, water at x &lt; 0).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
 <p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
 <p>Returns:</p>

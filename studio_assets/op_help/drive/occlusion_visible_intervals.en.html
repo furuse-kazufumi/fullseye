@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_visible_intervals(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy, s_max: &#x27;float&#x27;) -&gt; &#x27;list&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_visible_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>自車の目が p(s) = ego_xy + s h を 0 ≤ s ≤ s_max 進む間に、点 <code style="color:#22d3bf">emerge_xy</code> が <b>見えている</b> 前進量の区間の列。</p>
+<p>While the ego vehicle&#x27;s eye advances along p(s) = ego_xy + s h for 0 ≤ s ≤ s_max, the list of intervals of advance during which the point <code style="color:#22d3bf">emerge_xy</code> is <b>visible</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">occlusion_reveal_distance</code> は「最初に見える所」だけを返すが、見え方は単調でない: 駐車車両の幅の帯の外(歩道の上)の点は、遠くからは車と縁石の隙間越しに見え、近づくと隠れ、また見える。ここでは見える/見えないが切り替わり得る候補(角をかすめる視線と進路の交点、進路と辺の交点 —— 閉形式)で [0, s_max] を区切り、各区間の中点で視線を判定して、見える区間を [(s0, s1), ...] (昇順、隣り合う見える区間は結合)で返す。区間の端の縦距離は h · (e − p(s))。点が箱の内部なら []。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・非有限・寸法 ≤ 0、s_max ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

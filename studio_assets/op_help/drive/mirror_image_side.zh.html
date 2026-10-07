@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_image_side&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>カーブミラーに映る点が、鏡の中心より左右どちらに見えるか・どちらへ動いて見えるか(平面鏡の閉形式)。場面 S064・S130。</p>
+<p>道路凸面镜中映出的点看起来位于镜面中心的左侧还是右侧、看起来向哪边移动(平面镜闭式)。场景 S064、S130。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>左右の向きは凸面鏡でも同じ(門で光線追跡と照合。凸面は角を縮めるだけ)。</p>
 <p>上から見た 2 次元(x, y)。像 P&#x27; = P − 2((P − M)·n)n(<code style="color:#22d3bf">drivedecide.mirror_reflection_matrix</code> の 2 次元版)。<code style="color:#22d3bf">image_offset</code> = 眼から鏡の中心を見る向きに対する像の向きの角(+ = 左)。<code style="color:#22d3bf">real_side</code> = <code style="color:#22d3bf">heading</code>(運転者の前)に対して物が左(+1)か右(−1)か。<code style="color:#22d3bf">velocities</code> を渡すと <code style="color:#22d3bf">image_motion</code> = 像の角の速さ、<code style="color:#22d3bf">direct_motion</code> = 眼から物を直接見たときの角の速さ(遮りは見ない)、<code style="color:#22d3bf">virtual_eye_motion</code> = 仮想の眼 E&#x27; から見た角の速さ(= −image_motion が恒等式)、<code style="color:#22d3bf">reversed</code> = 像と直接の動きの向きが逆か。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

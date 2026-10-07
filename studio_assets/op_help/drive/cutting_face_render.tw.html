@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_face_render(scene, heel_x: &#x27;float&#x27;, heel_z: &#x27;float&#x27;, theta_deg: &#x27;float&#x27;, gain: &#x27;float&#x27; = 1.0, gradient: &#x27;float&#x27; = 0.0, blur_px: &#x27;float&#x27; = 0.0, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, food_visible: &#x27;bool&#x27; = True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cutting_face_render(scene, heel_x: &#x27;float&#x27;, heel_z: &#x27;float&#x27;, theta_deg: &#x27;float&#x27;, gain: &#x27;float&#x27; = 1.0, gradient: &#x27;float&#x27; = 0.0, blur_px: &#x27;float&#x27; = 0.0, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0, food_visible: &#x27;bool&#x27; = True)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_face_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>正面像(RGB、(H, W, 3) float)。壁 → まな板 → 刃 → 食材(手前)の順に、被覆率の解析描画で重ねる。</p>
+<p>正面影像(RGB，(H, W, 3) float)。依牆 → 砧板 → 刀刃 → 食材(前方)的順序，以覆蓋率的解析繪製疊加。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">heel_x</code> / <code style="color:#22d3bf">heel_z</code> は刃の根元の刃先(mm)、<code style="color:#22d3bf">theta_deg</code> は刃先の傾き。カメラは <code style="color:#22d3bf">gain</code>(明るさの倍率)、<code style="color:#22d3bf">gradient</code> (左右の照明勾配、全幅で ±gradient/2)、<code style="color:#22d3bf">blur_px</code>(ガウスぼけの σ)、<code style="color:#22d3bf">noise</code>(加法の正規雑音の σ)。刃の面積は副列 8 本で縦方向を厳密に積分する(多角形の面積と 2e-4 以内、PoC の門)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

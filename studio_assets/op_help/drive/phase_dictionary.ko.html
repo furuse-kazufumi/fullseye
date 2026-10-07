@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pxrd; pxrd.phase_dictionary(phases, two_theta, wavelength, size=inf, K=0.9, instrumental_fwhm=0.02, lorentz=&#x27;powder&#x27;, eta=0.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;phase_dictionary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>相の参照パターンの辞書: 2θ の格子の上に、体積分率 1 あたりの 1-D 強度を相ごとに並べる。</p>
+<p>상의 참조 패턴 사전: 2θ 격자 위에 체적 분율 1당 1차원 강도를 상별로 나열합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>1 行 = <code style="color:#22d3bf">(1/V²) Σ m|F|² L(2θ) × 形</code>(形は Scherrer の <code style="color:#22d3bf">size</code> [Å] と装置の FWHM をガウスで足した幅の pseudo-Voigt、<code style="color:#22d3bf">eta</code> は Lorentz の割合)。<code style="color:#22d3bf">instrumental_fwhm</code> は数 [deg] か <code style="color:#22d3bf">(2θ の列, FWHM の列)</code> の表 —— 平らな検出器では画素の張る角が <code style="color:#22d3bf">cos² 2θ</code> で縮むので装置の幅は 2θ で変わる。広がりの無い標準(Si)の像を同じ幾何で積分し、<code style="color:#22d3bf">diffraction_peaks</code> の FWHM を表にして渡すのが筋(PoC の手順)。<code style="color:#22d3bf">azimuthal_integrate</code> を偏光・立体角の補正つきで回したプロファイルと同じ量に揃う。幅が合っていないと NNLS の倍率が偏る —— <code style="color:#22d3bf">diffraction_peaks</code> の FWHM と <code style="color:#22d3bf">scherrer_size</code> で <code style="color:#22d3bf">size</code> を先に見積もるのが筋。</p>
 <p>返り値(dict): <code style="color:#22d3bf">names</code>・<code style="color:#22d3bf">two_theta</code>・<code style="color:#22d3bf">matrix</code>((P, n))・<code style="color:#22d3bf">density</code> [g/cm³]・<code style="color:#22d3bf">phases</code>(元の相、格子の追い込みで描き直すため)・<code style="color:#22d3bf">params</code>(波長・幅・Lorentz)。</p>
 <p>Raises ValueError: 相が空・相の形でない、名前の重複、格子が増えない、幅の値が不正。</p>

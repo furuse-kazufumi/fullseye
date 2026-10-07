@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_feasible(run, *, params=None, tol=(0.02, 0.02, 0.03)) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cr_feasible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>運動学の実現可能性(採点器 <code style="color:#22d3bf">solution_feasible</code> と同じ考え方の第 2 実装)。</p>
+<p>Kinematische Machbarkeit (eine zweite (unabhängige) Implementierung nach demselben Prinzip wie <code style="color:#22d3bf">solution_feasible</code> des Bewerters).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>各遷移で記録した u から <code style="color:#22d3bf">ks_step</code> を回し、次の状態と |Δx|, |Δy| &lt; tol[0], tol[1]、|Δψ| &lt; tol[2] か、u が制限内か(δ̇ ∈ [ddelta_min, ddelta_max]、|a| ≤ a_max)、摩擦円 a² + (v ψ̇)² ≤ a_max² か(ψ̇ = v/l_wb tan δ)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;feasible&quot;, &quot;max_pos_err&quot;, &quot;max_psi_err&quot;, &quot;violations&quot;: [(k, reason)], &quot;n_transitions&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: run が cr_drive の物でない、tol が 3 要素でない。</p>

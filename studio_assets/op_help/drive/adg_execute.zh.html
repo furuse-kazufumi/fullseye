@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ADG に従って実行する。各時刻、各車両は確率 <code style="color:#22d3bf">delay_prob</code> で止まる(滑り・人・荷役の遅れ)。</p>
+<p>按 ADG 执行。每个时刻，每辆车以概率 <code style="color:#22d3bf">delay_prob</code> 停下(打滑、人员、装卸延误)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

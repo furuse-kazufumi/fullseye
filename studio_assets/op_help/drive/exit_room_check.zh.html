@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。</p>
+<p>铁路道口(人行横道、交叉口同理)的对面是否有本车能停下的空间(第50条第2款)。可用数组。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>前の車の後端 <code style="color:#22d3bf">queue_rear</code> の後ろ <code style="color:#22d3bf">gap</code> で止まると、自分の後端 = queue_rear − gap − car_length。これが far_edge + beyond 以上なら入ってよい。返り値: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。前の車が無い場合は queue_rear = +∞。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

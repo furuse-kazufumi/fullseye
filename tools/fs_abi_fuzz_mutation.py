@@ -25,7 +25,7 @@ from pathlib import Path
 import numpy as np
 import scipy.ndimage as ndi
 
-ROOT = Path(r"C:\dev\projects\imgevolve")
+ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 import fslib  # noqa: E402
 

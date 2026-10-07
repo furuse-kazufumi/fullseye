@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_occupancy&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.course_occupancy(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">image2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.course_occupancy.raw(...)</code>,或直接调用 <code style="color:#22d3bf">drivecourse.course_occupancy</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>コース(要素または配置)を占有格子 <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code> に落とす。</p>
+<p>将路线(要素或布局)落到占据栅格 <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code> 上。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>走れる領域の外 = True(障害物)</b>。格子は bounds を <code style="color:#22d3bf">margin</code> だけ広げた範囲を <code style="color:#22d3bf">cell</code> で覆い、各 cell の中心で偶奇判定する。<code style="color:#22d3bf">extent = (xmin, xmax, ymin, ymax)</code> は格子がちょうど覆う範囲(xmax = xmin + nx·cell)、row 0 = ymin。占有率は cell → 0 で 1 − 面積/格子面積 に収束する(門)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: cell ≤ 0、margin &lt; 0、course の形が悪い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

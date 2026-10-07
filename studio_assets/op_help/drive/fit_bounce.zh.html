@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.fit_bounce(v_in, omega_in, v_out, omega_out, normal, bp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fit_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>跳ねの前後の (v, ω) から (e, μ) を閉形式で戻す(同定)。e = −v_n&#x27;/v_n。接線力積 J_t = m(v_t&#x27; − v_t) の大きさと J_n = m(v_n&#x27; − v_n) の比が μ —— 滑ったままの領域なら等号、途中で転がりに移った(grip)領域なら <b>下界</b>(μ ≥ |J_t|/J_n)。どちらかは、跳ねた後の接触点の滑り速度が 0 か(grip)で判る。返り値 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>。</p>
+<p>由弹跳前后的 (v, ω) 以闭式还原 (e, μ)(辨识)。e = −v_n&#x27;/v_n。切向冲量 J_t = m(v_t&#x27; − v_t) 的大小与 J_n = m(v_n&#x27; − v_n) 之比即 μ —— 在始终滑动的状态下为等号，在中途转为滚动(grip)的状态下为<b>下界</b>(μ ≥ |J_t|/J_n)。属于哪种，由弹跳后接触点的滑移速度是否为 0(grip)判断。返回值 <code style="color:#22d3bf">{&quot;e&quot;, &quot;mu&quot;, &quot;mu_is_lower_bound&quot;, &quot;regime&quot;, &quot;J_n&quot;, &quot;J_t&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × table</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_pressure_shifted(X, Y, hz: &#x27;dict&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.hertz_pressure_shifted(X, Y, hz: &#x27;dict&#x27;, d=(0.0, 0.0)) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_pressure_shifted&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>中心を d = (dx, dy) [m] にずらした Hertz 圧 p0 √(1 − r′²/a²) [Pa] (<code style="color:#22d3bf">hz</code> = <code style="color:#22d3bf">tacsim.hertz_sphere</code> の表)。小さな傾きトルク τ を受けた把持球は圧の中心が d = τ/P だけ寄る(準静的なモーメント釣合い)ので、ずらした Hertz 圧の元の中心まわりの 1 次モーメントは P·d = τ(厳密に線形)。<b>Raises</b> ValueError: hz に a/p0 が無い、X と Y の形が違う。</p>
+<p>中心移到 d = (dx, dy) [m] 的 Hertz 压力 p0 √(1 − r′²/a²) [Pa] (<code style="color:#22d3bf">hz</code> = <code style="color:#22d3bf">tacsim.hertz_sphere</code> 的表)。受到小倾斜扭矩 τ 的被抓握球，其压力中心偏移 d = τ/P(准静态力矩平衡)，因此平移后的 Hertz 压力绕原中心的 1 阶矩为 P·d = τ(严格线性)。<b>Raises</b> ValueError：hz 中没有 a/p0，X 与 Y 形状不同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

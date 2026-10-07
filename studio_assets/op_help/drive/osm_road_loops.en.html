@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_loops(roadmask: &#x27;dict&#x27;, *, tolerance_px: &#x27;float&#x27; = 0.75) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_loops&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>道路の和集合の境界ループ。外側(道路の縁)と穴(街区)に分け、Douglas–Peucker で間引く。</p>
+<p>Boundary loops of the union of roads. Splits them into outer loops (road edges) and holes (city blocks) and simplifies them with Douglas–Peucker.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>追跡は画素の辺に沿う(<code style="color:#22d3bf">contours_xld._trace_mask_boundaries</code>)ので、間引く前のループの面積の和 = 画素数 × step² (外側 − 穴)が厳密に成り立つ(<code style="color:#22d3bf">area_check</code>)。穴か外側かは、ループの最も左の縦の辺のすぐ右の画素が道路かどうかで決める。返り値 <code style="color:#22d3bf">{&quot;outer&quot;: [(K,2) xy], &quot;holes&quot;: [(K,2) xy], &quot;outer_raw&quot;, &quot;holes_raw&quot;, &quot;area_check&quot;: {&quot;loops_m2&quot;, &quot;pixels_m2&quot;, &quot;abs_err&quot;}}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.stall_verdict(kp, theta: &#x27;float&#x27;, mu_hat) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;stall_verdict&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>二点接触で止まった時の Whitney の判定(OCW p.28): θ &gt; c/μ̂ ならくさび(力を抜いても抜けない側)、以下ならかじり(力の向きで解ける)。c = (R − r)/R。μ̂ は同じ挿入の滑りの区間で触覚から読んだ値(<code style="color:#22d3bf">friction_from_single_contact</code>)、None か ≤ 0 なら推測せず <code style="color:#22d3bf">&quot;unknown&quot;</code>。返り <code style="color:#22d3bf">verdict</code>(&quot;wedging&quot; / &quot;jamming&quot; / &quot;unknown&quot;)・<code style="color:#22d3bf">theta_limit</code>。<b>Raises</b> ValueError: θ が有限でないか負。</p>
+<p>兩點接觸停住時的 Whitney 判定(OCW p.28)：θ &gt; c/μ̂ 為楔住(即使撤去力也拔不出的一側)，否則為卡死(可藉由力的方向解開)。c = (R − r)/R。μ̂ 是在同一次插入的滑動區間由觸覺讀出的值(<code style="color:#22d3bf">friction_from_single_contact</code>)，若為 None 或 ≤ 0 則不作推測，回傳 <code style="color:#22d3bf">&quot;unknown&quot;</code>。回傳 <code style="color:#22d3bf">verdict</code>(&quot;wedging&quot; / &quot;jamming&quot; / &quot;unknown&quot;)、<code style="color:#22d3bf">theta_limit</code>。<b>Raises</b> ValueError：θ 非有限或為負。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

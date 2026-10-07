@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;offtracking_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>内輪差の過渡(閉形式): 前車軸の中心が半径 R の円に入ってから弧長 s 進んだときの車の姿勢と内側の車輪の半径。</p>
+<p>내륜차의 과도 상태(닫힌 식): 앞차축 중심이 반경 R의 원에 진입한 뒤 호의 길이 s만큼 진행했을 때의 차량 자세와 안쪽 바퀴의 반경.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
 <p><code style="color:#22d3bf">arc_length</code>: s ≥ 0(配列可)。<code style="color:#22d3bf">track</code>: 輪距 t(内側の車輪の位置に使う)。<code style="color:#22d3bf">gamma0</code>: 円に入るときの γ(0 = 直線からまっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): <code style="color:#22d3bf">gamma</code>、<code style="color:#22d3bf">rear_radius</code>(後車軸の中心の半径 √(R² + L² − 2RL sin γ))、<code style="color:#22d3bf">front_inner_wheel_radius</code>・<code style="color:#22d3bf">rear_inner_wheel_radius</code>(内側の車輪の旋回中心からの距離)、<code style="color:#22d3bf">offtracking</code>(前内輪 − 後内輪)、<code style="color:#22d3bf">steady</code>(s → ∞ の値の dict)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>

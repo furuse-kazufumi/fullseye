@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_scene_world(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import carlabridge; carlabridge.carla_scene_world(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;carla_scene_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>場面記録 → 自前の世界(直線路 + 記録の姿勢に置いた先行車)。カメラと先行車の相対配置を保ったまま、カメラを (20, 0) で +x 向きに正規化する(CARLA の地図の座標は使わない)。先行車なしなら道だけ。</p>
+<p>Szenenaufzeichnung → eigene Welt (gerade Straße + vorausfahrendes Fahrzeug in der aufgezeichneten Pose). Unter Beibehaltung der relativen Anordnung von Kamera und vorausfahrendem Fahrzeug wird die Kamera auf (20, 0) mit Blickrichtung +x normalisiert (CARLA-Kartenkoordinaten werden nicht verwendet). Ohne vorausfahrendes Fahrzeug nur die Straße.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

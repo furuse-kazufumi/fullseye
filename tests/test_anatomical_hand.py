@@ -15,7 +15,8 @@ from pathlib import Path
 import numpy as np
 import pytest
 
-_MYO = Path(os.environ.get("MYO_SIM_DIR", r"C:/dev/projects/myo_sim"))
+# 既定は repo と並んだ checkout(手元の絶対パスを書かない)。MYO_SIM_DIR で上書き。
+_MYO = Path(os.environ.get("MYO_SIM_DIR") or Path(__file__).resolve().parents[2] / "myo_sim")
 _XML = _MYO / "hand" / "myohand.xml"
 pytestmark = pytest.mark.skipif(not _XML.exists(), reason="myo_sim (MyoHub/myo_sim) not present")
 

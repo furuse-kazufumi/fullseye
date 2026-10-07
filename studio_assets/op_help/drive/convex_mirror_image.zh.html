@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_image(object_distance, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;, object_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>凸面鏡の虚像(近軸、配列可)。場面 S064・S130。</p>
+<p>凸面镜的虚像(近轴，可用数组)。场景 S064、S130。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>1/a + 1/b = 2/R(b は鏡の向こうの虚像)→ b = aR/(2a + R)、倍率 m = R/(2a + R)。眼が鏡から e(<code style="color:#22d3bf">eye_distance</code>)のとき像の見かけの大きさ θ = 2 atan(m h /(2(e + b)))、近軸では m h/(e + b) = h/(e + k a)、k = 1 + 2e/R。<code style="color:#22d3bf">flat_equivalent_distance</code> = 同じ大きさに見える平面鏡の距離 k a(遠くに見える量)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_radius_ratio(d, p: &#x27;float&#x27;, method: &#x27;str&#x27; = &#x27;quadrature&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import tacdome; tacdome.largedef_radius_ratio(d, p: &#x27;float&#x27;, method: &#x27;str&#x27; = &#x27;quadrature&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;largedef_radius_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>大変形の接触半径の比 a/a_L(式 4)= (1/p)·B_d(1/p, 3/2)·d^{−1/p}/√(1 − d) = ∫₀¹ √((1 − d·uᵖ)/(1 − d)) du。</p>
+<p>大变形接触半径之比 a/a_L(式 4)= (1/p)·B_d(1/p, 3/2)·d^{−1/p}/√(1 − d) = ∫₀¹ √((1 − d·uᵖ)/(1 − d)) du。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">method=&quot;quadrature&quot;</code>(既定): 右の積分を 1 に寄せた複合 Gauss–Legendre で。<code style="color:#22d3bf">&quot;beta&quot;</code>: 原文の形どおり不完全ベータの連分数で(別の経路、照合用)。p = ∞(平頭)は非圧縮の半径の伸び 1/√(1 − d)。d → 0 で 1 + d·p/(2(p+1))。p = 1・2 の閉形式は (2/(3d))(1 − (1 − d)^{3/2})/√(1 − d) と [√(1−d)/2 + atan2(√d, √(1−d))/(2√d)]/√(1 − d)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、p が範囲外、method の綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

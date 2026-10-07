@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_s_curve(width=3.5, radius_outer=7.5, arc_fraction=0.375, entry=4.0, arc_pts=48)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_s_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>曲線コース(S 字): 直線 E → 左弧(中心角 2π·f)→ 右弧(同じ)→ 直線 E。</p>
+<p>曲線路線(S 形)：直線 E → 左弧(圓心角 2π·f)→ 右弧(相同)→ 直線 E。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>外径 R_o = <code style="color:#22d3bf">radius_outer</code>、内径 R_i = R_o − w、中心線の半径 R_c = (R_o + R_i)/2。2 つの弧は共通接線点で曲率の向きが反転する。多角形は中心線の標本点を法線方向に ±w/2 ずらして作る(弧の標本点は外円・内円の上に厳密に乗る)。面積 = 2πf(R_o² − R_i²) + 2Ew。規格: A = 3.5, B = 7.5, C = 3/8 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・外径が正でない、R_o ≤ w(内径が 0 以下)、arc_fraction ∉ (0, 1)、E &lt; 0、arc_pts が 1 以上の整数でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

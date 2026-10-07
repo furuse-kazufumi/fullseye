@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_restitution_from_wall(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_restitution_from_wall&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>壁で跳ねた軌跡から e(法線)と kₜ(接線): 向きが最も変わるコマで前後に分け、両側を <code style="color:#22d3bf">puck_velocity_estimate</code> で衝突時刻へ外挿。壁は衝突点に最も近い壁。<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>。両側 3 点未満は ValueError。</p>
+<p>由在壁上弹跳的轨迹求 e(法向)与 kₜ(切向)：在方向变化最大的帧处分成前后两段，两侧都用 <code style="color:#22d3bf">puck_velocity_estimate</code> 外推到碰撞时刻。壁取距碰撞点最近的壁。<code style="color:#22d3bf">{&quot;e&quot;, &quot;kt&quot;, &quot;t_hit&quot;, &quot;wall&quot;, &quot;n_before&quot;, &quot;n_after&quot;, &quot;v_in&quot;, &quot;v_out&quot;}</code>。任一侧少于 3 点时为 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

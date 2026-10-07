@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.ground_shift_track(frames, pixel_size: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ground_shift_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>地面を見下ろすカメラのコマ列から、隣り合うコマの並進を、窓つきの相互相関(整数)と並進の Lucas–Kanade(副画素)で測り、累積する。</p>
+<p>From the frame sequence of a camera looking down at the ground, measures the translation between adjacent frames with windowed cross-correlation (integer) and translational Lucas–Kanade (subpixel), and accumulates it.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">frames</code> は (T, H, W) の配列か同じ形の 2-D 配列の列(T ≥ 2)。<code style="color:#22d3bf">pixel_size</code> は地面での画素の大きさ [m]。返り値 <code style="color:#22d3bf">{&quot;step&quot;: (T−1, 2) の (drow, dcol) [m]、&quot;position&quot;: (T, 2) の累積 [m]、&quot;peak&quot;: (T−1,) 合わせた後の正規化相関}</code>。<code style="color:#22d3bf">step</code> は <b>像の中で模様が動いた量</b>(カメラ・車体の移動はその逆向き —— 前に進むと地面は後ろへ流れる)。1 コマの移動は像の 1/4 程度まで(相関は周期的なので、半分を越えると折り返す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

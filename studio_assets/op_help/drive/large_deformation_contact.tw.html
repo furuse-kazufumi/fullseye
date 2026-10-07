@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.large_deformation_contact(delta, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.large_deformation_contact(delta, L: &#x27;float&#x27;, lin: &#x27;dict&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;large_deformation_contact&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>押し込み δ(スカラーか配列)から大変形の力と接触半径(式 2・4)と、同じ δ の線形解(Hertz)との差。</p>
+<p>由壓入量 δ(純量或陣列)求大變形的力與接觸半徑(式 2、4)，以及與相同 δ 下線性解(Hertz)的差。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り: <code style="color:#22d3bf">d</code>・<code style="color:#22d3bf">delta</code>・<code style="color:#22d3bf">F_L</code>(線形)・<code style="color:#22d3bf">a_L</code>・<code style="color:#22d3bf">kappa</code>・<code style="color:#22d3bf">F</code>(= κ F_L)・<code style="color:#22d3bf">radius_ratio</code>・<code style="color:#22d3bf">a</code>・<code style="color:#22d3bf">F_universal</code> (式 6、k·d ≥ 1 は inf)・<code style="color:#22d3bf">F_hertz_from_radius</code>(測った a を線形解で読んだ力、平頭は nan)・<code style="color:#22d3bf">err_force_from_delta_pct</code> (F_L/F − 1)・<code style="color:#22d3bf">err_radius_from_delta_pct</code>(a_L/a − 1)・<code style="color:#22d3bf">err_force_from_radius_pct</code>・<code style="color:#22d3bf">beyond_validated</code>(d &gt; 0.5)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: δ ≤ 0 か δ ≥ L、L ≤ 0、lin が powerlaw_linear_contact の表でない、読みの綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

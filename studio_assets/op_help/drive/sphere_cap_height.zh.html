@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sphere_cap_height(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacscalib; tacscalib.sphere_cap_height(shape, centre, a_px: &#x27;float&#x27;, R_px: &#x27;float&#x27;, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sphere_cap_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>幾何学的な押し込み(弾性の裾なし)の真の高さ: 接触円の内側 h(r) = −(√(R² − r²) − √(R² − a²))、外側 0(a は min(a, R))。</p>
+<p>几何压入(无弹性边缘过渡)的真实高度：接触圆内 h(r) = −(√(R² − r²) − √(R² − a²))，圆外为 0(a 取 min(a, R))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">h</code> (H, W) [m]、<code style="color:#22d3bf">delta</code>(中心の深さ [m] = R − √(R² − a²))、<code style="color:#22d3bf">shape_rel</code>(h(r) − h(0) = R − √(R² − r²) [m]、a に依らない形、外側は nan)、<code style="color:#22d3bf">r</code> [px]。<code style="color:#22d3bf">pitch</code> [m/px]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: shape・centre の形、a・R・pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_scene_mjcf(params: &#x27;dict&#x27;, *, timestep: &#x27;float&#x27; = 0.00025, solref=(0.0005, 1.0), wrap_axle: &#x27;bool&#x27; = False) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>第 2 実装の場面の MJCF 文字列(mujoco 不要): 空間テンドン 棒の先 → ディアボロ → 棒の先、長さの上限 = 糸(片側拘束 = 伸びた時だけ引く = 摩擦のない滑車の厳密模型と同じ物理を、柔らかい拘束と暗黙の速度更新という別の解法で解く)。棒の先は mocap(各ステップで位置を書き込む)。ディアボロは自由関節の剛体(質量 = 論文の表 I、慣性は仮定。回転は糸と結合しない)。<code style="color:#22d3bf">wrap_axle</code> = True なら軸(半径 r)の円柱にテンドンを巻き付ける形(下側を通す、未検証)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: params の形、timestep ≤ 0、solref が 2 つの正の数でない。</p>
+<p>第二實作(獨立實作)場景的 MJCF 字串(不需要 mujoco)：空間肌腱 棍端 → 扯鈴 → 棍端，長度上限 = 繩(單側約束 = 僅在拉伸時拉 = 與無摩擦滑輪的精確模型相同的物理，以軟約束與隱式速度更新這一不同解法求解)。棍端為 mocap(每步寫入位置)。扯鈴為自由關節剛體(質量 = 論文表 I，慣性為假定。旋轉不與繩耦合)。<code style="color:#22d3bf">wrap_axle</code> = True 時，肌腱纏繞在軸(半徑 r)的圓柱上(從下側通過，未驗證)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：params 的形式、timestep ≤ 0、solref 不是 2 個正數。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

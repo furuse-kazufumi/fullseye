@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × signal × signal</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import cutting; cutting.slice_push_from_track(theta_deg: &#x27;float&#x27;, x_mm, z_mm) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;slice_push_from_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>刃の 1 点の軌跡 (x, z)(画像から)と刃先の傾き θ(画像から)で ξ を出す。速度は軌跡の直線当てはめの向き(ξ は比)。</p>
+<p>Berechnet ξ aus der Trajektorie (x, z) von 1 Punkt der Klinge (aus dem Bild) und der Neigung θ der Schneide (aus dem Bild). Die Geschwindigkeit ist die Richtung einer an die Trajektorie angepassten Geraden (ξ ist ein Verhältnis).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>押している区間だけを渡すこと。入り始め(手首が縮む途中)を混ぜると刃が指令より遅れて ξ が偏る —— 刃が食材の全幅を切っている定常区間を使う(PoC で 0.63 → 0.57 = 真値に戻ることを確かめた)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

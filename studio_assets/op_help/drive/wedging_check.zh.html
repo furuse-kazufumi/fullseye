@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wedging_check(kp, theta: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.wedging_check(kp, theta: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;wedging_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>二点接触が始まる時点の傾き θ [rad] で、くさび(wedging)が起こりうるか(OCW p.28: θ &gt; c/μ)。</p>
+<p>在开始两点接触时的倾角 θ [rad] 下，是否可能发生楔住(wedging)(OCW p.28：θ &gt; c/μ)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">possible</code>(θ &gt; c/μ)、<code style="color:#22d3bf">theta_limit</code> = c/μ、<code style="color:#22d3bf">l2</code>(その θ での二点接触の深さ、exact。θ ≥ θ_m_exact なら 0)、<code style="color:#22d3bf">l2_over_d</code>、<code style="color:#22d3bf">lambda</code> = l₂/(2rμ)、<code style="color:#22d3bf">possible_small_angle</code>(l₂/d &lt; μ ⇔ λ &lt; 1。小角では <code style="color:#22d3bf">possible</code> と同じ判定)。μ = 0 なら摩擦円錐が無いので常に False。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

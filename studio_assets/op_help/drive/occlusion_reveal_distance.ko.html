@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_reveal_distance(ego_xy, ego_heading: &#x27;float&#x27;, parked_box, emerge_xy) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_reveal_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>路肩駐車車両(向きつきの箱)の陰にある点 <code style="color:#22d3bf">emerge_xy</code> が、自車の目から <b>初めて見える</b> ときの縦距離。</p>
+<p>갓길 주차 차량(방향이 있는 상자)의 그늘에 있는 점 <code style="color:#22d3bf">emerge_xy</code>가 자차의 눈에서 <b>처음 보이는</b> 때의 종방향 거리.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>自車の目は p(s) = ego_xy + s h(h = (cos ψ, sin ψ)、s ≥ 0 = 前進量)を動く。視線 = 線分 p(s) → e が箱の内部を通らなければ見える。箱は凸なので「見えない s」は区間になり、その端は <b>視線が箱の角をかすめる</b> か、進路が箱の辺を横切る所。各角 c について直線 e + λ(c − e) と進路の交点 s_c を 2×2 の連立で解き(閉形式)、候補 {0, s_c, 進路と辺の交点} の小さい順に見えるかを調べ、最初に見える s* で d = h · (e − p(s*)) を返す。</p>
 <p>軸平行の例(進路 y = 0、+x 向き、陰を作る角 c、e は箱の向こう): d = (e_x − c_x) · e_y / (e_y − c_y)。</p>
 <p><code style="color:#22d3bf">parked_box</code> = (cx, cy, length, width, yaw)(中心・全長・全幅・向き)。最初から見えていれば s* = 0 の縦距離、どこまで進んでも見えない(e が箱の内部)なら <code style="color:#22d3bf">inf</code>。d が負(見えた時には既に e を通り過ぎている)もそのまま返す。角をかすめる視線は「見える」(箱を 1e-9 相対だけ縮めて判定し、浮動小数の揺れで判定が割れないようにする)。</p>

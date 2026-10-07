@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar × scalar × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.dispense_mass_from_video(frames, pitch: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, times, ground=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;dispense_mass_from_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>高さ図の列から出た質量と排出率 —— 各コマの山の体積 × ρ_b、時間に対する直線当て(最小二乗)。</p>
+<p>由高度图序列求出料质量与排出速率 —— 各帧料堆体积 × ρ_b，对时间做直线拟合(最小二乘)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">masses</code> [kg]、<code style="color:#22d3bf">rate</code>(傾き [kg/s])、<code style="color:#22d3bf">total</code>(最後 − 最初)、<code style="color:#22d3bf">rms</code>(直線残差 [kg])。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマが 2 未満 / 時刻の数が合わない / 時刻が単調でない。画像の体積分解能は <code style="color:#22d3bf">pitch³ ρ_b</code> の桁(1 mm・1500 kg/m³ で 1.5 mg/画素³ だが、縁の 1 画素の不確かさが面積 × pitch で乗るので実際は g 級)。mg 級は秤に譲る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コマ列 → コマごとの候補 → <code style="color:#22d3bf">balltrack.ball_track</code>(等速予測で繋ぐ、<code style="color:#22d3bf">max_jump_px</code> 超えは落とす)→ world 座標。</p>
+<p>Frame-Folge → Kandidaten je Frame → <code style="color:#22d3bf">balltrack.ball_track</code> (per Vorhersage mit konstanter Geschwindigkeit verknüpft; Sprünge über <code style="color:#22d3bf">max_jump_px</code> werden verworfen) → world-Koordinaten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>。速いパック(1 コマの移動 &gt; max_jump_px)では対応が切れてコマが落ちる —— その破れ方は門で測る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

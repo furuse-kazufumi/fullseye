@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>コマの列 → ディアボロの中心 (N, 3)・軸 (N, 3)・警報 <code style="color:#22d3bf">ok</code> (N,)・残差 (N,)。コマごとに <code style="color:#22d3bf">diabolo_axis_from_image</code> (学習なし、前のコマに頼らない)。推定できないコマは NaN で <code style="color:#22d3bf">ok = False</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマの列が空か列でない。</p>
+<p>影格序列 → 扯鈴中心 (N, 3)、軸 (N, 3)、警報 <code style="color:#22d3bf">ok</code> (N,)、殘差 (N,)。逐影格呼叫 <code style="color:#22d3bf">diabolo_axis_from_image</code>(無學習，不依賴前一影格)。無法估計的影格為 NaN 且 <code style="color:#22d3bf">ok = False</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：影格序列為空或不是序列。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_two_theta(shape, geometry)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.detector_two_theta(shape, geometry)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;detector_two_theta&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>検出器の各画素の 2θ・方位 χ・相対立体角(傾き・距離・中心つき)。</p>
+<p>偵測器各像素的 2θ、方位角 χ 與相對立體角(含傾斜、距離與中心)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">shape = (H, W)</code>、<code style="color:#22d3bf">geometry</code> は module の docstring の Fit2D 型。返り値(dict): <code style="color:#22d3bf">two_theta</code> [deg]・<code style="color:#22d3bf">chi</code> [deg] (<code style="color:#22d3bf">atan2</code>、+列が 0、+行が +90)・<code style="color:#22d3bf">solid_angle</code>(ビームの中心で傾き 0 のとき 1 になる相対値、<code style="color:#22d3bf">cos³</code> で落ちる)。2θ は <code style="color:#22d3bf">atan2(hypot(Pₓ, P_y), P_z)</code> で求める(acos を使うと 2θ → 0 の近くで丸めの床が出る)。</p>
 <p>Raises ValueError: 形が 2 要素の正の整数でない、幾何の鍵の欠け・綴り違い、<code style="color:#22d3bf">|tilt| &gt;= 60</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

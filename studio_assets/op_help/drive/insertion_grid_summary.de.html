@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>成功率の格子を集計する: 行 = {eps_mm, tilt_deg, correct, success} の列から、補正あり/なし × ε₀ × θ₀ の成功率の表と、「補正なしで全部成功する最大の ε₀」「補正ありの成功数 / 総数」。</p>
+<p>Fasst das Erfolgsraten-Gitter zusammen: aus Zeilen {eps_mm, tilt_deg, correct, success} die Tabelle der Erfolgsraten für mit/ohne Korrektur × ε₀ × θ₀ sowie &quot;größtes ε₀, bei dem ohne Korrektur alles gelingt&quot; und &quot;Erfolge / Gesamtzahl mit Korrektur&quot;.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り: <code style="color:#22d3bf">eps_mm</code>・<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) の配列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>
 <p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、<code style="color:#22d3bf">success_count</code>: {correct: (成功数, 総数)}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行が空、鍵が欠ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × signal × signal × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegtactile; pegtactile.two_point_forces(kp, F, M_g, g, tip, axis, mu_grid=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;two_point_forces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>二点接触(Whitney)のレンチを 2 つの接触力と壁の摩擦 μ に分解する(平面、両点が下へ滑る Coulomb の仮定)。</p>
+<p>将两点接触(Whitney)的力旋量分解为 2 个接触力与壁面摩擦 μ(平面，两点均向下滑动的 Coulomb 假定)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>傾きの面(軸の水平成分 e)で、先端の縁は −e 側の壁(法線 = 水平、摩擦 = 上向き)、胴は +e 側の最狭部の縁(法線 = 軸に垂直、摩擦 = 軸の上向き)。各 μ で (f_n1, f_n2) は 3 式(F_e, F_z, M)の最小二乗、残差最小の μ を放物線で詰める(既定の格子 0〜1.5、301 点)。返り <code style="color:#22d3bf">mu</code>・<code style="color:#22d3bf">fn_tip</code>・<code style="color:#22d3bf">fn_mouth</code>・<code style="color:#22d3bf">resid</code>(N)・<code style="color:#22d3bf">p_tip</code>・<code style="color:#22d3bf">p_mouth</code>。<b>Raises</b> ValueError: 軸が鉛直すぎて傾きの面が決まらない、ベクトルが有限の 3 成分でない、μ の格子が 3 点未満。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelong; drivelong.stopping_distance_grade(v: &#x27;float&#x27;, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;, theta: &#x27;float&#x27; = 0.0, c_rr: &#x27;float&#x27; = 0.0, k: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stopping_distance_grade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>停止距離の閉形式 = 空走 v ρ + 制動距離 (1/(2k)) ln(1 + k v²/A)、A = brake + g sin θ + c_rr g cos θ(k = 0 で v²/(2A))。</p>
+<p>Geschlossene Form des Anhaltewegs = Reaktionsweg v ρ + Bremsweg (1/(2k)) ln(1 + k v²/A), A = brake + g sin θ + c_rr g cos θ (v²/(2A) für k = 0).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>θ &gt; 0 が上り(止まりやすい)、θ &lt; 0 が下り。ρ の間は速さを保つ。A ≤ 0(下りで制動が坂に負ける)なら止まらない → <code style="color:#22d3bf">inf</code>。平地・c_rr = k = 0 で <code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, 0, brake)</code> と同じ式。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0、非有限、|θ| ≥ 45°。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

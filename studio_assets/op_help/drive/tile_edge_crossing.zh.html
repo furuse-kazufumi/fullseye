@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import driveinf; driveinf.tile_edge_crossing(i: &#x27;int&#x27;, j: &#x27;int&#x27;, side: &#x27;str&#x27;, tp: &#x27;dict&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tile_edge_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>区画 (i, j) の辺を道が横切る位置(区画の中の座標、辺に沿った 0..tile)。無ければ None。<code style="color:#22d3bf">side</code> ∈ {&quot;E&quot;, &quot;W&quot;, &quot;N&quot;, &quot;S&quot;}。★辺の番号で決める: 区画 (i, j) の E と区画 (i+1, j) の W は同じ辺(同じハッシュ)。</p>
+<p>道路穿过区块 (i, j) 某条边的位置(区块内坐标，沿边 0..tile)。没有则为 None。<code style="color:#22d3bf">side</code> ∈ {&quot;E&quot;, &quot;W&quot;, &quot;N&quot;, &quot;S&quot;}。★由边的编号决定: 区块 (i, j) 的 E 与区块 (i+1, j) 的 W 是同一条边(同一哈希)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

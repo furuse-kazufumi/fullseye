@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_validate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>表を検証する(fail-closed): 欄の語彙・クラス名・回復名の綴り、<b>全ペアの排他</b>(2 行が同じ署名に当たり得ないか = 全欄で許す集合が交わる行の組が無い)、<b>到達性</b>(unknown 以外の全クラスに ≥ 1 行)。</p>
+<p>校验表(fail-closed)：字段词汇、类名、恢复名的拼写，<b>所有对的互斥</b>(不存在 2 行可能命中同一签名 = 没有在所有字段上允许集合都相交的行对)，<b>可达性</b>(unknown 以外的所有类都有 ≥ 1 行)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">classes_covered</code>、<code style="color:#22d3bf">classes_missing</code>、<code style="color:#22d3bf">n_signatures</code>(語彙の直積の大きさ)、<code style="color:#22d3bf">n_covered</code>(どれかの行に当たる署名の数)、<code style="color:#22d3bf">coverage</code>、<code style="color:#22d3bf">overlaps</code>(交わる行の組 —— 空でなければ下の ValueError)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 綴り違い・交わる行・届かないクラス。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

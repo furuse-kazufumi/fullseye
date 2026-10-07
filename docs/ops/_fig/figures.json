@@ -14122,9 +14122,30 @@
    "status": "ok"
   },
   "tb_cx_apply_transfer_function": {
-   "in_sort": "cimage",
-   "reason": "橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない",
-   "status": "domain"
+   "color_ok": false,
+   "extra": {
+    "a": "tb_cx_apply_transfer_function.a.jpg",
+    "chain": "tb_cx_apply_transfer_function.chain.jpg",
+    "inputs": "tb_cx_apply_transfer_function.inputs.jpg"
+   },
+   "fig": "tb_cx_apply_transfer_function.png",
+   "inputs": [
+    "scene",
+    "photo",
+    "coins",
+    "beans",
+    "label",
+    "part",
+    "pcb",
+    "color"
+   ],
+   "knob_dead": [
+    "b"
+   ],
+   "out_kind": "ndarray",
+   "program": "img_to_cimage 0.50 0.50\ntb_cx_apply_transfer_function 0.50 0.50",
+   "pseudocolor": false,
+   "status": "ok"
   },
   "tb_cx_ifft": {
    "color_ok": false,
@@ -17333,6 +17354,8 @@
   "tb_temporal_band_power": {
    "color_ok": false,
    "extra": {
+    "a": "tb_temporal_band_power.a.jpg",
+    "b": "tb_temporal_band_power.b.jpg",
     "chain": "tb_temporal_band_power.chain.jpg",
     "inputs": "tb_temporal_band_power.inputs.jpg"
    },
@@ -17347,10 +17370,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "a",
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "img_to_video 0.50 0.50\ntb_temporal_band_power 0.50 0.50",
    "pseudocolor": true,
@@ -17359,6 +17379,8 @@
   "tb_temporal_bandpass": {
    "color_ok": false,
    "extra": {
+    "a": "tb_temporal_bandpass.a.jpg",
+    "b": "tb_temporal_bandpass.b.jpg",
     "chain": "tb_temporal_bandpass.chain.jpg",
     "gif": "tb_temporal_bandpass.gif",
     "inputs": "tb_temporal_bandpass.inputs.jpg"
@@ -17374,10 +17396,7 @@
     "pcb",
     "color"
    ],
-   "knob_dead": [
-    "a",
-    "b"
-   ],
+   "knob_dead": [],
    "out_kind": "ndarray",
    "program": "img_to_video 0.50 0.50\ntb_temporal_bandpass 0.50 0.50",
    "pseudocolor": false,
@@ -21896,13 +21915,13 @@
  },
  "size": 128,
  "stats": {
-  "domain": 5,
+  "domain": 4,
   "empty": 1,
   "failed": 0,
-  "ok": 930,
+  "ok": 931,
   "unreachable": 0,
-  "with_chain": 378,
+  "with_chain": 379,
   "with_gif": 40,
-  "with_sweep": 577
+  "with_sweep": 580
  }
 }

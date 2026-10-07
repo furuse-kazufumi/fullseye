@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import diabolo; diabolo.diabolo_spheroid(p_left, p_right, string_length: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_spheroid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>棒の先 2 点(焦点)と糸の長さ → 補助の回転楕円体: a = l/2、c = |x_L − x_R|/2、b = √(a² − c²)(式 1 の正しい形)。</p>
+<p>Die 2 Stabspitzen (Brennpunkte) und Schnurlänge → Hilfs-Rotationsellipsoid: a = l/2, c = |x_L − x_R|/2, b = √(a² − c²) (die korrekte Form von Gl. 1).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>★原文の (1b) は b = √(a² − |x_L − x_R|/2) で、長さと長さの 2 乗の差なので次元が合わない。論文の実機寸法(糸 1.45 m、棒の間隔 1.10 m)を入れると根の中が負になる(NaN)。楕円の恒等式 a² = b² + c² の形に直した(公開実装も 2 乗で書いている)。原文の値は <code style="color:#22d3bf">b_paper_literal</code> に残す。原文の前文は「半長軸 b と半短軸 a」と名前が逆(a = l/2 が半長軸)で、式の側に従う。</p>
 <p>返り <code style="color:#22d3bf">{&quot;center&quot;, &quot;axis&quot;(x_L − x_R の単位ベクトル), &quot;a&quot;, &quot;b&quot;, &quot;c&quot;, &quot;b_paper_literal&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 間隔 ≥ 糸、棒が重なる、有限でない入力。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

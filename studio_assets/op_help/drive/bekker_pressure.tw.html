@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar × any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.bekker_pressure(sinkage, width, soil) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;bekker_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Bekker の圧力–沈下 <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]。<code style="color:#22d3bf">sinkage</code> [m] はスカラーか配列(≥ 0)、<code style="color:#22d3bf">width</code> = b [m]。</p>
+<p>Bekker 壓力–沉陷關係 <code style="color:#22d3bf">p = (k_c / b + k_φ) zⁿ</code> [kPa]。<code style="color:#22d3bf">sinkage</code> [m] 為純量或陣列(≥ 0)，<code style="color:#22d3bf">width</code> = b [m]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返りは <code style="color:#22d3bf">sinkage</code> と同じ形の配列(スカラーなら 0 次元)。z = 0 で 0、z について単調に増える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

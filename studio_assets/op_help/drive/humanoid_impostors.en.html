@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.humanoid_impostors(clip: &#x27;dict&#x27;, *, n_yaw: &#x27;int&#x27; = 16, n_phase: &#x27;int&#x27; = 12, res: &#x27;int&#x27; = 128, distance: &#x27;float&#x27; = 30.0, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivehumanoid; drivehumanoid.humanoid_impostors(clip: &#x27;dict&#x27;, *, n_yaw: &#x27;int&#x27; = 16, n_phase: &#x27;int&#x27; = 12, res: &#x27;int&#x27; = 128, distance: &#x27;float&#x27; = 30.0, light=(0.3, -0.5, 0.8), ambient: &#x27;float&#x27; = 0.35) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;humanoid_impostors&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>クリップ(<code style="color:#22d3bf">humanoid_walk_clip</code>)を <b>方位 n_yaw × 位相 n_phase</b> の向きから描いておく。</p>
+<p>Pre-renders the clip (<code style="color:#22d3bf">humanoid_walk_clip</code>) from the views of <b>n_yaw azimuths × n_phase phases</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>方位 b = 体から見たカメラの向き 2πb / n_yaw(0 = 正面 +x から見る)。カメラは体の高さの中ほどの高さから水平に、距離 <code style="color:#22d3bf">distance</code> で見る(ほぼ平行投影)。色は <code style="color:#22d3bf">driveworld.world_camera</code> と同じ Lambert(光はカメラ系)。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">{&quot;color&quot; (n_yaw, n_phase, res, res, 3) uint8, &quot;mask&quot; (...) bool, &quot;dz&quot; (...) float16 (画素の深度 − distance [m]), &quot;f&quot; (事前描画の焦点距離 [px]), &quot;distance&quot;, &quot;eye_h&quot; [m], &quot;res&quot;, &quot;n_yaw&quot;, &quot;n_phase&quot;, &quot;cycle_length&quot;, &quot;dims&quot;, &quot;phase_s&quot; (各位相の歩いた距離 [m])}</code>。</p>

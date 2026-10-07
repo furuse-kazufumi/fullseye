@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>複数の要素を剛体運動 <code style="color:#22d3bf">(x, y, yaw)</code> で配置して 1 つの dict にする。</p>
+<p>Places multiple elements by rigid motions <code style="color:#22d3bf">(x, y, yaw)</code> and combines them into 1 dict.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として(yaw も回す)変換する。<code style="color:#22d3bf">profile</code>(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定は要素の和(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素の重なりは和として扱う。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・要素と配置の数が違う・要素が dict でない・配置が 3 要素で有限でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

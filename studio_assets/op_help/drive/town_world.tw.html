@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_world(layout, *, props=(), **kwargs) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><code style="color:#22d3bf">driveworld.world_build</code> の薄い包み(<code style="color:#22d3bf">props</code> と残りの引数をそのまま渡す)に、停止線・信号・踏切の位置の表を <code style="color:#22d3bf">world[&quot;town&quot;]</code> として足し、踏切の要素ごとに <b>遮断機つき警報機 2 基・遮断かん(上がり)・踏切の板・列車(遠くに待機)</b> を置く。</p>
+<p><code style="color:#22d3bf">driveworld.world_build</code> 的薄包裝(<code style="color:#22d3bf">props</code> 及其餘參數原樣傳遞)，把停止線、號誌、平交道位置表作為 <code style="color:#22d3bf">world[&quot;town&quot;]</code> 加入，並在每個平交道要素處放置<b>附柵欄的平交道警報器 2 座、柵桿(升起)、平交道鋪板、列車(在遠處待命)</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">world[&quot;town&quot;] = {&quot;stop_lines&quot;: [(x, y, yaw, kind)], &quot;signals&quot;: [(x, y, yaw, kind)], &quot;crossings&quot;: [(x0, y0, x1, y1, s0, s1)], &quot;gear&quot;: [踏切ごとの設備の索引 dict], &quot;total_length&quot;}</code>(signals は交差点の 4 基全部、yaw = 灯器が向く向き。stop_lines は</p>
 <p>左側通行の物)。設備の状態は <code style="color:#22d3bf">town_crossing_state</code> で時刻ごとに書き換える。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない(world_build の例外はそのまま)。</p>

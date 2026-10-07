@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>晴天(雲量 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])の太陽の照度 [lx]: <code style="color:#22d3bf">direct_normal</code>(太陽に正対する面)・<code style="color:#22d3bf">diffuse</code>(水平面の散乱)・<code style="color:#22d3bf">air_mass</code>。</p>
+<p>Solar illuminance [lx] under clear sky (cloud cover <code style="color:#22d3bf">cloud</code> ∈ [0, 1]): <code style="color:#22d3bf">direct_normal</code> (surface facing the sun), <code style="color:#22d3bf">diffuse</code> (scattered, on a horizontal surface), <code style="color:#22d3bf">air_mass</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>直達 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud)、AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散乱 = 薄明の表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0)に雲で (1 + 0.5 cloud) を掛ける —— 仮定(モジュールの docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

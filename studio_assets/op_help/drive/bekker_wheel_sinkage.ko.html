@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roverslip; roverslip.bekker_wheel_sinkage(load, wheel, soil, form: &#x27;str&#x27; = &#x27;classic&#x27;) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;bekker_wheel_sinkage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Bekker の剛な車輪の沈下の近似式 [m]。接地を放物線 <code style="color:#22d3bf">z(x) = z₀ − x²/D</code> で近似し、せん断は入れない。</p>
+<p>Bekker의 강성 차륜 침하 근사식 [m]. 접지를 포물선 <code style="color:#22d3bf">z(x) = z₀ − x²/D</code>로 근사하고, 전단은 넣지 않습니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">load</code> は 1 輪の垂直荷重 [N]、D = 2r、<code style="color:#22d3bf">k = k_c/b + k_φ</code>。荷重は <code style="color:#22d3bf">W = b k sqrt(D) z₀^(n+1/2) · I(n)</code>、<code style="color:#22d3bf">I(n) = ∫₀¹ (1 − t²)ⁿ dt</code>。<code style="color:#22d3bf">form = &quot;classic&quot;</code>: Bekker の教科書の式 <code style="color:#22d3bf">z = [3W / ((3 − n) b k sqrt(D))]^(2/(2n+1))</code>。これは <code style="color:#22d3bf">(1 − t²)ⁿ ≈ 1 − n t²</code> と置いた <code style="color:#22d3bf">I(n) ≈ (3 − n)/3</code> で、<b>n = 1 でだけ厳密</b>(n = 1.9 では I を 21 % 大きく見積もり、沈下を 17 % 深く出す —— 2026-10-06 の試作で数値積分と比べて見つけた)。<code style="color:#22d3bf">form = &quot;parabolic&quot;</code>: 同じ放物線のまま <code style="color:#22d3bf">I(n) = √π Γ(n+1) / (2 Γ(n + 3/2))</code> を厳密に使う。小さな沈下(z ≪ D)で <code style="color:#22d3bf">wheel_sinkage</code> の数値積分(後側の接地なし、τ = 0)に収束する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

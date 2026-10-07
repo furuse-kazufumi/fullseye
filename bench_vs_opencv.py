@@ -9,12 +9,14 @@ honest 方針([[feedback_benchmark_honest_disclosure]] / [[feedback_benchmark_th
 
 実行: loco venv(cv2 + torch cuda)で `python bench_vs_opencv.py`。docs/BENCH_VS_OPENCV.md を生成。
 """
+import os
 import sys
 import time
 
 import numpy as np
 
-sys.path.insert(0, r"C:\dev\projects\imgevolve")
+_ROOT = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, _ROOT)
 import cv2
 import torch
 import accel
@@ -265,7 +267,7 @@ def main():
             L.append(f"| {name} | {tc:.2f} | {tg:.2f} | {sp:.1f}× ({mark}) | {gips:.0f} | {cips:.0f} |")
 
     out = "\n".join(L) + "\n"
-    with open(r"C:\dev\projects\imgevolve\docs\BENCH_VS_OPENCV.md", "w", encoding="utf-8") as f:
+    with open(os.path.join(_ROOT, "docs", "BENCH_VS_OPENCV.md"), "w", encoding="utf-8") as f:
         f.write(out)
     print(out)
 

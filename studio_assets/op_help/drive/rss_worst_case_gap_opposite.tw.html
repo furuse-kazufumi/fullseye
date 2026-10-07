@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_worst_case_gap_opposite(d0: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_worst_case_gap_opposite(d0: &#x27;float&#x27;, v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None, dt: &#x27;float&#x27; = 0.001, t_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;rss_worst_case_gap_opposite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>対向の最悪ケース: 両車 ρ の間 <code style="color:#22d3bf">accel_max</code> で加速 → c_1 は <code style="color:#22d3bf">brake_min_correct</code>、c_2 は <code style="color:#22d3bf">brake_min</code> で停止。</p>
+<p>對向的最壞情況：兩車在 ρ 期間以 <code style="color:#22d3bf">accel_max</code> 加速 → c_1 以 <code style="color:#22d3bf">brake_min_correct</code>、c_2 以 <code style="color:#22d3bf">brake_min</code> 停止。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>c_1 は x = 0 から +x へ、c_2 は x = d0 から −x へ(v2 は絶対値)。gap = x_2 − x_1。Returns <code style="color:#22d3bf">t, x1, x2, v1, v2, gap, min_gap, t_min, collided, t_stop_1, t_stop_2</code>。<code style="color:#22d3bf">min_gap = d0 − (d_min − max(min_distance))</code> が成り立つ(d_min = <code style="color:#22d3bf">rss_longitudinal_opposite</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

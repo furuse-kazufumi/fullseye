@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import polish; polish.removal_depth_from_heights(z_before, z_after, ref_mask=None, frame: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;removal_depth_from_heights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>磨く前と後の高さ図(同じ格子に置かれていること)から削れた深さ [高さの単位、正 = 削れた]。後の図は載せ直しで傾きと高さが変わるので、差 z_before − z_after から「触れていない所」(<code style="color:#22d3bf">ref_mask</code>、無ければ外周の <code style="color:#22d3bf">frame</code> の割合の枠)で最小二乗の平面を引く。<b>Raises</b> ValueError: 形が違う・2-D でない・非有限、参照の画素が 3 未満、frame が (0, 0.5) の外。</p>
+<p>由拋光前後的高度圖(須位於同一網格)求出的去除深度 [高度單位，正 = 被去除]。由於重新裝夾會改變拋光後圖的傾斜與高度，對差值 z_before − z_after 在「未接觸區域」(<code style="color:#22d3bf">ref_mask</code>，未給定時為外周比例 <code style="color:#22d3bf">frame</code> 的邊框)上以最小平方擬合平面並減去。<b>Raises</b> ValueError：形狀不同、非 2-D 或非有限、參考像素少於 3、frame 在 (0, 0.5) 之外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

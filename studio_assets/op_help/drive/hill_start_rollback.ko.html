@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.hill_start_rollback(theta: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, c_rr: &#x27;float&#x27; = 0.012, a_creep: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_rollback&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>上り坂(θ &gt; 0)で止まった車がブレーキを離し、τ 秒後に駆動 a_drive が入るときのずり下がり(空気抵抗なしの閉形式)。</p>
+<p>오르막(θ &gt; 0)에 멈춘 차가 브레이크를 떼고 τ초 후 구동 a_drive가 들어갈 때의 뒤로 밀림(공기 저항 없는 닫힌 식).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>τ の間の下向きの加速度 a₁ = g sin θ − c_rr g cos θ − a_creep(≤ 0 ならずり下がらない)。距離 ½ a₁ τ²、速さ a₁ τ。駆動が入ると後ろ向きの動きを a₂ = a_drive − g sin θ + c_rr g cos θ で止める(転がり抵抗も動きに逆らう)→ (a₁ τ)²/(2 a₂)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">rollback</code>(合計 [m])、<code style="color:#22d3bf">during_gap</code>(½ a₁ τ²)、<code style="color:#22d3bf">recovery</code>((a₁τ)²/(2a₂))、<code style="color:#22d3bf">a1</code>、<code style="color:#22d3bf">a2</code>、<code style="color:#22d3bf">v_back</code>。</p>

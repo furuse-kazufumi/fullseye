@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_parabola(t, p) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.fit_parabola(t, p) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fit_parabola&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>観測 (t_i, p_i) に p = p₀ + v₀ t − ½ g t² ẑ を最小二乗で当てる(線形、閉形式)。<code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;g&quot;, &quot;rms&quot;}</code>。真空の真値なら 1e-9 で戻る(門)。</p>
+<p>用最小二乘将 p = p₀ + v₀ t − ½ g t² ẑ 拟合到观测 (t_i, p_i)(线性，闭式)。<code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;g&quot;, &quot;rms&quot;}</code>。真空真值可在 1e-9 内还原(门禁)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_opposite(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_opposite(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_opposite&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>対向(論文 Lemma two_way / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceOppositeDirection</code>)の最小安全距離 [m]。</p>
+<p>Minimum safe distance [m] in the opposite direction (paper Lemma two_way / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceOppositeDirection</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>c_1 は正しい車線(v1 ≥ 0、<code style="color:#22d3bf">p1</code> の <code style="color:#22d3bf">brake_min_correct</code> で減速)、c_2 は逆走(v2 は負でも大きさでも受けて <code style="color:#22d3bf">abs</code>、<code style="color:#22d3bf">p2</code> の <code style="color:#22d3bf">brake_min</code> で減速)。両車とも ρ の間 <code style="color:#22d3bf">accel_max</code> で加速。<code style="color:#22d3bf">d_min = S(v1; ρ_1, a_1, b_correct,1) + S(|v2|; ρ_2, a_2, b_min,2) + max(min_distance_1, min_distance_2)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

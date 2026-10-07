@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballworld; ballworld.camera_rig(tp: &#x27;dict&#x27; = None, *, n: &#x27;int&#x27; = 2, distance: &#x27;float&#x27; = 2.2, height: &#x27;float&#x27; = 1.7, fov_deg: &#x27;float&#x27; = 55.0, width: &#x27;int&#x27; = 1280, height_px: &#x27;int&#x27; = 1024) -&gt; &#x27;list&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;camera_rig&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>台を囲むカメラ(n = 2: 両端の斜め上、n = 4: 4 隅)。返り値 <code style="color:#22d3bf">[{&quot;pose&quot;, &quot;K&quot;, &quot;eye&quot;}, …]</code>、全部が台の中心を見る。</p>
+<p>围绕球台的相机(n = 2：两端斜上方，n = 4：4 个角)。返回值 <code style="color:#22d3bf">[{&quot;pose&quot;, &quot;K&quot;, &quot;eye&quot;}, …]</code>，全部朝向球台中心。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

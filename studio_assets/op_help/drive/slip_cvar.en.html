@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roverslip; roverslip.slip_cvar(model, slopes, alpha: &#x27;float&#x27; = 0.9, sign: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;slip_cvar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>滑り率の CVaR_α(上側 1 − α の尾の条件付き期待値)。<code style="color:#22d3bf">sign = −1</code> で −s の CVaR(下りの空走・横滑りの大きさ)。</p>
+<p>CVaR_α of the slip ratio (conditional expectation of the upper 1 − α tail). With <code style="color:#22d3bf">sign = −1</code>, the CVaR of −s (magnitude of downhill free-running / side slip).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>ガウス過程は閉形式 <code style="color:#22d3bf">μ + σ φ(Φ⁻¹(α)) / (1 − α)</code>(α = 0 で平均、σ は観測の予測分布)。分位点回帰は <code style="color:#22d3bf">(1/(1 − α)) ∫_α^{q_max} Q(u) du</code> を当てはめた段で台形則に、<code style="color:#22d3bf">q_max</code> より上の尾は最上段の値で埋める(尾を細く見積もる向きの近似 —— 段の外の分布は分からない)。返り値 (n,)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

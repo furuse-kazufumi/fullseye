@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tactorque; tactorque.punch_pressure(X, Y, a: &#x27;float&#x27;, P: &#x27;float&#x27; = 0.0, M1=(0.0, 0.0), pitch: &#x27;float | None&#x27; = None, sub: &#x27;int&#x27; = 4) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;punch_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>平頭円形押し込み子(半径 a [m])の圧力 [Pa]: p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r &lt; a、外は 0)。第 1 項 = Johnson 1985 式 3.34、第 2 項 = ∫ (x, y) p dA = M1 を満たす反対称項(導出はモジュール docstring、門で数値確認)。<code style="color:#22d3bf">pitch</code> を渡すと画素を sub×sub の副標本で平均する(縁の 1/√ 特異点の格子誤差を減らす。4×4 で Σ p h² が P と 0.6 %、実測)。<b>Raises</b> ValueError: a ≤ 0、P &lt; 0、X と Y の形が違う、|M1| &gt; Pa/3(接触が離れる: 線形の式が成り立たない、fail-closed)。</p>
+<p>平头圆形压头(半径 a [m])的压力 [Pa]：p = P/(2πa√(a²−r²)) + 3(M1_x x + M1_y y)/(2πa³√(a²−r²))(r &lt; a，外部为 0)。第 1 项 = Johnson 1985 式 3.34，第 2 项 = 满足 ∫ (x, y) p dA = M1 的反对称项(推导见模块 docstring，由门禁做数值确认)。传入 <code style="color:#22d3bf">pitch</code> 时，以 sub×sub 的子样本对像素取平均(减小边缘 1/√ 奇点的网格误差；4×4 时 Σ p h² 与 P 相差 0.6 %，实测)。<b>Raises</b> ValueError：a ≤ 0、P &lt; 0、X 与 Y 形状不同、|M1| &gt; Pa/3(接触脱离：线性公式不成立，fail-closed)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

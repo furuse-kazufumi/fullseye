@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivejapan; drivejapan.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;osm_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>OSM XML(文字列かファイルパス)を読み、節点を局所平面座標 [m] に落とす。</p>
+<p>Reads OSM XML (a string or a file path) and projects the nodes to local planar coordinates [m].</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;nodes&quot;: {id: {&quot;xy&quot;: (x, y), &quot;lat&quot;, &quot;lon&quot;, &quot;tags&quot;: {}}}, &quot;ways&quot;: [{&quot;id&quot;, &quot;nodes&quot;: [id], &quot;tags&quot;: {}}], &quot;bbox&quot;: (xmin, xmax, ymin, ymax)(</code>&lt;bounds&gt;<code style="color:#22d3bf"> があればそれ、無ければ節点の範囲), &quot;n_nodes&quot;, &quot;n_ways&quot;}</code>。origin が None なら <code style="color:#22d3bf">&lt;bounds&gt;</code> の中心(無ければ節点の平均)。<code style="color:#22d3bf">&lt;nd ref&gt;</code> が未知の節点を指す way はその節点を落とす(件数を <code style="color:#22d3bf">n_dangling</code> に)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: XML でない、<code style="color:#22d3bf">&lt;osm&gt;</code> でない、節点が 1 つも無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

@@ -2,15 +2,27 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_cx_apply_transfer_function — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>データ種</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼び出し</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code> (2-D は 1 画像 + 2 スカラつまみ <code style="color:#22d3bf">a,b∈[0,1]</code> のモデル)</p>
-<p>*図なし: 型は届くが、汎用の合成入力では定義域が合わない —— 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない。下の「実行できる例」で使い方を見ること。*</p>
+<p><img src="fig/tb_cx_apply_transfer_function.png" alt="tb_cx_apply_transfer_function: input → output"></p>
+<p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.a.jpg">tb_cx_apply_transfer_function: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
+<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>段階</b>(前置きの op → この op。左から順):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.chain.jpg">tb_cx_apply_transfer_function: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
+<p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.inputs.jpg">tb_cx_apply_transfer_function: 別の画像での出力</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>Multiply a <b>centred</b> spectrum by a filter <code style="color:#22d3bf">H</code> -&gt; <code style="color:#22d3bf">(H, W)</code> complex128.</p>
 <p>The honest primitive under <code style="color:#22d3bf">ops.lowpass</code> / <code style="color:#22d3bf">ops.highpass</code>, but</p>
 <p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field (not immediately inverted and real-cast), so it can be chained, inspected, or handed to <code style="color:#22d3bf">cx_ifft</code>. <code style="color:#22d3bf">H</code> is a same-shape transfer function laid out in the *centred* convention of <code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real (a magnitude mask) or complex (a phase-shifting filter). A real <code style="color:#22d3bf">cx</code> is FFT&#x27;d first (module convenience).</p>
-<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> sets the width of the transfer function <code style="color:#22d3bf">H</code>, which the bridge builds <b>per call at the spectrum&#x27;s own shape</b>: a centred Gaussian low-pass <code style="color:#22d3bf">H = exp(-r^2 / (2 sigma^2))</code> with <code style="color:#22d3bf">sigma = 0.02 + 0.48 a</code> cycles/pixel (0.26 at a=0.5). <code style="color:#22d3bf">b</code> is unused. (Until 2026-10-07 <code style="color:#22d3bf">H</code> was bound once as a fixed 32x32 array, so every other image size was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Studio で試す</h3>
+<p>下のプログラムは実際に走ることを確かめてある(図と同じ入力)。Studio のヘルプではこのブロックがボタンになり、その場で読み込んで実行できる。</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
+tb_cx_apply_transfer_function 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">▸ このパイプラインを読み込む</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">読み込んで実行</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">実行できる例(この op を実際に呼ぶ検証済みサンプル)</h3>
 <p style="margin:2px 0 2px 12px">• (まだありません)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">型が繋がる次の op(<code style="color:#22d3bf">cimage</code> を入力に取れる)</h3>

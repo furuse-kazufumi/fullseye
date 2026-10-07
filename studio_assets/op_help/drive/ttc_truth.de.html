@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ttc_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画素ごとの <b>真の τ</b>(秒、最初のコマの時刻で)と閉じる速さ: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>。</p>
+<p>Pixelweises <b>wahres τ</b> (Sekunden, zum Zeitpunkt des ersten Frames) und Annäherungsgeschwindigkeit: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">τ₀ = Z₀ · Δt / (Z₀ − Z₁)</code>(Lee 1976 の <code style="color:#22d3bf">Z / (−Ż)</code> を 2 コマの差分で。等速なら厳密)。近づかない画素(<code style="color:#22d3bf">Z₁ ≥ Z₀</code>)は <code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">closing_speed = (Z₀ − Z₁) / Δt</code>(m/s、正 = 近づく)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

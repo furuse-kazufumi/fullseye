@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecommonroad; drivecommonroad.ks_step(state, u, dt: &#x27;float&#x27;, params=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ks_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>運動学単線(KS)モデルを区分一定入力 u = (δ̇, a) で dt だけ RK4 で進める。参照点 = 後軸中心。</p>
+<p>운동학 단일 트랙(KS) 모델을 구간 일정 입력 u = (δ̇, a)로 RK4를 써서 dt만큼 진행합니다. 기준점 = 뒤차축 중심.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>state = (x_rear, y_rear, δ, v, ψ)。式: ẋ = v cos ψ、ẏ = v sin ψ、δ̇ = u₀、v̇ = u₁、ψ̇ = v / l_wb · tan δ (commonroad-vehicle-models <code style="color:#22d3bf">vehicle_dynamics_ks</code>、入力の飽和 <code style="color:#22d3bf">steering_constraints</code> / <code style="color:#22d3bf">acceleration_constraints</code> も同じ)。</p>
 <p>門: δ = 0 で x = x₀ + v t(1e-9)、一定 δ で半径 l_wb / tan δ の円(1 周で始点へ 1e-6)、commonroad-io があれば <code style="color:#22d3bf">vehicle_dynamics_ks</code> の odeint と 1 step で 1e-6 一致。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: state が (5,) でない・非有限、u が (2,) でない、dt ≤ 0、params が不正。</p>

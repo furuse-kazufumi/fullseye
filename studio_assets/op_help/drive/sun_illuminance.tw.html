@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveenv; driveenv.sun_illuminance(elevation: &#x27;float&#x27;, cloud: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;sun_illuminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>晴天(雲量 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])の太陽の照度 [lx]: <code style="color:#22d3bf">direct_normal</code>(太陽に正対する面)・<code style="color:#22d3bf">diffuse</code>(水平面の散乱)・<code style="color:#22d3bf">air_mass</code>。</p>
+<p>晴天(雲量 <code style="color:#22d3bf">cloud</code> ∈ [0, 1])的太陽照度 [lx]: <code style="color:#22d3bf">direct_normal</code>(正對太陽的面)、<code style="color:#22d3bf">diffuse</code>(水平面上的散射)、<code style="color:#22d3bf">air_mass</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>直達 = 1361 W/m² × 0.7^{AM^0.678}(Meinel)× 105 lm/W × (1 − cloud)、AM = Kasten &amp; Young 1989 1 / (sin h + 0.50572 (h + 6.07995°)^{−1.6364})。散乱 = 薄明の表(高度 ≤ 0)/ 400 + 16000 sin h(高度 &gt; 0)に雲で (1 + 0.5 cloud) を掛ける —— 仮定(モジュールの docstring)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

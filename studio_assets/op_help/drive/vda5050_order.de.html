@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vda5050_order(path, *, order_id=&#x27;order-1&#x27;, order_update_id=0, cell_size=1.0, map_id=&#x27;floor&#x27;, allowed_xy=0.05, allowed_theta=0.087, max_speed=1.0, released_nodes=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import agvfleet; agvfleet.vda5050_order(path, *, order_id=&#x27;order-1&#x27;, order_update_id=0, cell_size=1.0, map_id=&#x27;floor&#x27;, allowed_xy=0.05, allowed_theta=0.087, max_speed=1.0, released_nodes=None)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;vda5050_order&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>1 台の計画(マスの列)を VDA 5050 の order(dict)にする。待ちは除き、マスの中心をノードにする。</p>
+<p>Wandelt den Plan von 1 Fahrzeug (Zellenfolge) in eine VDA-5050-order (dict) um. Wartezeiten werden entfernt, die Zellmittelpunkte werden zu Knoten.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>ノードの <code style="color:#22d3bf">sequenceId</code> は 0, 2, 4 …(偶数)、エッジは 1, 3, 5 …(奇数)、エッジ数 = ノード数 − 1。<code style="color:#22d3bf">released_nodes</code> 個までを base(released=True)、残りを horizon にする(既定 = 全部 base)。座標は <code style="color:#22d3bf">x = col * cell_size</code>、<code style="color:#22d3bf">y = −row * cell_size</code>(行は下向き、地図の y は上向き)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

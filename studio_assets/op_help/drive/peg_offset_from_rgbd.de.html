@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.peg_offset_from_rgbd(rgb, depth, K, R_cam_to_world, r_peg: &#x27;float&#x27; = 0.005, hole_radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;peg_offset_from_rgbd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>手首 RGB-D 1 枚から、穴中心に対するペグ先端の相対ずれ (dx, dy) [m] を世界(搬送台)座標で —— 視覚サーボの観測量。</p>
+<p>Relativer Versatz (dx, dy) [m] der Stiftspitze gegenüber dem Bohrungsmittelpunkt in Welt- (Schlitten-)Koordinaten aus 1 RGB-D-Bild der Handgelenkkamera — die Beobachtungsgröße für Visual Servoing.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">R_cam_to_world</code> はカメラ座標のベクトルを世界へ回す 3×3(hand-eye)。ずれは板の平面内の成分、<code style="color:#22d3bf">height</code> は先端の板からの高さ。<code style="color:#22d3bf">hole_radius</code> を与えると穴の円を既知半径で当てる(<code style="color:#22d3bf">hole_centre_from_rgbd</code>)。</p>
 <p>返り: <code style="color:#22d3bf">hole</code>・<code style="color:#22d3bf">tip</code>(各計測の dict)、<code style="color:#22d3bf">dx</code>・<code style="color:#22d3bf">dy</code>・<code style="color:#22d3bf">height</code>。試作(16 姿勢): |dx|, |dy| の最大 0.010 mm。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

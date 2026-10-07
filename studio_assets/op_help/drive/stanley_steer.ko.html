@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;stanley_steer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。</p>
+<p>Stanley 조향각 δ = ψ_e + atan2(−k e, k_s + v)(앞차축 중심의 횡방향 편차 e는 경로 왼쪽이 양, ψ_e = 경로 방향 − ψ).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">front_pose</code>: (3,) または (N, 3)。<code style="color:#22d3bf">max_steer</code> で切る(切ると <code style="color:#22d3bf">stanley_straight_decay</code> の閉形式から外れる)。</p>
 <p>返り値: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>

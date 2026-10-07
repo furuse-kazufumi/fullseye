@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_decision(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_decision(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, pet_min: &#x27;float&#x27; = 0.0, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;passing_decision&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>対向車までの距離 <code style="color:#22d3bf">dist_oncoming</code>(判断時、自車が x_in にいるとき)で &quot;go&quot; か &quot;wait&quot; を返す。</p>
+<p>根据到对向来车的距离 <code style="color:#22d3bf">dist_oncoming</code>(判断时，本车位于 x_in 时)返回 &quot;go&quot; 或 &quot;wait&quot;。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>D ≥ D*(<code style="color:#22d3bf">passing_gap_required</code> の <code style="color:#22d3bf">d_required</code>)なら &quot;go&quot;(境目ちょうどは PET = pet_min で go)。<code style="color:#22d3bf">dist_oncoming = +inf</code> は「対向車なし」= &quot;go&quot;(他の引数の検査はする)。−inf・NaN は ValueError。<code style="color:#22d3bf">v_obstacle</code> &gt; 0 は走っている障害物(<code style="color:#22d3bf">passing_gap_required</code>)。</p>
 <p>門: D* ± ε で判断が切り替わる / <code style="color:#22d3bf">passing_simulate</code> の PET が pet_min になる境目と D* が一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

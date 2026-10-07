@@ -32,7 +32,10 @@ _OUT = os.path.join(_ROOT, "studio_assets", "sample_3d")
 _CACHE = os.path.join(_ROOT, "data", "sample_3d_cache")   # gitignored dev cache
 
 _ITOKAWA_URL = "https://data.darts.isas.jaxa.jp/pub/hayabusa/shape/gaskell/itokawa_f0049152.stl.gz"
-_MS700_GEO = "C:/dev/projects/ms_human_700_jaw/assets/geometry"
+#: MS-Human-700 の幾何(repo の外)。環境変数 ``MS_HUMAN_700_DIR``、無ければ repo と並んだ checkout。
+_MS700_GEO = os.path.join(os.environ.get("MS_HUMAN_700_DIR")
+                          or os.path.join(os.path.dirname(_ROOT), "ms_human_700_jaw"),
+                          "assets", "geometry")
 
 
 def _ensure_dirs():

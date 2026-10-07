@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.warehouse_grid(n_rack_rows=3, n_rack_cols=4, rack_len=4, aisle=1, margin=2)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;warehouse_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>棚の列と通路でできた倉庫の格子(True = 走れる)。</p>
+<p>由货架行与通道构成的仓库网格(True = 可行驶)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>棚は横長の 1 行 × <code style="color:#22d3bf">rack_len</code> マスのブロックで、上下左右を幅 <code style="color:#22d3bf">aisle</code> の通路が囲む。外周に <code style="color:#22d3bf">margin</code> マスの走行帯(ステーションの前)を置く。返りは <code style="color:#22d3bf">(grid, info)</code>、info に棚のマスの一覧と外周の帯。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

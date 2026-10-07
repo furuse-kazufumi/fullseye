@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events_xt(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, t_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid=(201, 201)) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events_xt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>[0, x_max] × [0, t_max] の時空の非一様ポアソン過程(率 λ(x, t) [件/(m·s)])を thinning で 1 本引く。</p>
+<p>Draws 1 realization of a space-time inhomogeneous Poisson process on [0, x_max] × [0, t_max] (rate λ(x, t) [events/(m·s)]) by thinning.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>停車中のバスのように、出現率が場所と時刻の両方に依る場合(λ(x, t) = bus_stop_rate(x) · [t &lt; 発車] + base)。率 rate_max の一様な候補(件数 ~ Poisson(rate_max · x_max · t_max)、位置・時刻は一様)を確率 λ/rate_max で残す。件数 ~ Poisson(Λ)、Λ = ∫∫λ dx dt。<code style="color:#22d3bf">rate_fn(x, t)</code> は同じ形の配列 2 つを受けて率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid = (nx, nt)</code> の格子で λ ≤ rate_max を確かめ、候補の所でも確かめる(超えれば ValueError)。</p>
 <p>戻り値: (N, 2) の配列 [[x, t], ...] (時刻の昇順)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

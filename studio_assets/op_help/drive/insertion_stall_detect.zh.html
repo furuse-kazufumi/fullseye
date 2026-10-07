@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_stall_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>深さの時系列 [m] から停滞を検出する(各刻 i で depth[i] − depth[i − window] &lt; min_advance なら stalled)。</p>
+<p>从深度时间序列 [m] 检测停滞(在每个时间步 i，若 depth[i] − depth[i − window] &lt; min_advance 则为 stalled)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>降下が始まる前(構えている間)は深さが一定で、素朴な検出器は鳴る —— <code style="color:#22d3bf">arm_advance</code> だけ進んでから <b>武装</b>する(onset はそれ以後の最初の stalled)。返り: <code style="color:#22d3bf">stalled</code>(bool の列、同じ長さ)、<code style="color:#22d3bf">onset</code>(最初の停滞の添字、無ければ −1)、<code style="color:#22d3bf">armed_at</code>(武装した添字、−1 なら武装せず = 一度も進まなかった)、<code style="color:#22d3bf">n_stalled</code>。単調降下(速度 ≥ min_advance/window)では鳴らない(門)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: window &lt; 1、min_advance ≤ 0、系列が空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

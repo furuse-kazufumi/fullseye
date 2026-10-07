@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import balltrack; balltrack.ball_track(detections, *, max_jump: &#x27;float&#x27; = 40.0, min_score: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ball_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>コマごとの候補列 <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> を 1 本の軌跡に繋ぐ(等速予測に最も近い候補、<code style="color:#22d3bf">max_jump</code> px 以内)。</p>
+<p>Links the per-frame candidate lists <code style="color:#22d3bf">detections[k] = ball_detect(frame_k)</code> into 1 trajectory (the candidate closest to the constant-velocity prediction, within <code style="color:#22d3bf">max_jump</code> px).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot; (N,), &quot;row&quot; (N,), &quot;radius&quot; (N,), &quot;found&quot; (K,) bool}</code>(見つからないコマは飛ばす)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.course_distance(course, xy) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>点 (N, 2) からコース(走れる多角形の和)への距離と、最寄り点から外へ向く単位ベクトル。</p>
+<p>Abstand von Punkten (N, 2) zum Kurs (Vereinigung der befahrbaren Polygone) und der vom nächstgelegenen Punkt nach außen zeigende Einheitsvektor.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">{&quot;d&quot; (N,), &quot;nx&quot; (N,), &quot;ny&quot; (N,)}</code>。内側は d = 0、n = 0。外側の d は最寄りの辺への点-線分距離の閉形式で、中心軸(最寄り点が 2 つある所)を除いて |∇d| = 1(eikonal)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">normalmap × matrix × matrix × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacsim; tacsim.contact_radius_fit(normals, X, Y, R: &#x27;float&#x27;, pitch: &#x27;float&#x27;, centre_xy=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;contact_radius_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>法線場の<b>半径方向スロープ分布</b>に Hertz のスロープ模型 dh/dr(r; a) を 1 パラメータ a で当てて接触半径を読む。</p>
+<p>Reads the contact radius by fitting the Hertz slope model dh/dr(r; a), with 1 parameter a, to the <b>radial slope distribution</b> of the normal field.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>模型: 内側 r/R、外側 (2/πR)[r arcsin(a/r) − a √(1 − a²/r²)] (導出、r = a で a/R に連続)。高さの積分を通らないので FFT 積分の振幅減衰・有限窓の遠方場・高さの基準(オフセット)の影響を受けない。a は [0.2, 3] × 粗い初期値の格子で SSE (ビンの個数で重み)を最小化し、放物線で副格子に詰める。<code style="color:#22d3bf">centre_xy</code> は (x, y)[m]、省略なら法線から高さを積分して重心。</p>
 <p>返り: <code style="color:#22d3bf">a</code>、<code style="color:#22d3bf">delta</code> = a²/R、<code style="color:#22d3bf">rms</code>(スロープの残差)、<code style="color:#22d3bf">r</code>・<code style="color:#22d3bf">slope</code>・<code style="color:#22d3bf">model</code>(分布)、<code style="color:#22d3bf">centre_xy</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, pitch ≤ 0、形が合わない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

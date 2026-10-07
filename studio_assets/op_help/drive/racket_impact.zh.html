@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.racket_impact(v, omega, normal, v_racket, bp: &#x27;dict&#x27;, rp: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;racket_impact&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>動くラケット(法線 n、速度 v_r)に球が当たる: ラケット系の相対速度で <code style="color:#22d3bf">ballistics.bounce</code> → 戻す。返り値 = bounce と同じ + <code style="color:#22d3bf">&quot;v_rel_in&quot;</code>。n は球の側を向く(球が n と逆向きに近づく)。</p>
+<p>球撞上运动中的球拍(法线 n，速度 v_r)：在球拍坐标系中以相对速度调用 <code style="color:#22d3bf">ballistics.bounce</code> → 变换回去。返回值 = 与 bounce 相同 + <code style="color:#22d3bf">&quot;v_rel_in&quot;</code>。n 朝向球的一侧(球沿与 n 相反的方向接近)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

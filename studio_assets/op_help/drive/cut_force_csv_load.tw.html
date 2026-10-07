@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_force_csv_load(path, license: &#x27;str&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_csv_load&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>有限要素の切断シミュレーションが書いた刃の力の CSV を読む(1 行目に <code style="color:#22d3bf">Rcforc</code>、2 行目が列名、列 = 時刻と力の 3 成分が交互)。</p>
+<p>讀取有限元素切割模擬輸出的刀刃力 CSV(第 1 行為 <code style="color:#22d3bf">Rcforc</code>，第 2 行為欄名，欄 = 時刻與力的 3 個分量交替)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>想定しているのは arXiv:2105.12244 が公開したデータセット(CC BY-NC 4.0 = 非商用)。<code style="color:#22d3bf">license</code> は呼び手が<b>必ず</b>書く(データの使い道を返り値に残すため、空なら ValueError)。データは repo に入れず、置き場所は環境変数で渡す。</p>
 <p>返り値: <code style="color:#22d3bf">t_s</code>、<code style="color:#22d3bf">F_xyz</code>(N、(N, 3))、<code style="color:#22d3bf">license</code>、<code style="color:#22d3bf">path</code> は返さない(ローカルパスを記録に残さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

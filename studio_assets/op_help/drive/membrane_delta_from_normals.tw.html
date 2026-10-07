@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">normalmap × matrix × matrix × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacsim; tacsim.membrane_delta_from_normals(normals, X, Y, pitch: &#x27;float&#x27;, tail: &#x27;str&#x27; = &#x27;boussinesq&#x27;, centre_xy=None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_delta_from_normals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>中心の沈み込み δ を法線場から: 半径方向スロープ s̄(r) を中心から窓の端まで 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))し、<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> なら遠方場 ū_z ≈ C/r(点荷重の Boussinesq 解、Johnson §3.2)から残りの裾 ū_z(r_max) = r_max · s̄(r_max) を足す(窓の端の最後の 3 ビンの中央値)。<code style="color:#22d3bf">tail=&quot;none&quot;</code> は裾なし(有限窓の過小評価をそのまま返す —— 間違いの量を測るため)。</p>
+<p>由法線場求中心沉陷 δ：將徑向斜率 s̄(r) 從中心到視窗邊緣做 1D 積分(∫ s̄ dr = ū_z(0) − ū_z(r_max))，<code style="color:#22d3bf">tail=&quot;boussinesq&quot;</code> 時由遠場 ū_z ≈ C/r(點載荷的 Boussinesq 解，Johnson §3.2)加上剩餘尾部 ū_z(r_max) = r_max · s̄(r_max)(取視窗邊緣最後 3 個分箱的中位數)。<code style="color:#22d3bf">tail=&quot;none&quot;</code> 不加尾部(直接回傳有限視窗的低估值 —— 用於量測誤差的大小)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>高さの FFT 積分を通らないので振幅の減衰を受けない。返り: δ [m]。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の tail、pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

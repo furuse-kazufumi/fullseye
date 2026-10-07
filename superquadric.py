@@ -174,6 +174,10 @@ def superquadric_residual(points, a, eps, R, t) -> float:
     のとおり。
     """
     P = _pts(points)
+    if P.shape[0] == 0:
+        # ★2026-10-07: 0 点の平均残差は 0/0(NaN を guard が置き換えていた)
+        raise ValueError("superquadric_residual: empty point cloud (0 points) — "
+                         "the mean residual is 0/0")
     r = _residual_vector(P, a, eps, R, t)
     return float(np.mean(r ** 2))
 

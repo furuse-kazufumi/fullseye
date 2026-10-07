@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>[0, x_max] の非一様ポアソン過程を thinning(Lewis &amp; Shedler 1979)で 1 本引く(昇順の位置の配列)。</p>
+<p>用 thinning(Lewis &amp; Shedler 1979)在 [0, x_max] 上抽取 1 条非齐次泊松过程样本(按升序排列的位置数组)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。<code style="color:#22d3bf">rate_fn</code> は numpy 配列を受けて同じ形の率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid</code> 点の等間隔格子で λ ≤ rate_max を確かめ、引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。<code style="color:#22d3bf">seed</code> は int か <code style="color:#22d3bf">np.random.Generator</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

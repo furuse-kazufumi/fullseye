@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import driveinf; driveinf.tile_stream(cache: &#x27;dict&#x27;, i: &#x27;int&#x27;, j: &#x27;int&#x27;, tp: &#x27;dict&#x27;, radius: &#x27;int&#x27; = 1, step: &#x27;float&#x27; = 10.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;tile_stream&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>車のいる区画 (i, j) の周り (2·radius + 1)² 区画を持ち、外れた区画を捨てる(<code style="color:#22d3bf">cache</code> をその場で書き換える)。返り値 <code style="color:#22d3bf">{&quot;loaded&quot;: [(i, j)], &quot;evicted&quot;: [(i, j)], &quot;n&quot;: 持っている区画の数}</code>。</p>
+<p>保持車輛所在區塊 (i, j) 周圍的 (2·radius + 1)² 個區塊，捨棄移出範圍的區塊(原地修改 <code style="color:#22d3bf">cache</code>)。回傳值 <code style="color:#22d3bf">{&quot;loaded&quot;: [(i, j)], &quot;evicted&quot;: [(i, j)], &quot;n&quot;: 持有的區塊數}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.chamfer_capture(kp, eps0: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;chamfer_capture&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>初期の横ずれ ε₀ [m] を面取りが補正なしで吸収できるか: |ε₀| ≤ W + c_r(先端の縁が面取り面の上に着地する条件、導出)。</p>
+<p>Ob die Fase einen anfänglichen Querversatz ε₀ [m] ohne Korrektur auffangen kann: |ε₀| ≤ W + c_r (Bedingung dafür, dass die Kante der Spitze auf der Fasenfläche aufsetzt; hergeleitet).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り: <code style="color:#22d3bf">captured</code>、<code style="color:#22d3bf">eps_max</code> = W + c_r、<code style="color:#22d3bf">margin</code> = eps_max − |ε₀|。既定の寸法では 1.2 mm。傾き θ₀ があると先端の縁の投影が動くが、θ₀ ≤ 3° では無視できる(試作の格子で ε₀ = 2, 3 mm が補正なしで失敗した根拠)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ozakimm; ozakimm.matmul_reproducible(A, B, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;matmul_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ビット単位で再現する FP64 の精度の <code style="color:#22d3bf">A @ B</code>(保証できなければ <code style="color:#22d3bf">ValueError</code> = fail-closed)。</p>
+<p>Bitgenau reproduzierbares <code style="color:#22d3bf">A @ B</code> mit FP64-Genauigkeit (<code style="color:#22d3bf">ValueError</code>, wenn dies nicht garantiert werden kann = fail-closed).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">matmul_ozaki</code> の Ozaki-I の自動選択に <code style="color:#22d3bf">on_insufficient=&quot;raise&quot;</code> を固定したもの。誤差は要素ごとに <code style="color:#22d3bf">tol · (|A||B|)_ij</code> + 最後の組み立ての丸め(数 ulp)以下。内側の添字の順(点の順)・BLAS のスレッド数に依らず同じビットを返す。点群の 3×N @ N×3 や 6×N @ N×6 の縮約向け(出力が大きい積では DGEMM の 15〜83 倍遅い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

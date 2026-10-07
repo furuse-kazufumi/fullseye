@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import motionio; motionio.events_to_frames(events: &#x27;dict&#x27;, n_frames: &#x27;int&#x27; = 32, shape=None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;events_to_frames&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>イベントを時間で n_frames に等分し、画素ごとに極性を足したコマ (T, H, W) にする(ON = +1、OFF = −1)。</p>
+<p>Splits the events evenly in time into n_frames and sums the polarities per pixel into frames (T, H, W) (ON = +1, OFF = −1).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>全イベントの極性の和はコマの総和と一致する(落とすイベントは無い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

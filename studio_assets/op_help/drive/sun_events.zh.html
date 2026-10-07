@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.sun_events(year: &#x27;int&#x27;, month: &#x27;int&#x27;, day: &#x27;int&#x27;, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, tz_hours: &#x27;float&#x27; = 9.0, *, h0: &#x27;float&#x27; = -0.8333) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sun_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>その日(地方の暦日)の日の出・南中・日の入りの時刻と、日の出入りの方位・南中の高度。</p>
+<p>当日(当地日历日)的日出、正午(中天)、日落时刻，以及日出日落的方位角和中天高度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>日の出入り = 太陽の中心の <b>幾何の</b> 高度が <code style="color:#22d3bf">h0</code>(既定 −0.8333° = 大気差 34′ + 視半径 16′、上辺が地平線に接する)を横切る時刻。<code style="color:#22d3bf">h0=&quot;naoj&quot;</code> で国立天文台 暦計算室の定義(太陽の上辺が視地平線、地平大気差 35′8″、視半径は距離から)。南中 = 時角 0。どちらも sun_at を時刻について解く(二分法、1e-6 日 ≈ 0.1 秒まで)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">sunrise</code> / <code style="color:#22d3bf">transit</code> / <code style="color:#22d3bf">sunset</code>(タイムゾーンつき datetime、日の出入りが無ければ None)、</p>

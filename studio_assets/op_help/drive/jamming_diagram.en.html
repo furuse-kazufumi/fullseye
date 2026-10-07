@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsim; pegsim.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;jamming_diagram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>かじり(jamming)の図(OCW p.34): 二点接触の深さ l [m] で、加える力の比 (F_x/F_z, M/(rF_z)) が進める領域の平行四辺形。</p>
+<p>Jamming diagram (OCW p.34): at two-point contact depth l [m], the parallelogram of the region in which the applied force ratios (F_x/F_z, M/(rF_z)) advance the insertion.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>λ = l/(2rμ)。頂点は (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)、縦軸の切片 ±λ、縦辺は F_x/F_z = ±1/μ。深さが増える(λ が増える)と縦に広がり、かじりにくくなる。<code style="color:#22d3bf">fx_over_fz</code> と <code style="color:#22d3bf">m_over_rfz</code> を与えると <code style="color:#22d3bf">inside</code>(内側なら進む)と <code style="color:#22d3bf">margin</code>(4 辺の不等式の最小の余裕、負なら外)も返す。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0(摩擦なしは平行四辺形が無限に広い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

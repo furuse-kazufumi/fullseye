@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;conflict_zone_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>衝突の領域(交差点の中で 2 つの進路が重なる所)を車が占める時刻 [t_in, t_out] (閉形式、配列可)。</p>
+<p>车辆占据冲突区域(交叉口内 2 条行进路线重叠处)的时刻 [t_in, t_out] (闭式，可用数组)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>前端が dist_to_zone 進むと入り、前端が dist_to_zone + zone_length + car_length 進むと後端が出る。初速 v0 から <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速(accel = 0 なら一定の速さ)。既に領域に入っている(dist_to_zone &lt; 0)場合は t_in = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

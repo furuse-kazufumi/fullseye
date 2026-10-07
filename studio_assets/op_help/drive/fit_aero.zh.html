@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.fit_aero(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 15, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;fit_aero&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>軌跡から <b>空力係数も</b> 同定する: (p₀, v₀, C_d, C_L) の 8 パラメータを Gauss–Newton(ω は既知、C_L は定数として当てる)。抗力は速さの 2 乗、マグヌスは ω × v なので、直線的でない軌跡(スピンあり・十分な長さ)でないと C_L は決まりにくい(<code style="color:#22d3bf">rms</code> と一緒に <code style="color:#22d3bf">cond</code> = ヤコビアンの条件数を返すので、それで判る)。返り値 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;cd&quot;, &quot;cl&quot;, &quot;rms&quot;, &quot;cond&quot;, &quot;iters&quot;}</code>。真値の軌跡(C_L 定数で作った)なら 1e-6 で戻る(門)。</p>
+<p>从轨迹<b>连同空气动力系数一起</b>辨识：用 Gauss–Newton 求 (p₀, v₀, C_d, C_L) 的 8 个参数(ω 已知，C_L 作为常数拟合)。阻力与速度的 2 次方成比例，马格努斯与 ω × v 成比例，因此除非轨迹为非直线(有旋转、足够长)，否则 C_L 难以确定(与 <code style="color:#22d3bf">rms</code> 一起返回 <code style="color:#22d3bf">cond</code> = 雅可比的条件数，可据此判断)。返回值 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;cd&quot;, &quot;cl&quot;, &quot;rms&quot;, &quot;cond&quot;, &quot;iters&quot;}</code>。对真值轨迹(以常数 C_L 生成)可在 1e-6 内还原(门禁)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

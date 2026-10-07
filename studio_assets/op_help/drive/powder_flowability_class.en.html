@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import granular; granular.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;powder_flowability_class&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>安息角 → 流動性区分(USP &lt;1174&gt; Table 1、原典 Carr 1965)。</p>
+<p>Angle of repose → flowability class (USP &lt;1174&gt; Table 1, original source Carr 1965).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor)、<code style="color:#22d3bf">phi_int</code>(表を引いた整数の度 = 四捨五入)、<code style="color:#22d3bf">tabulated</code>(表の下限 25 度以上か)、<code style="color:#22d3bf">band_upper_deg</code>(その区分の上限; 上限の無い最後の区分は None —— 返りに inf を入れない、JSON に載らないため)。表は整数の度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 角が (0, 90) の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

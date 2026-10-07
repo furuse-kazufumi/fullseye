@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_from_flow(u, v, dt: &#x27;float&#x27;, *, foe=None, mask=None, min_speed: &#x27;float&#x27; = 0.001, at_first_frame: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivettc; drivettc.ttc_from_flow(u, v, dt: &#x27;float&#x27;, *, foe=None, mask=None, min_speed: &#x27;float&#x27; = 0.001, at_first_frame: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;ttc_from_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>光学流から τ(秒): <code style="color:#22d3bf">{&quot;tau_map&quot;, &quot;tau&quot;, &quot;n&quot;, &quot;foe&quot;}</code>。</p>
+<p>由光流求 τ(秒)：<code style="color:#22d3bf">{&quot;tau_map&quot;, &quot;tau&quot;, &quot;n&quot;, &quot;foe&quot;}</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">sceneflow.time_to_contact</code>(画素ごと、コマ単位、FoE からの半径² / 半径方向の流れ)を秒に直す。2 コマの差分の流れが返すのは <b>2 コマ目の時刻の τ</b>(<code style="color:#22d3bf">Z₁ / (Z₀ − Z₁)</code> コマ)なので、<code style="color:#22d3bf">at_first_frame=True</code> (既定)は 1 コマ足して最初のコマの τ にする(等速なら厳密、<code style="color:#22d3bf">ttc_truth</code> と同じ時刻)。<code style="color:#22d3bf">foe</code> を省くと流れから推定する(<code style="color:#22d3bf">sceneflow.focus_of_expansion</code>)。真の FoE は <code style="color:#22d3bf">foe_from_motion</code>。<code style="color:#22d3bf">tau</code> は <code style="color:#22d3bf">mask</code>(省略時は全画素)の中で有限・正の τ の中央値(無ければ <code style="color:#22d3bf">inf</code>)、<code style="color:#22d3bf">n</code> はその画素数。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

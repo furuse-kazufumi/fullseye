@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.velocity_deficit_map(field, speed=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;velocity_deficit_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>速度場 → 自由流からの欠損 1 − u/U、横の振れ v/U、速さの欠損 1 − |v|/U。U は与えるか、上流の端 15 % の u の中央値。</p>
+<p>速度场 → 相对自由流的亏损 1 − u/U、横向偏摆 v/U、速率亏损 1 − |v|/U。U 由用户给出，或取上游端 15 % 处 u 的中位数。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">deficit</code>・<code style="color:#22d3bf">deflection</code>・<code style="color:#22d3bf">speed_deficit</code> (H, W)(測れない格子は NaN)、<code style="color:#22d3bf">speed</code>(使った U)、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

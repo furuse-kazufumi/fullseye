@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_crossing_point(pred: &#x27;dict&#x27;, x_line: &#x27;float&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_crossing_point&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>予測経路が守備線 x = <code style="color:#22d3bf">x_line</code> を最初に横切る時刻と場所(閉形式: 区間ごとに d(τ)·uₓ = 必要距離 を解く)。</p>
+<p>Time and place where the predicted path first crosses the defense line x = <code style="color:#22d3bf">x_line</code> (closed form: solves d(τ)·uₓ = required distance per segment).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;p&quot;, &quot;v&quot;, &quot;segment&quot;}</code>、横切らなければ <code style="color:#22d3bf">None</code>(fail-closed —— 止まる・ゴールに入る・時間切れ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

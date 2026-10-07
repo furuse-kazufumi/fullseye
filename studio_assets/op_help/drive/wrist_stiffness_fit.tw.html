@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wrist_stiffness_fit(dx, F, min_span: &#x27;float&#x27; = 2e-05) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.wrist_stiffness_fit(dx, F, min_span: &#x27;float&#x27; = 2e-05) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wrist_stiffness_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>手首のたわみ Δx(手首カメラ)と、ペグが受ける接触力の同じ成分 F から k = Σ FΔx / ΣΔx²(原点を通る最小二乗、準静的な釣り合い F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx)。回転(角と モーメント)にも同じ式で使える。返り <code style="color:#22d3bf">k</code>・<code style="color:#22d3bf">r2</code>・<code style="color:#22d3bf">rms_N</code>・<code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">span</code>。<b>Raises</b> ValueError: 点が 3 未満、形が違う、有限でない、Δx の幅が <code style="color:#22d3bf">min_span</code> 未満(悪条件: 動いていないばねの k は決まらない)。</p>
+<p>由腕部撓度 Δx(腕部相機)與銷所受接觸力的同一分量 F 求 k = Σ FΔx / ΣΔx²(過原點的最小平方，準靜態平衡 F_contact + F_spring ≈ 0 ⇒ F_contact = kΔx)。同一公式也可用於旋轉(角度與力矩)。回傳 <code style="color:#22d3bf">k</code>、<code style="color:#22d3bf">r2</code>、<code style="color:#22d3bf">rms_N</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">span</code>。<b>Raises</b> ValueError：點少於 3 個、形狀不同、非有限、Δx 的範圍小於 <code style="color:#22d3bf">min_span</code>(病態：不動的彈簧無法決定 k)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

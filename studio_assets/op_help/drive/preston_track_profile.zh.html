@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar × scalar × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.preston_track_profile(y, force: &#x27;float&#x27;, radius: &#x27;float&#x27;, k_p: &#x27;float&#x27;, kind: &#x27;str&#x27; = &#x27;flat&#x27;, spin: &#x27;float&#x27; = 0.0, speed=None, estar=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;preston_track_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>長い直線の一筆(+x へ進む)の断面の除去の深さ h(y) [m] (y = 進む向きの左が正の横ずれ、<code style="color:#22d3bf">y</code> と同じ形)。閉形式:</p>
-<p>平板 2 k_p p √(a² − y²)、Hertz k_p (E*/R)(a² − y²)(a は力から Hertz で)、回る平板(<code style="color:#22d3bf">spin</code> = ω、<code style="color:#22d3bf">speed</code> = v が要る) (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)、b = v − ωy)。|y| ≥ a は 0。<b>Raises</b> ValueError: 数の検査、回る時に速さが無い、Hertz で回す(閉形式が無い)。</p>
+<p>长直单次行程(朝 +x 前进)截面的去除深度 h(y) [m] (y = 横向偏差，前进方向左侧为正；形状与 <code style="color:#22d3bf">y</code> 相同)。闭式：平板 2 k_p p √(a² − y²)；Hertz k_p (E*/R)(a² − y²)(a 由力按 Hertz 求得)；旋转平板(需要 <code style="color:#22d3bf">spin</code> = ω、<code style="color:#22d3bf">speed</code> = v) (k_p p / v)[c √(b² + ω²c²) + (b²/ω) asinh(ωc/|b|)] (c = √(a² − y²)，b = v − ωy)。|y| ≥ a 时为 0。<b>Raises</b> ValueError：数值检查，旋转时缺少速度，Hertz 加旋转(无闭式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

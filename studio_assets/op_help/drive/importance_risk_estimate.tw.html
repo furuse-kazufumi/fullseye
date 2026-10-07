@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.importance_risk_estimate(simulate_fn: &#x27;Callable&#x27;, base_rate: &#x27;Callable&#x27;, boosted_rate: &#x27;Callable&#x27;, n_runs: &#x27;int&#x27;, seed, *, x_max: &#x27;float&#x27;, boosted_rate_max: &#x27;float&#x27;, n_grid: &#x27;int&#x27; = 20001) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.importance_risk_estimate(simulate_fn: &#x27;Callable&#x27;, base_rate: &#x27;Callable&#x27;, boosted_rate: &#x27;Callable&#x27;, n_runs: &#x27;int&#x27;, seed, *, x_max: &#x27;float&#x27;, boosted_rate_max: &#x27;float&#x27;, n_grid: &#x27;int&#x27; = 20001) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;importance_risk_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>出現率を上げた試行(率 λ&#x27;)で事故を起こしやすくし、尤度比の重みで本来の率 λ の事故確率に戻す。</p>
+<p>以提高出現率的試驗(速率 λ&#x27;)使事故更容易發生，再以概似比權重換算回原速率 λ 下的事故機率。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>1 回の試行 = <code style="color:#22d3bf">poisson_events(boosted_rate)</code> で出現位置 x_1..x_N を引き、<code style="color:#22d3bf">simulate_fn(events, rng)</code> が事故なら 1 (bool か [0, 1] の値)。重み(ポアソン過程の Radon–Nikodym 微分 dP_λ/dP_λ&#x27;):</p>
 <p>w = Π_i λ(x_i)/λ&#x27;(x_i) · exp(−(Λ − Λ&#x27;)),   Λ = ∫λ, Λ&#x27; = ∫λ&#x27;(台形、n_grid 点)</p>
 <p>推定 p̂ = mean(w · Y)、標準誤差 = std(w · Y)/sqrt(n)。<code style="color:#22d3bf">boosted_rate</code> を <code style="color:#22d3bf">base_rate</code> と同じにすれば w ≡ 1 で素朴なモンテカルロになる(門ではこれと、事故確率が閉形式で分かる simulate_fn とで比べる)。λ &gt; 0 なのに λ&#x27; = 0 の所があると推定が偏る(絶対連続でない)ので格子上で検査して ValueError。</p>

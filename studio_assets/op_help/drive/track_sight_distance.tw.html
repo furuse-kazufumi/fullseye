@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>渡り切る前に列車が着かないために、線路の上で見えていなければならない距離 = v_train · (clear_time + margin)。</p>
+<p>為避免在通過前列車抵達，必須在軌道上可見的距離 = v_train · (clear_time + margin)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>見える距離がこれ以上なら、見えていない列車は渡り切る前に踏切に着かない(到達時刻 = 距離 / 速さ &gt; 渡り切る時間)。配列可。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

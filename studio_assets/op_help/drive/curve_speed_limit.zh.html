@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.curve_speed_limit(radius, *, side_friction: &#x27;float&#x27;, superelevation: &#x27;float&#x27; = 0.0, g: &#x27;float&#x27; = 9.81)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;curve_speed_limit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>片勾配 i・横すべり摩擦係数 f の曲線(半径 R)で外へ滑らない上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。</p>
+<p>在超高 i、横向滑动摩擦系数 f 的曲线(半径 R)上不向外侧滑出的上限速度 v = √(g R (i + f)/(1 − i f)) [m/s]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>道路構造令の解説 (2) 式 Z cos α − G sin α ≤ f (Z sin α + G cos α)(Z = G v²/(gR)、i = tan α)を v について解いた厳密な形。i f ≥ 1 なら(どの速さでも外へは滑らない)<code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">radius</code> は配列でもよい(&gt; 0)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ 0、f &lt; 0、|i| ≥ 1、i + f ≤ 0(止まっていても内へ滑る)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

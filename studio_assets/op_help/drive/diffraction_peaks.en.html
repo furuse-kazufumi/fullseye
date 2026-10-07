@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import pxrd; pxrd.diffraction_peaks(two_theta, intensity, min_snr=6.0, baseline_window=None, max_peaks=200, noise=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;diffraction_peaks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>1-D の回折プロファイルから山を拾い、ガウス + 直線の局所の当てはめで位置・高さ・FWHM・面積を出す。</p>
+<p>Picks peaks from a 1-D diffraction profile and gives their position, height, FWHM and area by a local Gaussian + linear fit.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>手順: 窓 <code style="color:#22d3bf">baseline_window</code> [deg] (既定 = 範囲の 4 %)の転がり最小 → 転がり平均で背景を作り、背景を引いた値の局所の最大のうち <code style="color:#22d3bf">min_snr</code> × 雑音を超えるものを候補にする(雑音は間隔 1〜8 の差分の MAD の最大から。<code style="color:#22d3bf">noise</code> に</p>
 <p>数か、<code style="color:#22d3bf">azimuthal_integrate</code> の <code style="color:#22d3bf">sigma</code> のようなビンごとの配列を渡してもよい —— 中心の近くや隅のように画素の少ないビンの揺れを山と取り違えないためには配列が要る)。各候補の半値幅を目で測る代わりに半値の交点で見積もり、隣の候補との中点で切った窓でガウス + 直線を <code style="color:#22d3bf">scipy.optimize.least_squares</code> で当てる。重なった山は窓が切られるぶん偏る(分けたいなら <code style="color:#22d3bf">phase_fractions</code>)。</p>
 <p>返り値(dict): <code style="color:#22d3bf">two_theta</code>・<code style="color:#22d3bf">height</code>・<code style="color:#22d3bf">fwhm</code> [deg]・<code style="color:#22d3bf">area</code>・<code style="color:#22d3bf">snr</code>・<code style="color:#22d3bf">fit_ok</code>(当てはめが収束し窓の中に収まったか)、<code style="color:#22d3bf">noise</code>、<code style="color:#22d3bf">baseline</code>(格子と同じ長さ)。山が無ければ長さ 0 の配列(空 = 失敗ではない)。</p>

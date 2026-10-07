@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivedecide; drivedecide.dilemma_zone(v, *, reaction: &#x27;float&#x27;, decel: &#x27;float&#x27;, amber: &#x27;float&#x27;, intersection_width: &#x27;float&#x27;, car_length: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;dilemma_zone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>黄信号のジレンマゾーン(Gazis, Herman, Maradudin 1960)。</p>
+<p>황색 신호의 딜레마 구간(Gazis, Herman, Maradudin 1960).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>速度 <code style="color:#22d3bf">v</code> で停止線の手前 x にいるとき黄が点いた:</p>
 <p>止まれる     ⇔ x ≥ x_c = v δ + v²/(2a)                         (δ = reaction、a = decel)</p>
 <p>抜けられる   ⇔ x ≤ x_0 = v τ + ½ a₁ (τ − δ)² − (w + L)          (τ = amber、a₁ = accel ≥ 0、w = 交差点の幅、L = 車長)</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgba</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>標識の絵を RGBA float (H, W, 4) ∈ [0,1] で返す(板の外 = alpha 0)。幅 = <code style="color:#22d3bf">size_px</code>、高さは形の比。</p>
+<p>표지 그림을 RGBA float (H, W, 4) ∈ [0,1]로 반환합니다(판 바깥 = alpha 0). 폭 = <code style="color:#22d3bf">size_px</code>, 높이는 형태의 비율을 따릅니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>形と色(規格の配色、記号は単純化):</p>
 <p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
 <p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>

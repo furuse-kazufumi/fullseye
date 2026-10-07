@@ -2163,15 +2163,25 @@ def estimate_point_normals(points, k=16, viewpoint=None):
 
     手順: ``cKDTree`` で各点の ``k`` 近傍(自分自身を含む。``k > N`` なら N に切り詰め)を取り、
     その共分散の最小固有ベクトルを法線にする。返り値 ``(N,3)`` float64 の単位ベクトル。
-    ``viewpoint`` は 3 次元の座標(センサ位置)。点数が 3 未満・近傍が同一直線上だと法線は
-    不定のまま返る(検証は無い)。``k`` が小さいとノイズに弱く、大きいと角が丸まる。
+    ``viewpoint`` は 3 次元の座標(センサ位置)。近傍の点数 ``min(k, N)`` が 3 未満(点が
+    1〜2 個、または ``k < 3``)なら ``ValueError`` —— 3 点未満では面が決まらない(1 点だと
+    共分散すら作れず、2026-10-07 までは einsum の内部エラーで落ちていた)。近傍が同一直線上だと
+    法線は不定のまま返る(検証は無い)。``k`` が小さいとノイズに弱く、大きいと角が丸まる。
     後段: ``icp_point2plane`` の ``dst_normals``、``render_shaded`` 用の法線、``normals_to_egi``。
     ``pointcloud.estimate_normals``(台帳 ``estimate_normals``)と同じ規約。
     """
     from scipy.spatial import cKDTree
     P = np.asarray(points, np.float64)
+    if P.ndim != 2 or P.shape[1] != 3:
+        raise ValueError("estimate_point_normals: points must be an (N, 3) array, got shape %r"
+                         % (P.shape,))
+    kk = min(int(k), len(P))
+    if kk < 3:
+        raise ValueError("estimate_point_normals: a normal needs at least 3 neighbours, got "
+                         "min(k=%d, N=%d) = %d — fewer than 3 points do not define a plane"
+                         % (int(k), len(P), kk))
     tree = cKDTree(P)
-    _, idx = tree.query(P, k=min(k, len(P)))
+    _, idx = tree.query(P, k=kk)
     nn = P[idx]
     Q = nn - nn.mean(1, keepdims=True)
     cov = np.einsum("nki,nkj->nij", Q, Q) / Q.shape[1]

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は <code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
+<p>给定日期时间(带时区的 datetime 或儒略日)的太阳高度角与方位角。公式直接使用 <code style="color:#22d3bf">geocam.sun_position</code>(NOAA 太阳位置公式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章的低精度版，NOAA 大气折射)，另加日期时间的接收方式和日地距离。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
 <p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>

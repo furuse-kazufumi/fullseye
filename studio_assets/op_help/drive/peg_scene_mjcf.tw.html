@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.peg_scene_mjcf(kp=None, lg: &#x27;float | None&#x27; = None, offsamples: &#x27;int&#x27; = 4, timestep: &#x27;float&#x27; = 0.0005) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;peg_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>場面の MJCF 文字列(mujoco 不要): 穴 = 内接面が半径 R の箱 n_seg 個の環 + 45° の面取りの環 + 口の面の襟 + 四角い枠、位置制御の搬送台(x, y, z のスライド)に 6 つのばね関節の柔らかい手首、その先にペグ(円柱)。手首カメラは搬送台の 60 mm 後ろ・ 20 mm 上から 45° 下向き、側面カメラは固定。</p>
+<p>場景的 MJCF 字串(無需 mujoco)：孔 = 內切面半徑為 R 的 n_seg 個箱體構成的環 + 45° 倒角的環 + 孔口面的環圈 + 方框；位置控制的滑台(x, y, z 滑動)上裝有由 6 個彈簧關節構成的柔順腕部，其末端為銷(圓柱)。腕部相機位於滑台後方 60 mm、上方 20 mm，向下 45°；側面相機固定。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">lg</code> = 先端から回転のコンプライアンス中心までの距離(None → 手首原点 = ペグ長、0 → 先端に中心 = RCC)。<code style="color:#22d3bf">offsamples</code> は MSAA(RGB 用 4、depth 用 0 で別にコンパイルする —— 深度はサンプル 0 の位置になる罠)。<code style="color:#22d3bf">&lt;quality numslices=&quot;128&quot;&gt;</code> で円柱の多角形近似を 0.0015 % に(既定 28 では半径が 0.04 mm 内側)。単位 m、口の面 z = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

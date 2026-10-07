@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivettc; drivettc.label_extent(label, value: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;label_extent&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ラベル像の中で値 <code style="color:#22d3bf">value</code> の画素の箱: <code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>。</p>
+<p>标签图像中值为 <code style="color:#22d3bf">value</code> 的像素的包围盒：<code style="color:#22d3bf">{&quot;col0&quot;, &quot;col1&quot;, &quot;row0&quot;, &quot;row1&quot;, &quot;width&quot;, &quot;height&quot;, &quot;n&quot;}</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>幅・高さは画素数(<code style="color:#22d3bf">col1 − col0 + 1</code>)。無ければ全部 0。<code style="color:#22d3bf">ttc_from_scale</code> の入力(完全な検出器の代役)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

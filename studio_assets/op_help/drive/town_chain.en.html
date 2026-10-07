@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetown; drivetown.town_chain(elements, *, start=(0.0, 0.0, 0.0), overlap: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;town_chain&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>要素を順に継いで配置する: 要素 k+1 の entry を要素 k の exit(の <code style="color:#22d3bf">overlap</code> 手前)に合わせる剛体配置を閉形式で求め、<code style="color:#22d3bf">drivecourse.course_layout</code> に渡す。</p>
+<p>Places the elements by chaining them in order: solves in closed form the rigid placement that aligns the entry of element k+1 with the exit of element k (<code style="color:#22d3bf">overlap</code> before it) and passes it to <code style="color:#22d3bf">drivecourse.course_layout</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>elements : drivecourse の要素(dict)の列。順に継ぐ。</p>
 <p>start : 最初の要素の entry を置く世界姿勢 (x, y, yaw)。</p>

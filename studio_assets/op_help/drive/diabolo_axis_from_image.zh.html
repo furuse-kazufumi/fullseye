@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_axis_from_image(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, *, refine: &#x27;bool&#x27; = True, iters: &#x27;int&#x27; = 15) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_axis_from_image(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, *, refine: &#x27;bool&#x27; = True, iters: &#x27;int&#x27; = 15) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_axis_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>1 コマから手前のカップの縁の中心 <code style="color:#22d3bf">center_rim</code> と軸 <code style="color:#22d3bf">axis</code>(カメラ側を向く)を出す。ディアボロの中心 <code style="color:#22d3bf">center</code> = center_rim − (L/2) axis。学習なし。</p>
+<p>从 1 帧求出近侧杯口边缘的中心 <code style="color:#22d3bf">center_rim</code> 和轴 <code style="color:#22d3bf">axis</code>(朝向相机)。空竹中心 <code style="color:#22d3bf">center</code> = center_rim − (L/2) axis。无学习。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>初期値(弱透視): 縁の楕円の長半径 → 深度、短 / 長 = cos θ、底の板の中心のずれ = (L/2 − z_h) sin θ、θ = atan2(sin, cos) (acos の床を避ける)、ずれの向き = 軸の像の向き。仕上げ: 縁の円(半径 R、中心 C)と底の板(半径 r_h、中心 C − (L/2 − z_h) a)の厳密な透視投影の多角形モーメント(面積・重心・2 次)を、マスクのモーメントに Gauss–Newton で合わせる(5 自由度、8 残差)。残差 <code style="color:#22d3bf">residual_px</code> が 0.15 px を超えたら <code style="color:#22d3bf">ok = False</code>(底の板が壁に隠れた等。視線から 45° で 2.8 px、38° まで ≤ 0.02 px)。</p>
 <p>返り <code style="color:#22d3bf">{&quot;center&quot;, &quot;center_rim&quot;, &quot;axis&quot;, &quot;axis_init&quot;, &quot;tilt_init_deg&quot;, &quot;a_px&quot;, &quot;b_px&quot;, &quot;residual_px&quot;, &quot;ok&quot;, &quot;seg&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像の形、カップの内側か底の板が見えない(推定不能)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

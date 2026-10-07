@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import puck; puck.fivebar_workspace(link: &#x27;dict&#x27;, *, n: &#x27;int&#x27; = 161, tol: &#x27;float&#x27; = 1e-09) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_workspace&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>作業域: 格子の各点で IK が解けて FK∘IK が tol で戻る所(枝 out/forward で矛盾しない所だけを「届く」とする)。返り値 <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code>(x_max = 届く最前の x)。</p>
+<p>Arbeitsraum: die Gitterpunkte, an denen IK lösbar ist und FK∘IK innerhalb von tol zurückkehrt (nur auf dem Zweig out/forward widerspruchsfreie Punkte gelten als &quot;erreichbar&quot;). Rückgabewert <code style="color:#22d3bf">{&quot;xs&quot;,&quot;ys&quot;,&quot;mask&quot;,&quot;area&quot;,&quot;x_max&quot;,&quot;x_min&quot;}</code> (x_max = das am weitesten vorn erreichbare x).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

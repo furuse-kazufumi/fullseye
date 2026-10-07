@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_events(path) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import motionio; motionio.read_events(path) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;read_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>イベントカメラのイベント列を読む(.txt / .csv / .npy / .npz)。</p>
+<p>读取事件相机的事件序列(.txt / .csv / .npy / .npz)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>(int64)、<code style="color:#22d3bf">t</code>(float64、ファイルの単位のまま)、<code style="color:#22d3bf">p</code>(int8、+1 / −1)、<code style="color:#22d3bf">columns</code> (どの列をどれと読んだか —— 推定したなら <code style="color:#22d3bf">guessed=True</code>)、<code style="color:#22d3bf">shape</code>(x・y の最大 + 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

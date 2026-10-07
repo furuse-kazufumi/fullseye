@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import carlabridge; carlabridge.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;carla_pose_to_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>CARLA の [x, y, z, roll, pitch, yaw] → Fullseye の 4×4(world ← object、右手系: y と yaw の符号が反転)。R_f = M R_c M、t_f = M t_c(M = diag(1, −1, 1))。物体の局所系は x 前・y 左・z 上(driveworld の車と同じ)。</p>
+<p>CARLA 的 [x, y, z, roll, pitch, yaw] → Fullseye 的 4×4(world ← object，右手系：y 与 yaw 的符号取反)。R_f = M R_c M，t_f = M t_c(M = diag(1, −1, 1))。物体的局部坐标系为 x 前、y 左、z 上(与 driveworld 的车相同)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

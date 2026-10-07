@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import carlabridge; carlabridge.carla_pose_to_world(transform6) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;carla_pose_to_world&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>CARLA の [x, y, z, roll, pitch, yaw] → Fullseye の 4×4(world ← object、右手系: y と yaw の符号が反転)。R_f = M R_c M、t_f = M t_c(M = diag(1, −1, 1))。物体の局所系は x 前・y 左・z 上(driveworld の車と同じ)。</p>
+<p>CARLA-[x, y, z, roll, pitch, yaw] → Fullseye-4×4 (world ← object, rechtshändig: Vorzeichen von y und yaw werden umgekehrt). R_f = M R_c M, t_f = M t_c (M = diag(1, −1, 1)). Das lokale System des Objekts ist x vorn, y links, z oben (wie bei den Fahrzeugen in driveworld).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

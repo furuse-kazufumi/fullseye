@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_ode(p0, v0, omega, bp: &#x27;dict&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import ballistics; ballistics.flight_ode(p0, v0, omega, bp: &#x27;dict&#x27;, t_end: &#x27;float&#x27;, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;flight_ode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>重力 + 抗力 + マグヌス(+ スピン減衰)の RK4。返り値 <code style="color:#22d3bf">{&quot;t&quot; (N,), &quot;p&quot; (N, 3), &quot;v&quot; (N, 3), &quot;omega&quot; (N, 3)}</code> (t = 0, dt, …, ≤ t_end)。真空(rho = 0)なら <code style="color:#22d3bf">flight_vacuum</code> と一致(門)。</p>
+<p>RK4 for gravity + drag + Magnus (+ spin decay). Return value <code style="color:#22d3bf">{&quot;t&quot; (N,), &quot;p&quot; (N, 3), &quot;v&quot; (N, 3), &quot;omega&quot; (N, 3)}</code> (t = 0, dt, …, ≤ t_end). In vacuum (rho = 0) it matches <code style="color:#22d3bf">flight_vacuum</code> (gate).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

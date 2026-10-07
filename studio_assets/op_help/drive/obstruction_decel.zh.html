@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.obstruction_decel(dist, speed, t_free, *, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;obstruction_decel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>交差道路の車(領域まで dist、速さ speed)が、領域に t_free より前に入らないために要る一定の減速度(閉形式、配列可)。</p>
+<p>交叉道路上的车辆(到区域距离 dist，速度 speed)为了不在 t_free 之前进入区域所需的恒定减速度(闭式，可用数组)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>T = t_free。speed·T ≤ dist なら 0(減速しなくても間に合う)。T ≤ 2 dist / speed なら 2(speed·T − dist)/T²、それより後なら speed² / (2 dist)(領域の手前で止まる)。<code style="color:#22d3bf">obstructs</code> = 減速度 &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、2 条 22 号「速度又は方向を急に変更しなければならない」)。dist ≤ 0(もう領域にいる)で T &gt; 0 は ∞。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

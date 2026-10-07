@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">signal</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.marker_direction(marker_uv, center_uv, radius_px, K=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;marker_direction&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>像の中の模様の位置 (col, row) → 球面上の向き(カメラ系の単位ベクトル、前半球: x 右、y 上、z 手前)。</p>
+<p>图像中标记的位置 (col, row) → 球面上的方向(相机坐标系的单位向量，前半球：x 右，y 上，z 朝向观察者)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">K</code> (3, 3) を渡すと<b>透視で厳密に</b>解く: 球の角半径 α = atan(半径 px / f) から中心までの距離(半径 1 として 1/sin α)と中心の視線を出し、模様の画素の視線を球面と交差させ、交点の法線を返す。★K が無い形は円板を正射影とみなし、中心を通る視線を z とする系で答える —— 球が光軸から外れていると系ごと回り、球が動く映像では視線の変化がそのまま見かけの回転になる(0.6 m 先を 6 m/s で横切る球は 1 ms で視線が 0.01 rad 回り、1 コマの回転 0.15 rad に 7 % 上乗せされた。2026-09-30、PoC ㉔ の近接カメラ)。K が無ければ従来どおり。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

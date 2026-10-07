@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;two_point_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。</p>
+<p>傾角 θ [rad] 下開始兩點接觸的插入深度 l₂ [m] (從最窄處到末端中心)。依名稱選擇 3 種模型之一。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

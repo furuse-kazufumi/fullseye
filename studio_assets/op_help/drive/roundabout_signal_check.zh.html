@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>環状交差点の中の合図を採点する(53 条 2・4 項、教則 5-5-1(2))。場面 S069。</p>
+<p>对环形交叉口内的打灯示意评分(第53条第2、4款，交通教则 5-5-1(2))。场景 S069。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>

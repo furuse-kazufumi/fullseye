@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveterrain; driveterrain.radial_periodogram(field, dx: &#x27;float&#x27;, n_bins: &#x27;int&#x27; = 48) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;radial_periodogram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>格子上の高さ場 (H, W) の周期図を動径方向に平均する: <code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code>(f は周期/m)。</p>
+<p>Radially averages the periodogram of a height field (H, W) on a grid: <code style="color:#22d3bf">{&quot;f&quot;, &quot;power&quot;, &quot;count&quot;}</code> (f in cycles/m).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>平均であって環の積分ではない(積分すると f を 1 つ掛けた傾きになる)。DC は除く。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

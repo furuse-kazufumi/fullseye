@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import glob
 import math
+import os
 
 import numpy as np
 import pytest
@@ -143,7 +144,11 @@ def test_sholl_refuses(kw):
 
 
 def test_real_neuromorpho_files_keep_their_promises():
-    files = sorted(glob.glob("C:/dev/data/neuromorpho/*.swc"))
+    # 場所は NEUROMORPHO_DIR、無ければ repo の 2 つ上の data/neuromorpho(手元の絶対パスを書かない)
+    base = os.environ.get("NEUROMORPHO_DIR") or os.path.join(
+        os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+        "data", "neuromorpho")
+    files = sorted(glob.glob(os.path.join(base, "*.swc")))
     if not files:
         pytest.skip("NeuroMorpho SWC files are not bundled")
     for f in files:

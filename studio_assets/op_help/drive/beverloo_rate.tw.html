@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.beverloo_rate(D0: &#x27;float&#x27;, d: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, C: &#x27;float&#x27; = 0.58, k: &#x27;float&#x27; = 1.4, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.beverloo_rate(D0: &#x27;float&#x27;, d: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;, C: &#x27;float&#x27; = 0.58, k: &#x27;float&#x27; = 1.4, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;beverloo_rate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Beverloo の排出則 <code style="color:#22d3bf">W = C ρ_b √g (D₀ − k d)^{5/2}</code> [kg/s] (Beverloo ほか 1961; 係数 C ≈ 0.58、k ≈ 1.4 は Nedderman 1992 の整理)。<code style="color:#22d3bf">D0</code> = 円孔の直径 [m]、<code style="color:#22d3bf">d</code> = 粒径 [m]、<code style="color:#22d3bf">bulk_density</code> = かさ密度。</p>
+<p>Beverloo 排出定律 <code style="color:#22d3bf">W = C ρ_b √g (D₀ − k d)^{5/2}</code> [kg/s] (Beverloo 等 1961；係數 C ≈ 0.58、k ≈ 1.4 採用 Nedderman 1992 的整理)。<code style="color:#22d3bf">D0</code> = 圓孔直徑 [m]，<code style="color:#22d3bf">d</code> = 粒徑 [m]，<code style="color:#22d3bf">bulk_density</code> = 堆積密度。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">D0 ≤ k d</code>(有効開口が無い。式は負の底を 5/2 乗できないし、現実には詰まる)/ いずれかが ≤ 0 / 非有限。<code style="color:#22d3bf">D0/d &lt; 6</code> 程度では間欠流・詰まりが起きる(式の適用外)が、それはここでは拒否せず、返りの検査は呼び手に委ねる(閾は材料依存)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

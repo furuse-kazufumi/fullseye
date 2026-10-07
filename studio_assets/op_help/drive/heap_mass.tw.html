@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.heap_mass(volume: &#x27;float&#x27;, bulk_density: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;heap_mass&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><code style="color:#22d3bf">m = ρ_b V</code> [kg]。<code style="color:#22d3bf">bulk_density</code> はかさ密度 [kg/m³] (粒子密度ではない —— ガラス球 2500 kg/m³ の山は充填率 ≈ 0.6 で ρ_b ≈ 1500 kg/m³)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 体積が &lt; 0、密度が ≤ 0。</p>
+<p><code style="color:#22d3bf">m = ρ_b V</code> [kg]。<code style="color:#22d3bf">bulk_density</code> 為堆積密度 [kg/m³] (不是顆粒密度 —— 由 2500 kg/m³ 的玻璃球堆成的料堆，填充率 ≈ 0.6，ρ_b ≈ 1500 kg/m³)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：體積 &lt; 0、密度 ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

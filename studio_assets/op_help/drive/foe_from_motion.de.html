@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.foe_from_motion(K, T_rel) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>拡大の中心(FoE)の画素 <code style="color:#22d3bf">(col, row)</code>: 相対運動の並進 <code style="color:#22d3bf">t</code> を無限遠で投影した点。</p>
+<p>Pixel <code style="color:#22d3bf">(col, row)</code> des Expansionsfokus (FoE): die Projektion der Translation <code style="color:#22d3bf">t</code> der Relativbewegung im Unendlichen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">T_rel</code> の回転が単位でないと FoE は定義されない(<code style="color:#22d3bf">ValueError</code>)。奥行き方向の並進が 0(純粋な横滑り)なら <code style="color:#22d3bf">(nan, nan)</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

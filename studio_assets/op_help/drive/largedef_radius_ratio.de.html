@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.largedef_radius_ratio(d, p: &#x27;float&#x27;, method: &#x27;str&#x27; = &#x27;quadrature&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacdome; tacdome.largedef_radius_ratio(d, p: &#x27;float&#x27;, method: &#x27;str&#x27; = &#x27;quadrature&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;largedef_radius_ratio&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>大変形の接触半径の比 a/a_L(式 4)= (1/p)·B_d(1/p, 3/2)·d^{−1/p}/√(1 − d) = ∫₀¹ √((1 − d·uᵖ)/(1 − d)) du。</p>
+<p>Verhältnis der Kontaktradien a/a_L bei großer Verformung (Gl. 4) = (1/p)·B_d(1/p, 3/2)·d^{−1/p}/√(1 − d) = ∫₀¹ √((1 − d·uᵖ)/(1 − d)) du.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">method=&quot;quadrature&quot;</code>(既定): 右の積分を 1 に寄せた複合 Gauss–Legendre で。<code style="color:#22d3bf">&quot;beta&quot;</code>: 原文の形どおり不完全ベータの連分数で(別の経路、照合用)。p = ∞(平頭)は非圧縮の半径の伸び 1/√(1 − d)。d → 0 で 1 + d·p/(2(p+1))。p = 1・2 の閉形式は (2/(3d))(1 − (1 − d)^{3/2})/√(1 − d) と [√(1−d)/2 + atan2(√d, √(1−d))/(2√d)]/√(1 − d)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、p が範囲外、method の綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import polish; polish.band_width_profile(image, threshold: &#x27;float&#x27;, res: &#x27;float&#x27;, along: &#x27;str&#x27; = &#x27;x&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;band_width_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>直線の一筆(<code style="color:#22d3bf">along</code> の向き)で拭けた帯の幅を、帯に直交する線ごとに副画素で読む: しきい値を最初に越える所と最後に越える所を隣の画素との線形補間で求め、その差 × res。返り <code style="color:#22d3bf">widths</code>(線ごと、読めない線は NaN)、<code style="color:#22d3bf">centres</code>(帯の中心の位置 [m]、地図の座標)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。帯が 1 本である前提(複数の帯は外側どうしの幅になる)。<b>Raises</b> ValueError: 画像の検査、res ≤ 0、along が x / y でない、しきい値が非有限。</p>
+<p>对直线单次行程(方向 <code style="color:#22d3bf">along</code>)擦出的带，在与带正交的每条线上以亚像素精度读取宽度：用与相邻像素的线性插值求出首次与最后一次越过阈值的位置，其差 × res 即为宽度。返回 <code style="color:#22d3bf">widths</code>(逐线，无法读取的线为 NaN)、<code style="color:#22d3bf">centres</code>(带中心位置 [m]，图的坐标)、<code style="color:#22d3bf">valid</code>、<code style="color:#22d3bf">median</code>。前提是只有 1 条带(多条带时得到最外侧之间的宽度)。<b>Raises</b> ValueError：图像检查，res ≤ 0，along 不是 x / y，阈值非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

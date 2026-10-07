@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import roverslip; roverslip.slip_gp_fit(slopes, slips, length_scales=None, noise_levels=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;slip_gp_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>斜面の角 → 滑り率のガウス過程(RBF の核 + 一様な観測雑音)。超パラメータは対数周辺尤度の格子探索。</p>
+<p>坡角 → 滑移率的高斯过程(RBF 核 + 均匀的观测噪声)。超参数通过对数边际似然的网格搜索确定。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>y は平均を引いて標準偏差で割ってから当てはめる(信号の分散 σ_f² = 1 に固定、ℓ と雑音 σ_n を探す)。<code style="color:#22d3bf">length_scales</code> の既定は角の範囲の 0.05〜2 倍の 16 段(対数)、<code style="color:#22d3bf">noise_levels</code> は 0.01〜1(正規化した y の単位)の 16 段。返り値は予測に使う dict(<code style="color:#22d3bf">kind = &quot;gp&quot;</code>、<code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">alpha</code>・<code style="color:#22d3bf">L</code>・<code style="color:#22d3bf">ell</code>・<code style="color:#22d3bf">noise</code>・<code style="color:#22d3bf">y_mean</code>・<code style="color:#22d3bf">y_scale</code>・ <code style="color:#22d3bf">log_marginal_likelihood</code>)。雑音が角によって変わる(異分散)データでは、帯は全体の平均の幅になる(門の罠)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

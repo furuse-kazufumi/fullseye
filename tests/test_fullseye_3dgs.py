@@ -21,7 +21,7 @@ def test_scene_resolution_via_registry():
     this check has no torch dependency — scene_registry.py imports only json/os and
     resolve() is pure path logic. The actual CI-only failure is that
     scene_registry._MENAGERIE hardcodes an absolute local path
-    (C:/dev/projects/mujoco_menagerie) to a sibling checkout of mujoco_menagerie that
+    (the developer machine's own drive path) to a sibling checkout of mujoco_menagerie that
     is not part of this repo and is not cloned on CI runners (ubuntu-latest); on Linux
     that Windows path also just doesn't exist. So resolve("go2") legitimately returns
     None there. Skip when the asset tree is absent, matching this file's existing

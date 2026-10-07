@@ -5,7 +5,7 @@ zip の中央ディレクトリは末尾にあるので、(1) 末尾 2 MB を Ra
 Range で取り、名前が合う項目を選ぶ、(3) 各項目のローカルヘッダ + 圧縮データを Range で取り zlib(raw deflate)で伸長する。
 データは国土交通省 Project PLATEAU(公共データ利用規約 PDL1.0 = CC BY 4.0 互換)。出典表示: 「出典: 国土交通省 Project PLATEAU」。
 
-Run: py -3.11 plateau_fetch.py <zip-url> <name-substring> <outdir>   例: ... 53394611_bldg C:/dev/data/plateau/chuo_2025
+Run: py -3.11 plateau_fetch.py <zip-url> <name-substring> <outdir>   例: ... 53394611_bldg data/plateau/chuo_2025
 """
 from __future__ import annotations
 

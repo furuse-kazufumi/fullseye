@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh × table × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>メッシュ世界 <code style="color:#22d3bf">(V, F)</code> に姿勢 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)の LiDAR を 1 スイープ撃つ。</p>
+<p>以位姿 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)的 LiDAR 对网格世界 <code style="color:#22d3bf">(V, F)</code> 发射 1 次扫描。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は <code style="color:#22d3bf">ValueError</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> の dict。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>

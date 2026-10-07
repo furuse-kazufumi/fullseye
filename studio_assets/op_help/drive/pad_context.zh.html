@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。</p>
+<p>在膜的合成与读取中只构建 1 次的工具：像素中心网格 (X, Y)、Cerruti 核、3 色光源、无载荷膜的背景与标记基准图像。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>マーカーは <code style="color:#22d3bf">jitter_px</code> の一様ジッタで位相を散らす(印刷のばらつき程度)。<b>規則格子(0 px)は全マーカーが同じ副画素位相なので、重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る</b>(PoC の門で 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> はジッタの乱数。返りの <code style="color:#22d3bf">_model_cache</code>・<code style="color:#22d3bf">_sr_cache</code> は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

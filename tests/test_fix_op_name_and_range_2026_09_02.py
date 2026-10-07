@@ -75,13 +75,10 @@ def test_signed_frequency_ops_keep_the_negative_half(name):
 #: ★2026-10-07: [0,1] を外れるが、まだ ``ops.UNIT_RANGE_IS_NOT_THE_CONTRACT`` にも載らず
 #: 正規化もされていない image op(所有者の判断待ち)。``conftest.inputs_for`` が override の
 #: ある op にも sort 既定の帯を返すようにして見つかった。
-KNOWN_OUT_OF_UNIT_RANGE_PENDING = {
-    "tb_normals_to_egi":
-        "拡張ガウス像は bin ごとの**計数**(実測 two_clusters で最大 48、plane_only で 17)。"
-        "override の探針(160 本のばらばらな単位法線)は偶然どの bin にも 2 本入らず max=1 で、"
-        "[0,1] の門を運で通っていた。UNIT_RANGE_IS_NOT_THE_CONTRACT に計数画像として載せるか、"
-        "総数で割って [0,1] にするかは所有者の判断。",
-}
+#: ★2026-10-07 同日に空になった: ``tb_normals_to_egi``(拡張ガウス像の計数、最大 48)は橋の出口で
+#: 総数で割って割合([0,1]、和 1)にした(``backends_typed._egi_counts_to_fraction``。公開関数
+#: ``reprconv.normals_to_egi`` は計数のまま)。器は残す —— 次に見つけたらここへ。
+KNOWN_OUT_OF_UNIT_RANGE_PENDING: dict = {}
 
 
 @pytest.mark.parametrize("op", [o for o in ops.REGISTRY if o.out_sort == "image"],

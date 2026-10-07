@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import balltrack; balltrack.triangulate_dlt(uvs, poses, Ks) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_dlt&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>1 点の多視点三角測量(線形 DLT、SVD): <code style="color:#22d3bf">uvs</code> (C, 2)、<code style="color:#22d3bf">poses</code> (C, 4, 4)、<code style="color:#22d3bf">Ks</code> (C, 3, 3)。返り値 <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>。NaN の視点は飛ばす。2 視点未満なら ValueError。</p>
+<p>1 個點的多視角三角測量(線性 DLT，SVD)：<code style="color:#22d3bf">uvs</code> (C, 2)、<code style="color:#22d3bf">poses</code> (C, 4, 4)、<code style="color:#22d3bf">Ks</code> (C, 3, 3)。回傳值 <code style="color:#22d3bf">{&quot;p&quot; (3,), &quot;reproj_rms&quot; px, &quot;n_views&quot;}</code>。略過含 NaN 的視角。少於 2 個視角時為 ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

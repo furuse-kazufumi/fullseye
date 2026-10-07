@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.tdoa_bearing(sig_left, sig_right, fs, mic_spacing, *, c: &#x27;float&#x27; = 343.0, upsample: &#x27;int&#x27; = 16) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tdoa_bearing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2 本のマイク(左 = +y、右 = −y、間隔 <code style="color:#22d3bf">mic_spacing</code>)の到着時間差から音源の方位(遠方近似)。</p>
+<p>由 2 个麦克风(左 = +y，右 = −y，间距 <code style="color:#22d3bf">mic_spacing</code>)的到达时间差求声源方位(远场近似)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Δt = t_右 − t_左(左に先に着けば正)、 sin θ = c Δt / d、θ = 前方からの角(左が正)</p>
 <p>Δt は相互相関 Σ right[n] left[n − k] の最大(周波数領域で 0 を詰めて <code style="color:#22d3bf">upsample</code> 倍に補間し、さらに放物線)。探す範囲は物理的にありうる |Δt| ≤ d/c に限る。前後(θ と π − θ)は区別できない。</p>
 <p>返り値: <code style="color:#22d3bf">delay</code>(秒)、<code style="color:#22d3bf">bearing_rad</code> / <code style="color:#22d3bf">bearing_deg</code>、<code style="color:#22d3bf">sin_theta</code>(クリップ前)、<code style="color:#22d3bf">ambiguous</code> (主な周波数 f_peak で d &gt; c/(2 f_peak) なら True = 相関の山が 1/f ごとに並び範囲内に 2 つ入りうる)、<code style="color:#22d3bf">f_peak</code>。</p>

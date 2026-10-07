@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;passing_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>&quot;go&quot; にした場合を時間を進めて走らせ、PET(自車が対向車線から戻り切った時刻と、対向車がその地点に着く時刻の差)を返す。</p>
+<p>&quot;go&quot;로 한 경우를 시간을 진행시켜 주행시키고 PET(자차가 대향 차로에서 완전히 돌아온 시각과 대향차가 그 지점에 도착하는 시각의 차)를 반환합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>閉形式と独立な経路: 自車の <b>横位置</b> を、x_in〜x_out の間は対向車線(y = 1)、x_out を過ぎたら y(τ) = 1 − smoothstep(τ / T_lc)(τ = x_out を過ぎてからの時間)で戻すとして刻み dt で進め、y が 0 になった刻みを探して刻み内を二分法で詰めた時刻を戻り切った時刻とする(T_lc = 0 なら x_out を過ぎた時刻)。対向車は x = D から −v_on で進め、戻り切った地点を通る刻みを探して線形補間する。v_on = 0 なら PET = inf。</p>
 <p><code style="color:#22d3bf">v_obstacle</code> &gt; 0: 障害物の前端の外(x_out)も v_obstacle で進む(走っている自転車の追い越し)。</p>
 <p>戻り値 dict: <code style="color:#22d3bf">t_clear</code>、<code style="color:#22d3bf">x_clear</code>、<code style="color:#22d3bf">t_oncoming</code>(対向車が x_clear に着く時刻)、<code style="color:#22d3bf">pet</code>。</p>

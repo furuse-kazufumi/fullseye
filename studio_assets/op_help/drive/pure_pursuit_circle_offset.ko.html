@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.pure_pursuit_circle_offset(radius: &#x27;float&#x27;, lookahead: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, *, understeer: &#x27;float&#x27; = 0.0, speed: &#x27;float&#x27; = 0.0, params: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;pure_pursuit_circle_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>定常円(半径 R)を pure pursuit(後車軸の中心を基準)で追うときの定常の円の半径 ρ と横ずれ ρ − R(外へ正)。</p>
+<p>정상 원(반경 R)을 pure pursuit(뒤차축 중심 기준)로 추종할 때의 정상 원 반경 ρ와 횡방향 편차 ρ − R(바깥쪽이 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><b>運動学 + アンダーステア</b>(<code style="color:#22d3bf">params</code> = None): 指令の舵角 δ = L κ_cmd に対し実際の曲率が κ_cmd / (1 + K v²/L) になるとすると、同心円の定常で ρ = √(R² + (K v²/L) L_d²)(この版で導いた閉形式)。K = 0 なら ρ = R(横ずれ 0)。</p>
 <p><b>線形 2 輪等価モデル</b>(<code style="color:#22d3bf">params</code> を与える。δ = atan(L κ_cmd)): 定常では車体の向きが後車軸の速度(円の接線)より後軸の横すべり角 α_r = m l_f a_y / (C_r L) だけ内を向くので、注視点の見える角が α_r 減る。定常の関係(δ = L/R_c + K u²/R_c、β、回転の中心)を重心の旋回半径 R_c の 1 変数の方程式にして二分法で解く(半閉形式)。運動学の式はこの効果を落とすので横ずれを小さく見積もる(PoC では約半分)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R, L_d, L ≤ 0、注視点が円に届かない、1 + K v²/L ≤ 0、params で v ≤ 0.5。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import granular; granular.heap_volume_heightmap(hm, pitch: &#x27;float&#x27;, ground=None) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_heightmap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>高さ図の山の体積 <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]。<code style="color:#22d3bf">ground</code> は同形の地面高さ(None = 0)。負の高さ(地面より下)は 0 に切る —— 穴を山から引き算しない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形・pitch。</p>
+<p>高度圖中料堆的體積 <code style="color:#22d3bf">Σ (z − z_ground) pitch²</code> [m³]。<code style="color:#22d3bf">ground</code> 為同形狀的地面高度(None = 0)。負高度(低於地面)截為 0 —— 不從料堆中扣除坑洞。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：形狀、pitch。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

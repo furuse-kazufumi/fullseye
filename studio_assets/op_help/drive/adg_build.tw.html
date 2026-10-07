@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_build(paths)</code>(要直接呼叫實作,<code style="color:#22d3bf">import agvfleet; agvfleet.adg_build(paths)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;adg_build&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>行動依存グラフ(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。</p>
+<p>動作相依圖(Hönig, Kiesel, Tinka, Durham, Ayanian 2019)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>各車両の行動 = 「訪れるマスの列の k 番目に入る」。依存は 2 種類:</p>
 <p style="margin:2px 0 2px 12px">(1) 同じ車両の前の行動、(2) <b>同じマスを先に使う他車がそのマスを出ること</b>(計画の時刻順)。</p>
 <p>返りは dict: <code style="color:#22d3bf">cells</code>(各車両のマスの列)、<code style="color:#22d3bf">deps</code>(<code style="color:#22d3bf">(i, k)</code> → それより先に終わるべき <code style="color:#22d3bf">(j, m)</code> の集合)。計画に衝突があれば ValueError(依存の向きが決まらない)。</p>

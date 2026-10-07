@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_cbs(grid, starts, goals, max_nodes=20000, horizon=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_cbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。総コストが最適な衝突なしの計画。</p>
+<p>Conflict-Based Search(Sharon, Stern, Felner, Sturtevant 2015)。總成本最佳的無衝突計畫。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>上段は「衝突を 1 つ選び、2 台のどちらかに制約を足す」二分木の最良優先探索、下段は 1 台の時空間 A*。返りは dict: <code style="color:#22d3bf">paths</code>(各車両のマスの列)、<code style="color:#22d3bf">cost</code>(sum of costs)、<code style="color:#22d3bf">nodes</code>(展開した節の数)、<code style="color:#22d3bf">solved</code>。節の上限に達したら <code style="color:#22d3bf">solved=False</code>(<b>黙って最適でない解を返さない</b>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

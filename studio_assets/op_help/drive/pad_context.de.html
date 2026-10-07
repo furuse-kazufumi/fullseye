@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。</p>
+<p>Werkzeuge, die für Synthese und Auslesen der Membran nur 1-mal erstellt werden: Gitter der Pixelmittelpunkte (X, Y), Cerruti-Kern, 3-farbige Lichtquellen, Hintergrund der unbelasteten Membran und Referenzbild der Markierungen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>マーカーは <code style="color:#22d3bf">jitter_px</code> の一様ジッタで位相を散らす(印刷のばらつき程度)。<b>規則格子(0 px)は全マーカーが同じ副画素位相なので、重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る</b>(PoC の門で 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> はジッタの乱数。返りの <code style="color:#22d3bf">_model_cache</code>・<code style="color:#22d3bf">_sr_cache</code> は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

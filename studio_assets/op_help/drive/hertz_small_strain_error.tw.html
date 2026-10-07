@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_small_strain_error(d, p: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacdome; tacdome.hertz_small_strain_error(d, p: &#x27;float&#x27;, reading: &#x27;str&#x27; = &#x27;derived&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_small_strain_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>小変形の線形解(Hertz)を大変形に当てたときの誤差 [%] (d だけで決まり、L・寸法・弾性率に依らない)。</p>
+<p>將小變形線性解(Hertz)用於大變形時的誤差 [%] (僅由 d 決定，與 L、尺寸、彈性模數無關)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">force_from_delta</code> = 1/κₙ − 1(押し込みから力を読む)、<code style="color:#22d3bf">radius_from_delta</code> = 1/(a/a_L) − 1、<code style="color:#22d3bf">force_from_radius</code> = (a/a_L)^{p+1}/κₙ − 1(接触半径から力を読む = 視触覚センサの読み方、平頭は nan)、<code style="color:#22d3bf">force_universal</code> = 普遍形 (1 − k d)⁻¹ で読んだ力の誤差 κ_universal/κₙ − 1(k·d ≥ 1 は nan)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: d が [0, 1) の外、p が範囲外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

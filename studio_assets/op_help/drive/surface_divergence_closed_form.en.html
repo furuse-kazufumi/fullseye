@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tactorque; tactorque.surface_divergence_closed_form(p, G: &#x27;float&#x27;, nu: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;surface_divergence_closed_form&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>半空間の表面接線変位の発散の閉形式 ∇·ū = −(1−2ν) p/(2G)(本モジュールの導出: Boussinesq 点荷重 ū_r = −(1−2ν)P/(4πGr) と 2 次元の ∇·(r̂/r) = 2πδ²)。畳み込みの数値発散と比べる門(r &lt; 0.8a で 0.2 %、実測)。<b>Raises</b> ValueError: G ≤ 0。</p>
+<p>Closed form of the divergence of the tangential surface displacement of a half-space, ∇·ū = −(1−2ν) p/(2G) (derived in this module from the Boussinesq point load ū_r = −(1−2ν)P/(4πGr) and, in 2-D, ∇·(r̂/r) = 2πδ²). Gate comparing it with the numerical divergence of the convolution (0.2 % for r &lt; 0.8a, measured). <b>Raises</b> ValueError: G ≤ 0.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

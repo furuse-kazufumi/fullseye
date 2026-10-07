@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.passing_simulate(dist_oncoming: &#x27;float&#x27;, parked_len: &#x27;float&#x27;, margin_front: &#x27;float&#x27;, margin_back: &#x27;float&#x27;, v_ego: &#x27;float&#x27;, v_oncoming: &#x27;float&#x27;, *, lane_change_time: &#x27;float&#x27;, ego_length: &#x27;float&#x27; = 0.0, dt: &#x27;float&#x27; = 0.01, v_obstacle: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;passing_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>&quot;go&quot; にした場合を時間を進めて走らせ、PET(自車が対向車線から戻り切った時刻と、対向車がその地点に着く時刻の差)を返す。</p>
+<p>依時間推進模擬 &quot;go&quot; 的情形，回傳 PET(本車完全駛回本車道的時刻與對向來車到達該地點時刻之差)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>閉形式と独立な経路: 自車の <b>横位置</b> を、x_in〜x_out の間は対向車線(y = 1)、x_out を過ぎたら y(τ) = 1 − smoothstep(τ / T_lc)(τ = x_out を過ぎてからの時間)で戻すとして刻み dt で進め、y が 0 になった刻みを探して刻み内を二分法で詰めた時刻を戻り切った時刻とする(T_lc = 0 なら x_out を過ぎた時刻)。対向車は x = D から −v_on で進め、戻り切った地点を通る刻みを探して線形補間する。v_on = 0 なら PET = inf。</p>
 <p><code style="color:#22d3bf">v_obstacle</code> &gt; 0: 障害物の前端の外(x_out)も v_obstacle で進む(走っている自転車の追い越し)。</p>
 <p>戻り値 dict: <code style="color:#22d3bf">t_clear</code>、<code style="color:#22d3bf">x_clear</code>、<code style="color:#22d3bf">t_oncoming</code>(対向車が x_clear に着く時刻)、<code style="color:#22d3bf">pet</code>。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.lateral_offset(points, path, *, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lateral_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>点の、折線の経路に沿った弧長 s と横ずれ n(進行方向の左が正)。最も近い区間への射影。</p>
+<p>點沿折線路徑的弧長 s 與橫向偏差 n(行進方向左側為正)。投影至最近的區段。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">start_index</code>(点ごと、または 1 つ)を与えると、その区間の前後 <code style="color:#22d3bf">window</code> 区間だけを調べる(繰り返しを速くする。窓の外に本当の最寄りがあると誤るので、点が少しずつ動くときに使う)。None なら全区間を調べる。</p>
 <p>返り値: <code style="color:#22d3bf">s</code>, <code style="color:#22d3bf">n</code>, <code style="color:#22d3bf">index</code>(区間)、<code style="color:#22d3bf">heading</code>(その区間の向き)。点 (2,) なら スカラー。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、start_index が範囲外。</p>

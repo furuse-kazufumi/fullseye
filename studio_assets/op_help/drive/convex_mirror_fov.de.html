@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivedecide; drivedecide.convex_mirror_fov(radius, aperture, eye_distance) -&gt; &#x27;Dict[str, float]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_fov&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>凸面鏡(球面、半径 <code style="color:#22d3bf">radius</code>、開口の直径 <code style="color:#22d3bf">aperture</code>)を軸上 <code style="color:#22d3bf">eye_distance</code>(頂点から)の眼で見たときの視野角。</p>
+<p>Sichtwinkel eines Konvexspiegels (sphärisch, Radius <code style="color:#22d3bf">radius</code>, Öffnungsdurchmesser <code style="color:#22d3bf">aperture</code>), betrachtet von einem Auge auf der Achse im Abstand <code style="color:#22d3bf">eye_distance</code> (vom Scheitel).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>厳密(軸を含む断面): h = a/2、α = asin(h/R)、s = R − sqrt(R² − h²)、β = atan(h/(D + s))、<b>全視野角 = 2(β + 2α)</b>。<code style="color:#22d3bf">radius = inf</code> は平面鏡 2 atan(h/D)。</p>
 <p>近軸: ≈ a (1/D + 2/R)(誤差は h³ の桁。h/R ≲ 0.2 かつ h/D ≲ 0.2 で相対誤差が数 % 以内が目安)。</p>
 <p>返り値: <code style="color:#22d3bf">fov_rad</code> / <code style="color:#22d3bf">fov_deg</code>(厳密)、<code style="color:#22d3bf">fov_paraxial_rad</code>、<code style="color:#22d3bf">flat_fov_rad</code>(同じ開口の平面鏡)、<code style="color:#22d3bf">widening</code>(= fov / flat_fov、凸面で何倍広く見えるか)、<code style="color:#22d3bf">edge_tilt_rad</code> = α、<code style="color:#22d3bf">eye_angle_rad</code> = β。h ≥ R(半球より大きい開口)は ValueError。</p>

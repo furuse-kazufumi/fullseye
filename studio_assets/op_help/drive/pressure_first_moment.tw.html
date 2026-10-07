@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × matrix × matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.pressure_first_moment(p, X, Y, pitch: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pressure_first_moment&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>格子上の圧力 p (n, n) [Pa] の 0 次・1 次モーメント: <code style="color:#22d3bf">P</code> = Σ p h² [N]、<code style="color:#22d3bf">M1</code> = Σ (x, y) p h² [N·m]、<code style="color:#22d3bf">tau</code> = (−M1_y, M1_x) (z はゲルから物体へ、物体がゲルを押す力 −ẑ p のモーメント)。<b>Raises</b> ValueError: 形が違う、pitch ≤ 0。</p>
+<p>網格上壓力 p (n, n) [Pa] 的 0 階、1 階矩：<code style="color:#22d3bf">P</code> = Σ p h² [N]、<code style="color:#22d3bf">M1</code> = Σ (x, y) p h² [N·m]、<code style="color:#22d3bf">tau</code> = (−M1_y, M1_x)(z 由凝膠指向物體，為物體壓凝膠之力 −ẑ p 的力矩)。<b>Raises</b> ValueError：形狀不同，pitch ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">signal</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.lateral_wobble(n: &#x27;int&#x27;, dt: &#x27;float&#x27;, *, theta: &#x27;float&#x27;, sigma: &#x27;float&#x27;, seed: &#x27;Optional[int]&#x27;, x0: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lateral_wobble&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Ornstein–Uhlenbeck 過程 dX = −θ X dt + σ dW の厳密離散化(長さ n の列、刻み dt)。</p>
+<p>Ornstein–Uhlenbeck 과정 dX = −θ X dt + σ dW의 엄밀한 이산화(길이 n의 열, 스텝 dt).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>x_{k+1} = x_k e^{−θ dt} + σ sqrt((1 − e^{−2θ dt}) / (2θ)) ξ_k,   ξ_k ~ N(0, 1) 独立</p>
 <p>遷移分布が厳密なので dt に依らず定常分散 σ²/(2θ)、自己相関 corr(x_k, x_{k+j}) = e^{−θ j dt}(門は長い系列の標本で、許容幅は AR(1) の標本誤差から決める)。<code style="color:#22d3bf">x0</code> = None なら定常分布 N(0, σ²/(2θ)) から引く(最初から定常)。<code style="color:#22d3bf">seed</code> は <code style="color:#22d3bf">np.random.default_rng(seed)</code>(None も可だが非決定的)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: n &lt; 1、dt ≤ 0、θ ≤ 0、σ &lt; 0。</p>

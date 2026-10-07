@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.bicycle_model_step(state, steer, speed, params: &#x27;dict&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;bicycle_model_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線形 2 輪等価モデルの 1 刻み(古典的な 4 次 Runge–Kutta、刻みの間 δ と u は一定)。</p>
+<p>선형 2륜 등가 모델의 1스텝(고전적 4차 Runge–Kutta, 스텝 동안 δ와 u는 일정).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">state</code>: (..., 5) = (x, y, ψ, v_y, r)(重心の位置 [m]、向き [rad]、車の座標の横速度 [m/s]、ヨーレート [rad/s])。<code style="color:#22d3bf">steer</code>: 前輪の舵角 δ [rad] (state の先頭の形に放送)。<code style="color:#22d3bf">speed</code>: 前向きの速さ u [m/s] (&gt; 0、放送)。<code style="color:#22d3bf">params</code> には <code style="color:#22d3bf">inertia</code>(I_z [kg m²])も要る。返り値: 次の状態(同じ形)。</p>
 <p>横力は線形(飽和しない)。u → 0 で式が特異になるので u ≥ 0.5 m/s を要求する(低速は運動学で扱う)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、非有限、u &lt; 0.5、dt ≤ 0、I_z が無い。</p>

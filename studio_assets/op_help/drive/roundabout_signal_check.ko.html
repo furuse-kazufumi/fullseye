@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivepass; drivepass.roundabout_signal_check(progress, left_on, *, arm_angles: &#x27;Sequence[float]&#x27;, entry: &#x27;int&#x27;, exit: &#x27;int&#x27;, right_on=None, tol: &#x27;float&#x27; = 0.05) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;roundabout_signal_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>環状交差点の中の合図を採点する(53 条 2・4 項、教則 5-5-1(2))。場面 S069。</p>
+<p>회전교차로 안의 신호를 채점(제53조 제2·4항, 교칙 5-5-1(2)). 장면 S069.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">progress</code> = 入口から右回りに進んだ角 [rad]、単調非減少、サンプルごと、<code style="color:#22d3bf">left_on</code> / <code style="color:#22d3bf">right_on</code> = 合図の状態(bool)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_late</code>: 合図の角 + <code style="color:#22d3bf">tol</code> から出口の角までの間に左の合図が消えているサンプルがある。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">left_early</code>: 合図の角 − <code style="color:#22d3bf">tol</code> より手前で左の合図が点いている(手前の出口で出るように見える。53 条 4 項の「行為をしないのに合図」の <b>解釈</b>)。入った直後の出口(合図の角 = 0)では問わない。</p>

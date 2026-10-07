@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>単純多角形(凸・凹どちらも、自己交差なし)を耳切り法で三角形分割する。</p>
+<p>Trianguliert ein einfaches Polygon (konvex oder konkav, ohne Selbstüberschneidung) mit dem Ear-Clipping-Verfahren.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返す三角形は入力頂点の添字 (k-2, 3) で、各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
 <p>Args:</p>
 <p>poly: (k,2) 頂点列。閉じていなくてよい。</p>

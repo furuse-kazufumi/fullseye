@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_contains(course, xy)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_contains(course, xy)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_contains&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点が <b>走れる領域</b>(要素の多角形、配置なら要素の和)の内側かを偶奇規則で判定した bool 配列。</p>
+<p>Bool array telling, by the even-odd rule, whether points lie inside the <b>drivable area</b> (the element&#x27;s polygon, or the union of the elements for a layout).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">xy</code> は <code style="color:#22d3bf">(N, 2)</code>(<code style="color:#22d3bf">(2,)</code> なら bool スカラ)。境界上の点は未定義。要素ごとに bounds で先に篩う。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: course が dict でない・polygon が無い・xy の形が悪い・非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

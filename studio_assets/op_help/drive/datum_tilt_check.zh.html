@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.datum_tilt_check(result, warn_deg: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;datum_tilt_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p><code style="color:#22d3bf">repose_angle_silhouette</code> の返り(左右の斜面角と地面の傾き)から <b>基準面が傾いていないか</b> を判定する。</p>
+<p>根据 <code style="color:#22d3bf">repose_angle_silhouette</code> 的返回值(左右斜面角与地面倾斜)判定<b>基准面是否倾斜</b>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>平らでない地面(datum)の傾き β は安息角に足し算される(既存の体積 PoC と同じ罠)。せん断型(<code style="color:#22d3bf">z&#x27; = z + x tan β</code>) なら左右の斜面は <code style="color:#22d3bf">atan(tan φ ± tan β)</code>、カメラのロール(回転型)なら <code style="color:#22d3bf">φ ± β</code> —— <b>どちらも左右差 ≈ 2β</b> なので、左右差が <code style="color:#22d3bf">warn_deg</code> を超えたら警報。2 つの模型は 1 次で違う(β = 5 度・φ = 30 度で左の斜面が 33.62 対 35.00 度、実測)ので、両方の補正値を返し、どちらを使うかは地面の由来(高さ図の datum か、カメラの傾きか)で決める:</p>
 <p><code style="color:#22d3bf">phi_shear_deg</code>(tan の引き算、<code style="color:#22d3bf">ground_deg</code> を使う)、<code style="color:#22d3bf">phi_roll_deg</code>(角の引き算 = 左右の平均そのもの)、<code style="color:#22d3bf">beta_shear_deg</code>(左右の tan 差から読んだ β = atan((tan L − tan R)/2))、<code style="color:#22d3bf">beta_roll_deg</code>(= 左右差 / 2)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 欄が無い / 角が範囲外 / <code style="color:#22d3bf">warn_deg ≤ 0</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

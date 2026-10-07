@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>(要直接呼叫實作,<code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>比較用の素朴な実行: 計画の<b>マスの列</b>だけを使い、次のマスが空いていれば進む(順番の約束は無い)。</p>
+<p>供比較用的樸素執行：只使用計畫的<b>格子序列</b>，下一個格子空著就前進(沒有順序約定)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

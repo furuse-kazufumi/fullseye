@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_fk&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>順運動学: 関節角 (q₁, q₂)(各腕の近位リンクの x 軸からの角)→ 先端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)、E = 円(B₁, l₂) ∩ 円(B₂, l₂) の &quot;forward&quot;(x が大きい側)か &quot;back&quot;。返り値 <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>、交わらなければ <code style="color:#22d3bf">None</code>。</p>
+<p>Forward kinematics: joint angles (q₁, q₂) (angle of each arm&#x27;s proximal link from the x axis) → tip E. Elbow Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ), E = the &quot;forward&quot; (larger-x side) or &quot;back&quot; point of circle(B₁, l₂) ∩ circle(B₂, l₂). Return value <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>, or <code style="color:#22d3bf">None</code> if they do not intersect.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>比較用の素朴な実行: 計画の<b>マスの列</b>だけを使い、次のマスが空いていれば進む(順番の約束は無い)。</p>
+<p>Naive execution for comparison: uses only the plan&#x27;s <b>sequence of cells</b> and advances whenever the next cell is free (no ordering agreement).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

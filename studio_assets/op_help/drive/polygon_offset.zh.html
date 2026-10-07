@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.polygon_offset(vertices, clearance: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;polygon_offset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>凸多角形の各辺を外へ <code style="color:#22d3bf">clearance</code> [m] ずらした多角形(角は尖ったまま = 穴の図面の作り方)。正多角形なら相似拡大で、向きと対称は変わらない。返り <code style="color:#22d3bf">vertices</code>・<code style="color:#22d3bf">normals</code>・<code style="color:#22d3bf">offsets</code>(n·x ≤ h)。<b>Raises</b> ValueError: 凸でない、clearance &lt; 0 か有限でない、ずらすと辺が消える(凹みを持つ角は無いので、ここでは起きない形だけを通す)。</p>
+<p>将凸多边形的各边向外平移 <code style="color:#22d3bf">clearance</code> [m] 得到的多边形(角保持尖锐 = 孔图纸的画法)。正多边形则为相似放大，朝向和对称不变。返回 <code style="color:#22d3bf">vertices</code>、<code style="color:#22d3bf">normals</code>、<code style="color:#22d3bf">offsets</code>(n·x ≤ h)。<b>Raises</b> ValueError：非凸、clearance &lt; 0 或非有限、平移后边消失(由于没有凹角，此处只放行不会发生这种情况的形状)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

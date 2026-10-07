@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_loop_bend(radius=30.0, width=8.0, arc_pts=64)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_loop_bend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>周回コースの端の半円(左へ 180° 回る): 進入 (0, 0, 0) → 中心 (0, R) の周りを回って退出 (0, 2R, π)。多角形は外側の弧(半径 R + w/2)と内側の弧(R − w/2)で囲む環の半分。面積 = π R w(閉形式)、弧を折線にした分だけ小さく、arc_pts を増やすと収束する。規格(周回コース): 幅 8 m 以上、おおむね長円形。</p>
+<p>Halbkreis am Ende des Rundkurses (180° nach links): Einfahrt (0, 0, 0) → um den Mittelpunkt (0, R) → Ausfahrt (0, 2R, π). Das Polygon ist der halbe Kreisring zwischen dem äußeren Bogen (Radius R + w/2) und dem inneren Bogen (R − w/2). Fläche = π R w (geschlossene Form); das Polygon ist um den Anteil der Polygonzug-Näherung der Bögen kleiner und konvergiert mit wachsendem arc_pts. Norm (Rundkurs): Breite mindestens 8 m, annähernd oval.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ w/2(内側の弧が潰れる)、幅・半径が正でない、arc_pts が不正。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

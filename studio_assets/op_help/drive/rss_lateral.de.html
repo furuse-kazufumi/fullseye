@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_lateral(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import rsssafety; rsssafety.rss_lateral(v1: &#x27;float&#x27;, v2: &#x27;float&#x27;, p1: &#x27;dict&#x27;, p2: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;rss_lateral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>横方向(論文 Lemma lateral / lib <code style="color:#22d3bf">calculateSafeLateralDistance</code>)の最小安全距離 [m]。c_1 が左。</p>
+<p>Minimaler Sicherheitsabstand [m] in Querrichtung (Paper Lemma lateral / lib <code style="color:#22d3bf">calculateSafeLateralDistance</code>). c_1 ist links.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>横速度は <b>+ が右向き</b>(左の車が相手へ向かう向き)。<code style="color:#22d3bf">d_min = [ 左のオフセット − 右のオフセット + ½(μ_1 + μ_2) ]_+</code> で、左 = <code style="color:#22d3bf">S(v1; ρ_1, +a_lat,1, b_lat,1, direction=+1)</code>、右 = <code style="color:#22d3bf">S(v2; ρ_2, −a_lat,2, b_lat,2, direction=−1)</code>。ρ 後の横速度が互いに向いている範囲(v_{1,ρ} ≥ 0, v_{2,ρ} ≤ 0、かつ 左 − 右 ≥ 0)では論文の式 <code style="color:#22d3bf">μ + [ (v_1 + v_{1,ρ})/2 ρ + v_{1,ρ}²/(2b) − ((v_2 + v_{2,ρ})/2 ρ − v_{2,ρ}²/(2b)) ]_+</code> と一致する。それ以外では lib に従う(モジュール docstring「論文と ad-rss-lib が違う所」)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

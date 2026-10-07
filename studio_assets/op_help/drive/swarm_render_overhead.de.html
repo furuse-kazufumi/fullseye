@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × any × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>個体の位置 → 上から見た 1 コマ(ガウスの輝点、直径 = 標準偏差の 2 倍 = PIV の慣行、pivops と同じ)。</p>
+<p>Positionen der Individuen → 1 Frame in Draufsicht (Gaußsche Lichtpunkte, Durchmesser = 2 × Standardabweichung = PIV-Konvention, wie pivops).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
 <p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
 <p>shape: (H, W) [px]。</p>

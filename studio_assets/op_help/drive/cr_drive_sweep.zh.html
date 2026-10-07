@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_drive_sweep(scene, pp_index: &#x27;int&#x27; = 0, *, grid=None, margin: &#x27;float&#x27; = 0.15, **kwargs) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cr_drive_sweep&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ルールベースの gap acceptance: 運転手の母数の格子を穏やかな順に試し、<b>最初に全部の門を通った走行</b> を返す。</p>
+<p>基于规则的 gap acceptance: 按由温和开始的顺序尝试驾驶员参数网格，返回<b>第一个通过所有门禁的行驶</b>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>門 = ゴール到達 ∧ <code style="color:#22d3bf">cr_feasible</code> ∧ <code style="color:#22d3bf">cr_collision</code> で障害物なし(<code style="color:#22d3bf">margin</code> だけ膨らませた判定)∧ 道路境界なし。<code style="color:#22d3bf">grid</code> は <code style="color:#22d3bf">{&quot;a_lat&quot;: (...), &quot;lookahead&quot;: (...), &quot;k_v&quot;: (...), &quot;v_cruise&quot;: (...)}</code> 形式(既定 = a_lat 2.5→10、lookahead 5/8、k_v 0.6/1.0、v_cruise None)。他の kwargs は <code style="color:#22d3bf">cr_drive</code> へ。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;run&quot; (通った走行 | None), &quot;settings&quot; (その母数 | None), &quot;tries&quot;: [{&quot;settings&quot;, &quot;goal_reached&quot;, &quot;feasible&quot;, &quot;obstacle_collision&quot;, &quot;boundary_violation&quot;, &quot;first_collision&quot;}], &quot;n_tries&quot;}</code>。通る物が無ければ <code style="color:#22d3bf">run</code> は None(ValueError ではない)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: grid のキーが上記以外、margin &lt; 0。</p>

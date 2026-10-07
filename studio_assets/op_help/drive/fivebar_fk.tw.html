@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_fk&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>順運動学: 関節角 (q₁, q₂)(各腕の近位リンクの x 軸からの角)→ 先端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)、E = 円(B₁, l₂) ∩ 円(B₂, l₂) の &quot;forward&quot;(x が大きい側)か &quot;back&quot;。返り値 <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>、交わらなければ <code style="color:#22d3bf">None</code>。</p>
+<p>正向運動學：關節角 (q₁, q₂)(各臂近端連桿相對 x 軸的角度)→ 末端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)，E = 圓(B₁, l₂) ∩ 圓(B₂, l₂) 的 &quot;forward&quot;(x 較大的一側)或 &quot;back&quot;。回傳值 <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>，不相交時為 <code style="color:#22d3bf">None</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

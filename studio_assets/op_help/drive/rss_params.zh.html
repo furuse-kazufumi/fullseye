@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_params(rho: &#x27;float&#x27; = 1.0, accel_max: &#x27;float&#x27; = 3.5, brake_min: &#x27;float&#x27; = 4.0, brake_max: &#x27;float&#x27; = 8.0, brake_min_correct: &#x27;float&#x27; = 3.0, lat_accel_max: &#x27;float&#x27; = 0.2, lat_brake_min: &#x27;float&#x27; = 0.8, lat_margin: &#x27;float&#x27; = 0.1, min_distance: &#x27;float&#x27; = 0.0, v_max_accel: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, Optional[float]]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import rsssafety; rsssafety.rss_params(rho: &#x27;float&#x27; = 1.0, accel_max: &#x27;float&#x27; = 3.5, brake_min: &#x27;float&#x27; = 4.0, brake_max: &#x27;float&#x27; = 8.0, brake_min_correct: &#x27;float&#x27; = 3.0, lat_accel_max: &#x27;float&#x27; = 0.2, lat_brake_min: &#x27;float&#x27; = 0.8, lat_margin: &#x27;float&#x27; = 0.1, min_distance: &#x27;float&#x27; = 0.0, v_max_accel: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, Optional[float]]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;rss_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>RSS パラメータの dict を作る(既定 = ad-rss-lib の公表表、ρ は ego の 1 s)。</p>
+<p>生成 RSS 参数 dict(默认 = ad-rss-lib 的公开表，ρ 为 ego 的 1 s)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>ad-rss-lib <code style="color:#22d3bf">doc/ad_rss/Appendix-ParameterDiscussion.md</code> の &quot;conservative starting point&quot;:</p>
 <p>ρ_ego = 1 s(他車は <code style="color:#22d3bf">rss_params(rho=2.0)</code>)、a_accel_max = 3.5、a_brake_min = 4、a_brake_max = 8、a_brake_min_correct = 3、a^lat_brake_min = 0.8、a^lat_accel_max = 0.2、δ^lat_min(μ)= 0.1 m。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

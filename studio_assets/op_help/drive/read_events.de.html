@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.read_events(path) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import motionio; motionio.read_events(path) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;read_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>イベントカメラのイベント列を読む(.txt / .csv / .npy / .npz)。</p>
+<p>Liest den Ereignisstrom einer Eventkamera (.txt / .csv / .npy / .npz).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">x</code>・<code style="color:#22d3bf">y</code>(int64)、<code style="color:#22d3bf">t</code>(float64、ファイルの単位のまま)、<code style="color:#22d3bf">p</code>(int8、+1 / −1)、<code style="color:#22d3bf">columns</code> (どの列をどれと読んだか —— 推定したなら <code style="color:#22d3bf">guessed=True</code>)、<code style="color:#22d3bf">shape</code>(x・y の最大 + 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

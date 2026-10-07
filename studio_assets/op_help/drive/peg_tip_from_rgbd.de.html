@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;peg_tip_from_rgbd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>手首 RGB-D 1 枚からペグ先端の中心を 3-D(カメラ座標)で: ペグの画素 → depth の点群 → PCA の軸 → 既知半径の円柱当てはめ、先端の軸方向は影の端(副画素、被覆率)を、投影した縁の円の端と一致させる模型で決める。</p>
+<p>Mittelpunkt der Stiftspitze in 3-D (Kamerakoordinaten) aus 1 RGB-D-Bild der Handgelenkkamera: Stiftpixel → depth-Punktwolke → PCA-Achse → Zylinderanpassung mit bekanntem Radius; die axiale Lage der Spitze wird durch ein Modell bestimmt, das das Ende des Schattens (Subpixel, Bedeckungsgrad) mit dem Ende des projizierten Kantenkreises zur Deckung bringt.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り: <code style="color:#22d3bf">tip_cam</code>(3,)、<code style="color:#22d3bf">axis</code>(先端 → 上、単位)、<code style="color:#22d3bf">rms_cyl</code>、<code style="color:#22d3bf">n_pts</code>、<code style="color:#22d3bf">uv</code>(先端の投影)、<code style="color:#22d3bf">delta_axial</code>。</p>
 <p>正直に: 試作の 16 姿勢で軸方向の誤差 max 0.83 px(横方向 0.004 px)—— 影の端 1 画素の被覆率だけから軸方向を読む限界で、目標 0.3 px は未達。<b>Raises</b> <code style="color:#22d3bf">RuntimeError</code>: ペグが見えない(芯の画素 &lt; 50)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

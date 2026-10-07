@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_validate(table=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_validate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>表を検証する(fail-closed): 欄の語彙・クラス名・回復名の綴り、<b>全ペアの排他</b>(2 行が同じ署名に当たり得ないか = 全欄で許す集合が交わる行の組が無い)、<b>到達性</b>(unknown 以外の全クラスに ≥ 1 行)。</p>
+<p>Validates the table (fail-closed): spelling of the field vocabulary, class names and recovery names; <b>pairwise exclusivity</b> (no 2 rows can match the same signature = there is no pair of rows whose allowed sets intersect in every field); <b>reachability</b> (≥ 1 row for every class other than unknown).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り: <code style="color:#22d3bf">n_rows</code>、<code style="color:#22d3bf">classes_covered</code>、<code style="color:#22d3bf">classes_missing</code>、<code style="color:#22d3bf">n_signatures</code>(語彙の直積の大きさ)、<code style="color:#22d3bf">n_covered</code>(どれかの行に当たる署名の数)、<code style="color:#22d3bf">coverage</code>、<code style="color:#22d3bf">overlaps</code>(交わる行の組 —— 空でなければ下の ValueError)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 綴り違い・交わる行・届かないクラス。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

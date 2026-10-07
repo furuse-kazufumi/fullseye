@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.rear_axle_path(front_path, wheelbase: &#x27;float&#x27;, *, rear0=None) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;rear_axle_path&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>前車軸の中心の折線の軌跡から、すべりなしで引かれる後車軸の中心の軌跡(区間ごとに厳密な追跡曲線)。</p>
+<p>앞차축 중심의 꺾은선 궤적으로부터 미끄럼 없이 끌려가는 뒤차축 중심의 궤적(구간마다 엄밀한 추적 곡선).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>前が直線を Δ 進む間、棒(後 → 前)と直線のなす角 θ は tan(θ/2) = tan(θ₀/2) e^{−Δ/L}(厳密)。折線の頂点ごとにこれを繋ぐ。<code style="color:#22d3bf">rear0</code>: 後車軸の初めの位置(None なら最初の区間の向きに L だけ後ろ = 真っすぐ)。|前 − 後| = L を要求。</p>
 <p>返り値: <code style="color:#22d3bf">rear</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)(車体の向き = 棒の向き)、<code style="color:#22d3bf">gamma</code> (N,)(棒と前の進む向きのなす角、左旋回で正)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、重複点、L ≤ 0、|前 − 後| ≠ L、θ₀ = π(後ろ向きに押す)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>(要直接呼叫實作,<code style="color:#22d3bf">import ozakimm; ozakimm.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cross_covariance_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Kabsch / ICP の相互共分散 <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code>(3×3)を、点の順に依らないビットで返す。</p>
+<p>以與點順序無關的位元回傳 Kabsch / ICP 的互共變異數 <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code>(3×3)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>平均は <code style="color:#22d3bf">math.fsum</code>(正確に丸めた和)、中心化は要素ごと、縮約は <code style="color:#22d3bf">matmul_reproducible</code>。P と Q は行ごとに対応する (N, 3)(N ≥ 3)。精度は FP64 の積と同じ水準(要素ごとに <code style="color:#22d3bf">tol · (|P−P̄|ᵀ|Q−Q̄|)_ij</code> + 数 ulp)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

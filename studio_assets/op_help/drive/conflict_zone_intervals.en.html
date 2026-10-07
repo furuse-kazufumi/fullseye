@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;conflict_zone_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>衝突の領域(交差点の中で 2 つの進路が重なる所)を車が占める時刻 [t_in, t_out] (閉形式、配列可)。</p>
+<p>Times [t_in, t_out] during which a vehicle occupies the conflict zone (where 2 paths overlap inside the intersection) (closed form, arrays allowed).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>前端が dist_to_zone 進むと入り、前端が dist_to_zone + zone_length + car_length 進むと後端が出る。初速 v0 から <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速(accel = 0 なら一定の速さ)。既に領域に入っている(dist_to_zone &lt; 0)場合は t_in = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

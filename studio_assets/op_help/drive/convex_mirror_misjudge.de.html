@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivepass; drivepass.convex_mirror_misjudge(object_distance, speed, radius: &#x27;float&#x27;, *, eye_distance: &#x27;float&#x27;) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;convex_mirror_misjudge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>凸面鏡に映った車の距離と速さを平面鏡のつもりで読んだときの見誤り(近軸の閉形式、配列可)。場面 S064・S130。</p>
+<p>Fehleinschätzung, wenn Abstand und Geschwindigkeit eines im Konvexspiegel gesehenen Fahrzeugs wie bei einem Planspiegel gelesen werden (paraxiale geschlossene Form, Arrays möglich). Szenarien S064, S130.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>k = 1 + 2e/R。距離(大きさから): â = k a。速さは読み方で 3 つ:</p>
 <p><code style="color:#22d3bf">speed_size_consistent</code> = k v(大きさの変化を、大きさから読んだ距離と矛盾なく読む → 速く見える)、<code style="color:#22d3bf">speed_size_anchored</code> = k v (e + a)²/(e + k a)²(本当の距離 a にある物の大きさの変化として読む → a &gt; e/√k で遅い)、<code style="color:#22d3bf">speed_lateral_anchored</code> = v (e + a)/(e + k a)(横切る動きの角の速さを本当の距離で読む → 遅い)。<code style="color:#22d3bf">tau_apparent</code> = (e + k a)/(k v)(大きさとその変化率の比 = 見かけの到達時間)、<code style="color:#22d3bf">tau_true</code> = a / v。遠く見える(k &gt; 1)は読み方によらないが、<b>遅く見えるのは本当の距離に錨を置いたときだけ</b> —— 返り値の 3 つで分かる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

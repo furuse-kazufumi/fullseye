@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import lidarsim; lidarsim.ray_plane_range(origin, dirs, plane) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ray_plane_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>原点 <code style="color:#22d3bf">origin</code> から方向 <code style="color:#22d3bf">dirs (...,3)</code> のレイが平面 <code style="color:#22d3bf">ax+by+cz+d=0</code> に当たるまでの距離。</p>
+<p>Abstand, den Strahlen vom Ursprung <code style="color:#22d3bf">origin</code> in Richtung <code style="color:#22d3bf">dirs (...,3)</code> bis zum Auftreffen auf die Ebene <code style="color:#22d3bf">ax+by+cz+d=0</code> zurücklegen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>閉形式 <code style="color:#22d3bf">t = −(n·O + d)/(n·D)</code>、距離は <code style="color:#22d3bf">t·‖D‖</code>。前方(t &gt; 0)に当たらない・平行なら <code style="color:#22d3bf">inf</code>。法線がゼロなら <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

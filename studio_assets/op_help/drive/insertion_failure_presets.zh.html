@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_presets(kp=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_presets(kp=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_presets&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>注入する失敗の既定(各クラス → <code style="color:#22d3bf">pegfail_episode_run</code> の引数)。数は Whitney の境目から:</p>
-<p>missed_hole = ε₀ 2.5 mm(&gt; W + c_r = 1.2 mm)/ wedging = μ 0.8・θ₀ 4.5°(c/μ = 2.76°)/ jamming = θ₀ 3°(μ = 0.3 ではくさびにならない 7.35° の下)で先端が 4 mm 入ってから搬送台の横目標を傾きの側へ +3.0 mm ずらして保持(手首ばね 600 N/m → F_x ≤ 1.8 N、ヒンジは先端から 40 mm なので M/(rF_z) が平行四辺形の斜辺を越える。実測: −3.0 mm(反対側)では滑って入る、+1.6 mm では止まるが比は内側 = unknown)/ blocked_hole = 深さ 6 mm に栓 / wrong_hole = 26 mm 横の囮の穴へ向かう / nominal = ε₀ 0.5 mm・θ₀ 1.5°。</p>
+<p>要注入的失败的默认设置(各类别 → <code style="color:#22d3bf">pegfail_episode_run</code> 的参数)。数值来自 Whitney 的边界：missed_hole = ε₀ 2.5 mm(&gt; W + c_r = 1.2 mm)/ wedging = μ 0.8、θ₀ 4.5°(c/μ = 2.76°)/ jamming = θ₀ 3°(低于 7.35°，因此 μ = 0.3 时不会楔住)，末端插入 4 mm 后将滑台的横向目标向倾斜一侧偏移 +3.0 mm 并保持(腕部弹簧 600 N/m → F_x ≤ 1.8 N，铰链距末端 40 mm，因此 M/(rF_z) 越过平行四边形的斜边。实测：−3.0 mm(反侧)时滑入，+1.6 mm 时停住但比值在内侧 = unknown)/ blocked_hole = 深度 6 mm 处有塞子 / wrong_hole = 朝向侧方 26 mm 处的诱饵孔 / nominal = ε₀ 0.5 mm、θ₀ 1.5°。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

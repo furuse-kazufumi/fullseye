@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivecourse; drivecourse.course_turnaround(width=3.5, bay_width=3.5, depth=5.0, entry=5.0, corner_radius=1.0, arc_pts=16, side=&#x27;left&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;course_turnaround&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>方向変換コース(T 字): 幅 w の道路(x ∈ [0, 2E + bay_width])の側方中央に車庫(道路沿いの幅 bay_width、奥行 depth)、車庫口の両側に出入口部 E ずつ。</p>
+<p>방향 전환 코스(T 자): 폭 w 도로(x ∈ [0, 2E + bay_width])의 측면 중앙에 주차 칸(도로 방향 폭 bay_width, 깊이 depth), 주차 칸 입구 양쪽에 출입구부 E씩.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>別表第三の図(3JH00000217784)そのもの: 道路(幅 A)の途中に車庫(幅 B × 奥行 C)が直角に付き、車庫口の両側の道路が出入口部 D、車庫口の凹頂点 2 つがすみ切り E。図は上向きの道路の右側に車庫があるが、ここでは <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)を既定にし <code style="color:#22d3bf">&quot;right&quot;</code> で鏡映する。車は道路を進み、後退で車庫に入れ、来た方向へ出る(exit = (0, 0, π); 反対側へ出るときは配置側で向きを選ぶ)。centerline は道路の軸 → 車庫の軸。面積 = (2E + bay_width)·w + depth·bay_width + 2r²(1 − π/4)。</p>
 <p>規格: A = 3.5, B = 3.5, C = 5, D ≥ 5, E = 1 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・車庫幅・奥行・E が正でない、r &lt; 0、E &lt; r または depth &lt; r(すみ切りが辺に収まらない)、arc_pts が 1 以上の整数でない、side が left/right でない。</p>

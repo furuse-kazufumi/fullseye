@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.mapf_joint_astar(grid, starts, goals, max_expansions=2000000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;mapf_joint_astar&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>全台の位置を 1 つの状態にした A*。<b>小さな問題専用</b>の最適解(CBS の門の真値)。</p>
+<p>将所有车辆位置合为 1 个状态的 A*。<b>仅限小问题</b>的最优解(CBS 门禁的真值)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>sum of costs を厳密に数えるため、各車両に「終わった(以後は目的地に居続ける)」の旗を持たせる:</p>
 <p>目的地に居る車両はその手の前に終わってよく、1 手の費用 = まだ終わっていない台数。ヒューリスティック = 終わっていない車両の BFS 距離の和(許容的)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

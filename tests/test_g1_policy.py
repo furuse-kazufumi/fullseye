@@ -19,9 +19,14 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import g1_policy_bridge as G  # noqa: E402
 
-_CKPT = "C:/dev/projects/onocollo-complete/out/humanoid/mjx_g1_walk12c_ckpt_15728640.pkl"
-_REF = "C:/dev/projects/onocollo-complete/out/humanoid/g1_walk_cycle_straight.npy"
-_XML = "C:/dev/projects/mujoco_menagerie/unitree_g1/scene.xml"
+# 資産は repo の外。ONOCOLLO_DIR / MUJOCO_MENAGERIE、無ければ repo と並んだ checkout
+# (手元の絶対パスを書かない)。
+_SIBLINGS = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+_ONO = os.environ.get("ONOCOLLO_DIR") or os.path.join(_SIBLINGS, "onocollo-complete")
+_MENAGERIE = os.environ.get("MUJOCO_MENAGERIE") or os.path.join(_SIBLINGS, "mujoco_menagerie")
+_CKPT = os.path.join(_ONO, "out", "humanoid", "mjx_g1_walk12c_ckpt_15728640.pkl")
+_REF = os.path.join(_ONO, "out", "humanoid", "g1_walk_cycle_straight.npy")
+_XML = os.path.join(_MENAGERIE, "unitree_g1", "scene.xml")
 
 
 def _toy_policy(obs=4, act=2):

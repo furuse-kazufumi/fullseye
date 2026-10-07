@@ -75,13 +75,11 @@ KNOWN_HANGS_ON_NONFINITE: dict = {}
 #: 見ていたので、置き換え後の有限値しか見えず、この 16 op の 0/0 を一度も捕まえていなかった
 #: (docstring の「0 除算の検出器」は空振りしていた)。台帳(source=output)で数える。
 #: いずれも空配列の縮約(平均・比・最大)を素直に書いた形 —— 明示の拒否にするのが筋(bug-suspect)。
-KNOWN_NONFINITE_ON_EMPTY_INPUT = frozenset({
-    "area_frac", "gray_histo_abs", "hx_estimate_sl_al_lr", "hx_estimate_sl_al_zc",
-    "hx_estimate_tilt_lr", "hx_estimate_tilt_zc", "intensity", "sk_blur_effect",
-    "tb_cplx_cr_residual", "tb_dtof_depth", "tb_dynsys_correlation_dimension",
-    "tb_equivalent_level", "tb_estimate_alpha", "tb_get_y_value_funct_1d",
-    "tb_reflection_symmetry_score", "tb_superquadric_residual",
-})
+#: ★2026-10-07 同日に 16 → 0。内訳: 9 op(area_frac / gray_histo_abs / intensity / sk_blur_effect /
+#: hx_estimate_* 4 本 / tb_superquadric_residual)は本体の 0/0 を明示の ValueError に、
+#: 残る tb_* 7 本は**本体は既に正しく拒否していて**、橋の後始末 ``backends_typed._fallback`` が
+#: 空配列の平均 = NaN を返していた(空なら 0.0 に直した)。器は残す —— 次に見つけたらここへ。
+KNOWN_NONFINITE_ON_EMPTY_INPUT = frozenset()
 
 
 def _empty_for(sort):

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slip_entropy(mag, bins: &#x27;int&#x27; = 16, vmax=None) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import tacslip; tacslip.slip_entropy(mag, bins: &#x27;int&#x27; = 16, vmax=None) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;slip_entropy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>変位の大きさ |u| の列のヒストグラム(bins 本、範囲 [0, vmax] —— 省略時は最大値)の Shannon エントロピーを ln(bins) で正規化(0..1)。Yuan 2017 の滑りの指標: 固着核が縮んで滑り環の勾配に乗るマーカーが増えると上がる。<b>Raises</b> ValueError: 点が無い、bins &lt; 2。</p>
+<p>Shannon entropy of the histogram (bins bins, range [0, vmax] — the maximum if omitted) of the displacement magnitudes |u|, normalized by ln(bins) (0..1). The slip indicator of Yuan 2017: it rises as the stick core shrinks and more markers lie on the gradient of the slip annulus. <b>Raises</b> ValueError: no points, bins &lt; 2.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

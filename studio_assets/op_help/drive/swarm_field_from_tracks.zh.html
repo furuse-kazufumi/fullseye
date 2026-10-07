@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_field_from_tracks(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), grid_step=None, h=None, threshold: &#x27;float&#x27; = 0.3, max_disp_px=None, min_count: &#x27;int&#x27; = 3, outlier_k: &#x27;int&#x27; = 12, outlier_threshold: &#x27;float&#x27; = 3.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.swarm_field_from_tracks(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), grid_step=None, h=None, threshold: &#x27;float&#x27; = 0.3, max_disp_px=None, min_count: &#x27;int&#x27; = 3, outlier_k: &#x27;int&#x27; = 12, outlier_threshold: &#x27;float&#x27; = 3.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_field_from_tracks&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>俯瞰のコマ列 → 個体を検出(blob2d の連結成分 + 明るさの重心)→ 隣のコマと相互最近傍でつなぐ → 速度を SPH 核で格子へ。</p>
+<p>俯视帧序列 → 检测个体(blob2d 的连通分量 + 亮度质心)→ 与相邻帧按互为最近邻连接 → 用 SPH 核将速度映射到网格。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>つなぐ条件: A の点の最近傍が B の点で、その B の点の最近傍も A の点(相互)、かつ移動が <code style="color:#22d3bf">max_disp_px</code> 以下(既定 = 検出した点どうしの最近傍の間隔の中央値の 0.45 倍。1 コマの移動がこれを超えると取り違える = 追跡の限界)。全部のコマの組の速度を一つの集団にして平均する(定常の流れの前提)。取り違えた組は速度が桁で外れる(実測: 一様に撒いた 1300 個で 2 % の組が 1〜3 m/s ずれ、格子の rms 誤差が U の 16 % になった)ので、格子へ移す前に<b>正規化した中央値の検査</b>(PIV の慣行、近い <code style="color:#22d3bf">outlier_k</code> 個の速度の中央値からのずれ / その近傍のずれの中央値 &gt; <code style="color:#22d3bf">outlier_threshold</code>) で捨てる。</p>
 <p>Args:</p>
 <p>frames: 同じ大きさの (H, W) のコマの列(2 枚以上)。</p>

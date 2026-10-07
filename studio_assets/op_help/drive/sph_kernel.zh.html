@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.sph_kernel(r, h: &#x27;float&#x27;, dim: &#x27;int&#x27; = 2, derivative: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;sph_kernel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>3 次スプライン核 W(r, h)(M4、台の半径 2h)。<code style="color:#22d3bf">derivative=True</code> で dW/dr(r の向きの微分、0 以下)。</p>
+<p>3 次样条核 W(r, h)(M4，支撑半径 2h)。<code style="color:#22d3bf">derivative=True</code> 时为 dW/dr(沿 r 方向的导数，≤ 0)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>W = σ_d [1 − 1.5 q² + 0.75 q³] (0 ≤ q &lt; 1)、σ_d · 0.25 (2 − q)³(1 ≤ q &lt; 2)、0(q ≥ 2)、q = r/h。σ_1 = 2/(3h)、σ_2 = 10/(7π h²)、σ_3 = 1/(π h³)。この定数で ∫ W dV = 1(恒等式。門で数値の求積と照らす)。</p>
 <p>Args:</p>
 <p>r: 距離の配列(0 以上、形は任意)。</p>

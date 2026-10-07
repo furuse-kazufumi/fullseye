@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_size_synth(d50: &#x27;float&#x27;, sigma_ln: &#x27;float&#x27;, edges=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_synth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>対数正規の <b>体積</b> 分布を装置と同じ区間に割り付けた粒度分布(真値つき)。</p>
+<p>將對數常態的 <b>體積</b> 分布分配到與儀器相同區間的粒徑分布(附真值)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>体積の累積 <code style="color:#22d3bf">F(x) = Φ((ln x − ln d50) / σ)</code>。<code style="color:#22d3bf">edges</code> を省くと公開データの装置の 74 端(比 1.13616)。</p>
 <p>返り: <code style="color:#22d3bf">edges</code>・<code style="color:#22d3bf">volume</code>(%)と <code style="color:#22d3bf">truth</code>(<code style="color:#22d3bf">d10</code>・<code style="color:#22d3bf">d50</code>・<code style="color:#22d3bf">d90</code> = <code style="color:#22d3bf">d50 · exp(±1.28155 σ)</code>、<code style="color:#22d3bf">sigma_ln</code>)。区間の外にはみ出す体積が 1e-6 を超えると <code style="color:#22d3bf">ValueError</code>(端で切ると D10/D90 が黙って動く)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelateral; drivelateral.steady_cornering(speed: &#x27;float&#x27;, radius: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;steady_cornering&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線形 2 輪等価モデルの定常円旋回(速さ u、旋回半径 R = u/r、左旋回を正)。</p>
+<p>선형 2륜 등가 모델의 정상 원선회(속력 u, 선회 반경 R = u/r, 좌선회가 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>R は前向きの速さ u とヨーレート r で定義する(線形モデルの慣習)。重心の軌跡の実際の半径は合成の速さ / r = R √(1 + tan²β) で、β が小さい範囲で R に等しい(門で確かめた差は β² の桁)。</p>
 <p>返り値: <code style="color:#22d3bf">steer</code> δ = L/R + K u²/R [rad]、<code style="color:#22d3bf">yaw_rate</code> r = u/R、<code style="color:#22d3bf">lateral_accel</code> u²/R、<code style="color:#22d3bf">sideslip</code> β = l_r/R − m l_f u²/(C_r L R)、<code style="color:#22d3bf">yaw_gain</code> r/δ = (u/L)/(1 + K u²/L)、<code style="color:#22d3bf">front_slip</code>・<code style="color:#22d3bf">rear_slip</code> (軸の横すべり角)、<code style="color:#22d3bf">K</code>。R &lt; 0 で右旋回(符号がそのまま反転)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: u ≤ 0、R = 0 / 非有限、母数の誤り、1 + K u²/L ≤ 0(臨界速度以上)。</p>

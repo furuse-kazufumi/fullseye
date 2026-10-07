@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import scoop; scoop.two_view_volume(side_a, side_b, pitch: &#x27;float&#x27;, *, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;two_view_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>直交する 2 方向の側面像から体積 —— 行ごとの 2 つの弦 <code style="color:#22d3bf">W_a</code>・<code style="color:#22d3bf">W_b</code> を軸とする楕円の和 <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>。</p>
+<p>Volume from side images in 2 orthogonal directions — sum of ellipses whose axes are the 2 chords <code style="color:#22d3bf">W_a</code> and <code style="color:#22d3bf">W_b</code> of each row, <code style="color:#22d3bf">V = Σ f π (W_a/2)(W_b/2) pitch³</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>断面が楕円(軸対称でない山、縦長の盛り)なら厳密で、片方だけの回転体の仮定は楕円の扁平さの比で外れる(PoC で</p>
 <p>1.6 : 1 の楕円錐が片方だと −38 % / +60 %)。行の満ち具合 <code style="color:#22d3bf">f</code>(平らな面が行の途中を横切る行、像 a で読む)で弦を</p>
 <p><code style="color:#22d3bf">W = w / f</code> に直してから掛ける(幅の積は <code style="color:#22d3bf">f²</code> で数え落とすため)。雑音は先に消す。2 枚は同じ高さの刻み(同じ行が</p>

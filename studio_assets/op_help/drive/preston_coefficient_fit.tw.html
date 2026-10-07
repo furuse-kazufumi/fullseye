@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.preston_coefficient_fit(depth_map, dwell_map, mask=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import polish; polish.preston_coefficient_fit(depth_map, dwell_map, mask=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;preston_coefficient_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>深さの地図 = k_p × 滞在の地図(<code style="color:#22d3bf">dwell_map</code> = k_p = 1 で積分した ∫ p |v_rel| dt [Pa·m])を最小二乗で解き、Preston 係数を返す。原点を通す当てはめ <code style="color:#22d3bf">k_p</code> と、切片つき <code style="color:#22d3bf">k_p_affine</code> / <code style="color:#22d3bf">offset</code>、<code style="color:#22d3bf">r2</code>、<code style="color:#22d3bf">rms_residual</code>、<code style="color:#22d3bf">n</code>。<code style="color:#22d3bf">mask</code> が無ければ滞在が最大の 5 % を超える画素。<b>Raises</b> ValueError: 形が違う・非有限、画素が 3 未満、滞在が 0。</p>
+<p>以最小平方求解 深度圖 = k_p × 駐留圖(<code style="color:#22d3bf">dwell_map</code> = 以 k_p = 1 積分的 ∫ p |v_rel| dt [Pa·m])，回傳 Preston 係數：通過原點的擬合 <code style="color:#22d3bf">k_p</code>，以及含截距的 <code style="color:#22d3bf">k_p_affine</code> / <code style="color:#22d3bf">offset</code>、<code style="color:#22d3bf">r2</code>、<code style="color:#22d3bf">rms_residual</code>、<code style="color:#22d3bf">n</code>。未給定 <code style="color:#22d3bf">mask</code> 時取駐留超過最大值 5 % 的像素。<b>Raises</b> ValueError：形狀不同或非有限、像素少於 3、駐留為 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

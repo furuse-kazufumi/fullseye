@@ -158,13 +158,31 @@ class Scene:
         return S.launch_animation(xml, qpos, title=f"{self.name}", static_mesh=static)
 
 
-def evis_rl_perceive(qpos_npy, xml="C:/dev/projects/ms_human_700_jaw/scene_full_mjx.xml",
+def _sibling_asset(env, sibling, *rel):
+    """repo の外にある資産(MuJoCo の XML 等)の場所。手元の絶対パスを既定に持たない。
+
+    ``env`` が設定されていればそれ、無ければ **この repo と並んだ** ``sibling`` ディレクトリ
+    (``Path(__file__)`` から求める)。在らなければ明示の ``FileNotFoundError``。
+    """
+    from pathlib import Path
+    base = os.environ.get(env) or str(Path(__file__).resolve().parent.parent / sibling)
+    p = Path(base, *rel)
+    if not p.exists():
+        raise FileNotFoundError("%s not found — set %s to the %s checkout, or pass xml= explicitly"
+                                % (p, env, sibling))
+    return str(p)
+
+
+def evis_rl_perceive(qpos_npy, xml=None,
                      out_gif="out/evis_fullseye.gif", **kw):
     """Fullseye leverages the GPU-learned evis: take its physics rollout (a qpos trajectory
     from the MJX-PPO policy) and PERCEIVE it with Fullseye's unified vision — RGB, metric
     depth, and DVS events side by side. The control is learned on the GPU; the *seeing* is
-    Fullseye's job. Returns honest perception stats. See ``evis_fullseye_bridge``."""
+    Fullseye's job. Returns honest perception stats. See ``evis_fullseye_bridge``.
+    ``xml=None`` resolves ``$MS_HUMAN_700_DIR/scene_full_mjx.xml`` (or the sibling checkout)."""
     import evis_fullseye_bridge as B
+    if xml is None:
+        xml = _sibling_asset("MS_HUMAN_700_DIR", "ms_human_700_jaw", "scene_full_mjx.xml")
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, **kw)
 
 
@@ -200,11 +218,15 @@ def robot_pov(qpos_npy, xml, ego_body="torso_link", out_gif="out/robot_pov.gif",
     return B.perceive_evis_walk(qpos_npy, xml, out_gif=out_gif, ego_body=ego_body, **kw)
 
 
-def g1_real_sensors(qpos_npy, xml="C:/dev/projects/mujoco_menagerie/unitree_g1/scene.xml",
+def g1_real_sensors(qpos_npy, xml=None,
                     out_gif="out/g1_real_sensors.gif", obstacles=True, **kw):
     """G1 実機センサ仕様の知覚を1行で: Livox Mid-360 BEV 点群 + RealSense D435i RGB/深度。
-    仕様・取付位置は実測ベース(詳細 ``evis_fullseye_bridge.perceive_g1_real``)。"""
+    仕様・取付位置は実測ベース(詳細 ``evis_fullseye_bridge.perceive_g1_real``)。
+    ``xml=None`` は ``$MUJOCO_MENAGERIE/unitree_g1/scene.xml``(未設定なら repo と並んだ
+    ``mujoco_menagerie``)。"""
     import evis_fullseye_bridge as B
+    if xml is None:
+        xml = _sibling_asset("MUJOCO_MENAGERIE", "mujoco_menagerie", "unitree_g1", "scene.xml")
     return B.perceive_g1_real(qpos_npy, xml, out_gif=out_gif, obstacles=obstacles, **kw)
 
 

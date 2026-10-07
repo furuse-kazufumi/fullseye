@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.doppler_track(signal, fs, *, f_high: &#x27;float&#x27; = 960.0, f_low: &#x27;float&#x27; = 770.0, c: &#x27;float&#x27; = 343.0, smooth: &#x27;float&#x27; = 0.005, guard: &#x27;float&#x27; = 0.01, edge: &#x27;float&#x27; = 0.05, v_tol: &#x27;float&#x27; = 1.0, verdict_window: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.doppler_track(signal, fs, *, f_high: &#x27;float&#x27; = 960.0, f_low: &#x27;float&#x27; = 770.0, c: &#x27;float&#x27; = 343.0, smooth: &#x27;float&#x27; = 0.005, guard: &#x27;float&#x27; = 0.01, edge: &#x27;float&#x27; = 0.05, v_tol: &#x27;float&#x27; = 1.0, verdict_window: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;doppler_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>サイレンの音から瞬時周波数を推定し、近づいている / 遠ざかっているを判定する。</p>
+<p>從警笛聲估計瞬時頻率，判斷其正在接近還是遠離。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p style="margin:2px 0 2px 12px">1. 解析信号(FFT の Hilbert 変換)の位相差 → 瞬時周波数 f(t) = arg(z[n+1] z̄[n]) fs / 2π。</p>
 <p style="margin:2px 0 2px 12px">2. 幅 <code style="color:#22d3bf">smooth</code> 秒の移動中央値。</p>
 <p style="margin:2px 0 2px 12px">3. 各時刻で公称の 2 音(<code style="color:#22d3bf">f_high</code> / <code style="color:#22d3bf">f_low</code>)のうち比が近い方を「発した音」とみなし、ドップラー係数 D = f / f_nom、視線速度 v_r = c (1 − 1/D)(<code style="color:#22d3bf">doppler_shift</code> を v_r について解いたもの)。</p>

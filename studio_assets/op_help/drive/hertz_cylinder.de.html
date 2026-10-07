@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import tacsim; tacsim.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;hertz_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>円柱(半径 R)を弾性半空間に線荷重 F/L で押す線接触(Johnson 1985 §4.2): 接触半幅 b = √(4(F/L)R/(πE*))、p0 = 2(F/L)/(πb)。</p>
+<p>Linienkontakt eines Zylinders (Radius R), der mit der Linienlast F/L auf einen elastischen Halbraum gedrückt wird (Johnson 1985 §4.2): Kontakthalbbreite b = √(4(F/L)R/(πE*)), p0 = 2(F/L)/(πb).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り: <code style="color:#22d3bf">b</code>、<code style="color:#22d3bf">p0</code>、<code style="color:#22d3bf">pm</code> = (F/L)/(2b) = (π/4)p0、入力。2-D の押し込み δ は対数的で参照点に依存するため返さない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

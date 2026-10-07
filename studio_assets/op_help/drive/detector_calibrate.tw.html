@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。</p>
+<p>由已知標準樣品(如 Si)的繞射環校正偵測器的中心、距離與傾斜。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">d_spacings</code> は標準の面間隔 [Å] の list(強い順でなくてよい)、<code style="color:#22d3bf">geometry_guess</code> には少なくとも <code style="color:#22d3bf">pixel</code> と</p>
 <p><code style="color:#22d3bf">wavelength</code>、分かっていれば <code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code> を入れる。手順:</p>
 <p style="margin:2px 0 2px 12px">1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>

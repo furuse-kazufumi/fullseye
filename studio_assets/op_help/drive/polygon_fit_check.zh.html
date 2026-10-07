@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.polygon_fit_check(peg_points, hole_vertices) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;polygon_fit_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点群(ペグの頂点、または傾けたペグの射影した頂点)を<b>平行移動だけで</b>凸多角形の穴に入れられるか —— 余裕 m を最大にする線形計画 max m s.t. n_j·(p + t) ≤ h_j − m(全点・全辺)を、3 本の制約が等号になる頂点の列挙で厳密に解く(辺は高々十数本、組はまとめて解く)。返り <code style="color:#22d3bf">fit</code>(m ≥ 0)、<code style="color:#22d3bf">margin</code> [m] (負なら最小の食い込み)、<code style="color:#22d3bf">t</code>(最適な平行移動 (2,))、<code style="color:#22d3bf">active</code>(等号の辺の番号)。<b>Raises</b> ValueError: 点群が (N ≥ 1, 2) でない・有限でない、穴が凸多角形でない、穴の法線が全方向を囲まない(有界でない)。</p>
+<p>点群(销的顶点，或倾斜销投影后的顶点)能否<b>仅靠平移</b>放入凸多边形的孔 —— 通过枚举 3 个约束取等号的顶点，精确求解使余量 m 最大的线性规划 max m s.t. n_j·(p + t) ≤ h_j − m(所有点、所有边)(边至多十几条，组合一并求解)。返回 <code style="color:#22d3bf">fit</code>(m ≥ 0)、<code style="color:#22d3bf">margin</code> [m] (为负时是最小的嵌入量)、<code style="color:#22d3bf">t</code>(最优平移 (2,))、<code style="color:#22d3bf">active</code>(取等号的边的编号)。<b>Raises</b> ValueError：点群不是 (N ≥ 1, 2) 或非有限、孔不是凸多边形、孔的法线不能包围所有方向(无界)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveinf; driveinf.tile_height(i: &#x27;int&#x27;, j: &#x27;int&#x27;, x, y, tp: &#x27;dict&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;tile_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>区画 (i, j) の中の点 (x, y) の地面の高さ [m]: 全体の整数格子の Perlin 雑音 × relief、道の周りは平ら(<code style="color:#22d3bf">flat</code> m まで 0、<code style="color:#22d3bf">blend</code> m で smoothstep)。格子の番号 = 区画の番号 × cells + 升目の番号(整数で厳密)、補間は升目の中の小数だけ —— 継ぎ目で連続し、遠くでも桁が落ちない。</p>
+<p>Ground height [m] at point (x, y) in tile (i, j): Perlin noise on the global integer grid × relief, flat around roads (0 up to <code style="color:#22d3bf">flat</code> m, smoothstep over <code style="color:#22d3bf">blend</code> m). Grid index = tile index × cells + cell index (exact in integers); interpolation uses only the fraction within the cell — continuous across seams, and no loss of digits far away.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

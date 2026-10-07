@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecommonroad; drivecommonroad.cr_route(scene, lanelet_from, lanelet_to=None, *, goal=None, step: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cr_route&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>successor の BFS(hop 数最小)で lanelet の列を出し、中心線を継いで <code style="color:#22d3bf">step</code> m で再標本化する。</p>
+<p>透過 successor 的 BFS(跳數最少)得到 lanelet 序列，拼接中心線並依每 <code style="color:#22d3bf">step</code> m 重新取樣。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">lanelet_to</code> が None なら <code style="color:#22d3bf">goal[&quot;position_lanelets&quot;]</code> を終点にする(どちらも無ければ ValueError)。返り値 <code style="color:#22d3bf">{&quot;lanelets&quot;, &quot;polyline&quot; (K,2), &quot;cum&quot; (K,), &quot;length&quot;, &quot;speed_limit_mps&quot; (経路上の最小 | None), &quot;lanelet_s&quot; (各 lanelet が始まる弧長), &quot;lanelet_len&quot;, &quot;polygons&quot; [多角形]}</code>。<code style="color:#22d3bf">length</code> = 継いだ中心線の折線長(継ぎ目で重なる頂点は 1 つに潰す)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の lanelet、到達不能、終点が無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

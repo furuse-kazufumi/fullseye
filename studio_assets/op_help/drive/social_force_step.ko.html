@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points × points</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.social_force_step(pos, vel, goals, *, dt: &#x27;float&#x27;, v0, tau: &#x27;float&#x27;, A: &#x27;float&#x27;, B: &#x27;float&#x27;, radius, walls=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;social_force_step&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>social force の 1 歩(単位質量あたり。Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000 の形)。</p>
+<p>social force의 1스텝(단위 질량당. Helbing &amp; Molnár 1995 / Helbing, Farkas, Vicsek 2000의 형태).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>dv_i/dt = (v0_i e_i − v_i)/τ + Σ_j A exp((r_ij − d_ij)/B) n_ij + Σ_W A exp((r_i − d_iW)/B) n_iW</p>
 <p>e_i = 目標への単位ベクトル(目標に 1e-9 m 以内なら 0)、r_ij = r_i + r_j、d_ij = |x_i − x_j|、n_ij = (x_i − x_j)/d_ij。壁 W は線分 ((x0, y0), (x1, y1)) の列で、d_iW と n_iW は最近点から。</p>
 <p>積分(指数積分): 斥力 F を刻みの間一定と置き、線形部分 (v_d − v)/τ(v_d = v0 e + τ F)を厳密に解く:</p>

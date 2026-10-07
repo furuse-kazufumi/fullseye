@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_lamp_signal(t, *, t_on: &#x27;float&#x27;, t_off: &#x27;float&#x27;, flash_per_min: &#x27;float&#x27; = 50.0, duty: &#x27;float&#x27; = 0.5, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_lamp_signal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2 灯の赤色せん光灯の明るさ(0..1)を時刻 t(配列)で返す: 形 (n, 2)、列 0 = 左、列 1 = 右。</p>
+<p>返回 2 盏红色闪光灯在时刻 t(数组)的亮度(0..1)：形状 (n, 2)，列 0 = 左，列 1 = 右。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>1 灯の周期 P = 60 / flash_per_min、点灯 duty·P。右の灯は P/2 遅れ(解釈基準「交互に点滅」)。点くのは [t_on, t_off)。<code style="color:#22d3bf">exposure</code> &gt; 0 ならカメラの露光 [t, t + exposure] の平均(点灯時間の原始関数で閉形式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

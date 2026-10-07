@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.track_sight_distance(v_train, clear_time, *, margin: &#x27;float&#x27; = 0.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;track_sight_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>渡り切る前に列車が着かないために、線路の上で見えていなければならない距離 = v_train · (clear_time + margin)。</p>
+<p>Distance along the track that must be visible so that no train arrives before the crossing is cleared = v_train · (clear_time + margin).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>見える距離がこれ以上なら、見えていない列車は渡り切る前に踏切に着かない(到達時刻 = 距離 / 速さ &gt; 渡り切る時間)。配列可。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

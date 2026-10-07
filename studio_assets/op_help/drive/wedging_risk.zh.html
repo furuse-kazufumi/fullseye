@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wedging_risk(kp, theta: &#x27;float&#x27;, margin_deg: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.wedging_risk(kp, theta: &#x27;float&#x27;, margin_deg: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;wedging_risk&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>傾き θ [rad] のくさびの危険度: 境目 c/μ(OCW p.28)に対する比 θ/(c/μ) と、余裕 <code style="color:#22d3bf">margin_deg</code> を見た 3 段(<code style="color:#22d3bf">safe</code> / <code style="color:#22d3bf">near</code> / <code style="color:#22d3bf">over</code>)。pegsim.wedging_check を包み、<code style="color:#22d3bf">theta_limit_deg</code>・<code style="color:#22d3bf">headroom_deg</code> = c/μ − θ を度で足す。μ = 0 では境目が inf で常に safe。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ &lt; 0、margin_deg &lt; 0。</p>
+<p>倾角 θ [rad] 的楔住风险：相对边界 c/μ(OCW p.28)的比值 θ/(c/μ)，以及考虑余量 <code style="color:#22d3bf">margin_deg</code> 的 3 级(<code style="color:#22d3bf">safe</code> / <code style="color:#22d3bf">near</code> / <code style="color:#22d3bf">over</code>)。封装 pegsim.wedging_check，并以度为单位补充 <code style="color:#22d3bf">theta_limit_deg</code>、<code style="color:#22d3bf">headroom_deg</code> = c/μ − θ。μ = 0 时边界为 inf，始终为 safe。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：θ &lt; 0、margin_deg &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

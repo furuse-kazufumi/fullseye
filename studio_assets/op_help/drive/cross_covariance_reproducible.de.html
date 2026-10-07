@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code> (die Implementierung direkt: <code style="color:#22d3bf">import ozakimm; ozakimm.cross_covariance_reproducible(P, Q, tol: &#x27;float&#x27; = 1.1102230246251565e-16)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;cross_covariance_reproducible&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Kabsch / ICP の相互共分散 <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code>(3×3)を、点の順に依らないビットで返す。</p>
+<p>Gibt die Kabsch-/ICP-Kreuzkovarianz <code style="color:#22d3bf">H = (P − P̄)ᵀ (Q − Q̄)</code> (3×3) mit von der Punktreihenfolge unabhängigen Bits zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>平均は <code style="color:#22d3bf">math.fsum</code>(正確に丸めた和)、中心化は要素ごと、縮約は <code style="color:#22d3bf">matmul_reproducible</code>。P と Q は行ごとに対応する (N, 3)(N ≥ 3)。精度は FP64 の積と同じ水準(要素ごとに <code style="color:#22d3bf">tol · (|P−P̄|ᵀ|Q−Q̄|)_ij</code> + 数 ulp)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

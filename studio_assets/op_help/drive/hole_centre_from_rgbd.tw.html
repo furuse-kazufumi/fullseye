@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.hole_centre_from_rgbd(rgb, depth, K, peg_mask=None, radius: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hole_centre_from_rgbd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>手首 RGB-D 1 枚から穴(暗い円盤)の中心を 3-D(カメラ座標)で: 板の平面を depth で当て、反エイリアスの縁を平面に持ち上げ、平面内で円を当てる(<code style="color:#22d3bf">measure.fit_circle</code>)。</p>
+<p>從 1 張腕部 RGB-D 求孔(暗圓盤)的 3-D 中心(相機座標)：以 depth 擬合板平面，將抗鋸齒邊緣提升至平面上，在平面內擬合圓(<code style="color:#22d3bf">measure.fit_circle</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>画像面の楕円当てはめ(<code style="color:#22d3bf">measure.fit_ellipse</code>)も参考に返すが、透視では楕円の中心 ≠ 円の中心の投影(試作で最大 1.9 px の偏り)なので 3-D で当てる。<code style="color:#22d3bf">radius</code> に治具の図面の値(面取りの外径 R + W)を渡すと <code style="color:#22d3bf">circle_fit_known_radius</code> で中心だけを解く —— ペグが低く構えて縁の半分近くを隠す姿勢(ε = −3 mm、高さ 4 mm)では自由な当てはめの 0.18 px が既知半径で 0.05 px になる。</p>
 <p>返り: <code style="color:#22d3bf">centre_cam</code>(3,)、<code style="color:#22d3bf">radius</code>、<code style="color:#22d3bf">rms_circle</code>、<code style="color:#22d3bf">n_edge</code>、<code style="color:#22d3bf">edge_uv</code>、<code style="color:#22d3bf">plane_n</code>・<code style="color:#22d3bf">plane_c</code>、<code style="color:#22d3bf">ellipse</code>、<code style="color:#22d3bf">uv</code>(中心の投影)、<code style="color:#22d3bf">peg</code>(ペグのマスク)。<code style="color:#22d3bf">depth</code> は画素中心の +Z 距離 [m] (MSAA の深度は使わない)。<b>Raises</b> <code style="color:#22d3bf">RuntimeError</code>: 縁が見つからない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

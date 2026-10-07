@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.yield_maneuver_check(trajectory, *, t_approach: &#x27;float&#x27;, t_passed: &#x27;float&#x27;, intersections=(), near_margin: &#x27;float&#x27; = 30.0, left_tol: &#x27;float&#x27; = 1.0, stop_speed: &#x27;float&#x27; = 0.1, car_length: &#x27;float&#x27; = 4.5) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;yield_maneuver_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>緊急自動車が近づいたときの自車の動きを道路交通法 40 条で採点する。</p>
+<p>按道路交通法第40条对紧急车辆接近时本车的动作进行评分。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>40 条 1 項: 交差点又はその附近 → 交差点を避け、道路の左側に寄って <b>一時停止</b>。40 条 2 項: それ以外 → 道路の左側に寄って進路を譲る(停止までは求めない)。(一方通行で左に寄ると妨げる場合の右寄せは扱わない。)</p>
 <p><code style="color:#22d3bf">trajectory</code>: <code style="color:#22d3bf">{&quot;t&quot;, &quot;x&quot;, &quot;y&quot;, &quot;v&quot;}</code>。x = 道に沿った前端の位置、y = 車の左側面と道路の左端の距離(≥ 0)、v = 速さ。<code style="color:#22d3bf">intersections</code> = [(x_in, x_out), ...] (交差点の範囲)。車は [x − car_length, x] を占める。<code style="color:#22d3bf">t_approach</code> = 近づきに気づくべき時刻、<code style="color:#22d3bf">t_passed</code> = 緊急自動車が通り過ぎた時刻。</p>
 <p>判定(閾値はすべて <b>仮定</b>、法は数値を定めていない):</p>

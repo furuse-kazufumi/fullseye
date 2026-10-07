@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_stop_marking_mesh(*, char_h: &#x27;float&#x27; = 2.4, char_w: &#x27;float&#x27; = 0.8, gap: &#x27;float&#x27; = 1.0, z: &#x27;float&#x27; = 0.007)</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.jp_stop_marking_mesh(*, char_h: &#x27;float&#x27; = 2.4, char_w: &#x27;float&#x27; = 0.8, gap: &#x27;float&#x27; = 1.0, z: &#x27;float&#x27; = 0.007)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;jp_stop_marking_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>路面文字「止まれ」(法定外表示、白)。局所座標: 原点 = 字の列の手前端(車に近い側)の車線中心、+x = 進む向き、+y = 左。</p>
+<p>路面文字 &quot;Tomare&quot;(停)(法定外标示，白色)。局部坐标: 原点 = 文字列近端(靠近车辆的一侧)的车道中心，+x = 行进方向，+y = 左。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>寸法は警察庁「交通規制基準」第 46 の図例(1): 1 字 240 × 80 cm、画 15 cm、横棒 30 cm、字間 1 m、縦表示で遠い方から止・ま・れ(運転者は上から読む = 遠い字が上)。設置指針では停止線の 1〜3 m 手前から(<code style="color:#22d3bf">JP_TOMARE_SETBACK_M</code>)。字形は折線の略字形(曲線は近似)。返り値 (V, F, colors)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

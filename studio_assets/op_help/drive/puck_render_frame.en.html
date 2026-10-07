@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_render_frame(cam: &#x27;dict&#x27;, p, *, v=None, exposure: &#x27;float&#x27; = 0.0, n_sub: &#x27;int&#x27; = 16, noise: &#x27;float&#x27; = 0.0, rng=None, puck_value: &#x27;float&#x27; = 0.12, table_value: &#x27;float&#x27; = 0.92, wall_value: &#x27;float&#x27; = 0.55) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_render_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>真上の 1 コマを合成(float (H,W)、0〜1): 白い台・灰色の壁・暗いパック(1 次の反エイリアス)。</p>
+<p>Synthesizes 1 overhead frame (float (H,W), 0–1): white table, gray walls, dark puck (1st-order anti-aliasing).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">exposure</code> &gt; 0 なら露光の間 [t, t+exposure] にパックが v·exposure 動く分を n_sub 個の副露光の平均で入れる(モーションブラー)。コマの時刻は <b>露光の始め</b>: ブラーした像の重心は v·exposure/2 だけ進む(閉形式、門)。<code style="color:#22d3bf">noise</code> はガウス雑音の σ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

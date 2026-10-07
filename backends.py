@@ -69,6 +69,13 @@ def _safe(fn, out_sort=None):
     return _bs.guard(fn, out_sort)
 
 
+def _require_pixels(v, op):
+    """0 画素の画像を明示の拒否にする(平均・比の 0/0 を NaN として出さない)。"""
+    if np.size(v) == 0:
+        raise ValueError("%s: empty image (0 pixels) — the measure is 0/0" % op)
+    return v
+
+
 def _u8(v):
     """float 画像 -> uint8。**[0,1] の外は clip せず伸ばす**。
 
@@ -937,7 +944,7 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             ("sk_entropy_feat", "features", "entropy_gray", IMAGE, FEATURE,
              lambda v, a, b: np.float64(measure.shannon_entropy(v))),
             ("sk_blur_effect", "features", "", IMAGE, FEATURE,
-             lambda v, a, b: np.float64(measure.blur_effect(v))),
+             lambda v, a, b: np.float64(measure.blur_effect(_require_pixels(v, "sk_blur_effect")))),
         ]
         ops_out += [Op(n, c, h, i, o, _safe(f, o)) for (n, c, h, i, o, f) in sk]
     except ImportError:

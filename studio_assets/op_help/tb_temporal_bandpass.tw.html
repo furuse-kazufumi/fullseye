@@ -4,8 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:<code style="color:#22d3bf">fullseye.apply(img, &quot;tb_temporal_bandpass&quot;, a=0.5, b=0.5)</code>(2-D 的模型是一張圖 + 兩個純量旋鈕 <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p><img src="fig/tb_temporal_bandpass.png" alt="tb_temporal_bandpass: input → output"></p>
 <p>*圖為在 128×128 合成輸入上實際執行的輸出。左為輸入，右為輸出。點雲以俯視散點顯示(亮度 = z)，一維序列為折線，體資料為沿 z 的最大值投影，影片為中間影格，複數影像為振幅；無法成像的回傳值直接顯示數值。*</p>
-<p>*旋鈕 a 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
-<p>*旋鈕 b 不改變輸出(實測: 0.1 / 0.5 / 0.9 相同)。*</p>
+<p><b>掃描旋鈕 a</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.a.jpg">tb_temporal_bandpass: 旋鈕 a 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
+<p><b>掃描旋鈕 b</b>(0.1 / 0.5 / 0.9，另一旋鈕取預設):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.b.jpg">tb_temporal_bandpass: 旋鈕 b 掃描</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>階段</b>(前置運算子 → 本運算子，由左至右):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.chain.jpg">tb_temporal_bandpass: 處理階段</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
@@ -18,7 +20,7 @@
 <p>Each pixel is transformed along time, every DFT bin whose frequency lies outside <code style="color:#22d3bf">[f_lo, f_hi]</code> (in Hz, magnitude, DC always excluded) is zeroed, and the result is transformed back. Frequency-selective where <code style="color:#22d3bf">videops.moving_average</code> and <code style="color:#22d3bf">videops.spatiotemporal_gaussian</code> are low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
 <p>Exact for a component sitting on a bin: with <code style="color:#22d3bf">T</code> frames at <code style="color:#22d3bf">fps</code>, a sinusoid at <code style="color:#22d3bf">k*fps/T</code> Hz passes with gain 1 and everything else in the band passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame 32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of amplitude 0.3, the recovered waveform matches the 4 Hz term alone to <code style="color:#22d3bf">max|err| = 4.36e-15</code>.</p>
 <p>A brick-wall filter rings in time; that is the price of an exact pass-band and it is the same choice the 2012 Eulerian magnification paper makes. The output is zero-mean along time by construction.</p>
-<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_bandpass</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_bandpass</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> picks the centre of the pass-band among the clip&#x27;s own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and <code style="color:#22d3bf">b</code> its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

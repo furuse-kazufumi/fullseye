@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pxrd; pxrd.azimuthal_integrate(image, geometry, n_bins=None, two_theta_range=None, mask=None, solid_angle=True, polarization=None, chi_range=None, supersample=2)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;azimuthal_integrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>2-D の検出器像を 2θ の 1-D プロファイルに落とす(方位積分、マスクと補正つき)。</p>
+<p>將 2 維偵測器影像歸約為 2θ 的 1 維剖面(方位角積分，含遮罩與校正)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>各画素を <code style="color:#22d3bf">supersample</code>² 個の副画素に分け(値は等分)、副画素の中心の 2θ でビンに振り分けて、ビンごとに <b>平均</b> する(画素の分け方の粗さによる縞を減らす)。<code style="color:#22d3bf">solid_angle=True</code> で相対立体角を、<code style="color:#22d3bf">polarization</code> が数(0 = 無偏光、1 = 水平偏光)なら偏光因子を、平均の前に割り戻す。<code style="color:#22d3bf">mask</code> は True の画素を <b>除く</b>(同じ形の bool)。<code style="color:#22d3bf">chi_range</code> = (χ₀, χ₁) [deg] で扇形だけを積分(χ は <code style="color:#22d3bf">atan2</code> の (−180, 180])。非有限の画素は mask に入っていなければ拒否する。</p>
 <p><code style="color:#22d3bf">n_bins</code> の既定は画素 1 個の角の半分の幅になる数(<code style="color:#22d3bf">0.5·pixel/distance</code> [rad])。返り値(dict): <code style="color:#22d3bf">two_theta</code>(ビンの中心 [deg])・<code style="color:#22d3bf">intensity</code>(平均)・<code style="color:#22d3bf">count</code>(副画素の重みの和、0 のビンは <code style="color:#22d3bf">intensity</code> が nan —— 埋めない)・<code style="color:#22d3bf">sigma</code>(Poisson を仮定した平均の標準誤差)。</p>
 <p>Raises ValueError: 2-D でない、mask の形の不一致、非有限の画素、範囲が空、扇形が空、ビン数 &lt; 8。</p>

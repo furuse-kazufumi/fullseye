@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.two_point_depth(kp, theta: &#x27;float&#x27;, model: &#x27;str&#x27; = &#x27;exact&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;two_point_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>傾き θ [rad] で二点接触が始まる挿入深さ l₂ [m] (最狭部から先端中心まで)。3 つの模型を名前で選ぶ。</p>
+<p>Einführtiefe l₂ [m], bei der bei Neigung θ [rad] der Zweipunktkontakt beginnt (von der engsten Stelle bis zur Mitte der Spitze). Wählt eines von 3 Modellen per Name.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">&quot;exact&quot;</code>: 3-D の円柱で厳密 l₂ = (2R − r(cos θ + sec θ)) / tan θ(導出 (1′))。<code style="color:#22d3bf">&quot;small_angle&quot;</code>: l₂ = 2c_r / sin θ (OCW p.9 の l/d = c/θ を半径 clearance で書いたもの)。<code style="color:#22d3bf">&quot;rectangle&quot;</code>: 2-D の長方形近似 (D − d/cos θ)/tan θ(縁の点の高さ r sin θ を無視するので θ = 6° で 0.5 mm 浅く出る —— 間違いの量を測るために残す)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: θ ≤ 0、θ ≥ θ_m_exact(入口にすら入らない)、未知の model。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

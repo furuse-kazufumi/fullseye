@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.ae_size_correspondence(power, d50, group=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ae_size_correspondence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>AE の帯域電力と D50 の対応(単調性・相関・log–log の傾き α、<code style="color:#22d3bf">P ∝ D50^α</code>)。</p>
+<p>AE 頻帶功率與 D50 的對應關係(單調性、相關性、log–log 斜率 α，<code style="color:#22d3bf">P ∝ D50^α</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">group</code> を渡すと群(材料)ごとに出す(材料で電力の水準が桁で違うので、混ぜた相関は水準の差を拾う —— <code style="color:#22d3bf">pooled</code> は参考)。</p>
 <p>返り: 群 → <code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">spearman</code>(順位相関)・<code style="color:#22d3bf">alpha</code>(ln P を ln D50 に当てた傾き)・<code style="color:#22d3bf">sign_agree</code>(全ての組で「D50 が大きい方が P も大きい」の割合)。<b>点が 2 つなら spearman は ±1 しか取れない</b>(<code style="color:#22d3bf">n</code> を必ず併記する)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

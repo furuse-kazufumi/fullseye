@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelong; drivelong.hill_start_command(t_release: &#x27;float&#x27;, tau: &#x27;float&#x27;, a_drive: &#x27;float&#x27;, b_hold: &#x27;float&#x27;, a_creep: &#x27;float&#x27; = 0.0, technique: &#x27;str&#x27; = &#x27;gap&#x27;, v_cruise: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Callable&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hill_start_command&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>坂道発進の指令。t_release までは保持(クリープ + 制動 b_hold)。</p>
+<p>坡道起步的指令。在 t_release 之前保持(蠕行 + 制动 b_hold)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;gap&quot;</code>: t_release でブレーキを離し、τ 後に駆動 a_drive(足を踏み替える間 = ずり下がる。閉形式は <code style="color:#22d3bf">hill_start_rollback</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">technique=&quot;overlap&quot;</code>: t_release から τ の間、ブレーキを保ったままアクセルを踏み(駆動 a_drive)、τ 後にブレーキを離す(教習で教える「アクセルを踏んでからブレーキを離す」)。駆動 &gt; 坂なら逆行 0。</p>
 <p><code style="color:#22d3bf">v_cruise</code> を与えると、その速さに達したら駆動を止める(惰行)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.heap_volume_cone(R: &#x27;float | None&#x27; = None, H: &#x27;float | None&#x27; = None, phi_deg: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;heap_volume_cone&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>円錐の山の閉形式 —— <code style="color:#22d3bf">R</code>・<code style="color:#22d3bf">H</code>・<code style="color:#22d3bf">phi_deg</code> のうち <b>ちょうど 2 つ</b> を与えると残りと体積を返す。</p>
+<p>圆锥料堆的闭式 —— 给定 <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">H</code>、<code style="color:#22d3bf">phi_deg</code> 中的<b>恰好 2 个</b>，返回其余一个及体积。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">V = (π/3) R² H</code>、<code style="color:#22d3bf">H = R tan φ</code>。返り: <code style="color:#22d3bf">R</code>, <code style="color:#22d3bf">H</code>, <code style="color:#22d3bf">phi_deg</code>, <code style="color:#22d3bf">V</code> [m³]、<code style="color:#22d3bf">A</code>(底面積 πR²)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 与えた数が 2 つでない、または ≤ 0 / 非有限 / 角が (0, 90) の外。3 つ全部渡されたときも拒否する(矛盾した 3 つ組を黙って片方で上書きしない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

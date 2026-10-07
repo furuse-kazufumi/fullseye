@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import driveenv; driveenv.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;veiling_luminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>減能グレアの光幕輝度 L_v [cd/m²] (配列可)。E_glare = 目の位置での光源の照度 [lx]、θ = 光源と視線の角 [度]。</p>
+<p>Veiling luminance L_v [cd/m²] of disability glare (arrays allowed). E_glare = illuminance [lx] of the light source at the eye, θ = angle between light source and line of sight [deg].</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">model=&quot;stiles_holladay&quot;</code>: L_v = 10 E / θ²(θ は 1°〜30° 程度で使われる経験式)。<code style="color:#22d3bf">model=&quot;cie&quot;</code>: CIE 146:2002 の一般式 L_v/E = 10/θ³ + (5/θ² + 0.1 p/θ)(1 + (age/62.5)⁴) + 0.0025 p (p = 目の色素の係数、既定 0.5)。θ ≤ 0 は拒否(光源そのものは光幕でなく像)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

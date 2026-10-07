@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tactorque; tactorque.dipole_to_torque_fit(D, M) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;dipole_to_torque_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>双極子の 1 成分列 D (K,) と既知のモーメント M (K,) [N·m] の線形較正 D ≈ k M(原点通過)と D ≈ k₁ M + b(切片あり)。返り <code style="color:#22d3bf">k</code>・<code style="color:#22d3bf">R2</code>(原点通過の決定係数 = 1 − SS_res/SS_tot)・<code style="color:#22d3bf">k1</code>・<code style="color:#22d3bf">b</code>・<code style="color:#22d3bf">R2_affine</code>・<code style="color:#22d3bf">rmse_M</code>(M に換算した残差 RMS)。論文の較正係数 c = 1/k に当たる。<b>Raises</b> ValueError: K &lt; 2、形が違う、M がすべて同じ。</p>
+<p>偶極子 1 個分量的序列 D (K,) 與已知力矩 M (K,) [N·m] 的線性校正：D ≈ k M(過原點)與 D ≈ k₁ M + b(帶截距)。回傳 <code style="color:#22d3bf">k</code>、<code style="color:#22d3bf">R2</code>(過原點的決定係數 = 1 − SS_res/SS_tot)、<code style="color:#22d3bf">k1</code>、<code style="color:#22d3bf">b</code>、<code style="color:#22d3bf">R2_affine</code>、<code style="color:#22d3bf">rmse_M</code>(換算為 M 的殘差 RMS)。相當於論文的校正係數 c = 1/k。<b>Raises</b> ValueError：K &lt; 2，形狀不同，M 全部相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

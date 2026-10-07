@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_stall_detect(depth, window: &#x27;int&#x27; = 30, min_advance: &#x27;float&#x27; = 5e-05, arm_advance: &#x27;float&#x27; = 0.0005) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_stall_detect&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>深さの時系列 [m] から停滞を検出する(各刻 i で depth[i] − depth[i − window] &lt; min_advance なら stalled)。</p>
+<p>Detects stalls from a depth time series [m] (at each tick i, stalled if depth[i] − depth[i − window] &lt; min_advance).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>降下が始まる前(構えている間)は深さが一定で、素朴な検出器は鳴る —— <code style="color:#22d3bf">arm_advance</code> だけ進んでから <b>武装</b>する(onset はそれ以後の最初の stalled)。返り: <code style="color:#22d3bf">stalled</code>(bool の列、同じ長さ)、<code style="color:#22d3bf">onset</code>(最初の停滞の添字、無ければ −1)、<code style="color:#22d3bf">armed_at</code>(武装した添字、−1 なら武装せず = 一度も進まなかった)、<code style="color:#22d3bf">n_stalled</code>。単調降下(速度 ≥ min_advance/window)では鳴らない(門)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: window &lt; 1、min_advance ≤ 0、系列が空。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

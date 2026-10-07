@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_track(frames, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>コマの列 → ディアボロの中心 (N, 3)・軸 (N, 3)・警報 <code style="color:#22d3bf">ok</code> (N,)・残差 (N,)。コマごとに <code style="color:#22d3bf">diabolo_axis_from_image</code> (学習なし、前のコマに頼らない)。推定できないコマは NaN で <code style="color:#22d3bf">ok = False</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: コマの列が空か列でない。</p>
+<p>帧序列 → 空竹中心 (N, 3)、轴 (N, 3)、警报 <code style="color:#22d3bf">ok</code> (N,)、残差 (N,)。逐帧调用 <code style="color:#22d3bf">diabolo_axis_from_image</code>(无学习，不依赖前一帧)。无法估计的帧为 NaN 且 <code style="color:#22d3bf">ok = False</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：帧序列为空或不是序列。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

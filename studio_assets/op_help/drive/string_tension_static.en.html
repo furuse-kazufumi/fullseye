@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import diabolo; diabolo.string_tension_static(stick_gap: &#x27;float&#x27;, params: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;string_tension_static&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>棒が同じ高さ・間隔 2c で止まり、ディアボロが最下点で静止: 垂れ b = √(a² − c²)、張力 T = m g a / (2b)、糸の水平からの角 atan2(b, c)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 間隔が (0, 糸) の外。</p>
+<p>Sticks stopped at the same height with spacing 2c, diabolo at rest at the lowest point: sag b = √(a² − c²), tension T = m g a / (2b), angle of the string from horizontal atan2(b, c). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: spacing outside (0, string).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

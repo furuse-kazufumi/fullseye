@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.scherrer_size(fwhm, two_theta, wavelength, K=0.9, instrumental_fwhm=0.0, combine=&#x27;gauss&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;scherrer_size&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Scherrer の式で結晶子径 [Å] (<code style="color:#22d3bf">L = K λ / (β cos θ)</code>)。</p>
+<p>用 Scherrer 公式求微晶尺寸 [Å] (<code style="color:#22d3bf">L = K λ / (β cos θ)</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">fwhm</code>・<code style="color:#22d3bf">instrumental_fwhm</code> は 2θ の半値全幅 [deg]、<code style="color:#22d3bf">two_theta</code> [deg]、<code style="color:#22d3bf">wavelength</code> [Å]。試料による広がり β は <code style="color:#22d3bf">combine=&quot;gauss&quot;</code> で <code style="color:#22d3bf">sqrt(fwhm² − inst²)</code>、<code style="color:#22d3bf">&quot;lorentz&quot;</code> で <code style="color:#22d3bf">fwhm − inst</code>。配列を渡せば配列で返す。Scherrer の式は <b>体積で重みを付けた柱の長さ</b> の目安で、ひずみの広がり(tan θ に比例)は区別しない —— ひずみが疑わしいときは複数の山で Williamson–Hall のように tan θ への依存を見ること。</p>
 <p>Raises ValueError: <code style="color:#22d3bf">fwhm &lt;= instrumental_fwhm</code>(装置より細い山 = 径が決まらない)、非正の値、綴り違い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

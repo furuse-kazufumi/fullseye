@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import scoop; scoop.scoop_count(volume: &#x27;float&#x27;, radius: &#x27;float&#x27;, packing: &#x27;float&#x27;, *, density: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;scoop_count&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>体積と充填率から粒の数 <code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code>(<code style="color:#22d3bf">density</code> を与えれば質量 <code style="color:#22d3bf">N m_p</code> とかさ密度 <code style="color:#22d3bf">ν ρ_p</code>)。</p>
+<p>由体积和填充率求颗粒数 <code style="color:#22d3bf">N = V ν / ((4/3) π r³)</code>(给出 <code style="color:#22d3bf">density</code> 时还求质量 <code style="color:#22d3bf">N m_p</code> 和堆积密度 <code style="color:#22d3bf">ν ρ_p</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">packing</code> ν は <b>較正値</b>(同じ粒・同じ測り方で、数の分かった 1 回から <code style="color:#22d3bf">N v_p / V_img</code> を取る): 側面の輪郭は粒の外側の包絡なので、ν は充填そのものより小さく出る(包絡の分の体積を含む)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 体積 &lt; 0、半径 ≤ 0、ν が (0, 1] の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

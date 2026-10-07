@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import rsssafety; rsssafety.rss_longitudinal_same(v_rear: &#x27;float&#x27;, v_front: &#x27;float&#x27;, p: &#x27;dict&#x27;, p_front: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;rss_longitudinal_same&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>同方向(論文 Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>)の最小安全距離 [m]。</p>
+<p>Minimaler Sicherheitsabstand [m] in gleicher Richtung (Paper Lemma 2 / lib <code style="color:#22d3bf">calculateSafeLongitudinalDistanceSameDirection</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">d_min = [ v_r ρ + ½ a ρ² + (v_r + a ρ)²/(2 b_min) − v_f²/(2 b_max) ]_+ + min_distance</code>。後続車 c_r のパラメータが <code style="color:#22d3bf">p</code>(ρ, accel_max, brake_min, v_max_accel, min_distance)、先行車 c_f の <code style="color:#22d3bf">brake_max</code> は <code style="color:#22d3bf">p_front</code>(None なら <code style="color:#22d3bf">p</code>)から取る。v_rear, v_front ≥ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

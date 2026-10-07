@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivepass; drivepass.mirror_image_side(eye_xy, mirror_center_xy, mirror_normal_xy, points, *, heading, velocities=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;mirror_image_side&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>カーブミラーに映る点が、鏡の中心より左右どちらに見えるか・どちらへ動いて見えるか(平面鏡の閉形式)。場面 S064・S130。</p>
+<p>Ob ein im Verkehrsspiegel gesehener Punkt links oder rechts der Spiegelmitte erscheint und in welche Richtung er sich scheinbar bewegt (geschlossene Form für Planspiegel). Szenarien S064, S130.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>左右の向きは凸面鏡でも同じ(門で光線追跡と照合。凸面は角を縮めるだけ)。</p>
 <p>上から見た 2 次元(x, y)。像 P&#x27; = P − 2((P − M)·n)n(<code style="color:#22d3bf">drivedecide.mirror_reflection_matrix</code> の 2 次元版)。<code style="color:#22d3bf">image_offset</code> = 眼から鏡の中心を見る向きに対する像の向きの角(+ = 左)。<code style="color:#22d3bf">real_side</code> = <code style="color:#22d3bf">heading</code>(運転者の前)に対して物が左(+1)か右(−1)か。<code style="color:#22d3bf">velocities</code> を渡すと <code style="color:#22d3bf">image_motion</code> = 像の角の速さ、<code style="color:#22d3bf">direct_motion</code> = 眼から物を直接見たときの角の速さ(遮りは見ない)、<code style="color:#22d3bf">virtual_eye_motion</code> = 仮想の眼 E&#x27; から見た角の速さ(= −image_motion が恒等式)、<code style="color:#22d3bf">reversed</code> = 像と直接の動きの向きが逆か。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

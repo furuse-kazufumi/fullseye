@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>縦列駐車: 幅 <code style="color:#22d3bf">road_width</code> の道路(x ∈ [0, 2·approach + bay_length])の路側に、長さ car_length + extra (既定 7.5 m)× 幅 car_width の車室。<b>法令に数値なし(通達の別添は図)</b> —— 既定は慣行値。</p>
+<p>Längsparken: am Fahrbahnrand einer Straße der Breite <code style="color:#22d3bf">road_width</code> (x ∈ [0, 2·approach + bay_length]) eine Parkbucht der Länge car_length + extra (Standard 7.5 m) × Breite car_width. <b>Keine Zahlenwerte in den Vorschriften (die Anlage des Verwaltungsrundschreibens ist eine Zeichnung)</b> — der Standard ist ein üblicher Wert.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない、extra &lt; 0、side が left/right でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

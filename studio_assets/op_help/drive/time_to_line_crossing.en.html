@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">scalar</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.time_to_line_crossing(offset: &#x27;float&#x27;, heading_error: &#x27;float&#x27;, curvature: &#x27;float&#x27;, speed: &#x27;float&#x27;, *, line_offset: &#x27;float&#x27;, lane_curvature: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;time_to_line_crossing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>TLC: 車(の基準点)が今の曲率のまま円(または直線)を走るとして、車線の境界に届くまでの時間 [s]。</p>
+<p>TLC: time [s] until the vehicle (its reference point) reaches the lane boundary, assuming it drives a circle (or straight line) at its current curvature.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>座標: 車線の中心線の上の点を原点、中心線の向きを +x、左を +y。車は (0, <code style="color:#22d3bf">offset</code>)、中心線に対する向き <code style="color:#22d3bf">heading_error</code>、曲率 <code style="color:#22d3bf">curvature</code>(左が正)。境界は中心線から横 <code style="color:#22d3bf">line_offset</code>(左が正)の線 —— 中心線が曲率 <code style="color:#22d3bf">lane_curvature</code> の円なら、それと同心の円。届かなければ <code style="color:#22d3bf">inf</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、v ≤ 0、車がすでに境界の外側(offset と line_offset の関係で判断)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

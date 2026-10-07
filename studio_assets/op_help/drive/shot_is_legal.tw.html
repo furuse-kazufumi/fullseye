@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import racket; racket.shot_is_legal(p, v, w, bp, ip, tp, x_racket: &#x27;float&#x27;, side: &#x27;int&#x27;, hit_height=(0.05, 0.45)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;shot_is_legal&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>打球 (p, v, ω) を真の物理で先読みして、ネットを越え・相手コートに 1 度だけ落ち・相手の面 x = ∓x_r に打てる高さで届くかを判定する。<code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>。</p>
+<p>用真實物理預測擊球 (p, v, ω)，判定其是否越過球網、只在對方桌面落 1 次，並以對方擊球面 x = ∓x_r 處可擊打的高度到達。<code style="color:#22d3bf">{&quot;legal&quot;, &quot;reason&quot;, &quot;p_arrive&quot;, &quot;t_arrive&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

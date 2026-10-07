@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">any</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jp_sign_stop_mesh(*, side: &#x27;float&#x27; = 0.8, height: &#x27;float&#x27; = 2.5, pole_r: &#x27;float&#x27; = 0.04)</code>(要直接调用实现,<code style="color:#22d3bf">import drivejapan; drivejapan.jp_sign_stop_mesh(*, side: &#x27;float&#x27; = 0.8, height: &#x27;float&#x27; = 2.5, pole_r: &#x27;float&#x27; = 0.04)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;jp_sign_stop_mesh&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>一時停止(規制標識 330-A)の標識: 赤地の逆正三角形(一辺 side = 80 cm、縁線と文字は白、縁と地は赤 —— 別表第二 備考一(三)3(8))+ 柱。板は +x を向く(来る車の側)。角の丸み(R 5 cm)と「止まれ」の文字(字高 13 cm)は省く(字は路面文字 <code style="color:#22d3bf">jp_stop_marking_mesh</code> で見せる)。返り値 (V, F, colors) 面色つき。</p>
+<p>停车让行(规制标志 330-A)标志: 红底倒正三角形(边长 side = 80 cm，边线和文字为白色，边缘与底为红色 —— 附表第二 备考一(三)3(8))+ 立柱。标志板朝 +x(来车一侧)。省略圆角(R 5 cm)和 &quot;Tomare&quot;(停)文字(字高 13 cm)(文字由路面文字 <code style="color:#22d3bf">jp_stop_marking_mesh</code> 呈现)。返回值 (V, F, colors)，带面颜色。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

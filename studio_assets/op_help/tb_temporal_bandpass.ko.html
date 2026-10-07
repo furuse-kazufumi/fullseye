@@ -4,8 +4,10 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_temporal_bandpass&quot;, a=0.5, b=0.5)</code>(2-D 는 이미지 1 장 + 스칼라 노브 2 개 <code style="color:#22d3bf">a,b∈[0,1]</code> 모델)</p>
 <p><img src="fig/tb_temporal_bandpass.png" alt="tb_temporal_bandpass: input → output"></p>
 <p>*그림은 128×128 합성 입력에서 실제로 실행한 출력. 왼쪽이 입력, 오른쪽이 출력. 점군은 위에서 본 산점도(밝기 = z), 1-D 열은 꺾은선, 볼륨은 z 방향 최대값 투영, 동영상은 가운데 프레임, 복소 영상은 진폭이며, 그림이 되지 않는 반환값은 값 자체를 표시한다.*</p>
-<p>*노브 a 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
-<p>*노브 b 는 출력을 바꾸지 않는다(실측: 0.1 / 0.5 / 0.9에서 동일).*</p>
+<p><b>노브 a 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.a.jpg">tb_temporal_bandpass: 노브 a 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
+<p><b>노브 b 를 훑기</b>(0.1 / 0.5 / 0.9, 다른 노브는 기본값):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.b.jpg">tb_temporal_bandpass: 노브 b 스윕</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>단계</b>(앞에 오는 op → 이 op, 왼쪽에서 오른쪽으로):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_bandpass.chain.jpg">tb_temporal_bandpass: 단계</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
@@ -18,7 +20,7 @@
 <p>Each pixel is transformed along time, every DFT bin whose frequency lies outside <code style="color:#22d3bf">[f_lo, f_hi]</code> (in Hz, magnitude, DC always excluded) is zeroed, and the result is transformed back. Frequency-selective where <code style="color:#22d3bf">videops.moving_average</code> and <code style="color:#22d3bf">videops.spatiotemporal_gaussian</code> are low-pass; this is the filter isolating &quot;what is happening at 4 Hz&quot;.</p>
 <p>Exact for a component sitting on a bin: with <code style="color:#22d3bf">T</code> frames at <code style="color:#22d3bf">fps</code>, a sinusoid at <code style="color:#22d3bf">k*fps/T</code> Hz passes with gain 1 and everything else in the band passes untouched. Measured on a bin-centred 4 Hz unit sinusoid in a 64-frame 32 fps clip that also carries a DC offset of 0.5 and a 12 Hz component of amplitude 0.3, the recovered waveform matches the 4 Hz term alone to <code style="color:#22d3bf">max|err| = 4.36e-15</code>.</p>
 <p>A brick-wall filter rings in time; that is the price of an exact pass-band and it is the same choice the 2012 Eulerian magnification paper makes. The output is zero-mean along time by construction.</p>
-<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_bandpass</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_bandpass</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> picks the centre of the pass-band among the clip&#x27;s own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and <code style="color:#22d3bf">b</code> its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

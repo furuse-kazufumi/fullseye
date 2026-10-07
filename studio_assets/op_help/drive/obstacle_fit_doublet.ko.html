@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.obstacle_fit_doublet(field, speed=None, upstream_only: &#x27;bool&#x27; = False, exclude_margin: &#x27;float&#x27; = 1.25, min_explained: &#x27;float&#x27; = 0.5, min_radius=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;obstacle_fit_doublet&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>速度場に円柱まわりのポテンシャル流 u − i v = U (1 − R²/(z − z_c)²) を当てはめる(実装 2、2 次元の非線形最小二乗)。</p>
+<p>속도장에 원기둥 주위의 포텐셜 유동 u − i v = U (1 − R²/(z − z_c)²)를 피팅합니다(구현 2, 2차원 비선형 최소제곱).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>未知数は (x_c, y_c, R², U)。出発点は 2 つ: <code style="color:#22d3bf">stagnation_from_centerline</code> と、格子の節点を中心の候補にした粗い探索(U を固定すると模型は R² について 1 次なので閉形式で解ける)。説明できる割合の大きい方を採る。円の <code style="color:#22d3bf">exclude_margin</code> 倍より内側の格子は使わない(格子へ移す核が壁をまたいで速さを均すため)—— 推定し直して 3 回回す。<code style="color:#22d3bf">upstream_only</code> なら衝突点より上流(x &lt; x_c − R)の格子だけで当てはめる(「当たる前に」分かるか)。</p>
 <p>判定: 一様流だけの模型(u, v が定数)の残差 RSS₀ に対して、円柱の模型で減った割合 1 − RSS₁/RSS₀(<b>乱れのうち円柱で説明できる割合</b>)が <code style="color:#22d3bf">min_explained</code> 以上、半径が <code style="color:#22d3bf">min_radius</code>(既定 = 格子の間隔 2 つ)以上、中心が場の中 —— の 3 つで <code style="color:#22d3bf">detected</code>。否定の判定(障害物なし)はこの割合が小さいことで出る。</p>
 <p>★半径の下限は解像の限界: <code style="color:#22d3bf">swarm_field_from_tracks</code> の格子は個体の間隔 s ごとなので、既定では R &lt; 2s の障害物を「ある」と言わない。拒否が正当なことは実測で確かめた(一様に撒いた粒子、R = 0.6 m: R/s ≈ 5 で中心・半径とも 2 % 以内、R/s ≈ 2.5 で 5 % 以内、R/s ≈ 1.2 で半径が 48 % 小さく出る)。</p>

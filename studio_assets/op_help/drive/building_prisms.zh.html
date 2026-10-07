@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>建物列を押し出し柱メッシュにまとめる。</p>
+<p>把建筑列表合并为挤出柱体网格(mesh)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
 <p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
 <p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>

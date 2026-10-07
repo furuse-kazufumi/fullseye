@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelong; drivelong.long_params(mass: &#x27;float&#x27; = 1300.0, c_rr: &#x27;float&#x27; = 0.012, cda: &#x27;float&#x27; = 0.65, rho_air: &#x27;float&#x27; = 1.2, a_drive_max: &#x27;float&#x27; = 3.0, a_brake_max: &#x27;float&#x27; = 6.0, reaction: &#x27;float&#x27; = 0.75, mu: &#x27;float&#x27; = 0.8, a_creep: &#x27;float&#x27; = 0.3, g: &#x27;float&#x27; = 9.80665) -&gt; &#x27;Dict[str, float]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;long_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>縦の運動のパラメータ(既定値はすべて <b>仮定</b>。出典はモジュールの docstring)。</p>
+<p>纵向运动的参数(默认值全部为<b>假定</b>；出处见模块的 docstring)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>mass : 車両質量 [kg] (&gt; 0)。空気抵抗の係数 k = ρ_air C_d A / (2 m) にだけ効く。</p>
 <p>c_rr : 転がり抵抗係数(≥ 0、文献値 0.010〜0.015)</p>

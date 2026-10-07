@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.veiling_luminance(E_glare, theta_deg, *, model: &#x27;str&#x27; = &#x27;stiles_holladay&#x27;, age: &#x27;float&#x27; = 40.0, p: &#x27;float&#x27; = 0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;veiling_luminance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>減能グレアの光幕輝度 L_v [cd/m²] (配列可)。E_glare = 目の位置での光源の照度 [lx]、θ = 光源と視線の角 [度]。</p>
+<p>失能眩光的光幕亮度 L_v [cd/m²] (可用数组)。E_glare = 眼睛位置处光源的照度 [lx]，θ = 光源与视线的夹角 [度]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">model=&quot;stiles_holladay&quot;</code>: L_v = 10 E / θ²(θ は 1°〜30° 程度で使われる経験式)。<code style="color:#22d3bf">model=&quot;cie&quot;</code>: CIE 146:2002 の一般式 L_v/E = 10/θ³ + (5/θ² + 0.1 p/θ)(1 + (age/62.5)⁴) + 0.0025 p (p = 目の色素の係数、既定 0.5)。θ ≤ 0 は拒否(光源そのものは光幕でなく像)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

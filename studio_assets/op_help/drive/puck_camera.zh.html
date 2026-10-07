@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_camera(table: &#x27;dict&#x27;, *, px_per_m: &#x27;float&#x27; = 200.0, margin: &#x27;float&#x27; = 0.06) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>真上から見た合成カメラ: 台を等倍率で画素へ写すホモグラフィ(アフィン)。col = (x + x_half + margin)·s、row = (y_half + margin − y)·s。返り値 <code style="color:#22d3bf">{&quot;H&quot; world→(col,row), &quot;Hinv&quot;, &quot;shape&quot;, &quot;px_per_m&quot;, &quot;margin&quot;, &quot;table&quot;}</code>。</p>
+<p>从正上方观察的合成相机：以等倍率将球台映射到像素的单应性(仿射)。col = (x + x_half + margin)·s，row = (y_half + margin − y)·s。返回值 <code style="color:#22d3bf">{&quot;H&quot; world→(col,row), &quot;Hinv&quot;, &quot;shape&quot;, &quot;px_per_m&quot;, &quot;margin&quot;, &quot;table&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

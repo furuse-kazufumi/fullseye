@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.powder_flowability_class(phi_deg: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;powder_flowability_class&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>安息角 → 流動性区分(USP &lt;1174&gt; Table 1、原典 Carr 1965)。</p>
+<p>休止角 → 流动性等级(USP &lt;1174&gt; Table 1，原始出处 Carr 1965)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">cls</code>(excellent / good / fair / passable / poor / very poor / very, very poor)、<code style="color:#22d3bf">phi_int</code>(表を引いた整数の度 = 四捨五入)、<code style="color:#22d3bf">tabulated</code>(表の下限 25 度以上か)、<code style="color:#22d3bf">band_upper_deg</code>(その区分の上限; 上限の無い最後の区分は None —— 返りに inf を入れない、JSON に載らないため)。表は整数の度なので 30.5 は 31(good)、30.4 は 30(excellent)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 角が (0, 90) の外。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

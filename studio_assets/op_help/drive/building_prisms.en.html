@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveplateau; driveplateau.building_prisms(buildings: &#x27;Iterable[dict[str, Any]]&#x27;, *, color_fn: &#x27;Callable[[dict[str, Any]], Sequence[float]] | None&#x27; = None, base_z: &#x27;float | None&#x27; = 0.0, roof_shade: &#x27;float&#x27; = 0.92) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;building_prisms&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>建物列を押し出し柱メッシュにまとめる。</p>
+<p>Combines a list of buildings into an extruded-prism mesh.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>Args:</p>
 <p>buildings: <code style="color:#22d3bf">plateau_parse</code> の <code style="color:#22d3bf">buildings</code>(<code style="color:#22d3bf">footprint</code>, <code style="color:#22d3bf">height</code>, <code style="color:#22d3bf">ground_z</code>)。</p>
 <p>color_fn: <code style="color:#22d3bf">building -&gt; (r,g,b)</code> 0..1。None なら <code style="color:#22d3bf">_default_building_color</code>。</p>

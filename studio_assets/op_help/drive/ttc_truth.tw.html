@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivettc; drivettc.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;ttc_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画素ごとの <b>真の τ</b>(秒、最初のコマの時刻で)と閉じる速さ: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>。</p>
+<p>逐像素的<b>真實 τ</b>(秒，以第一影格的時刻計)與接近速度：<code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">τ₀ = Z₀ · Δt / (Z₀ − Z₁)</code>(Lee 1976 の <code style="color:#22d3bf">Z / (−Ż)</code> を 2 コマの差分で。等速なら厳密)。近づかない画素(<code style="color:#22d3bf">Z₁ ≥ Z₀</code>)は <code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">closing_speed = (Z₀ − Z₁) / Δt</code>(m/s、正 = 近づく)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

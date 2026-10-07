@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import driveplateau; driveplateau.buildings_in_box(parsed: &#x27;dict[str, Any]&#x27;, xmin: &#x27;float&#x27;, xmax: &#x27;float&#x27;, ymin: &#x27;float&#x27;, ymax: &#x27;float&#x27;) -&gt; &#x27;list[dict[str, Any]]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;buildings_in_box&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>重心(足元頂点の平均)が箱 [xmin,xmax]×[ymin,ymax] に入る建物だけを返す。</p>
+<p>只返回重心(底面顶点的平均)落在框 [xmin,xmax]×[ymin,ymax] 内的建筑。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
 <p>parsed: <code style="color:#22d3bf">plateau_parse</code> の返り値。xmin, xmax, ymin, ymax: 局所座標の箱 [m] (両端を含む)。</p>
 <p>Raises:</p>

@@ -616,6 +616,9 @@ OP_PARAM_HINTS = {
     ("vol_richardson_lucy", "psf"): lambda rng: __import__("volrestore").vol_gaussian_psf(1.0),
     ("cx_wiener_deconvolve", "psf"): lambda rng: (lambda k: k / k.sum())(
         np.outer(*(np.exp(-np.linspace(-2, 2, 5) ** 2),) * 2)),
+    # ★32x32 は chain_fuzz の cimage プール(32x32)に合わせた値。進化の橋
+    #   (backends_typed)はこれを使わず、呼び出しのたびにスペクトルと同じ形の H を作る
+    #   (backends_typed.CALL_TIME_ARGS。固定形だと他の大きさの画像で必ず拒否された、2026-10-07)。
     ("cx_apply_transfer_function", "H"): lambda rng: rng.random((32, 32)),
     # tier2 複素解析: w = 輪郭の内側にありそうな点(外・線上なら fail-closed
     # の CONTRACT が出るのが正しい)。Möbius の 4 係数は ad-bc≠0 の実例

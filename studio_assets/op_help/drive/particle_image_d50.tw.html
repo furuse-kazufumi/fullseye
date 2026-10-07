@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_image_d50(image, pitch: &#x27;float&#x27;, basis: &#x27;str&#x27; = &#x27;volume&#x27;, threshold: &#x27;float&#x27; = 0.02, border: &#x27;str&#x27; = &#x27;exclude&#x27;) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_image_d50&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>被覆率の画像の粒子から D10 / D50 / D90 [µm]。面積は <b>ラベルの中の被覆率の和</b>(縁の部分画素を数える、閾値で太らない)。</p>
+<p>由覆蓋率影像中的顆粒求 D10 / D50 / D90 [µm]。面積為 <b>標籤內覆蓋率之和</b>(計入邊緣的部分像素，不會因門檻值而變粗)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">basis</code>: <code style="color:#22d3bf">&quot;volume&quot;</code>(球と見て d³ の重み —— レーザー回折と同じ体積基準)、<code style="color:#22d3bf">&quot;number&quot;</code>(個数基準)。同じ画像でもこの 2 つは別の分布で、体積基準が大きく出る。<code style="color:#22d3bf">border</code>: <code style="color:#22d3bf">&quot;exclude&quot;</code>(縁に触れる粒子を捨てる)/ <code style="color:#22d3bf">&quot;include&quot;</code>。</p>
 <p>返り: <code style="color:#22d3bf">d10</code>・<code style="color:#22d3bf">d50</code>・<code style="color:#22d3bf">d90</code>・<code style="color:#22d3bf">diameters</code>(等価円直径 µm)・<code style="color:#22d3bf">n</code>・<code style="color:#22d3bf">n_border</code>・<code style="color:#22d3bf">basis</code>。粒子が 3 未満 → <code style="color:#22d3bf">ValueError</code>。融合した粒子は 1 個に数える(分けない —— 塗れた面積の分離は別の op の仕事)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

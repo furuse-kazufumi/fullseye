@@ -90,13 +90,17 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, norm, binm):
             skimage の biharmonic inpainting(調和方程式に基づく補間)で周囲から
             滑らかに埋める。
 
-            マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。``a``,
+            マスクが無ければ(欠損が見当たらなければ)入力をそのまま返す。全画素が
+            欠損扱いになる画像(定数の白・黒、黒地に輝点 1 つなど)も、埋める手掛かりに
+            なる画素が 1 つも無いので入力をそのまま返す。``a``,
             ``b`` は未使用。しきい値が固定なので、本来ハイライト/シャドウとして
             意味のある画素まで「欠損」扱いされ埋められてしまう場合がある。
             """
             x = np.clip(np.asarray(v, np.float64), 0, 1)
             mask = (x > 0.92) | (x < 0.08)
-            if not mask.any():
+            if not mask.any() or mask.all():
+                # 全画素が欠損扱い = 補間の手掛かりが 0 画素。skimage に渡すと空配列の
+                # min で落ちていた(2026-10-07)。埋められないものは埋めずに返す。
                 return x
             return restoration.inpaint_biharmonic(x, mask)
 

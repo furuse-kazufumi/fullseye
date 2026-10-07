@@ -474,8 +474,10 @@ def img_to_monogenic(v, a, b):
     だけ** を受け付ける(色の四元数 ``tb_rgb_to_quaternion`` を渡すと
     「モノジェニック信号ではない」と拒否する)ので、その族の入口はこちら。
 
-    - ``a`` → 中心波長 ``wavelength_px = 8 * (0.25 + 1.75 * a)`` 画素
-      (a=0.5 で 9 px。小さいほど細かい構造に応答)。
+    - ``a`` → 中心波長 ``wavelength_px = 3 + 12 * a`` 画素(3〜15 px、a=0.5 で 9 px。
+      小さいほど細かい構造に応答)。★2026-10-07 まで ``8 * (0.25 + 1.75 * a)`` で、a=0 が
+      2 px(ナイキスト)に写り ``monogenic_signal`` が必ず拒否していた —— 下端を 3 px に
+      上げ、a=0.5 の 9 px は据え置いた。
     - ``b`` → 帯域幅 ``bandwidth_octaves = 1.0 * (0.25 + 1.75 * b)`` オクターブ
       (b=0.5 で 1.125)。
     - 返り値: ``(H, W, 4)`` float64。値域は入力に依存し [0,1] に収まらない
@@ -484,7 +486,7 @@ def img_to_monogenic(v, a, b):
     import quatimage as Q                                # 遅延 import(循環回避)
 
     img = _image2d(v)
-    return np.asarray(Q.monogenic_signal(img, wavelength_px=8.0 * _rel(a),
+    return np.asarray(Q.monogenic_signal(img, wavelength_px=3.0 + 12.0 * float(np.clip(a, 0.0, 1.0)),
                                          bandwidth_octaves=1.0 * _rel(b)), np.float64)
 
 

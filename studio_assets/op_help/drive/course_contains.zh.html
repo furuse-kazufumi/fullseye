@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_contains(course, xy)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_contains(course, xy)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_contains&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点が <b>走れる領域</b>(要素の多角形、配置なら要素の和)の内側かを偶奇規則で判定した bool 配列。</p>
+<p>以奇偶规则判定点是否位于<b>可行驶区域</b>(要素的多边形；若为布局则为各要素之并)内侧的 bool 数组。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">xy</code> は <code style="color:#22d3bf">(N, 2)</code>(<code style="color:#22d3bf">(2,)</code> なら bool スカラ)。境界上の点は未定義。要素ごとに bounds で先に篩う。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: course が dict でない・polygon が無い・xy の形が悪い・非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

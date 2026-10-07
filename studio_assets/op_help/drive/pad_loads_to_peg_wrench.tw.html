@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × signal × scalar × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegtactile; pegtactile.pad_loads_to_peg_wrench(PR: &#x27;float&#x27;, qR, PL: &#x27;float&#x27;, qL, pad: &#x27;dict&#x27;, torsion: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;pad_loads_to_peg_wrench&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><code style="color:#22d3bf">peg_wrench_to_pad_loads</code> の逆: 2 パッドの (P, q) と膜が受けるねじり(パッド 1 枚あたり、グリッパ x まわり)→ パッドがペグに加えるレンチ(グリッパ系、把持点まわり)と把持力。ペグへのねじり = −2·torsion。返り <code style="color:#22d3bf">F</code>・<code style="color:#22d3bf">M</code>(3,)、<code style="color:#22d3bf">grip</code> = (N_R + N_L)/2。<b>Raises</b> ValueError: q が有限の 2 成分でない、P か torsion が有限でない。</p>
+<p><code style="color:#22d3bf">peg_wrench_to_pad_loads</code> 的逆運算：2 個墊的 (P, q) 與膜承受的扭轉(每 1 個墊，繞夾爪 x 軸)→ 墊施加於銷的力旋量(夾爪座標系，以抓握點為力矩中心)與抓握力。施加於銷的扭轉 = −2·torsion。回傳 <code style="color:#22d3bf">F</code>、<code style="color:#22d3bf">M</code>(3,)、<code style="color:#22d3bf">grip</code> = (N_R + N_L)/2。<b>Raises</b> ValueError：q 不是有限的 2 個分量、P 或 torsion 非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_spec(n_beams: &#x27;int&#x27; = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: &#x27;float&#x27; = 0.2, range_max: &#x27;float&#x27; = 60.0, range_min: &#x27;float&#x27; = 0.5, noise_std: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_spec(n_beams: &#x27;int&#x27; = 32, v_fov_deg=(-25.0, 15.0), azimuth_res_deg: &#x27;float&#x27; = 0.2, range_max: &#x27;float&#x27; = 60.0, range_min: &#x27;float&#x27; = 0.5, noise_std: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lidar_spec&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>回転式 LiDAR の仕様 dict を作る(既定は 32 beam・仰角 −25…+15°・方位 0.2° = 1800 列)。</p>
+<p>회전식 LiDAR의 사양 dict를 만듭니다(기본 32 beam, 앙각 −25…+15°, 방위 0.2° = 1800열).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n_beams</code>: レーザ層の数(≥ 1)。仰角帯 <code style="color:#22d3bf">v_fov_deg=(v_min, v_max)</code> [度] を等分し、行 0 が上端 <code style="color:#22d3bf">v_max</code> 側(<code style="color:#22d3bf">spherical_proj</code> と同じ)。<code style="color:#22d3bf">v_min &lt; v_max</code>、いずれも [−90, 90] の中。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">azimuth_res_deg</code>: 方位角の刻み [度] (&gt; 0)。360° を割り切る値でなければ <code style="color:#22d3bf">ValueError</code> (等間隔の 1 周が前提。0.2 → 1800 列、0.1 → 3600 列)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">range_min</code> / <code style="color:#22d3bf">range_max</code> [m]: 測距範囲(<code style="color:#22d3bf">0 ≤ range_min &lt; range_max &lt; ∞</code>)。外の最近接は無返答。</p>

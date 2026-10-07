@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点の集まりの SPH 密度 ρ_i = Σ_j m W(|x_i − x_j|, h)(自分を含む)と、弱圧縮の状態方程式 p = c² (ρ − ρ₀)。</p>
+<p>SPH density of a point set ρ_i = Σ_j m W(|x_i − x_j|, h) (including the point itself) and the weakly compressible equation of state p = c² (ρ − ρ₀).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>格子の間隔 Δ で m = ρ₀ Δ² に置けば、内側の点の ρ は ρ₀ に近い(h = 1.3Δ で 0.3 % 以内 —— 門で数える)。</p>
 <p>Args:</p>
 <p>points: (N, 2) の位置 [m]。</p>

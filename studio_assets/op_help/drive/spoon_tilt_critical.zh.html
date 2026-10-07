@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import granular; granular.spoon_tilt_critical(phi_deg: &#x27;float&#x27;, L: &#x27;float&#x27;, h0: &#x27;float&#x27;, lip: &#x27;str&#x27; = &#x27;wall&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;spoon_tilt_critical&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>スプーンから粉がこぼれ始める傾き θ_c [度] (2 次元断面、準静的、壁摩擦なし —— <b>自分の導出</b>)。</p>
+<p>粉体开始从勺子洒出的倾角 θ_c [度] (2 维截面、准静态、无壁面摩擦 —— <b>自行推导</b>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>模型: 床の長さ <code style="color:#22d3bf">L</code>(唇から奥壁まで、奥壁は床に垂直)、水平で深さ <code style="color:#22d3bf">h0</code> に平らに盛った粉。唇を下げて床を θ 傾ける。粉の自由表面は水平から φ(安息角)までしか立てないので、唇を通る斜面は<b>床から見て φ − θ</b>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lip=&quot;wall&quot;</code>(既定: 口に縁があり、初めは口まで平らに満ちている、初めの面積 <code style="color:#22d3bf">L h0</code>): 保持できる断面は <code style="color:#22d3bf">A(θ) = ½ L² tan(φ − θ)</code>(床と表面の楔)。<code style="color:#22d3bf">L h0</code> を超えて保持できなくなる傾きが <code style="color:#22d3bf">θ_c = φ − atan(2 h0 / L)</code>(atan2 で)。盛りが多いほど早くこぼれ、<code style="color:#22d3bf">h0 → 0</code> で <code style="color:#22d3bf">θ_c → φ</code>、θ = φ で全部出る。<code style="color:#22d3bf">2 h0 / L ≥ tan φ</code> なら水平でも既に保持できない(0 を返す)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">lip=&quot;open&quot;</code>(口に壁の無い器): 前面は初めから安息角の斜面なので <b>θ = 0⁺ からこぼれる</b> —— 常に 0 を返す。</p>

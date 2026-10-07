@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_crossing_state(world: &#x27;dict&#x27;, t: &#x27;float&#x27;, train: &#x27;Optional[dict]&#x27;, *, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetown; drivetown.town_crossing_state(world: &#x27;dict&#x27;, t: &#x27;float&#x27;, train: &#x27;Optional[dict]&#x27;, *, exposure: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;town_crossing_state&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>時刻 t の踏切の設備を世界に書き込む(全部の踏切に同じ列車の時刻を使う)。</p>
+<p>把時刻 t 的平交道設備狀態寫入世界(所有平交道使用同一列車時刻)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">train</code> = <code style="color:#22d3bf">town_run</code> の <code style="color:#22d3bf">run[&quot;train&quot;]</code>(None = 待機: かん上・灯消灯・列車は遠く)。状態は既存 op <code style="color:#22d3bf">drivecrossing.crossing_gate_state</code>(警報 → 降下 → 遮断 → 上昇、かんの角)と <code style="color:#22d3bf">drivecrossing.crossing_lamp_signal</code> (2 灯の交互点滅、<code style="color:#22d3bf">exposure</code> &gt; 0 でカメラの露光平均)で評価する。列車の先頭は <code style="color:#22d3bf">t_arrival</code> に道路の縁(手前 margin)に着き、<code style="color:#22d3bf">v_train</code> で +y(局所)へ進む。返り値 <code style="color:#22d3bf">{&quot;state&quot;, &quot;state_name&quot;, &quot;boom_angle&quot;, &quot;lamps&quot;, &quot;entry_forbidden&quot;, &quot;train_y&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: world が town_world の物でない、t が非有限、train の鍵が足りない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

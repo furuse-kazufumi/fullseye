@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import driveworld; driveworld.load_asset(name: &#x27;str&#x27;, dims=None, *, root=None, paint=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;load_asset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>同梱資産をメッシュ dict に: <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;name&quot;, &quot;dims&quot;}</code>。</p>
+<p>Loads a bundled asset as a mesh dict: <code style="color:#22d3bf">{&quot;V&quot;, &quot;F&quot;, &quot;color&quot;, &quot;label&quot;, &quot;name&quot;, &quot;dims&quot;}</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>z-up に直し、箱の寸法を <code style="color:#22d3bf">dims</code>(既定 = <code style="color:#22d3bf">ASSETS</code> の実寸)に軸ごとに合わせ、原点を箱の底面中心に置く。未知の名前・寸法 ≤ 0 は ValueError。同じ名前は 1 度だけ読む(キャッシュ)。</p>
 <p><code style="color:#22d3bf">paint</code>: 車の車体色(<code style="color:#22d3bf">CAR_PAINTS</code> の名前か (r, g, b)、None = 元の色)。車体の面だけを塗り替え、ガラス・タイヤ・灯火は元のまま、テクスチャの濃淡(明るさの比)は保つ。パトカー・タクシー(塗装が意味を持つ)と車以外は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

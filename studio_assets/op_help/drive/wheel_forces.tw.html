@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>沈下 z [m] と滑り率 s で、剛な車輪が土から受ける力(Wong–Reece の応力分布の数値積分)。</p>
+<p>在沉陷 z [m] 與滑移率 s 下剛性車輪從土壤受到的力(Wong–Reece 應力分布的數值積分)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牽引力(drawbar pull、前向き正)[N]、駆動トルク [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>・<code style="color:#22d3bf">slip</code> はスカラーか同じ形に放送できる配列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

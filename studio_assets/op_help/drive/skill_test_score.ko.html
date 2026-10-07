@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivelong; drivelong.skill_test_score(events, venue: &#x27;str&#x27; = &#x27;場内&#x27;, thresholds: &#x27;Optional[dict]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;skill_test_score&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>技能試験の減点を集計する(警察庁 丙運発第 12 号 令和 4 年の減点細目)。</p>
+<p>기능 시험의 감점을 집계합니다(경찰청 병운발 제12호 레이와 4년의 감점 세목).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>events : dict の列。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;stop&quot;, &quot;gap&quot;: 前端から停止線 [m] (負 = 越えた), &quot;signal&quot;: &quot;red&quot; など(任意)}</code> → gap &lt; 0 または gap &gt; stop_gap_max で 停止位置不適。赤信号で越え幅 &gt; signal_violation_over なら 信号無視(試験中止)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">{&quot;kind&quot;: &quot;brake&quot;, &quot;stages&quot;: 段数}</code> → 1 段以下で 制動操作不良(「ブレーキを数回に分けて踏まない場合」)。</p>

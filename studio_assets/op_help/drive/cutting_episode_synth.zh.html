@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_episode_synth(R: &#x27;float&#x27; = 400.0, theta_deg: &#x27;float&#x27; = 4.0, vx: &#x27;float&#x27; = 6.0, vz: &#x27;float&#x27; = 4.0, k_wrist: &#x27;float&#x27; = 4.0, dt: &#x27;float&#x27; = 0.1, n_frames: &#x27;int&#x27; = 40, heel_x0: &#x27;float&#x27; = 12.0, edge_start: &#x27;float&#x27; = 27.0, scene=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import cutting; cutting.cutting_episode_synth(R: &#x27;float&#x27; = 400.0, theta_deg: &#x27;float&#x27; = 4.0, vx: &#x27;float&#x27; = 6.0, vz: &#x27;float&#x27; = 4.0, k_wrist: &#x27;float&#x27; = 4.0, dt: &#x27;float&#x27; = 0.1, n_frames: &#x27;int&#x27; = 40, heel_x0: &#x27;float&#x27; = 12.0, edge_start: &#x27;float&#x27; = 27.0, scene=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_episode_synth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>閉形式の運動で切断の 1 回分を作る(準静的、剛塑性の食材 + 縦だけ柔らかい手首)。返り値 dict(列は numpy 配列)。</p>
+<p>用闭式运动生成 1 次切割(准静态，刚塑性食材 + 仅竖直方向柔软的腕部)。返回值为 dict(各列为 numpy 数组)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>指令: 刃の根元を (vx, −vz) mm/s で動かす(<code style="color:#22d3bf">k_wrist</code> N/mm)。食材は切れ始めるまで動かず、切れている間の押し力は <code style="color:#22d3bf">R · w_eff · 1/(1+ξ²)</code>(<code style="color:#22d3bf">cut_force_atkins</code> の slice_push)。刃は「指令 + F/k」の高さに止まり、切った所は戻らない。刃先の最下点(食材の幅の中)がまな板の 0.3 mm 上に来たら止める。</p>
 <p>返り値: <code style="color:#22d3bf">t</code>、<code style="color:#22d3bf">heel_x</code>、<code style="color:#22d3bf">heel_z_cmd</code>、<code style="color:#22d3bf">heel_z</code>、<code style="color:#22d3bf">edge_z_c</code>(食材中央での刃先の高さの真値)、<code style="color:#22d3bf">F</code>(押し力の真値)、<code style="color:#22d3bf">w_eff</code>、<code style="color:#22d3bf">xi</code>、<code style="color:#22d3bf">params</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

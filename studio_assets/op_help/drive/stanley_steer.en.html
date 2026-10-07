@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_steer(front_pose, path, *, gain: &#x27;float&#x27;, speed, softening: &#x27;float&#x27; = 0.0, max_steer: &#x27;float&#x27; = inf, start_index=None, window: &#x27;int&#x27; = 40) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;stanley_steer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Stanley の舵角 δ = ψ_e + atan2(−k e, k_s + v)(前車軸の中心の横ずれ e は経路の左が正、ψ_e = 経路の向き − ψ)。</p>
+<p>Stanley steering angle δ = ψ_e + atan2(−k e, k_s + v) (the lateral offset e of the front-axle center is positive to the left of the path; ψ_e = path heading − ψ).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">front_pose</code>: (3,) または (N, 3)。<code style="color:#22d3bf">max_steer</code> で切る(切ると <code style="color:#22d3bf">stanley_straight_decay</code> の閉形式から外れる)。</p>
 <p>返り値: <code style="color:#22d3bf">steer</code>, <code style="color:#22d3bf">lateral</code>, <code style="color:#22d3bf">heading_error</code>, <code style="color:#22d3bf">index</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形の誤り、k ≤ 0、v &lt; 0、k_s &lt; 0、max_steer ≤ 0。</p>

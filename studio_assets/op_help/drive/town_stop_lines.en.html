@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetown; drivetown.town_stop_lines(layout, *, side: &#x27;str&#x27; = &#x27;left&#x27;) -&gt; &#x27;List[dict]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;town_stop_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>町の停止線を弧長順に並べる: <code style="color:#22d3bf">[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None, &quot;drawn&quot;: bool}, ...]</code>。</p>
+<p>Lists the town&#x27;s stop lines in order of arc length: <code style="color:#22d3bf">[{&quot;s&quot;, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;kind&quot;, &quot;element&quot;, &quot;crossing_zone&quot;: (s0, s1) | None, &quot;drawn&quot;: bool}, ...]</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>交差点: 要素の <code style="color:#22d3bf">stop_lines</code>(線分 (2, 2))のうち <b>中心線に端点が載り、進行方向の <code style="color:#22d3bf">side</code> の側へ延びる物</b> が走行路の停止線(4 本のうち 1 本。左側通行なら左、右側通行なら鏡像の 1 本)。踏切: 停止線の位置は <b>踏切面 − stop_setback の閉形式</b> (drivecourse は左車線にしか白線を描かないので side に依らない。<code style="color:#22d3bf">drawn</code> = その側に白線が描かれているか)。<code style="color:#22d3bf">s</code> は中心線上の弧長、<code style="color:#22d3bf">yaw</code> はそこでの進行方向。踏切は踏切面の弧長の範囲 <code style="color:#22d3bf">crossing_zone</code> も付ける。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: layout が town_chain の物でない、side が left/right でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signal_phase_plan(*, crossing_length: &#x27;float&#x27;, ped_green: &#x27;float&#x27;, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, amber: &#x27;float&#x27; = 3.0, all_red: &#x27;float&#x27; = 2.0, cross_green: &#x27;float&#x27; = 20.0, cross_amber: &#x27;Optional[float]&#x27; = None, cross_all_red: &#x27;Optional[float]&#x27; = None, flash_fraction: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.signal_phase_plan(*, crossing_length: &#x27;float&#x27;, ped_green: &#x27;float&#x27;, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, amber: &#x27;float&#x27; = 3.0, all_red: &#x27;float&#x27; = 2.0, cross_green: &#x27;float&#x27; = 20.0, cross_amber: &#x27;Optional[float]&#x27; = None, cross_all_red: &#x27;Optional[float]&#x27; = None, flash_fraction: &#x27;float&#x27; = 1.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;signal_phase_plan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>2 現示の信号の時間割(主道路 A と、それに <b>並行する歩行者信号</b>、交差道路 B)。時刻 0 = A の青の始まり。</p>
+<p>2 時相號誌的時間表(主幹道 A 及與其<b>並行的行人號誌</b>，交叉道路 B)。時刻 0 = A 綠燈開始。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>歩行者 A: 青 [0, g) → 青点滅 [g, g + F) → 赤 [g + F, 周期)、F = flash_fraction · crossing_length / walk_speed</p>
 <p>車両 A:   青 [0, t_y) → 黄 [t_y, t_y + Y) → 赤、t_y = g + F + Δ(Δ = <code style="color:#22d3bf">ped_red_to_amber</code>)</p>
 <p>全赤 [t_y + Y, t_y + Y + AR) → 車両 B: 青 G_B → 黄 → 全赤 → 周期の終わり</p>

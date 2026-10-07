@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecourse; drivecourse.course_slope(width=7.0, height=1.5, grade_gentle=0.08, grade_steep=0.11, top=4.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;course_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>坂道コース: 緩坂で高さ <code style="color:#22d3bf">height</code> まで上り、頂上平坦部 <code style="color:#22d3bf">top</code>、急坂で下りる矩形の道(x 軸沿い)。</p>
+<p>Slope course: a rectangular road (along the x axis) that climbs a gentle slope to height <code style="color:#22d3bf">height</code>, has a flat top section <code style="color:#22d3bf">top</code>, and descends a steep slope.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>多角形は幅 w × 長さ L = height/g_gentle + top + height/g_steep の矩形。<code style="color:#22d3bf">profile</code> = (s, z) の折線 [(0,0), (s1,h), (s1+top,h), (L,0)]、z は <code style="color:#22d3bf">slope_height</code> で補間(driveworld が路面を持ち上げる)。</p>
 <p>規格: 幅 ≥ 7、高さ ≥ 1.5、緩 6.5〜9.0 %、急 10.0〜12.5 %、平坦部 ≥ 4 → <code style="color:#22d3bf">params[&quot;regulation&quot;]</code>。面積 = w·L。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 幅・高さ・勾配・平坦部が正でない、勾配 ≥ 1(45° 超は道ではない)。</p>

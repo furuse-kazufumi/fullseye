@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wedging_check(kp, theta: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import pegsim; pegsim.wedging_check(kp, theta: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;wedging_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>二点接触が始まる時点の傾き θ [rad] で、くさび(wedging)が起こりうるか(OCW p.28: θ &gt; c/μ)。</p>
+<p>Ob bei der Neigung θ [rad] zu Beginn des Zweipunktkontakts Verkeilen (Wedging) auftreten kann (OCW p.28: θ &gt; c/μ).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り: <code style="color:#22d3bf">possible</code>(θ &gt; c/μ)、<code style="color:#22d3bf">theta_limit</code> = c/μ、<code style="color:#22d3bf">l2</code>(その θ での二点接触の深さ、exact。θ ≥ θ_m_exact なら 0)、<code style="color:#22d3bf">l2_over_d</code>、<code style="color:#22d3bf">lambda</code> = l₂/(2rμ)、<code style="color:#22d3bf">possible_small_angle</code>(l₂/d &lt; μ ⇔ λ &lt; 1。小角では <code style="color:#22d3bf">possible</code> と同じ判定)。μ = 0 なら摩擦円錐が無いので常に False。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivelateral; drivelateral.offtracking_circle(front_radius: &#x27;float&#x27;, wheelbase: &#x27;float&#x27;, arc_length, *, track: &#x27;float&#x27; = 0.0, gamma0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;offtracking_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>内輪差の過渡(閉形式): 前車軸の中心が半径 R の円に入ってから弧長 s 進んだときの車の姿勢と内側の車輪の半径。</p>
+<p>內輪差的過渡過程(閉合式)：前軸中心進入半徑 R 的圓後行進弧長 s 時的車輛位姿與內側車輪的半徑。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>後車軸の中心は前車軸の中心を長さ L の棒で引く(すべりなし)。棒と前の速度のなす角 γ は dγ/ds = 1/R − sin γ / L。a = 1/R、b = 1/L、k = √(b² − a²)、t± = (b ± k)/a(t− = tan(γ*/2)、sin γ* = L/R)とすると Q = ((t+ − t₀)/(t− − t₀)) e^{k s}、tan(γ/2) = (Q t− − t+)/(Q − 1)。</p>
 <p><code style="color:#22d3bf">arc_length</code>: s ≥ 0(配列可)。<code style="color:#22d3bf">track</code>: 輪距 t(内側の車輪の位置に使う)。<code style="color:#22d3bf">gamma0</code>: 円に入るときの γ(0 = 直線からまっすぐ入る、0 ≤ γ₀ &lt; γ*)。返り値(s と同じ形): <code style="color:#22d3bf">gamma</code>、<code style="color:#22d3bf">rear_radius</code>(後車軸の中心の半径 √(R² + L² − 2RL sin γ))、<code style="color:#22d3bf">front_inner_wheel_radius</code>・<code style="color:#22d3bf">rear_inner_wheel_radius</code>(内側の車輪の旋回中心からの距離)、<code style="color:#22d3bf">offtracking</code>(前内輪 − 後内輪)、<code style="color:#22d3bf">steady</code>(s → ∞ の値の dict)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: R ≤ L(定常が無い)、s &lt; 0、γ₀ が範囲外、t/2 ≥ 後輪の半径。</p>

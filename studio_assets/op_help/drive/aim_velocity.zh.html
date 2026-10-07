@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.aim_velocity(p, target, T: &#x27;float&#x27;, bp: &#x27;dict&#x27;, omega=(0.0, 0.0, 0.0), refine: &#x27;int&#x27; = 6, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import racket; racket.aim_velocity(p, target, T: &#x27;float&#x27;, bp: &#x27;dict&#x27;, omega=(0.0, 0.0, 0.0), refine: &#x27;int&#x27; = 6, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;aim_velocity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点 p から時間 T で target に届く初速。真空の閉形式 v = (Δxy/T, (Δz + ½gT²)/T) を初期値に、抗力 + マグヌス(ω)の運動方程式で <code style="color:#22d3bf">refine</code> 回 Gauss–Newton(有限差分)。<code style="color:#22d3bf">{&quot;v&quot;, &quot;residual&quot;}</code>(residual = 到達点のずれ [m])。</p>
+<p>从点 p 在时间 T 内到达 target 的初速度。以真空闭式 v = (Δxy/T, (Δz + ½gT²)/T) 为初值，在阻力 + 马格努斯(ω)的运动方程上进行 <code style="color:#22d3bf">refine</code> 次 Gauss–Newton(有限差分)。<code style="color:#22d3bf">{&quot;v&quot;, &quot;residual&quot;}</code>(residual = 到达点的偏差 [m])。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>(要直接调用实现,<code style="color:#22d3bf">import pxrd; pxrd.phase_peel(two_theta, intensity, dictionary, max_phases=None, min_gain=0.05, min_fraction=0.005, background_order=4, sigma=None)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;phase_peel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>混合物から相を 1 つずつ剥がす(貪欲な前進選択)。</p>
+<p>从混合物中逐个(每次 1 个)剥离物相(贪心前向选择)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>段 0 は背景だけ。各段で、まだ選んでいない相を 1 つずつ足して <code style="color:#22d3bf">phase_fractions</code> を当て、<code style="color:#22d3bf">rwp</code> が最も下がる相を選ぶ。<code style="color:#22d3bf">rwp</code> の相対的な下がり幅が <code style="color:#22d3bf">min_gain</code> 未満、または選んだ相の重量分率が <code style="color:#22d3bf">min_fraction</code> 未満なら止める。</p>
 <p>全部の相を一度に当てる <code style="color:#22d3bf">phase_fractions</code> と違い、「どの順で、どれだけ説明が進んだか」が残る(図の素材)。</p>
 <p>返り値(dict): <code style="color:#22d3bf">order</code>(選んだ順の名前)・<code style="color:#22d3bf">stages</code>(各段の <code style="color:#22d3bf">phases</code>・<code style="color:#22d3bf">weight_fraction</code>・<code style="color:#22d3bf">fit</code>・<code style="color:#22d3bf">residual</code>・ <code style="color:#22d3bf">rwp</code>)・<code style="color:#22d3bf">final</code>(最後の段の <code style="color:#22d3bf">phase_fractions</code> の結果)。</p>

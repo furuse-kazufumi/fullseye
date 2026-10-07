@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import kendama; kendama.parabola_fit_g(t, P, *, g: &#x27;float&#x27; = 9.81, t_ref: &#x27;float&#x27; = None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;parabola_fit_g&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>重力 g(−z)を既知とした放物線 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ を最小二乗で当てる(未知 6 = 位置と速度)。</p>
+<p>중력 g(−z)를 기지로 한 포물선 p(t) = p_r + v_r (t − t_ref) − ½ g (t − t_ref)² ẑ를 최소제곱으로 피팅합니다(미지수 6 = 위치와 속도).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">t</code> (N,)、<code style="color:#22d3bf">P</code> (N, 3)(NaN の行は飛ばす)。<code style="color:#22d3bf">t_ref</code> 既定 = 使った最後の時刻(= その瞬間の状態を返す)。各軸は [1, t − t_ref] の線形最小二乗(z は ½ g (t − t_ref)² を足してから)。返り値 <code style="color:#22d3bf">{&quot;p&quot;, &quot;v&quot;, &quot;t_ref&quot;, &quot;rms&quot; (残差の RMS [m]), &quot;n&quot;}</code>。有効な点が 2 未満・時刻が全部同じ・g ≤ 0 は ValueError。真空の正確な標本なら (p, v) を丸め誤差で戻す(門)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>

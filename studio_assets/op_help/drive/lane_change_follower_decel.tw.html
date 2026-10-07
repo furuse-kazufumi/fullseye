@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lane_change_follower_decel(gap, v_follow, v_ego, *, reaction: &#x27;float&#x27;, accel_ego: &#x27;float&#x27; = 0.0, min_gap: &#x27;float&#x27; = 0.0, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivepass; drivepass.lane_change_follower_decel(gap, v_follow, v_ego, *, reaction: &#x27;float&#x27;, accel_ego: &#x27;float&#x27; = 0.0, min_gap: &#x27;float&#x27; = 0.0, sudden: &#x27;float&#x27; = 2.0) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;lane_change_follower_decel&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>進路を変えた先の後続車が、自車に min_gap より近づかないために要る一定の減速度(閉形式、配列可)。場面 S072。</p>
+<p>變換車道後，目標車道的跟隨車為了不比 min_gap 更接近本車所需的恆定減速度(閉合式，可用陣列)。場景 S072。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>車間 <code style="color:#22d3bf">gap</code> = 後続車の前端と自車の後端の距離(変えた瞬間)、後続車 <code style="color:#22d3bf">v_follow</code>、自車 <code style="color:#22d3bf">v_ego</code>(<code style="color:#22d3bf">accel_ego</code> ≥ 0 で加速し続ける)。後続車は <code style="color:#22d3bf">reaction</code> の間は速さを保ち、その後一定の減速。w₀ = v_follow − v_ego。反応の間に詰まる量 = w₀τ − a_eτ²/2(相対速度が反応の中で 0 に届けば w₀²/(2a_e))。反応の後の相対速度 w₁ = w₀ − a_eτ、残り g₁ = gap − min_gap − (詰まる量)。要る減速度 b = max(0, w₁²/(2g₁) − a_e)。反応の間にもう min_gap を割るなら ∞。<code style="color:#22d3bf">obstructs</code> = b &gt; <code style="color:#22d3bf">sudden</code>(<b>仮定</b> 2.0 m/s²、26 条の 2 第 2 項「急に」)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

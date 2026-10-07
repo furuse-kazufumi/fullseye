@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。</p>
+<p>Whether there is room on the far side of the railroad crossing (likewise for crosswalks and intersections) for the vehicle to stop (Art. 50(2)). Arrays allowed.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>前の車の後端 <code style="color:#22d3bf">queue_rear</code> の後ろ <code style="color:#22d3bf">gap</code> で止まると、自分の後端 = queue_rear − gap − car_length。これが far_edge + beyond 以上なら入ってよい。返り値: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。前の車が無い場合は queue_rear = +∞。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegtactile; pegtactile.pad_context(pad: &#x27;dict&#x27;, jitter_px: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 7) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;pad_context&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>膜の合成と読みで 1 回だけ作る道具: 画素中心の格子 (X, Y)、Cerruti 核、3 色の光源、無荷重の膜の背景とマーカーの基準像。</p>
+<p>Tools built just 1 time for membrane synthesis and reading: grid of pixel centers (X, Y), Cerruti kernel, 3-color lights, background of the unloaded membrane, and the marker reference image.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>マーカーは <code style="color:#22d3bf">jitter_px</code> の一様ジッタで位相を散らす(印刷のばらつき程度)。<b>規則格子(0 px)は全マーカーが同じ副画素位相なので、重心の pixel-locking が場全体の共通モードになり、せん断ゼロでも偽のせん断が出る</b>(PoC の門で 11 mN → 0.9 mN)。<code style="color:#22d3bf">seed</code> はジッタの乱数。返りの <code style="color:#22d3bf">_model_cache</code>・<code style="color:#22d3bf">_sr_cache</code> は読みの内部キャッシュ。<b>Raises</b> ValueError: jitter &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

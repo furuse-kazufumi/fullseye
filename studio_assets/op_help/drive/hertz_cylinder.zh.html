@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.hertz_cylinder(F_per_L: &#x27;float&#x27;, R: &#x27;float&#x27;, Estar: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_cylinder&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>円柱(半径 R)を弾性半空間に線荷重 F/L で押す線接触(Johnson 1985 §4.2): 接触半幅 b = √(4(F/L)R/(πE*))、p0 = 2(F/L)/(πb)。</p>
+<p>圆柱(半径 R)以线载荷 F/L 压在弹性半空间上的线接触(Johnson 1985 §4.2)：接触半宽 b = √(4(F/L)R/(πE*))，p0 = 2(F/L)/(πb)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">b</code>、<code style="color:#22d3bf">p0</code>、<code style="color:#22d3bf">pm</code> = (F/L)/(2b) = (π/4)p0、入力。2-D の押し込み δ は対数的で参照点に依存するため返さない。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

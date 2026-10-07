@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.sph_density_pressure(points, h: &#x27;float&#x27;, mass: &#x27;float&#x27; = 1.0, rho0: &#x27;float&#x27; = 1.0, c: &#x27;float&#x27; = 10.0, box=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sph_density_pressure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>点の集まりの SPH 密度 ρ_i = Σ_j m W(|x_i − x_j|, h)(自分を含む)と、弱圧縮の状態方程式 p = c² (ρ − ρ₀)。</p>
+<p>점 집합의 SPH 밀도 ρ_i = Σ_j m W(|x_i − x_j|, h)(자신 포함)와 약압축성 상태 방정식 p = c² (ρ − ρ₀).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>格子の間隔 Δ で m = ρ₀ Δ² に置けば、内側の点の ρ は ρ₀ に近い(h = 1.3Δ で 0.3 % 以内 —— 門で数える)。</p>
 <p>Args:</p>
 <p>points: (N, 2) の位置 [m]。</p>

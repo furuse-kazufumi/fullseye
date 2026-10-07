@@ -345,9 +345,15 @@ def _fallback(v, in_sort, out_sort):
     """
     if out_sort == "feature":
         try:
-            return float(np.mean(np.asarray(v, np.float64)))
+            arr = np.asarray(v, np.float64)
         except (TypeError, ValueError):
             return 0.0
+        if arr.size == 0:
+            # ★2026-10-07: 空入力を op が**正しく拒否した後**、ここが空配列の平均 = NaN を返して
+            #   いた(8 op。外側の guard が置き換えるので有限に見え、台帳にだけ source=output で
+            #   残っていた)。拒否の後始末が 0/0 を作らないよう、空なら 0.0。
+            return 0.0
+        return float(np.mean(arr))
     if in_sort == out_sort:
         return np.asarray(v)
     return _EMPTY_OF.get(out_sort, lambda: np.asarray(v))()
@@ -438,6 +444,115 @@ OP_TUNABLE_OVERRIDE = {
 OP_KNOB_RANGE = {
     ("wetness", "wet"): (0.0, 1.0),
     ("wetness", "ior"): (1.01, 2.5),     # 水膜の屈折率。コードは ior > 1 を要求(既定 1.33)
+    # ★2026-10-07: 相対スケールの端が定義域の外へ出ていた 2 本(契約電池で、端の knob が
+    #   **全入力で**拒否されていた)。両端は a=0.5 の値が相対スケールと同じになるよう選んだ
+    #   (window 10 / k 3)—— 既定の挙動と図の主図は動かない。整数の既定を持つ引数は
+    #   ``_make_runner`` が整数に丸めて渡す。
+    ("local_std", "window"): (3, 17),    # dsp.local_std は window >= 3(相対スケールだと a=0 で 2)
+    ("fit_spline_curve", "k"): (1, 5),   # scipy splprep は 1 <= k <= 5(相対スケールだと a=1 で 6)
+}
+
+
+#: 束縛を**呼び出しのたびに入力から作る**引数(op 名 → ``builder(v, a, b) -> dict``)。
+#: ``typed_catalog.OP_PARAM_HINTS`` は登録時に 1 回だけ値を引くので、**入力の形に合わせる
+#: 必要がある引数**(スペクトルと同じ形の伝達関数、動画の長さで決まる DFT ビン)は表せない。
+#: builder が返した dict は knob の写しの後で ``kw`` に上書きされる。空 dict = 束縛済みの
+#: 値のまま(形が不正な入力は op 本体の明示の拒否文に任せる)。
+#:
+#: ★2026-10-07 実測: ``tb_cx_apply_transfer_function`` は H を 32x32 固定で束縛していたので
+#: 32x32 以外のスペクトルでは**全入力・全 knob で**拒否していた(契約電池 24x24、図 128x128)。
+#: ``tb_temporal_band_power`` / ``tb_temporal_bandpass`` は帯域 [3, 5] Hz 固定で、12 フレーム /
+#: 32 fps の探針(ビン間隔 2.67 Hz)には帯域内のビンが無く、契約電池で一度も計算されていなかった。
+_TEMPORAL_FPS = 32.0      # typed_catalog.PARAM_HINTS["fps"] と同じ値(帯域はビンで決めるので値自体は効かない)
+
+
+def _centred_gaussian_lowpass(v, a, b):
+    """``cx_apply_transfer_function`` の H を**スペクトルと同じ形**で作る(中心化ガウス低域通過)。
+
+    ``H = exp(-r^2 / (2 sigma^2))``、``r`` は中心化した周波数(cycles/pixel、``cx_fft`` の
+    規約 = DC が中央)、``sigma = 0.02 + 0.48 a``。``b`` は使わない。
+    """
+    f = np.asarray(v)
+    if f.ndim != 2 or 0 in f.shape:
+        return {}
+    h, w = f.shape
+    sigma = 0.02 + 0.48 * float(np.clip(a, 0.0, 1.0))
+    fy = np.fft.fftshift(np.fft.fftfreq(h))
+    fx = np.fft.fftshift(np.fft.fftfreq(w))
+    r2 = fy[:, None] ** 2 + fx[None, :] ** 2
+    return {"H": np.exp(-0.5 * r2 / sigma ** 2)}
+
+
+def _temporal_band_from_knobs(v, a, b):
+    """時間帯域 ``[f_lo, f_hi]`` を**その動画自身の DFT ビン**から選ぶ。
+
+    非 DC のビンは ``k = 1 .. K``(``K = T // 2``、``T`` = フレーム数)。``a`` が中心のビン
+    ``kc = 1 + round(a (K - 1))``、``b`` が片側の幅 ``hw = round(b (K - 1) / 2)`` を決め、
+    帯域の端を選んだビンの**半ビン外側**に置く(``f_lo = (k_lo - 0.5) df``、
+    ``f_hi = min((k_hi + 0.5) df, fps/2)``、``df = fps / T``)。よって ``T >= 2`` なら
+    帯域には必ず 1 本以上のビンが入り、``f_lo > 0``(DC を含まない)、``f_hi <= fps/2``
+    (ナイキストを超えない)という op の 3 つの拒否条件にも触れない。
+    ``T < 2`` は空 dict を返し、op 本体の明示の拒否(時間周波数が定義されない)に任せる。
+    """
+    t = int(np.shape(v)[0]) if np.ndim(v) >= 1 else 0
+    k_max = t // 2
+    if k_max < 1:
+        return {}
+    df = _TEMPORAL_FPS / t
+    kc = 1 + int(np.floor(float(np.clip(a, 0.0, 1.0)) * (k_max - 1) + 0.5))
+    hw = int(np.floor(float(np.clip(b, 0.0, 1.0)) * (k_max - 1) / 2.0 + 0.5))
+    k_lo, k_hi = max(1, kc - hw), min(k_max, kc + hw)
+    return {"f_lo": (k_lo - 0.5) * df,
+            "f_hi": min((k_hi + 0.5) * df, 0.5 * _TEMPORAL_FPS),
+            "fps": _TEMPORAL_FPS}
+
+
+CALL_TIME_ARGS = {
+    "cx_apply_transfer_function": _centred_gaussian_lowpass,
+    "temporal_band_power": _temporal_band_from_knobs,
+    "temporal_bandpass": _temporal_band_from_knobs,
+}
+
+_TEMPORAL_KNOB_JA = (
+    "``a`` がその動画自身の非 DC の DFT ビンから通過帯域の中心を選び(0 = 最低のビン、"
+    "1 = ナイキストのビン)、``b`` が片側の幅を決める(0 = 1 ビン、1 = 片側に半分)。帯域の端は"
+    "選んだビンの半ビン外側に置く(フレームレートは 32 fps 固定)ので、2 フレーム以上の動画なら"
+    "帯域には必ずビンが入る。(2026-10-07 まで帯域は 3〜5 Hz 固定で、12 フレームの動画では"
+    "ビンが 1 本も入らず毎回拒否していた。)")
+_TEMPORAL_KNOB_EN = (
+    "``a`` picks the centre of the pass-band among the clip's own non-DC DFT bins "
+    "(0 = the lowest bin, 1 = the Nyquist bin) and ``b`` its half-width (0 = one bin, "
+    "1 = half the bins on each side). The band edges sit half a bin outside the chosen bins "
+    "(frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or "
+    "more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a "
+    "12-frame clip, so every call was refused.)")
+
+#: 橋の説明の「a / b が何を振るか」の文を差し替える表(op 名 → (日本語, 英語))。
+#: 呼び出し時の束縛(``CALL_TIME_ARGS``)や返りの変換(``OUTPUT_ADAPTERS_WITH_INPUT``)で
+#: 既定の文(「a も b も使われない」等)が嘘になる op のためのもの。中括弧は書かないこと
+#: (``str.format`` を通る)。
+BRIDGE_KNOB_DOC = {
+    "cx_apply_transfer_function": (
+        "``a`` が伝達関数 ``H`` の幅を振る。橋は H を**呼び出しのたびにスペクトルと同じ形で**作る: "
+        "中心化ガウス低域通過 ``H = exp(-r^2 / (2 sigma^2))``、``sigma = 0.02 + 0.48 a`` "
+        "cycles/pixel(a=0.5 で 0.26)。``b`` は未使用。(2026-10-07 まで H は登録時に 32x32 固定で"
+        "束縛され、それ以外の大きさの画像では毎回拒否していた。)",
+        "``a`` sets the width of the transfer function ``H``, which the bridge builds **per call "
+        "at the spectrum's own shape**: a centred Gaussian low-pass ``H = exp(-r^2 / (2 sigma^2))`` "
+        "with ``sigma = 0.02 + 0.48 a`` cycles/pixel (0.26 at a=0.5). ``b`` is unused. (Until "
+        "2026-10-07 ``H`` was bound once as a fixed 32x32 array, so every other image size was "
+        "refused.)"),
+    "temporal_band_power": (_TEMPORAL_KNOB_JA, _TEMPORAL_KNOB_EN),
+    "temporal_bandpass": (_TEMPORAL_KNOB_JA, _TEMPORAL_KNOB_EN),
+    "normals_to_egi": (
+        "``a`` が ``n_az``(既定 36)、``b`` が ``n_el``(既定 18)を振る。★橋の op は計数を"
+        "総数で割った**割合**(各 bin に入った法線の比率、和 1、値域 [0,1])を返す —— 宣言 sort "
+        "``image`` の [0,1] 契約に合わせるため(計数のままだと最大 48 などが出ていた、2026-10-07)。"
+        "生の計数は ``reprconv.normals_to_egi`` / ``fullseye.ledger.normals_to_egi`` が返す。",
+        "``a`` drives ``n_az`` (default 36) and ``b`` drives ``n_el`` (default 18). The bridged "
+        "op returns the **fraction** of normals per bin (counts divided by the total; sums to 1, "
+        "range [0, 1]) to honour the ``image`` sort's unit range. The raw counts are returned by "
+        "``reprconv.normals_to_egi`` / ``fullseye.ledger.normals_to_egi``."),
 }
 
 
@@ -480,12 +595,29 @@ def _point_labels_to_volume(points, labels, res=16):
     return vol.reshape(r, r, r).astype(np.float64)
 
 
+def _egi_counts_to_fraction(normals, counts):
+    """拡張ガウス像の**計数**を**割合**(和 1、[0,1])にする —— 宣言 sort ``image`` の値域契約。
+
+    ``reprconv.normals_to_egi`` は bin ごとの計数を返す(公開関数の仕様。総和 = 法線の本数で、
+    ``tests/test_type_alias_ledger.py`` がそれを使う)ので、公開関数は変えずに橋の出口でだけ
+    割る。2026-10-07 実測: 探針 two_clusters で最大 48、plane_only で 17 —— ``image`` を名乗り
+    ながら [0,1] を外れていた。
+    """
+    h = np.asarray(counts, np.float64)
+    total = float(h.sum())
+    if not (np.isfinite(total) and total > 0.0):
+        raise ValueError("normals_to_egi: the histogram holds no normals — "
+                         "the per-bin fraction is 0/0")
+    return h / total
+
+
 #: 返りを**入力と一緒に**見て直す表(op 名 → ``fn(入力, 返り)``)。
 #: ``ADAPTERS`` は返りだけを見るので、入力が要る変換はこちらに置く。
 OUTPUT_ADAPTERS_WITH_INPUT = {
     "region_growing": _point_labels_to_volume,
     "euclidean_cluster": _point_labels_to_volume,
     "plane_segmentation": _point_labels_to_volume,
+    "normals_to_egi": _egi_counts_to_fraction,
 }
 
 
@@ -516,7 +648,7 @@ _KNOB_EN = {0: "This op has no tunable parameter; ``a`` and ``b`` are unused.",
             2: "``a`` drives ``{p0}`` (default {d0}) and ``b`` drives ``{p1}`` (default {d1})."}
 
 
-def _bridge_doc(fn, name, dim, tunable):
+def _bridge_doc(fn, name, dim, tunable, knob_note=None):
     """橋の op の説明 —— 元の docstring に、``a``/``b`` が何を振るかを継ぐ。
 
     元が無説明なら ``None``(嘘の説明を捏造するより「説明なし」の方が正しい)。
@@ -525,7 +657,10 @@ def _bridge_doc(fn, name, dim, tunable):
     if not base:
         return None
     ja = any("぀" <= ch <= "ヿ" or "一" <= ch <= "鿿" for ch in base)
-    kn = (_KNOB_JA if ja else _KNOB_EN)[len(tunable)]
+    if knob_note is not None:                             # BRIDGE_KNOB_DOC の差し替え
+        kn = knob_note[0] if ja else knob_note[1]
+    else:
+        kn = (_KNOB_JA if ja else _KNOB_EN)[len(tunable)]
     slot = {}
     for i, (pname, default) in enumerate(tunable):
         slot["p%d" % i] = pname
@@ -535,7 +670,8 @@ def _bridge_doc(fn, name, dim, tunable):
     return "%s\n\n%s" % (base, note)
 
 
-def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None, knob_ranges=None):
+def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None, knob_ranges=None,
+                 call_time=None):
     """``fn(v, a, b)`` 規約のランナー。
 
     *tunable* は ``[(param 名, 既定値), ...]`` を最大 2 個(a に第 1、b に第 2)。
@@ -555,10 +691,14 @@ def _make_runner(fn, kwargs, tunable, in_sort, out_sort, doc=None, knob_ranges=N
         for (pname, default), knob in zip(tunable, (a, b)):
             if pname in ranges:
                 lo, hi = ranges[pname]
-                kw[pname] = lo + (hi - lo) * float(np.clip(knob, 0.0, 1.0))
+                val = lo + (hi - lo) * float(np.clip(knob, 0.0, 1.0))
+                # 整数の既定を持つ引数(窓長・次数)は整数で渡す(四捨五入、決定的)
+                kw[pname] = int(np.floor(val + 0.5)) if isinstance(default, int) else val
             else:
                 kw[pname] = _scaled(default, knob)
         try:
+            if call_time is not None:                     # CALL_TIME_ARGS: 入力の形に合わせる束縛
+                kw.update(call_time(v, a, b))
             got = _coerce(fn(v, **kw), out_sort)
         except Exception as _e:                           # noqa: BLE001 - fail-soft, RECORDED
             from backend_safe import is_strict, record
@@ -671,6 +811,8 @@ def build(Op, IMAGE, REGION, FEATURE, CONTOUR, _norm, _bin):
                   if (name, pn) in OP_KNOB_RANGE}
         out.append(Op("tb_" + name, "typed", "", in_sort, out_sort,
                       _make_runner(base, kwargs, tunable, in_sort, out_sort,
-                                   doc=_bridge_doc(fn, name, dim, tunable),
-                                   knob_ranges=ranges)))
+                                   doc=_bridge_doc(fn, name, dim, tunable,
+                                                   knob_note=BRIDGE_KNOB_DOC.get(name)),
+                                   knob_ranges=ranges,
+                                   call_time=CALL_TIME_ARGS.get(name))))
     return out

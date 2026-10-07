@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import balltrack; balltrack.track_triangulate(tracks, poses, Ks, n_frames: &#x27;int&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;track_triangulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>カメラごとの軌跡(<code style="color:#22d3bf">ball_track</code> の返り値)を三角測量して 3-D の軌跡に: <code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code> (2 視点以上で見えたコマだけ)。</p>
+<p>对各相机的轨迹(<code style="color:#22d3bf">ball_track</code> 的返回值)做三角测量，得到 3-D 轨迹：<code style="color:#22d3bf">{&quot;frame&quot;, &quot;p&quot; (N, 3), &quot;reproj_rms&quot; (N,)}</code>(仅限在 2 个以上视角中可见的帧)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

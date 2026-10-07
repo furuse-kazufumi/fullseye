@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fp64_emulation_probe()</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import ozakimm; ozakimm.fp64_emulation_probe()</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fp64_emulation_probe&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>cuBLAS の FP64 エミュレーション(CUDA 13.0 Update 2 以降)が、この計算機で使えるかを表で返す。</p>
+<p>cuBLAS의 FP64 에뮬레이션(CUDA 13.0 Update 2 이후)을 이 컴퓨터에서 쓸 수 있는지 표로 반환합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><b>例外を出さない</b>: GPU・CUDA・cuBLAS 13 が無ければ <code style="color:#22d3bf">available=False</code> と理由を返す(重い依存は持たない。ctypes でライブラリを開いて版を読むだけ)。返り: <code style="color:#22d3bf">available</code>(bool)、<code style="color:#22d3bf">rows</code>(候補ごとの <code style="color:#22d3bf">library</code>・<code style="color:#22d3bf">path</code>・<code style="color:#22d3bf">loaded</code>・ <code style="color:#22d3bf">cublas_version</code>・<code style="color:#22d3bf">emulation_api</code>(<code style="color:#22d3bf">cublasSetEmulationStrategy</code> があるか)・<code style="color:#22d3bf">gpu</code>(ハンドルを作れたか)・ <code style="color:#22d3bf">reason</code>)、<code style="color:#22d3bf">how</code>(有効にする方法)、<code style="color:#22d3bf">note</code>。</p>
 <p>有効にする方法は opt-in: math mode <code style="color:#22d3bf">CUBLAS_FP64_EMULATED_FIXEDPOINT_MATH</code>、またはコードを変えずに <code style="color:#22d3bf">CUBLAS_EMULATE_DOUBLE_PRECISION=1</code>。cuBLAS の文書はエミュレーション中はビット単位の再現の保証が外れると書く —— 再現が要るなら <code style="color:#22d3bf">matmul_reproducible</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>

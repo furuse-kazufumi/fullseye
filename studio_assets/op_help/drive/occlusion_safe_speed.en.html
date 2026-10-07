@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.occlusion_safe_speed(d, *, reaction: &#x27;float&#x27;, brake: &#x27;float&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;occlusion_safe_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>見えた瞬間から距離 d 以内に止まれる最大速度 v = b(−ρ + sqrt(ρ² + 2d/b))。</p>
+<p>Maximum speed at which the car can stop within distance d from the moment of becoming visible: v = b(−ρ + sqrt(ρ² + 2d/b)).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>v ρ + v²/(2b) = d(空走 + 制動。<code style="color:#22d3bf">rsssafety.rss_stopping_distance(v, ρ, accel=0, brake=b)</code> と同じ式)を v について解いた正の根。桁落ちを避けて v = 2d / (ρ + sqrt(ρ² + 2d/b)) で計算する(ρ = 0 で sqrt(2 b d))。d は配列でもよい。d ≤ 0 なら 0(見えた時には既に間に合わない)。</p>
 <p>門: <code style="color:#22d3bf">rss_stopping_distance(v, ρ, 0, b)</code> == d(第 2 実装、rtol 1e-12)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: reaction &lt; 0、brake ≤ 0、d が非有限(inf は許して inf を返す)。</p>

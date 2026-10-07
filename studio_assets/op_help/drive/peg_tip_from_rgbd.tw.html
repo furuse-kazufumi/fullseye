@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × image2d × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegsim; pegsim.peg_tip_from_rgbd(rgb, depth, K, r_peg: &#x27;float&#x27; = 0.005, peg_mask=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;peg_tip_from_rgbd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>手首 RGB-D 1 枚からペグ先端の中心を 3-D(カメラ座標)で: ペグの画素 → depth の点群 → PCA の軸 → 既知半径の円柱当てはめ、先端の軸方向は影の端(副画素、被覆率)を、投影した縁の円の端と一致させる模型で決める。</p>
+<p>從 1 張腕部 RGB-D 求銷末端中心的 3-D 座標(相機座標)：銷的像素 → depth 點雲 → PCA 軸 → 已知半徑圓柱擬合；末端在軸向上的位置由一個模型決定，該模型使陰影的端部(次像素、覆蓋率)與投影邊緣圓的端部一致。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り: <code style="color:#22d3bf">tip_cam</code>(3,)、<code style="color:#22d3bf">axis</code>(先端 → 上、単位)、<code style="color:#22d3bf">rms_cyl</code>、<code style="color:#22d3bf">n_pts</code>、<code style="color:#22d3bf">uv</code>(先端の投影)、<code style="color:#22d3bf">delta_axial</code>。</p>
 <p>正直に: 試作の 16 姿勢で軸方向の誤差 max 0.83 px(横方向 0.004 px)—— 影の端 1 画素の被覆率だけから軸方向を読む限界で、目標 0.3 px は未達。<b>Raises</b> <code style="color:#22d3bf">RuntimeError</code>: ペグが見えない(芯の画素 &lt; 50)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

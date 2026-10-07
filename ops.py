@@ -1379,7 +1379,11 @@ def _area_frac(v, a, b):
     """領域が占める画素の割合（面積率）を返す特徴量。HALCON の ``area_center``（Area and center of regions.）とは異なり、面積のみを返し重心は計算しない（機能の一部だけの対応）。
 
 ``a``, ``b`` は未使用。``v > 0.5`` で二値化した画素の平均値（= 前景画素数 / 全画素数）をスカラーで返す。値域は ``[0,1]``。"""
-    return np.float64(np.mean(_bin(v)))
+    m = _bin(v)
+    if m.size == 0:
+        # ★2026-10-07: 0 画素の面積率は 0/0(np.mean が NaN を返し、guard が黙って置き換えていた)
+        raise ValueError("area_frac: empty region (0 pixels) — the area fraction is 0/0")
+    return np.float64(np.mean(m))
 
 
 # --- more image -> image ----------------------------------------------------- #

@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × signal × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacscalib; tacscalib.field_position_sweep(centres, errors, image_shape) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;field_position_sweep&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>誤差の位置依存: 各画像の接触中心 (行, 列) と誤差(中央値など)を画像中心からの距離に対して並べ、最小二乗の傾き [誤差 / 100 px] と Spearman の順位相関(同順位は平均順位)を返す(numpy だけ)。</p>
-<p>返り: <code style="color:#22d3bf">dist_px</code>・<code style="color:#22d3bf">err</code>・<code style="color:#22d3bf">slope_per_100px</code>・<code style="color:#22d3bf">intercept</code>・<code style="color:#22d3bf">spearman</code>・<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 3 組未満 / 形の不一致 / 非有限 / image_shape の形。</p>
+<p>误差的位置依赖：将各图像的接触中心 (行, 列) 与误差(中位数等)按到图像中心的距离排列，返回最小二乘斜率 [误差 / 100 px] 与 Spearman 秩相关(并列取平均秩)(仅用 numpy)。返回：<code style="color:#22d3bf">dist_px</code>、<code style="color:#22d3bf">err</code>、<code style="color:#22d3bf">slope_per_100px</code>、<code style="color:#22d3bf">intercept</code>、<code style="color:#22d3bf">spearman</code>、<code style="color:#22d3bf">n</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：少于 3 组 / 形状不一致 / 非有限 / image_shape 的形状。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

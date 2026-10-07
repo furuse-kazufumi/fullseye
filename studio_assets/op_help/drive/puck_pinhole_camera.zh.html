@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × scalar × scalar × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_pinhole_camera(table: &#x27;dict&#x27;, height: &#x27;float&#x27;, fovy_deg: &#x27;float&#x27;, shape) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_pinhole_camera(table: &#x27;dict&#x27;, height: &#x27;float&#x27;, fovy_deg: &#x27;float&#x27;, shape) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_pinhole_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>真上の針穴カメラ(位置 (0, 0, h)、−z を見る、up = +y、MuJoCo のカメラ規約)をホモグラフィに: col = W/2 + f x/h、row = H/2 − f y/h、f = (H/2)/tan(fovy/2)。パック上面の高さ(≈ 0.02 m)は無視(視差 h に対して 1 % 強、残差は門で測る)。<code style="color:#22d3bf">shape</code> = (H, W)。返り値は <code style="color:#22d3bf">puck_camera</code> と同じ形。</p>
+<p>将正上方的针孔相机(位置 (0, 0, h)，朝向 −z，up = +y，MuJoCo 的相机约定)转为单应性：col = W/2 + f x/h，row = H/2 − f y/h，f = (H/2)/tan(fovy/2)。忽略冰球上表面的高度(≈ 0.02 m)(相对 h 的视差略高于 1 %，残差由门禁测量)。<code style="color:#22d3bf">shape</code> = (H, W)。返回值与 <code style="color:#22d3bf">puck_camera</code> 形式相同。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

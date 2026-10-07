@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_track(frames, cam: &#x27;dict&#x27;, *, max_jump_px: &#x27;float&#x27; = 40.0, **detect_kw) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_track&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>コマ列 → コマごとの候補 → <code style="color:#22d3bf">balltrack.ball_track</code>(等速予測で繋ぐ、<code style="color:#22d3bf">max_jump_px</code> 超えは落とす)→ world 座標。</p>
+<p>帧序列 → 每帧的候选 → <code style="color:#22d3bf">balltrack.ball_track</code>(用匀速预测连接，超过 <code style="color:#22d3bf">max_jump_px</code> 的丢弃)→ world 坐标。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;frame&quot; (N,), &quot;col&quot;,&quot;row&quot; (N,), &quot;xy&quot; (N,2), &quot;found&quot; (K,) bool}</code>。速いパック(1 コマの移動 &gt; max_jump_px)では対応が切れてコマが落ちる —— その破れ方は門で測る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

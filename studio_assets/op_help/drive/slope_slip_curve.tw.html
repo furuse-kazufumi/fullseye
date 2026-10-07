@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × table × any × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.slope_slip_curve(slopes_deg, wheel, soil, mass: &#x27;float&#x27;, n_wheels: &#x27;int&#x27; = 6, gravity: &#x27;float&#x27; = 3.72, s_min: &#x27;float&#x27; = -0.9, s_max: &#x27;float&#x27; = 0.99) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.slope_slip_curve(slopes_deg, wheel, soil, mass: &#x27;float&#x27;, n_wheels: &#x27;int&#x27; = 6, gravity: &#x27;float&#x27; = 3.72, s_min: &#x27;float&#x27; = -0.9, s_max: &#x27;float&#x27; = 0.99) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;slope_slip_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>斜面の角(度、登りが正)ごとに、車体の重さを支えつつ斜面方向の重力成分を牽引力で釣り合わせる定常の滑り率。</p>
+<p>對每個坡角(度，上坡為正)，在支撐車體重量的同時以牽引力平衡沿坡方向重力分量的穩態滑移率。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>1 輪あたり <code style="color:#22d3bf">F_z = m g cos β / N</code>、必要な牽引力 <code style="color:#22d3bf">m g sin β / N</code>。滑り率を [s_min, s_max] で二分法(内側で沈下も二分法)。<code style="color:#22d3bf">s_max</code> でも牽引力が足りない角は <code style="color:#22d3bf">feasible = False</code>・<code style="color:#22d3bf">slip = nan</code>(立ち往生)、下りで <code style="color:#22d3bf">s_min</code> でも止まれない角も同じ。既定の重力は火星 3.72 m/s²。返り値 <code style="color:#22d3bf">{&quot;slope&quot;, &quot;slip&quot;, &quot;sinkage&quot;, &quot;feasible&quot;, &quot;max_slope&quot;}</code>(<code style="color:#22d3bf">max_slope</code> は登れる最大の角の内挿 [deg]、範囲内に限界が無ければ nan)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

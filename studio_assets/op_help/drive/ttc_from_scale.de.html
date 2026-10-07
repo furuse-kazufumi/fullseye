@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">scalar</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_from_scale(w0: &#x27;float&#x27;, w1: &#x27;float&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.ttc_from_scale(w0: &#x27;float&#x27;, w1: &#x27;float&#x27;, dt: &#x27;float&#x27;) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;ttc_from_scale&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>見かけの大きさの変化から τ(秒、最初のコマの時刻で): <code style="color:#22d3bf">τ₀ = Δt · w₁ / (w₁ − w₀)</code>。</p>
+<p>τ (Sekunden, zum Zeitpunkt des ersten Frames) aus der Änderung der scheinbaren Größe: <code style="color:#22d3bf">τ₀ = Δt · w₁ / (w₁ − w₀)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>像の幅は奥行きに反比例(<code style="color:#22d3bf">w ∝ 1/Z</code>)なので <code style="color:#22d3bf">w₀/w₁ = Z₁/Z₀</code> → <code style="color:#22d3bf">τ₀ = Z₀ Δt / (Z₀ − Z₁) = Δt / (1 − w₀/w₁)</code>。Lee の <code style="color:#22d3bf">θ/θ̇</code> を前進差分にした <code style="color:#22d3bf">Δt · w₀ / (w₁ − w₀)</code> は 2 コマ目の τ で、ちょうど Δt 小さい。大きくならなければ(<code style="color:#22d3bf">w₁ ≤ w₀</code>)<code style="color:#22d3bf">inf</code>。幅は正でなければ <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

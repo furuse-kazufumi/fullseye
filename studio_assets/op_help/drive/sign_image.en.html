@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">rgba</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import roadjp; roadjp.sign_image(kind: &#x27;str&#x27;, *, size_px: &#x27;int&#x27; = 128, value=None, font_path=None, side: &#x27;float | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;sign_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>標識の絵を RGBA float (H, W, 4) ∈ [0,1] で返す(板の外 = alpha 0)。幅 = <code style="color:#22d3bf">size_px</code>、高さは形の比。</p>
+<p>Returns a picture of the road sign as RGBA float (H, W, 4) ∈ [0,1] (outside the plate = alpha 0). Width = <code style="color:#22d3bf">size_px</code>; the height follows the shape&#x27;s aspect ratio.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>形と色(規格の配色、記号は単純化):</p>
 <p style="margin:2px 0 2px 12px">• stop: 逆三角形・赤地・白の「止まれ」+ 下に小さく「STOP」。 slow: 逆三角形・白地・赤枠・青の「徐行」+「SLOW」。</p>
 <p style="margin:2px 0 2px 12px">• speed_limit: 円・白地・赤枠・青の数字(<code style="color:#22d3bf">value</code>、既定 40)。 no_entry: 円・赤地・白の横棒。</p>

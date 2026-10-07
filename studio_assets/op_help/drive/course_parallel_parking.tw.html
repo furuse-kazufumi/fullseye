@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecourse; drivecourse.course_parallel_parking(car_length=4.5, car_width=1.8, extra=3.0, road_width=7.0, approach=5.0, side=&#x27;left&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;course_parallel_parking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>縦列駐車: 幅 <code style="color:#22d3bf">road_width</code> の道路(x ∈ [0, 2·approach + bay_length])の路側に、長さ car_length + extra (既定 7.5 m)× 幅 car_width の車室。<b>法令に数値なし(通達の別添は図)</b> —— 既定は慣行値。</p>
+<p>路邊停車：在寬 <code style="color:#22d3bf">road_width</code> 的道路(x ∈ [0, 2·approach + bay_length])路側設長 car_length + extra(預設 7.5 m)× 寬 car_width 的車位。<b>法規中無數值(通函的附件為圖)</b> —— 預設值為慣例值。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>左側通行に合わせ <code style="color:#22d3bf">side=&quot;left&quot;</code>(+y)が既定、<code style="color:#22d3bf">&quot;right&quot;</code> で鏡映。<code style="color:#22d3bf">bay</code> = (x0, x1, y0, y1)。面積 = 道路 + 車室(すみ切りなし)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 寸法が正でない、extra &lt; 0、side が left/right でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

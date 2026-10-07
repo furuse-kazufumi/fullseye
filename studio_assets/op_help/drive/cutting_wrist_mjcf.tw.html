@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cutting_wrist_mjcf(scene=None, theta_deg: &#x27;float&#x27; = 4.0, k_n_per_mm: &#x27;float&#x27; = 4.0, damping: &#x27;float&#x27; = 25.0, mass: &#x27;float&#x27; = 0.15) -&gt; &#x27;str&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cutting_wrist_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>柔らかい手首の刃の場面(MJCF 文字列、mujoco 不要)。刃は縦のスライド関節(ばね <code style="color:#22d3bf">k</code>・減衰)1 本、食材と板は見た目だけ。</p>
+<p>柔順腕部的刀刃場景(MJCF 字串，不需要 mujoco)。刀刃有 1 個垂直滑動關節(彈簧 <code style="color:#22d3bf">k</code>、阻尼)，食材與砧板僅供顯示。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>カメラ <code style="color:#22d3bf">face</code> は正射影で、画素の寸法と <code style="color:#22d3bf">board_row</code> が <code style="color:#22d3bf">cutting_face_render</code> と同じになるよう置く。画像の中心は画素中心で数えて ((H−1)/2, (W−1)/2)(H/2 と書くと 0.5 px ずれる)。関節の摩擦損失は硬くしてある(既定の柔らかい摩擦損失は速度に比例する粘性のように振る舞い、切断力が 1 桁小さく出る)。食材の抵抗は走行中に関節の摩擦損失として毎歩書き換える(<code style="color:#22d3bf">cutting_mujoco_wrist</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

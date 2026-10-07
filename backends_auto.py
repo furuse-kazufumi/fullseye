@@ -1185,6 +1185,9 @@ def _sh_img_feat(p):
 
     def fn(v, a, b):
         x = np.clip(np.asarray(v, np.float64), 0, 1)
+        if x.size == 0 and metric in ("mean", "std", "median", "area_gray", "noise_est"):
+            # ★2026-10-07: 0 画素の平均・標準偏差は 0/0(NaN を guard が置き換えていた)
+            raise ValueError("img_feat %s: empty image (0 pixels) — the statistic is 0/0" % metric)
         if metric == "min":
             return np.float64(x.min())
         if metric == "max":

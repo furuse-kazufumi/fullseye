@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.insertion_grid_summary(rows) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_grid_summary&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>成功率の格子を集計する: 行 = {eps_mm, tilt_deg, correct, success} の列から、補正あり/なし × ε₀ × θ₀ の成功率の表と、「補正なしで全部成功する最大の ε₀」「補正ありの成功数 / 総数」。</p>
+<p>汇总成功率网格：由行 = {eps_mm, tilt_deg, correct, success} 的序列，得到 有/无校正 × ε₀ × θ₀ 的成功率表，以及“无校正时全部成功的最大 ε₀”和“有校正时的成功数 / 总数”。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">eps_mm</code>・<code style="color:#22d3bf">tilt_deg</code>(軸)、<code style="color:#22d3bf">rate</code>: {False: (n_eps, n_tilt) の配列, True: 同}、<code style="color:#22d3bf">n_runs</code>、<code style="color:#22d3bf">max_eps_all_ok</code>:</p>
 <p>{correct: その補正で全 θ₀ が成功する最大の ε₀(無ければ None)}、<code style="color:#22d3bf">success_count</code>: {correct: (成功数, 総数)}。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 行が空、鍵が欠ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

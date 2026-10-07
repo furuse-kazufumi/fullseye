@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.vision_boundary_flip(kp, eps_true, sigma: &#x27;float&#x27;, n: &#x27;int&#x27; = 2000, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;vision_boundary_flip&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>「どこで壊れるか」: 真のずれ ε に標準偏差 σ の計測雑音を足したとき、offset の欄(small/large、境目 W + c_r)が真と<b>反転する</b> 確率を各 ε で数える(numpy だけ)。境目から σ の何倍離れているか(<code style="color:#22d3bf">z</code>)と理論値 Φ(−|z|) も返す(雑音が正規なら一致する門)。</p>
+<p>“在哪里失效”：在真实偏移 ε 上叠加标准差为 σ 的测量噪声时，按各 ε 统计 offset 栏(small/large，边界 W + c_r)与真值<b>相反</b>的概率(仅用 numpy)。还返回距边界有几倍 σ(<code style="color:#22d3bf">z</code>)以及理论值 Φ(−|z|)(噪声为正态时二者一致的门禁)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>返り: <code style="color:#22d3bf">eps</code>(m)、<code style="color:#22d3bf">flip_rate</code>、<code style="color:#22d3bf">z</code> = (|ε| − eps_max)/σ、<code style="color:#22d3bf">flip_theory</code> = Φ(−|z|)、<code style="color:#22d3bf">eps_max</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: σ ≤ 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

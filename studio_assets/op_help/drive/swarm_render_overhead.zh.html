@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × any × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import swarmflow; swarmflow.swarm_render_overhead(points, shape, res: &#x27;float&#x27;, center=(0.0, 0.0), diameter_px: &#x27;float&#x27; = 3.0, intensity: &#x27;float&#x27; = 1.0, background: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_render_overhead&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>個体の位置 → 上から見た 1 コマ(ガウスの輝点、直径 = 標準偏差の 2 倍 = PIV の慣行、pivops と同じ)。</p>
+<p>个体位置 → 俯视的 1 帧(高斯亮点，直径 = 标准差的 2 倍 = PIV 惯例，与 pivops 相同)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
 <p>points: (N, 2) の位置 [m] (空でもよい = 背景だけ)。</p>
 <p>shape: (H, W) [px]。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crossing_clear_time(stop_to_edge: &#x27;float&#x27;, crossing_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, beyond: &#x27;float&#x27; = 0.5, accel: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, v0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivecrossing; drivecrossing.crossing_clear_time(stop_to_edge: &#x27;float&#x27;, crossing_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, beyond: &#x27;float&#x27; = 0.5, accel: &#x27;float&#x27;, v_max: &#x27;Optional[float]&#x27; = None, v0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;crossing_clear_time&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>停止線から発進して、車の後端が踏切の向こうの端 + <code style="color:#22d3bf">beyond</code> を越えるまでの時間(閉形式)。</p>
+<p>從停止線起步，到車尾越過平交道對側邊緣 + <code style="color:#22d3bf">beyond</code> 為止的時間(閉合式)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>距離 D = stop_to_edge + crossing_length + car_length + beyond(車の位置は前端)。一定の加速度 <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速して巡航(教則 6-1-1(5)「変速しないで一気に」= 途中で止まらない)。</p>
 <p>返り値: <code style="color:#22d3bf">distance</code>、<code style="color:#22d3bf">time</code>、<code style="color:#22d3bf">t_on_track</code>(前端が線路の手前の端に着く時刻)、<code style="color:#22d3bf">v_exit</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

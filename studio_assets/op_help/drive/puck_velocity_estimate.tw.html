@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import puck; puck.puck_velocity_estimate(t, xy, table: &#x27;dict&#x27;, *, model: &#x27;str&#x27; = &#x27;coulomb&#x27;, t_ref=None, iters: &#x27;int&#x27; = 3) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;puck_velocity_estimate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>N 点の位置から速度を最小二乗で: 向き û を固定した等減速模型 p(τ) = p_ref + v_ref τ − ½ μg τ² û(τ = t − t_ref)。</p>
+<p>由 N 個點的位置以最小平方求速度：固定方向 û 的等減速模型 p(τ) = p_ref + v_ref τ − ½ μg τ² û(τ = t − t_ref)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>û は v_ref から取るので 3 回反復(初期値 = 端点の差)。&quot;viscous&quot; は基底 (1 − e^{−kτ})/k で線形、&quot;none&quot; は直線。</p>
 <p>雑音の見積り: 残差から σ_pos、(AᵀA)⁻¹ から v_ref の分散(<code style="color:#22d3bf">sigma_v</code>、等方)。返り値 <code style="color:#22d3bf">{&quot;p_ref&quot;,&quot;v_ref&quot;,&quot;speed&quot;,&quot;u&quot;,&quot;t_ref&quot;,&quot;sigma_pos&quot;,&quot;sigma_v&quot;,&quot;sigma_p&quot;,&quot;resid_rms&quot;,&quot;n&quot;,&quot;model&quot;}</code>。N &lt; 3 は ValueError。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

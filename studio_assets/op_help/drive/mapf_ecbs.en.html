@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.mapf_ecbs(grid, starts, goals, w=1.2, max_nodes=50000, horizon=None)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;mapf_ecbs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>上段を焦点探索にした CBS(ECBS の上段と同じ考え方、Barer ら 2014)。総コストが <b>最適の w 倍以内</b>。</p>
+<p>CBS with focal search at the high level (the same idea as the high level of ECBS, Barer et al. 2014). Sum of costs is <b>within w times the optimum</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>開いている節のうち最小の総コスト <code style="color:#22d3bf">LB</code> は最適値以下(最適解はどれかの節の下にある)。そこで <code style="color:#22d3bf">コスト ≤ w · LB</code> の節(焦点)の中から<b>衝突の少ない</b>ものを展開する。返す計画は <code style="color:#22d3bf">cost ≤ w · LB ≤ w · 最適</code>(門)。返りは <code style="color:#22d3bf">mapf_cbs</code> の dict に <code style="color:#22d3bf">lower_bound</code> と <code style="color:#22d3bf">w</code> を足したもの。細い通路で最適の CBS が同じ長さの譲り合いの組を全部調べて止まるのを、衝突の少ない側へ寄せて抜ける。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

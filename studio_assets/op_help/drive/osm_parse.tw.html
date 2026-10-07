@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivejapan; drivejapan.osm_parse(source, *, origin=None) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;osm_parse&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>OSM XML(文字列かファイルパス)を読み、節点を局所平面座標 [m] に落とす。</p>
+<p>讀取 OSM XML(字串或檔案路徑)，把節點轉換到局部平面座標 [m]。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;origin&quot;: (lat0, lon0), &quot;nodes&quot;: {id: {&quot;xy&quot;: (x, y), &quot;lat&quot;, &quot;lon&quot;, &quot;tags&quot;: {}}}, &quot;ways&quot;: [{&quot;id&quot;, &quot;nodes&quot;: [id], &quot;tags&quot;: {}}], &quot;bbox&quot;: (xmin, xmax, ymin, ymax)(</code>&lt;bounds&gt;<code style="color:#22d3bf"> があればそれ、無ければ節点の範囲), &quot;n_nodes&quot;, &quot;n_ways&quot;}</code>。origin が None なら <code style="color:#22d3bf">&lt;bounds&gt;</code> の中心(無ければ節点の平均)。<code style="color:#22d3bf">&lt;nd ref&gt;</code> が未知の節点を指す way はその節点を落とす(件数を <code style="color:#22d3bf">n_dangling</code> に)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: XML でない、<code style="color:#22d3bf">&lt;osm&gt;</code> でない、節点が 1 つも無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

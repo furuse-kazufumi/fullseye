@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code> (to call the implementation directly, <code style="color:#22d3bf">import pxrd; pxrd.detector_calibrate(image, d_spacings, geometry_guess, n_azimuth=180, fit_tilt=True, min_rings=2)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;detector_calibrate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>既知の標準(Si など)の環から検出器の中心・距離・傾きを較正する。</p>
+<p>Calibrates the detector center, distance and tilt from the rings of a known standard (such as Si).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">d_spacings</code> は標準の面間隔 [Å] の list(強い順でなくてよい)、<code style="color:#22d3bf">geometry_guess</code> には少なくとも <code style="color:#22d3bf">pixel</code> と</p>
 <p><code style="color:#22d3bf">wavelength</code>、分かっていれば <code style="color:#22d3bf">cx</code>・<code style="color:#22d3bf">cy</code>・<code style="color:#22d3bf">distance</code>・<code style="color:#22d3bf">tilt</code>・<code style="color:#22d3bf">tilt_dir</code> を入れる。手順:</p>
 <p style="margin:2px 0 2px 12px">1. 中心が無ければ明るい画素の重心から始め、最も強い環を光線に沿って拾い、円の当てはめで中心を 3 回更新する。</p>

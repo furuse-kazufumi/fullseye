@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.friction_circle_usage(ax, ay, *, mu: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;friction_circle_usage&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>摩擦円の使用率 √(a_x² + a_y²) / (μ g)(1 を超えたら摩擦円の外 = タイヤが路面から受けられる力を超える)。</p>
+<p>Ausnutzung des Kammschen Kreises √(a_x² + a_y²) / (μ g) (über 1 = außerhalb des Kammschen Kreises = übersteigt die Kraft, die die Reifen von der Fahrbahn aufnehmen können).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">ax</code>, <code style="color:#22d3bf">ay</code>: 縦・横の加速度 [m/s²] (同じ形、または放送できる形)。<code style="color:#22d3bf">mu</code>: 路面とタイヤの摩擦係数(&gt; 0)。</p>
 <p>返り値: 使用率の配列(入力と同じ形)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 非有限、μ ≤ 0、g ≤ 0。</p>

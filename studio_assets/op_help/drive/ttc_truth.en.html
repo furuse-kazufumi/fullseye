@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivettc; drivettc.ttc_truth(depth, K, T_rel, dt: &#x27;float&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;ttc_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画素ごとの <b>真の τ</b>(秒、最初のコマの時刻で)と閉じる速さ: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>。</p>
+<p>Per-pixel <b>ground-truth τ</b> (seconds, at the time of the first frame) and closing speed: <code style="color:#22d3bf">{&quot;tau&quot;, &quot;closing_speed&quot;, &quot;depth1&quot;, &quot;valid&quot;}</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">τ₀ = Z₀ · Δt / (Z₀ − Z₁)</code>(Lee 1976 の <code style="color:#22d3bf">Z / (−Ż)</code> を 2 コマの差分で。等速なら厳密)。近づかない画素(<code style="color:#22d3bf">Z₁ ≥ Z₀</code>)は <code style="color:#22d3bf">inf</code>。<code style="color:#22d3bf">closing_speed = (Z₀ − Z₁) / Δt</code>(m/s、正 = 近づく)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

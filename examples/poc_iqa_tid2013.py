@@ -29,7 +29,7 @@ MOS との順位相関表(PSNR 0.640 / 0.470、SSIM 0.637 / 0.464、FSIMc 0.851 
 表には公表値だけを載せる。MS-SSIM は作者値(Metrix MUX)と 0.004 までしか合わず門にしない。画像と MOS は **repo に入れない**(配布条件は
 教育・研究目的のみ、改変版の再配布は著者許可)。実データの門は FULLSEYE_TID2013_DATA があるときだけで、CI では合成の門だけ走る。
 3,000 組の所要は約 2 分(PSNR 2 回 + SSIM 1 回 + BMP 読み、Windows・1 コア)。
-Run: set FULLSEYE_TID2013_DATA=C:\\dev\\data\\tid2013\\tid2013 & py -3.11 examples/poc_iqa_tid2013.py
+Run: set FULLSEYE_TID2013_DATA=<TID2013 の展開先>\\tid2013 & py -3.11 examples/poc_iqa_tid2013.py
 """
 from __future__ import annotations
 

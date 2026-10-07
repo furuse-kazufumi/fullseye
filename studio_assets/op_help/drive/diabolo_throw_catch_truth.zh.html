@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_throw_catch_truth(p0, v0, sticks, params: &#x27;dict&#x27;, *, t_min: &#x27;float&#x27; = 0.0, t_max: &#x27;float&#x27; = 5.0, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_throw_catch_truth(p0, v0, sticks, params: &#x27;dict&#x27;, *, t_min: &#x27;float&#x27; = 0.0, t_max: &#x27;float&#x27; = 5.0, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_throw_catch_truth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>放した状態 (p0, v0) からの放物線(閉形式)が、頂点の後で、受けの棒 <code style="color:#22d3bf">sticks</code>(固定の (2, 3))に対して「棒を結ぶ面より下かつ s &lt; c_F」に入る最初の時刻(論文の FLYING → ON_STRING の条件 + 面の規則。張りつめは呼び手が確かめる)。</p>
+<p>从放开状态 (p0, v0) 出发的抛物线(闭式)在过了最高点之后，相对接球的棍 <code style="color:#22d3bf">sticks</code>(固定的 (2, 3))首次进入“低于连接两棍的平面 且 s &lt; c_F”的时刻(论文的 FLYING → ON_STRING 条件 + 平面规则。绳是否张紧由调用方确认)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>頂点 t_apex = v_z/g、高さ v_z²/(2g) も返す。根は <code style="color:#22d3bf">n_grid</code> 点の格子で符号の変化を見つけ、二分法(80 回)で詰める。受けが無ければ t_catch = NaN。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形、t_max ≤ t_min、n_grid &lt; 3。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

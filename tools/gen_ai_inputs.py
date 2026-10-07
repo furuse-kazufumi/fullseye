@@ -17,7 +17,9 @@
   載っている画像だけを使う(拾い食いしない)。
 - 提供元は 2 つ: OpenAI(``OPENAI_API_KEY``、``gpt-image-1``)→ 使えなければ
   Google Gemini(``GEMINI_API_KEY``、``gemini-2.5-flash-image``)。どちらを使ったかは
-  来歴に残る。キーは ``D:/api-keys.json`` / ``C:/dev/api-keys.json`` から読み、
+  来歴に残る。キーは環境変数(``OPENAI_API_KEY`` / ``GEMINI_API_KEY``)、無ければ
+  ``FULLSEYE_API_KEYS`` が指す JSON、無ければ repo の 2 つ上のディレクトリの
+  ``api-keys.json`` から読み、
   ログにも出力にも出さない。2026-09-07 の初回は OpenAI 側が残高切れ(429
   ``credit_balance_exhausted``)で Gemini を使った。
 - 画像は 256×256 のグレー(``.png``)とカラー(``.color.png``)の 2 通りを保存する。
@@ -59,13 +61,17 @@ GEMINI_MODEL = "gemini-2.5-flash-image"
 
 
 def _key(name: str = "OPENAI_API_KEY") -> str:
-    for p in (r"D:/api-keys.json", r"C:/dev/api-keys.json"):
-        if os.path.exists(p):
+    env = os.environ.get(name, "")
+    if env:
+        return env
+    for p in (os.environ.get("FULLSEYE_API_KEYS", ""),
+              os.path.join(os.path.dirname(os.path.dirname(_ROOT)), "api-keys.json")):
+        if p and os.path.exists(p):
             with open(p, encoding="utf-8") as f:
                 k = json.load(f).get(name)
             if k:
                 return k
-    raise SystemExit("%s が見つからない(D:/api-keys.json)" % name)
+    raise SystemExit("%s が見つからない(環境変数 / FULLSEYE_API_KEYS / api-keys.json)" % name)
 
 
 def _generate_gemini(prompt: str, key: str) -> bytes:

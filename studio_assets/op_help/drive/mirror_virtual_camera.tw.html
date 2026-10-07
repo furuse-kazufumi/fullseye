@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivedecide; drivedecide.mirror_virtual_camera(cam_pose, mirror_plane) -&gt; &#x27;Dict[str, object]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;mirror_virtual_camera&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>平面鏡に映る像を撮る <b>仮想カメラ</b>。</p>
+<p>拍攝平面鏡中映像的<b>虛擬相機</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">cam_pose</code> は world→camera の 4×4(<code style="color:#22d3bf">render3d.look_at</code> の規約: X_cam = P X、−Z 前方)。<code style="color:#22d3bf">mirror_plane</code> は(n_x, n_y, n_z, d)(n·X = d)。</p>
 <p>返り値(dict):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">reflection</code>: 折り返し S(<code style="color:#22d3bf">mirror_reflection_matrix</code>)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import tacsim; tacsim.hertz_surface_uz(r, a: &#x27;float&#x27;, delta: &#x27;float&#x27;, R: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;hertz_surface_uz&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Hertz 球接触の半空間表面の法線変位 ū_z(r)(沈む量 ≥ 0、r と同じ形の配列)。</p>
+<p>Hertz 球接觸中半空間表面的法向位移 ū_z(r)(下沉量 ≥ 0，與 r 同形狀的陣列)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>内側 r ≤ a: δ − r²/(2R)。外側: (1/πR)[(2a² − r²) arcsin(a/r) + a r √(1 − a²/r²)] (Johnson 式 3.42a)。r = a で δ/2 に連続。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: a, δ, R ≤ 0、a² と Rδ が 1 % 以上食い違う(Hertz でない組)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

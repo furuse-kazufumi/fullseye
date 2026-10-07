@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_vacuum(p0, v0, t, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import ballistics; ballistics.flight_vacuum(p0, v0, t, g: &#x27;float&#x27; = 9.81) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;flight_vacuum&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>真空の放物線(閉形式): p(t) = p₀ + v₀ t − ½ g t² ẑ。<code style="color:#22d3bf">t</code> はスカラか (N,)、返り値 (3,) か (N, 3)。</p>
+<p>真空中的拋物線(閉合式)：p(t) = p₀ + v₀ t − ½ g t² ẑ。<code style="color:#22d3bf">t</code> 為純量或 (N,)，回傳值為 (3,) 或 (N, 3)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

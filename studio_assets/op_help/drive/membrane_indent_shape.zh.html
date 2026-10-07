@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">text × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.membrane_indent_shape(shape: &#x27;str&#x27;, depth: &#x27;float&#x27;, n: &#x27;int&#x27; = 128, fov: &#x27;float&#x27; = 0.006, R: &#x27;float&#x27; = 0.003, edge_deg: &#x27;float&#x27; = 30.0, tip_radius: &#x27;float&#x27; = 0.0003, size: &#x27;float&#x27; = 0.002) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_indent_shape&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>既知形状の剛体を深さ <code style="color:#22d3bf">depth</code> だけ押し込んだゲル膜の高さ場を<b>幾何学的な追従</b>で作る: h = −max(0, depth − z_ind(x, y))。</p>
+<p>以<b>几何贴合</b>生成已知形状刚体压入 <code style="color:#22d3bf">depth</code> 深度后的凝胶膜高度场：h = −max(0, depth − z_ind(x, y))。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>弾性の裾(Hertz の外側解)は入れない —— 球は <code style="color:#22d3bf">membrane_indent_sphere</code> が Hertz で正確に作るので、こちらは円柱・直線エッジ・スタンプのように閉形式の裾が無い形を<b>同じ流儀で</b>並べるための道具。<code style="color:#22d3bf">shape</code>:</p>
 <p><code style="color:#22d3bf">&quot;sphere&quot;</code>(半径 R の球冠 z = R − √(R² − r²))、<code style="color:#22d3bf">&quot;cylinder&quot;</code>(軸は y、z = R − √(R² − x²))、<code style="color:#22d3bf">&quot;edge&quot;</code>(直線エッジ:</p>
 <p>先端半径 tip_radius で丸めた角 edge_deg のくさび z = (√(x² + ρ²) − ρ) tan α)、<code style="color:#22d3bf">&quot;stamp&quot;</code>(一辺 size の &quot;F&quot; 字の平らなスタンプ、外側は距離 × tan 60° で立ち上がる)。法線は <code style="color:#22d3bf">photometric.surface_normals</code>(h/pitch)で取る(第 2 実装)。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × scalar</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tone_map(radiance, exposure: &#x27;float&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import driveenv; driveenv.tone_map(radiance, exposure: &#x27;float&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tone_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>HDR カメラの色を保つ階調の圧縮: m = 各画素の最大チャンネル × exposure、表示 = 輝度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 では線形、明るい所は 1 に漸近(色の比 = 色度は変えない。飽和で灯火が白くならない、仮定: 車載の HDR カメラ)。</p>
+<p>保持颜色的 HDR 相机阶调压缩: m = 各像素最大通道 × exposure，显示 = 亮度 × exposure × (1 + m/4)/(1 + m) —— m ≪ 1 时为线性，亮处渐近于 1(颜色比 = 色度不变。灯光不会因饱和而变白，假定: 车载 HDR 相机)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

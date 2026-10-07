@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_simulate(obstacle=None, speed: &#x27;float&#x27; = 1.0, box=(8.0, 5.0), spacing: &#x27;float&#x27; = 0.15, h_factor: &#x27;float&#x27; = 1.3, tau: &#x27;float&#x27; = 0.1, c: &#x27;float&#x27; = 10.0, alpha: &#x27;float&#x27; = 0.5, t_warm: &#x27;float&#x27; = 2.0, n_frames: &#x27;int&#x27; = 20, frame_dt: &#x27;float&#x27; = 0.06, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_simulate(obstacle=None, speed: &#x27;float&#x27; = 1.0, box=(8.0, 5.0), spacing: &#x27;float&#x27; = 0.15, h_factor: &#x27;float&#x27; = 1.3, tau: &#x27;float&#x27; = 0.1, c: &#x27;float&#x27; = 10.0, alpha: &#x27;float&#x27; = 0.5, t_warm: &#x27;float&#x27; = 2.0, n_frames: &#x27;int&#x27; = 20, frame_dt: &#x27;float&#x27; = 0.06, noise: &#x27;float&#x27; = 0.0, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>障害物のある周期の流路を流れる群れ(SPH の弱圧縮流体として動く個体)。障害物は個体には「ぶつかる壁」として効くだけ。</p>
+<p>장애물이 있는 주기적 유로를 흐르는 무리(SPH 약압축성 유체로 움직이는 개체). 장애물은 개체에게 &quot;부딪히는 벽&quot;으로만 작용합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>個体 i の加速度 = (U e_x − v_i)/τ(自由流の速さへ戻る)− Σ_j m (p_i/ρ_i² + p_j/ρ_j²) ∇W_ij(圧力 = 押し合い) − Σ_j m Π_ij ∇W_ij(Monaghan の人工粘性、近づく組だけ)+ 揺らぎ(標準偏差 <code style="color:#22d3bf">noise</code> [m/s²] の白色)。</p>
 <p>壁: 円の内側に入った個体は表面へ戻し、内向きの速度だけ消す(滑る壁)。周期境界(x も y も)。積分は symplectic Euler、刻みは CFL 0.25 h/(c + U)。U τ ≪ R・c ≫ U のとき定常の流れは円柱まわりのポテンシャル流に近い(module docstring の導出)。</p>
 <p>Args:</p>

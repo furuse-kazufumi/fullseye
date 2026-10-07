@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import roverslip; roverslip.wheel_forces(sinkage, slip, wheel, soil, n_quad: &#x27;int&#x27; = 96) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;wheel_forces&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>沈下 z [m] と滑り率 s で、剛な車輪が土から受ける力(Wong–Reece の応力分布の数値積分)。</p>
+<p>Kräfte, die ein starres Rad bei Einsinkung z [m] und Schlupf s vom Boden erfährt (numerische Integration der Spannungsverteilung nach Wong–Reece).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;Fz&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;theta_f&quot;, &quot;theta_m&quot;, &quot;theta_r&quot;}</code>: 垂直力 [N]、牽引力(drawbar pull、前向き正)[N]、駆動トルク [N·m]、角 [rad]。<code style="color:#22d3bf">sinkage</code>・<code style="color:#22d3bf">slip</code> はスカラーか同じ形に放送できる配列(0 ≤ z &lt; r、−1 &lt; s &lt; 1)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

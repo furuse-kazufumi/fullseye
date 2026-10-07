@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.conflict_zone_intervals(dist_to_zone, zone_length: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, v0: &#x27;float&#x27;, accel: &#x27;float&#x27; = 0.0, v_max: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;conflict_zone_intervals&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>衝突の領域(交差点の中で 2 つの進路が重なる所)を車が占める時刻 [t_in, t_out] (閉形式、配列可)。</p>
+<p>Zeitpunkte [t_in, t_out], in denen ein Fahrzeug die Konfliktzone (Bereich in der Kreuzung, in dem sich 2 Fahrwege überlappen) belegt (geschlossene Form, Arrays möglich).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>前端が dist_to_zone 進むと入り、前端が dist_to_zone + zone_length + car_length 進むと後端が出る。初速 v0 から <code style="color:#22d3bf">accel</code> で <code style="color:#22d3bf">v_max</code> まで加速(accel = 0 なら一定の速さ)。既に領域に入っている(dist_to_zone &lt; 0)場合は t_in = 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

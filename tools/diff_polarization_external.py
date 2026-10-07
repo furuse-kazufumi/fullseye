@@ -16,7 +16,7 @@ import os
 import sys
 import numpy as np
 
-sys.path.insert(0, r"C:\dev\projects\imgevolve")
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import optics as O          # noqa: E402
 import specularity as S     # noqa: E402
 import pypolar.mueller as pm  # noqa: E402

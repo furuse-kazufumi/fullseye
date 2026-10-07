@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivetraffic; drivetraffic.poisson_events(rate_fn: &#x27;Callable&#x27;, x_max: &#x27;float&#x27;, *, rate_max: &#x27;float&#x27;, seed, n_grid: &#x27;int&#x27; = 2001) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;poisson_events&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>[0, x_max] の非一様ポアソン過程を thinning(Lewis &amp; Shedler 1979)で 1 本引く(昇順の位置の配列)。</p>
+<p>Draws 1 realization of an inhomogeneous Poisson process on [0, x_max] by thinning (Lewis &amp; Shedler 1979) (an array of positions in ascending order).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>率 rate_max の一様ポアソン過程の候補を引き、各候補 x を確率 λ(x)/rate_max で残す。残った点は率 λ の非一様ポアソン過程 → 件数 N ~ Poisson(Λ)、Λ = ∫₀^{x_max} λ(x) dx(門: 多数の試行で平均 = 分散 = Λ、位置の分布 = λ/Λ)。<code style="color:#22d3bf">rate_fn</code> は numpy 配列を受けて同じ形の率を返す関数。<b>引く前に</b> <code style="color:#22d3bf">n_grid</code> 点の等間隔格子で λ ≤ rate_max を確かめ、引いた候補の所でも確かめる。どちらかで超えれば ValueError(fail-closed。上限を守らないと thinning は静かに少なく数える)。<code style="color:#22d3bf">seed</code> は int か <code style="color:#22d3bf">np.random.Generator</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

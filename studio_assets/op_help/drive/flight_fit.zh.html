@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × points × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import ballistics; ballistics.flight_fit(t, p, omega, bp: &#x27;dict&#x27;, *, iters: &#x27;int&#x27; = 12, dt: &#x27;float&#x27; = 0.001) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;flight_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>観測 (t_i, p_i)(跳ねを含まない区間)に、抗力 + マグヌス(ω 既知)の運動方程式を <b>初期状態 (p₀, v₀) の 6 パラメータ</b> で Gauss–Newton(有限差分のヤコビアン)で当てる。放物線の当てはめは抗力・マグヌスを g と v₀ に吸うので予測が曲がる —— こちらは先駆者の「空力モデルつきの追跡」に当たる。返り値 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;rms&quot;, &quot;iters&quot;, &quot;t0&quot;}</code>(p₀・v₀ は t = t[0] での状態)。真値の軌跡を入れると 1e-9 で戻る(門)。</p>
+<p>以 <b>初始状态 (p₀, v₀) 的 6 个参数</b>，用 Gauss–Newton(有限差分雅可比)将含阻力 + 马格努斯(ω 已知)的运动方程拟合到观测 (t_i, p_i)(不含弹跳的区间)。抛物线拟合会把阻力、马格努斯吸收进 g 与 v₀，使预测偏弯 —— 本函数相当于先行者的“带空气动力模型的追踪”。返回值 <code style="color:#22d3bf">{&quot;p0&quot;, &quot;v0&quot;, &quot;rms&quot;, &quot;iters&quot;, &quot;t0&quot;}</code>(p₀、v₀ 为 t = t[0] 时的状态)。输入真值轨迹时可在 1e-9 内还原(门禁)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

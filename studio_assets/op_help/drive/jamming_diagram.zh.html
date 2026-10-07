@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsim; pegsim.jamming_diagram(kp, depth: &#x27;float&#x27;, fx_over_fz: &#x27;float | None&#x27; = None, m_over_rfz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;jamming_diagram&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>かじり(jamming)の図(OCW p.34): 二点接触の深さ l [m] で、加える力の比 (F_x/F_z, M/(rF_z)) が進める領域の平行四辺形。</p>
+<p>卡死(jamming)图(OCW p.34)：在两点接触深度 l [m] 下，施加力之比 (F_x/F_z, M/(rF_z)) 能使插入推进的区域(平行四边形)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>λ = l/(2rμ)。頂点は (−1/μ, 2λ+1), (1/μ, −1), (1/μ, −(2λ+1)), (−1/μ, 1)、縦軸の切片 ±λ、縦辺は F_x/F_z = ±1/μ。深さが増える(λ が増える)と縦に広がり、かじりにくくなる。<code style="color:#22d3bf">fx_over_fz</code> と <code style="color:#22d3bf">m_over_rfz</code> を与えると <code style="color:#22d3bf">inside</code>(内側なら進む)と <code style="color:#22d3bf">margin</code>(4 辺の不等式の最小の余裕、負なら外)も返す。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: l &lt; 0、μ ≤ 0(摩擦なしは平行四辺形が無限に広い)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

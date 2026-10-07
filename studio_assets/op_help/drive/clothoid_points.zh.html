@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivelateral; drivelateral.clothoid_points(length: &#x27;float&#x27;, s, *, kappa0: &#x27;float&#x27; = 0.0, kappa1: &#x27;float&#x27; = 0.0, start=(0.0, 0.0), heading0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;clothoid_points&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>曲率が弧長に一次 κ(s) = κ₀ + (κ₁ − κ₀) s / length の曲線(クロソイドの一部。κ₀ = κ₁ なら円弧・直線)の点。</p>
+<p>曲率随弧长线性变化 κ(s) = κ₀ + (κ₁ − κ₀) s / length 的曲线(回旋曲线的一部分；κ₀ = κ₁ 时为圆弧或直线)上的点。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">s</code>: 0 ≤ s ≤ length の弧長(配列)。<code style="color:#22d3bf">start</code>・<code style="color:#22d3bf">heading0</code>: 始点と始点の向き。左へ曲がる曲率を正。クロソイドの部分は標準形(A² = 1/|dκ/ds|)をフレネル積分で写し、始点・向きに合わせて回す(数値積分を使わない)。</p>
 <p>返り値: <code style="color:#22d3bf">points</code> (N, 2)、<code style="color:#22d3bf">heading</code> (N,)、<code style="color:#22d3bf">curvature</code> (N,)、<code style="color:#22d3bf">A</code>(クロソイドのパラメータ、円弧・直線は inf)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: length ≤ 0、s が範囲外、非有限。</p>

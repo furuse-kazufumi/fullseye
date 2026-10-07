@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix × scalar × scalar × scalar</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheres_to_heightmap(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import granular; granular.spheres_to_heightmap(pos, radius: &#x27;float&#x27;, pitch: &#x27;float&#x27;, extent: &#x27;float&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;spheres_to_heightmap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>球の中心列 <code style="color:#22d3bf">pos (n, 3)</code> [m] と半径から、上から見た高さ図(各セルで球面の最大高さ、無ければ 0)。格子は <code style="color:#22d3bf">[-extent, extent]²</code> を <code style="color:#22d3bf">pitch</code> で刻む。</p>
+<p>Höhenkarte in Draufsicht aus den Kugelmittelpunkten <code style="color:#22d3bf">pos (n, 3)</code> [m] und dem Radius (maximale Höhe der Kugeloberflächen je Zelle, sonst 0). Das Gitter unterteilt <code style="color:#22d3bf">[-extent, extent]²</code> mit der Schrittweite <code style="color:#22d3bf">pitch</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

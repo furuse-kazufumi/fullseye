@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.tip_force_ratios(kp, F, M_tip, e_x) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;tip_force_ratios&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>先端の荷重 (F⃗, M⃗) を Whitney の比に: x = F⃗·e_x / F_z、y = M⃗·(e_x × ẑ) / (r F_z)、F_z = −F⃗·ẑ(押し込み正)。F_z ≤ 1e-6 N なら比は None(割れない)。<code style="color:#22d3bf">e_x</code> は水平の単位ベクトル(<code style="color:#22d3bf">jamming_force_check</code> の規約)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: e_x に水平成分が無い。</p>
+<p>将末端载荷 (F⃗, M⃗) 换算为 Whitney 比：x = F⃗·e_x / F_z，y = M⃗·(e_x × ẑ) / (r F_z)，F_z = −F⃗·ẑ(压入为正)。若 F_z ≤ 1e-6 N 则比值为 None(无法相除)。<code style="color:#22d3bf">e_x</code> 为水平单位向量(<code style="color:#22d3bf">jamming_force_check</code> 的约定)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：e_x 没有水平分量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

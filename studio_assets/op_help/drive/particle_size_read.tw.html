@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>レーザー回折の粒度分布 CSV(ヘッダの <code style="color:#22d3bf">key,value</code> 行 + <code style="color:#22d3bf">SizeClasses</code> で始まる表)を読む。</p>
+<p>讀取雷射繞射粒徑分布 CSV(標頭的 <code style="color:#22d3bf">key,value</code> 列 + 以 <code style="color:#22d3bf">SizeClasses</code> 開頭的表)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り: <code style="color:#22d3bf">edges</code> [µm] (表の 1 列目 = 区間の端)、<code style="color:#22d3bf">volume</code>(2 列目 = 端 i と i+1 の間の体積 %)、<code style="color:#22d3bf">header</code> (文字列の dict)、<code style="color:#22d3bf">dx50_reported</code>(ヘッダの <code style="color:#22d3bf">Dx (50)</code>、無ければ None)、<code style="color:#22d3bf">total_percent</code>(体積の総和)、<code style="color:#22d3bf">n_rows</code>。読み込んだパスは返り値に残さない。表が無い・数値でない・最後の行が 0 でない → <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

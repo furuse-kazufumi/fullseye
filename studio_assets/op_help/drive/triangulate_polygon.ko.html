@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveplateau; driveplateau.triangulate_polygon(poly: &#x27;np.ndarray | Sequence[Sequence[float]]&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;triangulate_polygon&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>単純多角形(凸・凹どちらも、自己交差なし)を耳切り法で三角形分割する。</p>
+<p>단순 다각형(볼록·오목 모두, 자기 교차 없음)을 귀 자르기법으로 삼각분할합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>返す三角形は入力頂点の添字 (k-2, 3) で、各三角形は反時計回り(入力が時計回りなら内部で反転して扱い、添字は元の頂点番号で返す)。</p>
 <p>Args:</p>
 <p>poly: (k,2) 頂点列。閉じていなくてよい。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.replicate_compare(groups: &#x27;dict&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import grind; grind.replicate_compare(groups: &#x27;dict&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;replicate_compare&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>独立試行のばらつきと、群(材料)どうしの差を同じ物差しで並べる。</p>
+<p>以同一標尺並列獨立試驗間的離散與各組(材料)之間的差異。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">groups</code>: 名前 → <code style="color:#22d3bf">(n_runs, n_conditions)</code> の配列(例: 材料ごとに 3 回 × 7 時点の D50)。全群で <code style="color:#22d3bf">n_conditions</code> が同じ。<code style="color:#22d3bf">log=True</code> は ln をとってから比べる(径の比のばらつき = 変動係数に近い)。返り: <code style="color:#22d3bf">spread</code>(群 → 条件ごとの <code style="color:#22d3bf">mean</code>・<code style="color:#22d3bf">sd</code>・ <code style="color:#22d3bf">cv</code>(SD/平均、元の尺度)、<code style="color:#22d3bf">cv_pooled</code>(cv の二乗平均の根)、<code style="color:#22d3bf">cv_max</code>)、<code style="color:#22d3bf">separation</code>(群の組 → 条件ごとの <code style="color:#22d3bf">|Δ平均| / √(SE₁² + SE₂²)</code>(SE = SD/√n)と、その最小 <code style="color:#22d3bf">min_z</code>。鍵は <code style="color:#22d3bf">&quot;名前1|名前2&quot;</code> の文字列)。試行が 2 未満 → <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

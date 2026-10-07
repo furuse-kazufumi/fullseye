@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import carlabridge; carlabridge.carla_scene_render(scene, *, lead_asset: &#x27;str&#x27; = &#x27;sedan&#x27;, asset_root=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;carla_scene_render&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>場面記録を自前の世界で撮り直す(同じ K・同じ取り付け高さ・同じ画角)→ driveworld.world_camera の像(<code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">depth</code> …)+ <code style="color:#22d3bf">pose</code> + <code style="color:#22d3bf">K</code>。CARLA の像と<b>並べて</b>見るための片割れ。</p>
+<p>在自建世界中重新拍摄场景记录(相同 K、相同安装高度、相同视场角)→ driveworld.world_camera 的图像 (<code style="color:#22d3bf">color</code> / <code style="color:#22d3bf">label</code> / <code style="color:#22d3bf">depth</code> …) + <code style="color:#22d3bf">pose</code> + <code style="color:#22d3bf">K</code>。用于与 CARLA 图像<b>并排</b>查看的另一半。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

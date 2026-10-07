@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacsim; tacsim.combined_modulus(E1: &#x27;float&#x27;, nu1: &#x27;float&#x27;, E2: &#x27;float | None&#x27; = None, nu2: &#x27;float&#x27; = 0.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;combined_modulus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>複合弾性率 E*: 1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。<code style="color:#22d3bf">E2=None</code> は剛体の押し込み子(第 2 項 0)。</p>
+<p>复合弹性模量 E*：1/E* = (1 − ν1²)/E1 + (1 − ν2²)/E2(Johnson 1985 式 4.9)。<code style="color:#22d3bf">E2=None</code> 表示刚体压头(第 2 项为 0)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: E ≤ 0、|ν| ≥ 1(Poisson 比は (−1, 0.5] が物理的だが上限は見ない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

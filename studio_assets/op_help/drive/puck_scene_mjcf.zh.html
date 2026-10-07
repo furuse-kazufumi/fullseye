@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import puck; puck.puck_scene_mjcf(table: &#x27;dict&#x27;, *, cam_height: &#x27;float&#x27; = 1.5, fovy: &#x27;float&#x27; = 50.0, offwidth: &#x27;int&#x27; = 1024, offheight: &#x27;int&#x27; = 768) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;puck_scene_mjcf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>自前の最小 MJCF(Coulomb 版、mujoco 不要): 摩擦のある平面に円柱のパック(自由関節)、4 枚の壁(箱)、真上カメラ。Challenge の台は粘性減衰なので、Coulomb の等減速を MuJoCo で確かめるにはこちらを使う。壁の反発は軟接触で e は測る。</p>
+<p>自制的最小 MJCF(Coulomb 版，不需要 mujoco)：有摩擦的平面上的圆柱冰球(自由关节)、4 面壁(箱体)、正上方相机。Challenge 的球台是黏性阻尼，因此要在 MuJoCo 中验证 Coulomb 匀减速请用这个。壁的反弹为软接触，e 需测量。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

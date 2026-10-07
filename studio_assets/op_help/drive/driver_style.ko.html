@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import drivetraffic; drivetraffic.driver_style(kind: &#x27;str&#x27;, seed: &#x27;Optional[int]&#x27; = None) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;driver_style&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>運転の癖 3 種(&quot;careful&quot; / &quot;normal&quot; / &quot;sloppy&quot;)の母数を返す。<b>値はすべて仮定</b>(出典なし)。</p>
+<p>운전 성향 3종(&quot;careful&quot; / &quot;normal&quot; / &quot;sloppy&quot;)의 모수를 반환합니다. <b>값은 모두 가정</b>(출처 없음).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>キー: IDM の <code style="color:#22d3bf">v0, T, a, b, s0, delta</code>、<code style="color:#22d3bf">reaction_delay</code> [s]、横ふらつき(OU 過程)の <code style="color:#22d3bf">wobble_theta</code> [1/s] と <code style="color:#22d3bf">wobble_sigma</code> [m/√s] (定常の標準偏差は σ/sqrt(2θ) = 0.05 / 0.11 / 0.28 m)、<code style="color:#22d3bf">speed_noise</code>(希望速度の相対むら)、<code style="color:#22d3bf">length</code> 4.5 m(仮定)、<code style="color:#22d3bf">kind</code>。返り値はそのまま <code style="color:#22d3bf">idm_platoon_simulate</code> の 1 台分に渡せる。</p>
 <p><code style="color:#22d3bf">seed</code> を与えると、主要な値に一様 ±10% の個人差を掛ける(<code style="color:#22d3bf">default_rng(seed)</code> で決定的)。None なら名目値。順序の性質(門): 名目値で careful の T・s0 が最大で反応遅れが最小、sloppy がその逆、ふらつきの定常 SD は careful &lt; normal &lt; sloppy。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 未知の kind。</p>

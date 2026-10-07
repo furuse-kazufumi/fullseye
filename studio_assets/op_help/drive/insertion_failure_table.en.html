@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_table() -&gt; &#x27;list&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_table() -&gt; &#x27;list&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>失敗分類表(データ): 各行 = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code>(欄 → 許す値の集合、<code style="color:#22d3bf">&quot;*&quot;</code> = 何でも), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}。</p>
+<p>Failure classification table (data): each row = {<code style="color:#22d3bf">cls</code>, <code style="color:#22d3bf">when</code> (field → set of allowed values, <code style="color:#22d3bf">&quot;*&quot;</code> = anything), <code style="color:#22d3bf">recovery</code>, <code style="color:#22d3bf">basis</code>}.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>行の根拠(<code style="color:#22d3bf">basis</code>)は Whitney 1982(OCW スライドの頁)か接触形成の幾何。順番に意味は無い —— 署名に当たる行は <b>高々 1 行</b> (<code style="color:#22d3bf">insertion_failure_validate</code> が全ペアで確かめる)。回復プリミティブの語彙は <code style="color:#22d3bf">insertion_recovery_primitive</code>。</p>
 <p>表(接触 / 深さの帯 / 進み / くさび / かじり / ずれ → クラス → 回復):</p>
 <p style="margin:2px 0 2px 12px">• none|plate, above|mouth, stalled, *, *, large → <code style="color:#22d3bf">missed_hole</code> → lift_recentre(先端が面取りに乗れない |ε₀| &gt; W + c_r、導出 (4))</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lead_truth_depth(scene) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import carlabridge; carlabridge.lead_truth_depth(scene) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;lead_truth_depth&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>記録の姿勢から閉形式: 先行車の後ろ面の中心までの<b>像面距離</b> [m]。後ろ面 = 中心 − 半長 × 先行車の前方向、像面距離 = (後ろ面 − カメラ)·カメラの前方向。先行車なしは inf。</p>
+<p>Geschlossene Form aus der aufgezeichneten Pose: <b>Bildebenenabstand</b> [m] zur Mitte der Rückfläche des vorausfahrenden Fahrzeugs. Rückfläche = Mitte − halbe Länge × Vorwärtsrichtung des vorausfahrenden Fahrzeugs, Bildebenenabstand = (Rückfläche − Kamera)·Vorwärtsrichtung der Kamera. Ohne vorausfahrendes Fahrzeug inf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

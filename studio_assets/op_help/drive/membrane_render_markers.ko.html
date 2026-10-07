@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgb × matrix × scalar × scalar</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import tacslip; tacslip.membrane_render_markers(rgb, pts, r_px: &#x27;float&#x27;, dark: &#x27;float&#x27;, sub: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;membrane_render_markers&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>RGB (H, W, 3) に黒い円盤のマーカー(中心 pts (N, 2) [px]、半径 r_px)を描く: 画素の被覆率で rgb *= 1 − dark·coverage。被覆率は円盤の縁の画素だけ sub² の副標本(内側 1・外側 0)。像を補間して歪めないので真値が厳密。<b>Raises</b> ValueError: rgb が (H, W, 3) でない、pts が (N, 2) でない、r_px ≤ 0、dark が [0, 1] の外。</p>
+<p>RGB (H, W, 3)에 검은 원판 마커(중심 pts (N, 2) [px], 반경 r_px)를 그림: 화소의 피복률로 rgb *= 1 − dark·coverage. 피복률은 원판 가장자리 화소만 sub²의 부표본(안쪽 1·바깥쪽 0). 영상을 보간해 왜곡하지 않으므로 참값이 엄밀. <b>Raises</b> ValueError: rgb가 (H, W, 3)이 아님, pts가 (N, 2)가 아님, r_px ≤ 0, dark가 [0, 1] 밖.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

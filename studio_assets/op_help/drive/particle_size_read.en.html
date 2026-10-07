@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.particle_size_read(path) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import grind; grind.particle_size_read(path) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;particle_size_read&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>レーザー回折の粒度分布 CSV(ヘッダの <code style="color:#22d3bf">key,value</code> 行 + <code style="color:#22d3bf">SizeClasses</code> で始まる表)を読む。</p>
+<p>Reads a laser-diffraction particle-size-distribution CSV (header <code style="color:#22d3bf">key,value</code> rows + a table starting with <code style="color:#22d3bf">SizeClasses</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り: <code style="color:#22d3bf">edges</code> [µm] (表の 1 列目 = 区間の端)、<code style="color:#22d3bf">volume</code>(2 列目 = 端 i と i+1 の間の体積 %)、<code style="color:#22d3bf">header</code> (文字列の dict)、<code style="color:#22d3bf">dx50_reported</code>(ヘッダの <code style="color:#22d3bf">Dx (50)</code>、無ければ None)、<code style="color:#22d3bf">total_percent</code>(体積の総和)、<code style="color:#22d3bf">n_rows</code>。読み込んだパスは返り値に残さない。表が無い・数値でない・最後の行が 0 でない → <code style="color:#22d3bf">ValueError</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

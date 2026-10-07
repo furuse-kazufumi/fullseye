@@ -20,7 +20,7 @@
 - クロスヘアは size >= 48 のみ (それ以下では線が 1px 未満になり濁るため)。
 
 使い方:
-    py -3.11 C:\\dev\\projects\\imgevolve\\assets\\make_icon.py
+    py -3.11 assets/make_icon.py
 """
 
 from __future__ import annotations

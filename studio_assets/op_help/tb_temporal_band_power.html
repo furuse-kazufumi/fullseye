@@ -5,8 +5,10 @@
 <p><img src="fig/tb_temporal_band_power.png" alt="tb_temporal_band_power: input → output"></p>
 <p>*図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*</p>
 <p>*出力は viridis 風の疑似カラー(暗い紫 = 小、黄 = 大)。距離・位相・向き・深度のような「量の場」を読むため。*</p>
-<p>*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
-<p>*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*</p>
+<p><b>つまみ a を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_band_power.a.jpg">tb_temporal_band_power: つまみ a を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
+<p><b>つまみ b を振る</b>(0.1 / 0.5 / 0.9、もう一方は既定):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_band_power.b.jpg">tb_temporal_band_power: つまみ b を振った図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>段階</b>(前置きの op → この op。左から順):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_temporal_band_power.chain.jpg">tb_temporal_band_power: 段階の図</a> <span style="color:#8b91a0;font-size:11px">(docs サイト)</span></p>
 <p><b>別の画像でも</b>(合成シーン / 写真 / 硬貨。上段が入力、下段がその出力。つまみは既定):</p>
@@ -15,7 +17,7 @@
 <p>Per-pixel mean-square power inside a temporal band -&gt; <code style="color:#22d3bf">(H, W)</code> map.</p>
 <p>&quot;Where in the frame is something moving at this frequency?&quot; — a resonance map. The value at a pixel is the mean over time of the squared band-passed signal, so a pure sinusoid of amplitude <code style="color:#22d3bf">a</code> inside the band reads exactly <code style="color:#22d3bf">a^2/2</code> (Parseval; measured relative error <code style="color:#22d3bf">3.08e-16</code> for <code style="color:#22d3bf">a = 0.3</code>).</p>
 <p>This is an *analysis map*, not a displayable image: it is a power and is not bounded by 1. Pixels with no in-band content read 0.</p>
-<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_band_power</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the motionmag op <code style="color:#22d3bf">temporal_band_power</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> picks the centre of the pass-band among the clip&#x27;s own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and <code style="color:#22d3bf">b</code> its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(サンプルデータ・文献)</h3>
 <p style="margin:2px 0 2px 12px">• サンプルデータ カタログ(DL URL / ライセンス) — 2-D は skimage.data(BSD/public)+ 合成、3-D は実データ源(Stanford/PDS 等)の DL URL。</p>
 <p style="margin:2px 0 2px 12px">• 演算子の来歴・参考文献 — この op 族の元になった研究/手法の出典。</p>

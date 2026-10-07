@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivettc; drivettc.foe_from_flow(u, v, mask=None, *, min_speed: &#x27;float&#x27; = 0.3, max_speed: &#x27;float&#x27; = inf, iters: &#x27;int&#x27; = 5, angle_scale: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;foe_from_flow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>光学流から拡大の中心(FoE)を推定する: <code style="color:#22d3bf">{&quot;foe&quot;: (col, row), &quot;n&quot;, &quot;residual&quot;}</code>。</p>
+<p>Schätzt den Expansionsfokus (FoE) aus dem optischen Fluss: <code style="color:#22d3bf">{&quot;foe&quot;: (col, row), &quot;n&quot;, &quot;residual&quot;}</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>純平行移動の流れは FoE から放射状(Longuet-Higgins &amp; Prazdny 1980)なので、各画素の流線(点 p_i を流れの向きに通る直線)は全部 FoE を通る。FoE = Σ w_i·dist(F, 流線_i)² を最小にする点(2×2 の正規方程式)。重みは反復で <code style="color:#22d3bf">1/|p_i − F|·1/(1 + (角度残差/angle_scale)²)</code>(Cauchy 風)。遠い画素の流線ほど向きの誤差が FoE の位置に効くので距離で割り、外れ値(遮蔽・無地)を角度残差で落とす。15 巡目で「既知」にした FoE を流れから出す口(16 巡目)。</p>
 <p>定理の門: 真の流れ(flow_from_depth_motion)を入れると <code style="color:#22d3bf">foe_from_motion</code> と 1e-9 で一致。</p>
 <p><code style="color:#22d3bf">mask</code> は使う画素(既定 = 有限で速さが [min_speed, max_speed] の画素)。有効画素が 3 未満、または正規方程式が特異(流線が全部平行)なら <code style="color:#22d3bf">ValueError</code>。</p>

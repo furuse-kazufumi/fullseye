@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivejapan; drivejapan.osm_road_mask(graph: &#x27;dict&#x27;, *, step: &#x27;float&#x27; = 0.5, margin: &#x27;float&#x27; = 6.0, bbox=None) -&gt; &#x27;Dict[str, object]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;osm_road_mask&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>辺を幅つきの線分(端は丸)として描いた <b>道路の和集合</b> の 2 値画像。</p>
+<p>Binärbild (2 Werte) der <b>Vereinigung der Straßen</b>, wobei die Kanten als Liniensegmente mit Breite (runde Enden) gezeichnet werden.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>画素 (r, c) の中心 = (xmin + (c + ½) step, ymin + (r + ½) step)、行は y の増える向き(数学座標。表示で上下を返す)。返り値 <code style="color:#22d3bf">{&quot;mask&quot;: (H, W) bool, &quot;xmin&quot;, &quot;ymin&quot;, &quot;step&quot;, &quot;shape&quot;, &quot;area_m2&quot;: 画素数 × step²}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: step ≤ 0、画像が 4e7 画素を超える(step を粗く)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

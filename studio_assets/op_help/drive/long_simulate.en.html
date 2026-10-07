@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">scalar × scalar × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.long_simulate(s0: &#x27;float&#x27;, v0: &#x27;float&#x27;, command: &#x27;Callable&#x27;, road=None, t_end: &#x27;float&#x27; = 30.0, dt: &#x27;float&#x27; = 0.01, params: &#x27;Optional[dict]&#x27; = None, t_breaks: &#x27;Sequence[float]&#x27; = (), t0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;long_simulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>縦の運動方程式を RK4 で積分する(事象の時刻で刻みを切る。モジュールの docstring)。</p>
+<p>Integrates the longitudinal equation of motion with RK4 (steps are split at event times; see the module docstring).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>s0, v0 : 初めの位置 [m] (道なりの弧長)と速度 [m/s] (負 = 後ろ向き)</p>
 <p>command : <code style="color:#22d3bf">command(t, s, v) -&gt; (drive, brake)</code>(どちらも ≥ 0 [m/s²]。上限は μ g cos θ と a_max で頭打ち)。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">scalar × scalar</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegsym; pegsym.symmetry_fold(angle: &#x27;float&#x27;, n: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;symmetry_fold&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>角を n 回対称の商 SO(2)/C_n の代表 (−π/n, π/n] に畳む(n = 1 は (−π, π]、n = 0 = 円は 0)。群の恒等式 symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) が門。<b>Raises</b> ValueError: n &lt; 0、角が有限でない。</p>
+<p>将角折叠到 n 重对称的商 SO(2)/C_n 的代表区间 (−π/n, π/n] (n = 1 时为 (−π, π]，n = 0 = 圆时为 0)。群恒等式 symmetry_fold(α + 2πk/n, n) = symmetry_fold(α, n) 即为门禁。<b>Raises</b> ValueError：n &lt; 0、角非有限。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

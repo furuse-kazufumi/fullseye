@@ -2,15 +2,27 @@
 <h2 style="color:#f5a524;margin:0 0 4px 0">tb_cx_apply_transfer_function — 2D <code style="color:#22d3bf">typed</code> op</h2>
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_cx_apply_transfer_function&quot;, a=0.5, b=0.5)</code> (the 2-D model is one image plus two scalar knobs <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
-<p>*No figure: the type is reachable, but the generic synthetic input is outside this op&#x27;s domain — 橋渡しで束縛した伝達関数 H が 32×32 固定で、128×128 のスペクトルと合わない. See the runnable examples below for usage.*</p>
+<p><img src="fig/tb_cx_apply_transfer_function.png" alt="tb_cx_apply_transfer_function: input → output"></p>
+<p>*The figure is the actual output on a synthetic 128×128 input. Left: input, right: output. Point clouds are drawn as a top-down scatter (brightness = z), 1-D series as a line plot, volumes as the maximum-intensity projection along z, videos as the middle frame, complex images as magnitude; return values that are not pictures are shown as the values themselves.*</p>
+<p><b>Sweeping knob a</b> (0.1 / 0.5 / 0.9, the other knob at its default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.a.jpg">tb_cx_apply_transfer_function: knob a sweep</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p>*Knob b does not change the output (measured: identical at 0.1 / 0.5 / 0.9).*</p>
+<p><b>Stages</b> (the ops that come before → this op, left to right):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.chain.jpg">tb_cx_apply_transfer_function: stages</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
+<p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
+<p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_cx_apply_transfer_function.inputs.jpg">tb_cx_apply_transfer_function: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Multiply a <b>centred</b> spectrum by a filter <code style="color:#22d3bf">H</code> -&gt; <code style="color:#22d3bf">(H, W)</code> complex128.</p>
 <p>The honest primitive under <code style="color:#22d3bf">ops.lowpass</code> / <code style="color:#22d3bf">ops.highpass</code>, but</p>
 <p><b>complex-preserving</b>: the filtered spectrum is returned as a complex field (not immediately inverted and real-cast), so it can be chained, inspected, or handed to <code style="color:#22d3bf">cx_ifft</code>. <code style="color:#22d3bf">H</code> is a same-shape transfer function laid out in the *centred* convention of <code style="color:#22d3bf">cx_fft</code> (DC at the centre); it may be real (a magnitude mask) or complex (a phase-shifting filter). A real <code style="color:#22d3bf">cx</code> is FFT&#x27;d first (module convenience).</p>
-<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. This op has no tunable parameter; <code style="color:#22d3bf">a</code> and <code style="color:#22d3bf">b</code> are unused.</p>
+<p>Typed bridge of the 2d op <code style="color:#22d3bf">cx_apply_transfer_function</code> into the 2-D evolution registry: the same implementation, called under the <code style="color:#22d3bf">op(v, a, b)</code> convention. <code style="color:#22d3bf">a</code> sets the width of the transfer function <code style="color:#22d3bf">H</code>, which the bridge builds <b>per call at the spectrum&#x27;s own shape</b>: a centred Gaussian low-pass <code style="color:#22d3bf">H = exp(-r^2 / (2 sigma^2))</code> with <code style="color:#22d3bf">sigma = 0.02 + 0.48 a</code> cycles/pixel (0.26 at a=0.5). <code style="color:#22d3bf">b</code> is unused. (Until 2026-10-07 <code style="color:#22d3bf">H</code> was bound once as a fixed 32x32 array, so every other image size was refused.)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>
+<h3 style="color:#17b8a6;margin:10px 0 2px 0">Try it in Studio</h3>
+<p>The program below has been verified to run (same input as the figure). In Studio&#x27;s help this block becomes buttons that load and run it on the spot.</p>
+<pre style="background:#12141b;border:1px solid #2c313f;padding:6px;color:#22d3bf">img_to_cimage 0.50 0.50
+tb_cx_apply_transfer_function 0.50 0.50</pre><p><a style="color:#f5a524" href="sample:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">▸ Load this pipeline</a> &nbsp;·&nbsp; <a style="color:#f5a524" href="run:img_to_cimage%200.50%200.50%0Atb_cx_apply_transfer_function%200.50%200.50">Load &amp; run</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Runnable examples (verified samples that actually call this op)</h3>
 <p style="margin:2px 0 2px 12px">• (none yet)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ops the type connects to (they accept <code style="color:#22d3bf">cimage</code> as input)</h3>

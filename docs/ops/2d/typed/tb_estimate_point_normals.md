@@ -46,8 +46,10 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
     手順: ``cKDTree`` で各点の ``k`` 近傍(自分自身を含む。``k > N`` なら N に切り詰め)を取り、
     その共分散の最小固有ベクトルを法線にする。返り値 ``(N,3)`` float64 の単位ベクトル。
-    ``viewpoint`` は 3 次元の座標(センサ位置)。点数が 3 未満・近傍が同一直線上だと法線は
-    不定のまま返る(検証は無い)。``k`` が小さいとノイズに弱く、大きいと角が丸まる。
+    ``viewpoint`` は 3 次元の座標(センサ位置)。近傍の点数 ``min(k, N)`` が 3 未満(点が
+    1〜2 個、または ``k < 3``)なら ``ValueError`` —— 3 点未満では面が決まらない(1 点だと
+    共分散すら作れず、2026-10-07 までは einsum の内部エラーで落ちていた)。近傍が同一直線上だと
+    法線は不定のまま返る(検証は無い)。``k`` が小さいとノイズに弱く、大きいと角が丸まる。
     後段: ``icp_point2plane`` の ``dst_normals``、``render_shaded`` 用の法線、``normals_to_egi``。
     ``pointcloud.estimate_normals``(台帳 ``estimate_normals``)と同じ規約。
 

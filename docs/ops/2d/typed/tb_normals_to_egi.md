@@ -73,7 +73,7 @@ version: 0.5.0  # fullseye lib version this note was generated for
         ValueError: ``extra_checks='on'`` で、長さが 1 から 1e-6 を超えて外れる
             ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。
 
-2-D 進化レジストリへ橋渡しした reprconv の op ``normals_to_egi``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``n_az``(既定 36)、``b`` が ``n_el``(既定 18)を振る。
+2-D 進化レジストリへ橋渡しした reprconv の op ``normals_to_egi``。実装は同じで、呼び出し規約だけ ``op(v, a, b)`` に合わせてある。``a`` が ``n_az``(既定 36)、``b`` が ``n_el``(既定 18)を振る。★橋の op は計数を総数で割った**割合**(各 bin に入った法線の比率、和 1、値域 [0,1])を返す —— 宣言 sort ``image`` の [0,1] 契約に合わせるため(計数のままだと最大 48 などが出ていた、2026-10-07)。生の計数は ``reprconv.normals_to_egi`` / ``fullseye.ledger.normals_to_egi`` が返す。
 
 ## 参考(サンプルデータ・文献)
 

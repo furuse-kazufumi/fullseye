@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">scalar × table × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import roverslip; roverslip.wheel_traction_curve(load, wheel, soil, slips=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;wheel_traction_curve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>1 輪の荷重 <code style="color:#22d3bf">load</code> [N] を一定に保ったときの、滑り率ごとの沈下・牽引力・トルク(牽引–滑り曲線)。</p>
+<p>保持 1 個車輪的載重 <code style="color:#22d3bf">load</code> [N] 不變時，各滑移率下的沉陷、牽引力與扭矩(牽引力–滑移曲線)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">slips</code> の既定は 0〜0.95 の 40 点。返り値 <code style="color:#22d3bf">{&quot;slip&quot;, &quot;sinkage&quot;, &quot;DP&quot;, &quot;T&quot;, &quot;DP_over_W&quot;, &quot;efficiency&quot;}</code> (<code style="color:#22d3bf">efficiency</code> = 牽引の仕事率 / 駆動の仕事率 = DP (1 − s) r / T、T ≤ 0 の点は 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

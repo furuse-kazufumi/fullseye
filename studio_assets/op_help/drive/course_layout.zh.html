@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_layout(elements, placements)</code>(要直接调用实现,<code style="color:#22d3bf">import drivecourse; drivecourse.course_layout(elements, placements)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;course_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>複数の要素を剛体運動 <code style="color:#22d3bf">(x, y, yaw)</code> で配置して 1 つの dict にする。</p>
+<p>以刚体运动 <code style="color:#22d3bf">(x, y, yaw)</code> 放置多个要素，合成 1 个 dict。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>各要素の polygon / centerline / rails / stop_lines は点として、entry / exit / signal_poses は姿勢として(yaw も回す)変換する。<code style="color:#22d3bf">profile</code>(坂道の (s, z))は要素の局所弧長なのでそのまま。返り値は <code style="color:#22d3bf">{&quot;kind&quot;: &quot;layout&quot;, &quot;elements&quot;: [変換済み要素(各々 &quot;placement&quot; を持つ)], &quot;polygon&quot;: None, &quot;bounds&quot;: (xmin, xmax, ymin, ymax), &quot;placements&quot;: [...]}</code>。内外判定は要素の和(<code style="color:#22d3bf">course_contains</code> / <code style="color:#22d3bf">course_occupancy</code>)。要素の重なりは和として扱う。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 要素が空・要素と配置の数が違う・要素が dict でない・配置が 3 要素で有限でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

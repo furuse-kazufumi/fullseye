@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table × matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivehumanoid; drivehumanoid.world_camera_impostors(world: &#x27;dict&#x27;, pose, K, width: &#x27;int&#x27; = 640, height: &#x27;int&#x27; = 400, actors=(), **camera_kw) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;world_camera_impostors&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><code style="color:#22d3bf">driveworld.world_camera</code> で世界を撮り、<code style="color:#22d3bf">actors</code> のインポスタを<b>深度で前後を比べて</b>貼る。</p>
+<p>用 <code style="color:#22d3bf">driveworld.world_camera</code> 拍攝世界，並將 <code style="color:#22d3bf">actors</code> 的替身(impostor)<b>依深度比較前後</b>後貼上。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">actors</code> = <code style="color:#22d3bf">[{&quot;imp&quot;: humanoid_impostors の返り値, &quot;x&quot;, &quot;y&quot;, &quot;yaw&quot;, &quot;distance&quot; (歩いた距離 [m])}, …]</code>。向きの段 = 体から見たカメラの方位を n_yaw 段に丸めたもの、位相 = 歩いた距離を周期で割った余りに最も近い段。大きさ = 実際のカメラの「1 m あたりの画素」/ 事前描画の「1 m あたりの画素」(最近傍で拡大縮小)。返り値は world_camera と同じ鍵。貼った画素は <code style="color:#22d3bf">label</code> = 物体のラベル(7)、<code style="color:#22d3bf">face</code> = −2(三角形が無い)、<code style="color:#22d3bf">shade</code> = 1。加えて <code style="color:#22d3bf">&quot;impostor_pixels&quot;</code>(貼った画素の数)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

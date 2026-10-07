@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_classify&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>署名を表で引く(fail-closed): 当たる行が 1 つならそのクラスと回復、0 なら <code style="color:#22d3bf">&quot;unknown&quot;</code>(推測しない)、2 つ以上なら表の欠陥として <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">insertion_failure_validate</code> が通した表では起きない)。</p>
+<p>以表查簽名(fail-closed)：命中 1 列則回傳其類別與恢復，0 列則為 <code style="color:#22d3bf">&quot;unknown&quot;</code>(不做推測)，2 列以上則視為表的缺陷拋出 <code style="color:#22d3bf">ValueError</code>(通過 <code style="color:#22d3bf">insertion_failure_validate</code> 的表不會發生)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>署名の欄に語彙の外の値があれば <code style="color:#22d3bf">ValueError</code>(綴り壊し)。返り: <code style="color:#22d3bf">cls</code>、<code style="color:#22d3bf">recovery</code>、<code style="color:#22d3bf">row</code>(当たった行の添字、無ければ −1)、<code style="color:#22d3bf">n_match</code>、<code style="color:#22d3bf">basis</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

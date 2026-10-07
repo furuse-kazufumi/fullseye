@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.fbm_params(seed: &#x27;int&#x27; = 0, hurst: &#x27;float&#x27; = 0.8, n_waves: &#x27;int&#x27; = 128, f_min: &#x27;float&#x27; = 0.005, f_max: &#x27;float&#x27; = 0.125, amplitude: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;fbm_params&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>乱数位相の正弦の和で fBm 面を作るための表(Saupe 1988 のスペクトル合成の連続版)。</p>
+<p>Parametertabelle, um eine fBm-Fläche als Summe von Sinuswellen mit zufälligen Phasen zu bilden (kontinuierliche Version der Spektralsynthese nach Saupe 1988).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>周波数は [f_min, f_max] に対数一様、向きは一様、位相は一様、振幅 ∝ f^{−H}。対数一様に撒いた波は 2 次元周波数面の密度が ∝ f^{−2} なので、パワースペクトルは ∝ A(f)² f^{−2} = f^{−(2H+2)}、つまり β = 2H + E(E = 2)。振幅は RMS が <code style="color:#22d3bf">amplitude</code> になるよう正規化する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

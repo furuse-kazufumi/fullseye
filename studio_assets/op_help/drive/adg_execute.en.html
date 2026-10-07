@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code> (to call the implementation directly, <code style="color:#22d3bf">import agvfleet; agvfleet.adg_execute(adg, delay_prob=0.3, seed=0, max_steps=10000)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;adg_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ADG に従って実行する。各時刻、各車両は確率 <code style="color:#22d3bf">delay_prob</code> で止まる(滑り・人・荷役の遅れ)。</p>
+<p>Executes according to the ADG. At each time step, each vehicle stops with probability <code style="color:#22d3bf">delay_prob</code> (slipping, people, delays in loading).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>次の行動の依存がすべて済んでいる車両だけが 1 マス進む。返りは dict: <code style="color:#22d3bf">trajectories</code>(実際の位置の列)、<code style="color:#22d3bf">makespan</code>、<code style="color:#22d3bf">collisions</code>(同じマス・すれ違い)、<code style="color:#22d3bf">deadlock</code>(誰も進めず未了)、<code style="color:#22d3bf">finished</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

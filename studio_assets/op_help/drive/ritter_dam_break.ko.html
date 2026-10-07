@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.ritter_dam_break(x, t: &#x27;float&#x27;, h0: &#x27;float&#x27;, g: &#x27;float&#x27; = 9.81, particle_mass=None) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;ritter_dam_break&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>Ritter のダム崩壊解(浅水方程式、乾いた床、ダムは x = 0、水は x &lt; 0)。</p>
+<p>Ritter의 댐 붕괴 해(천수 방정식, 마른 바닥, 댐은 x = 0, 물은 x &lt; 0).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>c₀ = √(g h₀)。x ≤ −c₀ t: h = h₀、u = 0 / −c₀ t &lt; x &lt; 2c₀ t: h = (2c₀ − x/t)²/(9g)、u = (2/3)(x/t + c₀) / x ≥ 2c₀ t: h = 0。</p>
 <p>先端の近くは h ∝ (x_f − x)² で水がほとんど無い。先端から δ までの水の量は ∫₀^δ (s/t)²/(9g) ds = δ³/(27 g t²)(導出)。粒子 1 個の量 m(1 次元の SPH なら h₀Δx)を与えると、<b>最も前の粒子の居場所</b>(先端から量 m/2 の所) x_f − (27 g t² m/2)^{1/3} を <code style="color:#22d3bf">lead_particle</code> に返す —— 粒子法の先端は Ritter の先端より必ず遅れて見え、その遅れはこの式で読める(粒子を細かくすると m^{1/3} でしか縮まない)。</p>
 <p>Returns:</p>

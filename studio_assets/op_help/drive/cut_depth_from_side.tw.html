@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">rgb × table × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_depth_from_side(image, track, px_per_mm: &#x27;float&#x27;, board_row: &#x27;float&#x27;, win: &#x27;int&#x27; = 5) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_depth_from_side&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>正面像の食材の上面(彩度の縁、列ごと副画素 → 中央値)と刃先の直線から切り込み深さ(mm)。</p>
+<p>由正面影像中食材的上表面(彩度邊緣，逐欄次像素 → 中位數)與刃口直線求切入深度(mm)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>深さ = 上面の z − 食材の幅の中央での刃先の z(<code style="color:#22d3bf">knife_edge_track</code> の直線の内挿)。刃が曲がっていればそのまま誤差になる。</p>
 <p>返り値: <code style="color:#22d3bf">depth_mm</code>、<code style="color:#22d3bf">top_z_mm</code>、<code style="color:#22d3bf">edge_z_mm</code>、<code style="color:#22d3bf">food_cols</code>(左右)、<code style="color:#22d3bf">n_cols</code>、<code style="color:#22d3bf">centre_col</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

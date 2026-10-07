@@ -19,9 +19,13 @@ version: 0.5.0  # fullseye lib version this note was generated for
 
 *図は合成の入力 128×128 で実際に走らせた出力。左が入力、右が出力。点群は上から見た散布(明るさ = z)、1-D 列は折れ線、体積は z 方向の最大値投影、動画は中央フレーム、複素画像は振幅、絵にならない返り値は値そのもの。*
 
-*つまみ a は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+**つまみ a を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
 
-*つまみ b は出力を変えない(実測: 0.1 / 0.5 / 0.9 で同一)。*
+![tb_temporal_bandpass: knob a sweep](../../_fig/tb_temporal_bandpass.a.jpg)
+
+**つまみ b を振る**(0.1 / 0.5 / 0.9、もう一方は既定):
+
+![tb_temporal_bandpass: knob b sweep](../../_fig/tb_temporal_bandpass.b.jpg)
 
 **段階**(前置きの op → この op。左から順):
 
@@ -56,7 +60,7 @@ Ideal temporal band-pass of every pixel's time series -> ``(T, H, W)``.
     and it is the same choice the 2012 Eulerian magnification paper makes. The
     output is zero-mean along time by construction.
 
-Typed bridge of the motionmag op ``temporal_bandpass`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. This op has no tunable parameter; ``a`` and ``b`` are unused.
+Typed bridge of the motionmag op ``temporal_bandpass`` into the 2-D evolution registry: the same implementation, called under the ``op(v, a, b)`` convention. ``a`` picks the centre of the pass-band among the clip's own non-DC DFT bins (0 = the lowest bin, 1 = the Nyquist bin) and ``b`` its half-width (0 = one bin, 1 = half the bins on each side). The band edges sit half a bin outside the chosen bins (frame rate fixed at 32 fps), so the band holds at least one bin for any clip of two or more frames. (Until 2026-10-07 the band was a fixed 3-5 Hz, which holds no bin for a 12-frame clip, so every call was refused.)
 
 ## 参考(サンプルデータ・文献)
 

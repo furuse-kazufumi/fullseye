@@ -33,7 +33,7 @@
 <p>ValueError: bin 数が 1 未満 / 上限超 / 入力不正。</p>
 <p>ValueError: <code style="color:#22d3bf">extra_checks=&#x27;on&#x27;</code> で、長さが 1 から 1e-6 を超えて外れる</p>
 <p>ベクトルを含むとき(位置の点群を法線として渡した事故を捕まえる)。</p>
-<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。</p>
+<p>2-D 進化レジストリへ橋渡しした reprconv の op <code style="color:#22d3bf">normals_to_egi</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。<code style="color:#22d3bf">a</code> が <code style="color:#22d3bf">n_az</code>(既定 36)、<code style="color:#22d3bf">b</code> が <code style="color:#22d3bf">n_el</code>(既定 18)を振る。★橋の op は計数を総数で割った<b>割合</b>(各 bin に入った法線の比率、和 1、値域 [0,1])を返す —— 宣言 sort <code style="color:#22d3bf">image</code> の [0,1] 契約に合わせるため(計数のままだと最大 48 などが出ていた、2026-10-07)。生の計数は <code style="color:#22d3bf">reprconv.normals_to_egi</code> / <code style="color:#22d3bf">fullseye.ledger.normals_to_egi</code> が返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

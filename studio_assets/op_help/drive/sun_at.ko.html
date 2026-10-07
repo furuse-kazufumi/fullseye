@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import driveenv; driveenv.sun_at(when, lat: &#x27;float&#x27;, lon: &#x27;float&#x27;, *, refraction: &#x27;bool&#x27; = True) -&gt; &#x27;Dict[str, float]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;sun_at&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>日時(タイムゾーンつき datetime かユリウス日)の太陽の高度・方位。式は <code style="color:#22d3bf">geocam.sun_position</code>(NOAA の太陽位置の式 = Meeus &quot;Astronomical Algorithms&quot; 第 25 章の低精度版、NOAA の大気差)をそのまま使い、日時の受け方と地球–太陽の距離を足す。</p>
+<p>일시(시간대가 있는 datetime 또는 율리우스일)의 태양 고도·방위. 식은 <code style="color:#22d3bf">geocam.sun_position</code>(NOAA 태양 위치 식 = Meeus &quot;Astronomical Algorithms&quot; 제25장의 저정밀도판, NOAA 대기 굴절)을 그대로 쓰고, 일시를 받는 방식과 지구–태양 거리를 추가합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Returns</h4>
 <p>dict : <code style="color:#22d3bf">elevation</code>(度、<code style="color:#22d3bf">refraction</code> なら大気差つきの見かけ)、<code style="color:#22d3bf">elevation_geometric</code>、<code style="color:#22d3bf">azimuth</code>(北から時計回り 度)、</p>
 <p><code style="color:#22d3bf">declination</code>、<code style="color:#22d3bf">eq_time</code>(均時差 分)、<code style="color:#22d3bf">hour_angle</code>(度)、<code style="color:#22d3bf">jd</code>、<code style="color:#22d3bf">distance_au</code>、<code style="color:#22d3bf">semidiameter</code>(度)。</p>

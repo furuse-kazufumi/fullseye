@@ -64,9 +64,12 @@ def test_perception_on_video_synthetic():
 # Real FullSense render clips (onocollo / hillco), if present on this machine — a
 # genuine (non-synthetic) end-to-end check. Skipped where the assets are absent
 # so the suite stays portable.
+# 場所は ONOCOLLO_DIR、無ければ repo と並んだ checkout(手元の絶対パスを書かない)。
+_ONO = os.environ.get("ONOCOLLO_DIR") or os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "onocollo-complete")
 _REAL_CLIPS = [
-    r"C:\dev\projects\onocollo-complete\out\media\rocket_arc.mp4",
-    r"C:\dev\projects\onocollo-complete\out\chopstick\box_grasp.mp4",
+    os.path.join(_ONO, "out", "media", "rocket_arc.mp4"),
+    os.path.join(_ONO, "out", "chopstick", "box_grasp.mp4"),
 ]
 _present = [p for p in _REAL_CLIPS if os.path.exists(p)]
 

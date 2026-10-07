@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecrossing; drivecrossing.exit_room_check(queue_rear, far_edge: &#x27;float&#x27;, car_length: &#x27;float&#x27;, *, gap: &#x27;float&#x27; = 1.0, beyond: &#x27;float&#x27; = 0.5)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;exit_room_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>踏切(横断歩道・交差点も同じ)の向こう側に、自分が止まれる余地があるか(50 条 2 項)。配列可。</p>
+<p>Ob auf der anderen Seite des Bahnübergangs (ebenso Fußgängerüberweg und Kreuzung) Platz zum Anhalten des eigenen Fahrzeugs ist (Art. 50 Abs. 2). Arrays möglich.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>前の車の後端 <code style="color:#22d3bf">queue_rear</code> の後ろ <code style="color:#22d3bf">gap</code> で止まると、自分の後端 = queue_rear − gap − car_length。これが far_edge + beyond 以上なら入ってよい。返り値: <code style="color:#22d3bf">room</code> = queue_rear − far_edge、<code style="color:#22d3bf">need</code> = car_length + gap + beyond、<code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">rear_if_stopped</code>。前の車が無い場合は queue_rear = +∞。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

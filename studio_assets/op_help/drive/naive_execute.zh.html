@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>(要直接调用实现,<code style="color:#22d3bf">import agvfleet; agvfleet.naive_execute(paths, delay_prob=0.3, seed=0, max_steps=10000)</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;naive_execute&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>比較用の素朴な実行: 計画の<b>マスの列</b>だけを使い、次のマスが空いていれば進む(順番の約束は無い)。</p>
+<p>用于对比的朴素执行：只使用计划的<b>格子序列</b>，下一个格子空着就前进(没有顺序约定)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>遅れが入ると、計画では時間差ですれ違うはずの 2 台が向かい合って止まる。返りは <code style="color:#22d3bf">adg_execute</code> と同じ形に <code style="color:#22d3bf">waits_for</code>(デッドロックの瞬間の「誰が誰を待つか」の辺)を足したもの。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

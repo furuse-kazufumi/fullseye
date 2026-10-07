@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">any</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import kendama; kendama.noisy_perceiver(rng, noise_pos: &#x27;float&#x27; = 0.0, noise_vel: &#x27;float&#x27; = 0.0)</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;noisy_perceiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>知覚に等方ガウス雑音を足す <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code>(位置 σ = noise_pos [m]、速度 σ = noise_vel [m/s])。負の σ は ValueError。rng = numpy.random.Generator。</p>
+<p>Adds isotropic Gaussian noise to perception: <code style="color:#22d3bf">perceive(t, p, v) → (p̂, v̂)</code> (position σ = noise_pos [m], velocity σ = noise_vel [m/s]). A negative σ raises ValueError. rng = numpy.random.Generator.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

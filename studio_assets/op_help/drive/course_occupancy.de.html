@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivecourse; drivecourse.course_occupancy(course, cell: &#x27;float&#x27; = 0.25, margin: &#x27;float&#x27; = 2.0)</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;course_occupancy&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.course_occupancy(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.course_occupancy.raw(...)</code> oder rufe <code style="color:#22d3bf">drivecourse.course_occupancy</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コース(要素または配置)を占有格子 <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code> に落とす。</p>
+<p>Rastert einen Kurs (Element oder Layout) in ein Belegungsgitter <code style="color:#22d3bf">(occ bool [row = y, col = x], extent)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>走れる領域の外 = True(障害物)</b>。格子は bounds を <code style="color:#22d3bf">margin</code> だけ広げた範囲を <code style="color:#22d3bf">cell</code> で覆い、各 cell の中心で偶奇判定する。<code style="color:#22d3bf">extent = (xmin, xmax, ymin, ymax)</code> は格子がちょうど覆う範囲(xmax = xmin + nx·cell)、row 0 = ymin。占有率は cell → 0 で 1 − 面積/格子面積 に収束する(門)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: cell ≤ 0、margin &lt; 0、course の形が悪い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

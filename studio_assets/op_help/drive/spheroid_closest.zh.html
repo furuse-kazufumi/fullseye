@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.spheroid_closest(x, sph: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;spheroid_closest&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>点 x → 回転楕円体の面の最近点 <code style="color:#22d3bf">point</code>・符号つき距離 <code style="color:#22d3bf">s</code>(内側 &gt; 0、論文の s の定義)・外向きの単位法線 <code style="color:#22d3bf">normal</code> (最近点での勾配の向き)。</p>
+<p>点 x → 旋转椭球面上的最近点 <code style="color:#22d3bf">point</code>、带符号距离 <code style="color:#22d3bf">s</code>(内侧 &gt; 0，论文中 s 的定义)、向外的单位法线 <code style="color:#22d3bf">normal</code>(最近点处梯度的方向)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>最近点は子午面の楕円への Eberly の二分法。★公開実装は中心から放射方向に縮めて戻し(最近点ではない、楕円体の外 5 mm の点で最大 2.2 mm 違う)、法線を (x/b, y/a, z/b) で近似する(勾配なら 2 乗、軸の上以外では最大 12.2° ずれる)。ここでは本文の「最も近い点へ動かす」と真の法線で書く。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: x が有限の 3-vector でない、sph が楕円体の dict でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

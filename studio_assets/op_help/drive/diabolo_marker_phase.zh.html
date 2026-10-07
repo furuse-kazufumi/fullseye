@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgb × table × table × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.diabolo_marker_phase(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, pose: &#x27;dict&#x27;, *, nbins: &#x27;int&#x27; = 720, widths=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import diabolo; diabolo.diabolo_marker_phase(img, cam: &#x27;dict&#x27;, params: &#x27;dict&#x27;, pose: &#x27;dict&#x27;, *, nbins: &#x27;int&#x27; = 720, widths=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;diabolo_marker_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>1 コマのマーカーから回転の位相 ψ(体の系 e1 から、右ねじ)と回転ぶれの弧の幅 |ω|·露光 [rad] を読む。</p>
+<p>从 1 帧中的标记读取旋转相位 ψ(从本体系 e1 起，右手螺旋)和旋转模糊的弧宽 |ω|·曝光 [rad]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">pose</code> は <code style="color:#22d3bf">diabolo_axis_from_image</code> の返り(軸・中心・分割)。マーカーの画素を推定した姿勢でマーカーの円の面へ戻し、方位角の度数(白さで重みづけ)を作る → 弧の幅ごとの型紙(反射 3 か所 + 灰のダミー 5 か所、非対称なので向きが一意)と円周相互相関(FFT)で最大を取り、位相は放物線で副標本。返り <code style="color:#22d3bf">{&quot;phase&quot;, &quot;smear&quot;, &quot;score&quot;, &quot;profile&quot;}</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像の形、pose が軸の推定の返りでない、nbins &lt; 16、マーカーが写っていない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivecrossing; drivecrossing.crosswalk_overtake_check(ego, others, *, crosswalk_start: &#x27;float&#x27;, crosswalk_end: &#x27;float&#x27;, zone: &#x27;float&#x27; = 30.0, v_moving: &#x27;float&#x27; = 0.5) -&gt; &#x27;Dict[str, object]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;crosswalk_overtake_check&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>横断歩道等とその手前 <code style="color:#22d3bf">zone</code> m の中で、前方を進行している車の前に出たか(38 条 3 項)。</p>
+<p>Whether the vehicle moved ahead of a vehicle traveling in front within a crosswalk etc. or the <code style="color:#22d3bf">zone</code> m before it (Art. 38(3)).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>ego, others[i] = {&quot;t&quot;, &quot;x&quot;[, &quot;v&quot;], &quot;kind&quot;}(x = 前端)。他の車の前端を自分の前端が後ろから越えた瞬間(線形補間)を「前方に出た」とし、そのときの自分の前端の位置が [crosswalk_start − zone, crosswalk_end] で、相手が進行中(速さ &gt; <code style="color:#22d3bf">v_moving</code>、<b>仮定</b>)かつ特定小型原動機付自転車等(<code style="color:#22d3bf">EXEMPT_KINDS</code>)でなければ違反。</p>
 <p>返り値: <code style="color:#22d3bf">ok</code>、<code style="color:#22d3bf">events</code> = [{&quot;other&quot;, &quot;t&quot;, &quot;x&quot;, &quot;in_zone&quot;, &quot;exempt&quot;, &quot;moving&quot;, &quot;violation&quot;}]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

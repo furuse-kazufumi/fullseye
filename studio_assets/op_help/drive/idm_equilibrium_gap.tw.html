@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import drivetraffic; drivetraffic.idm_equilibrium_gap(v, *, v0: &#x27;float&#x27;, T: &#x27;float&#x27;, s0: &#x27;float&#x27;, delta: &#x27;float&#x27; = 4.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;idm_equilibrium_gap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>IDM の平衡車間 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v &lt; v0)。</p>
+<p>IDM 的平衡車距 s_e(v) = (s0 + v T) / sqrt(1 − (v/v0)^δ)(0 ≤ v &lt; v0)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Δv = 0 で <code style="color:#22d3bf">idm_accel</code> = 0 と置いて解いたもの(s* = s0 + vT)。v → v0 で発散する(希望速度では車間は要らない = 前が無限に遠い)。a, b に依らない。</p>
 <p>門: 先行車が一定速度のとき <code style="color:#22d3bf">idm_platoon_simulate</code> が収束した車間と rtol 1e-6 で一致。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: v &lt; 0 または v ≥ v0。</p>

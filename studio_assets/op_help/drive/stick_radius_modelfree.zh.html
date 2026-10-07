@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import tacslip; tacslip.stick_radius_modelfree(pts_c, u_px, rel: &#x27;float&#x27; = 0.08, abs_px: &#x27;float&#x27; = 0.05) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;stick_radius_modelfree&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>模型なしの固着半径: 中心からの距離順に、内側 6 点の中央値 δ̂ から |ux − δ̂| が rel·|δ̂| + abs_px を超える最初の点と、その手前の点の中点の半径 <code style="color:#22d3bf">c_px</code>(分解能 = マーカー間隔)。<code style="color:#22d3bf">core_px</code> = δ̂。pts_c は中心相対 (M, 2) [px]、u_px は (M, 2) [px]。<b>Raises</b> ValueError: 点が 6 個未満。</p>
+<p>无模型的粘着半径：按到中心的距离排序，以内侧 6 个点的中位数 δ̂ 为基准，取 |ux − δ̂| 首次超过 rel·|δ̂| + abs_px 的点与其前一点的中点的半径 <code style="color:#22d3bf">c_px</code>(分辨率 = 标记间距)。<code style="color:#22d3bf">core_px</code> = δ̂。pts_c 为相对中心的 (M, 2) [px]，u_px 为 (M, 2) [px]。<b>Raises</b> ValueError：点少于 6 个。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

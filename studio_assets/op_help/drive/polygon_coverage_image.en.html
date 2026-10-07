@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegsym; pegsym.polygon_coverage_image(vertices_px, size: &#x27;int&#x27; = 160, ss: &#x27;int&#x27; = 8, width: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;polygon_coverage_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>凸多角形(画素座標 (col, row) の頂点列)の被覆率の像 0..1((size, width)、反エイリアスは <code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> の副標本)。真値つきの合成の部品。<b>Raises</b> ValueError: 凸でない、size &lt; 8、ss &lt; 1。</p>
+<p>Coverage image 0..1 ((size, width); anti-aliasing with <code style="color:#22d3bf">ss</code> × <code style="color:#22d3bf">ss</code> subsamples) of a convex polygon (vertex list in pixel coordinates (col, row)). A building block for synthesis with ground truth. <b>Raises</b> ValueError: not convex, size &lt; 8, ss &lt; 1.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Operator provenance and references — the sources of the research/methods this op family came from.</p>

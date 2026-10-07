@@ -3,7 +3,11 @@
 import json
 import os
 
-OUT = r"C:\dev\projects\onocollo-complete\docs\qiita\20260822_g1_evis\ops"
+#: 入出力は**別の repo**(記事の置き場)。手元の絶対パスを既定に持たない —— fops_lib と同じ環境変数。
+OUT = os.environ.get("FOPS_ARTICLE_OUT", "")
+if not OUT:
+    raise SystemExit("FOPS_ARTICLE_OUT に図の出力先(記事 repo の "
+                     "docs/qiita/20260822_g1_evis/ops)を設定してから実行すること")
 MAN = os.path.join(OUT, "_manifest_entries.json")
 
 data = json.load(open(MAN, encoding="utf-8"))

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import puck; puck.puck_wall_bounce(v, normal, e: &#x27;float&#x27;, kt: &#x27;float&#x27; = 1.0) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;puck_wall_bounce&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>壁との衝突: 法線成分 vₙ&#x27; = −e vₙ、接線成分 vₜ&#x27; = kₜ vₜ(e = 法線の反発係数、kₜ = 接線の保持率 = 接線の反発係数)。</p>
+<p>Collision with a wall: normal component vₙ&#x27; = −e vₙ, tangential component vₜ&#x27; = kₜ vₜ (e = normal coefficient of restitution, kₜ = tangential retention ratio = tangential coefficient of restitution).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>回転は持たない(壁の摩擦で入る回転は接線の減りに畳んである。Cross 2022 のディスク衝突は「滑りか把持か」で接線の反発係数を書く —— その 2 領域は入れていない)。返り値 <code style="color:#22d3bf">{&quot;v&quot;, &quot;vn_in&quot;, &quot;vn_out&quot;, &quot;vt_in&quot;, &quot;vt_out&quot;, &quot;energy_ratio&quot;}</code>。法線だけの衝突なら energy_ratio = e²(門)。<code style="color:#22d3bf">v·n ≥ 0</code>(離れていく)なら何もしない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

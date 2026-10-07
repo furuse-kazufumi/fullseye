@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh × table × matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import lidarsim; lidarsim.lidar_scan(V, F, spec, T_sensor, *, labels=None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;lidar_scan&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>メッシュ世界 <code style="color:#22d3bf">(V, F)</code> に姿勢 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)の LiDAR を 1 スイープ撃つ。</p>
+<p>메시 월드 <code style="color:#22d3bf">(V, F)</code>에 자세 <code style="color:#22d3bf">T_sensor</code>(world ← sensor)의 LiDAR를 1회 스윕 발사합니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">V</code> (N,3) float / <code style="color:#22d3bf">F</code> (M,3) int: 三角形メッシュ(空・非 (N,3)・非有限・範囲外の面番号は <code style="color:#22d3bf">ValueError</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spec</code>: <code style="color:#22d3bf">lidar_spec</code> の dict。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">T_sensor</code>: 4×4 同次行列(world ← sensor)。センサ座標は x=前, y=左, z=上。</p>

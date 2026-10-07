@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import drivedecide; drivedecide.predict_amber_onset(observations, *, flash_duration: &#x27;Optional[float]&#x27; = None, crossing_length: &#x27;Optional[float]&#x27; = None, walk_speed: &#x27;float&#x27; = 1.0, ped_red_to_amber: &#x27;float&#x27; = 2.0, t_now: &#x27;Optional[float]&#x27; = None) -&gt; &#x27;Dict[str, object]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;predict_amber_onset&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>並行する歩行者信号の観測(時刻順の <code style="color:#22d3bf">(t, state)</code>、state ∈ green / flash / red)から車両の黄の始まりを推定する。</p>
+<p>由并行行人信号灯的观测(按时间顺序的 <code style="color:#22d3bf">(t, state)</code>，state ∈ green / flash / red)估计车辆黄灯的开始。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>F = <code style="color:#22d3bf">flash_duration</code>(無ければ <code style="color:#22d3bf">crossing_length / walk_speed</code>)、Δ = <code style="color:#22d3bf">ped_red_to_amber</code>。観測の切り替わり(green→flash、flash→red)ごとに黄の時刻が入る区間を作り、その <b>積</b> をとる:</p>
 <p>green→flash(最後の green t_g、最初の flash t_f): 黄 ∈ [t_g + F + Δ, t_f + F + Δ]</p>
 <p>flash→red  (最後の flash t_f&#x27;、最初の red t_r):   黄 ∈ [t_f&#x27; + Δ, t_r + Δ]</p>

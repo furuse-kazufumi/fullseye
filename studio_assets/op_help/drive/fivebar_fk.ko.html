@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × table</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import puck; puck.fivebar_fk(q, link: &#x27;dict&#x27;, *, branch: &#x27;str&#x27; = &#x27;forward&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;fivebar_fk&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>順運動学: 関節角 (q₁, q₂)(各腕の近位リンクの x 軸からの角)→ 先端 E。肘 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ)、E = 円(B₁, l₂) ∩ 円(B₂, l₂) の &quot;forward&quot;(x が大きい側)か &quot;back&quot;。返り値 <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>、交わらなければ <code style="color:#22d3bf">None</code>。</p>
+<p>순기구학: 관절각 (q₁, q₂)(각 팔의 근위 링크가 x축과 이루는 각) → 끝점 E. 팔꿈치 Bᵢ = Aᵢ + l₁(cos qᵢ, sin qᵢ), E = 원(B₁, l₂) ∩ 원(B₂, l₂)의 &quot;forward&quot;(x가 큰 쪽) 또는 &quot;back&quot;. 반환값 <code style="color:#22d3bf">{&quot;E&quot;, &quot;B1&quot;, &quot;B2&quot;}</code>, 교차하지 않으면 <code style="color:#22d3bf">None</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">참고(샘플 데이터·문헌)</h3>
 <p style="margin:2px 0 2px 12px">• 샘플 데이터 카탈로그(DL URL / 라이선스) —— 2-D 는 skimage.data(BSD/public)+ 합성, 3-D 는 실데이터 소스(Stanford/PDS 등)의 DL URL.</p>
 <p style="margin:2px 0 2px 12px">• 연산자의 내력·참고문헌 —— 이 연산자 족의 바탕이 된 연구/기법의 출처.</p>

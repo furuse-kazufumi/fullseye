@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × table × matrix × matrix × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import driveterrain; driveterrain.world_materials(world: &#x27;dict&#x27;, view: &#x27;dict&#x27;, pose, K, m: &#x27;dict&#x27;) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;world_materials&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>描画結果 <code style="color:#22d3bf">view</code>(world_camera、&quot;shade&quot; を含む)に路面の材質を画素ごとに掛ける。</p>
+<p>Wendet pixelweise Fahrbahnmaterialien auf das Renderergebnis <code style="color:#22d3bf">view</code> an (aus world_camera, einschließlich &quot;shade&quot;).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>路面(ラベル 0)と地形(10)の画素は世界座標で材質を評価し直す: アスファルトの粒(Perlin 8 周期/m)、草の色むら、染み(暗い斑、ラベルは 0 のまま)、水溜り(空の写り込み、ラベル 11)。白線・横断歩道(9・12)は摩耗率 wear で路面の色に混ぜる(ラベルは不変、真値 &quot;wear&quot; に残る)。水溜りの写り込みの強さ(0.1〜0.9、Perlin 1.5 周期/m)は真値 &quot;refl&quot;。返り値 = <code style="color:#22d3bf">{&quot;color&quot;, &quot;label&quot;, &quot;puddle&quot;, &quot;refl&quot;, &quot;stain&quot;, &quot;wear&quot;, &quot;xyz&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

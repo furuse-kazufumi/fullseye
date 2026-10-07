@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import pegfail; pegfail.insertion_failure_classify(signature, table=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;insertion_failure_classify&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>署名を表で引く(fail-closed): 当たる行が 1 つならそのクラスと回復、0 なら <code style="color:#22d3bf">&quot;unknown&quot;</code>(推測しない)、2 つ以上なら表の欠陥として <code style="color:#22d3bf">ValueError</code>(<code style="color:#22d3bf">insertion_failure_validate</code> が通した表では起きない)。</p>
+<p>Looks up a signature in the table (fail-closed): if exactly 1 row matches, its class and recovery; if 0, <code style="color:#22d3bf">&quot;unknown&quot;</code> (no guessing); if 2 or more, <code style="color:#22d3bf">ValueError</code> as a table defect (cannot happen with a table that passed <code style="color:#22d3bf">insertion_failure_validate</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>署名の欄に語彙の外の値があれば <code style="color:#22d3bf">ValueError</code>(綴り壊し)。返り: <code style="color:#22d3bf">cls</code>、<code style="color:#22d3bf">recovery</code>、<code style="color:#22d3bf">row</code>(当たった行の添字、無ければ −1)、<code style="color:#22d3bf">n_match</code>、<code style="color:#22d3bf">basis</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>
 <p style="margin:2px 0 2px 12px">• Sample-data catalog (download URLs / licences) — 2-D uses skimage.data (BSD/public domain) plus synthetic images; 3-D lists download URLs for real data sources (Stanford, PDS, …).</p>

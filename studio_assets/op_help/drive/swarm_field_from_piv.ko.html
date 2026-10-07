@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">any × scalar × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.swarm_field_from_piv(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), window: &#x27;int&#x27; = 24, overlap: &#x27;float&#x27; = 0.5, min_peak_ratio: &#x27;float&#x27; = 1.1, outlier_threshold=3.0) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import swarmflow; swarmflow.swarm_field_from_piv(frames, res: &#x27;float&#x27;, frame_dt: &#x27;float&#x27;, center=(0.0, 0.0), window: &#x27;int&#x27; = 24, overlap: &#x27;float&#x27; = 0.5, min_peak_ratio: &#x27;float&#x27; = 1.1, outlier_threshold=3.0) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdrive.get(&quot;swarm_field_from_piv&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>俯瞰のコマ列 → 隣どうしの相互相関の PIV(pivops.piv_cross_correlate)→ 全部の組の平均 → 世界の速度場。</p>
+<p>부감 프레임 열 → 이웃끼리의 상호 상관 PIV(pivops.piv_cross_correlate) → 모든 쌍의 평균 → 월드의 속도장.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>個体を一つずつ見分けない(重なっても使える)代わりに、窓(<code style="color:#22d3bf">window</code> px)より細かい乱れは均される。峰の比が <code style="color:#22d3bf">min_peak_ratio</code> 未満の窓は欠測(NaN)。★群れは格子のように並びやすく(押し合いで間隔がそろう)、相関の峰が隣の格子の位置にも立つので峰の比が 1 に近い。実測(間隔 7.5 px、窓 24): しきい値 0 だと取り違えた窓が混ざり個体の速度との rms が U の 13.7 %、1.1 で 1.9 %(測れた窓 85 %)、1.3 では測れた窓が 18 % に減る —— 既定は 1.1。さらに組ごとに正規化した中央値の検査(pivops.piv_outlier_mask、しきい値 <code style="color:#22d3bf">outlier_threshold</code>、None で掛けない)で外れた窓を欠測にしてから平均する。pivops の注意どおり、急な勾配(障害物の肩)を外れと呼ばないよう慣行の 2 より緩い 3。pivops の成分 (dy, dx) [px/コマ] を u = dx·res/Δt、v = −dy·res/Δt に直す。</p>
 <p>Returns:</p>
 <p>速度場の dict + <code style="color:#22d3bf">valid_fraction</code>(窓のうち測れた割合)、<code style="color:#22d3bf">n_pairs</code>。</p>

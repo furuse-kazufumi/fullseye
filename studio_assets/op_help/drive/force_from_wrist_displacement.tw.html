@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.force_from_wrist_displacement(z_meas_mm, z_cmd_mm, k_n_per_mm: &#x27;float&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;force_from_wrist_displacement&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>柔らかい手首(縦のばね k、N/mm)なら押し力 F = k (z_meas − z_cmd): 刃が指令より上に残った分が力(N の配列)。</p>
+<p>柔順腕部(垂直彈簧 k，N/mm)時，推力 F = k (z_meas − z_cmd)：刀刃高於指令的部分即為力(N 的陣列)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>準静的の近似: 手首の慣性と減衰は入らない。減衰 c の手首を速さ v で下げると、空中での風袋引きに c·v が入り、刃が食材に止められている間だけそれが抜ける —— 誤差の上限は c·v(PoC の --full で MuJoCo の拘束力と比べる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

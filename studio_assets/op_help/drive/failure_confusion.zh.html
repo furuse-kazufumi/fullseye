@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.failure_confusion(true_cls, pred_cls, classes=(&#x27;nominal&#x27;, &#x27;chamfer_sliding&#x27;, &#x27;missed_hole&#x27;, &#x27;wrong_hole&#x27;, &#x27;wedging&#x27;, &#x27;jamming&#x27;, &#x27;blocked_hole&#x27;, &#x27;seated&#x27;, &#x27;unknown&#x27;)) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import pegfail; pegfail.failure_confusion(true_cls, pred_cls, classes=(&#x27;nominal&#x27;, &#x27;chamfer_sliding&#x27;, &#x27;missed_hole&#x27;, &#x27;wrong_hole&#x27;, &#x27;wedging&#x27;, &#x27;jamming&#x27;, &#x27;blocked_hole&#x27;, &#x27;seated&#x27;, &#x27;unknown&#x27;)) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsdrive.get(&quot;failure_confusion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>混同行列と正答率: 行 = 注入(真)のクラス、列 = 分類。<code style="color:#22d3bf">classes</code> の外の名は ValueError(綴り壊し)。</p>
-<p>返り: <code style="color:#22d3bf">matrix</code>(n, n) int、<code style="color:#22d3bf">classes</code>、<code style="color:#22d3bf">accuracy</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">per_class_recall</code>(真の各クラスの再現率、無い行は nan)。</p>
+<p>混淆矩阵与正确率：行 = 注入(真实)类别，列 = 分类结果。<code style="color:#22d3bf">classes</code> 之外的名称引发 ValueError(拼写错误)。返回：<code style="color:#22d3bf">matrix</code>(n, n) int、<code style="color:#22d3bf">classes</code>、<code style="color:#22d3bf">accuracy</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">per_class_recall</code>(各真实类别的召回率，缺失的行为 nan)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>
 <p style="margin:2px 0 2px 12px">• 示例数据目录(下载 URL / 许可证) —— 2-D 用 skimage.data(BSD/公有领域)加合成图,3-D 给出真实数据源(Stanford/PDS 等)的下载 URL。</p>
 <p style="margin:2px 0 2px 12px">• 算子来历与参考文献 —— 该算子族所依据的研究/方法出处。</p>

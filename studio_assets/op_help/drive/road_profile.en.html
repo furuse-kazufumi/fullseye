@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import drivelong; drivelong.road_profile(profile_xz, l0: &#x27;float&#x27; = 0.0) -&gt; &#x27;Dict[str, np.ndarray]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsdrive.get(&quot;road_profile&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>水平距離と高さの折線 (x, z)(drivecourse.course_slope の <code style="color:#22d3bf">profile</code> と同じ形)を、<b>路面に沿った弧長 l</b> の縦断にする。</p>
+<p>Turns a polyline of horizontal distance and height (x, z) (same form as <code style="color:#22d3bf">profile</code> of drivecourse.course_slope) into a longitudinal profile over <b>arc length l along the road surface</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>返り値 = <code style="color:#22d3bf">{&quot;l&quot; (n,), &quot;x&quot; (n,), &quot;z&quot; (n,), &quot;sin&quot; (n−1,), &quot;cos&quot; (n−1,)}</code>。l は <code style="color:#22d3bf">l0</code> から始まる折れ点の弧長。区間 i の勾配角 θ_i は sin = Δz/Δl、cos = Δx/Δl(両端の外は平ら: θ = 0、z は端の値)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2 点未満、非有限、x が狭義単調増加でない、勾配が 45° 以上。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

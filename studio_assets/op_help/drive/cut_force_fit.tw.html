@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × scalar</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import cutting; cutting.cut_force_fit(F_n, w_eff_mm, xi: &#x27;float&#x27;, min_w_mm: &#x27;float&#x27; = 2.0) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsdrive.get(&quot;cut_force_fit&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>切断中の力の列 F(N)と切っている幅 w_eff(mm)から靱性 R(J/m²)を原点を通る最小二乗で出す。</p>
+<p>由切割過程中的力序列 F(N)與正在切割的寬度 w_eff(mm)，以通過原點的最小平方求韌性 R(J/m²)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>模型: <code style="color:#22d3bf">F = R · w_eff · g(ξ)</code>、g = 1/(1+ξ²)(<code style="color:#22d3bf">cut_force_atkins</code> の slice_push、摩擦なし)。w_eff &lt; <code style="color:#22d3bf">min_w_mm</code> の点(入り始め)は使わない。★ 合成の真値を同じ模型で作るとこの当てはめは配管の検査にしかならず、摩擦の分は R に吸い込まれる(返り値の <code style="color:#22d3bf">model</code> に書く)。返り値: <code style="color:#22d3bf">R</code>、<code style="color:#22d3bf">rms_n</code>、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">g</code>、<code style="color:#22d3bf">model</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

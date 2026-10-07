@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">signal</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import drivelateral; drivelateral.stanley_straight_decay(e0: &#x27;float&#x27;, t, *, gain: &#x27;float&#x27;, speed: &#x27;float&#x27;, softening: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsdrive.get(&quot;stanley_straight_decay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>直線の経路で Stanley(切らない)の前車軸の横ずれ e(t) の閉形式。</p>
+<p>Geschlossene Form der Querabweichung e(t) der Vorderachse unter Stanley (ohne Begrenzung) auf einem geraden Pfad.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>ė = −v k e / √(a² + k² e²)、a = k_s + v。F(e) = √(a² + k²e²) − a ln((a + √(a² + k²e²))/(k|e|)) は dF/dt = −v k(一定)。F(e(t)) = F(e₀) − v k t を |e| ∈ (0, |e₀|] の二分法(F は |e| に単調増加)で解く。小さい e では e ≈ e₀&#x27; e^{−k t v/a}(指数)、大きい e では |e| がほぼ v t で減る(直線)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: k ≤ 0、v ≤ 0、k_s &lt; 0、t &lt; 0。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
