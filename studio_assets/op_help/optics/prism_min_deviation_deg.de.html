@@ -11,7 +11,7 @@
 <p>anzupassen ist die richtige Korrektur; einen Wächter hinzuzufügen wäre Symptombehandlung).</p>
 <p>apex_deg: Scheitelwinkel A [deg]. glass: Glasname aus <code style="color:#22d3bf">raytrace.glass_catalog</code> oder ein numerischer Brechungsindex.</p>
 <p>Rückgabewert: minimale Ablenkung δ_min = 2·asin(n·sin(A/2)) − A (Hecht §5.5). Wellenlängen mit n·sin(A/2) &gt; 1 können nicht austreten (Totalreflexion), daher NaN.</p>
-<p>Gegenprobe: für N-BK7 mit A=60° ist δ_min ≈ 38.9° bei der d-Linie (587.6 nm), und die Differenz zwischen F-Linie (486.1) und C-Linie (656.3) (Winkeldispersion) zeigt <b>in die von der Abbe-Zahl erwartete Richtung</b> (kürzere Wellenlängen werden stärker gebrochen).</p>
+<p>Gegenprobe: für N-BK7 mit A=60° ist δ_min ≈ 38.6° bei der d-Linie (587.6 nm), und die Differenz zwischen F-Linie (486.1) und C-Linie (656.3) (Winkeldispersion) zeigt <b>in die von der Abbe-Zahl erwartete Richtung</b> (kürzere Wellenlängen werden stärker gebrochen).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>
 <p style="margin:2px 0 2px 12px">• <b>Einheiten stecken im Argumentnamen</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Eine Verwechslung von mm und µm stürzt nicht ab, sondern liefert eine plausibel aussehende falsche Antwort; der Name verhindert das. Aus der Größenordnung wird nie auf die Einheit geschlossen.</p>

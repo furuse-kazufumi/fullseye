@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
 <p>Apply the <b>diffraction blur</b> set by the aperture (the Airy disc approximated by a Gaussian).</p>
 <p>An image made with geometrical optics alone shows more detail than the real machine. Stopping down deepens the depth of field, but diffraction smears the detail ―― if you set the aperture without watching this tug-of-war, defects that were visible in simulation vanish on the real machine.</p>
-<p>The Airy pattern is approximated by an equivalent Gaussian matched to the radius 1.22λN of the 1st dark ring (σ ≈ 0.42 · 1.22λN). If you need an exact PSF, use <code style="color:#22d3bf">lensimage.psf_from_opd</code> (diffraction PSF of a real aberrated pupil).</p>
+<p>The Airy pattern is approximated by the Gaussian that fits it best (σ ≈ 0.42 · λN, about 0.34 times the radius 1.22λN of the 1st dark ring). If you need an exact PSF, use <code style="color:#22d3bf">lensimage.psf_from_opd</code> (diffraction PSF of a real aberrated pupil).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

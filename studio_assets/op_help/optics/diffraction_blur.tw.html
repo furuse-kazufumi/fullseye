@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
 <p>施加由光闌決定的<b>繞射模糊</b>(用高斯近似艾里斑)。</p>
 <p>只用幾何光學產生的像，細節比實機顯現得更多。光圈收得越小景深越深，但繞射會把細節抹掉 ―― 不看這場拉鋸就決定光圈，模擬中看得見的缺陷在實機上就會消失。</p>
-<p>艾瑞斑以與第 1 暗環半徑 1.22λN 相匹配的等效高斯(σ ≈ 0.42 · 1.22λN)近似。需要嚴格的 PSF 時請用 <code style="color:#22d3bf">lensimage.psf_from_opd</code>(實際像差光瞳的繞射 PSF)。</p>
+<p>艾瑞斑以最接近它的高斯(σ ≈ 0.42 · λN，約為第 1 暗環半徑 1.22λN 的 0.34 倍)近似。需要嚴格的 PSF 時請用 <code style="color:#22d3bf">lensimage.psf_from_opd</code>(實際像差光瞳的繞射 PSF)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>optics 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>
 <p style="margin:2px 0 2px 12px">• <b>單位寫進參數名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不會當掉,而是給出「看似合理卻是錯的答案」,所以用命名來防。這裡絕不從數值大小去猜單位。</p>

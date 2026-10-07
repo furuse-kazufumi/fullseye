@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
 <p>조리개가 정하는 <b>회절 흐림</b>을 입힙니다(에어리 디스크를 가우스로 근사).</p>
 <p>기하 광학만으로 만든 상은 실기보다 세부가 지나치게 나온다. 조일수록 피사계 심도는 깊어지지만회절로 세부가 뭉개진다 ―― 이 줄다리기를 보지 않고 조리개를 정하면, 시뮬레이션상으로는보이던 결함이 실기에서 사라진다.</p>
-<p>에어리 패턴을, 제1 암환의 반지름 1.22λN에 맞춘 등가 가우스(σ ≈ 0.42 · 1.22λN)로 근사한다. 엄밀한 PSF가 필요하면 <code style="color:#22d3bf">lensimage.psf_from_opd</code>(실제 수차 동공의 회절 PSF)를 쓴다.</p>
+<p>에어리 패턴을, 가장 잘 근사하는 가우스(σ ≈ 0.42 · λN, 제1 암환의반지름 1.22λN의 약 0.34배)로 근사한다. 엄밀한 PSF가 필요하면 <code style="color:#22d3bf">lensimage.psf_from_opd</code>(실제 수차 동공의 회절 PSF)를 쓴다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

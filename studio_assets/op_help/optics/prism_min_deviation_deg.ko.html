@@ -11,7 +11,7 @@
 <p>맞추는 것이 올바른 수정이며, 파수꾼을 더하는 것은 대증 요법).</p>
 <p>apex_deg: 꼭지각 A [deg]. glass: <code style="color:#22d3bf">raytrace.glass_catalog</code>의 유리재 이름, 또는 굴절률의 수치.</p>
 <p>반환값: 최소 편각 δ_min = 2·asin(n·sin(A/2)) − A(Hecht §5.5). n·sin(A/2) &gt; 1인파장은 빛이 나갈 수 없으므로(전반사) NaN.</p>
-<p>검산: N-BK7·A=60°에서 d선(587.6 nm)의 δ_min ≈ 38.9°, F선(486.1)과 C선(656.3)의차(각분산)가 <b>Abbe 수로부터 예상되는 방향</b>(단파장일수록 크게 굽는다)이 된다.</p>
+<p>검산: N-BK7·A=60°에서 d선(587.6 nm)의 δ_min ≈ 38.6°, F선(486.1)과 C선(656.3)의차(각분산)가 <b>Abbe 수로부터 예상되는 방향</b>(단파장일수록 크게 굽는다)이 된다.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>optics 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>
 <p style="margin:2px 0 2px 12px">• <b>단위는 인자 이름에 넣습니다</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. mm 와 µm 를 혼동하면 crash 가 아니라 「그럴듯하게 틀린 답」이 나오므로 이름으로 막습니다. 크기로 단위를 추측하는 처리는 일절 하지 않습니다.</p>

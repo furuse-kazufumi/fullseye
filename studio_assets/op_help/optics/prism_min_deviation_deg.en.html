@@ -11,7 +11,7 @@
 <p>is the right fix; adding a guard would be treating the symptom).</p>
 <p>apex_deg: apex angle A [deg]. glass: glass name in <code style="color:#22d3bf">raytrace.glass_catalog</code>, or a numeric refractive index.</p>
 <p>Returns: minimum deviation δ_min = 2·asin(n·sin(A/2)) − A (Hecht §5.5). Wavelengths with n·sin(A/2) &gt; 1 cannot exit (total internal reflection), so NaN.</p>
-<p>Cross-check: for N-BK7 with A=60°, δ_min ≈ 38.9° at the d line (587.6 nm), and the difference between the F line (486.1) and the C line (656.3) (angular dispersion) goes <b>in the direction expected from the Abbe number</b> (shorter wavelengths bend more).</p>
+<p>Cross-check: for N-BK7 with A=60°, δ_min ≈ 38.6° at the d line (587.6 nm), and the difference between the F line (486.1) and the C line (656.3) (angular dispersion) goes <b>in the direction expected from the Abbe number</b> (shorter wavelengths bend more).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

@@ -5,7 +5,7 @@
 
 Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mit `★` markierten sind die tragenden — was gemessen wurde, was schiefging, warum es so gebaut ist. Diese Seite sammelt sie maschinell ein; maßgeblich ist der Quellcode, daher können beide nicht auseinanderlaufen.
 
-**Übersetzungsstand**: 610 von 1312. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
+**Übersetzungsstand**: 610 von 1331. Nicht übersetzte Einträge stehen im japanischen Original — ein stiller Rückfall sähe aus wie eine Übersetzung, darum wird eine fehlende Übersetzung als fehlend ausgewiesen.
 
 
 ## `accel.py`
@@ -70,8 +70,11 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L586** — ★ Der einzige Eintrittspunkt für Schrotrauschen. Mit photons_per_unit=1 gilt "Erwartungswert = lambda".
 - **L675** — ★ field_seed ist fest (derselbe Himmel), nur seed wird variiert (eine andere Beobachtung).
 - **L746** — ★Bis 2026-09-08 sagte der Kommentar dieses Gates "vollkommen flach = Rauschen ist nicht messbar". **Es war die Prämisse, die falsch war** —— es gibt noch einen weiteren Weg, auf dem σ zu 0 wird: wenn MAD unter ganzzahligem DN zusammenfällt (0.0 für ein Realbild-Äquivalent von σ=0.5). Für ein nicht flaches Bild leer zurückzugeben ist keine konservative, sondern eine **falsche Antwort**; tatsächlich wurden 2 in ein 200x200-Ganzzahl-Frame gepflanzte Punktziele als 0 zurückgegeben. Wir trennen die Wege: wenn flach, leer zurückgeben (keine Sterne); wenn nicht flach, verweigern.
-- **L1606** — ★Bei Gleichstand wähle den **Bin mit mehr rohen Stimmen**. Eine 3x3-Glättung ergibt links wie rechts der wahren Spitze dieselbe Summe, sodass ein argmax allein auf dem geglätteten Wert "einen leeren Bin neben der Spitze" wählen kann —— genau das trat in der Messung auf: die wahre Verschiebung (-0.087, +0.996) hatte ihre Stimmen 7 + 4 an der Bin-Grenze zweigeteilt, und ihr um einen Bin verschobenes Zentrum endete mit **0 Stimmen** (frame_align schlug fälschlich als "nicht überlappend" fail-closed an). Ein Gewicht von 1e-6 ist weit kleiner als der Schritt des geglätteten Werts (1/9), ändert also die Rangfolge nicht, wenn ein echter Unterschied besteht.
-- **L1629** — ★2026-09-08: gib auch die **Höhe der zweitplatzierten Spitze** zurück. Bei einem Sternfeld gibt es eine Spitze, aber bei repetitiven Strukturen (Rasterpunkte, Gitter, Gewebe) reihen sich **gleich hohe Spitzen** um einen Gittervektor verschoben auf, und welche man auch wählt, "alle stimmen zu" = inlier_ratio wird 1.00. Die Zustimmungsrate ist nicht "die Wahrscheinlichkeit, dass die Antwort korrekt ist", daher geben wir **ob es eine einzige Spitze gab** als separate Zahl aus (0 = Einzelspitze, nahe 1 = es gibt weitere gleichwertige Kandidaten).
+- **L1025** _(ja)_ — ★ 画像の外の中心は「flux 0・area 0・snr inf」を黙って返していた —— 拒否する。 画像の縁で欠けた開口は計算はできるが flux が系統的に少ないので ``truncated`` で印を付ける(area_px は欠けた後の面積)。
+- **L1260** _(ja)_ — 残差の sigma で下支えする。★ 以前は +inf に置き換えていたので **何も落とさず**、宇宙線がそのまま平均に入った。
+- **L1616** _(ja)_ — 束ねた sigma で下支えする。★ 以前は中央値画像の空間 MAD を使っていたが、 平坦な整数データではそれも 0 になり床が 1e-12 —— 読み出し雑音の +1 DN が 全部「宇宙線」になった(32x32x9 枚で真の宇宙線 1 に対し 871 画素)。
+- **L1657** — ★Bei Gleichstand wähle den **Bin mit mehr rohen Stimmen**. Eine 3x3-Glättung ergibt links wie rechts der wahren Spitze dieselbe Summe, sodass ein argmax allein auf dem geglätteten Wert "einen leeren Bin neben der Spitze" wählen kann —— genau das trat in der Messung auf: die wahre Verschiebung (-0.087, +0.996) hatte ihre Stimmen 7 + 4 an der Bin-Grenze zweigeteilt, und ihr um einen Bin verschobenes Zentrum endete mit **0 Stimmen** (frame_align schlug fälschlich als "nicht überlappend" fail-closed an). Ein Gewicht von 1e-6 ist weit kleiner als der Schritt des geglätteten Werts (1/9), ändert also die Rangfolge nicht, wenn ein echter Unterschied besteht.
+- **L1680** — ★2026-09-08: gib auch die **Höhe der zweitplatzierten Spitze** zurück. Bei einem Sternfeld gibt es eine Spitze, aber bei repetitiven Strukturen (Rasterpunkte, Gitter, Gewebe) reihen sich **gleich hohe Spitzen** um einen Gittervektor verschoben auf, und welche man auch wählt, "alle stimmen zu" = inlier_ratio wird 1.00. Die Zustimmungsrate ist nicht "die Wahrscheinlichkeit, dass die Antwort korrekt ist", daher geben wir **ob es eine einzige Spitze gab** als separate Zahl aus (0 = Einzelspitze, nahe 1 = es gibt weitere gleichwertige Kandidaten).
 
 ## `backend_safe.py`
 
@@ -131,6 +134,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `backends_extra.py`
 
 - **L210** — ★``ev[0]`` ist der **algebraisch** größte Eigenwert, nicht der mit dem größten Absolutwert. Auf einem hellen Grat ist die Hauptkrümmung negativ, sodass ev[0] der mit dem kleineren Absolutwert wird und die **umgekehrte** Antwort von 0 auf dem Grat und 1 an beiden Seiten ergibt (2026-09-05 Fable-Review, gemessen [1, .64, 0, 0, 0, 0, .64, 1]). Wir nehmen wie beschrieben den größten Absolutwert.
+
+## `backends_measure1d.py`
+
+- **L83** _(ja)_ — ★ A float image in 0..255 (cv2.imread(...).astype(float)) was clipped to a flat 1.0 above 1 — every edge brighter than 1 vanished silently.
 
 ## `backends_r3.py`
 
@@ -1307,6 +1314,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L754** _(ja)_ — ★bbox が無いときは glyphops.make_spec に任せる。版面が取れなければ items に bbox が 入らない = 黙って外れた箱で直すことは起きない。ここでは理由を付けて断る。
 - **L1043** _(ja)_ — ★2026-09-20(GenSpark 第 38 報 N135): 「2390 names」が op 数と読まれた —— 数えているのは op 名 + HALCON 別名。
 
+## `fullseye/xlsxio.py`
+
+- **L46** _(ja)_ — ★ float64 に直してから [0,1] に clip すると uint8 の 0..255 が 0/1 の 2 値に潰れた
+- **L51** _(ja)_ — ★ 切り捨ての int() だと 1000 px が step 3 で 334 px になり longest を守らない
+- **L68** _(ja)_ — dict の表は key / value の 2 列(mdio と同じ)。★ list(dict) はキー文字列の 列になり、1 文字ずつのセルに綴られていた
+
 ## `fullseye_comm.py`
 
 - **L393** _(ja)_ — ★CRC は**公表された検査値**で裏を取る。CRC-16/MODBUS の諸元は ``width=16 poly=0x8005 init=0xffff refin=true refout=true xorout=0x0000 check=0x4b37``(CRC catalogue)—— ``check`` は ASCII ``"123456789"`` の CRC である。 自分で作った入力の往復だけで試すと、**反射入力と反射出力を同時に取り違えた実装が 緑になる**(自分で包んで自分で開けるので、向きの誤りが打ち消し合う)。 外の値と突き合わせて初めて、線の向こうの装置と話が通じることが言える。
@@ -1324,6 +1337,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `gicp.py`
 
 - **L178** _(ja)_ — ★2026-10-07 レビュー修正: 小角線形化 R ← (I+[ω]×)R は原点まわりの回転なので、原点から 遠い点群(オフセット 1e3 で回転誤差 20°)では回転と並進がほぼ縮退して誤った姿勢に落ちた。 target の外接箱の中心 c へ両点群を寄せて解き、t = t' + c − R·c で世界へ戻す (外接箱の中心は点の順に依らない = reproducible=True のビット一致を保つ)。
+
+## `glassmirror.py`
+
+- **L269** _(ja)_ — 多重反射の和は偏光ごとに取ってから平均する。★ 以前は Rs と Rp を先に平均して 1 本の R で和を取っていたので、斜め入射で透過率を過小評価した(air→1.5、 60° で 0.836 対 正しい 0.848)。垂直入射では Rs = Rp なので値は変わらない。
 
 ## `glyphops.py`
 
@@ -1371,12 +1388,16 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L526** _(ja)_ — ★2026-09-20(GenSpark 第 53 報 N187、再現): --seq 無しは空列を「ソートして」[] を印字し rc 0 だった。
 - **L635** _(ja)_ — ★help の実行例(2026-09-19、GenSpark 第 6 報 N9 / K2): 配布物では console_script `fullseye` が入口で、 `py -3.11 imgevolve.py` は checkout 専用の綴り。呼ばれ方に合わせて例文を書き換える。
 
+## `imgforensics.py`
+
+- **L192** _(ja)_ — ★ complex は ComplexWarning だけで虚部を捨て、実部のハッシュを返していた。 文字列・object も同じく受け取らない
+
 ## `imgio.py`
 
 - **L99** — ★**Zwei Kriterien** (2026-09-08, am selben Tag behoben). Zunaechst wurde nur nach 'CIE L* hat 0 Umkehrungen' ausgewaehlt, doch ``poc_colormap_readability`` mass, dass **``cividis`` trotz 0 Umkehrungen einen Farbdifferenz-Grat aufwirft**. Selbst bei monotoner Helligkeit erscheint bei ungleichmaessiger Farbdifferenz-Schrittweite eine **nicht vorhandene Grenze** in einem glatten Feld -- es gab sich nach einem einseitigen Kriterium als 'sicher' aus. Gemessen (512 Stufen, max / median der benachbarten Farbdifferenz sowie die Anzahl der lokalen Maxima, die das 1.6-fache des Medians ueberschreiten): ========== ========== ============== ========== Map / L*-Umkehrungen / dE max/median / Gratanzahl ========== ========== ============== ========== ``gray`` 0 1.33 0 ``viridis`` 0 1.38 0 ``plasma`` 0 1.38 0 ``magma`` 0 1.48 0 ``inferno`` 0 1.50 0 ``cividis`` 0 **2.23** **1** ``turbo`` 1 1.78 1 ========== ========== ============== ========== ``cividis`` wurde entfernt, **weil die approximierte LUT dieses repo grob ist**, nicht wegen eines Problems des veroeffentlichten cividis selbst (seine 6 Kontrollpunkte sind die wenigsten unter den sequenziellen Maps). Fuer alle, die mit Blick auf Farbsehschwaechen waehlen wollen, steht :data:`CVD_SAFE` bereit. ``tests/test_pseudocolour_family.py`` misst jedes Mal beide Kriterien.
 - **L124** — Maps, denen nachgesagt wird, dass ihre Reihenfolge auch bei Farbsehschwaeche (P/D-Typ) lesbar bleibt. ★Die approximierte LUT von ``cividis`` hat 6 Kontrollpunkte und eine grobe Farbdifferenz-Schrittweite und erfuellt das :data:`PERCEPTUAL_SAFE`-Kriterium nicht (gemessen dE max/median 2.23). Mit mehr Kontrollpunkten liesse es sich in beide aufnehmen -- da das haendische Abschreiben von Primaerquellenwerten eine Vorgeschichte von Tippfehlern hat, wird dies bis zur Bestaetigung der Quelle zurueckgestellt.
 - **L716** _(ja)_ — ★2026-09-20(GenSpark 第 34 報 N120): PFM は float 専用の形式なのに、既定の 8 bit 経路が 0..255 の 値を float32 として書き、読むと 0..1 に clip されて別画像になっていた(往復 max|Δ| 0.98)。 PFM の既定は float(無損失)。
-- **L905** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
+- **L910** _(ja)_ — ★2026-09-20(GenSpark 第 18 報 N78): 無い・ディレクトリ・読めない、が全部同じ文だった。
 
 ## `imgmetrics.py`
 
@@ -1385,7 +1406,8 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 ## `matappear.py`
 
 - **L167** — ★Das Uebergeben eines 0-dimensionalen (skalaren) Werts liess `r.shape[-1]` einen **nackten IndexError** werfen (im adversarialen Audit vom 2026-09-04 aufgedeckt). Ein spektraler Reflexionsgrad hat mindestens eine Wellenlaengenachse -- ein Skalar ist kein 'Wert pro Wellenlaenge', daher weist der Waechter ihn ausdruecklich ab.
-- **L296** — ★Ein reales Gitter beugt auf **beiden Seiten** (bei symmetrischen Furchen sind die +/-m-Effizienzen nahezu gleich). Bindet man hier nicht beide +/- ein, koennen je nach Geometrie von Lichtquelle und Blickrichtung alle Loesungen negativ werden, und der Filter 'nur positives lambda behalten' **verwirft alles und wird pechschwarz**. Gemessen: eine senkrecht zu den Furchen beleuchtete CD (delta-sin = -0.55) hatte m=+1,+2 bei lambda<0 komplett verschwunden, und die 440 nm von m=-2 waren die eigentliche Loesung.
+- **L217** _(ja)_ — ★ 範囲外は黙って clip せず拒否する(cos=5 が垂直入射、cos=-0.5 が全反射に化けていた)。 丸めの屑(1 + 1e-15 など)だけは許す。
+- **L301** — ★Ein reales Gitter beugt auf **beiden Seiten** (bei symmetrischen Furchen sind die +/-m-Effizienzen nahezu gleich). Bindet man hier nicht beide +/- ein, koennen je nach Geometrie von Lichtquelle und Blickrichtung alle Loesungen negativ werden, und der Filter 'nur positives lambda behalten' **verwirft alles und wird pechschwarz**. Gemessen: eine senkrecht zu den Furchen beleuchtete CD (delta-sin = -0.55) hatte m=+1,+2 bei lambda<0 komplett verschwunden, und die 440 nm von m=-2 waren die eigentliche Loesung.
 
 ## `match3d.py`
 
@@ -1444,9 +1466,22 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L624** _(ja)_ — ★ここを「もう片端が次数 3 以上」と書いていた最初の版は、実測で 一度も発火しなかった: ヒゲの根元が枝の端点クラスタと 26 近傍で 融合して次数 2 になる配置が普通にあり、その場合に素通りしていた (「刈った」と報告しながら 0 本という、いちばん静かな失敗)。
 
+## `mesh.py`
+
+- **L410** _(ja)_ — ★ match the whole line: a comment that merely mentions end_header used to end the header there and shift the binary body (silent garbage).
+- **L655** _(ja)_ — ★ A comma is a column separator only when it is the ONLY one on the line. "1,5 2,5 3,5" (decimal commas, European locale) used to be re-split into 6 columns and read as xyz + colour (silently wrong).
+
+## `meshio_opt.py`
+
+- **L446** _(ja)_ — ONCE from all three. ★ Per-channel, a 16-bit orange scene whose blue stays <= 255 (in 16-bit units) had blue divided by 255 -> 0.78 instead of 0.003.
+
 ## `metrics3d.py`
 
 - **L369** _(ja)_ — ★2026-10-07 レビュー修正: md=None(軸方向は無制限)で球の半径を r にしていたため、 実際は「半径 r の球」で切り取っていた(面が法線方向に r 以上動くと両側が揃わず nan)。 無制限の円筒は球で絞れないので、全点を候補にして軸・半径で判定する。
+
+## `motionio.py`
+
+- **L137** _(ja)_ — ★ 値域(ptp)最大の単調列を時刻にすると、左→右に掃く縁の x(0..239 px)が 秒単位の t(0..0.1)に勝って x と t が入れ替わった(2026-10-07)。 x・y は画素座標なので整数値。時刻は「整数でない単調列」を優先し、 決まらなければ推測せず拒否する(見出しを付ければ名前で読める)。
 
 ## `occupancy.py`
 
@@ -1593,9 +1628,14 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 ## `optics.py`
 
-- **L877** _(ja)_ — ★補集合はここで作る。`1 - lowpass` を呼び出し側に作らせると、 境界の扱いが 2 通りに分かれて lowpass + highpass = 1 が崩れる。
-- **L882** _(ja)_ — ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを 返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を 厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。 離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
-- **L2100** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
+- **L869** _(ja)_ — ★奇数次の微分は奇関数。偶数長の ``fftfreq`` はナイキストの ``-1/2`` だけを 持ち対の ``+1/2`` が無いので、そこを残すと実の場の「微分」に虚部が出た (実測 max|Im| 0.34)。hilbert_x と同じくそのビンを 0 にする。
+- **L885** _(ja)_ — ★補集合はここで作る。`1 - lowpass` を呼び出し側に作らせると、 境界の扱いが 2 通りに分かれて lowpass + highpass = 1 が崩れる。
+- **L890** _(ja)_ — ★ナイキストのビンを 0 にする。``fftfreq`` は偶数長で ``-1/2`` だけを 返し、対になる ``+1/2`` が無いので、そこを残すと片側位相が**奇対称を 厳密に満たさない**(実測: 残差 1.6e-09 → 0 にすると 2.3e-16)。 離散ヒルベルト変換で標準的な扱いで、`scipy.signal.hilbert` も同じ。
+- **L2112** _(ja)_ — ★縁は**モザイクのまま**鏡映で 2 画素広げてから抜く。広げ幅が偶数で ``reflect`` (縁の画素を重ねない鏡映)なら 2x2 の位相が保たれる。マスク後の面を伸ばすと 未計測の 0 が縁に写り、一様な場でも縁が暗くなった(実測 16 画素)。
+
+## `optscene.py`
+
+- **L2154** _(ja)_ — σ = 0.42·λN(Airy 強度の最良ガウス近似)。★ 以前は 0.42·(1.22λN) で 22 % 太かった
 
 ## `ozakimm.py`
 
@@ -1684,6 +1724,10 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 
 - **L897** _(ja)_ — ★2026-10-07: 補正で割った値 v = I / c の分散は I / c² = |v| / c(補正を σ に通さないと 2θ=55° で σ を 2.3 倍小さく見積もった)
 
+## `raster.py`
+
+- **L148** _(ja)_ — ★ /iinfo.max put a signed image in [-1, 1] (int16 -32768 -> -1.00003)
+
 ## `realdata.py`
 
 - **L38** — ★ Nur solche, deren ``public``-Spalte true ist, dürfen in zu veröffentlichenden Abbildungen verwendet werden. Solche, die auf zitierte Nutzung zu Forschungs- und Bildungszwecken beschränkt sind, tragen ``cite``.
@@ -1745,10 +1789,12 @@ Dieses Repository hält das *Warum* in **Kommentaren im Quellcode** fest. Die mi
 - **L1018** _(ja)_ — ★★**破綻は警告でなく構造で返す**。感度係数がすべて 0 になると、入力に 不確かさがあるのに合成不確かさが 0 になる —— 規格の比較損失の例 (``dY = X1^2 + X2^2`` を ``x_i = 0`` で評価)がまさにこれで、 ``c_i = 2 x_i = 0`` だから 1 次近似は「不確かさゼロ」と答える。数式としては 正しいが**測定の主張としては嘘**で、モンテカルロは同じ状況で ``u = 50e-6`` を返す。0 を返すこと自体は止めない(それが伝播則の答えなので)が、 ``guf_valid=False`` と ``invalid_reasons=["stationary_point"]`` を**結果に 同伴させる**。警告にすると握りつぶされ、呼んだ側は「測定が完璧だった」と読む。
 - **L1027** _(ja)_ — ★**この検出条件そのものは本実装の判断であって、規格が列挙したものではない**。 規格が定めるのは線形モデルの 3 条件(Welch-Satterthwaite の適用可否 / 有限自由度の入力が独立であること / 出力分布が正規または t で近似できること)と 非線形モデルの 5 条件(最良推定値の近傍で連続微分可能 / 適切な次数の全微分で 成立 / 高次項に関わる入力が独立 / その分布が正規 / 落とした高次項が無視できる) で、「感度が全部 0」「区間が定義域を出る」という**判定手順は書かれていない**。 ここで実装したのは、その条件が破れたときに**観測される形**のほうである —— 停留点は高次項が支配する特殊例、負側への張り出しは正規近似の破綻の現れ。
 - **L1042** _(ja)_ — ★破綻は**警告でなく構造**で返す(警告は握りつぶされる/ログに消える)
-- **L1084** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
-- **L1114** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
-- **L1393** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
-- **L1524** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
+- **L1072** _(ja)_ — ★ NaN は ``nu <= 0`` をすり抜け、下の isfinite で「無限大」扱いになっていた (dof=[4, nan] で nu_eff 16 = 自由度を水増しし k を小さく)。欠測は拒否する。
+- **L1089** _(ja)_ — ★規格は「nu_eff が整数でなければ**次に小さい整数へ切り捨ててから** t を引く」 ことを要求する(安全側に倒すため)。16.64 のまま引くと k = 2.1132、 切り捨てて 16 で引くと 2.1199 —— 公表例題の 2.12 は後者。0.3 % の差だが、 拡張不確かさは報告書に載る数字なので規格どおりに倒す。切り捨て前の値も ``dof_effective`` に残す(どこで丸めたかが見えないと追えない)。
+- **L1119** _(ja)_ — ★**区間が定義域を出たら、それは測定の主張でなく近似の破綻**。 比較損失(二乗の和)は構成上非負なのに、規格の例題では伝播則の 95 % 区間が [-96, +296]e-6 と負側へ張り出す。伝播則は出力を正規と見なすので 境界を知らない —— 知っているのは呼ぶ側だけなので、境界を渡されたときに 限って検査する(既定で勝手に 0 を下限と仮定はしない)。
+- **L1399** _(ja)_ — ★"no spread" is not "std == 0.0". A column holding one repeated value leaves rounding dust behind: 4.2 stored 200 times gives std = 1.3e-14, not zero (measured). Dividing by that dust amplifies it into a distance of nonsense, and the absolute test never fires. Put the floor at the *relative* scale of the column, below which a spread cannot be represented in the data itself.
+- **L1431** _(ja)_ — ★ std = 1 alone does NOT make a flat feature "contribute nothing": a new observation that leaves the flat value is scored in raw units, so the same physical data in mm vs um gave MD 1.73 vs 1732 (2026-10-07 review). Zero its row and column of the inverse correlation instead — then its z drops out of z' R^-1 z whatever the new value is.
+- **L1539** _(ja)_ — ★A unit space given in part is the dangerous case: the missing piece would be silently estimated from the very data under test, so a drifted batch would score itself as normal. Refuse instead.
 
 ## `specops.py`
 

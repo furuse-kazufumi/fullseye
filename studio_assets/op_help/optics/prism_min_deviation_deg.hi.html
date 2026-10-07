@@ -11,7 +11,7 @@
 <p>सही सुधार है; guard जोड़ना केवल लक्षण का इलाज होता)।</p>
 <p>apex_deg: apex angle A [deg]। glass: <code style="color:#22d3bf">raytrace.glass_catalog</code> में काँच का नाम, या numeric refractive index।</p>
 <p>Returns: minimum deviation δ_min = 2·asin(n·sin(A/2)) − A (Hecht §5.5)। जिन wavelengths पर n·sin(A/2) &gt; 1 है वे बाहर नहीं निकल सकतीं (total internal reflection), इसलिए NaN।</p>
-<p>Cross-check: A=60° वाले N-BK7 के लिए d line (587.6 nm) पर δ_min ≈ 38.9°, और F line (486.1) और C line (656.3) के बीच का अंतर (angular dispersion) <b>Abbe number से अपेक्षित दिशा में</b> जाता है (छोटी wavelengths अधिक मुड़ती हैं)।</p>
+<p>Cross-check: A=60° वाले N-BK7 के लिए d line (587.6 nm) पर δ_min ≈ 38.6°, और F line (486.1) और C line (656.3) के बीच का अंतर (angular dispersion) <b>Abbe number से अपेक्षित दिशा में</b> जाता है (छोटी wavelengths अधिक मुड़ती हैं)।</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">पूरी family का input contract (fail-closed)</h3>
 <p>optics के सभी ops गणना से पहले input की जाँच करते हैं (कुछ भी चुपचाप पास नहीं होता):</p>
 <p style="margin:2px 0 2px 12px">• <b>Unit argument के नाम में ही लिखी होती है</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>। mm और µm की गड़बड़ी crash नहीं करती, बल्कि &quot;सही दिखने वाला पर गलत उत्तर&quot; देती है, इसलिए नाम से इसे रोका जाता है। मान के आकार से unit का अनुमान बिल्कुल नहीं लगाया जाता।</p>

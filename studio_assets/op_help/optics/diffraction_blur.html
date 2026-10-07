@@ -5,7 +5,7 @@
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">使い方</h3>
 <p>開口で決まる<b>回折ぼけ</b>を掛ける(エアリーディスクをガウスで近似)。</p>
 <p>幾何光学だけで作った像は、実機より細部が出すぎる。絞るほど被写界深度は深くなるが回折で細部は潰れる ―― この綱引きを見ずに絞りを決めると、シミュレーション上は見えていた欠陥が実機で消える。</p>
-<p>エアリーパターンを、第 1 暗環の半径 1.22λN に合わせた等価ガウス(σ ≈ 0.42 · 1.22λN)で近似する。厳密な PSF が要るなら <code style="color:#22d3bf">lensimage.psf_from_opd</code>(実収差瞳の回折 PSF)を使う。</p>
+<p>エアリーパターンを最もよく近似するガウス(σ ≈ 0.42 · λN、第 1 暗環の半径 1.22λN の約 0.34 倍)で近似する。厳密な PSF が要るなら <code style="color:#22d3bf">lensimage.psf_from_opd</code>(実収差瞳の回折 PSF)を使う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">ファミリ共通の入力契約(fail-closed)</h3>
 <p>optics の全 op は入力を検証してから計算する(黙って通さない):</p>
 <p style="margin:2px 0 2px 12px">• <b>単位は引数名に埋め込む</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。mm と µm の取り違えは crash ではなく「もっともらしく間違った答え」なので、名前で防ぐ。大きさから単位を推測する処理は一切しない。</p>

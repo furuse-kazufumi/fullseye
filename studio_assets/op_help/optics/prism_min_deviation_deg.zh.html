@@ -11,7 +11,7 @@
 <p>对齐才是正确的修法，加看守只是对症疗法)。</p>
 <p>apex_deg：顶角 A [deg]。glass：<code style="color:#22d3bf">raytrace.glass_catalog</code> 中的玻璃材料名，或折射率数值。</p>
 <p>返回值：最小偏向角 δ_min = 2·asin(n·sin(A/2)) − A(Hecht §5.5)。n·sin(A/2) &gt; 1 的波长光无法射出(全反射)，因此为 NaN。</p>
-<p>验算：N-BK7、A=60° 时 d 线(587.6 nm)的 δ_min ≈ 38.9°，F 线(486.1)与 C 线(656.3)的差(角色散)符合<b>由 Abbe 数预期的方向</b>(波长越短弯折越大)。</p>
+<p>验算：N-BK7、A=60° 时 d 线(587.6 nm)的 δ_min ≈ 38.6°，F 线(486.1)与 C 线(656.3)的差(角色散)符合<b>由 Abbe 数预期的方向</b>(波长越短弯折越大)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>
