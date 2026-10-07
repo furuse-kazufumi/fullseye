@@ -74,7 +74,7 @@ def derivate_vector_field(vfield_row, vfield_col, feature="divergence"):
 
 
 def gen_gauss_bandpass(shape, sigma_low, sigma_high):
-    """周波数領域のガウス帯域通過マスクを生成(gen_gauss_bandpass)。
+    """周波数領域のガウス帯域通過マスクを生成(gen_gauss_bandpass)。**DC は左上 [0, 0]**(``np.fft.fftfreq`` の並び)。
 
     マスク = exp(−r²/2σ_high²) − exp(−r²/2σ_low²)(r は周波数 [cycles/px])。``σ_low`` が低域側の遮断、
     ``σ_high`` が高域側の遮断で、``0 < sigma_low < sigma_high`` でなければならない。
@@ -93,7 +93,7 @@ def gen_gauss_bandpass(shape, sigma_low, sigma_high):
 
 
 def gen_sin_bandpass(shape, freq_low, freq_high):
-    """正弦窓の周波数帯域通過マスク(gen_sin_bandpass)。"""
+    """正弦窓の周波数帯域通過マスク(gen_sin_bandpass)。**DC は左上 [0, 0]**(``apply_bandpass`` の既定 ``dc="corner"``)。"""
     H, W = shape
     fy = np.fft.fftfreq(H)[:, None]; fx = np.fft.fftfreq(W)[None, :]
     r = np.sqrt(fx ** 2 + fy ** 2)
@@ -105,7 +105,7 @@ def gen_sin_bandpass(shape, freq_low, freq_high):
 
 
 def gen_std_bandpass(shape, freq_low, freq_high, order=2):
-    """Butterworth 型の帯域通過マスク(gen_std_bandpass)。"""
+    """Butterworth 型の帯域通過マスク(gen_std_bandpass)。**DC は左上 [0, 0]**(``apply_bandpass`` の既定 ``dc="corner"``)。"""
     H, W = shape
     fy = np.fft.fftfreq(H)[:, None]; fx = np.fft.fftfreq(W)[None, :]
     r = np.sqrt(fx ** 2 + fy ** 2) + 1e-12
@@ -114,11 +114,26 @@ def gen_std_bandpass(shape, freq_low, freq_high, order=2):
     return 1.0 / (1.0 + ((r ** 2 - center ** 2) / (r * width)) ** (2 * order))
 
 
-def apply_bandpass(image, mask):
-    """周波数マスクを画像に適用(FFT 領域フィルタ)(apply_bandpass)。"""
+def apply_bandpass(image, mask, dc="corner"):
+    """周波数マスクを画像に適用(FFT 領域フィルタ)(apply_bandpass)。
+
+    ``dc`` はマスクの**直流成分の位置**: ``"corner"``(既定)= 左上 [0, 0](この module の ``gen_*_bandpass``・
+    ``np.fft.fftfreq`` の並び)、``"center"`` = 中央(``hx_gen_lowpass`` / ``hx_gen_highpass`` / ``hx_gen_bandpass``・
+    ``cx_fft`` の ``fftshift`` 済みの並び)。マスクの値だけからは規約を判定できない(左上規約の高域通過と中央規約の
+    低域通過は同じ形)ので、取り違えると低域通過のつもりで高域だけが残り**黙って**間違う —— 明示させる。
+    ★2026-10-07: 以前は ``dc`` が無く、中央規約のマスクを渡すと例外なく反転した結果を返した。形の違うマスクも
+    broadcast で黙って通っていた → ValueError。
+    """
     im = _img(image)
+    m = np.asarray(mask)
+    if dc not in ("corner", "center"):
+        raise ValueError("apply_bandpass: dc must be 'corner' or 'center', got %r" % (dc,))
+    if m.shape != im.shape:
+        raise ValueError("apply_bandpass: mask shape %r != image shape %r" % (m.shape, im.shape))
+    if dc == "center":
+        m = np.fft.ifftshift(m)
     F = np.fft.fft2(im)
-    return np.fft.ifft2(F * np.asarray(mask)).real
+    return np.fft.ifft2(F * m).real
 
 
 def convol_channels(image, filter_mask):

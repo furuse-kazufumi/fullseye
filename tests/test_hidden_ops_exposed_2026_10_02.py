@@ -268,3 +268,27 @@ def test_pipeline3d_stand_in_raises_a_clear_import_error():
     with pytest.raises(ImportError, match="pipeline3d"):
         f(np.zeros((3, 3)))
 
+
+
+
+def test_apply_bandpass_takes_the_dc_convention_explicitly():
+    """★2026-10-07: hx_gen_lowpass(中央規約)のマスクを左上規約で当てると低域通過が高域通過に化けた。"""
+    import ops
+    from filters_flow import apply_bandpass, gen_gauss_bandpass
+    rng = np.random.default_rng(0)
+    img = rng.random((32, 32))
+    lp_c = [o for o in ops.REGISTRY if o.name == "hx_gen_lowpass"]
+    if lp_c:
+        m = np.asarray(lp_c[0].fn(img, 0.3, 0.0), float)
+        assert m[16, 16] > 0.5 and m[0, 0] < 0.5                             # 中央規約: DC は中央
+        good = apply_bandpass(img, m, dc="center")
+        assert abs(good.mean() - img.mean()) < 1e-9                          # 低域通過は平均を保つ
+        bad = apply_bandpass(img, m)                                         # 規約の取り違え
+        assert abs(bad.mean()) < 1e-9                                        # DC を殺す = 高域通過に化ける
+    m2 = gen_gauss_bandpass(img.shape, 0.05, 0.2)
+    np.testing.assert_allclose(apply_bandpass(img, np.fft.fftshift(m2), dc="center"),
+                               apply_bandpass(img, m2), atol=1e-12)
+    with pytest.raises(ValueError, match="dc must be"):
+        apply_bandpass(img, m2, dc="middle")
+    with pytest.raises(ValueError, match="mask shape"):
+        apply_bandpass(img, m2[:16])
