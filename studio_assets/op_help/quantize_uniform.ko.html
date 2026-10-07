@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantize_uniform.inputs.jpg">quantize_uniform: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>一様量子化器(<b>丸め</b>)。<code style="color:#22d3bf">a</code> がビット数 1〜8、<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>균일 양자화기(<b>반올림</b>). <code style="color:#22d3bf">a</code>는 비트 수 1~8, <code style="color:#22d3bf">b</code>는 사용하지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">round(x * (L-1)) / (L-1)</code>、<code style="color:#22d3bf">L = 2**bits</code>。刻みは <code style="color:#22d3bf">Δ = 1/(L-1)</code>。</p>
 <p><b><code style="color:#22d3bf">xpil_posterize</code> との違いはここで、無視できない</b>: あちらは PIL の実装で <b>下位ビットを切り捨てる</b>ので、出力の平均が入力より <code style="color:#22d3bf">Δ/2</code> だけ低い。一様分布の入力で実測すると、bits=4 で平均誤差 <code style="color:#22d3bf">-0.0312</code>(理論 <code style="color:#22d3bf">-Δ/2 = -0.03125</code>)。分散はどちらも <code style="color:#22d3bf">Δ²/12</code> で同じだが、偏りがある分だけ二乗誤差が</p>
 <p>切り捨て: Δ²/12 + (Δ/2)² = Δ²/3     丸め: Δ²/12</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.rms_norm(tokens, eps: &#x27;float&#x27; = 0.0, weight=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;rms_norm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>RMS 正規化 → tokens。<b>既定(eps=0, weight なし)では出力の RMS が厳密に 1</b>。</p>
+<p>RMS 정규화 → tokens. <b>기본값(eps=0, weight 없음)에서는 출력의 RMS가 엄밀히 1</b>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Zhang・Sennrich 2019。LayerNorm から平均を引く段を落としたもので、残るのは「行のノルムを揃える」だけ —— だから <b>RMS が 1 になることが検算になる</b> (実測 2.2e-16)。<code style="color:#22d3bf">eps</code> を入れると 1 からずれる。それが <code style="color:#22d3bf">eps</code> の値段。</p>
 <p>Args:</p>
 <p>tokens: (T, d) float。1 行が 1 トークン。</p>

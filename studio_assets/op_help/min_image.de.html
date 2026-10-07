@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: Dieser Operator hat 2 Eingänge, <code style="color:#22d3bf">fullseye.apply</code> kann ihn daher nicht ausführen (das ist das Ein-Bild-Modell). <code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;min_image&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code> (Namen mit <code style="color:#22d3bf">$</code> am Anfang sind die von außen übergebenen Eingaben)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON-Äquivalent</b>: <code style="color:#22d3bf">min_image</code> (Bedeutung und Parameter sind in der HALCON-Referenz nachzulesen)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 枚の画像の画素ごとの最小値。HALCON の <code style="color:#22d3bf">min_image</code> に相当。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。暗い方を残すので、反射ハイライトの抑制に使う。</p>
+<p>Pixelweises Minimum von 2 Bildern. Entspricht HALCONs <code style="color:#22d3bf">min_image</code>. <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> werden nicht verwendet. Es behält den dunkleren Wert und dient daher zur Unterdrückung von Glanzlichtern.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>
 <p style="margin:2px 0 2px 12px">• Herkunft und Literatur der Operatoren — die Quellen der Forschung/Verfahren, auf denen diese Operatorfamilie beruht.</p>

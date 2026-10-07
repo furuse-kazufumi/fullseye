@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">fullseye.apply(img, &quot;tb_intrinsics_to_fullseye&quot;, a=0.5, b=0.5)</code> (das 2-D-Modell ist ein Bild plus zwei skalare Regler <code style="color:#22d3bf">a,b∈[0,1]</code>)</p>
 <p>*Keine Abbildung: der Typ ist erreichbar, aber die generische synthetische Eingabe liegt außerhalb des Definitionsbereichs dieses Ops — 3×3 で焦点距離が正の K だけを受け、汎用の合成 matrix は fail-closed で拒否される(op_probe の探針では走る). Zur Verwendung siehe die lauffähigen Beispiele unten.*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>CARLA の K(画素の角が整数、主点 W/2)→ Fullseye / render3d の K(画素の中心が整数、主点 (W−1)/2)。主点を 0.5 ずらすだけ。</p>
+<p>CARLAs K (Pixelecken auf ganzen Zahlen, Hauptpunkt W/2) → K von Fullseye / render3d (Pixelmitten auf ganzen Zahlen, Hauptpunkt (W−1)/2). Verschiebt lediglich den Hauptpunkt um 0.5.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>2-D 進化レジストリへ橋渡しした drive の op <code style="color:#22d3bf">intrinsics_to_fullseye</code>。実装は同じで、呼び出し規約だけ <code style="color:#22d3bf">op(v, a, b)</code> に合わせてある。この op に調整点は無く、<code style="color:#22d3bf">a</code> も <code style="color:#22d3bf">b</code> も使われない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

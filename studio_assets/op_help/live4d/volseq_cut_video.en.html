@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import live4d; live4d.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opslive4d.get(&quot;volseq_cut_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>体積時系列を 1 枚の断面で切った動画 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
+<p>Video <code style="color:#22d3bf">(T, H, W)</code> of a volume time series cut by a single cross-section (<code style="color:#22d3bf">video</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">plane</code> は <code style="color:#22d3bf">&quot;xy&quot;</code>(z を固定)/ <code style="color:#22d3bf">&quot;xz&quot;</code>(y を固定)/ <code style="color:#22d3bf">&quot;yz&quot;</code>(x を固定)、<code style="color:#22d3bf">position</code> は固定する軸に沿った相対位置 [0, 1]。断面は最大値投影と違って重なりを失わないが、断面から外れた動きは見えない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d family guide</a></p>

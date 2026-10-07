@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_phase(gx, gy, *, mapping)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_phase(gx, gy, *, mapping)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_phase&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>勾配の位相(3.41 節): ϕ = atan2(gy, gx) を 0 ≤ ϕ &lt; 2π に移し、0〜255 に写す(REQ-0364)。出力 U8。</p>
+<p>Gradientenphase (Abschnitt 3.41): verschiebt ϕ = atan2(gy, gx) in 0 ≤ ϕ &lt; 2π und bildet sie auf 0–255 ab (REQ-0364). Ausgabe U8.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*mapping*(必須): 規格は写し方の丸めを書いていない。<code style="color:#22d3bf">&quot;floor&quot;</code> = ⌊ϕ·256/(2π)⌋(0 ≤ 値 ≤ 255 が自動で成り立つ)、<code style="color:#22d3bf">&quot;round&quot;</code> = ⌊ϕ·256/(2π) + 0.5⌋ mod 256(2π の手前は 0 に巻く)。gx = gy = 0 の画素は atan2 の約束で ϕ = 0。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: S16 の 2-D でない / 形が違う / mapping が一覧に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

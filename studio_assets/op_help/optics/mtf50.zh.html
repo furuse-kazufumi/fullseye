@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code>(要直接调用实现,<code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>SFR(pairs: 周波数, 値)が 0.5 を<b>最初に</b>切る周波数(直線補間)。0.5 を切らなければ <code style="color:#22d3bf">ValueError</code> (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。</p>
+<p>SFR(pairs：频率，值)<b>首次</b>低于 0.5 时的频率(线性插值)。若从未低于 0.5，则 <code style="color:#22d3bf">ValueError</code> (不会把“直到可测范围上限都在 0.5 以上”默默当作最大值返回)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>optics 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>
 <p style="margin:2px 0 2px 12px">• <b>单位写进参数名</b> —— <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>。把 mm 和 µm 弄混不会崩溃,而是给出「看着合理却是错的答案」,所以用命名来防。这里绝不从数值大小去猜单位。</p>

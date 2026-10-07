@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathestimation; mathestimation.stat_ttest_paired(x, y) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;stat_ttest_paired&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>対応のある t 検定: 同じ対象を 2 回測った差 d = x − y の平均が 0 か。</p>
+<p>成對 t 檢定：對同一對象量測 2 次所得差值 d = x − y 的平均是否為 0。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>t = mean(d) / (sd(d)/√n)、自由度 n−1、両側の p 値。返り値 <code style="color:#22d3bf">{&quot;t&quot;, &quot;df&quot;, &quot;p&quot;, &quot;mean_diff&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

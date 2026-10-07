@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;print_layer_defect_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>観測した層画像と期待の層画像(<code style="color:#22d3bf">gcode_layer_image</code>)を比べた<b>符号つきの欠陥図</b> <code style="color:#22d3bf">image2d</code>:</p>
-<p>+1 = あるはずの所に無い(欠け・詰まり)、−1 = 無いはずの所にある(糸引き・はみ出し・spaghetti)、0 = 一致。</p>
+<p><b>Vorzeichenbehaftete Defektkarte</b> <code style="color:#22d3bf">image2d</code> aus dem Vergleich eines beobachteten Schichtbilds mit dem erwarteten Schichtbild (<code style="color:#22d3bf">gcode_layer_image</code>): +1 = fehlt, wo etwas sein sollte (Lücken, Verstopfung), −1 = vorhanden, wo nichts sein sollte (Fädenziehen, Überstand, Spaghetti), 0 = Übereinstimmung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>両方を <code style="color:#22d3bf">threshold</code> で二値化し、<code style="color:#22d3bf">tolerance_px</code> だけ膨らませた相手に含まれない画素だけを欠陥にする(位置ずれと線幅の揺れを許す)。位置合わせはしない —— カメラ像は先に <code style="color:#22d3bf">gcode_layer_image</code> と同じ画素格子へ写しておく。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">Leitfaden zur Familie printpath</a></p>

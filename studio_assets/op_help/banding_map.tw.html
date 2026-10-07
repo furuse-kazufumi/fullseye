@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/banding_map.inputs.jpg">banding_map: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>階調の<b>段差(バンディング)が見えている場所</b>を返す。<code style="color:#22d3bf">a</code> がビット数、<code style="color:#22d3bf">b</code> が窓。</p>
+<p>回傳<b>可見色階斷層(色帶)的位置</b>。<code style="color:#22d3bf">a</code> 為位元數，<code style="color:#22d3bf">b</code> 為視窗。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
 <p style="margin:2px 0 2px 12px">1. <b>刻みの上に乗っている</b> —— 値が <code style="color:#22d3bf">k*Δ</code> の格子にある。量子化していない画像にバンディングは無い(浮動小数の雑音はここで落ちる)。</p>
 <p style="margin:2px 0 2px 12px">2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が <code style="color:#22d3bf">Δ</code> の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>

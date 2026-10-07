@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqatid; iqatid.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_spearman&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Spearman の順位相関 ρ = 平均順位どうしの Pearson 相関(同順位があっても正しい形。古典式 1 − 6Σd²/(n(n²−1)) は同順位が無いときだけ一致)。単調増加で 1、反転で −1。どちらかが定数なら <code style="color:#22d3bf">nan</code>(順位の分散が 0、相関は定義されない)。±inf は順序だけ使う(完全一致の PSNR = inf を落とさない)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・2 未満・nan。</p>
+<p>Spearman 秩相关 ρ = 平均秩之间的 Pearson 相关(即使有并列也正确的形式。经典公式 1 − 6Σd²/(n(n²−1)) 仅在无并列时一致)。单调递增为 1，反转为 −1。任一方为常数时为 <code style="color:#22d3bf">nan</code>(秩的方差为 0，相关无定义)。 ±inf 只使用其顺序(不丢弃完全一致时的 PSNR = inf)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：长度不一致、少于 2、nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

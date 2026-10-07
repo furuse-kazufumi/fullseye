@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;abel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。</p>
+<p>把轴对称分布 f(r)(在 r = 0, dr, 2dr, … 处的采样)映射为投影 A(y)(正向 Abel 变换)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr。r = √(y² + u²) と置くと A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du になり、y = r の特異点が消える(被積分関数は滑らか)。f は 3 次スプラインで補間し、u の積分は Gauss–Legendre <code style="color:#22d3bf">n_quad</code> 点。R の外では f = 0 とみなす。</p>
 <p>門: f = exp(−r²/σ²) なら A(y) = √π σ exp(−y²/σ²)(R が十分大きいとき)。返り値は f と同じ長さ・同じ格子(y = 0, dr, 2dr, …)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

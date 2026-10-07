@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_edges_as_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>辺を線分の表にする(Studio で点群に重ねる出口): 列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。</p>
+<p>에지를 선분 표로 만든다(Studio에서 점군에 겹치는 출구): 열 pre / post / x0 y0 z0 / x1 y1 z1 / weight.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">P</code> は graph_layout_spectral の (n, 3)(または (n, 2)、z = 0 を足す)。|W| &gt; thresh の辺だけ、対角(自己結合)は長さ 0 なので出さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

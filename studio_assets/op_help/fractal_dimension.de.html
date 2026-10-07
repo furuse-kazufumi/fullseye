@@ -8,8 +8,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/fractal_dimension.a.jpg">fractal_dimension: Regler a durchfahren</a> <span style="color:#8b91a0;font-size:11px">(Doku-Website)</span></p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>テクスチャの複雑さを測る Minkowski-Bouligand(ボックスカウント)フラクタル次元。</p>
+<p>Minkowski-Bouligand-(Box-Counting-)Fraktaldimension, die die Komplexität einer Textur misst.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>閾値 <code style="color:#22d3bf">a</code>(既定 0.5)で二値化し、箱サイズ <code style="color:#22d3bf">s = 1, 2, 4, …</code> について「構造を含む s×s 箱」の数 <code style="color:#22d3bf">N(s)</code> を数え、<code style="color:#22d3bf">log N(s)</code> を <code style="color:#22d3bf">log(1/s)</code> に最小二乗回帰した傾きを返す(Mandelbrot 1982)。直線状の構造は ~1、平面を埋める領域は ~2、自己相似な縁は中間の非整数(Sierpinski 三角形なら <code style="color:#22d3bf">log 3 / log 2 ≈ 1.585</code>)。表面粗さ・組織テクスチャ・地形・破面などの安価な複雑さ特徴に使える。</p>
 <p>有限解像度のため塗り潰し領域は 2 をやや下回る(粗いスケールで箱が飽和する既知の過小評価)。<code style="color:#22d3bf">a</code> が二値化の閾値、<code style="color:#22d3bf">b</code> は未使用。構造が無い/1 スケールしか取れないときは 0 を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import dic; dic.speckle_quality(img: &#x27;Any&#x27;) -&gt; &#x27;dict[str, float]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;speckle_quality&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>撮ったスペックルが DIC に向いているかを 4 つの数字で返す。</p>
+<p>以 4 個數字回傳所拍攝的散斑是否適合 DIC。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">pivops</code> にも <code style="color:#22d3bf">fullseye</code> にも無い(<code style="color:#22d3bf">speckle_filter</code> は SAR の斑点雑音 <b>除去</b>で別物)。撮影の場で「この模様で測れるか」を判定するための口。</p>
 <p>引数</p>
 <p>img  スペックル画像(2 次元)。輝度の規格は問わないが、<code style="color:#22d3bf">coverage</code> は</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.kv_cache_decode(query_step, key_cache, value_cache, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;kv_cache_decode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>1 トークン分だけ進める推論(KV Cache)→ tokens (1, dv)。</p>
+<p>1토큰만큼만 진행하는 추론(KV Cache) → tokens (1, dv).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>因果マスクの下では<b>未来を書き換えても前の出力が 1 ビットも動かない</b>(実測 0.0e+00) ので、済んだ key/value を取っておいて 1 行だけ計算すればよい —— 逐次に 1 行ずつ進めた結果は、全系列を一括で通した結果と一致する(相対差 1.6e-16)。計算量は 1 歩あたり O(T d) で、一括の O(T² d) を T 歩に割ったものに等しい。</p>
 <p>Args:</p>
 <p>query_step: (1, d) float。いま生成しようとしている 1 トークン。</p>

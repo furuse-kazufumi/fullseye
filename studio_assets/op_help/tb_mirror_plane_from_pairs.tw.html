@@ -11,8 +11,8 @@
 <p><b>換別的影像</b>(合成場景 / 照片 / 硬幣。上排為輸入，下排為對應輸出。旋鈕取預設):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mirror_plane_from_pairs.inputs.jpg">tb_mirror_plane_from_pairs: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>左右の対応ランドマークから正中面を出す。→ <code style="color:#22d3bf">(2, 3)</code>(1 行目 = 点、2 行目 = 法線)。</p>
+<p>由左右對應的特徵點求出正中面。→ <code style="color:#22d3bf">(2, 3)</code>(第 1 列 = 點，第 2 列 = 法線)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
 <p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
 <p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>

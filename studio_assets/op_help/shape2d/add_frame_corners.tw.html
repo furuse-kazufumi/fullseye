@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_frame_corners(pts, shape)</code>(要直接呼叫實作,<code style="color:#22d3bf">import imagemorph; imagemorph.add_frame_corners(pts, shape)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;add_frame_corners&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>点群に画像の四隅(+辺の中点)を固定点として足す。</p>
+<p>將影像的四個角(+各邊中點)作為固定點加入點集。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>ワープの三角形分割が画像全体を覆い、凸包の外側にできる穴を防ぐための定番処置。src/dst の両方に同じ順序で足せば、四隅は「動かない対応点」として働く。</p>
 <p>足す 8 点は画素中心座標 <code style="color:#22d3bf">(x, y)</code> で、<code style="color:#22d3bf">W-1</code> / <code style="color:#22d3bf">H-1</code> を端とする:</p>
 <p><code style="color:#22d3bf">(0,0) (xm,0) (W-1,0) (0,ym) (W-1,ym) (0,H-1) (xm,H-1) (W-1,H-1)</code> (<code style="color:#22d3bf">xm = (W-1)/2</code>、<code style="color:#22d3bf">ym = (H-1)/2</code>)。この順で末尾に連結する。</p>

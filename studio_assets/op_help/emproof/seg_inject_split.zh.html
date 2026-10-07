@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_split(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 4000, axis: &#x27;str&#x27; = &#x27;row&#x27;, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_inject_split(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 4000, axis: &#x27;str&#x27; = &#x27;row&#x27;, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>評価用に<b>分断</b>を仕込む: 大きなラベルを <code style="color:#22d3bf">n</code> 個選び、画素の中央値の行(<code style="color:#22d3bf">axis=&quot;row&quot;</code>)か列(<code style="color:#22d3bf">&quot;col&quot;</code>)で 2 つに切って、片側に新しい id(既存最大 + 1, +2, …)を付ける。</p>
+<p>为评估<b>植入分割</b>：选出 <code style="color:#22d3bf">n</code> 个大标签，在像素中位数所在的行(<code style="color:#22d3bf">axis=&quot;row&quot;</code>)或列(<code style="color:#22d3bf">&quot;col&quot;</code>)处切成两半，给其中一侧赋予新的 id(现有最大值 + 1, +2, …)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>切り口は直線 = 膜の無い境界で、<code style="color:#22d3bf">seg_boundary_membrane_gap</code> が拾うべき形。両側が <code style="color:#22d3bf">min_area / 4</code> px 以上残るラベルだけ候補にする。<code style="color:#22d3bf">n</code> 個取れなければ ValueError。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;split_before&quot;]</code> で取り出せる。</p>
 <p>&gt;&gt;&gt; cut = seg_inject_split(labels, n=1, seed=0, axis=&quot;row&quot;)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

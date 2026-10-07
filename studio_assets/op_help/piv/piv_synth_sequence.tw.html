@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">images</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pivops.piv_synth_sequence</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>同じ粒子を繰り返し動かした画像列。返りは <code style="color:#22d3bf">(frames, truth)</code>。</p>
+<p>同一批粒子反覆移動而得到的影像序列。回傳 <code style="color:#22d3bf">(frames, truth)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>

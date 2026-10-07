@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>写真から<b>列ごとの空と地形の境界の行</b>を動的計画法で 1 本抜く → signal (W,)。</p>
+<p>用动态规划从照片中提取 1 条<b>每列的天空与地形分界所在行</b> → signal (W,)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
 <p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
 <p>Args:</p>

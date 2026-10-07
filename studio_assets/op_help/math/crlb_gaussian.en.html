@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.crlb_gaussian(x, theta, sigma: &#x27;float&#x27; = 1.0, *, model: &#x27;str&#x27; = &#x27;gaussian_peak&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;crlb_gaussian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>白色ガウス雑音(標準偏差 sigma)の下での Cramér–Rao 下界。</p>
+<p>Cramér–Rao lower bound under white Gaussian noise (standard deviation sigma).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>y_i = f(x_i; θ) + ε_i、ε ~ N(0, σ²) のとき Fisher 情報行列 I = JᵀJ / σ²(J = ∂f/∂θ、中心差分)、<b>どんな不偏推定量の共分散も I⁻¹ 以上</b>。<code style="color:#22d3bf">std</code> は各パラメータの標準偏差の下限 √diag(I⁻¹)。<code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">constant</code>(c)/ <code style="color:#22d3bf">line</code>(a + bx)/ <code style="color:#22d3bf">gaussian_peak</code>(A, μ, s)/ <code style="color:#22d3bf">exp_decay</code>(A, k)/ <code style="color:#22d3bf">sinusoid</code>(A, f, φ)。</p>
 <p>門: 定数の平均なら σ²/n。直線の最小二乗(効率的な推定量)のモンテカルロ分散が下界に一致する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import acoustics; acoustics.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>; aus dem Register: <code style="color:#22d3bf">opsacoustics.get(&quot;gcc_delay&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">measurement</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> oder rufe <code style="color:#22d3bf">acoustics.gcc_delay</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 チャンネルの<b>到達時間差</b>を一般化相互相関(GCC)で測る。→ <code style="color:#22d3bf">(delay, table)</code>。</p>
+<p>Misst die <b>Laufzeitdifferenz</b> zwischen 2 Kanälen mit der verallgemeinerten Kreuzkorrelation (GCC). → <code style="color:#22d3bf">(delay, table)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
 <p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
 <p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>

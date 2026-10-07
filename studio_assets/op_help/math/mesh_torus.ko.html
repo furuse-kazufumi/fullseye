@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">mesh</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;mesh_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R &gt; r &gt; 0)。</p>
+<p>토러스(도넛)의 닫힌 삼각형 메시 (vertices, faces). 큰 반경 R, 관의 반경 r(R &gt; r &gt; 0).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>種数 1 の曲面の見本: χ = 0、角欠損の総和 = 0(外側の凸の部分が正、内側の鞍の部分が負で打ち消し合う)。頂点は (u, v) の格子(u が大円、v が管のまわり)の順で、<code style="color:#22d3bf">u = i·2π/n_u</code>、<code style="color:#22d3bf">v = j·2π/n_v</code> の頂点が i·n_v + j 番。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>
 <p>mathops 의 모든 연산자는 입력을 검증한 뒤에 계산합니다(조용히 통과시키지 않습니다):</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d × labels2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_label_changes(before, after, min_pixels: &#x27;int&#x27; = 1, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_label_changes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2 枚のラベル画像の差を<b>融合と分断の対</b>として返す(校正の前後、または仕込んだ誤りの答え合わせ)。</p>
+<p>2장의 라벨 영상의 차이를 <b>융합과 분단의 쌍으로</b> 반환한다(캘리브레이션 전후 비교, 또는 심어 둔 오류의 정답 대조).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">before</code> のラベル b と <code style="color:#22d3bf">after</code> のラベル a が同じ画素を <code style="color:#22d3bf">min_pixels</code> 以上共有する対を数え、</p>
 <p style="margin:2px 0 2px 12px">• 融合 = after の 1 ラベルが before の 2 ラベル以上を覆う → <code style="color:#22d3bf">merge_after</code> / <code style="color:#22d3bf">merge_before</code>(対ごとに 1 行。吸った側の id 自身も before の 1 つとして並ぶ)</p>
 <p style="margin:2px 0 2px 12px">• 分断 = before の 1 ラベルが after の 2 ラベル以上に割れる → <code style="color:#22d3bf">split_before</code> / <code style="color:#22d3bf">split_after</code>(同様に残った側の id も並ぶ)</p>

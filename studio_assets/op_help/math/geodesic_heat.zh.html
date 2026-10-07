@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>熱法による曲面上の測地距離(Crane et al. 2013)。<code style="color:#22d3bf">source</code> は頂点番号(または番号の列、既定は頂点 0)。メッシュは <code style="color:#22d3bf">(vertices, faces)</code> でも mesh の組 1 つでもよい。</p>
+<p>用热方法求曲面上的测地距离(Crane et al. 2013)。<code style="color:#22d3bf">source</code> 为顶点编号(或编号序列，默认为顶点 0)。网格可以是 <code style="color:#22d3bf">(vertices, faces)</code>，也可以是1 个 mesh 元组。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p style="margin:2px 0 2px 12px">1) (M − tL) u = δ を 1 ステップ解く(熱を時間 t だけ広げる、t の既定 = 平均辺長²)</p>
 <p style="margin:2px 0 2px 12px">2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
 <p style="margin:2px 0 2px 12px">3) L φ = ∇·X を解き、source で 0 になるようずらす</p>

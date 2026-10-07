@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bootstrap_std_error.inputs.jpg">bootstrap_std_error: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>局所標準偏差の<b>標準誤差</b>を、分布を仮定せずに測る(ブートストラップ)。</p>
+<p>Measures the <b>standard error</b> of the local standard deviation without assuming a distribution (bootstrap).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">local_std</code> が併記する誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> は<b>雑音が正規分布</b>という仮定の上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。ここでは窓の中の値を<b>そこから重複ありで取り直して</b>統計量を作り直し、その散らばりそのものを誤差とする —— 仮定が要らない代わりに計算で買う。</p>
 <p><code style="color:#22d3bf">a</code> が窓(3〜9 画素)、<code style="color:#22d3bf">b</code> が取り直しの回数(8〜64)。出力は窓内の標準偏差に対する<b>相対</b>標準誤差で、<code style="color:#22d3bf">1.0</code> が「100 % ぶれる」。</p>
 <p><b>読み方</b>: <b>絶対値ではなく、場所ごとの比で読む</b>。正規分布の白色雑音に当てると閉形式 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> より<b>低めに出る</b>(ブートストラップは小標本で標準偏差のばらつきを過小に言う)。実測(<code style="color:#22d3bf">b=1.0</code>、取り直し 64 回):</p>

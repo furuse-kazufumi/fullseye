@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>頭を束ねる注意(GQA)→ tokens。<b>n_kv_heads == n_heads で MHA、== 1 で MQA に厳密一致</b>。</p>
+<p>把頭分組共享的注意力(GQA)→ tokens。<b>n_kv_heads == n_heads 時與 MHA、== 1 時與 MQA 嚴格一致</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
 <p>Args:</p>
 <p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>

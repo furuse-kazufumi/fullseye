@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import live4d; live4d.focus_sweep_height_video(volseq, window: &#x27;int&#x27; = 5) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_height_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>焦点掃引(各フレームが z の合焦スタック)の時系列から<b>高さ場の動画</b> <code style="color:#22d3bf">(T, Y, X)</code> を起こす(<code style="color:#22d3bf">video</code>、単位は z の枚数)。</p>
+<p>由焦點掃描(每個影格是 z 方向的對焦堆疊)的時間序列產生<b>高度場影片</b> <code style="color:#22d3bf">(T, Y, X)</code>(<code style="color:#22d3bf">video</code>， 單位為 z 的張數)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>合焦度は局所ラプラシアン絶対値の平均(<code style="color:#22d3bf">window</code>、Sum-Modified-Laplacian)、各画素の高さは合焦度が最大の z を放物線で副ボクセル精度にしたもの(<code style="color:#22d3bf">depth_from_focus</code> の時系列版)。数値が欲しいときはこちら、絵が欲しいときは <code style="color:#22d3bf">focus_sweep_surface_video</code>。テクスチャの無い画素は合焦度が平らで高さが決まらない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 族使用指南</a></p>

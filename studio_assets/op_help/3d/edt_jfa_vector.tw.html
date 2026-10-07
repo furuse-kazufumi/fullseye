@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">flow_dense</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">match3d.edt_jfa_vector</code>。</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>:該運算子有 GPU 路徑(<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>各 voxel から最近 seed への変位 <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>、dz, dy, dx [voxel])を <b>GPU の JFA</b> で。</p>
+<p>以 <b>GPU 的 JFA</b> 求每個 voxel 到最近 seed 的位移 <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>，dz, dy, dx [voxel])。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">edt_jfa</code> は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。CPU / scipy 経路は <code style="color:#22d3bf">vol_nearest_seed_vector</code>(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError (<code style="color:#22d3bf">edt_jfa</code> は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_dynamic_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ダイナミックレンジ DR = μ_p.sat / μ_p.min(式 28)を倍・dB(20 log10)・bit(log2)で。</p>
+<p>Dynamikbereich DR = μ_p.sat / μ_p.min (Gl. 28) als Verhältnis, in dB (20 log10) und in Bit (log2).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: どちらかが正でない / μ_p.sat ≤ μ_p.min。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder optics-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_circle(radius: &#x27;float&#x27; = 1.0, center=(0.0, 0.0)) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_circle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>円を厳密に表す 2 次 NURBS(Piegl &amp; Tiller 例 7.1: 正方形の 4 隅と 4 辺の中点、隅の重みは 1/√2)。</p>
+<p>精確表示圓的 2 次 NURBS(Piegl &amp; Tiller 例 7.1：正方形的 4 個角與 4 條邊的中點，角點權重為 1/√2)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返す <code style="color:#22d3bf">control_points</code>・<code style="color:#22d3bf">weights</code>・<code style="color:#22d3bf">knots</code>・<code style="color:#22d3bf">degree</code> をそのまま <code style="color:#22d3bf">nurbs_curve</code> に渡すと、どの点も中心から <code style="color:#22d3bf">radius</code> の距離にある(丸め誤差まで)。隅の制御点は円の外 (√2 − 1)·radius の所にあり、曲線は通らない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_softmax(query, key, value, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_softmax&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>一括の注意(参照実装)→ tokens。<b>この族の答え合わせの基準</b>。</p>
+<p>Attention in einem Durchgang (Referenzimplementierung) → tokens. <b>Die Referenz, an der diese Familie geprüft wird</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>(T, T) のスコア行列を実際に作ってから softmax する、いちばん素直な書き方。<code style="color:#22d3bf">attention_tiled</code> / <code style="color:#22d3bf">attention_linear</code> / <code style="color:#22d3bf">attention_grouped</code> はこれと一致することで正しさを示す。</p>
 <p>Args:</p>
 <p>query: (T, d) float。</p>

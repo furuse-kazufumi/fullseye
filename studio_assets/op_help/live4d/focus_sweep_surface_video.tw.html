@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">rgbvideo</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import live4d; live4d.focus_sweep_surface_video(volseq, window: &#x27;int&#x27; = 5, zscale: &#x27;float&#x27; = 1.0, light=(0.4, 0.4, 0.8), ambient: &#x27;float&#x27; = 0.25) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opslive4d.get(&quot;focus_sweep_surface_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>焦点掃引(各フレームが z の合焦スタック)の時系列から<b>陰影つきの高さ場の動画</b> <code style="color:#22d3bf">(T, Y, X, 3)</code> を起こす(<code style="color:#22d3bf">rgbvideo</code>)。</p>
+<p>由焦點掃描(每個影格是 z 方向的對焦堆疊)的時間序列產生<b>帶陰影的高度場影片</b> <code style="color:#22d3bf">(T, Y, X, 3)</code>(<code style="color:#22d3bf">rgbvideo</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>高さは <code style="color:#22d3bf">focus_sweep_height_video</code> と同じ(合焦度の最大を放物線で副ボクセルに)。高さ場の勾配から法線を作り(<code style="color:#22d3bf">zscale</code> は z 1 枚の実長 / 画素の実長)、<code style="color:#22d3bf">light</code> 方向のランバート陰影(<code style="color:#22d3bf">ambient</code> を下駄に)を<b>高さの色</b>(青 = 低い → 赤 = 高い)に掛ける。掃引の途中で対象が動くと層の整合が崩れて高さが跳ぶ(その時刻だけ疑う)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_table(W: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ノードごとの in_degree / out_degree(二値)と in_strength / out_strength(重み和)の表。</p>
+<p>노드별 in_degree / out_degree(이진)와 in_strength / out_strength(가중치 합)의 표.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>度数は <code style="color:#22d3bf">W != 0</code> の本数(対角は除く)、strength は重みの和(対角は除く)。返りは列名 → 長さ n の配列の dict(この repo の <code style="color:#22d3bf">table</code>)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

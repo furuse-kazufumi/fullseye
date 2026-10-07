@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>スペクトル配置: 向きを畳んだ Laplacian の Fiedler ベクトル(第 2..dim+1 固有ベクトル)を座標にした点群 (n, 3)、各軸 [0, 1]。</p>
+<p>谱布局：以折叠方向后的 Laplacian 的 Fiedler 向量(第 2..dim+1 特征向量)为坐标的点云 (n, 3)，各轴 [0, 1]。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">dim</code> は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結のグラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import edgesfr; edgesfr.sfr_from_edge(esf, window, *, correction, ends=1.0, apodize=&#x27;none&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;sfr_from_edge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>ESF から SFR(エッジから測る MTF)を出す。</p>
+<p>Bestimmt aus der ESF die SFR (an einer Kante gemessene MTF).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*esf* は <code style="color:#22d3bf">edge_spread</code> の返り値(辞書)か、1 px 刻みの 1-D 配列(<code style="color:#22d3bf">oversample</code> = 1 とみなす)。エッジの中心(差分の絶対値の最大)から ±*window* px を切り、両端 *ends* px の平均を黒/白の基準に正規化し、前進差分で LSF にしてフーリエ変換の絶対値を DC で割る。</p>
 <p>*window*(必須、px): 切り出す半幅。★迷光(裾)は窓の外に居るので、窓を狭くするほど SFR から見えなくなる。*correction*(必須): 標本化が作る sinc の割り戻し。</p>
 <p><code style="color:#22d3bf">&quot;none&quot;</code> — 割り戻さない(離散の段差を離散の PSF で畳んだ像なら前進差分が離散 LSF そのもので、これが正しい)。</p>

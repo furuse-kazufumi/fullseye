@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pivops.piv_synth_particles</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>トレーサ粒子を撒いた 1 枚を作る。返りは <code style="color:#22d3bf">(image, positions)</code>。</p>
+<p>產生 1 張撒佈示蹤粒子的影像。回傳 <code style="color:#22d3bf">(image, positions)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
 <p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
 <p>Args:</p>

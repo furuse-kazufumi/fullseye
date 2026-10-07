@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqafsim; iqafsim.fsim(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>FSIM(輝度のみ、1 = 同一、<b>higher is better</b>)。TID2013 の FSIM.txt と 4 桁一致するのは <b>Y′ limited の灰色画像</b>を渡したとき(<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsim, luma=&quot;limited_u8&quot;)</code>、3,000 組 max |差| 5.0e-5)。詳細 <code style="color:#22d3bf">fsim_pair</code>。</p>
+<p>FSIM (luminance only, 1 = identical, <b>higher is better</b>). It agrees with TID2013&#x27;s FSIM.txt to 4 digits when given <b>a Y′ limited grayscale image</b> (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsim, luma=&quot;limited_u8&quot;)</code>, 3,000 pairs, max |diff| 5.0e-5). Details: <code style="color:#22d3bf">fsim_pair</code>.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

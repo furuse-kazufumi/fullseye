@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_transform(f, dr: &#x27;float&#x27; = 1.0, *, n_quad: &#x27;int&#x27; = 64) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;abel_transform&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>軸対称な分布 f(r)(r = 0, dr, 2dr, … の標本)を投影 A(y) に写す(前向き Abel 変換)。</p>
+<p>Maps an axisymmetric distribution f(r) (samples at r = 0, dr, 2dr, …) to its projection A(y) (forward Abel transform).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>A(y) = 2 ∫_y^R f(r) r / √(r² − y²) dr。r = √(y² + u²) と置くと A(y) = 2 ∫_0^{√(R²−y²)} f(√(y²+u²)) du になり、y = r の特異点が消える(被積分関数は滑らか)。f は 3 次スプラインで補間し、u の積分は Gauss–Legendre <code style="color:#22d3bf">n_quad</code> 点。R の外では f = 0 とみなす。</p>
 <p>門: f = exp(−r²/σ²) なら A(y) = √π σ exp(−y²/σ²)(R が十分大きいとき)。返り値は f と同じ長さ・同じ格子(y = 0, dr, 2dr, …)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

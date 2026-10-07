@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_quiver(flow, spacing=None, scale=None, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_quiver&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>矢印図(MATLAB の <code style="color:#22d3bf">quiver</code>)。返りは <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
+<p>화살표 그림(MATLAB의 <code style="color:#22d3bf">quiver</code>). 반환은 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">spacing</code> 格子ごとに 1 本、起点を格子点に置き、先端を <code style="color:#22d3bf">起点 + scale * v</code> に引く。<code style="color:#22d3bf">scale</code> を省くと <b>最も長い矢印が間隔の 0.9 倍</b> になる(MATLAB の自動倍率と同じ考え方で、隣の矢印に重ならない)。<b>倍率は図ごとに変わる</b> ので、並べて比べる図では <code style="color:#22d3bf">scale</code> を固定する。長さが 1 画素に満たない矢印は描かない(向きの無い点は印と読まれる)。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>(<code style="color:#22d3bf">dy, dx</code>)。</p>

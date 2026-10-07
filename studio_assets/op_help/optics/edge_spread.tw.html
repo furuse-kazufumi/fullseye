@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import edgesfr; edgesfr.edge_spread(img, roi, *, oversample=4, orientation=&#x27;auto&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;edge_spread&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>傾いたエッジ(ISO 12233)の ROI から、画素より細かい ESF を作る。</p>
+<p>由傾斜邊緣(ISO 12233)的 ROI 建立比像素更細的 ESF。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>手順: ROI を「エッジが行を横切る」向きにそろえる(<code style="color:#22d3bf">orientation=&quot;auto&quot;</code> は列方向と行方向の勾配の大きさで決める、<code style="color:#22d3bf">&quot;vertical&quot;</code> = エッジが縦に走る / <code style="color:#22d3bf">&quot;horizontal&quot;</code> = 横に走る)→ 行ごとに 1 階差分の重心でエッジの位置を出す → 位置を行番号に直線で当てる(最小二乗)→ 各画素の中心のエッジからの<b>垂直距離</b> d を出し、幅 1/oversample px の升に振り分けて平均する。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;x&quot;: 升の中心の距離 [px] (エッジに垂直), &quot;esf&quot;: 升の平均, &quot;count&quot;: 升の画素数, &quot;angle_deg&quot;: エッジの傾き(行に対する、符号つき), &quot;oversample&quot;, &quot;orientation&quot;: 使った向き, &quot;edge_x0&quot;: ROI の 0 行目でのエッジの位置 [px]}</code>。</p>
 <p>★傾きが小さすぎる(画素の位相が升を埋めない)と空の升が出る —— <b>黙って補間しない</b>で <code style="color:#22d3bf">ValueError</code>。ISO 12233 が 2〜10° 程度の傾きを求めるのはこのため。傾きが 45° を越えるなら <code style="color:#22d3bf">orientation</code> が逆。</p>

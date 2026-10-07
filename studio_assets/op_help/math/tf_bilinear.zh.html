@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_bilinear(num, den, fs: &#x27;float&#x27; = 1.0, *, prewarp_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_bilinear(num, den, fs: &#x27;float&#x27; = 1.0, *, prewarp_hz: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;tf_bilinear&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Tustin(双一次)変換 s = K (z − 1)/(z + 1) で連続系を離散系に写す。</p>
+<p>用 Tustin(双线性)变换 s = K (z − 1)/(z + 1) 把连续系统映射为离散系统。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>K = 2·fs(素の Tustin)か、<code style="color:#22d3bf">prewarp_hz</code> を与えると K = ω₀ / tan(ω₀ / (2 fs)) (その周波数で連続系と離散系の応答が<b>厳密に一致</b>する。それ以外の周波数は tan で歪む)。返り値の係数は z の降べき(<code style="color:#22d3bf">np.polyval(num_z, z)</code>)。安定な連続系は安定な離散系になる(左半面 → 単位円内)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

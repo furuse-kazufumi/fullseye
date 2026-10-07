@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>remap(3.44 節): 出力 (x, y) = 入力 (map_x[y, x], map_y[y, x])(REQ-0392)。表は出力の形、座標は入力の画素の中心が整数。</p>
+<p>remap(3.44 节)：输出 (x, y) = 输入 (map_x[y, x], map_y[y, x])(REQ-0392)。表的形状与输出相同，坐标以输入像素中心为整数。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / map_x と map_y が同じ形の 2-D の実数でない / interpolation・border が一覧に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">openvx_ports 族使用指南</a></p>

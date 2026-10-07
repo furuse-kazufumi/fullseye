@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>左右の対応ランドマークから正中面を出す。→ <code style="color:#22d3bf">(2, 3)</code>(1 行目 = 点、2 行目 = 法線)。</p>
+<p>由左右对应的标志点求出正中面。→ <code style="color:#22d3bf">(2, 3)</code>(第 1 行 = 点，第 2 行 = 法线)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
 <p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
 <p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>

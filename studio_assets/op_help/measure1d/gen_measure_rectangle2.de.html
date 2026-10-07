@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">measurehandle</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code> (die Implementierung direkt: <code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>; aus dem Register: <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>回転測定矩形(長軸 <code style="color:#22d3bf">phi</code> 方向に 1 px 間隔でプロファイルを取る)を定義(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は中心から -(n-1)/2 px の位置。<code style="color:#22d3bf">length2</code> は幅方向の平均化幅 [px]。</p>
+<p>Definiert ein gedrehtes Messrechteck (das Profil wird entlang der Hauptachse in Richtung <code style="color:#22d3bf">phi</code> im Abstand von 1 px abgetastet) (gen_measure_rectangle2). Anzahl der Abtastwerte n = round(2*length1)+1, der Startpunkt liegt -(n-1)/2 px vom Mittelpunkt entfernt. <code style="color:#22d3bf">length2</code> ist die Mittelungsbreite quer zum Profil [px].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">Leitfaden zur Familie subpixel_measuring</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

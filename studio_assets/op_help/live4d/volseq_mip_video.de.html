@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;volseq_mip_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>体積時系列を軸 <code style="color:#22d3bf">axis</code>(1 = z, 2 = y, 3 = x)の最大値投影で動画 <code style="color:#22d3bf">(T, H, W)</code> に畳む(<code style="color:#22d3bf">video</code>)。</p>
+<p>Faltet eine Volumen-Zeitreihe durch Maximumprojektion entlang der Achse <code style="color:#22d3bf">axis</code> (1 = z, 2 = y, 3 = x) zu einem Video <code style="color:#22d3bf">(T, H, W)</code> (<code style="color:#22d3bf">video</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>畳んだ先は <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> など 2D+t の op がそのまま使える。最大値投影は「奥行きのどこかにあれば見える」投影なので、重なりは失われる(何を失ったかは <code style="color:#22d3bf">volseq_cut_video</code> の断面と見比べる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>

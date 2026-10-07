@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonlinear_filter(image, mask, *, function, border, constant_value=0, origin=None)</code>(要直接调用实现,<code style="color:#22d3bf">import vxcore; vxcore.vx_nonlinear_filter(image, mask, *, function, border, constant_value=0, origin=None)</code>;从台账取用则 <code style="color:#22d3bf">opsvx.get(&quot;vx_nonlinear_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>非線形フィルタ(3.38 節): マスクの真の画素の値の中央値 / 最小(収縮)/ 最大(膨張)(REQ-0325・0330)。</p>
+<p>非线性滤波(3.38 节)：掩模为真的像素值的中值 / 最小值(腐蚀)/ 最大值(膨胀)(REQ-0325、0330)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*function*: <code style="color:#22d3bf">&quot;median&quot;</code> / <code style="color:#22d3bf">&quot;min&quot;</code> / <code style="color:#22d3bf">&quot;max&quot;</code>(vx_non_linear_filter_e)。*mask*: 2-D の bool(BOX / CROSS / DISK / OTHER のどれでも)。*origin*: マスクの原点 (行, 列)(VX_MATRIX_ORIGIN、既定は中央 <code style="color:#22d3bf">(rows // 2, cols // 2)</code>)。*border*(必須): <code style="color:#22d3bf">&quot;replicate&quot;</code> / <code style="color:#22d3bf">&quot;constant&quot;</code> / <code style="color:#22d3bf">&quot;undefined&quot;</code>(端は 0 で埋めて計算する —— 値は規格上未定義)。★マスクの画素数が偶数のときの中央値は規格に無い —— 昇順に並べた <code style="color:#22d3bf">n // 2</code> 番目(上側の中央値、scipy の median_filter と同じ)を取る。</p>
 <p>REQ-0327: 9×9 までのマスクは必ず扱う(この実装に上限は無い)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / function が一覧に無い / mask が 2-D の bool でない・空 / origin がマスクの外。</p>

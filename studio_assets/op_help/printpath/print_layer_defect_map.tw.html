@@ -3,9 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.print_layer_defect_map(observed: &#x27;Any&#x27;, expected: &#x27;Any&#x27;, tolerance_px: &#x27;int&#x27; = 2, threshold: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;print_layer_defect_map&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>観測した層画像と期待の層画像(<code style="color:#22d3bf">gcode_layer_image</code>)を比べた<b>符号つきの欠陥図</b> <code style="color:#22d3bf">image2d</code>:</p>
-<p>+1 = あるはずの所に無い(欠け・詰まり)、−1 = 無いはずの所にある(糸引き・はみ出し・spaghetti)、0 = 一致。</p>
+<p>比較觀測到的層影像與期望的層影像(<code style="color:#22d3bf">gcode_layer_image</code>)得到的<b>帶符號缺陷圖</b> <code style="color:#22d3bf">image2d</code>：+1 = 應有處卻沒有(缺料、堵塞)，−1 = 不應有處卻有(牽絲、溢出、spaghetti)，0 = 一致。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>両方を <code style="color:#22d3bf">threshold</code> で二値化し、<code style="color:#22d3bf">tolerance_px</code> だけ膨らませた相手に含まれない画素だけを欠陥にする(位置ずれと線幅の揺れを許す)。位置合わせはしない —— カメラ像は先に <code style="color:#22d3bf">gcode_layer_image</code> と同じ画素格子へ写しておく。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>

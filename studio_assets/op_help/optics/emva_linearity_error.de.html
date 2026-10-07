@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_linearity_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に<b>相対偏差の重み 1/y²</b>で当て(式 59〜61)、飽和の 5〜95 % の点で相対偏差 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] の絶対値の平均を LE とする。</p>
+<p>Linearitätsfehler LE (Gl. 58–63). y = μ_y − μ_y.dark wird an die Belichtung H <b>mit dem Gewicht der relativen Abweichung 1/y²</b> angepasst (Gl. 59–61), und LE ist der Mittelwert der Beträge der relativen Abweichung δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] über die Punkte bei 5–95 % der Sättigung.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;LE_percent&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;deviation_percent&quot;, &quot;used&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 5〜95 % に 3 点未満 / y が正でない点がある(重み 1/y² が無限)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">tokens × tokens</code> → <code style="color:#22d3bf">attnmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_scores(query, key, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_scores&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>生の注意スコア QKᵀ/√d → attnmap (T, S)。</p>
+<p>原始注意力分数 QKᵀ/√d → attnmap (T, S)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Args:</p>
 <p>query: (T, d) float。問い合わせる側。</p>
 <p>key: (S, d) float。引かれる側。d は query と同じ。</p>

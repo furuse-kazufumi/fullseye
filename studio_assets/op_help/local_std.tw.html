@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_std.inputs.jpg">local_std: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>局所窓内の標準偏差を<b>入力と同じ単位で</b>返す(正規化しない)。HALCON の <code style="color:#22d3bf">deviation_image</code>（Calculate the standard deviation of gray values within rectangular windows.）に相当。</p>
+<p>以<b>與輸入相同的單位</b>回傳局部視窗內的標準差(不做正規化)。相當於 HALCON 的 <code style="color:#22d3bf">deviation_image</code>(Calculate the standard deviation of gray values within rectangular windows.)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">a</code> が窓の<b>幅</b>を、<code style="color:#22d3bf">b</code> が窓の<b>高さ</b>をそれぞれ <code style="color:#22d3bf">3,5,7,9</code>（<code style="color:#22d3bf">_k</code>）に振る —— HALCON の <code style="color:#22d3bf">deviation_image(image, width, height)</code> と同じく矩形窓を取れる。</p>
 <p><b><code style="color:#22d3bf">std_filter</code> との違いはここだけで、そこが肝心</b>: <code style="color:#22d3bf">std_filter</code> は出力をその画像の最大値で正規化するので、<b>画像をまたいで値を比較できない</b>(弱いテクスチャしか無い画像では雑音が 1.0 まで持ち上がる)。この op は割らないので、<b>別の画像・別の時刻の値とそのまま比べられる</b>。HALCON の <code style="color:#22d3bf">deviation_image</code> も正規化しないので、意味としてはこちらが忠実。平滑化フィルタの <code style="color:#22d3bf">sigma_image</code> とは別物(あちらは σ を使って平滑化する)。</p>
 <p><b>推定量と誤差(閉形式)</b>: 窓の画素数を <code style="color:#22d3bf">n = 幅 x 高さ</code> として、平均を引いた分散を <code style="color:#22d3bf">n/(n-1)</code> で不偏化し、さらに <code style="color:#22d3bf">sigma</code> の残る偏りを <code style="color:#22d3bf">c4(n) ≈ 1 - 1/(4n)</code> で抜く。したがって推定はほぼ無偏(実測: 真値の 99.8〜100.1%)。<b>1 画素あたりの相対標準誤差は <code style="color:#22d3bf">1/sqrt(2(n-1))</code></b> —— 3x3 窓で約 25%、9x9 窓で約 7.9%(実測が理論と一致)。粗さや雑音量を数字で言うときは、この幅を併記すること。</p>

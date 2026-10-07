@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_cubature(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, a=-1.0, b=1.0) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;gauss_cubature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>Gauss–Legendre のテンソル積で、箱 [a, b]^dim(a, b は軸ごとでも可)の求積の節点 (n^dim, dim) と重み。</p>
+<p>用 Gauss–Legendre 的张量积，求盒 [a, b]^dim(a, b 也可按轴分别指定)上求积的节点 (n^dim, dim) 与权重。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>画像の画素平均・ボリュームの体積積分・PSF の積分に。各軸で 2n−1 次までの多項式の積を<b>厳密に</b>積分する(門: x^p y^q で p, q &lt;= 2n−1 は厳密、どれかが 2n で誤差)。点の数は n^dim なので高次元では急に増える(dim &gt; 6 では低食い違い列の方が向く)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

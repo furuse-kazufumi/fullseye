@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.nurbs_revolve(profile, weights=None, *, degree: &#x27;int&#x27; = 2, knots=None, n=(48, 48)) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;nurbs_revolve&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>平面の NURBS 曲線 (r, z) を z 軸のまわりに 1 周回した回転面(Piegl &amp; Tiller §8.5)。</p>
+<p>평면 NURBS 곡선 (r, z)를 z축 둘레로 1바퀴 돌린 회전면(Piegl &amp; Tiller §8.5).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>断面の各制御点を <code style="color:#22d3bf">nurbs_circle</code> の 9 点で回し、重みを掛け合わせる。断面が厳密な円弧なら、出来る曲面も厳密な球・トーラス・円錐になる(多項式の曲面では近似しかできない)。</p>
 <p>Args:</p>
 <p>profile: (m, 2) の断面の制御点 (r, z)。r は軸からの距離(0 以上)。</p>

@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/scale_select_std.inputs.jpg">scale_select_std: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画素ごとに<b>窓の大きさを選ぶ</b>局所標準偏差(Lepski / ICI 規則)。</p>
+<p>逐像素<b>選擇視窗大小</b>的局部標準差(Lepski / ICI 規則)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>窓を広げるほど推定は安定するが(相対標準誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code>)、縁がにじんで分解能が落ちる —— <b>大きさを 1 つ選ぶ限りこの矛盾は解けない</b>。解き方は「時間でも場所でもなく<b>場所ごとに別の答えを持つ</b>」こと: 小さい窓から順に、推定値の信頼区間が交わり続ける間だけ窓を広げ、交わらなくなった 1 つ手前で止める。平坦な所では大きな窓(安定)、縁の近くでは小さな窓(にじまない)が自動で選ばれる。</p>
 <p><code style="color:#22d3bf">a</code> が試す窓の上限(<code style="color:#22d3bf">3,5,7,9,11,13,15</code> のどこまでか)、<code style="color:#22d3bf">b</code> が信頼区間の倍率 <code style="color:#22d3bf">gamma</code>(1.0〜3.0)。<code style="color:#22d3bf">gamma</code> を大きくすると窓が伸びやすくなる(安定寄り)。</p>
 <p><b><code style="color:#22d3bf">local_std</code> との関係</b>: <code style="color:#22d3bf">local_std</code> は窓を固定する。平坦部の推定を締めたくて窓を広げると縁がにじむ、という取引をこちらは場所ごとに解く。<b>縁の鋭さを保ったまま平坦部の誤差だけ下げられる</b>のが取り柄で、代わりに計算量が窓の数だけ増える。</p>

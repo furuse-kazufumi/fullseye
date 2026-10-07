@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dither_ordered.inputs.jpg">dither_ordered: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>順序ディザ(Bayer 行列)で量子化する。<code style="color:#22d3bf">a</code> がビット数 1〜8、<code style="color:#22d3bf">b</code> が行列の大きさ。</p>
+<p>순서 디더(Bayer 행렬)로 양자화한다. <code style="color:#22d3bf">a</code>는 비트 수 1~8, <code style="color:#22d3bf">b</code>는 행렬의 크기.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>量子化の<b>前に</b>、画素位置で決まる決まった量(Bayer 行列、<code style="color:#22d3bf">b</code> が 2x2 / 4x4 / 8x8 を振る)を足してから丸める。平坦部の誤差が画素ごとに散るので、段差が細かい市松に化けて <b>縞が見えなくなる</b>。誤差そのものは減らない —— 見え方を変えているだけで、平均二乗誤差はむしろ <code style="color:#22d3bf">_quantize_uniform</code> よりわずかに大きい。</p>
 <p><b>誤差拡散(<code style="color:#22d3bf">dither_floyd_steinberg</code>)との使い分け</b>: 順序ディザは <b>画素ごとに独立</b>なので、タイル分割しても継ぎ目が出ず、並列化も自由、同じ入力に必ず同じ出力を返す。誤差拡散のほうが見た目は滑らかだが、走査順に依存するので<b>切り出す位置を変えると結果が変わる</b>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

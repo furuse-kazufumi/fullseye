@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">measurehandle</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_arc(center_row, center_col, radius, angle_start, angle_extent, width, shape)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_arc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>測定弧(円周方向に ≈1 px 間隔でプロファイルを取る)を定義(gen_measure_arc)。サンプル数 n = round(|angle_extent|*radius)+1、<code style="color:#22d3bf">spacing</code> = 弧長/(n-1)。</p>
+<p>측정 호(원주 방향으로 ≈1 px 간격으로 프로파일을 취함)를 정의한다(gen_measure_arc). 샘플 수 n = round(|angle_extent|*radius)+1, <code style="color:#22d3bf">spacing</code> = 호 길이/(n-1).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>弧上のサンプル点は <code style="color:#22d3bf">row = center_row + radius sin(θ)</code>、<code style="color:#22d3bf">col = center_col + radius cos(θ)</code>、<code style="color:#22d3bf">θ = angle_start + linspace(0, angle_extent, n)</code>。角度は <b>ラジアン</b>で、col 軸(x)から row 軸(画像下向き)へ回る向きが正。<code style="color:#22d3bf">angle_extent</code> が負なら逆回りに進み、<code style="color:#22d3bf">measure_pos</code> の <code style="color:#22d3bf">pos</code> / <code style="color:#22d3bf">dist</code> はその進行方向に沿って数える。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: [px]。<code style="color:#22d3bf">n = max(2, round(|angle_extent| * radius) + 1)</code> なので、半径や角度幅が小さすぎるとサンプル 2 点・<code style="color:#22d3bf">spacing</code> が弧長そのものになる。<code style="color:#22d3bf">radius = 0</code> は <code style="color:#22d3bf">spacing = 0</code> になり後段の微分で破綻する(ここでは検証しない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">width</code>: 幅方向(法線)の平均化幅 [px]。<code style="color:#22d3bf">int</code> に切られ、1 以下なら平均なし。</p>

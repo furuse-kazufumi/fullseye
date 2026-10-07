@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">flow2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_deform_pass</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>窓変形つきの 1 段。予測変位で<b>画像そのものを歪めてから</b>相関を取る。</p>
+<p>1 Stufe mit Fensterdeformation. Verzerrt mit der vorhergesagten Verschiebung <b>zuerst die Bilder selbst</b> und korreliert erst dann.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
 <p>Args:</p>
 <p>a, b: 画像対。</p>

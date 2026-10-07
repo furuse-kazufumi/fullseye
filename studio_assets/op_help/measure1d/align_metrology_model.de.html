@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">metrologymodel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import metrology; metrology.align_metrology_model(model, drow=0.0, dcol=0.0) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmeasure1d.get(&quot;align_metrology_model&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>計測モデルの全オブジェクトを平行移動して整列(align_metrology_model)。</p>
+<p>Richtet alle Objekte des Messtechnikmodells durch Verschiebung aus (align_metrology_model).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>全オブジェクトの位置に <code style="color:#22d3bf">(drow, dcol)</code> [px] を足した <b>新しいモデル</b> を返す(入力の dict は書き換えない)。<code style="color:#22d3bf">line</code> は両端点 <code style="color:#22d3bf">(row1, col1)</code>・<code style="color:#22d3bf">(row2, col2)</code> が動き、<code style="color:#22d3bf">circle</code> / <code style="color:#22d3bf">rect</code> / <code style="color:#22d3bf">ellipse</code> は中心 <code style="color:#22d3bf">(row, col)</code> が動く。半径・半辺長・<code style="color:#22d3bf">phi</code>・<code style="color:#22d3bf">n</code> は変えない ―― <b>回転とスケールは扱わない</b>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">drow</code>, <code style="color:#22d3bf">dcol</code>: 変位 [px]。既定 0(写しを作るだけになる)。</p>
 <p style="margin:2px 0 2px 12px">• 型は検証しない。<code style="color:#22d3bf">add_metrology_object_generic</code> で積んだ未知型は <code style="color:#22d3bf">params[0]</code>/<code style="color:#22d3bf">params[1]</code> を row/col とみなして動かす。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_vorticity(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_vorticity(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_vorticity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>渦度 <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>。<b>反時計回りが正</b>(画像座標での定義)。</p>
+<p>涡量 <code style="color:#22d3bf">d(dx)/dy - d(dy)/dx</code>。<b>逆时针为正</b>(在图像坐标中的定义)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>行が下向きに増える画像座標では、数学の xy 座標と上下が逆になる。この符号を決めずに書くと渦の向きが黙って反転するので、定義を docstring に固定する。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>

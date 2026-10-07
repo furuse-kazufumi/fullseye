@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">shapemodel × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code>(要直接调用实现,<code style="color:#22d3bf">import shapestats; shapestats.shape_mahalanobis(model, shape, align: &#x27;bool&#x27; = True, cumulative: &#x27;float&#x27; = 0.99, n_modes: &#x27;int&#x27; = 0)</code>;从台账取用则 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_mahalanobis&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>モデルから見てその形がどれだけ<b>異常</b>か。→ float。</p>
+<p>从模型来看该形状有多<b>异常</b>。→ float。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">sqrt(sum(score_i^2 / variance_i))</code> を<b>先頭の何本かに限って</b>足す。</p>
 <p>★ <b>全成分を足してはいけない。</b> K 個体の群から出る主成分は K-1 本だが、後ろのほうは分散が数値的なゼロまで落ちる。実測(K=12、N=80、真のモードは 2 本)の分散: <code style="color:#22d3bf">3.2e-02, 5.6e-03, 4.0e-05, 6.7e-13, 9.7e-14, 9.9e-17, …, 1.0e-31</code>。この裾で割ると値が意味を失う:</p>
 <p>==========  ===========  ==================</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph × points</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_edges_as_lines(W: &#x27;Any&#x27;, P: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_edges_as_lines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>辺を線分の表にする(Studio で点群に重ねる出口): 列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。</p>
+<p>将边转换为线段表(在 Studio 中叠加到点云上的出口)：列 pre / post / x0 y0 z0 / x1 y1 z1 / weight。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">P</code> は graph_layout_spectral の (n, 3)(または (n, 2)、z = 0 を足す)。|W| &gt; thresh の辺だけ、対角(自己結合)は長さ 0 なので出さない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>

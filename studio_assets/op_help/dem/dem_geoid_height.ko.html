@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>ジオイド高の格子を緯度・経度で<b>双一次補間</b>して <code style="color:#22d3bf">N</code> [m] を返す(<code style="color:#22d3bf">signal</code>)。</p>
+<p>지오이드고 격자를 위도·경도로 <b>쌍선형 보간</b>하여 <code style="color:#22d3bf">N</code> [m]을 반환한다(<code style="color:#22d3bf">signal</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>GNSS が返すのは楕円体高 <code style="color:#22d3bf">h</code>、地図と設計図が使うのは標高 <code style="color:#22d3bf">H</code>。その差がジオイド高 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)で、日本付近では概ね <b>+30〜+40 m</b> ある。この op は公開されているジオイドモデルの格子(GSIGEO / EGM 系のような等間隔グリッド)を読む側の道具で、<b>モデルそのものは持たない</b> —— どの版を使ったかは呼び手の責任であり、版が変われば標高は数 cm 動く。</p>
 <p>Args:</p>
 <p>geoid: <code style="color:#22d3bf">(H, W)</code> のジオイド高 [m]。<code style="color:#22d3bf">geoid[0, 0]</code> が</p>

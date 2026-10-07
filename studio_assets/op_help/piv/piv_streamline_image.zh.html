@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_streamline_image(flow, upsample=8, background=None, color=(0.08, 0.08, 0.12), width=1.5, arrows=True, **stream_kw)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamline_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>流線図(MATLAB の <code style="color:#22d3bf">streamslice</code>)。返りは <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
+<p>流线图(MATLAB 的 <code style="color:#22d3bf">streamslice</code>)。返回 <code style="color:#22d3bf">(h*upsample, w*upsample, 3)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">piv_streamlines</code> の等間隔配置で線を引き、各線の弧長の中ほどに向きの矢じりを 1 つ置く(LIC と違って<b>前後が読める</b>)。線の間隔が揃うので、<b>線の密度では速さを表さない</b> —— 速さを見たいときは <code style="color:#22d3bf">background</code> に <code style="color:#22d3bf">piv_flow_magnitude</code> か色相図を敷く。</p>
 <p>Args:</p>
 <p>flow: <code style="color:#22d3bf">(2, h, w)</code>。</p>

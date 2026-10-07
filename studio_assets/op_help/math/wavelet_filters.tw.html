@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">table</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。</p>
+<p>依教科書的建構方法(頻譜分解)產生 Daubechies 正交歸一小波 dbN 的濾波器。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>

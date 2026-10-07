@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_synth_particles.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_synth_particles</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(image, positions) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>トレーサ粒子を撒いた 1 枚を作る。返りは <code style="color:#22d3bf">(image, positions)</code>。</p>
+<p>Erzeugt 1 Bild mit eingestreuten Tracerpartikeln. Rückgabe: <code style="color:#22d3bf">(image, positions)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>粒子はガウス輝点(直径 = 1/e^2 幅ではなく<b>標準偏差の 2 倍</b>を <code style="color:#22d3bf">diameter_px</code> と呼ぶ、PIV の慣行)。位置は連続値なので、サブピクセルの真値を持つ画像が作れる。</p>
 <p><code style="color:#22d3bf">density</code> は 1 画素あたりの粒子数。PIV の経験則では<b>窓あたり 5-10 個</b>が目安で、32x32 窓なら 0.005-0.01 に当たる。少なすぎると相関ピークが立たず、多すぎると粒子像が重なって個々の対応が失われる。</p>
 <p>Args:</p>

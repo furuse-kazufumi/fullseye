@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">points</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_datum_shift_3param(lat_deg, lon_deg, h_m, dx_m, dy_m, dz_m, a_from_m, f_from, a_to_m, f_to)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_datum_shift_3param&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>測地成果(datum)の乗り換え —— 地心 3 パラメータの平行移動(<code style="color:#22d3bf">points</code>)。</p>
+<p>측지 성과(datum)의 변환 —— 지심 3 매개변수 평행 이동(<code style="color:#22d3bf">points</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>同じ「北緯 35 度 41 分」でも、旧日本測地系と世界測地系では<b>地上で数百メートル</b> 離れた点を指す。この op はその乗り換えを、地心直交座標での平行移動(<code style="color:#22d3bf">Molodensky-Badekas</code> の回転・縮尺なしの場合)として行う::</p>
 <p>ECEF(a_from, f_from) + (dx, dy, dz) -&gt; 測地座標(a_to, f_to)</p>
 <p>★<b>パラメータに既定値を置かない</b>。どの成果からどの成果へ、どの平行移動量で移すのかは国・地域・版で違い、黙って仮定すると「例外は出ないが数百メートルずれた座標」が出る —— それがこの op の存在理由なので、呼び手に必ず書かせる。</p>

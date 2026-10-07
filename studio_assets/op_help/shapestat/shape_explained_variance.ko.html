@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">shapemodel</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_explained_variance(model)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_explained_variance(model)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_explained_variance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>各主成分の寄与率(合計 1)。→ <code style="color:#22d3bf">(k,)</code>。</p>
+<p>각 주성분의 기여율(합계 1). → <code style="color:#22d3bf">(k,)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>式: <code style="color:#22d3bf">variance / total_variance</code>。分母は <code style="color:#22d3bf">model[&quot;total_variance&quot;]</code>(<code style="color:#22d3bf">shape_pca</code> が<b>全</b>特異値から計算した総分散)で、無ければ <code style="color:#22d3bf">variance.sum()</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> の返り値。必須キーが無ければ <code style="color:#22d3bf">ValueError</code>。</p>
 <p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(k,)</code> float64、各要素は <code style="color:#22d3bf">[0, 1]</code>。<code style="color:#22d3bf">shape_pca(n_components=0)</code> (全成分)なら合計は 1。<b><code style="color:#22d3bf">n_components</code> で打ち切ったモデルでは合計が 1 未満</b> になる(切り捨てた成分の分だけ足りない)―― 「上位 k 本でどれだけ説明できるか」を読むにはむしろその方が正しい。</p>

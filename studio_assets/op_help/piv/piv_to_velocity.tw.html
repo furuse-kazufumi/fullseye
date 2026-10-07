@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">flow2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_to_velocity(flow, pixel_size_m, dt_s)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_to_velocity(flow, pixel_size_m, dt_s)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_to_velocity&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>画素/フレーム → m/s。<b>両方とも必須引数</b>(既定値を置かない)。</p>
+<p>像素/影格 → m/s。<b>兩者皆為必要引數</b>(不設預設值)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>単位の取り違えは例外を出さずに桁を変えるので、既定値を置くと事故が既定になる —— <code style="color:#22d3bf">demops</code> の <code style="color:#22d3bf">cell_size</code> と同じ判断。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">(2, h, w)</code> [m/s]。</p>

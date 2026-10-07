@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrics3d; metrics3d.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;m3c2_distance&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">signal</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">metrics3d.m3c2_distance</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2 時点の点群の差を<b>法線方向に</b>測る(M3C2)。→ <code style="color:#22d3bf">(distance, lod)</code> の 2 つ。</p>
+<p>2개 시점의 점군 차이를 <b>법선 방향으로</b> 측정한다(M3C2). → <code style="color:#22d3bf">(distance, lod)</code>의 2개.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
 <p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
 <p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>

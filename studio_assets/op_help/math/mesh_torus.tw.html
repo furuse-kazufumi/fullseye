@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">mesh</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathgeometry; mathgeometry.mesh_torus(R: &#x27;float&#x27; = 2.0, r: &#x27;float&#x27; = 0.7, n_u: &#x27;int&#x27; = 32, n_v: &#x27;int&#x27; = 16) -&gt; &#x27;tuple&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;mesh_torus&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>トーラス(ドーナツ)の閉じた三角形メッシュ (vertices, faces)。大きい半径 R・管の半径 r(R &gt; r &gt; 0)。</p>
+<p>環面(甜甜圈)的封閉三角網格 (vertices, faces)。大半徑 R、管半徑 r(R &gt; r &gt; 0)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>種数 1 の曲面の見本: χ = 0、角欠損の総和 = 0(外側の凸の部分が正、内側の鞍の部分が負で打ち消し合う)。頂点は (u, v) の格子(u が大円、v が管のまわり)の順で、<code style="color:#22d3bf">u = i·2π/n_u</code>、<code style="color:#22d3bf">v = j·2π/n_v</code> の頂点が i·n_v + j 番。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

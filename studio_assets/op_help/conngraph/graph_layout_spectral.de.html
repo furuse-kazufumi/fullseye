@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_layout_spectral(W: &#x27;Any&#x27;, dim: &#x27;int&#x27; = 2, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layout_spectral&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>スペクトル配置: 向きを畳んだ Laplacian の Fiedler ベクトル(第 2..dim+1 固有ベクトル)を座標にした点群 (n, 3)、各軸 [0, 1]。</p>
+<p>Spektrales Layout: eine Punktwolke (n, 3), deren Koordinaten die Fiedler-Vektoren (Eigenvektoren 2..dim+1) der Laplace-Matrix mit zusammengefalteten Richtungen sind, jede Achse in [0, 1].</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">dim</code> は 2 か 3(2 なら z = 0)。連結成分ごとに配置してから格子に並べる —— 非連結のグラフでは零固有空間が縮退して Fiedler ベクトルが成分を分けるとは限らないので、成分は明示的に分ける(成分内は箱の 0.3 倍、成分間は 1 の間隔)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>

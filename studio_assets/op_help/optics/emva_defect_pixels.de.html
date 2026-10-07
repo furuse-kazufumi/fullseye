@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_defect_pixels(avg_image, L, threshold)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_defect_pixels(avg_image, L, threshold)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_defect_pixels&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>欠陥画素の特徴づけ(8.8 節): 対数ヒストグラム(式 73〜75)と積算ヒストグラム(式 77)、しきい値を越える画素の数。</p>
+<p>Charakterisierung defekter Pixel (Abschnitt 8.8): logarithmisches Histogramm (Gl. 73–75) und kumuliertes Histogramm (Gl. 77) sowie die Anzahl der Pixel oberhalb einer Schwelle.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*avg_image*: L 枚の平均画像(時間雑音を平均で消したもの)。*L*: 平均した枚数(ビン幅を 1/L の整数倍にする)。*threshold*(必須)[DN]: 平均からの絶対偏差がこれを<b>越える</b>画素を数える(用途の「止め帯」)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;hist_centers&quot;: 平均からの偏差, &quot;hist_counts&quot;, &quot;accum_x&quot;: 絶対偏差, &quot;accum_percent&quot;: その偏差以上の画素の %, &quot;n_above&quot;: 数, &quot;mu&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D でない / L が正の整数でない / threshold が負 / 画像が一定(ヒストグラムの幅 0)。</p>

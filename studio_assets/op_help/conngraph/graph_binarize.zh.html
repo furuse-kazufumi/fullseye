@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_binarize(W: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_binarize(W: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_binarize&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>|W| &gt; thresh の辺を 1.0、それ以外を 0.0 にした conn_graph(対角も同じ規則)。</p>
+<p>将 |W| &gt; thresh 的边设为 1.0、其余设为 0.0 的 conn_graph(对角线也遵循同一规则)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

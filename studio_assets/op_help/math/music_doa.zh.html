@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathspectral; mathspectral.music_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5, grid_deg=None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;music_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>MUSIC(Schmidt 1986): 共分散の雑音部分空間に直交する向きを探す。</p>
+<p>MUSIC(Schmidt 1986)：搜索与协方差噪声子空间正交的方向。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>P(θ) = 1 / ‖E_nᴴ a(θ)‖²。真の向きでは分母がほぼ 0 になり鋭い峰が立つ。</p>
 <p><b>前提</b>: 波源の数が正しい・波源どうしが無相関(相関した波 = 多重反射では部分空間が潰れて峰が消える)。<code style="color:#22d3bf">n_sources=None</code> なら <code style="color:#22d3bf">n_sources_mdl</code> で推定し、返り値の <code style="color:#22d3bf">n_sources_estimated</code> を True にする。返り値 <code style="color:#22d3bf">{&quot;grid_deg&quot;, &quot;pseudo_spectrum_db&quot;, &quot;doa_deg&quot;, &quot;eigenvalues&quot;}</code>(doa は峰の大きい順に n 個、格子の分解能)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

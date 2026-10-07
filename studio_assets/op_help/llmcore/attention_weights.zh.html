@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">attnmap</code> → <code style="color:#22d3bf">attnmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>行ごとの softmax(マスクつき)→ attnmap。<b>行和は 1、mask 位置は厳密に 0</b>。</p>
+<p>逐行 softmax(带掩码)→ attnmap。<b>行和为 1，mask 位置严格为 0</b>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
 <p>Args:</p>
 <p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>

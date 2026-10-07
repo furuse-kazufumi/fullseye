@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.capsule_sdf(grid, a, b, radius)</code> (to call the implementation directly, <code style="color:#22d3bf">import sdf_ops; sdf_ops.capsule_sdf(grid, a, b, radius)</code>; from the registry, <code style="color:#22d3bf">ops3d.get(&quot;capsule_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>線分 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> を半径 <code style="color:#22d3bf">radius</code> で太らせたカプセルの<b>厳密</b>な符号付き距離場。</p>
+<p><b>Exact</b> signed distance field of a capsule formed by thickening the segment <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> by radius <code style="color:#22d3bf">radius</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

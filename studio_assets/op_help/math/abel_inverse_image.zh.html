@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathtransforms; mathtransforms.abel_inverse_image(image, dr: &#x27;float&#x27; = 1.0, *, center: &#x27;float | None&#x27; = None, method: &#x27;str&#x27; = &#x27;onion&#x27;) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;abel_inverse_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>軸対称な物体を横から撮った<b>画像</b>(縦 = 対称軸の向き、横 = 軸からの距離)を、行ごとに逆 Abel して断面画像にする。</p>
+<p>对从侧面拍摄的轴对称物体<b>图像</b>(纵向 = 对称轴方向，横向 = 距轴的距离)逐行做逆 Abel 变换，得到截面图像。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>炎・プラズマ・噴流の写真は、奥行き方向に足し合わさった投影しか写らない。各行を中心列で左右に分け、2 つの半分を平均してから(左右の非対称を均す)逆 Abel する。<code style="color:#22d3bf">center</code> は対称軸の列(既定 = 明るさの重心、行ごとではなく画像全体で 1 本)。返り値 <code style="color:#22d3bf">{&quot;slice&quot;, &quot;center&quot;, &quot;asymmetry&quot;}</code> —— slice は (H, R) の f(z, r)、asymmetry は左右の半分の差の大きさ(0 に近いほど軸対称の仮定が成り立つ)。</p>
 <p>門: 3-D のガウスの塊の投影から、断面のガウスが戻る(閉じた式)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

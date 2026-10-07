@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_leading_edge_radius(contour, frac=0.001, n_fit=24)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_leading_edge_radius&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>前縁半径(翼弦比)。前縁近傍の点に円を当てはめる。</p>
+<p>前緣半徑(與弦長之比)。對前緣附近的點擬合圓。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">frac</code> は前縁から弦方向にどこまでを「前縁付近」とみなすか。<b>この値で答えが変わる</b>。鼻先は円だが、少し離れると円ではないので、窓を広げると系統的に<b>過大</b>になる。NACA 4 桁の閉形式 <code style="color:#22d3bf">1.1019 * t^2</code> と突き合わせた実測(点数 4001 で生成):</p>
 <p>==========  ==========  ==========  ==========  ==========</p>
 <p>frac        NACA 0012   NACA 2412   NACA 0021   NACA 0008</p>

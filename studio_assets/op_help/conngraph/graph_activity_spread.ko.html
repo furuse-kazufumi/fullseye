@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × points × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_activity_spread(X: &#x27;Any&#x27;, P: &#x27;Any&#x27;, source: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activity_spread&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>活動がどこまで広がったかの時系列の表: 列 step / mean_distance / active_fraction / source_fraction。</p>
+<p>활동이 어디까지 퍼졌는지의 시계열 표: 열 step / mean_distance / active_fraction / source_fraction.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">X</code> = (T, n) の状態列、<code style="color:#22d3bf">P</code> = (n, 3) の座標、<code style="color:#22d3bf">source</code> = 刺激したノードの指示子(長さ n の整数、非零 = 刺激。1 つ以上)。mean_distance[t] = Σ|x_i(t)| ‖P_i − c‖ / Σ|x_i(t)|(c = 刺激ノードの重心、|x| で重みづけた活動の平均距離、単位は P と同じ。活動が全零のステップは 0)。active_fraction[t] = |x_i(t)| ≥ 全体最大 × thresh のノードの割合。source_fraction[t] = 活動のうち刺激ノードにある分 Σ_source |x| / Σ|x|(全零なら 0)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

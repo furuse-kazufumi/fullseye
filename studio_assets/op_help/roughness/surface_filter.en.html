@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_filter(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">depth</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_filter.raw(...)</code> or call <code style="color:#22d3bf">roughness.surface_filter</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(roughness, waviness)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>高さ場を粗さとうねりに分ける(ISO 16610-21 のガウスフィルタ)。</p>
+<p>Separates a height field into roughness and waviness (Gaussian filter of ISO 16610-21).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>戻り値は <code style="color:#22d3bf">(roughness, waviness)</code>。<code style="color:#22d3bf">roughness</code> が λc より短い成分、<code style="color:#22d3bf">waviness</code> が長い成分で、<code style="color:#22d3bf">end_effect=&quot;reject&quot;</code> でなければ <code style="color:#22d3bf">roughness + waviness</code> は入力(λs を掛けたあとの一次形状)に厳密に一致する。</p>
 <p>引数</p>
 <p>z          高さ場 <code style="color:#22d3bf">z[i, j]</code>(行 = y、列 = x)。</p>

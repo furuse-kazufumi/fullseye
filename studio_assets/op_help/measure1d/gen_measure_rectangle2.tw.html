@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">measurehandle</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>回転測定矩形(長軸 <code style="color:#22d3bf">phi</code> 方向に 1 px 間隔でプロファイルを取る)を定義(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は中心から -(n-1)/2 px の位置。<code style="color:#22d3bf">length2</code> は幅方向の平均化幅 [px]。</p>
+<p>定義旋轉量測矩形(沿長軸 <code style="color:#22d3bf">phi</code> 方向以 1 px 間隔取剖面)(gen_measure_rectangle2)。取樣數 n = round(2*length1)+1，起點位於距中心 -(n-1)/2 px 處。<code style="color:#22d3bf">length2</code> 為寬度方向的平均寬度 [px]。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

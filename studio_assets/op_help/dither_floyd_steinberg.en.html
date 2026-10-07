@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/dither_floyd_steinberg.inputs.jpg">dither_floyd_steinberg: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>誤差拡散ディザ(Floyd–Steinberg)。<code style="color:#22d3bf">a</code> がビット数 1〜8、<code style="color:#22d3bf">b</code> は未使用。</p>
+<p>Error-diffusion dithering (Floyd–Steinberg). <code style="color:#22d3bf">a</code> is the bit count 1 to 8; <code style="color:#22d3bf">b</code> is unused.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各画素を丸めたあと、出た誤差を右 7/16・左下 3/16・下 5/16・右下 1/16 に配る。<b>平均は保たれる</b>(局所的に足し引きが釣り合う)ので、平坦な階調が縞にならずに点の密度で表現される。1 ビットまで落としても絵として読めるのはこれのため。</p>
 <p><b>適用条件</b>: (1) 走査順に依存するので、<b>画像を切り出す位置を変えると結果が変わる</b> —— タイル処理や並列化には向かない(そちらは <code style="color:#22d3bf">dither_ordered</code>)。(2) 誤差を隣へ送るので、細い線の周りに尾を引く。(3) ここでは素直な逐次実装なので、大きな画像では <code style="color:#22d3bf">dither_ordered</code> よりずっと遅い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

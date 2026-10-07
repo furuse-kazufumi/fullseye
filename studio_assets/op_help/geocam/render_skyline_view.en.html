@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code> (to call the implementation directly, <code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>; from the registry, <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
+<p>From a skyline table and an orientation, draws the <b>sky mask</b> (H, W) seen by a camera pointing that way → image2d (0/1).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
 <p>Args:</p>
 <p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>

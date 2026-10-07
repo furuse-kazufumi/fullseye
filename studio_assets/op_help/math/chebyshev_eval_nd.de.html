@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">table × matrix</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_eval_nd(coeffs, points, box=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_eval_nd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p><code style="color:#22d3bf">chebyshev_coeffs_nd</code> の係数を点 (M, d) で評価する(各軸 T_k(t) = cos(k·arccos t))。</p>
+<p>Wertet die Koeffizienten von <code style="color:#22d3bf">chebyshev_coeffs_nd</code> an den Punkten (M, d) aus (je Achse T_k(t) = cos(k·arccos t)).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">points</code> が d 本の 1-D 配列の組なら、その格子(外積)の上で評価して形 (m1, …, md) を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

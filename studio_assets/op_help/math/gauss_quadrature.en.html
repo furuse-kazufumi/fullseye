@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;gauss_quadrature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。</p>
+<p>Nodes and weights of n-point Gauss quadrature. ∫ f ≈ Σ w_k f(x_k).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>n 点で <b>2n−1 次までの多項式を厳密に</b>積分する(等間隔の台形則は 1 次まで)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> は区間 [a, b] へ写せる(既定 [−1, 1])。他の kind は重み関数込みの積分(<code style="color:#22d3bf">integral</code> 参照)。</p>
 <p>門: 2n−1 次の単項式は厳密、2n 次は厳密でない(両向き)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

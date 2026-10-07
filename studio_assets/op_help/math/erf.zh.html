@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.erf(x) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;erf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>誤差関数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。</p>
+<p>误差函数 erf(x) = (2/√π) ∫_0^x e^{−t²} dt。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>正規分布の累積や、ぼけたエッジ(ガウスで畳んだ段差)の形そのもの: 幅 σ のガウスでぼけた段差は ½(1 + erf(x / (σ√2)))。門: 奇関数、erf(∞) = 1、導関数 = (2/√π) e^{−x²}、Gauss 求積による積分と一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

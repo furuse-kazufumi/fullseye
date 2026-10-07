@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mat_expm(A) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.mat_expm(A) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;mat_expm&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>行列の指数関数 e^A(Padé 近似 + scaling-and-squaring、scipy)。</p>
+<p>Matrix exponential e^A (Padé approximation + scaling-and-squaring, scipy).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>線形 ODE x&#x27; = A x の解 x(t) = e^{At} x(0)。歪対称 3×3 なら回転行列(Rodrigues の公式と一致)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>

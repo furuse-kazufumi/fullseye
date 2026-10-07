@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">shapemodel</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_explained_variance(model)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.shape_explained_variance(model)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;shape_explained_variance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>各主成分の寄与率(合計 1)。→ <code style="color:#22d3bf">(k,)</code>。</p>
+<p>Explained-variance ratio of each principal component (sums to 1). → <code style="color:#22d3bf">(k,)</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>式: <code style="color:#22d3bf">variance / total_variance</code>。分母は <code style="color:#22d3bf">model[&quot;total_variance&quot;]</code>(<code style="color:#22d3bf">shape_pca</code> が<b>全</b>特異値から計算した総分散)で、無ければ <code style="color:#22d3bf">variance.sum()</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">shape_pca</code> の返り値。必須キーが無ければ <code style="color:#22d3bf">ValueError</code>。</p>
 <p style="margin:2px 0 2px 12px">• 返り値: <code style="color:#22d3bf">(k,)</code> float64、各要素は <code style="color:#22d3bf">[0, 1]</code>。<code style="color:#22d3bf">shape_pca(n_components=0)</code> (全成分)なら合計は 1。<b><code style="color:#22d3bf">n_components</code> で打ち切ったモデルでは合計が 1 未満</b> になる(切り捨てた成分の分だけ足りない)―― 「上位 k 本でどれだけ説明できるか」を読むにはむしろその方が正しい。</p>

@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/runlength_smear.inputs.jpg">runlength_smear: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p><b>走査長平滑化(RLSA)</b>。行内の字の隙間を埋めて、字を「行」の塊にまとめる。</p>
+<p><b>런 길이 평활화(RLSA)</b>. 행 안의 글자 사이 틈을 메워 글자를 &#x27;행&#x27; 덩어리로 묶는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>版面解析(どこが行で、どこが段か)の基本部品。<code style="color:#22d3bf">a</code> が<b>埋める隙間の長さ</b>を <code style="color:#22d3bf">3,5,9,15,25,41,65</code> 画素(<code style="color:#22d3bf">b</code> の向きに沿った線)に振り、<code style="color:#22d3bf">b</code> が向きと</p>
 <p>合成を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は<b>水平のみ</b>、<code style="color:#22d3bf">0.5 &lt; b &lt;= 0.75</code> は<b>垂直のみ</b>、<code style="color:#22d3bf">b &gt; 0.75</code> は<b>水平と垂直の小さい方</b>(= 古典 RLSA の 2 パス AND 合成。両方向で埋まった所だけが残るので、行だけでなく<b>段組みの塊</b>が出る)。</p>
 <p>★<b>既存の <code style="color:#22d3bf">gclose</code> と一部重なる</b>。<code style="color:#22d3bf">gclose</code> は <code style="color:#22d3bf">b</code> で水平線の構造要素を選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——</p>

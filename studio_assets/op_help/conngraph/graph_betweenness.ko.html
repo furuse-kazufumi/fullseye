@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_betweenness(W: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_betweenness&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>媒介中心性(Brandes 2001、二値有向、正規化なし)。ノードごとの長さ n の配列。</p>
+<p>매개 중심성(Brandes 2001, 이진 유향, 정규화 없음). 노드별 길이 n의 배열.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>ノード v の値 = Σ_{s≠v≠t} σ_st(v) / σ_st(最短路の本数比)。二値構造が対称(すべての辺が相互)なら無向グラフとして (s, t) と (t, s) を 1 対と数え 2 で割る —— 無向スター(n 個)の中心が (n−1)(n−2)/2、葉が 0 になる教科書の値。有向(非対称)なら順序対のまま数える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

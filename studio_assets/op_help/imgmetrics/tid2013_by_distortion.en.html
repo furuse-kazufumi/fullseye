@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">any × table</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_by_distortion(values, index: &#x27;dict&#x27;, idx=None) -&gt; &#x27;List[dict]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqatid; iqatid.tid2013_by_distortion(values, index: &#x27;dict&#x27;, idx=None) -&gt; &#x27;List[dict]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_by_distortion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>歪み種(24)ごとの、指標と MOS の順位相関。</p>
+<p>Rank correlation between the metric and the MOS for each distortion type (24).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">values</code> は <code style="color:#22d3bf">idx</code>(台帳の行番号、省略 = 3000 行全部)に対応する値。各行: <code style="color:#22d3bf">type</code>(1 始まり)、<code style="color:#22d3bf">name</code>(readme TABLE I)、<code style="color:#22d3bf">n</code>、<code style="color:#22d3bf">n_inf</code>、<code style="color:#22d3bf">srocc</code>、<code style="color:#22d3bf">krocc</code>(τ_b)。1 種 = 25 参照 × 5 段 = 125 組。組が 2 未満の種は nan。歪み 18(彩度変化)は Y′ の PSNR が 106 / 125 組で inf(同順位)なので、その種の順位相関は低く出る —— 指標の欠陥でなく輝度だけを見る指標の限界。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathestimation; mathestimation.hist_distance(p, q, metric: &#x27;str&#x27; = &#x27;kl&#x27;, *, eps: &#x27;float&#x27; = 1e-12) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;hist_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2 つのヒストグラム(非負、和で正規化する)の距離・発散。</p>
+<p>2개의 히스토그램(음이 아니며 합으로 정규화) 사이의 거리·발산.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;kl&quot;</code> —— Kullback–Leibler D(p‖q) = Σ p log(p/q)(非対称。q が 0 で p が正だと無限大 → eps で床)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;js&quot;</code> —— Jensen–Shannon(対称、0..log 2、平方根は距離の公理を満たす)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bhattacharyya&quot;</code> —— −log Σ √(pq)。 <code style="color:#22d3bf">&quot;hellinger&quot;</code> —— √(1 − Σ √(pq))(0..1)。</p>

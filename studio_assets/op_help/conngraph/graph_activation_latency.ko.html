@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_activation_latency(X: &#x27;Any&#x27;, thresh: &#x27;float&#x27; = 0.1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_activation_latency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>各ノードが初めて「点いた」ステップ(0 始まり)の列 (n,)、整数。点かなかったノードは −1。</p>
+<p>각 노드가 처음 &#x27;켜진&#x27; 스텝(0부터 시작)의 열 (n,), 정수. 켜지지 않은 노드는 −1.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">X</code> は reservoir_states の (T, n)。「点いた」= |x| ≥ <b>全体の最大値</b> × thresh(thresh は(0, 1])。尺度はノードごとでなく 1 つ —— ノードごとに伸ばすと、ほとんど動かないノードの丸め屑も「点いた」になる。全零の X はすべて −1。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

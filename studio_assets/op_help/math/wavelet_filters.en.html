@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.wavelet_filters(order: &#x27;int&#x27; = 2) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;wavelet_filters&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Daubechies の正規直交ウェーブレット dbN のフィルタを、教科書の構成(スペクトル分解)で作る。</p>
+<p>Builds the filters of the Daubechies orthonormal wavelet dbN by the textbook construction (spectral factorization).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>|H(ω)|² = cos^{2N}(ω/2)·P(sin²(ω/2))、P(y) = Σ_{k&lt;N} C(N−1+k, k) y^k(Daubechies 1988)。P の根から単位円の内側の零点を選び、(1 + z⁻¹)^N と掛け合わせる。表を写さないので桁落ちの転記ミスが無い(門が値を確かめる)。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">lowpass</code> h(長さ 2N、和 √2)、<code style="color:#22d3bf">highpass</code> g[n] = (−1)^n h[2N−1−n]、<code style="color:#22d3bf">order</code>、</p>

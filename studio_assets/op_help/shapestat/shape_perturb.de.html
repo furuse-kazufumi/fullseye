@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>形に<b>既知の</b>変形を 1 つ入れる。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
+<p>Bringt 1 <b>bekannte</b> Deformation in eine Form ein. → <code style="color:#22d3bf">(N, 3)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* のまわりをガウス重みで外向きに膨らませる。片側だけに入れれば左右非対称性の真値になる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>

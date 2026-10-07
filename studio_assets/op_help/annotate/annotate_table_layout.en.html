@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">text</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_table_layout(text, xy, anchor=&#x27;lt&#x27;, font_size=13, font_path=None, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, bold=False, italic=False, line_spacing=1.15)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table_layout&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>table(dict)を返す: タブ区切りの文字列を<b>表</b>として置く桁と行の位置。</p>
+<p>Returns a table (dict): the column and row positions at which a tab-separated string is placed as a <b>table</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>行は <code style="color:#22d3bf">\n</code>、桁は <code style="color:#22d3bf">\t</code> で切る。桁幅は<b>指定されたサイズの実フォントで 1 セルずつ測った幅の最大</b>で決まる —— 文字数で数えると和文と英数字で必ずずれるので、測る以外に正しくやりようがない。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>text : str</p>

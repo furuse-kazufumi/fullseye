@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.veiling_glare_index(img, dark_mask, bright_mask)</code> (die Implementierung direkt: <code style="color:#22d3bf">import edgesfr; edgesfr.veiling_glare_index(img, dark_mask, bright_mask)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;veiling_glare_index&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>迷光(ベーリンググレア)指数: 黒い点の中心の明るさの平均 / 白地の明るさの平均(ISO 9358 の考え方)。</p>
+<p>Streulicht-Index (Veiling Glare): mittlere Helligkeit in der Mitte der schwarzen Flecken / mittlere Helligkeit des weißen Grundes (nach dem Ansatz von ISO 9358).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*dark_mask*(必須): 黒い点の<b>中心部</b>の画素(点の縁の ぼけ を含めない —— 縁を含めるとコアの ぼけ まで迷光に数える)。*bright_mask*(必須): 白地の画素。★黒い点の大きさ(と光源の広さ)で答えが変わる: 裾が 1/(1+(r/r0)²) のレンズでは黒い点の一辺を 16 → 256 px にすると同じレンズの指数が 19.6 % → 4.5 %(<code style="color:#22d3bf">poc_veiling_glare</code> 3 節)。点の大きさは結果と一緒に報告すること。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;vgi&quot;: 比, &quot;dark&quot;: 黒点の平均, &quot;bright&quot;: 白地の平均, &quot;n_dark&quot;, &quot;n_bright&quot;}</code>。暗電流・黒レベルは引かない(引いた像を渡す)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像・マスクの形が違う / マスクが bool でない・空・重なる / 白地の平均が 0 以下。</p>

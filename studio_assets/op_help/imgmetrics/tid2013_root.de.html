@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">any</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import iqatid; iqatid.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_root&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>配布物の展開先。<code style="color:#22d3bf">root</code> が無ければ環境変数 <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>。どちらも無い・<code style="color:#22d3bf">mos_with_names.txt</code> が無ければ <code style="color:#22d3bf">None</code> (呼び手は skip する —— データは repo に無い)。</p>
+<p>Ort, an den die Distribution entpackt wurde. Fehlt <code style="color:#22d3bf">root</code>, die Umgebungsvariable <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>. Fehlt beides oder fehlt <code style="color:#22d3bf">mos_with_names.txt</code>, <code style="color:#22d3bf">None</code> (der Aufrufer überspringt (skip) — die Daten liegen nicht im Repo).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

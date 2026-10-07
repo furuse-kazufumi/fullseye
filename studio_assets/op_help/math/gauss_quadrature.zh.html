@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;gauss_quadrature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。</p>
+<p>n 点 Gauss 求积的节点与权重。∫ f ≈ Σ w_k f(x_k)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>n 点で <b>2n−1 次までの多項式を厳密に</b>積分する(等間隔の台形則は 1 次まで)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> は区間 [a, b] へ写せる(既定 [−1, 1])。他の kind は重み関数込みの積分(<code style="color:#22d3bf">integral</code> 参照)。</p>
 <p>門: 2n−1 次の単項式は厳密、2n 次は厳密でない(両向き)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

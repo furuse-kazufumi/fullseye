@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_seeds(distance: &#x27;Any&#x27;, h: &#x27;float&#x27;, connectivity: &#x27;int&#x27; = 8) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_seeds&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>h-maxima の種。<b><code style="color:#22d3bf">h</code> は <code style="color:#22d3bf">distance</code> と同じ単位の絶対値</b>。</p>
+<p>h-Maxima-Saatpunkte. <b><code style="color:#22d3bf">h</code> ist ein Absolutwert in derselben Einheit wie <code style="color:#22d3bf">distance</code></b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>「高さ <code style="color:#22d3bf">h</code> 以上そびえている極大」だけを残し、連結成分に番号を振って返す。融合した塊を割るときの種として使う。</p>
 <p><b>既存の <code style="color:#22d3bf">fs.op.xsk2_h_maxima</code> と違う点</b>(<code style="color:#22d3bf">poc_cell_counting</code> が</p>
 <p>記録した穴):</p>

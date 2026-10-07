@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">attnmap × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>注意の重みで値を混ぜる → tokens。<b>行和 1 なので出力は入力の凸結合</b>。</p>
+<p>以注意力權重混合值 → tokens。<b>由於列和為 1，輸出是輸入的凸組合</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>Args:</p>
 <p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
 <p>value: (S, dv) float。混ぜられる側。</p>

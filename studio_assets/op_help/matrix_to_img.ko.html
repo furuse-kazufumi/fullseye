@@ -13,8 +13,8 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/matrix_to_img.inputs.jpg">matrix_to_img: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>行列を<b>見るための濃淡</b>にして画像へ戻す —— キャストではない。</p>
+<p>행렬을 <b>보기 위한 농담</b>으로 만들어 영상으로 되돌린다 — 캐스트가 아니다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>行き(<code style="color:#22d3bf">img_to_matrix</code>)は値も形も変えない<b>純粋なキャスト</b>だと明記してあるが、戻りを同じくキャストにすると嘘になる: 行列の値は [0,1] に収まらず、最小値が黒・最大値が白に伸びるだけだと <b>0 がどこかが分からない</b>。共分散・相関・擬似逆行列の符号は、そこが読めないと意味を持たない。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>対数圧縮</b>の強さ。<code style="color:#22d3bf">k = 10**(3a) - 1</code> として <code style="color:#22d3bf">y = sign(x) * log1p(k|x|) / log1p(k)</code>(a=0 は線形、a=1 で 1000 倍の圧縮)。条件数のように桁が開く行列で、小さい成分が全部黒に潰れるのを防ぐ。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 基準。<code style="color:#22d3bf">b &lt; 0.5</code> は<b>データの min–max を [0,1] に伸ばす</b>、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>0 を 0.5 に置いて <code style="color:#22d3bf">|x|</code> の最大で対称に</b>(符号つきの行列向け。0.5 が中立、明るい = 正、暗い = 負)。</p>

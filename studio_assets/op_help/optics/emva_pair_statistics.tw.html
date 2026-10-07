@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_pair_statistics(y0, y1)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_pair_statistics(y0, y1)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_pair_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>同じ露光で撮った 2 枚から、平均・時間分散・空間分散を出す(式 16・18・32)。</p>
+<p>由同一曝光下拍攝的 2 張影像，求出平均、時間變異數與空間變異數(式 16、18、32)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">mu</code> = (μ[0] + μ[1]) / 2(式 16)、<code style="color:#22d3bf">var_temporal</code> = Σ(y0 − y1)²/(2NM) − (μ[0] − μ[1])²/2(式 18: 2 枚の平均の差の補正は Release 4 の新規)、<code style="color:#22d3bf">var_spatial</code> = Σ y0·y1/(NM) − μ[0]μ[1] (式 32、負にならないことが示されている)。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;mu&quot;, &quot;var_temporal&quot;, &quot;var_spatial&quot;, &quot;mu0&quot;, &quot;mu1&quot;, &quot;n_pixels&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 2-D の実数でない / 形が違う / NaN・inf / 画素が 2 未満。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix × labels</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.states_layer_dimension(X: &#x27;Any&#x27;, labels: &#x27;Any&#x27;) -&gt; &#x27;dict[str, np.ndarray]&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;states_layer_dimension&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>層ごとの実効次元の表: 列 layer / n / participation_ratio / ratio(= PR / n)。</p>
+<p>층별 실효 차원의 표: 열 layer / n / participation_ratio / ratio(= PR / n).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">X</code> = <code style="color:#22d3bf">graph_layer_propagate</code> の返り (N, n)、<code style="color:#22d3bf">labels</code> = ノードの層 id。「脳 → 首 → 腹髄 → 筋」で次元がどこで落ちるか(動きの量子化)を 1 つの数式で読む。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

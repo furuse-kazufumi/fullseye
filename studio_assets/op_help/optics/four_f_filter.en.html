@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">cimage × cimage</code> → <code style="color:#22d3bf">cimage</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.four_f_filter(field, transfer, invert=True)</code> (to call the implementation directly, <code style="color:#22d3bf">import optics; optics.four_f_filter(field, transfer, invert=True)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;four_f_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>4f 光学プロセッサ: 2 枚のレンズとフーリエ面のフィルタを通した出力。</p>
+<p>4f optical processor: the output after passing through 2 lenses and the filter in the Fourier plane.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>入力面 → レンズ 1 → <b>フーリエ面</b>(<code style="color:#22d3bf">transfer</code> を掛ける)→ レンズ 2 → 出力面。スカラ回折の理想 4f 系では出力は</p>
 <p><code style="color:#22d3bf">out(x, y) = (u * h)(-x, -y)</code></p>
 <p>—— 畳み込みに<b>座標反転</b>が付く。2 枚のレンズがそれぞれ*前向きの*フーリエ変換を行い、<code style="color:#22d3bf">F{F{u}}(x) = u(-x)</code> だからである。「フーリエ面で掛けるだけ」の計算と実物の 4f 系はここが違うので、反転は既定で<b>する</b>。</p>

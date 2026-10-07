@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.stipple_points_from_image(image, n_points, iterations=30, gamma=1.0, floor=0.02, seed=0, metric=&#x27;euclidean&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;stipple_points_from_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>濃淡を<b>点の密度</b>に写す(重みつき Lloyd = 重心ボロノイ)。→ <code style="color:#22d3bf">pairs</code></p>
+<p>Maps grey levels to <b>point density</b> (weighted Lloyd = centroidal Voronoi). → <code style="color:#22d3bf">pairs</code></p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>暗いところに点が密に集まる。返るのは <code style="color:#22d3bf">(n_points, 2)</code> の <b>(row, col)</b>。</p>
 <p>引数:</p>
 <p>image: 明るさ <code style="color:#22d3bf">[0, 1]</code> の 2-D(または色。輝度に落とす)。</p>

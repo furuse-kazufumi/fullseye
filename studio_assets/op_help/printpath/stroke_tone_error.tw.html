@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.stroke_tone_error(image, points, pen_width=1.0, blur_sigma=3.0, gamma=1.0)</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tone_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>線を引いた結果の<b>濃淡</b>が目標とどれだけ違うか。→ <code style="color:#22d3bf">table</code></p>
+<p>畫線所得的<b>濃淡</b>與目標相差多少。→ <code style="color:#22d3bf">table</code></p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>★これが一筆書きの<b>本当の目的関数</b>。「絵として似ている」を人の目に任せず、ペン幅で描いて目の尺度にぼかし、目標の暗さと比べて数で返す。</p>
 <p>返り値: dict</p>
 <p>&quot;rms&quot; / &quot;max_abs&quot; / &quot;bias&quot; —— 暗さの差(<code style="color:#22d3bf">[0, 1]</code> の尺度)</p>

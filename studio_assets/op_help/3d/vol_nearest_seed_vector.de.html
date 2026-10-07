@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">flow_dense</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_seed_vector(vol_binary, spacing=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import volops; volops.vol_nearest_seed_vector(vol_binary, spacing=None)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_seed_vector&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>各 voxel から<b>最近の seed voxel への変位ベクトル</b> <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>、成分 dz, dy, dx [voxel])。</p>
+<p><b>Verschiebungsvektor von jedem Voxel zum nächsten Seed-Voxel</b> <code style="color:#22d3bf">(3, D, H, W)</code> (<code style="color:#22d3bf">flow_dense</code>, Komponenten dz, dy, dx [voxel]).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>seed = 非零 voxel(<code style="color:#22d3bf">&gt; 0.5</code> で二値化)。seed の上では 0。<code style="color:#22d3bf">vol_distance_transform</code> が返すのは距離の<b>値</b>だけで、「どの voxel が最近か」は落ちる —— 骨格からの半径(表面 → 骨格の変位)、膜までの肉厚、ESDF の勾配、ラベルのボロノイ分割はこの<b>向き</b>が要る(2026-09-21、コネクトーム基盤の穴)。<code style="color:#22d3bf">spacing</code> <code style="color:#22d3bf">(sz, sy, sx)</code> を渡すと最近傍の判定は物理距離で行う(返す変位は voxel 単位のまま —— <code style="color:#22d3bf">|v * spacing|</code> が物理距離)。</p>
 <p>厳密解: Maurer, Qi &amp; Raghavan (IEEE TPAMI 2003) の線形時間 EDT(<code style="color:#22d3bf">scipy.ndimage.distance_transform_edt(return_indices=True)</code>)。同距離の seed が複数あるときはその実装の順序で 1 つ(順序に意味を持たせないこと)。seed が 1 つも無いと ValueError(全 voxel が無限遠 —— 黙って 0 を返さない)。</p>
 <p>&gt;&gt;&gt; v = np.zeros((5, 5, 5)); v[2, 2, 0] = 1</p>

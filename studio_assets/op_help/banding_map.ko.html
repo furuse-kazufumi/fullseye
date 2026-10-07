@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/banding_map.inputs.jpg">banding_map: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>階調の<b>段差(バンディング)が見えている場所</b>を返す。<code style="color:#22d3bf">a</code> がビット数、<code style="color:#22d3bf">b</code> が窓。</p>
+<p><b>계조의 단차(밴딩)가 보이는 곳</b>을 반환한다. <code style="color:#22d3bf">a</code>는 비트 수, <code style="color:#22d3bf">b</code>는 창.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
 <p style="margin:2px 0 2px 12px">1. <b>刻みの上に乗っている</b> —— 値が <code style="color:#22d3bf">k*Δ</code> の格子にある。量子化していない画像にバンディングは無い(浮動小数の雑音はここで落ちる)。</p>
 <p style="margin:2px 0 2px 12px">2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が <code style="color:#22d3bf">Δ</code> の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>

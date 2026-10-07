@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import watershed3d; watershed3d.watershed_vol(binary, markers: &#x27;Optional[np.ndarray]&#x27; = None, min_distance: &#x27;float&#x27; = 1.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opssegmentation.get(&quot;watershed_vol&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>距離変換シードの分水嶺で 3D 前景を物体ごとのラベルに分割する(公開 op の薄い合成)。</p>
+<p>以距離轉換為種子的分水嶺把 3D 前景分割為每個物體的標籤(公開 op 的輕量組合)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>連結成分では 1 個に融合する<b>接触/僅かな重なり</b>を割るのが目的。EDT は <code style="color:#22d3bf">volops.vol_distance_transform</code>、skimage 分水嶺は <code style="color:#22d3bf">volops.vol_watershed</code> に委譲し、本モジュールは (A) skimage 不在時の純 scipy フォールバックと、シード自動生成のグルーだけを足す。<code style="color:#22d3bf">markers</code> を省略すると距離変換の局所極大(<code style="color:#22d3bf">min_distance</code> NMS)を自動シードにする。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>

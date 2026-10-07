@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.plane_sdf(grid, point, normal)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.plane_sdf(grid, point, normal)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;plane_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>半空間(平面で切った側)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>반공간(평면으로 자른 쪽)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">sdf(p) = (p - point) · n̂</code>。法線 <code style="color:#22d3bf">n̂</code> の<b>指す側が外側(正)</b>で、反対側が内側。面取り(chamfer)・切断・「基板から上だけ」のような<b>片側だけを残す</b>演算に使う。<code style="color:#22d3bf">sdf_intersect</code> を重ねれば任意の凸多面体が作れる。ただし <b>max による交差は角の外側で厳密ではない</b>: 6 枚で直方体を作ると占有(<code style="color:#22d3bf">&lt;= 0</code>)と内側の値は <code style="color:#22d3bf">box_sdf</code> に完全一致するが、外側は角の近くで最大 2.1(半辺 2 の箱・格子 0.25 で実測)だけ<b>過小評価</b>する —— CSG の標準的な性質で、距離そのものが要るなら <code style="color:#22d3bf">box_sdf</code> を使う。</p>
 <p>厳密性: 平面は全空間で勾配ノルム 1 なので、この値は<b>どこでも真の符号付き距離</b> (<code style="color:#22d3bf">box_sdf</code> のように角で切り替わる場合分けが要らない)。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>

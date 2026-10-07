@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">labels</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import watershed3d; watershed3d.separate_touching(binary, min_distance: &#x27;float&#x27; = 5.0, method: &#x27;str&#x27; = &#x27;auto&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opssegmentation.get(&quot;separate_touching&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>genuinely-new (B): 接触物体を 1 呼び出しで自動分離する常用ラッパ。</p>
+<p>genuinely-new (B)：用 1 次调用自动分离接触物体的常用封装。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>「複数物体が接触して 1 連結成分に融合している」典型ケースを、距離変換→極大 NMS シード化→ 分水嶺という定型パイプラインを畳んで 1 コールで割る(公開 API では 3 op を手で繋ぐ必要があるところを常用ケース向けに 1 関数化)。中身は <code style="color:#22d3bf">watershed_vol(..., markers=None)</code>。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>binary : array_like</p>

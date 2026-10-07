@@ -11,8 +11,8 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/tb_mirror_plane_from_pairs.inputs.jpg">tb_mirror_plane_from_pairs: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>左右の対応ランドマークから正中面を出す。→ <code style="color:#22d3bf">(2, 3)</code>(1 行目 = 点、2 行目 = 法線)。</p>
+<p>좌우 대응 랜드마크로부터 정중면을 구한다. → <code style="color:#22d3bf">(2, 3)</code>(1행 = 점, 2행 = 법선).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
 <p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
 <p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>

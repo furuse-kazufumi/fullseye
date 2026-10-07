@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.piv_multipass(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">flow2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.piv_multipass.raw(...)</code> or call <code style="color:#22d3bf">pivops.piv_multipass</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>粗い窓から細かい窓へ段を下げる多段 PIV。返りは <code style="color:#22d3bf">(flow, info)</code>。</p>
+<p>Multi-pass PIV that steps down from coarse windows to fine windows. Returns <code style="color:#22d3bf">(flow, info)</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>各段の結果を<b>次の段の予測変位</b>として使う(整数量だけ 2 枚目の窓をずらす)。段の間で外れ値を除いて埋めるのは意図的 —— 外れたベクトルをそのまま予測に使うと、その窓は次の段でも外れたまま固定される。</p>
 <p>Args:</p>
 <p>a, b: 画像対。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_chi2_gof(observed, expected=None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_chi2_gof&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>χ² 適合度検定: 度数 <code style="color:#22d3bf">observed</code> が期待度数(既定は一様)に合うか。自由度 = 区分数 − 1。</p>
+<p>χ² goodness-of-fit test: whether the counts <code style="color:#22d3bf">observed</code> match the expected counts (uniform by default). Degrees of freedom = number of bins − 1.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>期待度数が 5 未満の区分があると近似が悪い(<code style="color:#22d3bf">low_expected</code> に数を返す)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>

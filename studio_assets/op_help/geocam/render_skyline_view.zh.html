@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>(要直接调用实现,<code style="color:#22d3bf">import geocam; geocam.render_skyline_view(sky_table, K, shape, yaw_deg, pitch_deg, roll_deg)</code>;从台账取用则 <code style="color:#22d3bf">opsgeocam.get(&quot;render_skyline_view&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>スカイライン table と姿勢から、その向きのカメラが見る<b>空のマスク</b>(H, W)を描く → image2d(0/1)。</p>
+<p>根据天际线 table 与姿态，绘制该朝向的相机所看到的<b>天空掩膜</b>(H, W)→ image2d(0/1)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>各画素の光線を世界へ回し、その方位のスカイライン仰角より上なら空(1)、下なら地形(0)。合成の写真づくり(PoC)と、推定した姿勢を写真に重ねて目で確かめる図に使う。<code style="color:#22d3bf">camera_orientation_from_skyline</code> の予測と同じ幾何なので、<b>描いて → 抜いて → 当てる</b>の往復が閉じる(テストの真値)。</p>
 <p>Args:</p>
 <p>sky_table: <code style="color:#22d3bf">dem_skyline</code> の出力(<code style="color:#22d3bf">azimuth_deg</code> / <code style="color:#22d3bf">elevation_deg</code>)。</p>

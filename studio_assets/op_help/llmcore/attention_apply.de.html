@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">attnmap × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_apply(weights, value) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_apply&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>注意の重みで値を混ぜる → tokens。<b>行和 1 なので出力は入力の凸結合</b>。</p>
+<p>Mischt die Werte mit den Attention-Gewichten → tokens. <b>Da die Zeilensummen 1 sind, ist die Ausgabe eine konvexe Kombination der Eingaben</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Args:</p>
 <p>weights: (T, S) float。行和が 1 であること(<code style="color:#22d3bf">attention_weights</code> の出力)。</p>
 <p>value: (S, dv) float。混ぜられる側。</p>

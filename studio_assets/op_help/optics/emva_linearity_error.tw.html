@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>(要直接呼叫實作,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_linearity_error(H, mu_y, mu_y_dark, mu_y_sat)</code>;從台帳取用則 <code style="color:#22d3bf">opsoptics.get(&quot;emva_linearity_error&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>直線性の誤差 LE(式 58〜63)。y = μ_y − μ_y.dark を露光 H に<b>相対偏差の重み 1/y²</b>で当て(式 59〜61)、飽和の 5〜95 % の点で相対偏差 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] の絶対値の平均を LE とする。</p>
+<p>線性誤差 LE(式 58〜63)。將 y = μ_y − μ_y.dark 對曝光 H 以<b>相對偏差的權重 1/y²</b>進行擬合(式 59〜61)，並在飽和的 5〜95 % 的點上，取相對偏差 δy[i] = 100 (y − (a0 + a1 H))/(a0 + a1 H) [%] 的絕對值的平均作為 LE。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;LE_percent&quot;, &quot;a0&quot;, &quot;a1&quot;, &quot;deviation_percent&quot;, &quot;used&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 5〜95 % に 3 点未満 / y が正でない点がある(重み 1/y² が無限)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>

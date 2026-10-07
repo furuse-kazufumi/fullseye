@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapeset</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.generalized_procrustes(shapes, max_iter: &#x27;int&#x27; = 100, tol: &#x27;float&#x27; = 1e-10, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;generalized_procrustes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>一般化 Procrustes(GPA)。全個体を共通の枠へ。→ <code style="color:#22d3bf">(K, N, 3)</code>。</p>
+<p>일반화 Procrustes 분석(GPA). 모든 개체를 공통 좌표틀로 옮긴다. → <code style="color:#22d3bf">(K, N, 3)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>手順は教科書どおり: 1 個体を仮の平均にして全員を合わせ、平均を取り直し、その平均を<b>最初の個体に合わせ直して</b>枠の漂流を止め、収束まで繰り返す。最後の一手が無いと平均が毎回ゆっくり回り、<code style="color:#22d3bf">tol</code> に到達しない。</p>
 <p>収束の判定は平均形状の移動量(点ごと RMS)。反復数と収束の可否は <code style="color:#22d3bf">shape_mean</code> ではなくこちらには返らない —— 群を返す関数なので、</p>
 <p>診断が要るときは前後で <code style="color:#22d3bf">procrustes_distance</code> を測ること。</p>

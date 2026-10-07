@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import conngraph; conngraph.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsconngraph.get(&quot;graph_adjacency_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>隣接行列を [0, 1] の画像 (n, n) にする。order = none / degree(総次数の降順)/ component(成分順)。</p>
+<p>Turns the adjacency matrix into an image (n, n) in [0, 1]. order = none / degree (descending total degree) / component (component order).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>値は |W| を(log なら log1p してから)最大値で割る。全零なら全零の画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph family guide</a></p>

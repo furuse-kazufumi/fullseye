@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import iqafsim; iqafsim.fsim_pair(ref, dist, data_range: &#x27;float&#x27; = 255.0, downsample: &#x27;bool&#x27; = True) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsim_pair&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>FSIM と FSIMc を一度に(位相一致は 1 枚 1 回しか計算しない —— 評価器や PoC はこちらを呼ぶ)。</p>
+<p>FSIM과 FSIMc를 한 번에 계산한다(위상 일치는 영상 1장당 1번만 계산 —— 평가기와 PoC는 이쪽을 호출한다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>手順(論文 §III): (1) F = max(1, round(min(H, W)/256)) で F×F 平均 + 間引き(TID2013 の 384×512 は F = 2 → 192×256)、(2) Y の位相一致 PC と Scharr([3 0 −3; 10 0 −10; 3 0 −3]/16)勾配の大きさ G、(3) S_PC = (2 PC1 PC2 + T1)/(PC1² + PC2² + T1)、S_G = (2 G1 G2 + T2)/(G1² + G2² + T2)、</p>
 <p style="margin:2px 0 2px 12px">(4) FSIM = Σ S_G S_PC PC_m / Σ PC_m(PC_m = max(PC1, PC2))、(5) FSIMc は彩度 I / Q の S_I S_Q(T3 = T4 = 200)の λ = 0.03 乗の実部を掛ける。</p>
 <p>入力は同じ形の (H, W) か (H, W, 3)(0–255; <code style="color:#22d3bf">data_range</code> で尺度を宣言)。<b>(H, W) のときは FSIMc = FSIM</b>(彩度の項が無い)。TID2013 の作者値: FSIM.txt は <b>Y′ limited の灰色画像</b>、FSIMc.txt は色画像(モジュール docstring の表)—— 色画像 1 枚から両方を出すと FSIM の方は FSIM.txt と合わない(max 0.0318)。返り値 <code style="color:#22d3bf">{&quot;fsim&quot;, &quot;fsimc&quot;, &quot;f&quot;}</code>(f = 間引き係数)。恒等で 1。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 形が違う、2×2 未満、位相一致が全画素 0(平坦画像: FSIM は 0/0 で定義されない)。</p>

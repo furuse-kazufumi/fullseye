@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import iqatid; iqatid.tid2013_published() -&gt; &#x27;Dict[str, Tuple[float, float]]&#x27;</code>; from the registry, <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_published&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>公表の順位相関表 {metric: (SROCC, KROCC)}(14 本)。</p>
+<p>The published rank-correlation table {metric: (SROCC, KROCC)} (14 metrics).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>出典: https://www.ponomarenko.info/tid2013.htm(Last changed 2015-03-23)の「Ranking of compared metrics in accordance with Spearman / Kendall correlation with MOS」、配布物 readme の TABLE III / IV と同一。鍵は配布物 <code style="color:#22d3bf">metrics_values/&lt;鍵&gt;.txt</code> のファイル名(小文字)。<b>同梱の作者値と mos.txt から、Spearman = 平均順位・Kendall = τ_b で 14 本すべて 3 桁一致</b> (|差| ≤ 0.0005 / 0.00044、2026-10-04)。ページ冒頭の「PSNR … is 0.69」と使用例の「FSIMc Full : 0.666」は表と食い違う(前者は TID2008 の名残、後者は τ_a 0.66626 に一致 —— どちらも推測)ので門には使わない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics family guide</a></p>

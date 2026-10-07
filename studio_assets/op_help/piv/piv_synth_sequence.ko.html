@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">images</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_synth_sequence</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>同じ粒子を繰り返し動かした画像列。返りは <code style="color:#22d3bf">(frames, truth)</code>。</p>
+<p>같은 입자를 반복해서 움직인 영상 열. 반환값은 <code style="color:#22d3bf">(frames, truth)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>

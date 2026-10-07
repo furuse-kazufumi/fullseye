@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import llmcore; llmcore.attention_tiled(query, key, value, tile: &#x27;int&#x27; = 64, mask=None, window=None, scale=None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsllmcore.get(&quot;attention_tiled&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>タイル + online softmax の注意(FlashAttention の芯)→ tokens。<b>近似ではない</b>。</p>
+<p>타일 + online softmax 어텐션(FlashAttention의 핵심) → tokens. <b>근사가 아니다</b>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Dao ら 2022。key/value を <code style="color:#22d3bf">tile</code> 行ずつ読み、走っている最大値と分母をその場で補正しながら足す。作る中間行列は (T, <code style="color:#22d3bf">tile</code>) だけで、<b>(T, T) を一度も作らない</b> —— 速さの出どころは近似ではなく、置き場所。<code style="color:#22d3bf">attention_softmax</code> との相対差はタイル 128 枚でも <b>1.2e-15</b>(タイル 1 枚で 8.2e-16 なので、枚数を 128 倍しても 1.5 倍)。</p>
 <p>Args:</p>
 <p>query: (T, d) float。</p>

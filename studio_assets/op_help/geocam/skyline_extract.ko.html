@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.skyline_extract(image, sky_is_bright=True, smooth=1.5, max_jump=3, jump_penalty=0.5)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;skyline_extract&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>写真から<b>列ごとの空と地形の境界の行</b>を動的計画法で 1 本抜く → signal (W,)。</p>
+<p>사진에서 <b>열마다의 하늘과 지형 경계의 행</b>을 동적 계획법으로 1개 뽑는다 → signal (W,).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Lie・Lin・Hsu 2005(*Pattern Recognition*: 航法のための頑健なスカイライン抽出)と同じ考え:</p>
 <p>垂直方向の明るさの変化(空が上で明るければ <code style="color:#22d3bf">I[v−1] − I[v+1]</code> が正)を「境界らしさ」にし、隣の列から行が <code style="color:#22d3bf">max_jump</code> 以上飛ばない連続な経路のうちコストが最小のものを選ぶ(<code style="color:#22d3bf">jump_penalty</code> × 行の飛び)。雲や建物の縦の縁で局所的に強い応答が出ても、経路の連続性が本物の稜線を残す。</p>
 <p>Args:</p>

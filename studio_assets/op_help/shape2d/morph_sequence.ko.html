@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × image2d × pairs × pairs</code> → <code style="color:#22d3bf">images</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.morph_sequence(imgA, imgB, ptsA, ptsB, n=7, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;morph_sequence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>alpha を 0→1 に n 段で振ったモーフ列(A から B へ滑らかに変わる各フレーム)。</p>
+<p>alpha를 0→1로 n단계에 걸쳐 바꾼 모프 열(A에서 B로 매끄럽게 변하는 각 프레임).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>返り値: 長さ n の list。先頭が A、末尾が B に一致する。</p>
 <p><code style="color:#22d3bf">alpha = linspace(0, 1, n)</code> の各値で <code style="color:#22d3bf">morph(imgA, imgB, ptsA, ptsB, alpha, method, lam, with_corners)</code> を呼ぶだけ。各フレームは (1) 中間点 <code style="color:#22d3bf">(1-α) ptsA + α ptsB</code> を作り、(2) A と B をそれぞれそこへワープし、</p>
 <p style="margin:2px 0 2px 12px">(3) <code style="color:#22d3bf">α</code> でクロスディゾルブ、の 3 段。フレームごとにワープ 2 回なので、</p>

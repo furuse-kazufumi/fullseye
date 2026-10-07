@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.signed_surface_distance(query, surface, surface_normals=None, k: &#x27;int&#x27; = 1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;signed_surface_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>問い合わせ点から面までの<b>符号つき</b>距離。→ <code style="color:#22d3bf">(N,)</code>。</p>
+<p>질의점에서 면까지의 <b>부호 있는</b> 거리. → <code style="color:#22d3bf">(N,)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>符号は面の法線から決める(外側が正)。1-D の輪郭には <code style="color:#22d3bf">profileops.profile_deviation</code> があるのに 3-D に相当が無かった、というのが 2026-09-06 に PoC が出した穴。</p>
 <p>法線を省くと <code style="color:#22d3bf">normals_orient.estimate_oriented_normals</code> で推定する —— <b>向き付き</b>でなければ符号が点ごとにばらつく(素の PCA 法線は符号が任意で、回転すると 4 割が裏返る。<code style="color:#22d3bf">pointcloud.fpfh</code> が踏んだのと同じ穴)。</p>
 <p><code style="color:#22d3bf">k</code> は符号を決めるときに使う最近傍の数。1 だと最近傍 1 点の法線に賭けることになり、雑音のある面では符号が飛ぶ。2 以上にすると距離で重みを付けた平均の向きで決める(距離そのものは最近傍のまま)。</p>

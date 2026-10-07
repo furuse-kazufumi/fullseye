@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_form_remove(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">depth</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_form_remove.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.surface_form_remove</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(residual, coeffs)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>格子のまま平面 / 二次曲面を除く。<code style="color:#22d3bf">(residual, coeffs)</code> を返す。</p>
+<p>直接在网格上去除平面 / 二次曲面。返回 <code style="color:#22d3bf">(residual, coeffs)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>引数</p>
 <p>z       高さ場。</p>
 <p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>

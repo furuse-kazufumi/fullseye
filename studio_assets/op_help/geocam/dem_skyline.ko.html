@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import geocam; geocam.dem_skyline(dem, cell_size, observer_rc, eye_height=1.5, az_step_deg=1.0, max_distance=None, earth_curvature=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgeocam.get(&quot;dem_skyline&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>DEM の 1 点から見た<b>全方位のスカイライン</b>(方位ごとの地平線仰角)→ table。</p>
+<p>DEM의 1점에서 본 <b>전방위 스카이라인</b>(방위마다의 지평선 앙각) → table.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">dem_horizon_angle</code> は「全セル × 1 方位」、これは「1 点 × 全方位」—— 固定カメラの向きを決めるのに要るのは後者。各方位へ <code style="color:#22d3bf">cell_size / 2</code> 刻みで視線を進め(標高は双一次補間)、<code style="color:#22d3bf">atan((z_j − z_0 − drop(d)) / d)</code> の最大値をその方位の仰角にする。<code style="color:#22d3bf">drop(d) = d² / (2 R_eff)</code> は地球の丸みと大気屈折(有効半径 R / (1 − 0.13))で遠くの山が沈む分。視線が DEM の外に出たらそこで止める(<code style="color:#22d3bf">max_distance</code> でも止まる)。<b>DEM の外側</b>は「DEM の最低標高の平面が地平線まで続く」と仮定し、仰角の下限を地平線の沈み <code style="color:#22d3bf">−sqrt(2 h / R_eff)</code>(h = 観測点の最低標高からの高さ)にする —— 有限の DEM の端でたまたま低い点を見て、実際には地球の丸みで見えない −7° のような「穴」を空にしないため(<code style="color:#22d3bf">horizon_dip_deg</code> に返す)。</p>
 <p>Args:</p>
 <p>dem: (H, W) 標高 [m]。行 0 が北端。</p>

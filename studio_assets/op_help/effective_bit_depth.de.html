@@ -7,8 +7,8 @@
 <p>*Regler a ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <p>*Regler b ändert die Ausgabe nicht (gemessen: identisch bei 0,1 / 0,5 / 0,9).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>画像が<b>実際に</b>使っているビット数を推定して <code style="color:#22d3bf">[0,1]</code> に写して返す(feature)。</p>
+<p>Schätzt die Anzahl der Bits, die das Bild <b>tatsächlich</b> nutzt, und gibt sie auf <code style="color:#22d3bf">[0,1]</code> abgebildet zurück (feature).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">8</code> ビットの器に入っていても、中身が <code style="color:#22d3bf">6</code> ビット相当しかないことはよくある —— 低ビットのセンサを引き伸ばした、一度 JPEG を通した、ガンマを掛けた、など。ここでは占有している階調の<b>実際の間隔</b>から実効ビット数を推定する:</p>
 <p>出現した画素値を並べ、隣り合う値の差の<b>最頻値</b>を刻み <code style="color:#22d3bf">Δ</code> とみて <code style="color:#22d3bf">bits = log2(1 + 1/Δ)</code>。返り値は <code style="color:#22d3bf">bits / 16</code> (<code style="color:#22d3bf">a</code>/<code style="color:#22d3bf">b</code> は未使用)。</p>
 <p><b>適用条件と外れ方</b>: (1) ★<b>画素数が上限を決める</b>。階調がほぼ連続(浮動小数のまま処理した画像)では、最小の刻みは「値が N 個あるときの平均間隔 ~1/N」なので、推定は <code style="color:#22d3bf">log2(N)</code> 付近で頭打ちになる —— 128x128(N=16384)の連続画像で実測 <b>13.7 bit</b>。16 に飽和するわけではないので、<b>「これ以上は測れない」線を画素数から先に引いておくこと</b>(小さな切り抜きで測ると低く出る)。(2) 非線形な変換(ガンマ・対数)を通った後は刻みが場所によって違うので、最頻値は「代表的な刻み」であって一様な刻みではない。</p>

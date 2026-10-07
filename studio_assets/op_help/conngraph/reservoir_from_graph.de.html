@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_from_graph(W: &#x27;Any&#x27;, rho: &#x27;float&#x27; = 0.9) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.reservoir_from_graph(W: &#x27;Any&#x27;, rho: &#x27;float&#x27; = 0.9) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_from_graph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>W をスペクトル半径が rho になるように定数倍した conn_graph(echo state の前処理)。半径 0 は拒否。</p>
+<p>Ein conn_graph, bei dem W mit einer Konstante skaliert wird, sodass der Spektralradius rho beträgt (Vorverarbeitung für Echo State). Ein Radius von 0 wird abgelehnt.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

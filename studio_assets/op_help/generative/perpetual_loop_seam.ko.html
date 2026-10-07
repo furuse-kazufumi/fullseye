@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_loop_seam(video: &#x27;np.ndarray&#x27;) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_loop_seam&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>循環動画の<b>継ぎ目</b>を数で出す(<code style="color:#22d3bf">table</code>)。</p>
+<p>순환 동영상의 <b>이음매</b>를 수치로 낸다(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">seam</code> = 最終コマ → 初コマの差、<code style="color:#22d3bf">typical</code> = コマ間の差の中央値。継ぎ目の無い動画では <code style="color:#22d3bf">ratio = seam / typical</code> が <b>1 に近い</b>(最後のまたぎが、ほかのまたぎと見分けが付かない)。<b>0 ではなく 1 が正解</b>なのがここの読みどころ —— 0 は「動きが止まっている」という意味になる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidegenerative:generative_art">generative_art 패밀리 가이드</a></p>

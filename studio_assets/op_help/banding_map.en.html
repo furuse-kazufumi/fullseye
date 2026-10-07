@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/banding_map.inputs.jpg">banding_map: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>階調の<b>段差(バンディング)が見えている場所</b>を返す。<code style="color:#22d3bf">a</code> がビット数、<code style="color:#22d3bf">b</code> が窓。</p>
+<p>Returns <b>where tonal steps (banding) are visible</b>. <code style="color:#22d3bf">a</code> is the bit count; <code style="color:#22d3bf">b</code> is the window.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>段差が「見える」条件は 3 つそろったときで、この op はその 3 つを順に掛ける。</p>
 <p style="margin:2px 0 2px 12px">1. <b>刻みの上に乗っている</b> —— 値が <code style="color:#22d3bf">k*Δ</code> の格子にある。量子化していない画像にバンディングは無い(浮動小数の雑音はここで落ちる)。</p>
 <p style="margin:2px 0 2px 12px">2. <b>窓の中がちょうど 1 刻みだけ動く</b> —— 窓内の最大と最小の差(peak-to-peak)が <code style="color:#22d3bf">Δ</code> の 1 倍。0 倍(平坦)でも 2 倍以上(本物の輪郭)でもない。</p>

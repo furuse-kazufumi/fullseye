@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">images</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.piv_synth_sequence.raw(...)</code> oder rufe <code style="color:#22d3bf">pivops.piv_synth_sequence</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(frames, truth) -&gt; images</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>同じ粒子を繰り返し動かした画像列。返りは <code style="color:#22d3bf">(frames, truth)</code>。</p>
+<p>Bildfolge, in der dieselben Partikel wiederholt bewegt werden. Rückgabe: <code style="color:#22d3bf">(frames, truth)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">piv_synth_pair</code> が 2 枚なのに対し、こちらは <b>1 つの流れを追い続けた列</b>を作る。アンサンブル相関と時間統計はこれでないと確かめられない —— 独立な対を並べたものを列と呼ぶと、隣り合う 2 枚に対応関係が無く、統計が無意味になる(実測: 平均 0.73 px に対して変動の RMS が 4.05 px という、流れではなく作り方を測った数字が出た)。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>

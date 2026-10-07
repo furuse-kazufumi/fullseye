@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat(vertices, faces=None, source=0, *, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>熱法による曲面上の測地距離(Crane et al. 2013)。<code style="color:#22d3bf">source</code> は頂点番号(または番号の列、既定は頂点 0)。メッシュは <code style="color:#22d3bf">(vertices, faces)</code> でも mesh の組 1 つでもよい。</p>
+<p>Geodesic distance on a surface by the heat method (Crane et al. 2013). <code style="color:#22d3bf">source</code> is a vertex index (or a sequence of indices; default vertex 0). The mesh may be given as <code style="color:#22d3bf">(vertices, faces)</code> or as 1 mesh tuple.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p style="margin:2px 0 2px 12px">1) (M − tL) u = δ を 1 ステップ解く(熱を時間 t だけ広げる、t の既定 = 平均辺長²)</p>
 <p style="margin:2px 0 2px 12px">2) 各三角形で X = −∇u / |∇u|(熱が来た向きと逆 = 距離が増える向き)</p>
 <p style="margin:2px 0 2px 12px">3) L φ = ∇·X を解き、source で 0 になるようずらす</p>

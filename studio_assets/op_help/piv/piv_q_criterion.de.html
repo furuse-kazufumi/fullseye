@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_q_criterion(flow, spacing=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import pivops; pivops.piv_q_criterion(flow, spacing=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;piv_q_criterion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Q 基準 <code style="color:#22d3bf">-tr(J^2)/2</code>。<b>回転がひずみを上回る</b>場所が正になる。</p>
+<p>Q-Kriterium <code style="color:#22d3bf">-tr(J^2)/2</code>. Es ist positiv, wo <b>die Rotation die Verzerrung übersteigt</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>渦度だけを見るとせん断層も光る(層流の壁近傍が渦に見える)ので、渦の抽出にはこちらを使う。閉形式(解析場を直接与えた実測):</p>
 <p style="margin:2px 0 2px 12px">• 剛体回転 ω=0.01 → <code style="color:#22d3bf">+1.0e-4</code> (= ω^2)</p>
 <p style="margin:2px 0 2px 12px">• 一様膨張 s=0.01 → <code style="color:#22d3bf">-1.0e-4</code> (= -s^2)</p>

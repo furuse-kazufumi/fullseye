@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_normalise(contour)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_normalise(contour)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_normalise&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>弦長 1・前縁が原点・弦が +x になるよう回転と並進で正規化する。</p>
+<p>以旋轉與平移進行正規化，使弦長為 1、前緣位於原點、弦朝向 +x。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>スケールは弦長でしか変えない</b>(形を歪めない)。返りは正規化した輪郭。</p>
 <p>手順: <code style="color:#22d3bf">profile_chord_frame</code> で前縁 <code style="color:#22d3bf">le</code>・後縁 <code style="color:#22d3bf">te</code>(開いた後縁は隙間の中点)・弦長 <code style="color:#22d3bf">chord</code>・弦の向き <code style="color:#22d3bf">angle_deg</code> を求め、<code style="color:#22d3bf">((contour - le) @ R(-angle).T) / chord</code> を返す。回転・並進・一様スケールの相似変換だけで、点の数と順序は保つ(再標本化しない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">contour</code>: <code style="color:#22d3bf">(N, 2)</code> の <b>(x, y)</b>、8 点以上、有限。<code style="color:#22d3bf">(row, col)</code> を渡すと弦は見つかるが上下が入れ替わる(例外は出ない)。閉じているかはここでは検査しない(<code style="color:#22d3bf">profile_sides</code> 以降が検査する)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_geodetic_slope(dem, lat0_deg, d_lat_deg, d_lon_deg, method=&#x27;horn&#x27;, units=&#x27;degrees&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_geodetic_slope&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p><b>緯度経度の格子</b>(等角度間隔)の DEM の傾斜。セル寸法が緯度で変わる。</p>
+<p><b>经纬度网格</b>(等角度间隔)DEM 的坡度。格子单元尺寸随纬度变化。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>公開 DEM の多くは「1 秒メッシュ」のように<b>角度で等間隔</b>です。この格子を</p>
 <p>そのまま <code style="color:#22d3bf">dem_slope</code> に一定のセル寸法で渡すと、経度方向の実距離が <code style="color:#22d3bf">cos(緯度)</code> 倍だけ短いことが無視されます。緯度方向の寸法を両軸に使うと <b>東西の傾斜が過小</b>になり(北緯 60 度で半分)、経度方向の寸法を両軸に使えば今度は南北が過大になります。<b>どちらに転ぶかは何を定数にしたかで決まる</b>ので、「過大/過小」を覚えるのではなく<b>緯度ごとに寸法を計算する</b>のが正解です。</p>
 <p>★ 最初この docstring に「東西が過大になる」と書いたが、テストで測ったら <b>半分になった</b>(過小)。符号や向きの主張は測ってから書くこと。</p>

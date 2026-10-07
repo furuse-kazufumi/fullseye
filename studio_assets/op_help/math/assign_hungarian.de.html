@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathestimation; mathestimation.assign_hungarian(cost, *, maximize: &#x27;bool&#x27; = False) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;assign_hungarian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>コスト行列 (n, m) の割当問題を解く(Kuhn 1955 / Munkres 1957 の Hungarian 法、scipy の実装)。</p>
+<p>Löst das Zuordnungsproblem für eine Kostenmatrix (n, m) (Ungarische Methode nach Kuhn 1955 / Munkres 1957, Implementierung von scipy).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>行と列を 1 対 1 に結び、選んだコストの総和を最小(<code style="color:#22d3bf">maximize=True</code> で最大)にする。n != m なら短い側が全部結ばれる。返り値 <code style="color:#22d3bf">{&quot;rows&quot;, &quot;cols&quot;, &quot;total&quot;, &quot;pairs&quot;}</code>。門: 小さな行列で全順列の総当たりと一致する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

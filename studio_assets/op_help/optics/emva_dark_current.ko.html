@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dark_current(t_exp, mu_y_dark, K, *, var_y_dark=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_dark_current&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>暗電流(7.1 節): 暗画像の平均(と分散)を露光時間に直線で当てた傾き。</p>
+<p>암전류(7.1절): 암영상의 평균(과 분산)을 노출 시간에 직선으로 피팅한 기울기.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>μ_I.y [DN/s] = 平均の傾き、μ_I.e [e⁻/s] = μ_I.y / K。*var_y_dark* を渡すと分散の傾き [DN²/s] / K² も出す(暗電流の補正があるカメラは分散からしか測れない)。露光時間は <b>6 点以上</b>・等間隔を規格が求める。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;mu_I_y&quot;, &quot;mu_I_e&quot;, &quot;offset_y&quot;, &quot;var_slope&quot;, &quot;mu_I_e_from_var&quot;, &quot;n_points&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 6 点未満 / 長さが違う / 露光時間がすべて同じ / K が正でない。</p>

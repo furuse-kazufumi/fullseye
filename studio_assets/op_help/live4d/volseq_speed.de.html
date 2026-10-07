@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">volseq</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import live4d; live4d.volseq_speed(volseq, win: &#x27;int&#x27; = 3, pyr_levels: &#x27;int&#x27; = 3, iters: &#x27;int&#x27; = 5, reg: &#x27;float&#x27; = 0.001) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opslive4d.get(&quot;volseq_speed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>体積時系列の隣り合うフレーム間の<b>速さ</b> <code style="color:#22d3bf">|d|</code> [voxel/frame] を <code style="color:#22d3bf">(T − 1, Z, Y, X)</code> で返す(<code style="color:#22d3bf">volseq</code>)。</p>
+<p>Gibt die <b>Geschwindigkeit</b> <code style="color:#22d3bf">|d|</code> [voxel/frame] zwischen benachbarten Frames einer Volumen-Zeitreihe als <code style="color:#22d3bf">(T − 1, Z, Y, X)</code> zurück (<code style="color:#22d3bf">volseq</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>各フレーム対に <code style="color:#22d3bf">vol_flow_3d</code> を当てた大きさ。どこが・いつ動いたかの地図で、<code style="color:#22d3bf">volseq_render_orbit(mode=&quot;speed&quot;)</code> の色もこれ。T &gt;= 3 が要る(返りも <code style="color:#22d3bf">volseq</code> = T − 1 &gt;= 2 枚)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">Leitfaden zur Familie live4d</a></p>

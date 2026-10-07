@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">matrix</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathnumerics; mathnumerics.low_discrepancy(n: &#x27;int&#x27;, dim: &#x27;int&#x27; = 2, kind: &#x27;str&#x27; = &#x27;halton&#x27;, *, skip: &#x27;int&#x27; = 0, seed: &#x27;int | None&#x27; = None) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;low_discrepancy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>[0, 1)^dim の低食い違い点列 (n, dim)。</p>
+<p>[0, 1)^dim의 저불일치 점열 (n, dim).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;halton&quot;</code> —— 座標ごとに異なる素数を基数にした van der Corput 列(自前の実装、決定的)。<code style="color:#22d3bf">skip</code> 個を読み飛ばす(先頭の 0 を避けるなら 1)。高次元(&gt; 8 程度)では座標間に縞が出るので注意。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;sobol&quot;</code> —— scipy.stats.qmc.Sobol(<code style="color:#22d3bf">seed</code> を与えるとスクランブル)。n は 2 の冪が最良。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;random&quot;</code> —— 比較用の一様乱数(<code style="color:#22d3bf">seed</code> 必須、再現性のため)。</p>

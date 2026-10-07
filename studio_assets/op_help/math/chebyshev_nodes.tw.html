@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">signal</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_nodes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>区間 [a, b] の Chebyshev 点 n 個(昇順)。</p>
+<p>區間 [a, b] 上的 n 個 Chebyshev 點(遞增排序)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">kind=2</code>(既定)は端点を含む Chebyshev–Lobatto 点 x_k = cos(kπ/(n−1))、<code style="color:#22d3bf">kind=1</code> は端点を含まない Chebyshev–Gauss 点 cos((2k+1)π/(2n))。端に向かって密になり、多項式補間の暴れ(Runge 現象)を抑える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

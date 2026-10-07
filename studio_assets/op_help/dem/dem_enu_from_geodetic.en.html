@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">points</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_enu_from_geodetic(lat_deg, lon_deg, h_m, lat0_deg, lon0_deg, h0_m)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_enu_from_geodetic&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>測地座標 → 基準点まわりの<b>局所 ENU</b>(東・北・上)[m] (<code style="color:#22d3bf">points</code>)。</p>
+<p>Geodetic coordinates → <b>local ENU</b> (east, north, up) around a reference point [m] (<code style="color:#22d3bf">points</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>現場の図面・ロボットの地図・点群の多くは「原点からの東・北・上」で書かれる。ECEF からの変換は基準点での回転 1 つで、<code style="color:#22d3bf">ENU = R(lat0, lon0) (X - X0)</code>。</p>
 <p>★ 平面直角座標(投影)<b>ではない</b>。ENU は基準点で接する平面への正射影に相当し、距離が伸びるほど地球の丸みぶん高さ方向に落ちる —— 10 km で約 7.8 m、100 km で約 780 m。広域を「平らな xy」として扱うのは、この落差を捨てること。</p>
 <p>Args:</p>

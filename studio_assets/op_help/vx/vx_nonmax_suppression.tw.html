@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で<b>自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には &gt;</b> のときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す(他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。</p>
+<p>非極大值抑制(3.39 節)。像素 (x, y) 僅當在視窗內<b>對前面的鄰居(上方各列以及同一列左側)≥、對後面的鄰居 &gt;</b> 時才保留(REQ-0337)。平坦峰頂只保留 1 個像素正是由於這種不對稱。*mask* 的非零像素不參與比較，原樣保留 (也不用於其他像素的比較，REQ-0336)。被抑制的像素在 U8 時為 0，S16 時為 INT16_MIN(REQ-0335)。超出視窗的鄰居不比較。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>*window*(必須): 奇数の窓の一辺(3, 5, …)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8/S16 の 2-D でない / window が 3 以上の奇数でない / mask の形が違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>

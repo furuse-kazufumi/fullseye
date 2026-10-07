@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathgeometry; mathgeometry.geodesic_heat_grid(mask, source=None, *, spacing=1.0, t: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;geodesic_heat_grid&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2-D 画像・3-D ボリュームの格子の上で、障害物を避けた測地距離を熱法で求める(Crane et al. 2013 の格子版)。</p>
+<p>在 2-D 图像或 3-D 体数据的网格上，用热方法求避开障碍物的测地距离(Crane et al. 2013 的网格版)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">mask</code> は通れる画素/ボクセルが True の bool 配列(2-D か 3-D)、<code style="color:#22d3bf">source</code> は始点の添字(1 点 <code style="color:#22d3bf">(i, j[, k])</code> か点の列。省略すると最初の通れる画素)。<code style="color:#22d3bf">spacing</code> は軸ごとの画素の大きさ(スカラーか軸ごと)。</p>
 <p style="margin:2px 0 2px 12px">1) (I − tΔ) u = δ(熱を広げる、Δ は通れる画素の間だけを結ぶ 2d+1 点の Laplacian = 障害物は断熱)</p>
 <p style="margin:2px 0 2px 12px">2) X = −∇u / |∇u|(面の間の差分で)  3) Δφ = ∇·X を解いて始点で 0 にずらす。</p>

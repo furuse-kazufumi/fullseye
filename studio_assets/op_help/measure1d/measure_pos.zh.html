@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.measure_pos(image, measure, sigma=1.0, threshold=0.1, transition=&#x27;all&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pos&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>測定線上のエッジ位置(サブピクセル)と振幅を抽出(measure_pos)。</p>
+<p>提取测量线上的边缘位置(亚像素)和幅值(measure_pos)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>各エッジ: <code style="color:#22d3bf">pos</code>(サンプル index、矩形は始点からの px)/ <code style="color:#22d3bf">dist</code>(始点からの距離 [px])/ <code style="color:#22d3bf">row</code>, <code style="color:#22d3bf">col</code> / <code style="color:#22d3bf">amplitude</code>(符号つきグレー差)/ <code style="color:#22d3bf">polarity</code> (&quot;positive&quot; = 測定方向に明るくなる)。<code style="color:#22d3bf">threshold</code> は |amplitude| の下限、<code style="color:#22d3bf">transition</code> は &quot;all&quot; / &quot;positive&quot; / &quot;negative&quot;。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>

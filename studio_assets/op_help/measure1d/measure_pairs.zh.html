@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>(要直接调用实现,<code style="color:#22d3bf">import measuring1d; measuring1d.measure_pairs(image, measure, sigma=1.0, threshold=0.1)</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;measure_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>立ち上がり/立ち下がりエッジのペア(構造の幅)を抽出(measure_pairs)。<code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = 各エッジの <code style="color:#22d3bf">pos</code>、<code style="color:#22d3bf">width</code> = 幅 [px]、<code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col)。</p>
+<p>提取上升/下降边缘对(结构的宽度)(measure_pairs)。<code style="color:#22d3bf">first</code>/<code style="color:#22d3bf">second</code> = 各边缘的 <code style="color:#22d3bf">pos</code>，<code style="color:#22d3bf">width</code> = 宽度 [px]，<code style="color:#22d3bf">first_point</code>/<code style="color:#22d3bf">second_point</code> = (row, col)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

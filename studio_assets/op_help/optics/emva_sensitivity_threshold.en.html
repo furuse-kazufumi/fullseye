@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_sensitivity_threshold&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>絶対感度しきい値(SNR = 1 になる露光、式 26・27)。</p>
+<p>Absolute sensitivity threshold (the exposure at which SNR = 1, Eqs. 26, 27).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2)、μ_e.min = η μ_p.min。★量子化雑音が入る限り μ_e.min は σ_d より大きい。返り値 <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: η が (0, 1] の外 / σ_d・σ_q² が負 / K が正でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

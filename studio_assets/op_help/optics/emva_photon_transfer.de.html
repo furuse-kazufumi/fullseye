@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code> (die Implementierung direkt: <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>photon transfer 曲線からシステムゲイン K と暗雑音 σ_d を出す(式 50・53・54)。</p>
+<p>Bestimmt aus der Photon-Transfer-Kurve die Systemverstärkung K und das Dunkelrauschen σ_d (Gl. 50, 53, 54).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*mu_y*, *var_y*: 露光段ごとの平均と時間分散(<code style="color:#22d3bf">emva_pair_statistics</code> の <code style="color:#22d3bf">mu</code> と <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_y_sat*: 飽和の平均(0.1〜0.2 % の画素が最大値になる露光で測る)。</p>
 <p>K = σ²_y − σ²_y.dark を μ_y − μ_y.dark に当てた直線(<b>切片あり</b>)の傾き。使う点は飽和の 0〜70 %(式 50 の直後)。σ_d = √(σ²_y.dark − 1/12)/K(式 53)。★σ²_y.dark &lt; 0.24 DN² では量子化雑音が支配的で推定できないので、<code style="color:#22d3bf">sigma_d</code> は None、<code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(式 54)を返す。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code> は当てはめに使った点の真偽)。</p>

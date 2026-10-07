@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import imagemorph; imagemorph.morph(imgA, imgB, ptsA, ptsB, alpha, method=&#x27;affine&#x27;, lam=0.0, with_corners=True)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;morph&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 枚の画像 A, B を対応点でモーフし、比率 alpha の中間画像を作る。</p>
+<p>Morpht 2 Bilder A und B über korrespondierende Punkte und erzeugt das Zwischenbild beim Verhältnis alpha.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>手順(Beier–Neely 流のメッシュ・モーフ):</p>
 <p style="margin:2px 0 2px 12px">1. 中間形状 mid = (1-alpha)·ptsA + alpha·ptsB を作る。</p>
 <p style="margin:2px 0 2px 12px">2. A を ptsA→mid へ、B を ptsB→mid へワープ(両者の特徴を mid に揃える)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_viewshed(dem, cell_size, observer_rc, observer_height_m=1.7, target_height_m=0.0, max_distance_m=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_viewshed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>1 点からの可視領域(1 = 見える)。視線が地形に遮られるかを判定する。</p>
+<p>1개 점에서의 가시 영역(1 = 보임). 시선이 지형에 가려지는지를 판정한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">observer_rc</code> は <code style="color:#22d3bf">(row, col)</code>。観測点自身は常に可視。</p>
 <p>手順: 目の高さ <code style="color:#22d3bf">eye = z[observer] + observer_height_m</code>。各セルへの視線を <code style="color:#22d3bf">ceil(hypot(H, W))</code> 等分し、途中の地形の仰角 <code style="color:#22d3bf">(z_mid - eye) / d_mid</code> が目標の仰角 <code style="color:#22d3bf">(z + target_height_m - eye) / d</code> を上回るセルがあれば遮蔽(0)。途中の点は最近傍セルに丸めるので、斜めの視線は格子誤差を含む。<b>地球の曲率と大気屈折は入れない</b>(数 km 超では別途補正する)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">dem</code>: <code style="color:#22d3bf">(H, W)</code> [m]、3x3 以上、番兵値は拒否(<code style="color:#22d3bf">dem_slope</code> と同じ契約)。<code style="color:#22d3bf">nan</code> セルは比較が偽になるため<b>遮蔽にも被遮蔽にもならず 1 のまま</b>残る。</p>

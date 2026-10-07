@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_peak_locking(flow, bins=20)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_peak_locking(flow, bins=20)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_peak_locking&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ピークロッキングの強さ。小数部の分布が一様からどれだけ外れているか。</p>
+<p>峰值锁定的强度：小数部分的分布偏离均匀分布的程度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>サブピクセル推定は、真の変位の小数部が 0 や 0.5 のときにそこへ引き寄せられる偏りを持つ(相関ピークの形と当てはめる関数の形が違うことから来る、PIV の教科書的な系統誤差)。<b>流れが一様でなければ小数部は一様分布に近いはず</b>で、そこからのずれを測る。</p>
 <p>指標 <code style="color:#22d3bf">c0</code> は<b>標本数に依らない</b>カイ二乗型のずれ:</p>
 <p><code style="color:#22d3bf">sum((n_i - n_bar)^2 / n_bar) / (bins - 1)</code>。一様分布から標本を取ると期待値 1 になるので、<b>1 前後なら一様と区別できない</b>、大きいほど偏っている。</p>

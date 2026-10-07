@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/companding_mu_law.inputs.jpg">companding_mu_law: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>μ 則の圧伸(compand = compress + expand)。<code style="color:#22d3bf">a</code> が μ、<code style="color:#22d3bf">b</code> がビット数。</p>
+<p>μ 律壓擴(compand = compress + expand)。<code style="color:#22d3bf">a</code> 為 μ，<code style="color:#22d3bf">b</code> 為位元數。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">F(x) = ln(1 + mu*x) / ln(1 + mu)</code> で暗部を伸ばしてから量子化し、逆変換で戻す。結果として<b>刻みが暗部で細かく明部で粗くなる</b> —— 目も撮像系も暗部の差に敏感なので、同じビット数で見た目の劣化が小さい。電話の音声符号化(G.711)と同じ原理で、画像では対数的な階調割り当てにあたる。</p>
 <p><code style="color:#22d3bf">a</code> は <code style="color:#22d3bf">mu = 1 + 254*a</code>(1〜255、<code style="color:#22d3bf">a=0</code> で実質そのまま)、<code style="color:#22d3bf">b</code> がビット数 1〜8。</p>
 <p><b>Lloyd–Max との違い</b>: あちらは<b>その画像の分布</b>に合わせるので符号表が画像ごとに変わる。こちらは<b>固定の曲線</b>なので、別の画像・別の装置と値をそのまま比べられる。分布が対数的に偏っているという仮定が当たっていれば近い性能が出て、外れていれば Lloyd–Max のほうが良い。</p>

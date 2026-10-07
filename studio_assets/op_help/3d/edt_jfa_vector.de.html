@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">flow_dense</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.edt_jfa_vector.raw(...)</code> oder rufe <code style="color:#22d3bf">match3d.edt_jfa_vector</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• <b>GPU</b>: Dieser Operator hat einen GPU-Pfad (<code style="color:#22d3bf">device=&quot;cuda&quot;</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>各 voxel から最近 seed への変位 <code style="color:#22d3bf">(3, D, H, W)</code>(<code style="color:#22d3bf">flow_dense</code>、dz, dy, dx [voxel])を <b>GPU の JFA</b> で。</p>
+<p>Verschiebung von jedem Voxel zum nächsten Seed <code style="color:#22d3bf">(3, D, H, W)</code> (<code style="color:#22d3bf">flow_dense</code>, dz, dy, dx [voxel]), berechnet mit <b>GPU-JFA</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">edt_jfa</code> は距離の値だけを返すが、JFA は内部で最近 seed の座標を運んでいる —— それをそのまま出す(追加コストほぼ 0)。CPU / scipy 経路は <code style="color:#22d3bf">vol_nearest_seed_vector</code>(同じ値、N≤160 で厳密一致を実測)。seed が無ければ ValueError (<code style="color:#22d3bf">edt_jfa</code> は 1e6 に飽和させるが、向きに「無限遠」は無い)。返りは torch float32(台帳経由では numpy)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>
 <p style="margin:2px 0 2px 12px">• Katalog der Beispieldaten (Download-URLs / Lizenzen) — 2-D nutzt skimage.data (BSD/Public Domain) plus synthetische Bilder, 3-D nennt Download-URLs echter Datenquellen (Stanford, PDS, …).</p>

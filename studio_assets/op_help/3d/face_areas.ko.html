@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.face_areas(mesh) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;face_areas&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>三角形メッシュの<b>面ごとの面積</b> → <code style="color:#22d3bf">(M,)</code>。</p>
+<p>삼각형 메시의 <b>면별 면적</b> → <code style="color:#22d3bf">(M,)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>面積 = <code style="color:#22d3bf">0.5·|cross(v1−v0, v2−v0)|</code> を面ごとに返す(<code style="color:#22d3bf">mesh_area</code> はこの総和)。面積は<b>重み</b>として使うためにある —— 「下を向いた面の面積」「公差外の面積」「曲率の面積加重平均」はすべて面ごとの面積が要る量で、総和からは作れない。</p>
 <p>Args:</p>
 <p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>

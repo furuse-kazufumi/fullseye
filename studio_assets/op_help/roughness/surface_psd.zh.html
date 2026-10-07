@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_psd(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">pairs</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_psd.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.surface_psd</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>高さ場のパワースペクトル密度。<code style="color:#22d3bf">(q, C)</code> を返す。<b>規約を引数で明示する。</b></p>
+<p>高度场的功率谱密度。返回 <code style="color:#22d3bf">(q, C)</code>。<b>约定通过参数明确指定。</b></p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>引数</p>
 <p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
 <p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>

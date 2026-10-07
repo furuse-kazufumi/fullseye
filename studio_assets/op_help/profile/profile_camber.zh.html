@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_camber(contour, n=101)</code>(要直接调用实现,<code style="color:#22d3bf">import profileops; profileops.profile_camber(contour, n=101)</code>;从台账取用则 <code style="color:#22d3bf">opsprofile.get(&quot;profile_camber&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>キャンバー線(上下面の中線)。返りは <code style="color:#22d3bf">(n, 2)</code> の <code style="color:#22d3bf">(x, yc)</code>。</p>
+<p>中弧线(上下表面的中线)。返回 <code style="color:#22d3bf">(n, 2)</code> 的 <code style="color:#22d3bf">(x, yc)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>★<b>定義の差を承知で使うこと</b>。ここが返すのは「弦の各位置での上下面の中点」で、NACA が翼型を<b>作るときに使う</b>キャンバー線(厚みを法線方向に載せる前の中心線)とは厳密には別物です。加えて弦の取り方も違う —— 幾何的な弦は「後縁の中点から最も遠い点」を前縁とするので、キャンバーのある翼では生成座標の原点からわずかにずれ、弦が 0.1 度ほど傾きます。</p>
 <p>実測(閉形式の最大キャンバー比 対 本 op の返り):</p>
 <p>==========  ==========  ==========  ==========</p>

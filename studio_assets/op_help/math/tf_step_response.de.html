@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tf_step_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.tf_step_response(num, den, t) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;tf_step_response&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>単位ステップ応答 y(t) = L⁻¹[H(s)/s] (t)。</p>
+<p>Einheitssprungantwort y(t) = L⁻¹[H(s)/s] (t).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>拡大行列 [[A, B], [0, 0]] の指数関数で ∫_0^t e^{Aτ} B dτ を厳密に得る(A が特異でも可)。</p>
 <p>門: 1/(s+a) → (1 − e^{−at})/a、2 次系 ω²/(s² + 2ζωs + ω²) の閉じた式。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

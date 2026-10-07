@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">table × text</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>; from the registry, <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>線分の表を G-code(G21 / G90 / M82、G1 の絶対座標と絶対 E)に書く。返りは書いたパス(<code style="color:#22d3bf">text</code>)。</p>
+<p>Writes a table of line segments to G-code (G21 / G90 / M82, G1 with absolute coordinates and absolute E). Returns the path written (<code style="color:#22d3bf">text</code>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">gcode_read</code> と往復できる(層は <code style="color:#22d3bf">;LAYER:n</code> で書く)。移動だけの線分は E を進めない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath family guide</a></p>

@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantization_error.inputs.jpg">quantization_error: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>量子化で失われた量 <code style="color:#22d3bf">|x - Q(x)|</code> を <code style="color:#22d3bf">Δ/2</code> で割って <code style="color:#22d3bf">[0,1]</code> にした地図。</p>
+<p>A map of the amount lost by quantization, <code style="color:#22d3bf">|x - Q(x)|</code>, divided by <code style="color:#22d3bf">Δ/2</code> to bring it into <code style="color:#22d3bf">[0,1]</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">a</code> がビット数 1〜8(<code style="color:#22d3bf">_quantize_uniform</code> と同じ振り方)、<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">1.0</code> が「その画素で取りうる最大の誤差(<code style="color:#22d3bf">Δ/2</code>)」にあたる。</p>
 <p><b>何のために見るのか</b>: 誤差が一様に散っていれば量子化雑音として扱ってよい。<b>特定の等高線に沿って揃っていたら、そこがバンディングの出る場所</b>。数字で言うと、正しく振る舞っているとき地図の平均は <code style="color:#22d3bf">0.5</code> 付近(一様分布の平均)に来る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

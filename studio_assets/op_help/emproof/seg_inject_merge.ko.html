@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>評価用に<b>融合</b>を仕込む: 隣接する大きなラベル対を <code style="color:#22d3bf">n</code> 組選び、片方の id をもう片方に書き換える。</p>
+<p>평가용으로 <b>융합</b>을 심는다: 인접한 큰 라벨 쌍을 <code style="color:#22d3bf">n</code>개 골라 한쪽의 id를 다른 쪽으로 바꿔 쓴다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">min_area</code> px 以上のラベルだけを候補にし(小さな断片の融合は弦が短くて検出できず、評価が「仕込めない誤り」に引っ張られる)、乱数(<code style="color:#22d3bf">seed</code>)で対を選ぶ。同じラベルは 1 回しか使わない。<code style="color:#22d3bf">n</code> 組取れなければ ValueError(黙って少ない数で返すと AUC の分母が変わる)。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> で取り出せる。</p>
 <p>&gt;&gt;&gt; merged = seg_inject_merge(labels, n=1, seed=3)</p>
 <p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 吸われた id</p>

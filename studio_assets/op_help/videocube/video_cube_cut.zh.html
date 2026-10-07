@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>立方体の断面 1 枚(<code style="color:#22d3bf">image2d</code>)。<code style="color:#22d3bf">&quot;xt&quot;</code> = 行 <code style="color:#22d3bf">position</code> のスリットスキャン (T, W)、<code style="color:#22d3bf">&quot;yt&quot;</code> = 列の (T, H)、<code style="color:#22d3bf">&quot;xy&quot;</code> = 時刻 <code style="color:#22d3bf">position</code> のフレーム (H, W)。<code style="color:#22d3bf">position</code> は [0, 1] の割合(行・列・時刻の何割目か)。</p>
+<p>立方体的一张截面(<code style="color:#22d3bf">image2d</code>)。<code style="color:#22d3bf">&quot;xt&quot;</code> = 行 <code style="color:#22d3bf">position</code> 的狭缝扫描 (T, W)，<code style="color:#22d3bf">&quot;yt&quot;</code> = 列的 (T, H)，<code style="color:#22d3bf">&quot;xy&quot;</code> = 时刻 <code style="color:#22d3bf">position</code> 的帧 (H, W)。<code style="color:#22d3bf">position</code> 是 [0, 1] 的比例(位于行、列、时刻的几成处)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>x–t 断面では、右へ動く物体は右下がりの筋、止まっている物体は縦の帯になる —— <b>速度が傾きとして読める</b>。</p>
 <p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # 4 割目の行を横切ったものの記録</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

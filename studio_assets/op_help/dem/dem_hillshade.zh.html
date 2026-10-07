@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>(要直接调用实现,<code style="color:#22d3bf">import demops; demops.dem_hillshade(dem, cell_size, azimuth_deg=315.0, altitude_deg=45.0, z_factor=1.0, method=&#x27;horn&#x27;)</code>;从台账取用则 <code style="color:#22d3bf">opsdem.get(&quot;dem_hillshade&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>陰影起伏 [0,1]。<code style="color:#22d3bf">azimuth_deg</code> は光源の方位(北 0 度・東回り)。</p>
+<p>地形晕渲 [0,1]。<code style="color:#22d3bf">azimuth_deg</code> 为光源方位(北为 0 度，向东旋转)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Lambert の余弦則そのもので、<b>遮蔽は考えない</b>(自分より手前の尾根で影になる分は含まれない)。落ちる影が要るなら <code style="color:#22d3bf">dem_horizon_angle</code> と組み合わせること —— 「陰影起伏に影が入っている」と思い込むのが定番の誤解。</p>
 <p>平坦面では <code style="color:#22d3bf">sin(altitude)</code> に一致する(実測 1e-15 以下)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

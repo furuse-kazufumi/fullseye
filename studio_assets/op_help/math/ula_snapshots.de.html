@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathspectral; mathspectral.ula_snapshots(angles_deg=(10.0, 16.0), n_elements: &#x27;int&#x27; = 8, n_snapshots: &#x27;int&#x27; = 200, *, spacing: &#x27;float&#x27; = 0.5, snr_db: &#x27;float | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;ula_snapshots&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>等間隔線形アレイが受ける複素スナップショット (M, K) を作る(到来方向推定の答えの決まる入力)。</p>
+<p>Erzeugt die komplexen Snapshots (M, K), die ein gleichförmiges lineares Array empfängt (eine Eingabe, deren Antwort für die Einfallsrichtungsschätzung feststeht).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>波源ごとに独立な複素ガウスの信号(無相関)。<code style="color:#22d3bf">snr_db</code> を与えると素子ごとの白色雑音を足す(None = 雑音なし)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

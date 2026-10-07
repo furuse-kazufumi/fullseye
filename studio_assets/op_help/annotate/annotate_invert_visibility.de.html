@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_invert_visibility(img, mask, mode=&#x27;complement&#x27;, alpha=1.0, bits=128)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert_visibility&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>反転色が<b>その地の上で本当に見えるか</b>を、描く前に測る。</p>
+<p>Misst vor dem Zeichnen, ob die invertierte Farbe <b>auf diesem Untergrund tatsächlich sichtbar ist</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>反転色の利点は「地の色を知らなくてよい」ことだが、弱点はたった 1 つで、しかも致命的 —— <b>中間調では反転しても同じ色になる</b>。8bit グレーの v=128 に対する補色は v=127 で、WCAG のコントラスト比は <b>1.014</b> (比 1.0 が「同じ色」。実測 2026-09-08)。比 1.5 を下回る帯は v ∈ [113, 142] の 30/256 階調 = 全階調の 12 % に及ぶ。</p>
 <p><code style="color:#22d3bf">annotate_invert</code> と <code style="color:#22d3bf">annotate_invert_path</code> は内部でこれを呼んで警告するが、<b>自分で fail-closed にしたいとき</b>はこの op で測ってから描く(<code style="color:#22d3bf">min_contrast</code> を見て、低ければ <code style="color:#22d3bf">mode=&quot;contrast&quot;</code> に倒す)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

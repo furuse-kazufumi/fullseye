@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>(要直接呼叫實作,<code style="color:#22d3bf">import medial; medial.skeleton_graph3d(vol, distance=None, spacing=(1.0, 1.0, 1.0), min_branch_len=0.0)</code>;從台帳取用則 <code style="color:#22d3bf">ops3d.get(&quot;skeleton_graph3d&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>3D 骨格を <b>ノード(接合点・端点)と枝(長さ・半径)のグラフ</b>に組み立てる。</p>
+<p>把 3D 骨架組裝成<b>由節點(連接點、端點)和分支(長度、半徑)構成的圖</b>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">skeleton_junctions3d</code> / <code style="color:#22d3bf">skeleton_endpoints3d</code> / <code style="color:#22d3bf">skeleton_branches3d</code> は「どの voxel がノードか/枝か」を <b>マスク</b>で返すだけで、<b>どの枝がどのノードとどのノードを繋ぐか</b>は返さない。回路にするにはその接続が要る —— 神経形態のケーブル理論では、区画の軸方向コンダクタンスが <b>直径と長さ</b>で決まり、区画同士の <b>繋がり方</b>が回路そのものになる。この op はその 1 段を埋める。</p>
 <p>引数:</p>
 <p>vol: 3-D の骨格(bool か <code style="color:#22d3bf">{0, 1}</code>。<code style="color:#22d3bf">skeletonize_vol</code> の出力)。中身が</p>

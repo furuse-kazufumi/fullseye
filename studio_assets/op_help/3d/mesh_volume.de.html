@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>閉じた三角形メッシュが囲む<b>符号付き体積</b> → float。</p>
+<p><b>Vorzeichenbehaftetes Volumen</b>, das ein geschlossenes Dreiecksnetz einschließt → float.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
 <p>Args:</p>
 <p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>

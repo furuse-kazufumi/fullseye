@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × text</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import annotate; annotate.annotate_table(img, text, xy, anchor=&#x27;lt&#x27;, font_size=13, color=&#x27;neutral&#x27;, text_color=None, box_color=None, box_alpha=0.72, pad=6, col_gap=None, row_gap=0, align=&#x27;auto&#x27;, header=False, grid=False, border=0, border_color=None, font_path=None, scheme=&#x27;okabe_ito&#x27;, min_contrast=2.0, bold=False, italic=False, line_spacing=1.15, style=None, layout=None)</code>; from the registry, <code style="color:#22d3bf">opsannotate.get(&quot;annotate_table&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像(image2d)を返す: タブ区切りの文字列を<b>表</b>として描く(半透明の板つき)。</p>
+<p>Returns an image (image2d): draws a tab-separated string as a <b>table</b> (with a semi-transparent backing panel).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>桁幅は <code style="color:#22d3bf">annotate_table_layout</code> が実フォントで測って決める。既定の桁間は行高の 0.6 倍なので、<code style="color:#22d3bf">font_size</code> を変えれば間隔も一緒に動く。板は既定で半透明(<code style="color:#22d3bf">box_alpha=0.72</code>、0 で板なし)。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>box_alpha : float</p>

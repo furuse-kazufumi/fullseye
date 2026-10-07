@@ -3,9 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_metric_values(root, metric: &#x27;str&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_metric_values&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>作者の計算値 <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>(大文字小文字無視、3000 行、名前なし)を (3000,) float で返す。</p>
-<p>行の順は <code style="color:#22d3bf">tid2013_index</code> の <code style="color:#22d3bf">names</code> と同じ。<code style="color:#22d3bf">metric</code> は <code style="color:#22d3bf">tid2013_published</code> の鍵(psnr / psnrc / ssim / mssim …)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: ファイルが無い、行数 ≠ 3000、非数。</p>
+<p>將作者的計算值 <code style="color:#22d3bf">metrics_values/&lt;metric&gt;.txt</code>(不分大小寫，3000 行，無名稱)以 (3000,) float 回傳。 行的順序與 <code style="color:#22d3bf">tid2013_index</code> 的 <code style="color:#22d3bf">names</code> 相同。<code style="color:#22d3bf">metric</code> 為 <code style="color:#22d3bf">tid2013_published</code> 的鍵(psnr / psnrc / ssim / mssim …)。 <b>Raises</b> <code style="color:#22d3bf">ValueError</code>：檔案不存在、行數 ≠ 3000、非數值。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

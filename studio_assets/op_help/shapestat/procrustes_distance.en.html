@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_distance(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False, normalize: &#x27;bool&#x27; = True)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.procrustes_distance(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False, normalize: &#x27;bool&#x27; = True)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_distance&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Procrustes 距離 = 重ねたあとの点ごと RMS。→ float。</p>
+<p>Procrustes distance = per-point RMS after superimposition. → float.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">normalize=True</code>(既定)は *target* の重心距離 RMS で割った<b>無次元</b>の値。形どうしを大きさに依らず比べるならこちら。生の距離が要るなら False。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshapestat:shape_statistics">shape_statistics family guide</a></p>

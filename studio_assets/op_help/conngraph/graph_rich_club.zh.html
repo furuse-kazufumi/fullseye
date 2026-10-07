@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_rich_club(W: &#x27;Any&#x27;, k: &#x27;int&#x27;) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_rich_club&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>rich club 係数 φ(k): 総次数 (in+out、二値) &gt; k のノードが張る部分グラフの有向密度。</p>
+<p>rich club 系数 φ(k)：由总度 (in+out，二值) &gt; k 的节点张成的子图的有向密度。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>φ = 辺数 / (r (r − 1))、r = 該当ノード数。r &lt; 2 なら 0(NaN を返さない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>

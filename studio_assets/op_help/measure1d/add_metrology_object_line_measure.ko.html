@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import metrology; metrology.add_metrology_object_line_measure(model, row1, col1, row2, col2, n: &#x27;int&#x27; = 25) -&gt; &#x27;int&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_line_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>直線計測オブジェクトを追加(add_metrology_object_line_measure)。index を返す。</p>
+<p>직선 계측 객체를 추가한다(add_metrology_object_line_measure). index를 반환한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>参照線分 <code style="color:#22d3bf">(row1, col1) → (row2, col2)</code> [px] を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はこの線分上に <code style="color:#22d3bf">n</code> 点を等間隔(両端を含む)に置き、各点から <b>線分の法線方向</b> に短い測定線を張ってサブピクセルのエッジを探し、得た点に直線を最小二乗で当て直す。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: サンプル点数(既定 25)。多いほどフィットは安定するが計測時間は比例。</p>
 <p style="margin:2px 0 2px 12px">• 端点が一致する(長さ <code style="color:#22d3bf">&lt; 1e-9</code>)線分は積めるが、<code style="color:#22d3bf">apply</code> 時にサンプル 0 個 → フィット失敗として <code style="color:#22d3bf">params=None</code>、<code style="color:#22d3bf">rms=inf</code> で返る(例外にはならない)。</p>

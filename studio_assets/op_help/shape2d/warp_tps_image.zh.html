@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.warp_tps_image(img, src_pts, dst_pts, lam=0.0, order=1)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_tps_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>薄板スプラインで img の src_pts を dst_pts へ動かす滑らかなワープ。</p>
+<p>用薄板样条将 img 的 src_pts 移动到 dst_pts 的平滑变形。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>出力座標 → 入力座標の逆写像 TPS(dst→src)を当てはめ、出力全格子で評価してサンプルする。lam=0 なら制御点上で厳密に対応(特徴が正しく着地)、lam&gt;0 で変形を平滑化。区分アフィンより滑らかだが、全画素×制御点のカーネル評価コスト。</p>
 <p>引数・返り値は <code style="color:#22d3bf">warp_piecewise_affine</code> と同じ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

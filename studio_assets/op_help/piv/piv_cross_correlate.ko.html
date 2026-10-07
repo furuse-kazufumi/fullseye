@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_cross_correlate(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">flow2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_cross_correlate.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_cross_correlate</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>窓ごとの相互相関で変位場を出す。返りは <code style="color:#22d3bf">(flow, info)</code>。</p>
+<p>창별 상호상관으로 변위장을 구한다. 반환값은 <code style="color:#22d3bf">(flow, info)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>各窓で <code style="color:#22d3bf">FFT</code> を 2 回とって共役積の逆変換を取り(循環相関)、最大値の位置を整数変位、その周りの 3 点でサブピクセル変位を決める。</p>
 <p><b>零方向への偏りとその補正(実測)</b>: 素の相互相関は変位を<b>零へ引き寄せる</b>。窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、実測でも偏りは変位に比例した(win=32・Hann、<code style="color:#22d3bf">dx</code> を 0.5 から 6 px まで振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>傾き一定</b>)。</p>
 <p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> はこれを、<b>窓関数の自己相関で割る</b>ことで補正する(重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、<code style="color:#22d3bf">search_limit</code> で探索範囲を窓の 1/4 に絞るのと<b>必ず対にする</b>。実測:</p>

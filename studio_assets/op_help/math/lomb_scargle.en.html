@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.lomb_scargle(t, y, freqs) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;lomb_scargle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>不等間隔の時系列 (t, y) の Lomb–Scargle 周期図(Scargle 1982 の時刻ずらし τ つき、平均を引いてから)。</p>
+<p>Lomb–Scargle periodogram of an unevenly sampled time series (t, y) (with the time offset τ of Scargle 1982, after subtracting the mean).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>P(f) = ½ [ (Σ y_c cos ω(t−τ))² / Σ cos² ω(t−τ) + (Σ y_c sin ω(t−τ))² / Σ sin² ω(t−τ) ]、ω = 2πf、tan 2ωτ = Σ sin 2ωt / Σ cos 2ωt。f は周波数(t の単位の逆数)。f = 0 は定義されないので拒否する。</p>
 <p>門: 等間隔の標本ではフーリエ周波数 k/(NΔt) で |DFT|²/N に一致する。返り値 <code style="color:#22d3bf">{&quot;freq&quot;, &quot;power&quot;, &quot;peak_freq&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

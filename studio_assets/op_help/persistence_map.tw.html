@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/persistence_map.inputs.jpg">persistence_map: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><b>閾値を選ばずに</b>「山の目立ち具合」を測る(0 次元パーシステンス)。</p>
+<p><b>不選取閾值</b>地測量「山峰的顯著程度」(0 維持續性)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>閾値を 1 つ選ぶと適用範囲が狭まる —— という矛盾は「<b>全部の閾値を試して、結果が変わらない所だけ残す</b>」ことで解ける。高い方から水位を下げていき、新しい山が現れた高さ(誕生)と、その山がより高い山に飲まれた高さ(消滅)の差を、その山の <b>persistence(目立ち具合)</b> とする。地形でいう「突出度(prominence)」そのもの。</p>
 <p>出力は各画素に「その画素が属する山の persistence」を入れた地図。<code style="color:#22d3bf">a</code> は残す下限(これ未満の山は 0 にする)、<code style="color:#22d3bf">b</code> は連結の仕方(0.5 未満で 4 近傍、以上で 8 近傍)。</p>
 <p><b><code style="color:#22d3bf">h_maxima</code> / MSER との違い</b>: <code style="color:#22d3bf">xsk2_h_maxima</code> は <code style="color:#22d3bf">h</code> をひとつ選んで「それ以上の山」を返す —— つまり閾値を 1 つ選んでいる。こちらは<b>全部の h についての答えを 1 枚に畳んだもの</b>なので、後から好きな水準で切れる。MSER は「面積が安定な領域」を探すので似た発想だが、あちらは領域の形、こちらは高さ。</p>

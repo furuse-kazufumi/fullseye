@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">images</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_time_statistics(images, window=32, overlap=0.5, **kw)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_time_statistics&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像列 → 時間平均・変動の RMS・レイノルズ応力。</p>
+<p>Image sequence → time average, RMS of the fluctuations and Reynolds stresses.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>連続する対ごとに変位を測り、時間方向の統計を取る。乱流の記述はこの 3 つが出発点で、<code style="color:#22d3bf">u&#x27;v&#x27;</code> の符号と大きさが運動量輸送そのものになる。</p>
 <p><b>1 対だけでは意味が無い</b>(変動が定義できない)ので 3 枚以上を要求する。</p>
 <p>Args:</p>

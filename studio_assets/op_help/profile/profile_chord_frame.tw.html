@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.profile_chord_frame(contour)</code>(要直接呼叫實作,<code style="color:#22d3bf">import profileops; profileops.profile_chord_frame(contour)</code>;從台帳取用則 <code style="color:#22d3bf">opsprofile.get(&quot;profile_chord_frame&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>弦(最も離れた 2 点)を見つける。返りは dict。</p>
+<p>求弦(相距最遠的 2 個點)。回傳 dict。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>翼型の慣行どおり、<b>最も離れた 2 点</b>を前縁・後縁とみなす。どちらが前縁かは <b>その点の近傍の曲率が大きいほう</b>で決める(前縁は丸く、後縁は尖る)。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">le</code> / <code style="color:#22d3bf">te</code>(座標)、<code style="color:#22d3bf">le_index</code> / <code style="color:#22d3bf">te_index</code>、</p>

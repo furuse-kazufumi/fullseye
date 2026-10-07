@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>流れ場 ―― 粒子を場に乗せて流し続ける(止めなければ終わらない)。</p>
+<p>흐름장 — 입자를 장에 실어 계속 흘려보낸다(멈추지 않으면 끝나지 않는다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>★場は<b>ポテンシャル ψ の回転</b>として作る。だから <b>発散が恒等的に 0</b> (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った</p>
 <p>流れ場との違いはここで、<code style="color:#22d3bf">perpetual_identities</code> が数で出す。</p>
 <p>★線の色と太さは<b>流速</b> |∇ψ| に結びつけてある(太さも濃さも一定だと、同じ場から描いても「落書き」にしかならない)。</p>

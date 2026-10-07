@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import printpath; printpath.stroke_tour_closed(points, start=&#x27;nearest&#x27;, two_opt_rounds=8, order=None)</code>; aus dem Register: <code style="color:#22d3bf">opsprintpath.get(&quot;stroke_tour_closed&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>点を 1 回ずつ通って戻る<b>閉じた巡回路</b>に並べ替える。→ <code style="color:#22d3bf">pairs</code></p>
+<p>Ordnet die Punkte zu einer <b>geschlossenen Rundtour</b> um, die jeden Punkt genau 1 Mal besucht und zurückkehrt. → <code style="color:#22d3bf">pairs</code></p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返るのは入力と同じ点を並べ替えた <code style="color:#22d3bf">(N, 2)</code>。<b>最後の点から最初の点へ戻る</b> ことで閉じる(末尾に先頭を重複させない)。</p>
 <p>★これは最適な巡回路ではない(TSP は NP 困難)。<b>下界と比べて質を言う</b>:</p>
 <p>閉じた巡回路は最小全域木より短くなれないので <code style="color:#22d3bf">length / mst_length</code> が 1 に近いほど良い。一様な点なら Beardwood–Halton–Hammersley の <code style="color:#22d3bf">0.7124 √(n A)</code> も目安になる。<b>黄金ファイルは使わない。</b></p>

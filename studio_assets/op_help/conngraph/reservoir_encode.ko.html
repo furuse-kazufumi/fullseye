@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.reservoir_encode(W: &#x27;Any&#x27;, X: &#x27;Any&#x27;, steps: &#x27;int&#x27; = 6, in_scale: &#x27;float&#x27; = 0.1, leak: &#x27;float&#x27; = 0.3, nonlinearity: &#x27;str&#x27; = &#x27;tanh&#x27;, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;reservoir_encode&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>静的入力の一括 reservoir 符号化(分類用): X の各行を零状態から steps 回回した最終状態 (N, n)。</p>
+<p>정적 입력의 일괄 reservoir 부호화(분류용): X의 각 행을 영 상태에서 steps회 돌린 최종 상태 (N, n).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>行 x ごとに x_{t+1} = (1−leak) x_t + leak · f(Wᵀ x_t + W_in x) を steps 回。<code style="color:#22d3bf">W_in</code> は reservoir_states と同じ seed 付き一様 (−in_scale, in_scale) の (n, d)。行のループは書かず、1 ステップ = (N, n) @ (n, n) の行列積 1 回で全行を同時に進める。linear・leak 1・steps 1 なら X W_inᵀ、steps 2 なら (X W_inᵀ) W + X W_inᵀ に厳密一致。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

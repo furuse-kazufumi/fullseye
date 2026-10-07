@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import videocube; videocube.video_summary_keyframes(video, k: &#x27;int&#x27; = 5, min_gap: &#x27;int | None&#x27; = None, bins: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsvideocube.get(&quot;video_summary_keyframes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>代表フレームの添字 <code style="color:#22d3bf">(k,)</code> int64、昇順(<code style="color:#22d3bf">indices</code>)。</p>
+<p>代表帧的下标 <code style="color:#22d3bf">(k,)</code> int64，升序(<code style="color:#22d3bf">indices</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>フレームごとの得点 = 動きの量(|I_t − I_{t−1}| の平均、[0, 1] に正規化)+ 場面の変化(ヒストグラムの χ² 距離、正規化)。得点の高い順に、既に選んだフレームから <code style="color:#22d3bf">min_gap</code>(既定 T // (2k))以上離れたものを貪欲に <code style="color:#22d3bf">k</code> 枚選ぶ。T &lt; k なら全フレーム。学習なしの「何かが起きたフレーム」であって、意味の要約ではない。</p>
 <p>&gt;&gt;&gt; idx = video_summary_keyframes(clip, k=4)</p>
 <p>&gt;&gt;&gt; thumbnails = clip[idx]</p>

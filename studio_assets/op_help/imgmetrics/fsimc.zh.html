@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">rgbimage × rgbimage</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import iqafsim; iqafsim.fsimc(ref, dist, data_range: &#x27;float&#x27; = 255.0) -&gt; &#x27;float&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsimgmetrics.get(&quot;fsimc&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>FSIMc(彩度 I / Q を含む、1 = 同一、<b>higher is better</b>)。TID2013 の FSIMc.txt と 4 桁一致するのは色画像(RGB → YIQ full range)を渡したとき(<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsimc, luma=&quot;rgb&quot;)</code>、3,000 組 max |差| 5.0e-5)。(H, W) 入力なら FSIM と同じ値。詳細 <code style="color:#22d3bf">fsim_pair</code>。</p>
+<p>FSIMc(含色度 I / Q，1 = 相同，<b>higher is better</b>)。传入彩色图像(RGB → YIQ full range)时，与 TID2013 的 FSIMc.txt 在 4 位上一致 (<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, fsimc, luma=&quot;rgb&quot;)</code>，3,000 对，max |差| 5.0e-5)。(H, W) 输入时与 FSIM 值相同。详见 <code style="color:#22d3bf">fsim_pair</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">参考(示例数据、文献)</h3>

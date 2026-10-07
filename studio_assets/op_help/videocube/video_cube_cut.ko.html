@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">video</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videocube; videocube.video_cube_cut(video, plane: &#x27;str&#x27; = &#x27;xt&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideocube.get(&quot;video_cube_cut&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>立方体の断面 1 枚(<code style="color:#22d3bf">image2d</code>)。<code style="color:#22d3bf">&quot;xt&quot;</code> = 行 <code style="color:#22d3bf">position</code> のスリットスキャン (T, W)、<code style="color:#22d3bf">&quot;yt&quot;</code> = 列の (T, H)、<code style="color:#22d3bf">&quot;xy&quot;</code> = 時刻 <code style="color:#22d3bf">position</code> のフレーム (H, W)。<code style="color:#22d3bf">position</code> は [0, 1] の割合(行・列・時刻の何割目か)。</p>
+<p>입방체의 단면 1장(<code style="color:#22d3bf">image2d</code>). <code style="color:#22d3bf">&quot;xt&quot;</code> = 행 <code style="color:#22d3bf">position</code>의 슬릿 스캔 (T, W), <code style="color:#22d3bf">&quot;yt&quot;</code> = 열의 (T, H), <code style="color:#22d3bf">&quot;xy&quot;</code> = 시각 <code style="color:#22d3bf">position</code>의 프레임 (H, W). <code style="color:#22d3bf">position</code>은 [0, 1]의 비율(행·열·시각의 몇 할째인지).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>x–t 断面では、右へ動く物体は右下がりの筋、止まっている物体は縦の帯になる —— <b>速度が傾きとして読める</b>。</p>
 <p>&gt;&gt;&gt; streak = video_cube_cut(clip, &quot;xt&quot;, position=0.4)      # 4 割目の行を横切ったものの記録</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

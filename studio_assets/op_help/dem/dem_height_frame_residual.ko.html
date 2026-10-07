@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_height_frame_residual(h_ellipsoidal_m, h_orthometric_m, geoid_height_m, tol_m=0.1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_height_frame_residual&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p><code style="color:#22d3bf">h - H - N</code> の残差 —— 高さの取り違えを<b>静かにさせない</b>検出器(<code style="color:#22d3bf">table</code>)。</p>
+<p><code style="color:#22d3bf">h - H - N</code>의 잔차 —— 높이의 혼동을 <b>조용히 넘어가게 하지 않는</b> 검출기(<code style="color:#22d3bf">table</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>楕円体高・標高・ジオイド高は 1 つの恒等式で結ばれている(<code style="color:#22d3bf">h = H + N</code>)。3 つそろった点でその残差を測れば、<b>どれかが別の基準・別のモデル・別の版で作られている</b>ことが数値で出る。測量成果どうしなら残差は cm 級に収まり、楕円体高をそのまま標高として使っていれば残差は <code style="color:#22d3bf">-N</code>(日本付近で −30〜−40 m) に張り付く。</p>
 <p>Args:</p>
 <p>h_ellipsoidal_m: 楕円体高 [m] (GNSS の返り)。配列可。</p>

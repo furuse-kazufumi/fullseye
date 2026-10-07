@@ -11,8 +11,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/quantization_error.inputs.jpg">quantization_error: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>量子化で失われた量 <code style="color:#22d3bf">|x - Q(x)|</code> を <code style="color:#22d3bf">Δ/2</code> で割って <code style="color:#22d3bf">[0,1]</code> にした地図。</p>
+<p>将量化损失的量 <code style="color:#22d3bf">|x - Q(x)|</code> 除以 <code style="color:#22d3bf">Δ/2</code> 后变换到 <code style="color:#22d3bf">[0,1]</code> 的图。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">a</code> がビット数 1〜8(<code style="color:#22d3bf">_quantize_uniform</code> と同じ振り方)、<code style="color:#22d3bf">b</code> は未使用。<code style="color:#22d3bf">1.0</code> が「その画素で取りうる最大の誤差(<code style="color:#22d3bf">Δ/2</code>)」にあたる。</p>
 <p><b>何のために見るのか</b>: 誤差が一様に散っていれば量子化雑音として扱ってよい。<b>特定の等高線に沿って揃っていたら、そこがバンディングの出る場所</b>。数字で言うと、正しく振る舞っているとき地図の平均は <code style="color:#22d3bf">0.5</code> 付近(一様分布の平均)に来る。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

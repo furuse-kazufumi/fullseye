@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">cimage</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import optics; optics.fourier_plane_filter(size=64, kind=&#x27;derivative_x&#x27;, order=1, charge=1, radius_frac=0.25, pixel_pitch_um=1.0)</code>; aus dem Register: <code style="color:#22d3bf">opsoptics.get(&quot;fourier_plane_filter&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>4f 系のフーリエ面に置く複素透過関数 <code style="color:#22d3bf">H(fx, fy)</code>。</p>
+<p>Komplexe Transmissionsfunktion <code style="color:#22d3bf">H(fx, fy)</code> in der Fourier-Ebene eines 4f-Systems.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>返るのは <code style="color:#22d3bf">numpy.fft.fftfreq</code> の並び(<b>fftshift しない</b>)の complex128 <code style="color:#22d3bf">(size, size)</code> で、<code style="color:#22d3bf">four_f_filter</code> にそのまま渡せる。空間周波数の単位は cycles/um(<code style="color:#22d3bf">fftfreq(size, d=pixel_pitch_um)</code>)。</p>
 <p>*kind*:</p>
 <p><code style="color:#22d3bf">identity</code></p>

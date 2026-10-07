@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code> (die Implementierung direkt: <code style="color:#22d3bf">import metrics3d; metrics3d.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>; aus dem Register: <code style="color:#22d3bf">ops3d.get(&quot;m3c2_distance&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">signal</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code> oder rufe <code style="color:#22d3bf">metrics3d.m3c2_distance</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>2 時点の点群の差を<b>法線方向に</b>測る(M3C2)。→ <code style="color:#22d3bf">(distance, lod)</code> の 2 つ。</p>
+<p>Misst die Differenz zwischen Punktwolken aus 2 Zeitpunkten <b>in Normalenrichtung</b> (M3C2). → die 2 Werte <code style="color:#22d3bf">(distance, lod)</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
 <p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
 <p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.integrate_hamiltonian(q0, p0, dt: &#x27;float&#x27; = 0.05, n_steps: &#x27;int&#x27; = 1000, *, system: &#x27;str&#x27; = &#x27;harmonic&#x27;, method: &#x27;str&#x27; = &#x27;verlet&#x27;, **params) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;integrate_hamiltonian&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>名前つきのハミルトン系(質量 1)を時間積分する。返り値 <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>。</p>
+<p>Integrates a named Hamiltonian system (mass 1) in time. Return value <code style="color:#22d3bf">{&quot;t&quot;,&quot;q&quot;,&quot;p&quot;,&quot;energy&quot;,&quot;energy_drift&quot;}</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">method</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;verlet&quot;</code> —— 速度 Verlet(シンプレクティック・時間反転対称)。エネルギー誤差は O(dt²) で<b>有界</b>のまま振動し、長時間でも増えない。dt を負にして回すと元の状態に(丸め誤差まで)戻る。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;euler&quot;</code> —— 陽的 Euler(比較用の失敗例)。調和振動子ではエネルギーが毎ステップ (1 + ω²dt²) 倍に増え、位相空間で外向きの渦巻きになる。</p>

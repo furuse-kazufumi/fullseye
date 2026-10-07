@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_ellipse_measure(model, row, col, phi, ra, rb, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_ellipse_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>楕円計測オブジェクトを追加(add_metrology_object_ellipse_measure)。<code style="color:#22d3bf">phi</code> = <code style="color:#22d3bf">ra</code> 軸の向き(col 軸から、ラジアン)。</p>
+<p>添加椭圆计量对象(add_metrology_object_ellipse_measure)。<code style="color:#22d3bf">phi</code> = <code style="color:#22d3bf">ra</code> 轴的方向(从 col 轴起算，弧度)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>参照楕円(中心 <code style="color:#22d3bf">(row, col)</code> [px]、<code style="color:#22d3bf">phi</code> 方向の半径 <code style="color:#22d3bf">ra</code>、直交方向の半径 <code style="color:#22d3bf">rb</code>)を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> はパラメータ角 <code style="color:#22d3bf">t</code> を <code style="color:#22d3bf">n</code> 等分した点を置き(弧長等分ではないので、扁平な楕円では長軸端が密になる)、各点で楕円の外向き法線 <code style="color:#22d3bf">∇F</code> に沿ってエッジを測り、楕円フィットで出し直す。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">phi</code>: col 軸(x)から row 軸(画像下向き)へ測ったラジアン(矩形の <code style="color:#22d3bf">phi</code> と同じ規約)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">ra</code>, <code style="color:#22d3bf">rb</code>: 半径 [px]。0 を入れると法線計算で 0 除算になるので避ける(ここでは検証しない)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">points × points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code> (die Implementierung direkt: <code style="color:#22d3bf">import shapestats; shapestats.procrustes_align(source, target, scaling: &#x27;bool&#x27; = True, reflection: &#x27;bool&#x27; = False)</code>; aus dem Register: <code style="color:#22d3bf">opsshapestat.get(&quot;procrustes_align&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>*source* を *target* に重ねた点。→ <code style="color:#22d3bf">(N, 3)</code>(<code style="color:#22d3bf">procrustes_fit</code> の適用)。</p>
+<p>Punkte von *source*, auf *target* überlagert. → <code style="color:#22d3bf">(N, 3)</code> (Anwendung von <code style="color:#22d3bf">procrustes_fit</code>).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">M = procrustes_fit(source, target, scaling, reflection)</code> を求め、<code style="color:#22d3bf">source @ M[:3, :3].T + M[:3, 3]</code> を返す。変換は重心合わせ + SVD による回転(+ 任意でスケール)の相似変換で、<b>i 番目どうしが対応している</b>ことが前提。対応の無い点群を渡しても例外は出ず、意味の無い配置が返る(その場合は ICP 系の登録を使う)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">source</code>, <code style="color:#22d3bf">target</code>: <code style="color:#22d3bf">(N, 3)</code>、同じ <code style="color:#22d3bf">N</code>、有限。<code style="color:#22d3bf">N = 1</code> でも通る(並進のみ)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">scaling=True</code>: 大きさの違いも吸収する。<code style="color:#22d3bf">False</code> なら剛体変換。<code style="color:#22d3bf">source</code> が全点同一(広がり 0)のときスケールは 1 のまま。</p>

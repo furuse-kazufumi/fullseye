@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_preserving_shuffle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。</p>
+<p>Gradtreues Mischen (Nullmodell): verdrahtet die Kanten neu und erhält dabei Eingangsgrad, Ausgangsgrad jedes Knotens sowie die Multimenge der Gewichte.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。<code style="color:#22d3bf">n_swaps</code> の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。辺が 2 本未満なら複製を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">Leitfaden zur Familie conngraph</a></p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_velocity_gradient(flow, spacing=1.0)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_velocity_gradient(flow, spacing=1.0)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_velocity_gradient&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>速度勾配テンソルの成分と、そこから出る量をまとめて返す。</p>
+<p>Returns the components of the velocity-gradient tensor together with the quantities derived from it.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>渦度・発散・Q 基準・渦回転強度・ひずみ速度は<b>すべて同じ 4 つの微分</b>から出るので、勾配を 4 回計算し直さずに済むようにここへまとめる。個々の op (<code style="color:#22d3bf">piv_vorticity</code> など)は単独でも使えるが、複数要るならこちら。</p>
 <p>Returns:</p>
 <p>dict: <code style="color:#22d3bf">dudx</code> / <code style="color:#22d3bf">dudy</code> / <code style="color:#22d3bf">dvdx</code> / <code style="color:#22d3bf">dvdy</code>(各 <code style="color:#22d3bf">(h, w)</code>)、</p>

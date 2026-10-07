@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × matrix × matrix</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_remap(image, map_x, map_y, *, interpolation, border, constant_value=0)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_remap&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>remap(3.44 節): 出力 (x, y) = 入力 (map_x[y, x], map_y[y, x])(REQ-0392)。表は出力の形、座標は入力の画素の中心が整数。</p>
+<p>remap (Abschnitt 3.44): Ausgabe (x, y) = Eingabe (map_x[y, x], map_y[y, x]) (REQ-0392). Die Tabellen haben die Form der Ausgabe; in den Koordinaten liegen die Mittelpunkte der Eingabepixel auf ganzen Zahlen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8 の 2-D でない / map_x と map_y が同じ形の 2-D の実数でない / interpolation・border が一覧に無い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidevx:openvx_ports">Leitfaden zur Familie openvx_ports</a></p>

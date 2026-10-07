@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">metrologymodel</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import metrology; metrology.add_metrology_object_circle_measure(model, row, col, radius, n: &#x27;int&#x27; = 40) -&gt; &#x27;int&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;add_metrology_object_circle_measure&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>円計測オブジェクトを追加(add_metrology_object_circle_measure)。</p>
+<p>新增圓量測物件(add_metrology_object_circle_measure)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>参照円(中心 <code style="color:#22d3bf">(row, col)</code>、半径 <code style="color:#22d3bf">radius</code> [px])を <code style="color:#22d3bf">model[&quot;objects&quot;]</code> に積む(dict をその場で更新)。<code style="color:#22d3bf">apply_metrology_model</code> は円周を <code style="color:#22d3bf">n</code> 等分した角度に点を置き、各点で <b>半径方向</b>(外向き法線)に測定線を張ってサブピクセルのエッジを取り、最小二乗の円フィットで中心と半径を出し直す。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">radius</code>: 参照半径 [px]。実物とのずれは <code style="color:#22d3bf">apply</code> の <code style="color:#22d3bf">measure_length</code> (既定 ±6 px)以内に収まっている必要がある ―― それより外のエッジは見つからない。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">n</code>: 円周のサンプル数(既定 40)。半径が大きい円ほど増やす。</p>

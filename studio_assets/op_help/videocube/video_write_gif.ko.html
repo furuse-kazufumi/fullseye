@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">rgbvideo</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import videocube; videocube.video_write_gif(frames, path: &#x27;str&#x27;, fps: &#x27;float&#x27; = 10.0) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvideocube.get(&quot;video_write_gif&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>フレーム列をアニメーション GIF に書く(<code style="color:#22d3bf">text</code> = 書いたパス)。使い回しの出口。</p>
+<p>프레임 열을 애니메이션 GIF로 쓴다(<code style="color:#22d3bf">text</code> = 쓴 경로). 재사용 가능한 출구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">frames</code> は灰の <code style="color:#22d3bf">video</code> (T, H, W) か色の <code style="color:#22d3bf">rgbvideo</code> (F, H, W, 3)。float は [0, 1] を 0..255 に、整数はそのまま uint8 に(範囲外は切る)。<b>全フレームを保存する</b>(Pillow は前と同じ絵を 1 コマに畳んで数を減らすので、<code style="color:#22d3bf">video.write_video</code> の全コマ保存経路を使い、書いた後に枚数を読み戻して確かめる)。Pillow が無ければ ImportError(optional 依存)。<code style="color:#22d3bf">path</code> は <code style="color:#22d3bf">.gif</code> で終わること。</p>
 <p>&gt;&gt;&gt; video_write_gif(video_cube_orbit(clip, n_frames=24), &quot;out/cube.gif&quot;, fps=12)</p>
 <p>&#x27;out/cube.gif&#x27;</p>

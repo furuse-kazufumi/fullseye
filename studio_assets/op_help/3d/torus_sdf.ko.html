@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sdf_ops; sdf_ops.torus_sdf(grid, center, axis, major_radius, minor_radius)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;torus_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>トーラス(ドーナツ)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>토러스(도넛)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖(r - major_radius, t)‖ - minor_radius</code>(<code style="color:#22d3bf">r</code> は軸からの半径、<code style="color:#22d3bf">t</code> は軸方向の距離)。芯線が半径 <code style="color:#22d3bf">major_radius</code> の円で、その周りに半径 <code style="color:#22d3bf">minor_radius</code> の管が付いた形なので、<b>フィレット(隅の丸み)の解析形</b>としてそのまま使える。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code> / <code style="color:#22d3bf">center</code> / <code style="color:#22d3bf">axis</code>: <code style="color:#22d3bf">cylinder_sdf</code> と同じ(軸はドーナツの穴の向き)。</p>

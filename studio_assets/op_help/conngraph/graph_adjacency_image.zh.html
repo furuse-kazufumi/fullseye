@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_adjacency_image(W: &#x27;Any&#x27;, order: &#x27;str&#x27; = &#x27;none&#x27;, log: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_adjacency_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>隣接行列を [0, 1] の画像 (n, n) にする。order = none / degree(総次数の降順)/ component(成分順)。</p>
+<p>将邻接矩阵转换为 [0, 1] 的图像 (n, n)。order = none / degree(按总度降序)/ component(按分量顺序)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>値は |W| を(log なら log1p してから)最大値で割る。全零なら全零の画像。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 族使用指南</a></p>

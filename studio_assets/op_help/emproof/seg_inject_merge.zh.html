@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import emproof; emproof.seg_inject_merge(labels, n: &#x27;int&#x27; = 1, seed: &#x27;int&#x27; = 0, min_area: &#x27;int&#x27; = 3000, ignore_zero: &#x27;bool&#x27; = True) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsemproof.get(&quot;seg_inject_merge&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>評価用に<b>融合</b>を仕込む: 隣接する大きなラベル対を <code style="color:#22d3bf">n</code> 組選び、片方の id をもう片方に書き換える。</p>
+<p>为评估<b>植入融合</b>：选出 <code style="color:#22d3bf">n</code> 组相邻的大标签对，把其中一方的 id 改写为另一方。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">min_area</code> px 以上のラベルだけを候補にし(小さな断片の融合は弦が短くて検出できず、評価が「仕込めない誤り」に引っ張られる)、乱数(<code style="color:#22d3bf">seed</code>)で対を選ぶ。同じラベルは 1 回しか使わない。<code style="color:#22d3bf">n</code> 組取れなければ ValueError(黙って少ない数で返すと AUC の分母が変わる)。仕込んだ対は <code style="color:#22d3bf">seg_label_changes(labels, out)[&quot;merge_before&quot;]</code> で取り出せる。</p>
 <p>&gt;&gt;&gt; merged = seg_inject_merge(labels, n=1, seed=3)</p>
 <p>&gt;&gt;&gt; seg_label_changes(labels, merged)[&quot;merge_before&quot;]     # 吸われた id</p>

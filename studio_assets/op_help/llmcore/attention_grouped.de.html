@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">tokens × tokens × tokens</code> → <code style="color:#22d3bf">tokens</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_grouped(query, key, value, n_heads: &#x27;int&#x27;, n_kv_heads: &#x27;int&#x27;, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_grouped&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>頭を束ねる注意(GQA)→ tokens。<b>n_kv_heads == n_heads で MHA、== 1 で MQA に厳密一致</b>。</p>
+<p>Attention, die Köpfe bündelt (GQA) → tokens. <b>Stimmt bei n_kv_heads == n_heads exakt mit MHA und bei == 1 exakt mit MQA überein</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Ainslie ら 2023。query は <code style="color:#22d3bf">n_heads</code> 本に割り、key/value は <code style="color:#22d3bf">n_kv_heads</code> 本しか持たずに使い回す。両端が既存の 2 つ(MHA / MQA)に<b>厳密に</b>落ちる(どちらも 0.0e+00) ので、「中間を取る」という主張が端で検算できる。</p>
 <p>Args:</p>
 <p>query: (T, n_heads·dh) float。頭ごとに幅 dh で並んでいる。</p>

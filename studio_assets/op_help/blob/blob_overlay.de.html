@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × labels2d</code> → <code style="color:#22d3bf">rgb</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_overlay(image: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, alpha: &#x27;float&#x27; = 0.5, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_overlay&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>元画像の上に物体を色分けして重ね、<code style="color:#22d3bf">(H, W, 3)</code> の float RGB を返す。</p>
+<p>Legt die Objekte farblich unterschieden über das Originalbild und gibt ein float-RGB der Form <code style="color:#22d3bf">(H, W, 3)</code> zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>この族の<b>出口</b>。作れて測れるが見られない型にしないために置く。</p>
 <p>色は <code style="color:#22d3bf">fullseye.colorize_labels</code> と同じ規則で、背景は元画像のまま。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

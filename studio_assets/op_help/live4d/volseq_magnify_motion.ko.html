@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">volseq</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_magnify_motion(volseq, alpha: &#x27;float&#x27; = 10.0, f_lo: &#x27;float&#x27; = 0.05, f_hi: &#x27;float&#x27; = 0.4, fps: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_magnify_motion(volseq, alpha: &#x27;float&#x27; = 10.0, f_lo: &#x27;float&#x27; = 0.05, f_hi: &#x27;float&#x27; = 0.4, fps: &#x27;float&#x27; = 1.0, sigma: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_magnify_motion&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>体積時系列の<b>帯域内の微小な動きを alpha 倍</b>にする(<code style="color:#22d3bf">volseq</code>、Eulerian の線形拡大の 3 次元版)。</p>
+<p>체적 시계열의 <b>대역 내 미소한 움직임을 alpha 배</b>로 키운다(<code style="color:#22d3bf">volseq</code>, Eulerian 선형 확대의 3차원판).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>Wu et al.(SIGGRAPH 2012)の線形 Eulerian: 各体積を空間ガウス(<code style="color:#22d3bf">sigma</code>)で平滑化した層を、時間方向に帯域通過(<code style="color:#22d3bf">[f_lo, f_hi]</code> Hz、<code style="color:#22d3bf">fps</code> は体積のフレームレート、FFT の理想帯域)して <code style="color:#22d3bf">alpha − 1</code> 倍を元に足し戻す。並進 δ の像 <code style="color:#22d3bf">I(x − δ(t))</code> を 1 次で展開すると帯域内の時間変化は <code style="color:#22d3bf">−δ · ∇I</code> なので、足し戻した結果の変位は <code style="color:#22d3bf">alpha · δ</code>(<code style="color:#22d3bf">alpha</code> は変位の倍率: 1 で恒等、0 で帯域内の動きを消す)。成り立つのは <b>小さな動き</b>だけ —— 目安は <code style="color:#22d3bf">alpha · δ &lt; λ / 8</code>(λ は平滑化後の空間波長 ≈ 4·sigma)。それを超えると像が壊れる(増幅でなく歪み)。雑音も同じ倍率で増幅される(SNR は良くならない)。</p>
 <p>&gt;&gt;&gt; s = volseq_synth_beating((16, 24, 24), n_frames=24, period=8.0, amplitude=0.1)</p>
 <p>&gt;&gt;&gt; volseq_magnify_motion(s, alpha=8.0, f_lo=0.08, f_hi=0.2, fps=1.0).shape</p>

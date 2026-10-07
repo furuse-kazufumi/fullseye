@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathnumerics; mathnumerics.interp_barycentric(xk, yk, x) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;interp_barycentric&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>点 (xk, yk) を通る多項式(次数 len−1)を、重心公式で x に評価する(Berrut &amp; Trefethen 2004)。</p>
+<p>Evaluates at x the polynomial (degree len−1) through the points (xk, yk) with the barycentric formula (Berrut &amp; Trefethen 2004).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>係数を経由しない(Vandermonde 行列は解かない)ので高次でも数値的に安定。等間隔点では <b>Runge 現象</b>(端の振動)がそのまま出る —— それは公式の欠陥ではなく、点の置き方の問題。</p>
 <p>門: 次数 len−1 以下の多項式は厳密に再現する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>

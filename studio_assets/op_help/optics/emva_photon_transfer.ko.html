@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_photon_transfer(mu_y, var_y, mu_y_dark, var_y_dark, mu_y_sat)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_photon_transfer&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>photon transfer 曲線からシステムゲイン K と暗雑音 σ_d を出す(式 50・53・54)。</p>
+<p>photon transfer 곡선으로부터 시스템 게인 K와 암잡음 σ_d를 구한다(식 50·53·54).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>*mu_y*, *var_y*: 露光段ごとの平均と時間分散(<code style="color:#22d3bf">emva_pair_statistics</code> の <code style="color:#22d3bf">mu</code> と <code style="color:#22d3bf">var_temporal</code>)。*mu_y_dark*, *var_y_dark*: 暗画像の同じ量。*mu_y_sat*: 飽和の平均(0.1〜0.2 % の画素が最大値になる露光で測る)。</p>
 <p>K = σ²_y − σ²_y.dark を μ_y − μ_y.dark に当てた直線(<b>切片あり</b>)の傾き。使う点は飽和の 0〜70 %(式 50 の直後)。σ_d = √(σ²_y.dark − 1/12)/K(式 53)。★σ²_y.dark &lt; 0.24 DN² では量子化雑音が支配的で推定できないので、<code style="color:#22d3bf">sigma_d</code> は None、<code style="color:#22d3bf">sigma_d_upper</code> = 0.40/K(式 54)を返す。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;K&quot;, &quot;offset&quot;, &quot;sigma_d&quot;, &quot;sigma_d_upper&quot;, &quot;sigma_d_valid&quot;, &quot;n_points&quot;, &quot;residual_rms&quot;, &quot;used&quot;}</code> (<code style="color:#22d3bf">used</code> は当てはめに使った点の真偽)。</p>

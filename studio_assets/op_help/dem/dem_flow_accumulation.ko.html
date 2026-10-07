@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import demops; demops.dem_flow_accumulation(dem, cell_size, fill=True, epsilon=1e-06, nodata=&#x27;error&#x27;)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsdem.get(&quot;dem_flow_accumulation&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>集水セル数。各セルへ流れ込む上流セルの個数(自セルを 1 と数える)。</p>
+<p>집수 셀 수. 각 셀로 흘러드는 상류 셀의 개수(자기 셀을 1로 센다).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">fill=True</code> なら先に窪地を埋める(埋めないと窪地で流れが止まり、下流の集水量が<b>静かに小さく出る</b>)。欠測セルの集水量は <code style="color:#22d3bf">nan</code>。</p>
 <p>グラフの構築はベクトル化してある。ただし<b>効果は小さい</b>: 1024x1024 で 2.71 秒 -&gt; 2.39 秒。支配しているのは構築ではなく、そのあとのトポロジカル走査(セル数ぶんの Python ループ)のほうだった。速くしたいならそこを書き換える必要がある —— 直したつもりで直っていない、を残さないため明記する。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

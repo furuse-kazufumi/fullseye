@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import demops; demops.dem_curvature(dem, cell_size, kind=&#x27;profile&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsdem.get(&quot;dem_curvature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>曲率 [1/m]。<code style="color:#22d3bf">kind</code> は <code style="color:#22d3bf">&quot;profile&quot;</code>(断面) / <code style="color:#22d3bf">&quot;planform&quot;</code>(平面) / <code style="color:#22d3bf">&quot;total&quot;</code>。</p>
+<p>Krümmung [1/m]. <code style="color:#22d3bf">kind</code> ist <code style="color:#22d3bf">&quot;profile&quot;</code> (Profil) / <code style="color:#22d3bf">&quot;planform&quot;</code> (Grundriss) / <code style="color:#22d3bf">&quot;total&quot;</code>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>Zevenbergen &amp; Thorne (1987) の 2 次曲面当てはめ。断面曲率は流下方向の凹凸(加速・減速)、平面曲率は等高線の曲がり(集中・発散)を表す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidedem:dem_terrain_analysis">Leitfaden zur Familie dem_terrain_analysis</a></p>

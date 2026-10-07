@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で<b>自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には &gt;</b> のときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す(他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。</p>
+<p>비최대 억제(3.39절). 화소 (x, y)는 창 안에서 <b>자기보다 앞(위의 행과 같은 행의 왼쪽)의 이웃에는 ≥, 뒤의 이웃에는 &gt;</b>일 때만 남는다(REQ-0337). 평평한 꼭대기에서 1화소만 남는 것은 이 비대칭 때문이다. *mask*의 0이 아닌 화소는 비교하지 않고 그대로 남긴다 (다른 화소의 비교에도 쓰지 않는다, REQ-0336). 억제한 화소는 U8이면 0, S16이면 INT16_MIN(REQ-0335). 창 밖으로 벗어나는 이웃은 비교하지 않는다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>*window*(必須): 奇数の窓の一辺(3, 5, …)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8/S16 の 2-D でない / window が 3 以上の奇数でない / mask の形が違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

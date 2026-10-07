@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">indices</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mesh_props; mesh_props.boundary_vertices(mesh) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;boundary_vertices&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>開いた縁(境界)に乗っている<b>頂点の index</b> → <code style="color:#22d3bf">(K,)</code>。</p>
+<p>位于开放边缘(边界)上的<b>顶点 index</b> → <code style="color:#22d3bf">(K,)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>無向辺のうち<b>ちょうど 1 つの面にしか使われていない辺</b>(境界辺)の端点を集めて返す。閉じた多様体なら空配列 —— つまり <code style="color:#22d3bf">len(boundary_vertices(mesh)) == 0</code> が <b>水密性(watertight)の判定</b>になる。穴埋め・体積計算・曲率のどれも、境界の有無で意味が変わるので、先にここを見る。</p>
 <p>Args:</p>
 <p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>

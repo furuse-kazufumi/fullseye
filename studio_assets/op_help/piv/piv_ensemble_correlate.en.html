@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.piv_ensemble_correlate(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">flow2d</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.piv_ensemble_correlate.raw(...)</code> or call <code style="color:#22d3bf">pivops.piv_ensemble_correlate</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>相関マップを<b>足してから</b>ピークを探す(アンサンブル相関)。</p>
+<p>Searches for the peak <b>after summing</b> the correlation maps (ensemble correlation).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
 <p>Args:</p>
 <p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>

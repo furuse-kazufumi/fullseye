@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code> (to call the implementation directly, <code style="color:#22d3bf">import shapestats; shapestats.mirror_plane_from_pairs(landmarks, pairs=None, midline=None)</code>; from the registry, <code style="color:#22d3bf">opsshapestat.get(&quot;mirror_plane_from_pairs&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>左右の対応ランドマークから正中面を出す。→ <code style="color:#22d3bf">(2, 3)</code>(1 行目 = 点、2 行目 = 法線)。</p>
+<p>Derives the median (midsagittal) plane from corresponding left/right landmarks. → <code style="color:#22d3bf">(2, 3)</code> (row 1 = point, row 2 = normal).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>左右の対 <code style="color:#22d3bf">(i, j)</code> の<b>中点</b>は、どれも正中面の上に乗る。だからその中点集合に平面を当てればよい —— 変形の量に依らず面が決まるのが要点で、残差を最小にする面(<code style="color:#22d3bf">symmetry3d.detect_reflection_symmetry</code>)とは別物である。</p>
 <p>★ 2026-09-06 の実測: 6.4 mm の片側変形を入れると、<b>残差最適面は真の正中面から 2.92 mm / 1.72 度ずれ、非対称量の 46 % を消した</b>(利得 0.54)。このランドマーク面なら利得 1.03。<b>見つけるなら残差最適面、量を言うならこちら</b>。</p>
 <p>*midline* は正中線上にある(対にならない)ランドマークの添字。与えると中点集合に足して面の当てはめを安定させる。</p>

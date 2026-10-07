@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">signal</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.chebyshev_nodes(n: &#x27;int&#x27;, a: &#x27;float&#x27; = -1.0, b: &#x27;float&#x27; = 1.0, kind: &#x27;int&#x27; = 2) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;chebyshev_nodes&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>区間 [a, b] の Chebyshev 点 n 個(昇順)。</p>
+<p>n Tschebyschow-Punkte auf dem Intervall [a, b] (aufsteigend).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">kind=2</code>(既定)は端点を含む Chebyshev–Lobatto 点 x_k = cos(kπ/(n−1))、<code style="color:#22d3bf">kind=1</code> は端点を含まない Chebyshev–Gauss 点 cos((2k+1)π/(2n))。端に向かって密になり、多項式補間の暴れ(Runge 現象)を抑える。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>
 <p>Jeder mathops-Operator prüft seine Eingabe vor der Berechnung (nichts rutscht stillschweigend durch):</p>

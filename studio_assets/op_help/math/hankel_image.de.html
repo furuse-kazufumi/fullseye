@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathtransforms; mathtransforms.hankel_image(image, *, center=None, spacing: &#x27;float&#x27; = 1.0, n: &#x27;int&#x27; = 256, r_max: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;hankel_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>軸対称な画像(円い開口・ガウスの塊・回折の輪)の 2 次元フーリエ変換を、動径の 1 本の Hankel 変換で求める。</p>
+<p>Bestimmt die 2-dimensionale Fourier-Transformation eines achsensymmetrischen Bildes (runde Apertur, Gauß-Fleck, Beugungsringe) mit 1 radialen Hankel-Transformation.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>画像を中心からの距離で 1 画素幅の輪に分けて平均し(動径の分布)、<code style="color:#22d3bf">hankel_transform</code>(0 次)にかける。軸対称なら 2 次元の変換が<b>1 本の積分</b>で済み(輪で平均するので雑音も 1/√(輪の画素数) に減る)、軸対称からどれだけ崩れているか(<code style="color:#22d3bf">asymmetry</code>)を数で返す。周波数の刻みは 2-D FFT と同じく 1/(2·半径) 程度で、細かくはならない。</p>
 <p>Args:</p>
 <p>image: 2-D の実画像。</p>

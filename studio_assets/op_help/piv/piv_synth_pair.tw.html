@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">image2d</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">pivops.piv_synth_pair</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>既知の変位場を持つ画像対を作る。返りは <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
+<p>產生具有已知位移場的影像對。回傳 <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>

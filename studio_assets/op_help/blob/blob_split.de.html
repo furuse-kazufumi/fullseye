@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">labels2d × labels2d × image2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import blob2d; blob2d.blob_split(labels: &#x27;Any&#x27;, seeds: &#x27;Any&#x27;, distance: &#x27;Any&#x27;) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsblob.get(&quot;blob_split&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>種から<b>高いところ順に</b>領域を広げて、融合した塊を割る(分水嶺)。</p>
+<p>Lässt Regionen von den Saatpunkten aus <b>in der Reihenfolge von den höchsten Stellen an</b> wachsen und trennt verschmolzene Klumpen (Wasserscheide).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p><code style="color:#22d3bf">distance</code> の高い画素から順に、隣接する既知のラベルを取り込んでいく(immersion 型の分水嶺を、距離の降順で回す形)。<b>種を持たない塊はそのまま残す</b> —— 割る材料が無いのに消すのは嘘になるため。</p>
 <p><code style="color:#22d3bf">segmentation.watersheds_marker</code> を使わないのは、<b>skimage が無い環境で黙って別の算法(マーカーからの最近傍)に落ちる</b>から。落ちた先は画像を一切見ないので、同じ関数名で違うものが返る。ここは numpy と scipy だけで閉じる。</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>

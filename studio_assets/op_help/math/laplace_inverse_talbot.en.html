@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathtransforms; mathtransforms.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;laplace_inverse_talbot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。</p>
+<p>Numerical inverse Laplace transform of a rational function F(s) = num(s)/den(s) (fixed Talbot method).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>厳密解は <code style="color:#22d3bf">tf_impulse_response</code> が行列指数で出すので、<b>2 つの独立な経路で同じ f(t) が出るか</b>がこの op の検算になる。任意の F(s)(1/√s など)は <code style="color:#22d3bf">laplace_inverse_func</code> へ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>

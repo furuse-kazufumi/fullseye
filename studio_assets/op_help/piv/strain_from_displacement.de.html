@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.strain_from_displacement(u: &#x27;Any&#x27;, v: &#x27;Any&#x27;, window: &#x27;int&#x27;, method: &#x27;str&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import dic; dic.strain_from_displacement(u: &#x27;Any&#x27;, v: &#x27;Any&#x27;, window: &#x27;int&#x27;, method: &#x27;str&#x27;, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;tuple[np.ndarray, np.ndarray, np.ndarray]&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opspiv.get(&quot;strain_from_displacement&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.strain_from_displacement(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">image2d</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.strain_from_displacement.raw(...)</code> oder rufe <code style="color:#22d3bf">dic.strain_from_displacement</code> direkt auf.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>変位場からひずみ場を出す。<code style="color:#22d3bf">(exx, eyy, exy)</code> を返す。</p>
+<p>Berechnet das Verzerrungsfeld aus einem Verschiebungsfeld. Gibt <code style="color:#22d3bf">(exx, eyy, exy)</code> zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>引数(<code style="color:#22d3bf">window</code> と <code style="color:#22d3bf">method</code> に<b>既定値は無い</b>。理由は下記)</p>
 <p>u        x 方向(列)の変位場 [px]。2 次元。</p>
 <p>v        y 方向(行)の変位場 [px]。<code style="color:#22d3bf">u</code> と同じ形。</p>

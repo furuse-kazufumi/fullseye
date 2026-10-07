@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>(要直接呼叫實作,<code style="color:#22d3bf">import pivops; pivops.piv_streamlines(flow, seeds=None, separation=None, step=0.25, max_length=None, min_speed=0.001, test_ratio=0.5)</code>;從台帳取用則 <code style="color:#22d3bf">opspiv.get(&quot;piv_streamlines&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>流線を RK4 でたどる(MATLAB の <code style="color:#22d3bf">stream2</code> / <code style="color:#22d3bf">streamslice</code> に当たる)。</p>
+<p>以 RK4 追蹤流線(相當於 MATLAB 的 <code style="color:#22d3bf">stream2</code> / <code style="color:#22d3bf">streamslice</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">seeds</code> を省くと <b>Jobard–Lefer(1997)の等間隔配置</b>で種を自動で置く。流線どうしが <code style="color:#22d3bf">separation</code> 程度の間隔で並び、<code style="color:#22d3bf">test_ratio * separation</code> より近づいた所で打ち切る。矢印図は密にすると潰れ、種を手で置くと空白が残るが、この配置は<b>空白も重なりも作らない</b>(下の 2 つの性質を門にしている)。</p>
 <p style="margin:2px 0 2px 12px">• 別々の流線の標本点どうしは <code style="color:#22d3bf">test_ratio * separation</code> より近づかない。</p>
 <p style="margin:2px 0 2px 12px">• 速さが <code style="color:#22d3bf">min_speed</code> 以上の格子点はどれも、どこかの流線から <code style="color:#22d3bf">separation</code> 以内にある(取りこぼしの無さ)。</p>

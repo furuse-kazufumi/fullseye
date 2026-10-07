@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import blob2d; blob2d.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsblob.get(&quot;blob_select_largest&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>面積の大きい順に <code style="color:#22d3bf">count</code> 個だけ残す(<b>番号は面積の降順に振り直す</b>)。</p>
+<p>按面积从大到小只保留 <code style="color:#22d3bf">count</code> 个(<b>编号按面积降序重新分配</b>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>同じ面積が並んだときは元の番号が小さいほうを先にする(実行ごとに順序が変わらないよう <code style="color:#22d3bf">argsort</code> を安定ソートで固定してある)。<code style="color:#22d3bf">count</code> が物体数より多くても<b>あるだけ</b>返す(足りないことを例外にはしない —— 「上位 3 個」を頼んで 2 個しか無いのは異常ではない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis 族使用指南</a></p>

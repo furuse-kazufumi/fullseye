@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/bootstrap_std_error.inputs.jpg">bootstrap_std_error: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <p>*4열은 컬러 (H,W,3) 입력. 이 op는 채널을 넘나들지 않고 컬러를 다룰 수 있다(색 채널을 세 번째 공간축으로 컨볼루션하지 않음).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>局所標準偏差の<b>標準誤差</b>を、分布を仮定せずに測る(ブートストラップ)。</p>
+<p>국소 표준편차의 <b>표준오차</b>를 분포를 가정하지 않고 측정한다(부트스트랩).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">local_std</code> が併記する誤差 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> は<b>雑音が正規分布</b>という仮定の上に立っている。外れ値や二峰性があると、その式は本当のばらつきを過小に言う。ここでは窓の中の値を<b>そこから重複ありで取り直して</b>統計量を作り直し、その散らばりそのものを誤差とする —— 仮定が要らない代わりに計算で買う。</p>
 <p><code style="color:#22d3bf">a</code> が窓(3〜9 画素)、<code style="color:#22d3bf">b</code> が取り直しの回数(8〜64)。出力は窓内の標準偏差に対する<b>相対</b>標準誤差で、<code style="color:#22d3bf">1.0</code> が「100 % ぶれる」。</p>
 <p><b>読み方</b>: <b>絶対値ではなく、場所ごとの比で読む</b>。正規分布の白色雑音に当てると閉形式 <code style="color:#22d3bf">1/sqrt(2(n-1))</code> より<b>低めに出る</b>(ブートストラップは小標本で標準偏差のばらつきを過小に言う)。実測(<code style="color:#22d3bf">b=1.0</code>、取り直し 64 回):</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">flow2d × flow2d</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_error_stats(flow, truth, trim=1)</code> (to call the implementation directly, <code style="color:#22d3bf">import pivops; pivops.piv_error_stats(flow, truth, trim=1)</code>; from the registry, <code style="color:#22d3bf">opspiv.get(&quot;piv_error_stats&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>真値との差の内訳。<b>偏りと散らばりを分けて</b>返す。</p>
+<p>Breakdown of the difference from the ground truth. Returns <b>bias and scatter separately</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>どちらか一方だけを出すと、系統的にずれている実装が「誤差 0.3 px」として通ってしまう。偏り(平均誤差)と散らばり(標準偏差)は別の原因を指す。</p>
 <p>Args:</p>
 <p>flow: 推定 <code style="color:#22d3bf">(2, h, w)</code>。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>(要直接呼叫實作,<code style="color:#22d3bf">import demops; demops.dem_geoid_height(geoid, lat_deg, lon_deg, lat0_deg, lon0_deg, d_lat_deg, d_lon_deg)</code>;從台帳取用則 <code style="color:#22d3bf">opsdem.get(&quot;dem_geoid_height&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ジオイド高の格子を緯度・経度で<b>双一次補間</b>して <code style="color:#22d3bf">N</code> [m] を返す(<code style="color:#22d3bf">signal</code>)。</p>
+<p>依緯度、經度對大地水準面高網格做<b>雙線性內插</b>，回傳 <code style="color:#22d3bf">N</code> [m] (<code style="color:#22d3bf">signal</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>GNSS が返すのは楕円体高 <code style="color:#22d3bf">h</code>、地図と設計図が使うのは標高 <code style="color:#22d3bf">H</code>。その差がジオイド高 <code style="color:#22d3bf">N</code>(<code style="color:#22d3bf">H = h - N</code>)で、日本付近では概ね <b>+30〜+40 m</b> ある。この op は公開されているジオイドモデルの格子(GSIGEO / EGM 系のような等間隔グリッド)を読む側の道具で、<b>モデルそのものは持たない</b> —— どの版を使ったかは呼び手の責任であり、版が変われば標高は数 cm 動く。</p>
 <p>Args:</p>
 <p>geoid: <code style="color:#22d3bf">(H, W)</code> のジオイド高 [m]。<code style="color:#22d3bf">geoid[0, 0]</code> が</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">table</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsoptics.get(&quot;emva_sensitivity_threshold&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>絶対感度しきい値(SNR = 1 になる露光、式 26・27)。</p>
+<p>절대 감도 임계값(SNR = 1이 되는 노출, 식 26·27).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2)、μ_e.min = η μ_p.min。★量子化雑音が入る限り μ_e.min は σ_d より大きい。返り値 <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: η が (0, 1] の外 / σ_d・σ_q² が負 / K が正でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>

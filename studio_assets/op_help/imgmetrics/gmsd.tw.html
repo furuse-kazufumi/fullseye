@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqafsim; iqafsim.gmsd(ref, dist, data_range: &#x27;float&#x27; = 255.0, c: &#x27;float&#x27; = 170.0) -&gt; &#x27;float&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;gmsd&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>GMSD = GMS 地図の標準偏差(N−1、原実装の <code style="color:#22d3bf">std2</code>、論文 式 5)。0 = 同一、大きいほど劣化(<b>lower is better</b> —— MOS との順位相関は負で、公表表は |ρ| を載せる: TID2013 全体 |SROCC| 0.8038、二次資料 0.8044)。入力 (H, W) か (H, W, 3)(3-ch は Y)。<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: <code style="color:#22d3bf">gmsd_map</code> と同じ、地図が 1 画素(分散が定義されない)。</p>
+<p>GMSD = GMS 圖的標準差(N−1，原實作的 <code style="color:#22d3bf">std2</code>，論文式 5)。0 = 相同，越大表示劣化越嚴重(<b>越低越好</b> —— 與 MOS 的等級相關為負，公開表格列出的是 |ρ|：TID2013 整體 |SROCC| 0.8038，二手資料 0.8044)。輸入為 (H, W) 或 (H, W, 3)(3 通道時取 Y)。<code style="color:#22d3bf">iqatid.tid2013_evaluate(root, gmsd, luma=&quot;rgb&quot;)</code>。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>：與 <code style="color:#22d3bf">gmsd_map</code> 相同，或圖只有 1 個像素(變異數無定義)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

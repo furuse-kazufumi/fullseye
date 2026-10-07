@@ -13,8 +13,8 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/counts_to_img.inputs.jpg">counts_to_img: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>非負整数の 1-D カウント列を<b>棒グラフ</b>にして画像へ戻す。</p>
+<p>음이 아닌 정수의 1-D 카운트 열을 <b>막대그래프</b>로 만들어 영상으로 되돌린다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">counts</code> を画像に落とせる op は <b>1 本も無かった</b>(作る op は 13 本ある)。既定を棒にしてあるのは、カウントが<b>整数の度数</b>だからで、折れ線で結ぶと「間の値」が在るように見えてしまう。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 縦軸の余白(<code style="color:#22d3bf">signal_to_img</code> と同じ式)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 描き方。<code style="color:#22d3bf">b &lt; 1/3</code> で<b>折れ線</b>、<code style="color:#22d3bf">&lt; 2/3</code> で<b>棒</b>(既定)、それ以上で <b>点</b>。<code style="color:#22d3bf">signal_to_img</code> と<b>並びが違う</b>のは、既定のノブ 0.5 でその型に素直な描き方になるようにしているから —— カウントは棒が素直。</p>

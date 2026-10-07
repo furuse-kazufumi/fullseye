@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">rgb</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import perpetual; perpetual.perpetual_flow_field(size: &#x27;int&#x27; = 520, seed: &#x27;int&#x27; = 0, lines: &#x27;int&#x27; = 420, steps: &#x27;int&#x27; = 150, scale: &#x27;float&#x27; = 0.01) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsgenerative.get(&quot;perpetual_flow_field&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>流れ場 ―― 粒子を場に乗せて流し続ける(止めなければ終わらない)。</p>
+<p>流場 —— 讓粒子隨場持續流動(不停止就不會結束)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>★場は<b>ポテンシャル ψ の回転</b>として作る。だから <b>発散が恒等的に 0</b> (非圧縮)で、粒子が湧いたり消えたりしない。「それらしい雑音」で作った</p>
 <p>流れ場との違いはここで、<code style="color:#22d3bf">perpetual_identities</code> が数で出す。</p>
 <p>★線の色と太さは<b>流速</b> |∇ψ| に結びつけてある(太さも濃さも一定だと、同じ場から描いても「落書き」にしかならない)。</p>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import live4d; live4d.volseq_mip_video(volseq, axis: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_mip_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>体積時系列を軸 <code style="color:#22d3bf">axis</code>(1 = z, 2 = y, 3 = x)の最大値投影で動画 <code style="color:#22d3bf">(T, H, W)</code> に畳む(<code style="color:#22d3bf">video</code>)。</p>
+<p>체적 시계열을 축 <code style="color:#22d3bf">axis</code>(1 = z, 2 = y, 3 = x)의 최댓값 투영으로 동영상 <code style="color:#22d3bf">(T, H, W)</code>로 접는다(<code style="color:#22d3bf">video</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>畳んだ先は <code style="color:#22d3bf">video_spacetime_cube</code> / <code style="color:#22d3bf">video_cube_cut</code> / <code style="color:#22d3bf">motion_magnify</code> など 2D+t の op がそのまま使える。最大値投影は「奥行きのどこかにあれば見える」投影なので、重なりは失われる(何を失ったかは <code style="color:#22d3bf">volseq_cut_video</code> の断面と見比べる)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 패밀리 가이드</a></p>

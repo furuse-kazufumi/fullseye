@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">points</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.shape_perturb(shape, amplitude: &#x27;float&#x27; = 0.05, mode: &#x27;str&#x27; = &#x27;bulge&#x27;, center=(1.0, 0.0, 0.0), sigma: &#x27;float&#x27; = 0.4, seed: &#x27;int&#x27; = 0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_perturb&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>形に<b>既知の</b>変形を 1 つ入れる。→ <code style="color:#22d3bf">(N, 3)</code>。</p>
+<p>형상에 <b>알려진</b> 변형을 1개 넣는다. → <code style="color:#22d3bf">(N, 3)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">mode</code>:</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;bulge&quot;</code>  —— *center* のまわりをガウス重みで外向きに膨らませる。片側だけに入れれば左右非対称性の真値になる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">&quot;shift&quot;</code>  —— *center* 方向へ一様に平行移動(Procrustes が消す成分)。</p>

@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">depth</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd.raw(...)</code>,或直接调用 <code style="color:#22d3bf">roughness.surface_synth_psd</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(z, sq_analytic)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>指定した PSD から高さ場を合成する。<code style="color:#22d3bf">(z, sq_analytic)</code> を返す。</p>
+<p>由指定的 PSD 合成高度场。返回 <code style="color:#22d3bf">(z, sq_analytic)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>帯域 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> の各モードに振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>、自己アフィン)を置き、<b>位相だけ</b>乱数にする。全体を <code style="color:#22d3bf">sq</code> に規格化して返す。</p>
 <p>引数</p>
 <p>n           格子の大きさ。整数なら <code style="color:#22d3bf">n x n</code>、<code style="color:#22d3bf">(ny, nx)</code> でも可。</p>

@@ -13,8 +13,8 @@
 <p><b>On other images</b> (synthetic scene / photo / coins. Top row: inputs, bottom row: their outputs. Knobs at default):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/feature_to_img.inputs.jpg">feature_to_img: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>スカラの feature を<b>目盛りつきの帯</b>にして画像へ戻す —— 2-D 台帳で <b>125 本の op が作るのに、画像に落とせる op が 1 本も無かった</b> sort。</p>
+<p>Turns a scalar feature into a <b>band with tick marks</b> and back into an image — the sort for which, in the 2-D ledger, <b>125 ops produce it, yet not even 1 op could turn it into an image</b>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>★<b>数字そのものは描かない。</b> 文字を焼くと絵が<b>環境に入っている書体</b>で変わり、同じ入力で同じ画素という契約が壊れる。描くのは値の<b>位置</b>で、目盛り(0・1/4・1/2・3/4・1)が読みの手掛かりになる。数値が要るなら <code style="color:#22d3bf">annotate_table</code> / <code style="color:#22d3bf">annotate_leader</code>(paper 族)に渡すこと。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → スケールの上限 <code style="color:#22d3bf">hi = 10 ** (4a - 2)</code>(a=0 で 0.01、a=0.5 で <b>1.0</b>、a=1 で 100)。特徴量は桁がまちまちなので、見たい桁をここで選ぶ。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 目盛りの張り方。<code style="color:#22d3bf">b &lt; 0.5</code> は <b>片側</b> <code style="color:#22d3bf">[0, hi]</code>(左端が 0)、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>両側</b> <code style="color:#22d3bf">[-hi, +hi]</code>(<b>中央が 0</b>。相関・歪度など符号のある量向け)。</p>

@@ -13,8 +13,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/structure_tensor_orientation.inputs.jpg">structure_tensor_orientation: 其他输入图像</a> <span style="color:#8b91a0;font-size:11px">(文档网站)</span></p>
 <p>*第 4 列是彩色 (H,W,3) 输入。此算子能正确处理颜色而不跨通道(不把颜色通道当作第三个空间轴卷积)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>局所の<b>縞の走る向き</b>(構造テンソルの主軸)を <code style="color:#22d3bf">[0,1]</code> に写して返す。</p>
+<p>返回局部<b>条纹走向</b>(结构张量的主轴)，并映射到 <code style="color:#22d3bf">[0,1]</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> がともに水平、<code style="color:#22d3bf">0.5</code> が垂直にあたる(向きは 180 度で一周するので、<code style="color:#22d3bf">0</code> と <code style="color:#22d3bf">1</code> は同じ向き —— <b>この出力を差分すると境目で偽の段差が出る</b>ことに注意)。</p>
 <p><code style="color:#22d3bf">a</code> が微分前の平滑 <code style="color:#22d3bf">sigma</code>(0.5〜3.0 画素)、<code style="color:#22d3bf">b</code> が積分窓 <code style="color:#22d3bf">rho</code>(1.0〜8.0 画素)。<code style="color:#22d3bf">rho</code> は「どれくらいの広さで向きが揃っているとみなすか」で、繊維や研磨目のピッチより大きく取る。</p>
 <p><b>適用条件</b>: 向きが定義できるのは<b>勾配が構造的に偏っている所だけ</b>。テンソルの異方度が跡に対して <code style="color:#22d3bf">1e-6</code> を下回る画素(平坦面・等方な雑音)は「向き未定義」として <code style="color:#22d3bf">0.5</code> を返す —— ここで床を置かないと、一様な面で丸め屑が <code style="color:#22d3bf">arctan2</code> に増幅されて <b>明るさを 0.01 変えただけで向きが一斉に反転する</b>。向きの確からしさは <code style="color:#22d3bf">structure_tensor_coherence</code> で別に測ること。</p>

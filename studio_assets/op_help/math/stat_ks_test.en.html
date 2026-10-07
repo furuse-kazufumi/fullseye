@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathestimation; mathestimation.stat_ks_test(x, y=None, *, dist: &#x27;str&#x27; = &#x27;norm&#x27;) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;stat_ks_test&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>Kolmogorov–Smirnov 検定。<code style="color:#22d3bf">y</code> を与えれば 2 標本(同じ分布から来たか)、無ければ標準正規分布との適合。</p>
+<p>Kolmogorov–Smirnov test. Given <code style="color:#22d3bf">y</code>, a 2-sample test (whether both come from the same distribution); without it, goodness of fit to the standard normal distribution.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>D = 経験分布関数どうしの最大の差。p 値は scipy(厳密/漸近を自動で選ぶ)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>

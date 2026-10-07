@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_swirling_strength(flow, spacing=1.0)</code>(要直接调用实现,<code style="color:#22d3bf">import pivops; pivops.piv_swirling_strength(flow, spacing=1.0)</code>;从台账取用则 <code style="color:#22d3bf">opspiv.get(&quot;piv_swirling_strength&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>渦回転強度 λ_ci —— 速度勾配テンソルの複素固有値の虚部の大きさ。</p>
+<p>旋涡强度 λ_ci —— 速度梯度张量复特征值虚部的大小。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>Q 基準と同じく「せん断と渦を区別する」量だが、こちらは<b>回転の角速度に等しい単位</b>を持つ(1/フレーム)。実測: 剛体回転 ω=0.01 で <code style="color:#22d3bf">0.01</code>、一様膨張とせん断で <code style="color:#22d3bf">0.0</code>。</p>
 <p>固有値が実数(= 回転していない)の場所は 0 を返す。各点で独立な 2x2 の固有値なので、格子全体をベクトル化して一度に解いている。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

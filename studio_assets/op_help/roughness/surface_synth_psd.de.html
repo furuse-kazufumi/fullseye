@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Rückgabewert über das Register</b>: <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd(...)</code> liefert <b>nur den Wert des deklarierten Out-Typs <code style="color:#22d3bf">depth</code></b> (die zugrunde liegende Funktion gibt zusätzlich Hilfsinformationen zurück). Wird das Verworfene gebraucht, nutze <code style="color:#22d3bf">fullseye.ledger.surface_synth_psd.raw(...)</code> oder rufe <code style="color:#22d3bf">roughness.surface_synth_psd</code> direkt auf.</p>
 <p style="margin:2px 0 2px 12px">• Rückgabe der Funktion: <code style="color:#22d3bf">(z, sq_analytic)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>指定した PSD から高さ場を合成する。<code style="color:#22d3bf">(z, sq_analytic)</code> を返す。</p>
+<p>Synthetisiert ein Höhenfeld aus einer vorgegebenen PSD. Gibt <code style="color:#22d3bf">(z, sq_analytic)</code> zurück.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>帯域 <code style="color:#22d3bf">lambda_lo &lt;= λ &lt;= lambda_hi</code> の各モードに振幅 <code style="color:#22d3bf">A(q) ∝ q^-(H+1)</code>(= 面 PSD <code style="color:#22d3bf">C(q) ∝ q^-2(H+1)</code>、自己アフィン)を置き、<b>位相だけ</b>乱数にする。全体を <code style="color:#22d3bf">sq</code> に規格化して返す。</p>
 <p>引数</p>
 <p>n           格子の大きさ。整数なら <code style="color:#22d3bf">n x n</code>、<code style="color:#22d3bf">(ny, nx)</code> でも可。</p>

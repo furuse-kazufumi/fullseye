@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/img_to_projection_profile.inputs.jpg">img_to_projection_profile: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>画像を 1 方向へ潰した<b>射影プロファイル</b>を 1-D の signal にする ―― 版面解析の基本量。</p>
+<p>Turns the <b>projection profile</b>, obtained by collapsing the image along 1 direction, into a 1-D signal — a basic quantity of page-layout analysis.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">img_to_signal</code> が「1 本の行/列をそのまま読む」のに対し、こちらは<b>全行(全列)を束ねて 1 本にまとめる</b>。文字列の切れ目・罫線・帯の境目は、1 本の走査線では雑音に埋もれるが、潰すと谷として立ち上がる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 向き。<code style="color:#22d3bf">b &lt; 0.5</code> で<b>縦に潰して長さ W</b>(列ごとの代表値。横に並んだ字の切れ目が谷になる)、<code style="color:#22d3bf">b &gt;= 0.5</code> で<b>横に潰して長さ H</b>(行ごと。行間が谷になる)。<code style="color:#22d3bf">img_to_signal</code> と同じく <code style="color:#22d3bf">b</code> が向きを決めるが、<code style="color:#22d3bf">a</code> の意味は違う。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → <b>上側トリム率</b>。潰す軸の値を大きい順に並べ、上位 <code style="color:#22d3bf">m = max(1, round((1-a) * N))</code> 個だけを平均する。<code style="color:#22d3bf">a=0</code> は<b>ただの平均射影</b> (古典的な projection profile そのもの)、<code style="color:#22d3bf">a=1</code> は<b>最大値射影</b>(MIP)、その間は「外れ値だけを残して均す」連続的な折衷になる。</p>

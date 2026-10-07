@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>閉輪郭を複素フーリエ級数の係数にする —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
+<p>將封閉輪廓轉換為複數傅立葉級數的係數 —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>引数:</p>
 <p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
 <p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>

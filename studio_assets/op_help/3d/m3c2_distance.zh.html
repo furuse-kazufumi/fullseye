@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>(要直接调用实现,<code style="color:#22d3bf">import metrics3d; metrics3d.m3c2_distance(a, b, cores, normals, radius, max_depth=None, min_points=4)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;m3c2_distance&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.m3c2_distance(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">signal</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.m3c2_distance.raw(...)</code>,或直接调用 <code style="color:#22d3bf">metrics3d.m3c2_distance</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>2 時点の点群の差を<b>法線方向に</b>測る(M3C2)。→ <code style="color:#22d3bf">(distance, lod)</code> の 2 つ。</p>
+<p><b>沿法线方向</b>测量 2 个时间点点云之间的差异(M3C2)。→ <code style="color:#22d3bf">(distance, lod)</code> 这 2 个值。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>最近傍距離(chamfer / C2C)は「いちばん近い点までの距離」なので、<b>傾いた面では面に沿ったずれまで距離として数えてしまう</b>。地形・構造物の変化検出では、それが「測り直しただけで検出される偽の変化」の主因になる(<code style="color:#22d3bf">poc_structure_4d_deterioration</code></p>
 <p>の実測: 劣化ゼロで測り返しただけで C2C の中央値 21.07 mm、法線方向なら 0.55 mm)。</p>
 <p>M3C2(Lague 2013)は core 点ごとに <b>法線 <code style="color:#22d3bf">n</code> を軸とする円筒</b>(半径 <code style="color:#22d3bf">radius</code>、長さ <code style="color:#22d3bf">max_depth</code>)で両方の雲を切り取り、各点を <code style="color:#22d3bf">n</code> に射影した平均の差を返す。向きは <code style="color:#22d3bf">n</code> の指す側が正 —— <b>符号がそのまま「増えた / 減った」</b>になる。</p>

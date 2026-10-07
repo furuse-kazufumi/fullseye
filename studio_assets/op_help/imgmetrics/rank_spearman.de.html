@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">any × any</code> → <code style="color:#22d3bf">scalar</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import iqatid; iqatid.rank_spearman(x, y) -&gt; &#x27;float&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_spearman&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>Spearman の順位相関 ρ = 平均順位どうしの Pearson 相関(同順位があっても正しい形。古典式 1 − 6Σd²/(n(n²−1)) は同順位が無いときだけ一致)。単調増加で 1、反転で −1。どちらかが定数なら <code style="color:#22d3bf">nan</code>(順位の分散が 0、相関は定義されない)。±inf は順序だけ使う(完全一致の PSNR = inf を落とさない)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ不一致・2 未満・nan。</p>
+<p>Spearmans Rangkorrelation ρ = Pearson-Korrelation zwischen mittleren Rängen (die Form, die auch bei Bindungen korrekt ist; die klassische Formel 1 − 6Σd²/(n(n²−1)) stimmt nur ohne Bindungen überein). 1 bei monoton steigend, −1 bei Umkehrung. Ist eine Seite konstant, <code style="color:#22d3bf">nan</code> (Varianz der Ränge ist 0, die Korrelation ist nicht definiert). ±inf wird nur über seine Reihenfolge verwendet (ein PSNR = inf bei exakter Übereinstimmung wird nicht verworfen). <b>Raises</b> <code style="color:#22d3bf">ValueError</code>: Längen ungleich, weniger als 2, nan.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">Leitfaden zur Familie image_difference_metrics</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Referenzen (Beispieldaten, Literatur)</h3>

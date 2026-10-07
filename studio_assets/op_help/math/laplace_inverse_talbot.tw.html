@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">signal × signal × signal</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import mathtransforms; mathtransforms.laplace_inverse_talbot(num, den, t, *, M: &#x27;int&#x27; = 32) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsmath.get(&quot;laplace_inverse_talbot&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>有理関数 F(s) = num(s)/den(s) の数値逆ラプラス変換(固定 Talbot 法)。</p>
+<p>有理函數 F(s) = num(s)/den(s) 的數值逆拉普拉斯轉換(固定 Talbot 法)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>厳密解は <code style="color:#22d3bf">tf_impulse_response</code> が行列指数で出すので、<b>2 つの独立な経路で同じ f(t) が出るか</b>がこの op の検算になる。任意の F(s)(1/√s など)は <code style="color:#22d3bf">laplace_inverse_func</code> へ。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">該族通用的輸入契約(fail-closed)</h3>
 <p>mathops 的每個運算子都先檢驗輸入再計算(不讓任何東西無聲通過):</p>

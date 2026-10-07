@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">table × text</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線分の表を G-code(G21 / G90 / M82、G1 の絶対座標と絶対 E)に書く。返りは書いたパス(<code style="color:#22d3bf">text</code>)。</p>
+<p>선분 표를 G-code(G21 / G90 / M82, G1의 절대 좌표와 절대 E)로 쓴다. 반환은 쓴 경로(<code style="color:#22d3bf">text</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">gcode_read</code> と往復できる(層は <code style="color:#22d3bf">;LAYER:n</code> で書く)。移動だけの線分は E を進めない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 패밀리 가이드</a></p>

@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_ensemble_correlate(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">flow2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_ensemble_correlate.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_ensemble_correlate</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>相関マップを<b>足してから</b>ピークを探す(アンサンブル相関)。</p>
+<p>将相关图<b>相加之后</b>再寻找峰值(集成相关)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>粒子が少ない・雑音が多い場合、1 対ずつ測って平均すると<b>外れたベクトルの平均</b>になる。相関の段階で足すと、弱いピークが同じ場所に積み上がって立ち上がる。定常流(全対で変位が同じ)が前提。</p>
 <p>Args:</p>
 <p>images: 2 枚以上の画像の列。連続する対 <code style="color:#22d3bf">(k, k+1)</code> を使う。</p>

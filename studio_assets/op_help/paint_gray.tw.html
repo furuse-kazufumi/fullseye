@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:此運算子有 2 個輸入,<code style="color:#22d3bf">fullseye.apply</code> 無法呼叫它(那是單張影像的模型)。<code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;paint_gray&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code>(以 <code style="color:#22d3bf">$</code> 開頭的名稱是從外部傳入的輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">paint_gray</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>第 2 画像(source)の濃淡を第 1 画像へ塗り込む。HALCON の <code style="color:#22d3bf">paint_gray</code> に相当。★塗る範囲は source の<b>非ゼロ画素すべて</b>(この層の約束「定義域の外は 0」に合わせた)。2026-09-03 までは <code style="color:#22d3bf">&gt; 0.5</code> の画素だけを塗っていたため、<b>暗い source が消えていた</b>。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>把第 2 張影像(source)的灰階塗入第 1 張影像。相當於 HALCON 的 <code style="color:#22d3bf">paint_gray</code>。★塗入範圍是 source 的<b>所有非零像素</b>(與本層「定義域之外為 0」的約定一致)。直到 2026-09-03 為止只塗 <code style="color:#22d3bf">&gt; 0.5</code> 的像素，因此<b>暗的 source 會消失</b>。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

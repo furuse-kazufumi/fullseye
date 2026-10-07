@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">signal × signal</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_quantum_efficiency(mu_p, mu_y, mu_y_dark, mu_y_sat, K)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_quantum_efficiency&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>応答(特性曲線)の傾きから量子効率 η を出す(式 49・52)。</p>
+<p>由响应(特性曲线)的斜率求出量子效率 η(式 49、52)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>*mu_p*: 露光段ごとの画素あたりの平均光子数(照度計と露光時間から: μ_p = A E t_exp λ/(hc))。R = μ_y − μ_y.dark を μ_p に当てた直線(<b>切片 0 に固定</b>)の傾き、η = R/K。使う点は飽和の 0〜70 %。</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;eta&quot;, &quot;responsivity&quot;, &quot;n_points&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さが違う / 0〜70 % に 2 点未満 / K が正でない / 応答が正でない。</p>

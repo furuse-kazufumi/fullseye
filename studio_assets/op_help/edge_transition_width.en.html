@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/edge_transition_width.inputs.jpg">edge_transition_width: other inputs</a> <span style="color:#8b91a0;font-size:11px">(docs site)</span></p>
 <p>*The 4th column is a colour (H,W,3) input. This op handles colour without crossing channels (it does not convolve the colour channel as a third spatial axis).*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p><b>エッジの遷移幅</b>(= その場の実効 PSF の広がり)を画素単位で測る。</p>
+<p>Measures the <b>edge transition width</b> (= the spread of the effective PSF at that location) in pixels.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><code style="color:#22d3bf">a</code> が測定窓の一辺を <code style="color:#22d3bf">3,5,7,9</code>(<code style="color:#22d3bf">_k(a)</code>)に振る。<code style="color:#22d3bf">b</code> が振幅と勾配の推定量を</p>
 <p>選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は窓内の<b>最大 − 最小</b>(素直・鋭いが外れ値に弱い)、<code style="color:#22d3bf">b &gt; 0.5</code> は<b>分位点</b>で、<code style="color:#22d3bf">b</code> を上げるほど分位が 90/10 から 60/40 へ寄って雑音に鈍くなる(そのぶん段差も丸まる = 取引になっている)。</p>
 <p>幅 ≒ 局所の振幅 ÷ 局所の最大勾配。段差が 1 画素で立ち上がれば幅は 1 付近、ぼけて 5 画素かけて立ち上がれば 5 付近になる。ぼけを<b>作る</b> <code style="color:#22d3bf">simulate_defocus</code> の対で、こちらは<b>測る</b>側。合焦判定・モーションブラー量・解像限界・文字が読める大きさかの判定に使える。</p>

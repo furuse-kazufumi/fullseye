@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">depth</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import demops; demops.dem_stream_network(dem, cell_size, threshold_cells=100.0, fill=True, nodata=&#x27;error&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsdem.get(&quot;dem_stream_network&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>集水量が閾値を超えたセルを河道とみなす二値マスク。</p>
+<p>Binary mask that treats cells whose flow accumulation exceeds a threshold as stream channels.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>手順: <code style="color:#22d3bf">dem_flow_accumulation(dem, cell_size, fill, nodata)</code> で各セルの集水セル数(自セルを 1 と数える)を取り、<code style="color:#22d3bf">acc &gt;= threshold_cells</code> を 1、それ以外を 0 にする。欠測セルは <code style="color:#22d3bf">nan</code> のまま。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">threshold_cells</code>: 河道とみなす集水セル数。正の有限値(<code style="color:#22d3bf">ValueError</code>)。面積で決めたいなら <code style="color:#22d3bf">面積 [m^2] / cell_size^2</code> に換算して渡す(この op はセル数しか受けない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">fill=True</code>(既定): 先に priority-flood(<code style="color:#22d3bf">dem_fill_sinks</code>、<code style="color:#22d3bf">epsilon=1e-6</code>)で窪地を埋める。埋めないと窪地で流れが止まり、下流の集水量が小さく出て河道が途切れる。</p>

@@ -4,8 +4,8 @@
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import acoustics; acoustics.gcc_delay(a, b, rate=1.0, weight=&#x27;phat&#x27;, band=None, interpolate=True)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsacoustics.get(&quot;gcc_delay&quot;)</code>)</p>
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.gcc_delay(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">measurement</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.gcc_delay.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">acoustics.gcc_delay</code> 를 직접 호출하세요.</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>2 チャンネルの<b>到達時間差</b>を一般化相互相関(GCC)で測る。→ <code style="color:#22d3bf">(delay, table)</code>。</p>
+<p>2채널의 <b>도달 시간차</b>를 일반화 상호상관(GCC)으로 측정한다. → <code style="color:#22d3bf">(delay, table)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>漏水の位置決め、音源の方向、超音波の肉厚、振動の伝搬 —— どれも「同じ源が 2 か所にいつ着いたか」の差で決まる。この op はその差を<b>秒</b>(<code style="color:#22d3bf">rate</code> が既定 1.0 なら標本)で返す。位置に直すには経路長と伝搬速度を掛ける(<code style="color:#22d3bf">x = (L - c·delay) / 2</code> の形)。</p>
 <p>★<b>速度の仮定がそのまま位置の誤差になる</b>。相関がどれだけ綺麗でも、掛ける速度が 10 % 違えば位置は経路の中心からの距離に比例してずれる(<code style="color:#22d3bf">poc_leak_localization</code> の</p>
 <p>実測: 中心から 18 m の漏水で +1.798 m、幾何の予測 1.800 m)。相関の質と位置の正しさは<b>別の量</b>なので、報告では分けること。</p>

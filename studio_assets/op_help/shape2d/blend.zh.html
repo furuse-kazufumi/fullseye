@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">image2d × image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blend(a, b, alpha)</code>(要直接调用实现,<code style="color:#22d3bf">import imagemorph; imagemorph.blend(a, b, alpha)</code>;从台账取用则 <code style="color:#22d3bf">opsshape2d.get(&quot;blend&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>クロスディゾルブ (1-alpha)·a + alpha·b(a,b は同 shape・[0,1])。</p>
+<p>交叉溶解 (1-alpha)·a + alpha·b(a、b 形状相同，取值 [0,1])。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>画素ごとの線形補間。対応点でのワープは<b>しない</b>ので、目や輪郭がずれた 2 枚では二重像になる ―― 特徴を 1 つに重ねたいなら <code style="color:#22d3bf">morph</code>。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code>: <code style="color:#22d3bf">(H, W)</code> または <code style="color:#22d3bf">(H, W, C)</code>、同じ形。float64 に変換する。<b>NaN は 0、+Inf は 1、-Inf は 0 に無言で置き換える</b>(例外は出ない)。値域の検査はせず、結果を <code style="color:#22d3bf">[0, 1]</code> にクリップするだけなので、0〜255 の画像を渡すと白飛びした絵が返る。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">alpha</code>: 合成比。<code style="color:#22d3bf">[0, 1]</code> に<b>無言でクリップ</b>(0 で <code style="color:#22d3bf">a</code>、1 で <code style="color:#22d3bf">b</code>)。</p>

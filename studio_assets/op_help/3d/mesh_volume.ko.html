@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">mesh</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mesh_props; mesh_props.mesh_volume(mesh) -&gt; &#x27;float&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;mesh_volume&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>閉じた三角形メッシュが囲む<b>符号付き体積</b> → float。</p>
+<p>닫힌 삼각형 메시가 둘러싸는 <b>부호 있는 부피</b> → float.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>発散定理(divergence theorem)で <code style="color:#22d3bf">V = (1/6)·Σ v0 · (v1 × v2)</code>。面の巻き順が外向き(右手系)なら正、内向きなら負になる —— <b>符号は向きの検査そのもの</b>で、負が返ったら法線が裏返っている。</p>
 <p>Args:</p>
 <p>mesh: <code style="color:#22d3bf">(vertices (N,3), faces (M,3))</code> のタプル。</p>

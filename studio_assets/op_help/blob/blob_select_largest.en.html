@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_select_largest(labels: &#x27;Any&#x27;, count: &#x27;int&#x27; = 1) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_select_largest&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>面積の大きい順に <code style="color:#22d3bf">count</code> 個だけ残す(<b>番号は面積の降順に振り直す</b>)。</p>
+<p>Keeps only <code style="color:#22d3bf">count</code> objects in order of decreasing area (<b>the numbers are reassigned in descending order of area</b>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>同じ面積が並んだときは元の番号が小さいほうを先にする(実行ごとに順序が変わらないよう <code style="color:#22d3bf">argsort</code> を安定ソートで固定してある)。<code style="color:#22d3bf">count</code> が物体数より多くても<b>あるだけ</b>返す(足りないことを例外にはしない —— 「上位 3 個」を頼んで 2 個しか無いのは異常ではない)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideblob:blob_analysis">blob_analysis family guide</a></p>

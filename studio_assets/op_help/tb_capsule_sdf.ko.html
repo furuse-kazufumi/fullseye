@@ -13,8 +13,8 @@
 <p><b>움직임</b>(GIF: 프레임 / 시점 / 슬라이스를 차례로. 정지 그림이 완성형이고 GIF는 보조):</p>
 <p><img src="fig/tb_capsule_sdf.gif" alt="tb_capsule_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>線分 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> を半径 <code style="color:#22d3bf">radius</code> で太らせたカプセルの<b>厳密</b>な符号付き距離場。</p>
+<p>선분 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code>를 반경 <code style="color:#22d3bf">radius</code>로 두껍게 한 캡슐의 <b>엄밀한</b> 부호 거리장.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">measurehandle</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code> (to call the implementation directly, <code style="color:#22d3bf">import measuring1d; measuring1d.gen_measure_rectangle2(row, col, phi, length1, length2, shape)</code>; from the registry, <code style="color:#22d3bf">opsmeasure1d.get(&quot;gen_measure_rectangle2&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>回転測定矩形(長軸 <code style="color:#22d3bf">phi</code> 方向に 1 px 間隔でプロファイルを取る)を定義(gen_measure_rectangle2)。サンプル数 n = round(2*length1)+1、始点は中心から -(n-1)/2 px の位置。<code style="color:#22d3bf">length2</code> は幅方向の平均化幅 [px]。</p>
+<p>Defines a rotated measurement rectangle (the profile is sampled at 1 px spacing along the major axis in direction <code style="color:#22d3bf">phi</code>) (gen_measure_rectangle2). Number of samples n = round(2*length1)+1; the start point lies -(n-1)/2 px from the center. <code style="color:#22d3bf">length2</code> is the averaging width across the profile [px].</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidemeasure1d:subpixel_measuring">subpixel_measuring family guide</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">References (sample data, literature)</h3>

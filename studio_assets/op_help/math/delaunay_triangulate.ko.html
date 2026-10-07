@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import mathgeometry; mathgeometry.delaunay_triangulate(points) -&gt; &#x27;dict&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsmath.get(&quot;delaunay_triangulate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>平面 (N, 2) の三角形分割、または空間 (N, 3) の四面体分割(Delaunay、scipy.spatial = Qhull)。</p>
+<p>평면 (N, 2)의 삼각 분할 또는 공간 (N, 3)의 사면체 분할(Delaunay, scipy.spatial = Qhull).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>返り値 <code style="color:#22d3bf">{&quot;simplices&quot;, &quot;hull&quot;, &quot;n_simplices&quot;, &quot;circumcenters&quot;, &quot;circumradii&quot;, &quot;dim&quot;}</code>(2-D では <code style="color:#22d3bf">triangles</code> / <code style="color:#22d3bf">n_triangles</code> も同じ中身で返す)。外接円・外接球は描画・Voronoi 用。</p>
 <p>門: <b>どの外接円(球)の中にも他の点が無い</b>(空円性。2-D は既存の <code style="color:#22d3bf">is_delaunay_2d</code> も真値)/ 2-D の三角形の数は 2n − h − 2(h = 凸包の頂点数)/ 3-D の四面体の集まりは凸な塊なので V − E + F − T = 1(Euler)。共円・共球の点が多いと分割は一意でない(どれも Delaunay)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">패밀리 공통 입력 계약(fail-closed)</h3>

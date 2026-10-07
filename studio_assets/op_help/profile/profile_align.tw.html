@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>經台帳呼叫的回傳值</b>: <code style="color:#22d3bf">fullseye.ledger.profile_align(...)</code> 只回傳<b>宣告的 out 型別 <code style="color:#22d3bf">pairs</code> 的值</b>(底層函式還會回傳輔助資訊)。需要被捨棄的部分時,請用 <code style="color:#22d3bf">fullseye.ledger.profile_align.raw(...)</code>,或直接呼叫 <code style="color:#22d3bf">profileops.profile_align</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底層回傳: <code style="color:#22d3bf">(aligned, info) -&gt; pairs</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>測った輪郭を設計輪郭へ合わせる。返りは <code style="color:#22d3bf">(aligned, info)</code>。</p>
+<p>將量測輪廓對準設計輪廓。回傳 <code style="color:#22d3bf">(aligned, info)</code>。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">mode</code> は <code style="color:#22d3bf">ALIGN_MODES</code>。<b>相似(スケール推定)は提供しない</b> —— 大きさの誤差そのものを吸収してしまうため(モジュール docstring の実測表)。</p>
 <p>Returns:</p>
 <p><code style="color:#22d3bf">(aligned (N, 2), info)</code>。<code style="color:#22d3bf">info</code> は <code style="color:#22d3bf">mode</code> / <code style="color:#22d3bf">angle_deg</code> /</p>

@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">measurement</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.mtf50(sfr)</code> (to call the implementation directly, <code style="color:#22d3bf">import edgesfr; edgesfr.mtf50(sfr)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;mtf50&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>SFR(pairs: 周波数, 値)が 0.5 を<b>最初に</b>切る周波数(直線補間)。0.5 を切らなければ <code style="color:#22d3bf">ValueError</code> (「測れる範囲の上まで 0.5 以上」を最大値として黙って返さない)。</p>
+<p>The frequency at which the SFR (pairs: frequency, value) <b>first</b> drops below 0.5 (linear interpolation). If it never drops below 0.5, <code style="color:#22d3bf">ValueError</code> (it does not silently return &quot;0.5 or above up to the top of the measurable range&quot; as the maximum value).</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>
 <p style="margin:2px 0 2px 12px">• <b>Units are baked into the argument name</b> — <code style="color:#22d3bf">_mm</code> / <code style="color:#22d3bf">_um</code> / <code style="color:#22d3bf">_deg</code> / <code style="color:#22d3bf">_mrad</code>. Confusing mm with µm does not crash; it yields a plausible-looking wrong answer, so the name prevents it. Nothing here guesses the unit from the magnitude.</p>

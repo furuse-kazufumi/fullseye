@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import mathspectral; mathspectral.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsmath.get(&quot;esprit_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>ESPRIT(Roy &amp; Kailath 1989): アレイの「1 素子ずらし」の不変性から、格子を使わずに向きを解く。</p>
+<p>ESPRIT(Roy &amp; Kailath 1989)：利用阵列“平移 1 个阵元”的不变性，不使用网格直接解出方向。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>信号部分空間 E_s の上 M−1 行と下 M−1 行を最小二乗で結ぶ Φ の固有値 λ_k = exp(−2πi d sin θ_k) から θ_k = arcsin(−arg λ_k / (2π d))。雑音なし・無相関なら厳密(格子の分解能に縛られない)。<code style="color:#22d3bf">n_sources=None</code> なら MDL で推定する。返り値 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>
 <p>mathops 的每个算子都先校验输入再计算(不让任何东西无声通过):</p>

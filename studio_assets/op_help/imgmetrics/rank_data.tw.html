@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">any</code> → <code style="color:#22d3bf">any</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.rank_data(x) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;rank_data&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>平均順位(1 始まり)。同順位は同じ値の順位の平均(scipy.stats.rankdata の &#x27;average&#x27; と同じ定義)。</p>
+<p>平均等級(從 1 開始)。同等級者取其等級的平均(與 scipy.stats.rankdata 的 &#x27;average&#x27; 定義相同)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>例: [10, 20, 20, 30] → [1, 2.5, 2.5, 4]。±inf は最大 / 最小の順位(互いに同順位)。<b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 長さ 2 未満・nan。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>

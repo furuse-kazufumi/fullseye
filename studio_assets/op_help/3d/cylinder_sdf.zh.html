@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">coordgrid</code> → <code style="color:#22d3bf">sdf</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.cylinder_sdf(grid, center, axis, radius, height)</code>(要直接调用实现,<code style="color:#22d3bf">import sdf_ops; sdf_ops.cylinder_sdf(grid, center, axis, radius, height)</code>;从台账取用则 <code style="color:#22d3bf">ops3d.get(&quot;cylinder_sdf&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>有限長の円柱(両端が平らな蓋)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>有限长圆柱(两端为平盖)的<b>精确</b>有符号距离场(内侧为负、外侧为正)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

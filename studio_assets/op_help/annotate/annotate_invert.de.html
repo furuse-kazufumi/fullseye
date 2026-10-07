@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d × mask</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code> (die Implementierung direkt: <code style="color:#22d3bf">import annotate; annotate.annotate_invert(img, mask, draw=&#x27;fill&#x27;, width=1.5, mode=&#x27;complement&#x27;, alpha=1.0, bits=128, min_contrast=1.5, on_invisible=&#x27;warn&#x27;)</code>; aus dem Register: <code style="color:#22d3bf">opsannotate.get(&quot;annotate_invert&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>領域(region)を<b>反転色</b>で塗る/縁取る。</p>
+<p>Füllt / umrandet eine Region (region) in <b>invertierter Farbe</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>「地が明るいか暗いか判らないので、どちらでも見える色で描きたい」というときの古典手。塗り色を決めずに済むかわりに、<b>中間調で消える</b>ので <code style="color:#22d3bf">annotate_invert_visibility</code> の測定を内側で必ず通す。</p>
 <p>★<b>地がモノクロ(グレー)なら、まず彩度のある色を検討すること</b>。灰色には彩度が無いので、彩度のある色はどの階調とも<b>色相で</b>区別がつく —— 反転色より確実で、しかも「これは重ねた線だ」と一目で判る(<code style="color:#22d3bf">annotate_outline</code> / <code style="color:#22d3bf">overlay_mask</code> に役割色を渡す)。反転色が本領を発揮するのは、地がカラーで<b>どの色を選んでも衝突しうる</b>とき。</p>
 <p>なお <code style="color:#22d3bf">annotate_invert_visibility</code> が測るのは WCAG の<b>輝度</b>比なので、「輝度は同じだが色相が違う」ような見え方は評価できない —— 色で描くなら、この op の数字は当てにしないこと。</p>

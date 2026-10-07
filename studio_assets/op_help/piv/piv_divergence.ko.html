@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">flow2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.piv_divergence(flow, spacing=1.0)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import pivops; pivops.piv_divergence(flow, spacing=1.0)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opspiv.get(&quot;piv_divergence&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>発散 <code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>。<b>非圧縮なら 0</b> —— 独立な検算に使える。</p>
+<p>발산 <code style="color:#22d3bf">d(dy)/dy + d(dx)/dx</code>. <b>비압축이면 0</b> —— 독립적인 검산에 쓸 수 있다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>式: <code style="color:#22d3bf">gradient(flow[0], spacing, axis=0) + gradient(flow[1], spacing, axis=1)</code> (<code style="color:#22d3bf">numpy.gradient</code>: 内部は中央差分、格子の端は片側差分)。<code style="color:#22d3bf">flow[0]</code> が行方向の変位 <code style="color:#22d3bf">dy</code>、<code style="color:#22d3bf">flow[1]</code> が列方向の変位 <code style="color:#22d3bf">dx</code>、<code style="color:#22d3bf">x</code> = 列、<code style="color:#22d3bf">y</code> = 行。行が下向きでも発散の符号は座標の向きに依らない(渦度 <code style="color:#22d3bf">piv_vorticity</code> とは違い、反転しない)。正 = 湧き出し、負 = 吸い込み。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">flow</code>: <code style="color:#22d3bf">(2, h, w)</code>、成分 <code style="color:#22d3bf">(dy, dx)</code> [px/frame] (<code style="color:#22d3bf">piv_cross_correlate</code> / <code style="color:#22d3bf">piv_multipass</code> の返り値)。<code style="color:#22d3bf">h, w &gt;= 2</code> でないと微分できないので <code style="color:#22d3bf">ValueError</code>(窓が大きすぎて 1 本しかベクトルが無い場合)。<b>有限性は検査しない</b> ―― <code style="color:#22d3bf">piv_replace_outliers(method=&quot;nan&quot;)</code> の NaN は隣接 2 セルへ広がる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">spacing</code>: ベクトル間隔 [px]、正の有限値。<code style="color:#22d3bf">info[&quot;step&quot;]</code> を渡す(既定 1.0 のままだと単位が「1/ベクトル間隔」になる)。</p>

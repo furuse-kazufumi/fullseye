@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Return value through the ledger</b>: <code style="color:#22d3bf">fullseye.ledger.surface_psd(...)</code> returns <b>only the declared out type <code style="color:#22d3bf">pairs</code></b> (the underlying function also returns auxiliary values). When you need what was dropped, use <code style="color:#22d3bf">fullseye.ledger.surface_psd.raw(...)</code> or call <code style="color:#22d3bf">roughness.surface_psd</code> directly.</p>
 <p style="margin:2px 0 2px 12px">• Underlying return: <code style="color:#22d3bf">(q, C) -&gt; (N,2)</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>高さ場のパワースペクトル密度。<code style="color:#22d3bf">(q, C)</code> を返す。<b>規約を引数で明示する。</b></p>
+<p>Power spectral density of the height field. Returns <code style="color:#22d3bf">(q, C)</code>. <b>The conventions are made explicit through the arguments.</b></p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>引数</p>
 <p>z       高さ場(平均は内部で引く。DC ビンは返さない)。</p>
 <p>dx, dy  標本間隔。<code style="color:#22d3bf">dy=None</code> は正方画素。</p>

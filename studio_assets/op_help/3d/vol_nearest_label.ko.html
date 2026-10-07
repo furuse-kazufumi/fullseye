@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">voxel</code> → <code style="color:#22d3bf">voxel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vol_nearest_label(vol_labels, spacing=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import volops; volops.vol_nearest_label(vol_labels, spacing=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">ops3d.get(&quot;vol_nearest_label&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>零 voxel に<b>最近の非零ラベル</b>を配ったラベル体積 <code style="color:#22d3bf">(D, H, W)</code>(ラベルのボロノイ分割、<code style="color:#22d3bf">voxel</code>)。</p>
+<p>0인 voxel에 <b>가장 가까운 0이 아닌 라벨</b>을 나눠 준 라벨 체적 <code style="color:#22d3bf">(D, H, W)</code>(라벨의 보로노이 분할, <code style="color:#22d3bf">voxel</code>).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>入力は整数ラベル(<code style="color:#22d3bf">vol_label</code> / <code style="color:#22d3bf">vol_rle_components</code> の出力、0 = 未割当)。各 0 voxel は物理距離(<code style="color:#22d3bf">spacing</code>)で最も近い非零 voxel のラベルを受け取り、非零 voxel はそのまま。EM の分割片や骨格の枝ラベルから「その枝が支配する体積」を切り出す(枝ごとの体積・肉厚)のに使う。非整数のラベルは拒否(丸めて別のラベルにしない)、非零が 1 つも無ければ ValueError。返りは int64。</p>
 <p>&gt;&gt;&gt; L = np.zeros((1, 1, 7)); L[0, 0, 0] = 1; L[0, 0, 6] = 2</p>
 <p>&gt;&gt;&gt; vol_nearest_label(L)[0, 0].tolist()</p>

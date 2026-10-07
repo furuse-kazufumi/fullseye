@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">image2d</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_nonmax_suppression(image, *, window, mask=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import vxcore; vxcore.vx_nonmax_suppression(image, *, window, mask=None)</code>; aus dem Register: <code style="color:#22d3bf">opsvx.get(&quot;vx_nonmax_suppression&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>非極大の抑制(3.39 節)。画素 (x, y) は、窓の中で<b>自分より前(上の行と、同じ行の左)の隣には ≥、後ろの隣には &gt;</b> のときだけ残る(REQ-0337)。平らな頂上が 1 画素だけ残るのはこの非対称のため。*mask* の非ゼロ画素は比べず、そのまま残す(他の画素の比較にも使わない、REQ-0336)。抑制した画素は U8 なら 0、S16 なら INT16_MIN(REQ-0335)。窓の外にはみ出す隣は比べない。</p>
+<p>Non-Maximum-Unterdrückung (Abschnitt 3.39). Ein Pixel (x, y) bleibt nur erhalten, wenn es im Fenster <b>≥ seinen vorangehenden Nachbarn (Zeile darüber und links in derselben Zeile) und &gt; seinen nachfolgenden Nachbarn</b> ist (REQ-0337). Wegen dieser Asymmetrie bleibt auf einem flachen Gipfel genau 1 Pixel übrig. Pixel ungleich null in *mask* werden nicht verglichen und unverändert beibehalten (auch nicht für den Vergleich anderer Pixel verwendet, REQ-0336). Unterdrückte Pixel werden bei U8 zu 0, bei S16 zu INT16_MIN (REQ-0335). Nachbarn außerhalb des Fensters werden nicht verglichen.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>*window*(必須): 奇数の窓の一辺(3, 5, …)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: U8/S16 の 2-D でない / window が 3 以上の奇数でない / mask の形が違う。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">image2d × pairs × pairs</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import imagemorph; imagemorph.warp_piecewise_affine(img, src_pts, dst_pts, order=1)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshape2d.get(&quot;warp_piecewise_affine&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>img の src_pts にある内容を dst_pts へ動かす区分アフィンワープ。</p>
+<p>img의 src_pts에 있는 내용을 dst_pts로 옮기는 구간별 아핀 워프.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>dst_pts を Delaunay 三角形分割し、各出力画素が属す三角形の重心座標を求め、同じ重心座標で src_pts 側の対応三角形へ写して逆写像サンプルする。凸包の外側(三角形に属さない画素)は恒等(元位置)でサンプルするため、四隅を対応点に含める(<code style="color:#22d3bf">add_frame_corners</code>)と穴なく画像全体を覆える。</p>
 <p>引数:</p>
 <p>img: (H,W) か (H,W,C)、[0,1]。</p>

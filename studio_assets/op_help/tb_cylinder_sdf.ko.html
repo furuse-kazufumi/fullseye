@@ -13,8 +13,8 @@
 <p><b>움직임</b>(GIF: 프레임 / 시점 / 슬라이스를 차례로. 정지 그림이 완성형이고 GIF는 보조):</p>
 <p><img src="fig/tb_cylinder_sdf.gif" alt="tb_cylinder_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>有限長の円柱(両端が平らな蓋)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p>유한 길이 원기둥(양 끝이 평평한 뚜껑)의 <b>엄밀한</b> 부호 거리장(안쪽 음, 바깥쪽 양).</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

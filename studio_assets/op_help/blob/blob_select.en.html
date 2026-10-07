@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">labels2d</code> → <code style="color:#22d3bf">labels2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import blob2d; blob2d.blob_select(labels: &#x27;Any&#x27;, feature: &#x27;str&#x27;, vmin: &#x27;Optional[float]&#x27; = None, vmax: &#x27;Optional[float]&#x27; = None, spacing: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>; from the registry, <code style="color:#22d3bf">opsblob.get(&quot;blob_select&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>特徴量が <code style="color:#22d3bf">[vmin, vmax]</code> に入る物体だけ残す(<b>番号は 1 から振り直す</b>)。</p>
+<p>Keeps only the objects whose feature value lies in <code style="color:#22d3bf">[vmin, vmax]</code> (<b>the numbers are reassigned starting from 1</b>).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <h4 style="color:#17b8a6;margin:6px 0 2px 0">Parameters</h4>
 <p>labels : array_like</p>
 <p><code style="color:#22d3bf">blob_label</code> の出力。</p>

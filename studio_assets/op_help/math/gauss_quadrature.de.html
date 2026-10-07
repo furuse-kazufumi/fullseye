@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">keine</code> → <code style="color:#22d3bf">table</code> (ein Operator, der allein durch seine Argumente bestimmt ist — er nimmt kein Bild und keine Daten entgegen)</p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import mathnumerics; mathnumerics.gauss_quadrature(n: &#x27;int&#x27;, kind: &#x27;str&#x27; = &#x27;legendre&#x27;, a: &#x27;float | None&#x27; = None, b: &#x27;float | None&#x27; = None) -&gt; &#x27;dict&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsmath.get(&quot;gauss_quadrature&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>n 点の Gauss 求積の節点と重み。∫ f ≈ Σ w_k f(x_k)。</p>
+<p>Knoten und Gewichte der n-Punkt-Gauß-Quadratur. ∫ f ≈ Σ w_k f(x_k).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>n 点で <b>2n−1 次までの多項式を厳密に</b>積分する(等間隔の台形則は 1 次まで)。<code style="color:#22d3bf">kind=&quot;legendre&quot;</code> は区間 [a, b] へ写せる(既定 [−1, 1])。他の kind は重み関数込みの積分(<code style="color:#22d3bf">integral</code> 参照)。</p>
 <p>門: 2n−1 次の単項式は厳密、2n 次は厳密でない(両向き)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Familienweiter Eingabevertrag (fail-closed)</h3>

@@ -13,8 +13,8 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/contour_to_img.inputs.jpg">contour_to_img: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>XLD 輪郭を<b>その輪郭自身の座標系に描き戻す</b> —— 43 本の op が作るのに、画像に落とせる op は 1 本も無かった。</p>
+<p>XLD 윤곽을 <b>그 윤곽 자신의 좌표계에 다시 그린다</b> — 43개의 op가 윤곽을 만드는데도 영상으로 떨어뜨릴 수 있는 op는 1개도 없었다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>図の生成器は輪郭を折れ線で描いているが、それは<b>道具の中の実装</b>で登録 op からは呼べない(<code style="color:#22d3bf">fullseye.apply</code> にも Studio にも出てこない)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 線の太さ <code style="color:#22d3bf">1 + int(2a)</code>(1〜3 画素)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 濃さの付け方。<code style="color:#22d3bf">b &lt; 0.5</code> は<b>全部同じ濃さ</b>、<code style="color:#22d3bf">b &gt;= 0.5</code> は <b>点数の多い輪郭ほど濃く</b>(順位で 0.15〜0.85 に割り振る)。どれが主要な輪郭かが一目で分かる。</p>

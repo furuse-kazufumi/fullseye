@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/local_bimodality.inputs.jpg">local_bimodality: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><b>局所の二峰性</b>(bimodality coefficient)。閾値を 1 つも選ばずに「ここは 2 つの値に分かれているか」だけを 0〜1 の地図で返す。</p>
+<p><b>局部雙峰性</b>(bimodality coefficient)。連 1 個閾值都不選取，僅以 0〜1 的圖回傳「此處是否分成 2 個值」。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">a</code> が窓の一辺を <code style="color:#22d3bf">9, 15, 25, 41</code> に振る(大きいほど推定は安定するが、細い構造は周りに溶ける)。<code style="color:#22d3bf">b</code> が<b>コントラストの床</b>を <code style="color:#22d3bf">max(1e-5, 0.25b x 画像の値域)</code> に振る ―― 窓の標準偏差がこれ未満なら 0 を返す(b=0 でも 1e-5 の絶対床は残る)。</p>
 <p><code style="color:#22d3bf">BC = (歪度^2 + 1) / 尖度</code> で、窓の 1〜4 次モーメント(箱型平均 4 回)だけから閉形式に出る。<b>平行移動にもスケールにも不変</b>なので、薄い模様でも濃い模様でも同じ値になる。参照値は解析解で決まっていて、実測もそこへ収束する(窓 41):</p>
 <p style="margin:2px 0 2px 12px">• <b>2 点分布(半々の 2 値)= 1.0</b>(尖度 1 が下限)―― 段差の真上で実測 1.0000</p>

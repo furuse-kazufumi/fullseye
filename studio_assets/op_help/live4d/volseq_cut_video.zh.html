@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">volseq</code> → <code style="color:#22d3bf">video</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import live4d; live4d.volseq_cut_video(volseq, plane: &#x27;str&#x27; = &#x27;xy&#x27;, position: &#x27;float&#x27; = 0.5) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opslive4d.get(&quot;volseq_cut_video&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>体積時系列を 1 枚の断面で切った動画 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
+<p>用一张截面切开体积时间序列得到的视频 <code style="color:#22d3bf">(T, H, W)</code>(<code style="color:#22d3bf">video</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">plane</code> は <code style="color:#22d3bf">&quot;xy&quot;</code>(z を固定)/ <code style="color:#22d3bf">&quot;xz&quot;</code>(y を固定)/ <code style="color:#22d3bf">&quot;yz&quot;</code>(x を固定)、<code style="color:#22d3bf">position</code> は固定する軸に沿った相対位置 [0, 1]。断面は最大値投影と違って重なりを失わないが、断面から外れた動きは見えない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guidelive4d:live4d">live4d 族使用指南</a></p>

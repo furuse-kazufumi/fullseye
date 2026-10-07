@@ -13,8 +13,8 @@
 <p><b>Bewegung</b> (GIF: Bilder / Ansichten / Schnitte nacheinander. Die stehende Abbildung ist die vollständige; das GIF ist ergänzend):</p>
 <p><img src="fig/tb_cylinder_sdf.gif" alt="tb_cylinder_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>有限長の円柱(両端が平らな蓋)の<b>厳密</b>な符号付き距離場(内側負・外側正)。</p>
+<p><b>Exaktes</b> vorzeichenbehaftetes Distanzfeld eines Zylinders endlicher Länge (flache Deckel an beiden Enden) (innen negativ, außen positiv).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>軸方向の距離 <code style="color:#22d3bf">t</code> と軸からの半径 <code style="color:#22d3bf">r</code> に分け、<code style="color:#22d3bf">q = (r - radius, |t| - height/2)</code> として <code style="color:#22d3bf">outside = ‖max(q, 0)‖</code>、<code style="color:#22d3bf">inside = min(max(q), 0)</code>、<code style="color:#22d3bf">sdf = outside + inside</code>。これは <code style="color:#22d3bf">box_sdf</code> と同じ Quilez 流の構成を「(半径, 軸)の 2-D 断面」に適用したもので、側面・蓋・角(縁)のいずれに対しても真のユークリッド距離になる。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

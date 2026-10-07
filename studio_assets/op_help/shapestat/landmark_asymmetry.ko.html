@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">points</code> → <code style="color:#22d3bf">signal</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import shapestats; shapestats.landmark_asymmetry(landmarks, pairs=None, plane=None)</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsshapestat.get(&quot;landmark_asymmetry&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>左右の対ごとの<b>符号つき</b>非対称量。→ <code style="color:#22d3bf">(M,)</code>。</p>
+<p>좌우 쌍마다의 <b>부호 있는</b> 비대칭량. → <code style="color:#22d3bf">(M,)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>各対について、片方を面で鏡映してもう片方と比べ、面の法線方向の差を返す。符号は「右が外側なら正」(<code style="color:#22d3bf">mirror_plane_from_pairs</code> が法線をその向きに揃えている)。<b>絶対値にまとめない</b> —— 左右どちらが張り出しているかは臨床でも検査でも意味が違う。</p>
 <p><code style="color:#22d3bf">pairs=None</code> / <code style="color:#22d3bf">plane=None</code> はどちらも <code style="color:#22d3bf">mirror_plane_from_pairs</code> と同じ既定(前半/後半の対、その対から出した正中面)。<b>面を省くと、面自体が同じ対から決まる</b>ので「面を決めた材料で面からのずれを測る」ことになる —— それでも左右差は測れる(中点は定義上どちらの側にも寄らない)が、別の情報源から面が決まるなら渡したほうが強い。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>

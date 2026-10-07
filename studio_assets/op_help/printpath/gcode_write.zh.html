@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">table × text</code> → <code style="color:#22d3bf">text</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import printpath; printpath.gcode_write(table: &#x27;Any&#x27;, path: &#x27;str&#x27;, layer_tags: &#x27;bool&#x27; = True) -&gt; &#x27;str&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_write&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>線分の表を G-code(G21 / G90 / M82、G1 の絶対座標と絶対 E)に書く。返りは書いたパス(<code style="color:#22d3bf">text</code>)。</p>
+<p>把线段表写成 G-code(G21 / G90 / M82，G1 的绝对坐标与绝对 E)。返回写入的路径(<code style="color:#22d3bf">text</code>)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p><code style="color:#22d3bf">gcode_read</code> と往復できる(層は <code style="color:#22d3bf">;LAYER:n</code> で書く)。移動だけの線分は E を進めない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>

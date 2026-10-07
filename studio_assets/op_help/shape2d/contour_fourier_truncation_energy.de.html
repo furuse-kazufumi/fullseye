@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_truncation_energy(spectrum, orders=None)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_truncation_energy(spectrum, orders=None)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_truncation_energy&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>打ち切り次数ごとの<b>予言される</b>誤差(<code style="color:#22d3bf">table</code>)—— パーセバルの厳密式。</p>
+<p>Der <b>vorhergesagte</b> Fehler je Abbruchordnung (<code style="color:#22d3bf">table</code>) — Parsevals exakte Formel.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>次数 <code style="color:#22d3bf">K</code> で打ち切った再構成 <code style="color:#22d3bf">z^K</code> について、標本上の二乗平均誤差は <code style="color:#22d3bf">mean|z - z^K|^2 = Σ_{|k| &gt; K} |c_k|^2</code> に<b>厳密に等しい</b>。だから再構成を 1 度もせずに「何項あれば何画素まで似るか」を先に言える。</p>
 <p>★<b>予言が厳密なのは、係数列が完全なときだけ</b>である(<code style="color:#22d3bf">contour_fourier_complex</code> を <code style="color:#22d3bf">n_harmonics=None</code> で呼んだ場合)。打ち切った係数列を渡されると、捨てられた側のエネルギーは<b>知りようがない</b>ので、返る誤差は<b>下界</b>になる —— 過小に見える誤差を「厳密」と言わないために、ここに書いておく。</p>
 <p>返り値: dict(<code style="color:#22d3bf">table</code>)</p>

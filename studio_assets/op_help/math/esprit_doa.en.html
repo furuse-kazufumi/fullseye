@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">matrix</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code> (to call the implementation directly, <code style="color:#22d3bf">import mathspectral; mathspectral.esprit_doa(X, n_sources: &#x27;int | None&#x27; = None, *, spacing: &#x27;float&#x27; = 0.5) -&gt; &#x27;dict&#x27;</code>; from the registry, <code style="color:#22d3bf">opsmath.get(&quot;esprit_doa&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ESPRIT(Roy &amp; Kailath 1989): アレイの「1 素子ずらし」の不変性から、格子を使わずに向きを解く。</p>
+<p>ESPRIT (Roy &amp; Kailath 1989): solves for the directions without a grid, from the array&#x27;s invariance under a &quot;shift by 1 element&quot;.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>信号部分空間 E_s の上 M−1 行と下 M−1 行を最小二乗で結ぶ Φ の固有値 λ_k = exp(−2πi d sin θ_k) から θ_k = arcsin(−arg λ_k / (2π d))。雑音なし・無相関なら厳密(格子の分解能に縛られない)。<code style="color:#22d3bf">n_sources=None</code> なら MDL で推定する。返り値 <code style="color:#22d3bf">{&quot;doa_deg&quot;, &quot;eigenvalues&quot;, &quot;n_sources&quot;, &quot;n_sources_estimated&quot;}</code>。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every mathops op validates its input before computing (nothing slips through silently):</p>

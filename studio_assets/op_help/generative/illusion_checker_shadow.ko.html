@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">없음</code> → <code style="color:#22d3bf">rgb</code>(인자만으로 정해지는 연산자 —— 이미지나 데이터 입력을 받지 않습니다)</p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import illusion; illusion.illusion_checker_shadow(size: &#x27;int&#x27; = 46, n: &#x27;int&#x27; = 8, light: &#x27;float&#x27; = 0.62, dark: &#x27;float&#x27; = 0.31) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsgenerative.get(&quot;illusion_checker_shadow&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>チェッカーシャドウ。<b>印を付けた 2 マスは厳密に同じ画素値</b>。</p>
+<p>체커 섀도. <b>표시한 2개의 칸은 엄밀하게 같은 화소값</b>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>影の係数を <code style="color:#22d3bf">dark / light</code> に取ると、影の中の明マスは影の外の暗マスと <b>数として同じ</b>になる。★この図は <code style="color:#22d3bf">aa=0</code>(反エイリアスなし)で描く —— 縁の混色が入ると「厳密に同値」という主張のほうが嘘になるため。</p>
 <p>不変量: <code style="color:#22d3bf">CHECKER_PATCHES</code> の 2 マス —— <b>影の外の暗マス</b> (2,3) と <b>影の中の明マス</b> (5,5) —— の画素値が完全に一致(差が厳密に 0)。</p>
 <p>★ここは一度間違えた。対にすべきは「暗マス × 影なし」と「明マス × 影あり」で、同じ明暗のマスを 2 つ選んでも当然ながら一致しない(実測 0.31 の差が出た)。絵は「それらしく」見えてしまうので、<b>数で確かめるまで気づけない</b> —— この族が守ろうとしているのと同じ型の事故。</p>

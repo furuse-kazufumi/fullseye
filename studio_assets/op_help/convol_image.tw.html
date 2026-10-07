@@ -4,8 +4,7 @@
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>:此運算子有 2 個輸入,<code style="color:#22d3bf">fullseye.apply</code> 無法呼叫它(那是單張影像的模型)。<code style="color:#22d3bf">g = fullseye.FullseyeGraph(); g.add(&quot;out&quot;, &quot;convol_image&quot;, [&quot;$in1&quot;, &quot;$in2&quot;], a=0.5, b=0.5); g.run({&quot;$in1&quot;: img1, &quot;$in2&quot;: img2}, terminal=&quot;out&quot;)</code>(以 <code style="color:#22d3bf">$</code> 開頭的名稱是從外部傳入的輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>HALCON 對應</b>:<code style="color:#22d3bf">convol_image</code>(其含義與參數可參考 HALCON 手冊)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>第 2 入力をフィルタマスクとして畳み込む。HALCON の <code style="color:#22d3bf">convol_image</code> に相当。★HALCON と同じく<b>相関</b>(マスクを書いたまま重ねる)で計算する —— scipy の <code style="color:#22d3bf">convolve</code> はマスクを反転するので、非対称なマスクだと画像が逆向きにずれる。マスクは絶対値の総和で正規化し、端は <code style="color:#22d3bf">reflect</code>。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> は未使用。</p>
+<p>以第 2 個輸入作為濾波遮罩進行卷積。相當於 HALCON 的 <code style="color:#22d3bf">convol_image</code>。★與 HALCON 一樣按<b>相關</b>(按遮罩原樣疊加)計算 —— scipy 的 <code style="color:#22d3bf">convolve</code> 會翻轉遮罩，因此若遮罩不對稱，影像會往相反方向偏移。遮罩按絕對值之和正規化，邊界用 <code style="color:#22d3bf">reflect</code>。<code style="color:#22d3bf">a</code>, <code style="color:#22d3bf">b</code> 未使用。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>
 <p style="margin:2px 0 2px 12px">• 範例資料目錄(下載 URL / 授權) —— 2-D 用 skimage.data(BSD/公有領域)加合成圖,3-D 給出真實資料源(Stanford/PDS 等)的下載 URL。</p>
 <p style="margin:2px 0 2px 12px">• 運算子來歷與參考文獻 —— 該運算子族所依據的研究/方法出處。</p>

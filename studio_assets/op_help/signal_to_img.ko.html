@@ -13,8 +13,8 @@
 <p><b>다른 영상에서도</b>(합성 장면 / 사진 / 동전. 윗줄이 입력, 아랫줄이 그 출력. 노브는 기본값):</p>
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/signal_to_img.inputs.jpg">signal_to_img: 다른 입력 이미지</a> <span style="color:#8b91a0;font-size:11px">(문서 사이트)</span></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>1-D の signal を<b>折れ線の図</b>にして画像へ戻す —— 「作った列を見る」入口。</p>
+<p>1-D signal을 <b>꺾은선 그림</b>으로 만들어 영상으로 되돌린다 — &#x27;만든 열을 보는&#x27; 입구.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>行きの橋(<code style="color:#22d3bf">img_to_signal</code> / <code style="color:#22d3bf">img_to_projection_profile</code>)で画像から列を作れるようになったが、<b>その列を見る登録 op が無かった</b>。signal を画像に落とせる op は <code style="color:#22d3bf">spectrogram</code> の 2 本だけで、どちらも描くのは<b>スペクトル</b> であって列そのものではない。図の生成器は 1-D を折れ線で描いているが、それは<b>道具の中の実装</b>で、<code style="color:#22d3bf">fullseye.apply</code> からも Studio からも呼べない。この op がその穴を埋める。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">a</code> → 縦軸の<b>余白</b> <code style="color:#22d3bf">pad = 0.30 * a * (データの幅)</code>(a=0 でぴったり、a=1 で上下に 30 % の余白)。ぴったりだと端の点が枠に重なる。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">b</code> → 描き方。<code style="color:#22d3bf">b &lt; 1/3</code> で<b>点</b>、<code style="color:#22d3bf">&lt; 2/3</code> で<b>折れ線</b>、それ以上で<b>棒</b>。★並びは「<b>既定のノブ 0.5 がその型に素直な描き方になる</b>」ように決めてある —— 列は折れ線が素直なので真ん中が折れ線。</p>

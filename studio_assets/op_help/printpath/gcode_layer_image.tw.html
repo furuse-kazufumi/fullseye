@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">table</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import printpath; printpath.gcode_layer_image(table: &#x27;Any&#x27;, layer: &#x27;int&#x27;, px_per_mm: &#x27;float&#x27; = 10.0, line_width_mm: &#x27;float&#x27; = 0.4, bounds=None, travel: &#x27;bool&#x27; = False) -&gt; &#x27;np.ndarray&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsprintpath.get(&quot;gcode_layer_image&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>1 層の経路を<b>線幅つきのラスタ</b> <code style="color:#22d3bf">image2d</code>(0 / 1、y 下向き = 行)に描く。</p>
+<p>把一層的路徑繪成<b>帶線寬的點陣</b> <code style="color:#22d3bf">image2d</code>(0 / 1，y 向下 = 列)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>押し出しのある線分だけを <code style="color:#22d3bf">line_width_mm</code> の太さで塗る(<code style="color:#22d3bf">travel=True</code> なら移動も細線で)。画素は <code style="color:#22d3bf">px_per_mm</code>、範囲は <code style="color:#22d3bf">bounds=(xmin, ymin, xmax, ymax)</code> mm(無ければ表全体 + 2 mm の余白 —— 層をまたいで同じ範囲にしたければ渡す)。これが「この層はこう見えるはず」の期待像で、カメラの層画像と <code style="color:#22d3bf">print_layer_defect_map</code> で比べる。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideprintpath:printpath">printpath 族使用指南</a></p>

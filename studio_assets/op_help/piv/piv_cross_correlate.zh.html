@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_cross_correlate(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">flow2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_cross_correlate.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_cross_correlate</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>窓ごとの相互相関で変位場を出す。返りは <code style="color:#22d3bf">(flow, info)</code>。</p>
+<p>通过逐窗口的互相关求出位移场。返回 <code style="color:#22d3bf">(flow, info)</code>。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>各窓で <code style="color:#22d3bf">FFT</code> を 2 回とって共役積の逆変換を取り(循環相関)、最大値の位置を整数変位、その周りの 3 点でサブピクセル変位を決める。</p>
 <p><b>零方向への偏りとその補正(実測)</b>: 素の相互相関は変位を<b>零へ引き寄せる</b>。窓をずらすと重なる領域が減り、相関の値そのものが変位とともに落ちるからで、実測でも偏りは変位に比例した(win=32・Hann、<code style="color:#22d3bf">dx</code> を 0.5 から 6 px まで振って偏り / (d/N) が 1.30, 1.29, 1.28, 1.28, 1.28 —— <b>傾き一定</b>)。</p>
 <p><code style="color:#22d3bf">normalize=&quot;overlap&quot;</code> はこれを、<b>窓関数の自己相関で割る</b>ことで補正する(重なり面積で正規化するのと同じ)。ただし縁では割る量が 0 に近づくので、<code style="color:#22d3bf">search_limit</code> で探索範囲を窓の 1/4 に絞るのと<b>必ず対にする</b>。実測:</p>

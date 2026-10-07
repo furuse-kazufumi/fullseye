@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.reconstruct(model, n_points=300, n_harmonics=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import fourierdesc; fourierdesc.reconstruct(model, n_points=300, n_harmonics=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsshape2d.get(&quot;reconstruct&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>EFD 係数から輪郭を再構成する((M,2))。</p>
+<p>由 EFD 係數重建輪廓((M,2))。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>n_harmonics を係数数より小さくすると <b>高調波を打ち切って平滑化</b> される(低次だけ残すほど丸くなる)。</p>
 <p>式: <code style="color:#22d3bf">t = linspace(0, 1, n_points, endpoint=False)</code> について <code style="color:#22d3bf">x(t) = a0 + Σ a_n cos(2πnt) + b_n sin(2πnt)</code>、<code style="color:#22d3bf">y(t) = c0 + Σ c_n cos(2πnt) + d_n sin(2πnt)</code>(<code style="color:#22d3bf">n = 1..N</code>)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">model</code>: <code style="color:#22d3bf">elliptic_fourier</code> の返り値(<code style="color:#22d3bf">coeffs</code> <code style="color:#22d3bf">(N, 4)</code>、<code style="color:#22d3bf">a0</code>、<code style="color:#22d3bf">c0</code>)。<code style="color:#22d3bf">normalize</code> を通した係数を渡せば正準ポーズ(第 1 高調波で整列)の輪郭が出る。dict の検証はしない(キー欠落は <code style="color:#22d3bf">KeyError</code>)。</p>

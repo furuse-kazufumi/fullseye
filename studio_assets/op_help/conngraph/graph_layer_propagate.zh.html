@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">conn_graph × labels × matrix</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>(要直接调用实现,<code style="color:#22d3bf">import conngraph; conngraph.graph_layer_propagate(W: &#x27;Any&#x27;, labels: &#x27;Any&#x27;, U: &#x27;Any&#x27;, activation: &#x27;str&#x27; = &#x27;kwta&#x27;, active_frac: &#x27;float&#x27; = 0.1, gain: &#x27;float&#x27; = 1.0) -&gt; &#x27;np.ndarray&#x27;</code>;从台账取用则 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_layer_propagate&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>層 0 の状態 <code style="color:#22d3bf">U</code> (N, n_0) を、ブロック <code style="color:#22d3bf">W[layer a → layer a+1]</code> で<b>前向きに一段ずつ</b>通した全層の状態 <code style="color:#22d3bf">(N, n)</code>(<code style="color:#22d3bf">matrix</code>、列はノード順で層 0 の列は <code style="color:#22d3bf">U</code> そのもの)。</p>
+<p>将层 0 的状态 <code style="color:#22d3bf">U</code> (N, n_0) 经由区块 <code style="color:#22d3bf">W[layer a → layer a+1]</code> <b>逐级向前</b>传递，得到全部层的状态 <code style="color:#22d3bf">(N, n)</code>(<code style="color:#22d3bf">matrix</code>，列按节点顺序，层 0 的列就是 <code style="color:#22d3bf">U</code> 本身)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>受け手ごとに入力重みの和を 1 に正規化してから重みつき和を取り(層の大きさに依らない)、<code style="color:#22d3bf">activation</code> で</p>
 <p>活性化する: <code style="color:#22d3bf">&quot;linear&quot;</code> はそのまま(平均絶対値を <code style="color:#22d3bf">gain</code> に)、<code style="color:#22d3bf">&quot;tanh&quot;</code> は飽和、<code style="color:#22d3bf">&quot;kwta&quot;</code> は各刺激で入力が上位 <code style="color:#22d3bf">active_frac</code> の受け手だけが(閾値上の余剰で)発火し、平均が 1 になるよう正規化する。層をまたぐ結線(層 a → a+2)と層内の再帰は<b>使わない</b>(前向きの一段ごとの写像だけを見る道具)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">详细使用指南</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">shapeset</code> → <code style="color:#22d3bf">shapemodel</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.shape_pca(shapes, n_components: &#x27;int&#x27; = 0, align: &#x27;bool&#x27; = True)</code>(要直接呼叫實作,<code style="color:#22d3bf">import shapestats; shapestats.shape_pca(shapes, n_components: &#x27;int&#x27; = 0, align: &#x27;bool&#x27; = True)</code>;從台帳取用則 <code style="color:#22d3bf">opsshapestat.get(&quot;shape_pca&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>形態 PCA(統計形状モデル)。→ dict(<code style="color:#22d3bf">shapemodel</code>)。</p>
+<p>形態 PCA(統計形狀模型)。→ dict(<code style="color:#22d3bf">shapemodel</code>)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>返す辞書: <code style="color:#22d3bf">mean</code> <code style="color:#22d3bf">(N,3)</code> / <code style="color:#22d3bf">components</code> <code style="color:#22d3bf">(k, N*3)</code> / <code style="color:#22d3bf">variance</code> <code style="color:#22d3bf">(k,)</code> / <code style="color:#22d3bf">n_points</code> / <code style="color:#22d3bf">total_variance</code> / <code style="color:#22d3bf">aligned</code> <code style="color:#22d3bf">(K,N,3)</code>。</p>
 <p><code style="color:#22d3bf">n_components=0</code>(既定)は <code style="color:#22d3bf">min(K-1, N*3)</code> 本すべて。<code style="color:#22d3bf">align=True</code> なら先に <code style="color:#22d3bf">generalized_procrustes</code> を掛ける(揃えずに PCA を取ると、第 1 主成分が「位置の違い」になって形の話が消える)。</p>
 <p>★ <b>分散は標本分散(<code style="color:#22d3bf">K-1</code> で割る)</b>。K が小さいと固有値は系統的に大きく出る。個体数が二桁に届かないうちは、固有値そのものより<b>比</b>を見ること。</p>

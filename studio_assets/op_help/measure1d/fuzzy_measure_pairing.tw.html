@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">image2d × measurehandle</code> → <code style="color:#22d3bf">table</code></p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>(要直接呼叫實作,<code style="color:#22d3bf">import measuring1d; measuring1d.fuzzy_measure_pairing(image, measure, sigma=1.0, threshold=0.1, pair_size=None)</code>;從台帳取用則 <code style="color:#22d3bf">opsmeasure1d.get(&quot;fuzzy_measure_pairing&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>ファジィ基準(想定幅 pair_size)に最も合うエッジ対を選ぶ(fuzzy_measure_pairing)。</p>
+<p>選擇最符合模糊準則(預期寬度 pair_size)的邊緣對(fuzzy_measure_pairing)。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>手順: <code style="color:#22d3bf">measure_pairs(image, measure, sigma, threshold)</code> で極性の異なる隣接エッジの対を取り、各対に <code style="color:#22d3bf">fuzzy_score = exp(-((width - pair_size) / (0.5 pair_size))^2)</code> を付けて <b>スコア降順に並べ替える</b>。想定幅ちょうどで 1、幅が <code style="color:#22d3bf">±0.5 pair_size</code> ずれると <code style="color:#22d3bf">e^-1</code> ≈ 0.37。先頭要素が最も合う対。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">image</code>: 2-D float(グレー値の単位は入力のまま)。</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">measure</code>: <code style="color:#22d3bf">gen_measure_rectangle2</code> / <code style="color:#22d3bf">gen_measure_arc</code> の dict。</p>

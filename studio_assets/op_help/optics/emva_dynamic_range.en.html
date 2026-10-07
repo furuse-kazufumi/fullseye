@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">none</code> → <code style="color:#22d3bf">table</code> (an op determined by its arguments alone — it takes no image or data input)</p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_dynamic_range(mu_p_sat, mu_p_min)</code> (to call the implementation directly, <code style="color:#22d3bf">import sensorchar; sensorchar.emva_dynamic_range(mu_p_sat, mu_p_min)</code>; from the registry, <code style="color:#22d3bf">opsoptics.get(&quot;emva_dynamic_range&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>ダイナミックレンジ DR = μ_p.sat / μ_p.min(式 28)を倍・dB(20 log10)・bit(log2)で。</p>
+<p>Dynamic range DR = μ_p.sat / μ_p.min (Eq. 28) as a ratio, in dB (20 log10) and in bits (log2).</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: どちらかが正でない / μ_p.sat ≤ μ_p.min。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Family-wide input contract (fail-closed)</h3>
 <p>Every optics op validates its input before computing (nothing slips through silently):</p>

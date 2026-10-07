@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">attnmap</code> → <code style="color:#22d3bf">attnmap</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code> (die Implementierung direkt: <code style="color:#22d3bf">import llmcore; llmcore.attention_weights(scores, mask=None, window=None) -&gt; &#x27;np.ndarray&#x27;</code>; aus dem Register: <code style="color:#22d3bf">opsllmcore.get(&quot;attention_weights&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>行ごとの softmax(マスクつき)→ attnmap。<b>行和は 1、mask 位置は厳密に 0</b>。</p>
+<p>Zeilenweiser Softmax (mit Maske) → attnmap. <b>Zeilensummen sind 1, Maskenpositionen exakt 0</b>.</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>行ごとに最大値を引いてから指数を取る。これは飾りではない —— 引かずに <code style="color:#22d3bf">exp</code> するとスコアが大きいとき<b>全行が inf/NaN になる</b>(実測: 96 行中 96 行)。引けば 0 行。</p>
 <p>Args:</p>
 <p>scores: (T, T) float の生スコア(<code style="color:#22d3bf">attention_scores</code> の出力)。</p>

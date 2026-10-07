@@ -3,8 +3,7 @@
 <p style="margin:2px 0 2px 12px">• <b>資料種類</b>:<code style="color:#22d3bf">無</code> → <code style="color:#22d3bf">any</code>(僅由參數決定的運算子 —— 不接受影像或資料輸入)</p>
 <p style="margin:2px 0 2px 12px">• <b>呼叫</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code>(要直接呼叫實作,<code style="color:#22d3bf">import iqatid; iqatid.tid2013_root(root=None) -&gt; &#x27;Optional[Path]&#x27;</code>;從台帳取用則 <code style="color:#22d3bf">opsimgmetrics.get(&quot;tid2013_root&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>配布物の展開先。<code style="color:#22d3bf">root</code> が無ければ環境変数 <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>。どちらも無い・<code style="color:#22d3bf">mos_with_names.txt</code> が無ければ <code style="color:#22d3bf">None</code> (呼び手は skip する —— データは repo に無い)。</p>
+<p>發布檔的解壓位置。若無 <code style="color:#22d3bf">root</code>，則用環境變數 <code style="color:#22d3bf">FULLSEYE_TID2013_DATA</code>。兩者皆無、或沒有 <code style="color:#22d3bf">mos_with_names.txt</code> 時回傳 <code style="color:#22d3bf">None</code> (呼叫端會 skip —— 資料不在 repo 中)。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">詳細使用指南</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideimgmetrics:image_difference_metrics">image_difference_metrics 族使用指南</a></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">參考(範例資料、文獻)</h3>

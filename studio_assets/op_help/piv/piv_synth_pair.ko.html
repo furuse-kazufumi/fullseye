@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>원장 경유의 반환값</b>: <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair(...)</code> 는 <b>선언된 out 형 <code style="color:#22d3bf">image2d</code> 의 값만</b> 반환합니다(실제 함수는 보조 정보도 반환). 버려진 쪽이 필요하면 <code style="color:#22d3bf">fullseye.ledger.piv_synth_pair.raw(...)</code> 를 쓰거나 <code style="color:#22d3bf">pivops.piv_synth_pair</code> 를 직접 호출하세요.</p>
 <p style="margin:2px 0 2px 12px">• 실제 반환: <code style="color:#22d3bf">(a, b, truth) -&gt; image2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>既知の変位場を持つ画像対を作る。返りは <code style="color:#22d3bf">(image_a, image_b, truth)</code>。</p>
+<p>알려진 변위장을 가진 영상 쌍을 만든다. 반환값은 <code style="color:#22d3bf">(image_a, image_b, truth)</code>.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p><b>粒子を動かしてから 2 枚目を描く</b>(1 枚目を補間で歪めるのではない)。補間で作ると、補間の平滑化が「PIV が当てやすい絵」を作ってしまい、自分の実装を自分に有利な入力で測ることになる。</p>
 <p>Args:</p>
 <p>shape: <code style="color:#22d3bf">(H, W)</code>。</p>

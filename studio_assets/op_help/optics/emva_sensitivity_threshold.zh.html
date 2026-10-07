@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>数据种类</b>:<code style="color:#22d3bf">无</code> → <code style="color:#22d3bf">table</code>(仅由参数决定的算子 —— 不接受图像或数据输入)</p>
 <p style="margin:2px 0 2px 12px">• <b>调用</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>(要直接调用实现,<code style="color:#22d3bf">import sensorchar; sensorchar.emva_sensitivity_threshold(eta, sigma_d, K, *, sigma_q2=0.08333333333333333)</code>;从台账取用则 <code style="color:#22d3bf">opsoptics.get(&quot;emva_sensitivity_threshold&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>絶対感度しきい値(SNR = 1 になる露光、式 26・27)。</p>
+<p>绝对灵敏度阈值(使 SNR = 1 的曝光，式 26、27)。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>μ_p.min = (1/η)(√(σ²_d + σ²_q/K² + 1/4) + 1/2)、μ_e.min = η μ_p.min。★量子化雑音が入る限り μ_e.min は σ_d より大きい。返り値 <code style="color:#22d3bf">{&quot;mu_p_min&quot;, &quot;mu_e_min&quot;}</code>。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: η が (0, 1] の外 / σ_d・σ_q² が負 / K が正でない。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">该族通用的输入契约(fail-closed)</h3>

@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">pairs</code> → <code style="color:#22d3bf">matrix</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code> (to call the implementation directly, <code style="color:#22d3bf">import fourierdesc; fourierdesc.contour_fourier_complex(points, n_harmonics=None, parametrisation=&#x27;index&#x27;)</code>; from the registry, <code style="color:#22d3bf">opsshape2d.get(&quot;contour_fourier_complex&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>閉輪郭を複素フーリエ級数の係数にする —— <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>。</p>
+<p>Turns a closed contour into the coefficients of a complex Fourier series — <code style="color:#22d3bf">z(t) = Σ c_k exp(2πi k t)</code>.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>引数:</p>
 <p>points: (N,2) の閉輪郭頂点。<b>(row, col) 順</b>(<code style="color:#22d3bf">fourierdesc</code> と同じ)。</p>
 <p>n_harmonics: 残す次数 <code style="color:#22d3bf">K</code>(<code style="color:#22d3bf">|k| &lt;= K</code>)。<code style="color:#22d3bf">None</code> なら表せる上限まで。</p>

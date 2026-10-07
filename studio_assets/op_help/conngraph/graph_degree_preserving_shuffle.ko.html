@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>데이터 종류</b>: <code style="color:#22d3bf">conn_graph</code> → <code style="color:#22d3bf">conn_graph</code></p>
 <p style="margin:2px 0 2px 12px">• <b>호출</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>(구현을 직접 호출하려면 <code style="color:#22d3bf">import conngraph; conngraph.graph_degree_preserving_shuffle(W: &#x27;Any&#x27;, n_swaps: &#x27;int | None&#x27; = None, seed: &#x27;int&#x27; = 0) -&gt; &#x27;np.ndarray&#x27;</code>, 원장에서 가져오려면 <code style="color:#22d3bf">opsconngraph.get(&quot;graph_degree_preserving_shuffle&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">사용법</h3>
-<p>&gt; 이 연산자의 설명은 아직 번역이 없습니다. 원문을 그대로 싣습니다.</p>
-<p>次数保存シャッフル(帰無モデル): 各ノードの入次数・出次数と重みの多重集合を保って辺を繋ぎ替える。</p>
+<p>차수 보존 셔플(귀무 모델): 각 노드의 입차수·출차수와 가중치의 다중집합을 유지한 채 에지를 다시 연결한다.</p>
+<p>&gt; 아래 상세 설명은 원문입니다 —— 요약과 제목은 번역되어 있습니다.</p>
 <p>有向 double-edge swap(Maslov &amp; Sneppen 2002): 辺 (a→b, w1) と (c→d, w2) を(a→d, w1) と (c→b, w2) に替える。自己結合と重複辺を作る組は捨てる。<code style="color:#22d3bf">n_swaps</code> の既定は 10 × 辺数。<b>二値構造の次数</b>を保つ(重みは辺に付いて移動するので strength は変わりうる)。対角(自己結合)は動かさずそのまま残す。辺が 2 本未満なら複製を返す。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">자세한 사용 가이드</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideconngraph:conngraph">conngraph 패밀리 가이드</a></p>

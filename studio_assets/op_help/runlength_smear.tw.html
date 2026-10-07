@@ -12,8 +12,8 @@
 <p>▸ <a style="color:#17b8a6" href="https://furuse.work/ops/_fig/runlength_smear.inputs.jpg">runlength_smear: 其他輸入影像</a> <span style="color:#8b91a0;font-size:11px">(文件網站)</span></p>
 <p>*第 4 欄是彩色 (H,W,3) 輸入。此運算子能正確處理顏色而不跨通道(不把顏色通道當作第三個空間軸摺積)。*</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p><b>走査長平滑化(RLSA)</b>。行内の字の隙間を埋めて、字を「行」の塊にまとめる。</p>
+<p><b>游程平滑(RLSA)</b>。填補行內字元之間的空隙，把字元合併成「行」的區塊。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p>版面解析(どこが行で、どこが段か)の基本部品。<code style="color:#22d3bf">a</code> が<b>埋める隙間の長さ</b>を <code style="color:#22d3bf">3,5,9,15,25,41,65</code> 画素(<code style="color:#22d3bf">b</code> の向きに沿った線)に振り、<code style="color:#22d3bf">b</code> が向きと</p>
 <p>合成を選ぶ: <code style="color:#22d3bf">b &lt;= 0.5</code> は<b>水平のみ</b>、<code style="color:#22d3bf">0.5 &lt; b &lt;= 0.75</code> は<b>垂直のみ</b>、<code style="color:#22d3bf">b &gt; 0.75</code> は<b>水平と垂直の小さい方</b>(= 古典 RLSA の 2 パス AND 合成。両方向で埋まった所だけが残るので、行だけでなく<b>段組みの塊</b>が出る)。</p>
 <p>★<b>既存の <code style="color:#22d3bf">gclose</code> と一部重なる</b>。<code style="color:#22d3bf">gclose</code> は <code style="color:#22d3bf">b</code> で水平線の構造要素を選べるので、水平 RLSA は原理的に書ける。ここが足すのは 2 つ ——</p>

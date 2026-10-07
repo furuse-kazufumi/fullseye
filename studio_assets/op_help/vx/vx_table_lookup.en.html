@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Data kinds</b>: <code style="color:#22d3bf">image2d × signal</code> → <code style="color:#22d3bf">image2d</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Call</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.vx_table_lookup(image, table, *, offset=0)</code> (to call the implementation directly, <code style="color:#22d3bf">import vxcore; vxcore.vx_table_lookup(image, table, *, offset=0)</code>; from the registry, <code style="color:#22d3bf">opsvx.get(&quot;vx_table_lookup&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Usage</h3>
-<p>&gt; This operator&#x27;s description has not been translated yet. The original text follows as it is.</p>
-<p>表引き(3.47 節): 出力 = table[画素値 + offset] (REQ-0421)。U8 と S16 を受ける(REQ-0422)。出力の dtype は表の dtype。</p>
+<p>Table lookup (Section 3.47): output = table[pixel value + offset] (REQ-0421). Accepts U8 and S16 (REQ-0422). The output dtype is the table&#x27;s dtype.</p>
+<p>&gt; The detailed description below is the original text — the summary and the headings are translated.</p>
 <p>*offset*: S16 の表は負の画素値を引くために中央を 0 に置く(VX_LUT_OFFSET、典型は 32768)。U8 は 0。★表の外を引く画素があれば止める(黙って端に寄せない)。</p>
 <p><b>Raises</b> <code style="color:#22d3bf">ValueError</code>: 画像が U8/S16 の 2-D でない / 表が 1-D でない・空 / 表の外を引く画素がある。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Detailed usage guide</h3>

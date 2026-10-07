@@ -5,8 +5,8 @@
 <p style="margin:2px 0 2px 12px">• <b>经台账调用的返回值</b>: <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass(...)</code> 只返回<b>声明的 out 类型 <code style="color:#22d3bf">flow2d</code> 的值</b>(底层函数还会返回辅助信息)。需要被丢弃的部分时,使用 <code style="color:#22d3bf">fullseye.ledger.piv_deform_pass.raw(...)</code>,或直接调用 <code style="color:#22d3bf">pivops.piv_deform_pass</code>。</p>
 <p style="margin:2px 0 2px 12px">• 底层返回: <code style="color:#22d3bf">(flow, info) -&gt; flow2d</code></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 该算子的说明尚无译文,以下照原文给出。</p>
-<p>窓変形つきの 1 段。予測変位で<b>画像そのものを歪めてから</b>相関を取る。</p>
+<p>带窗口变形的 1 级。先用预测位移<b>使图像本身变形之后</b>再求相关。</p>
+<p>&gt; 以下的详细说明为原文 —— 摘要与标题已翻译。</p>
 <p>整数ずらし(<code style="color:#22d3bf">piv_cross_correlate</code> の <code style="color:#22d3bf">shift</code>)は、窓の中で変位が一定という仮定を置く。回転やせん断のように<b>窓の中で変位が変わる</b>場では相関ピークが潰れるので、2 枚を予測の半分ずつ逆向きに歪めてから相関する(中央差分の変形)。</p>
 <p>Args:</p>
 <p>a, b: 画像対。</p>

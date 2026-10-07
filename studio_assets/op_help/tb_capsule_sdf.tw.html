@@ -13,8 +13,8 @@
 <p><b>動態</b>(GIF: 依序顯示影格 / 視點 / 切片。靜態圖是完整版，GIF 為輔助):</p>
 <p><img src="fig/tb_capsule_sdf.gif" alt="tb_capsule_sdf: animation"></p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">用法</h3>
-<p>&gt; 該運算子的說明尚無譯文,以下照原文給出。</p>
-<p>線分 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> を半径 <code style="color:#22d3bf">radius</code> で太らせたカプセルの<b>厳密</b>な符号付き距離場。</p>
+<p>將線段 <code style="color:#22d3bf">a</code>–<code style="color:#22d3bf">b</code> 以半徑 <code style="color:#22d3bf">radius</code> 加粗所得膠囊體的<b>精確</b>有號距離場。</p>
+<p>&gt; 以下的詳細說明為原文 —— 摘要與標題已翻譯。</p>
 <p><code style="color:#22d3bf">sdf(p) = ‖p - (a + clamp(((p-a)·(b-a))/‖b-a‖², 0, 1)·(b-a))‖ - radius</code>。線分への最短距離そのものなので<b>全空間で勾配ノルム 1</b>(円柱と違い端が丸いぶん、角が無く厳密)。リブ・配管・骨・ワイヤ・工具の掃引体積の近似に向く。</p>
 <p>引数と検証(<code style="color:#22d3bf">ValueError</code>):</p>
 <p style="margin:2px 0 2px 12px">• <code style="color:#22d3bf">grid</code>: 最終軸が 3 の float 配列 <code style="color:#22d3bf">(..., 3)</code>。</p>

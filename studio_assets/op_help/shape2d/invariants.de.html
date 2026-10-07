@@ -3,8 +3,8 @@
 <p style="margin:2px 0 2px 12px">• <b>Datenarten</b>: <code style="color:#22d3bf">efdmodel</code> → <code style="color:#22d3bf">pairs</code></p>
 <p style="margin:2px 0 2px 12px">• <b>Aufruf</b>: <code style="color:#22d3bf">import fullseye as fs; fs.ledger.invariants(model, scale_invariant=True)</code> (die Implementierung direkt: <code style="color:#22d3bf">import fourierdesc; fourierdesc.invariants(model, scale_invariant=True)</code>; aus dem Register: <code style="color:#22d3bf">opsshape2d.get(&quot;invariants&quot;)</code>)</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Verwendung</h3>
-<p>&gt; Für diesen Operator gibt es noch keine Übersetzung. Es folgt der Originaltext unverändert.</p>
-<p>回転・平行移動・始点・(任意で)スケールに不変な形状記述子((N,2))。</p>
+<p>Formdeskriptor, invariant gegenüber Rotation, Translation, Startpunkt und (optional) Skalierung ((N,2)).</p>
+<p>&gt; Die ausführliche Beschreibung unten ist der Originaltext — Zusammenfassung und Überschriften sind übersetzt.</p>
 <p>各高調波の楕円の (長軸, 短軸) = 特異値を並べたもの。DC を含まないので平行移動に不変、特異値なので空間回転と始点シフトに不変、第1高調波の長軸で割ればスケール不変。形状マッチング(<code style="color:#22d3bf">descriptor_distance</code>)の土台。</p>
 <h3 style="color:#17b8a6;margin:10px 0 2px 0">Ausführlicher Anwendungsleitfaden</h3>
 <p style="margin:2px 0 2px 12px">• <a style="color:#22d3bf" href="guideshape2d:shape_description_2d">Leitfaden zur Familie shape_description_2d</a></p>
