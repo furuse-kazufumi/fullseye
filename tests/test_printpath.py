@@ -76,7 +76,7 @@ def test_contours_to_gcode_extrudes_the_closed_form_amount_and_round_trips(tmp_p
 def test_gcode_read_honours_relative_modes_units_and_refuses_arcs_and_gaps(tmp_path):
     p = tmp_path / "rel.gcode"
     p.write_text("\n".join([
-        "G21", "G91", "M83", "G0 X0 Y0 Z0.2 F3000",
+        "G21", "G28", "G91", "M83", "G0 X0 Y0 Z0.2 F3000",   # G28 で 0 に置いてから相対
         "G1 X10 E1.0 F1200",             # 相対: x 0 → 10、E +1
         "G1 Y5 E0.5",                    # y 0 → 5、E +0.5
         "G1 X-10 E-0.3",                 # リトラクト: 押し出しに数えない
@@ -86,7 +86,9 @@ def test_gcode_read_honours_relative_modes_units_and_refuses_arcs_and_gaps(tmp_p
     ]) + "\n", encoding="utf-8")
     t = P.gcode_read(str(p))
     assert abs(t["e"].sum() - 3.5) < 1e-9
-    assert t["x1"][0] == 10.0 and t["y1"][1] == 5.0 and t["x1"][2] == 0.0
+    # G28 で始点が決まるので先頭の Z 上げも空送りの線分(e=0)になる
+    assert t["e"][0] == 0.0 and t["z1"][0] == 0.2
+    assert t["x1"][1] == 10.0 and t["y1"][2] == 5.0 and t["x1"][3] == 0.0
     assert t["layer"].max() == 1 and t["layer"][-1] == 1                    # Z の増加で 2 層目
     p2 = tmp_path / "inch.gcode"
     p2.write_text("G20\nG90\nG0 X0 Y0 Z0 F100\nG1 X1 E1\n", encoding="utf-8")
@@ -499,3 +501,24 @@ def test_the_stipple_is_unchanged_by_the_kd_tree_and_does_not_build_a_distance_m
     dm = (rr[:, None] - got[None, :, 0]) ** 2 + (cc[:, None] - got[None, :, 1]) ** 2
     assert P.stipple_energy(img, got, gamma=1.6) == pytest.approx(
         float((wf * dm.min(axis=1)).sum()), rel=1e-12)
+
+
+
+def test_gcode_read_g91_from_an_unknown_start_is_not_read_as_absolute(tmp_path):
+    """★2026-10-07: 始点未定の G91 は相対量を絶対座標として読んでいた(G28 も無視していた)。"""
+    p = tmp_path / "nohome.gcode"
+    p.write_text("G91\nG0 X5 Y5 Z5 F3000\nG1 X10 E1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="ever set"):
+        P.gcode_read(str(p))
+    # よくある開始スクリプト: 原点復帰 → 相対で Z を上げる → 絶対に戻る
+    p2 = tmp_path / "start.gcode"
+    p2.write_text("G28\nG91\nG1 Z10 F600\nG90\nM82\nG92 E0\nG1 X20 Y0 E1 F1200\n", encoding="utf-8")
+    t = P.gcode_read(str(p2))
+    assert t["z0"][0] == 0.0 and t["z1"][0] == 10.0 and t["e"][0] == 0.0        # 0 からの相対の Z 上げ
+    assert t["z0"][-1] == 10.0 and t["z1"][-1] == 10.0 and t["x1"][-1] == 20.0
+    assert t["x0"][0] == 0.0 and abs(t["e"].sum() - 1.0) < 1e-12
+    # 軸指定の G28 はその軸だけ: Z が未定のまま相対で動かすと線分で拒否
+    p3 = tmp_path / "homex.gcode"
+    p3.write_text("G28 X Y\nG91\nG1 Z1 F600\nG1 X5 E1\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="ever set"):
+        P.gcode_read(str(p3))

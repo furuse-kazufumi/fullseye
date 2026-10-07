@@ -153,7 +153,9 @@ def gcode_read(path: str, layer_from: str = "auto") -> dict[str, np.ndarray]:
     押し出したフィラメント長 mm、移動だけなら 0)、``f``(送り mm/min)、``layer``(層番号)。
 
     解釈するのは G0 / G1(直線移動)、G90 / G91(座標の絶対 / 相対)、M82 / M83(E の絶対 / 相対)、G92(座標の
-    リセット)、G20 / G21(インチ / mm)、``;`` コメント。円弧 G2 / G3 は**扱わない**(黙って直線にせず ValueError ——
+    リセット)、G28(原点復帰: 指定軸 —— 無指定なら X/Y/Z 全部 —— を 0 に置く。Marlin 既定の min 端点・原点オフセット
+    0 を仮定するので、max 側に原点を取る機械は直後に G92 で座標を与えること)、G20 / G21(インチ / mm)、``;`` コメント。
+    G91 の相対移動は**始点が未定の軸では位置を未定のまま残す**(相対量を絶対座標として読まない)。円弧 G2 / G3 は**扱わない**(黙って直線にせず ValueError ——
     スライサで直線に展開して出力すること)。層は ``layer_from="tag"`` なら ``;LAYER:n`` のコメント、``"z"`` なら押し出し
     を伴う Z の増加で切る。``"auto"`` はタグがあればタグ、無ければ Z。座標が一度も与えられないまま押し出す行は
     ValueError(方言の穴を黙って 0 で埋めない)。
@@ -203,6 +205,13 @@ def gcode_read(path: str, layer_from: str = "auto") -> dict[str, np.ndarray]:
             absolute = cmd == "G90"
         elif cmd in ("M82", "M83"):
             e_absolute = cmd == "M82"
+        elif cmd == "G28":
+            # ★2026-10-07: 以前は黙って無視され、直後の G91 の相対量が絶対座標として読まれていた
+            # 軸は数値なしでも書ける(``G28 X Y``)ので、数値つきの語でなく文字そのものを見る
+            named = set(re.findall(r"[XYZ]", code[lead.end():].upper()))
+            axes = [k for k in ("X", "Y", "Z") if k in named] or ["X", "Y", "Z"]
+            for k in axes:
+                pos[k] = 0.0
         elif cmd == "G92":
             for k in ("X", "Y", "Z", "E"):
                 if k in params:
@@ -216,7 +225,11 @@ def gcode_read(path: str, layer_from: str = "auto") -> dict[str, np.ndarray]:
             for k in ("X", "Y", "Z"):
                 if k in params:
                     v = params[k] * scale
-                    new[k] = v if (absolute or pos[k] is None) else pos[k] + v
+                    if absolute:
+                        new[k] = v
+                    else:
+                        # ★2026-10-07: 始点未定の軸への相対移動は未定のまま(以前は相対量を絶対座標として読んだ)
+                        new[k] = None if pos[k] is None else pos[k] + v
             de = 0.0
             if "E" in params:
                 ev = params["E"]
