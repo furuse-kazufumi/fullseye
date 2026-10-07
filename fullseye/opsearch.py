@@ -47,6 +47,25 @@ _GERMAN = re.compile(r"[äöüß]|\b(?:der|die|das|und|nicht|mit|eines?|bild|kan
 
 _CACHE: dict = {}
 
+#: 同じ言語の中の言い換え(手で書いた表、2026-10-07)。要約の 6 言語は**言語をまたぐ**対応は持っているが、
+#: 同じ言語の別の言い方(「檢測」と「偵測」、「校正」と「キャリブレーション」)は持たない。問い合わせにどれかが
+#: あれば残りを弱い重み(:data:`_W_SYNONYM`)で足す。表に無い言い換えは拾わない(``hint`` で案内する)。
+SYNONYMS: tuple = (
+    ("ノイズ除去", "雑音除去", "デノイズ", "ノイズ低減"), ("平滑化", "ぼかし", "スムージング"),
+    ("二値化", "しきい値", "閾値"), ("校正", "較正", "キャリブレーション"), ("エッジ", "縁"),
+    ("検出", "抽出"), ("点群", "ポイントクラウド"), ("位置合わせ", "レジストレーション", "整列"),
+    ("去噪", "降噪", "除噪"), ("边缘", "边沿"), ("二值化", "阈值"), ("标定", "校准"), ("检测", "提取"),
+    ("檢測", "偵測"), ("雜訊", "噪聲", "噪訊"), ("邊緣", "邊沿"), ("校正", "標定", "校準"), ("閾值", "臨界值"),
+    ("잡음", "노이즈"), ("에지", "엣지"), ("검출", "탐지", "추출"), ("보정", "교정", "캘리브레이션"),
+    ("이진화", "임계값"), ("평활화", "스무딩", "블러"),
+    ("kante", "kanten"), ("rauschen", "entrauschen", "rauschunterdruckung"), ("glattung", "glatten", "weichzeichnen"),
+    ("kalibrierung", "kalibrieren"), ("schwellwert", "schwelle", "binarisierung"),
+    ("denoise", "noise", "despeckle"), ("blur", "smooth", "smoothing"), ("threshold", "binarize", "binarization"),
+    ("calibration", "calibrate"), ("edge", "edges"), ("detect", "detection"),
+    ("registration", "align", "alignment"),
+)
+_W_SYNONYM = 0.6
+
 
 def _norm(text: str) -> str:
     return unicodedata.normalize("NFKC", text or "").lower()
@@ -80,6 +99,25 @@ def detect_lang(query: str) -> str:
     if _GERMAN.search(q):
         return "de"
     return "en"
+
+
+def _fold(text: str) -> str:
+    """言い換え表の照合用: NFKC・小文字・ウムラウトを落とす(Glättung → glattung)。"""
+    t = unicodedata.normalize("NFKD", _norm(text))
+    return "".join(c for c in t if not unicodedata.combining(c)).replace("ß", "ss")
+
+
+def _synonym_tokens(query: str, have: set) -> list[str]:
+    """問い合わせに含まれる言い換え表の語について、同じ組の他の語の検索語(既にあるものは除く)。"""
+    fq = _fold(query)
+    out: list[str] = []
+    for group in SYNONYMS:
+        if any(_fold(w) in fq for w in group):
+            for w in group:
+                for tok in tokenize(w):
+                    if tok not in have and tok not in out:
+                        out.append(tok)
+    return out
 
 
 def _pick_lang(query: str, qtok: list, top_rows: list) -> str:
@@ -170,6 +208,7 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
         raise ValueError("search_ops: k must be a positive int, got %r" % (k,))
     ix = load_index(index_path)
     q = list(dict.fromkeys(tokenize(query)))
+    extra = _synonym_tokens(query, set(q))
     rows, docs, lens, avg, idf = ix["rows"], ix["docs"], ix["lens"], ix["avg"], ix["idf"]
     scores: dict[int, float] = {}
     matched: Counter = Counter()
@@ -182,9 +221,19 @@ def search_ops(query: str, k: int = 10, *, lang: str | None = None, in_sort: str
             if f:
                 scores[i] = scores.get(i, 0.0) + w * f * (_K1 + 1) / (f + _K1 * (1 - _B + _B * lens[i] / avg))
                 matched[i] += 1
-    # 語を多く含む op を上に(一般語 1 つだけで当たった op が、語を全部含む op を追い越さない)
+    for tok in extra:
+        w = idf.get(tok)
+        if w is None:
+            continue
+        for i, tf in enumerate(docs):
+            f = tf.get(tok)
+            if f:
+                scores[i] = scores.get(i, 0.0) + _W_SYNONYM * w * f * (_K1 + 1) / (
+                    f + _K1 * (1 - _B + _B * lens[i] / avg))
+    # 語を多く含む op を上に(一般語 1 つだけで当たった op が、語を全部含む op を追い越さない)。
+    # 言い換えだけで当たった op も 0 にはしない(問い合わせの語が索引に無い言い方でも引けるように)
     for i in scores:
-        scores[i] *= matched[i] / len(q)
+        scores[i] *= max(matched[i], 0.5) / max(len(q), 1)
     exact = ix["names"].get(_norm(query.strip()).replace(" ", "_"))
     if exact is not None:
         scores[exact] = scores.get(exact, 0.0) + 1e6                   # 名前そのものなら先頭

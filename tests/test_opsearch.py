@@ -123,3 +123,24 @@ def test_facade_cli_and_mcp_share_one_search(capsys):
     assert len(rows) == 5 and set(o["name"] for o in rows) & EDGE
     with pytest.raises(ArgError):
         call_tool("fullseye_find_ops", {"query": " "}, cat)
+
+
+
+@pytest.mark.parametrize("query,lang,want", [
+    ("雑音除去", "ja", NOISE),          # 要約は「ノイズ除去」と書く —— 言い換え表なしでは 0 件だった
+    ("邊緣檢測", "tw", EDGE),           # 台湾の要約は「偵測」と書く —— 言い換え表なしでは 0 件だった
+])
+def test_same_language_synonyms_reach_ops_written_with_the_other_word(query, lang, want):
+    names = [o["name"] for o in search_ops(query, k=8, lang=lang)["ops"]]
+    assert names
+    assert set(names) & want, names
+
+
+def test_synonym_table_is_not_cross_language_and_stays_small():
+    """言い換え表は同じ言語の中だけ(言語をまたぐ対応は 6 言語の要約が持つ)。広い語(境界・輪郭)を
+    入れるとメッシュの「辺」などを巻き込んで悪化した(2026-10-07 実測)ので、狭く保つ。"""
+    from fullseye.opsearch import SYNONYMS
+    assert SYNONYMS
+    assert all(2 <= len(g) <= 4 for g in SYNONYMS)
+    banned = {"boundary", "rand", "輪郭", "轮廓", "경계"}
+    assert not banned & {w for g in SYNONYMS for w in g}
