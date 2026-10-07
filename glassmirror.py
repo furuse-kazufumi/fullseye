@@ -327,7 +327,7 @@ def prism_min_deviation_deg(wavelength_nm=550.0, apex_deg=60.0, glass="N-BK7") -
     返り値: 最小偏角 δ_min = 2·asin(n·sin(A/2)) − A(Hecht §5.5)。n·sin(A/2) > 1 の
     波長は光が出られない(全反射)ので NaN。
 
-    検算: N-BK7・A=60° で d 線(587.6 nm)の δ_min ≈ 38.9°、F 線(486.1)と C 線(656.3)の
+    検算: N-BK7・A=60° で d 線(587.6 nm)の δ_min ≈ 38.6°、F 線(486.1)と C 線(656.3)の
     差(角分散)が **Abbe 数から予想される向き**(短波長ほど大きく曲がる)になる。
     """
     op = "prism_min_deviation_deg"
