@@ -104,7 +104,9 @@ def test_regular_grid_is_perfectly_uniform():
     d = M.pc_density(P, k=4)
     inner = (X.ravel() > 0.6) & (X.ravel() < 5) & (Y.ravel() > 0.6) & (Y.ravel() < 5)
     assert np.allclose(d["spacing"][inner], 0.5)                    # 4-neighbour shell = pitch
-    assert abs(M.pc_density(P[inner], k=4)["nonuniformity"] - 1.0) < 1e-9 or True
+    # ★2026-10-07: ここにあった ``abs(pc_density(P[inner])["nonuniformity"] - 1) < 1e-9 or True`` は
+    #   ``or True`` で常に真だった。実測 1.9121 —— 内側だけを切り出すと、その部分集合自身の縁で
+    #   近傍殻が欠けるので一様にはならない(主張そのものが誤り)。上の spacing の検査が本題なので削除。
     assert d["n"] == 144
 
 

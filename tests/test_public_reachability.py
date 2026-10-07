@@ -123,6 +123,32 @@ def _shipped_modules():
     return names
 
 
+#: ★2026-10-07: optional 依存が無いと import できない出荷モジュール ``{module: 許す欠落依存}``。
+#: 以前は ``except Exception: continue`` で**どんな import 失敗も**母数から黙って外していた ——
+#: 壊れたモジュールは「不可視の関数」の数にも島の検査にも入らず、ラチェットはむしろ緑に寄る。
+#: ここに無いモジュールの import 失敗、ここにあっても別の理由の失敗は赤。
+OPTIONAL_IMPORT_MODULES = {
+    "gsplat_train_native": frozenset({"gsplat", "torch", "PIL"}),
+    "gsplat_animate": frozenset({"gsplat", "torch", "PIL", "mujoco"}),
+}
+
+
+def _import_shipped(name):
+    """出荷モジュールを import する。許された optional 依存の欠落だけ ``None``、他は赤。"""
+    try:
+        return importlib.import_module(name)
+    except ModuleNotFoundError as e:
+        missing = (e.name or "").split(".")[0]
+        if missing in OPTIONAL_IMPORT_MODULES.get(name, ()):
+            return None
+        raise AssertionError(
+            "出荷モジュール %r が import できない(%s)。optional 依存なら "
+            "OPTIONAL_IMPORT_MODULES に理由つきで足す" % (name, e)) from e
+    except Exception as e:                                       # noqa: BLE001
+        raise AssertionError("出荷モジュール %r の import が失敗した: %s: %s"
+                             % (name, type(e).__name__, e)) from e
+
+
 def _public_names():
     """公開経路 3 つの名前を集める(facade / 型つき台帳 / 進化する 2-D op)。"""
     import fullseye as fs
@@ -159,10 +185,9 @@ def _invisible_counts():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         for name in _shipped_modules():
-            try:
-                mod = importlib.import_module(name)
-            except Exception:
-                continue                      # optional 依存で入らないものは数えない
+            mod = _import_shipped(name)
+            if mod is None:
+                continue                      # 許された optional 依存の欠落だけ数えない
             fns = [n for n in dir(mod)
                    if not n.startswith("_")
                    and callable(getattr(mod, n))
@@ -218,9 +243,8 @@ def _hidden_total():
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         for name in _shipped_modules():
-            try:
-                mod = importlib.import_module(name)
-            except Exception:
+            mod = _import_shipped(name)
+            if mod is None:
                 continue
             total += sum(1 for n in dir(mod)
                          if not n.startswith("_")

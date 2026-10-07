@@ -381,7 +381,8 @@ def test_uncrop_roundtrips_and_refuses_clipping():
     back = volops.vol_uncrop(part, off, vol.shape)
     assert back.shape == vol.shape
     assert np.array_equal(back[3:9, 4:10, 5:11], vol[3:9, 4:10, 5:11])
-    assert np.all(back[mask < 0.5][back[mask < 0.5] != vol[mask < 0.5]] == 0.0) or True
+    # ★2026-10-07: ``or True`` を外した(実測: マスク外で vol と違う 7783 画素はすべて 0)
+    assert np.all(back[mask < 0.5][back[mask < 0.5] != vol[mask < 0.5]] == 0.0)
     # exact: outside the box everything is fill (0), inside it equals vol
     box = np.zeros_like(vol, dtype=bool)
     box[3:9, 4:10, 5:11] = True

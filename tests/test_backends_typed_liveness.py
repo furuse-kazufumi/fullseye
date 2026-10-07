@@ -126,6 +126,11 @@ def _is_constant_fallback(outs):
     return tiny and allzero
 
 
+#: ★2026-10-07: 探針を作れず ``_live_report`` が**検査せずに飛ばす** tb_* op の台帳 ``{op: 理由}``。
+#: 以前は ``skipped`` を返すだけで誰も見ておらず、探針の無い op は生死の検査を黙って抜けた。
+KNOWN_UNPROBED_BRIDGES: dict = {}
+
+
 def _live_report(trials=8, seed=0):
     rng = np.random.default_rng(seed)
     dead, live, skipped = [], [], []
@@ -160,6 +165,12 @@ def test_no_new_bridge_op_is_a_constant_fallback():
     requires_backend('torch')
     live, dead, skipped = _live_report()
     assert live, "橋渡し op が 1 つも生きていない(検査の前提が壊れている)"
+    unprobed = sorted(set(skipped) - set(KNOWN_UNPROBED_BRIDGES))
+    assert not unprobed, (
+        "探針が作れず生死を検査していない tb_* op: %s —— 探針を足すか、"
+        "KNOWN_UNPROBED_BRIDGES に理由つきで載せる" % unprobed)
+    stale = sorted(set(KNOWN_UNPROBED_BRIDGES) - set(skipped))
+    assert not stale, "KNOWN_UNPROBED_BRIDGES の op が検査されるようになった —— 行を消す: %s" % stale
     new = sorted(set(dead) - set(KNOWN_DEAD_BRIDGES))
     assert not new, (
         "定数しか返さない橋渡し op(新規): %s\n"
@@ -671,20 +682,36 @@ def _finite_battery(gk):
 _FINITE_KNOBS = [(0.0, 0.0), (0.5, 0.5), (1.0, 1.0), (0.15, 0.85), (0.0, 1.0), (1.0, 0.0)]
 
 
-def _bridge_nonfinite_report():
-    """tb_* ops that return a NaN/Inf anywhere in the battery."""
+def _bridge_nonfinite_report(stats=None):
+    """tb_* ops that return a NaN/Inf anywhere in the battery.
+
+    *stats* (dict, optional) receives how much was actually evaluated: ``n_ops``,
+    ``n_pairs`` ((op, input) pairs with at least one returned value), ``short``
+    (ops whose battery had < 4 inputs) and ``raised`` (calls that escaped the guard).
+    """
     bad = set()
+    st = {"n_ops": 0, "n_pairs": 0, "short": [], "raised": []}
     for op in _bridge_ops():
         gk = _SORT_TO_GEN[op.in_sort]
-        for v in _finite_battery(gk):
+        batt = _finite_battery(gk)
+        st["n_ops"] += 1
+        if len(batt) < 4:                                # 3 seeds + zeros (+ ones) = 5 expected
+            st["short"].append((op.name, len(batt)))
+        for v in batt:
+            got = False
             for a, b in _FINITE_KNOBS:
                 try:
                     r = np.asarray(op.fn(np.array(v, copy=True), a, b))
-                except Exception:                        # noqa: BLE001 - fail-soft path, covered elsewhere
+                except Exception as e:                   # noqa: BLE001 - fail-soft path, covered elsewhere
+                    st["raised"].append("%s: %s" % (op.name, type(e).__name__))
                     continue
+                got = True
                 if r.dtype != object and np.issubdtype(r.dtype, np.number) \
                         and r.size and not np.all(np.isfinite(r)):
                     bad.add(op.name)
+            st["n_pairs"] += got
+    if stats is not None:
+        stats.update(st)
     return bad
 
 
@@ -693,7 +720,15 @@ def test_no_bridge_op_returns_nonfinite_except_by_contract():
     honest answer is non-finite (then list it in KNOWN_NONFINITE_BY_CONTRACT with the
     reason). Also fails if a listed op has stopped producing non-finite (stale).
     """
-    bad = _bridge_nonfinite_report()
+    stats = {}
+    bad = _bridge_nonfinite_report(stats)
+    # ★2026-10-07: 例外で抜けた組は検査していない —— 何組を実際に見たかに下限を置く
+    #   (実測 159 op × 5 入力 = 795 組、例外 0)。
+    assert stats["n_ops"] >= 100, "検査した橋渡し op が少なすぎる: %d" % stats["n_ops"]
+    assert not stats["short"], "電池が 4 入力未満の op(生成器が黙って失敗): %s" % stats["short"][:10]
+    assert not stats["raised"], "guard を抜けて例外を出した呼び出し: %s" % stats["raised"][:10]
+    assert stats["n_pairs"] >= 4 * stats["n_ops"], (
+        "検査できた (op, 入力) が %d 組しか無い(op %d 本)" % (stats["n_pairs"], stats["n_ops"]))
     known = set(KNOWN_NONFINITE_BY_CONTRACT)
     new = sorted(bad - known)
     stale = sorted(known - bad)

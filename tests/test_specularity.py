@@ -787,7 +787,11 @@ def test_residual_scales_linearly_with_radiance():
     clean, _s, L, nrm, alb = shadow_scene(k_blocked=3)
     a = S.photometric_residual(clean * 7.0, L, nrm, alb * 1.0)
     b = S.photometric_residual(clean, L, nrm, alb)
-    assert np.abs(a - 7.0 * b).max() < 1e-12 * 7.0 or True   # see below
+    # ★2026-10-07: ここにあった ``max|a - 7b| < 7e-12 or True`` は ``or True`` で常に真だった。
+    #   実測 max|a - 7b| = 4.91(b は 1.4e-16)—— 画像だけを 7 倍してアルベドを据え置くのはモデル違反で、
+    #   残差は 7 倍の線形にはならない(主張そのものが誤り)。成り立つ向き = 「線形ではない」を測った値で固定する。
+    #   正しい線形性の形は下の c の検査。
+    assert np.abs(a - 7.0 * b).max() > 1.0, np.abs(a - 7.0 * b).max()   # measured 4.91
     # the honest form: the model is albedo*normal, so scaling the *images* only
     # is a model violation and the residual reflects it linearly in the offset
     c = S.photometric_residual(clean * 7.0, L, nrm, alb * 7.0)

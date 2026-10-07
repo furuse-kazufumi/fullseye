@@ -72,6 +72,18 @@ def test_signed_frequency_ops_keep_the_negative_half(name):
         f"{name}: 画素の {100*float(np.mean(out <= 1e-9)):.1f}% が 0 に潰れている")
 
 
+#: ★2026-10-07: [0,1] を外れるが、まだ ``ops.UNIT_RANGE_IS_NOT_THE_CONTRACT`` にも載らず
+#: 正規化もされていない image op(所有者の判断待ち)。``conftest.inputs_for`` が override の
+#: ある op にも sort 既定の帯を返すようにして見つかった。
+KNOWN_OUT_OF_UNIT_RANGE_PENDING = {
+    "tb_normals_to_egi":
+        "拡張ガウス像は bin ごとの**計数**(実測 two_clusters で最大 48、plane_only で 17)。"
+        "override の探針(160 本のばらばらな単位法線)は偶然どの bin にも 2 本入らず max=1 で、"
+        "[0,1] の門を運で通っていた。UNIT_RANGE_IS_NOT_THE_CONTRACT に計数画像として載せるか、"
+        "総数で割って [0,1] にするかは所有者の判断。",
+}
+
+
 @pytest.mark.parametrize("op", [o for o in ops.REGISTRY if o.out_sort == "image"],
                          ids=[o.name for o in ops.REGISTRY if o.out_sort == "image"])
 def test_every_image_op_stays_in_the_unit_range(op):
@@ -88,6 +100,18 @@ def test_every_image_op_stays_in_the_unit_range(op):
     if op.name in ops.UNIT_RANGE_IS_NOT_THE_CONTRACT:
         pytest.skip("物理量/生の大きさを運ぶ image: %s"
                     % ops.UNIT_RANGE_IS_NOT_THE_CONTRACT[op.name])
+
+    known = KNOWN_OUT_OF_UNIT_RANGE_PENDING.get(op.name)
+    if known is not None:
+        escaped = False
+        for _iname, iv in inputs_for(op.in_sort, op.name):
+            for a, b in ((0.2, 0.5), (0.5, 0.5), (0.8, 0.3)):
+                out = op.fn(copy_input(iv), a, b)
+                if isinstance(out, np.ndarray) and out.size and out.dtype.kind in "fiu"                         and (float(np.min(out)) < -1e-9 or float(np.max(out)) > 1 + 1e-9):
+                    escaped = True
+        assert escaped, ("%s は [0,1] に収まるようになった —— "
+                         "KNOWN_OUT_OF_UNIT_RANGE_PENDING から行を消す" % op.name)
+        pytest.xfail(known)
 
     for iname, iv in inputs_for(op.in_sort, op.name):
         for a, b in ((0.2, 0.5), (0.5, 0.5), (0.8, 0.3)):

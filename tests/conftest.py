@@ -450,8 +450,11 @@ def inputs_for(in_sort: str, op_name: str | None = None):
         except Exception:                                    # noqa: BLE001
             ovr = None
         if ovr is not None:
+            # ★2026-10-07: ここに ``return`` があり、上の docstring(sort 既定の帯を捨てない)
+            #   に反して override のある 10 op は sort 既定の帯を一度も通っていなかった。
+            #   sort 既定は「拒否が明示の fail-closed で記録される」ことの検査として通す
+            #   (test_op_contracts.KNOWN_FALLS_BACK_ON_EDGE に by-design として載る)。
             yield "override", ovr[0]()
-            return
     bank = BANKS.get(in_sort)
     if bank is None:
         return

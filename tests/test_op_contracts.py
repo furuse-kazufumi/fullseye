@@ -16,8 +16,9 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+import backend_safe as _bs
 import ops
-from conftest import KNOBS, copy_input, inputs_for
+from conftest import KNOBS, copy_input, inputs_for, requires_full_registry
 
 ALL_OPS = list(ops.REGISTRY)
 OP_IDS = [op.name for op in ALL_OPS]
@@ -69,6 +70,182 @@ def _equal(x, y) -> bool:
 #: その op たちは「登録されているのに一度も実行されない」状態に戻る。
 PROBELESS_OPS_BUDGET = 0
 
+#: 台帳の分類(``KNOWN_FALLS_BACK_ON_EDGE`` / ``KNOWN_SORT_VIOLATIONS``)。
+BY_DESIGN = "by-design"        # op が退化入力を**明示の拒否文**で fail-closed にしている(契約どおり)
+BACKEND = "backend-limit"      # 下請けライブラリがその入力(極小・定数)を扱えない
+SUSPECT = "bug-suspect"        # op 側の欠陥が疑われる(knob の値域・固定形の補助引数・意図しない内部エラー)
+
+#: ★2026-10-07: 契約電池で ``backend_safe.guard`` の fallback に落ちる op の台帳
+#: ``{op: (分類, 落ちる入力名の集合, 理由)}``。
+#:
+#: 上の 3 契約(例外なし・有限・決定的)は ``op.fn`` を**guard 越しに**呼ぶ。guard は例外を
+#: 握って sort の既定値を返し、非有限の出力は置き換えてから返す —— だから op 本体が
+#: 例外を投げても NaN を出しても、assert の時点では「例外なし・有限・決定的」に見えていた
+#: (2026-10-07 実測: 936 op 中 46 op が電池のどこかで黙って fallback、うち 8 op は
+#: 疑わしい欠陥。``inputs_for`` が sort 既定の帯を返すようにしてさらに 10 op)。
+#: 今は guard の台帳(``backend_safe.mark`` / ``events_since``)を見て、ここに無い
+#: (op, 入力)で劣化が記録されたら赤にする。台帳の op が電池のどこでも落ちなくなったら
+#: それも赤(直ったら行を消す)。入力名の集合は「これ以上増えない」上限として使う。
+KNOWN_FALLS_BACK_ON_EDGE: dict = {
+    "dl_guided_filter": (BACKEND, frozenset({"tiny4"}),
+        "torch の reflect padding(5)が 4x4 画像より大きい"),
+    "img_to_monogenic": (SUSPECT, frozenset({"const0", "const1", "const_mid", "normal", "single_bright", "tiny4"}),
+        "knob a=0 が wavelength_px=2(ナイキスト)へ写り、全入力で拒否される —— knob の値域が op の定義域の外へ出ている"),
+    "sk_wavelet": (BACKEND, frozenset({"const0", "const1", "const_mid"}),
+        "skimage.denoise_wavelet が分散 0 の定数画像で全画素 NaN を返す(source=output)"),
+    "tb_alpha_shape_boundary": (BY_DESIGN, frozenset({"coincident", "collinear", "plane_only", "single"}),
+        "退化点群(共面・共線・一致・1 点)は Qhull が四面体分割できず拒否"),
+    "tb_bandpass": (BY_DESIGN, frozenset({"tiny2"}),
+        "2 サンプルの信号に filtfilt は掛けられない(明示拒否)"),
+    "tb_beamform_delay_sum": (BY_DESIGN, frozenset({"const0", "single_chirp"}),
+        "全ゼロの cube / 素子 1 個は到来方向が定義されない(明示拒否)"),
+    "tb_cx_apply_transfer_function": (SUSPECT, frozenset({"const0", "normal", "real_only", "unit_phase"}),
+        "typed_catalog が H を 32x32 固定で作るので、32x32 以外の cimage では全入力・全 knob で必ず失敗する(op が実質死んでいる)"),
+    "tb_dem_ecef_to_geodetic": (BY_DESIGN, frozenset({"coincident", "collinear", "normal", "plane_only", "single", "two_clusters"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_dtof_depth": (BY_DESIGN, frozenset({"const0", "flat"}),
+        "光子ゼロ・平坦なヒストグラムにはピークが無い(明示拒否)"),
+    "tb_dynsys_correlation_dimension": (BY_DESIGN, frozenset({"coincident", "collinear", "single"}),
+        "N >= 32 点が要る(8 点・1 点の退化雲は明示拒否)"),
+    "tb_estimate_alpha": (BY_DESIGN, frozenset({"coincident", "single"}),
+        "全点一致・1 点では最近傍距離が無い(明示拒否)"),
+    "tb_estimate_oriented_normals": (BY_DESIGN, frozenset({"coincident", "collinear", "single"}),
+        "k=22 近傍に足りない点数(明示拒否)"),
+    "tb_estimate_point_normals": (SUSPECT, frozenset({"single"}),
+        "1 点の雲で einsum の内部エラー(意図した拒否文ではない)"),
+    "tb_fit_spline_curve": (SUSPECT, frozenset({"coincident", "collinear", "normal", "plane_only", "single", "two_clusters"}),
+        "knob (1,1) が spline 次数 k=6 へ写り scipy が TypeError(1<=k<=5)—— knob の値域が定義域の外。一致・1 点は Invalid inputs"),
+    "tb_fly_lgmd_eta": (BY_DESIGN, frozenset({"tiny2"}),
+        "2 サンプルでは微分が取れない(明示拒否)"),
+    "tb_fly_tau_from_expansion": (BY_DESIGN, frozenset({"tiny2"}),
+        "2 サンプルでは微分が取れない(明示拒否)"),
+    "tb_highpass": (BY_DESIGN, frozenset({"tiny2"}),
+        "2 サンプルの信号に filtfilt は掛けられない(明示拒否)"),
+    "tb_intrinsics_to_carla": (BY_DESIGN, frozenset({"ill_conditioned", "near_zero", "normal", "singular", "tall", "tiny2", "zeros"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_intrinsics_to_fullseye": (BY_DESIGN, frozenset({"ill_conditioned", "near_zero", "normal", "singular", "tall", "tiny2", "zeros"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_keypoints_to_image2d": (BY_DESIGN, frozenset({"empty"}),
+        "空の keypoints は表現として無効(明示拒否)"),
+    "tb_keypoints_uv_to_points": (BY_DESIGN, frozenset({"empty"}),
+        "空の keypoints は表現として無効(明示拒否)"),
+    "tb_landmark_asymmetry": (BY_DESIGN, frozenset({"single"}),
+        "ランドマーク 1 点(偶数・4 点以上が要る、明示拒否)"),
+    "tb_lf_epi_slope": (BY_DESIGN, frozenset({"single_view"}),
+        "単一視点の光線場には EPI の傾きが無い(明示拒否)"),
+    "tb_local_std": (SUSPECT, frozenset({"const0", "const1", "impulse", "normal", "tiny2"}),
+        "knob a=0 が window=2 へ写り全入力で拒否される(window>=3)—— knob の値域が定義域の外"),
+    "tb_lowpass": (BY_DESIGN, frozenset({"tiny2"}),
+        "2 サンプルの信号に filtfilt は掛けられない(明示拒否)"),
+    "tb_mirror_plane_from_pairs": (BY_DESIGN, frozenset({"single"}),
+        "ランドマーク 1 点(偶数・4 点以上が要る、明示拒否)"),
+    "tb_monogenic_amplitude": (BY_DESIGN, frozenset({"normal", "unit"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_monogenic_orientation": (BY_DESIGN, frozenset({"normal", "unit"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_monogenic_phase": (BY_DESIGN, frozenset({"normal", "unit"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_normals_to_egi": (BY_DESIGN, frozenset({"coincident", "collinear", "normal", "single"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_pc_density_equalize": (BY_DESIGN, frozenset({"coincident", "collinear", "single"}),
+        "k が点数以上(8 点・1 点の雲、明示拒否)"),
+    "tb_pc_fill_sparse": (BY_DESIGN, frozenset({"coincident", "collinear", "single"}),
+        "k が点数以上(8 点・1 点の雲、明示拒否)"),
+    "tb_project_cylindrical": (BY_DESIGN, frozenset({"coincident", "collinear", "plane_only", "single"}),
+        "z の幅が 0 の雲は z_range を推定できない(明示拒否)"),
+    "tb_quat_normalize_image": (BY_DESIGN, frozenset({"const0"}),
+        "絶対値 0 の四元数は正規化の向きが無い(明示拒否)"),
+    "tb_quaternion_to_rgb": (BY_DESIGN, frozenset({"normal", "real_only", "unit"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_reflection_symmetry_score": (BY_DESIGN, frozenset({"coincident", "single"}),
+        "全点一致・1 点では正規化の尺度が無い(明示拒否)"),
+    "tb_specular_coefficient_map": (BY_DESIGN, frozenset({"const0", "const1", "grey", "highlight", "normal"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_specular_diffuse_split": (BY_DESIGN, frozenset({"const0", "const1", "grey", "highlight", "normal"}),
+        "sort 既定の探針は op_probe.OP_PROBE_OVERRIDE の理由で拒否される(override が先頭、sort 既定の帯は拒否を確かめる側)"),
+    "tb_stat_correlation": (BY_DESIGN, frozenset({"singular", "zeros"}),
+        "分散 0 の列は Pearson 相関が 0/0(明示拒否)"),
+    "tb_stat_zscore": (BY_DESIGN, frozenset({"const0", "const1"}),
+        "定数信号の z-score は 0/0(明示拒否)"),
+    "tb_temporal_band_power": (SUSPECT, frozenset({"const0", "normal", "single_frame", "static"}),
+        "既定の通過帯域 [3,5] Hz に T=12 フレーム / 32 fps の DFT ビンが無く、電池の全入力・全 knob で拒否 —— この op は契約電池で一度も計算されていない(探針か既定値の見直しが要る)"),
+    "tb_temporal_bandpass": (SUSPECT, frozenset({"const0", "normal", "single_frame", "static"}),
+        "同上(通過帯域 [3,5] Hz に DFT ビンが無い。電池で一度も計算されていない)"),
+    "xcv3_brisk_count": (BACKEND, frozenset({"tiny4"}),
+        "OpenCV BRISK の内部 resize が 4x4 で assert"),
+    "xkor_clahe": (BACKEND, frozenset({"tiny4"}),
+        "kornia CLAHE のタイル格子が 4x4 画像に収まらない"),
+    "xkor_dog": (BACKEND, frozenset({"tiny4"}),
+        "kornia の padding が 4x4 画像より大きい"),
+    "xkor_laplacian": (BACKEND, frozenset({"tiny4"}),
+        "kornia の padding が 4x4 画像より大きい"),
+    "xsk2_hog": (BACKEND, frozenset({"tiny4"}),
+        "skimage HOG は 12x12 以上を要求"),
+    "xsk2_multiotsu": (BACKEND, frozenset({"const0", "const1", "const_mid", "single_bright"}),
+        "skimage multiotsu は 3 クラスに 3 値以上を要求(定数・2 値画像)"),
+    "xsk2_wiener": (BACKEND, frozenset({"tiny4"}),
+        "4x4 画像で 5x5 窓の broadcast エラー(ライブラリ側の境界処理)"),
+    "xsk_inpaint": (SUSPECT, frozenset({"const0", "const1", "single_bright"}),
+        "定数画像で zero-size reduction —— 欠損マスクが空のとき恒等にせずライブラリへ空配列を渡している"),
+    "xsk_orb_count": (BACKEND, frozenset({"const0", "const1", "const_mid", "tiny4"}),
+        "skimage ORB が定数・極小画像で特徴点ゼロを例外にする"),
+    "xsk_random_walker": (BACKEND, frozenset({"const_mid"}),
+        "定数画像から種(seed)が作れない"),
+    "xsp_cspline_smooth": (BACKEND, frozenset({"tiny4"}),
+        "scipy cspline の境界条件が 4x4 で収束しない"),
+    "xsp_savgol": (BACKEND, frozenset({"tiny4"}),
+        "savgol の窓長が 4 画素を超える"),
+    "xsp_wiener": (BACKEND, frozenset({"const0"}),
+        "scipy.signal.wiener が全ゼロ画像で全画素 NaN を返す(source=output)"),
+    "xwt_mra_component": (BACKEND, frozenset({"tiny4"}),
+        "pywt MRA の分解段数が 4x4 画像に足りない"),
+}
+
+#: ★2026-10-07: 宣言した out_sort の形を守っていない op(``test_op_honours_declared_sort`` の
+#: else 枝 = points/signal/matrix/video/qimage/cimage/… の 120 op を新たに検査して見つかった)。
+#: (2026-10-07 同日に 3 op を直して空になった: 複素の sort を名乗る tb_angular_spectrum_propagate /
+#: tb_cx_apply_transfer_function / tb_fmcw_window_apply が、ops._wrap_unguarded の guard で実部だけにされ
+#: float64 を返していた。表は器として残す —— 次に見つかった違反の置き場。)
+KNOWN_SORT_VIOLATIONS: dict = {}
+
+
+def _call_recording(op, iv, a, b, fell, iname):
+    """``op.fn`` を 1 回呼び、guard が台帳に記録した劣化を ``fell[iname]`` に残す。
+
+    ``backend_safe.mark()`` は記録のたびに増える通し番号なので、前後で値が違えば
+    この呼び出しの中で劣化が起きた(リングから溢れて ``events_since`` が空でも分かる)。
+    """
+    m = _bs.mark()
+    out = op.fn(copy_input(iv), a, b)
+    if _bs.mark() != m and iname not in fell:
+        ev = _bs.events_since(m, this_thread=False)
+        e = ev[0] if ev else {"source": "?", "error": "event evicted from the ring"}
+        fell[iname] = "%s @ (a=%s, b=%s): %s" % (e["source"], a, b, str(e["error"])[:240])
+    return out
+
+
+#: ★2026-10-07: **全体実行でだけ** fallback する op(単独・同じファイル群では再現しない)。
+#: KNOWN_FALLS_BACK_ON_EDGE は「必ず落ちる」の完全一致なので、ここに載せたものは「落ちてもよい・
+#: 落ちなくてもよい」として扱う —— 門を黙らせるのでなく、原因不明であることを名指しで残す置き場。
+#: sk_gabor: -n 6 の全体スイートで tiny4 @ (a=0, b=0) の出力 16 画素中 8 画素が NaN(1 回観測)。
+#:   単独・test_fix_gabor_dc / test_studio_params / test_fix_op_name_and_range / test_api_device と
+#:   同じプロセスでは毎回有限。前に走った何かが残す大域状態が疑わしい(未特定、見直し台帳に載せた)。
+KNOWN_ORDER_DEPENDENT: dict = {
+    "sk_gabor": (frozenset({"tiny4"}), "全体実行でだけ tiny4 @ (0,0) が半分 NaN(原因未特定、2026-10-07)"),
+}
+
+
+def _assert_no_unledgered_fallback(op, fell):
+    """台帳に無い (op, 入力) で劣化が記録されていないこと(新しい fallback は赤)。"""
+    known = KNOWN_FALLS_BACK_ON_EDGE.get(op.name)
+    allowed = known[1] if known else frozenset()
+    if op.name in KNOWN_ORDER_DEPENDENT:
+        allowed = allowed | KNOWN_ORDER_DEPENDENT[op.name][0]
+    new = {k: v for k, v in fell.items() if k not in allowed}
+    assert not new, (
+        "%s が契約電池で guard の fallback に落ちた(例外か非有限の出力を guard が握り潰して"
+        "いた)。直すか、理由つきで KNOWN_FALLS_BACK_ON_EDGE に載せる: %s" % (op.name, new))
+
 
 def _probes(op):
     """この op に当てられる探針。空なら契約ゲートは何も検査できない。
@@ -84,9 +261,15 @@ def test_op_runs_without_exception(op):
     probes = _probes(op)
     if not probes:
         pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    fell = {}
     for iname, iv in probes:
         for a, b in KNOBS:
-            op.fn(copy_input(iv), a, b)  # must not raise
+            _call_recording(op, iv, a, b, fell, iname)  # must not raise
+    # ★guard 越しでは「例外なし」は自明に真 —— 劣化の台帳で本当に走ったかを見る
+    _assert_no_unledgered_fallback(op, fell)
+    if op.name in KNOWN_FALLS_BACK_ON_EDGE:
+        assert fell, ("%s は契約電池のどこでも fallback しなくなった —— "
+                      "KNOWN_FALLS_BACK_ON_EDGE から行を消す" % op.name)
 
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
@@ -110,9 +293,10 @@ def test_op_output_is_finite(op):
     if op.name in ops.NONFINITE_IS_MEANINGFUL:
         pytest.skip("非有限が契約上の意味を持つ op(ops.NONFINITE_IS_MEANINGFUL): %s"
                     % ops.NONFINITE_IS_MEANINGFUL[op.name])
+    fell = {}
     for iname, iv in probes:
         for a, b in KNOBS:
-            out = op.fn(copy_input(iv), a, b)
+            out = _call_recording(op, iv, a, b, fell, iname)
             for arr in _arrays(out):
                 bad = ~np.isfinite(arr)
                 assert not bad.any(), (
@@ -122,6 +306,9 @@ def test_op_output_is_finite(op):
                 f = np.asarray(out, np.float64).reshape(-1)
                 assert f.size >= 1 and np.isfinite(f[0]), (
                     f"{op.name} feature non-finite on '{iname}' (a={a}, b={b})")
+    # ★guard は非有限の出力を置き換えてから返す(source=output で台帳に残る)。
+    #   上の assert は置き換え後を見ているので、台帳の側で「置き換えが起きていない」を確かめる。
+    _assert_no_unledgered_fallback(op, fell)
 
 
 @pytest.mark.parametrize("op", ALL_OPS, ids=OP_IDS)
@@ -135,11 +322,30 @@ def test_op_is_deterministic(op):
     probes = _probes(op)
     if not probes:
         pytest.skip("in_sort '%s' に探針が無い(BANKS 未対応)" % op.in_sort)
+    fell = {}
     for iname, iv in probes:
-        ref = op.fn(copy_input(iv), 0.5, 0.5)
+        ref = _call_recording(op, iv, 0.5, 0.5, fell, iname)
         for _ in range(3):
-            again = op.fn(copy_input(iv), 0.5, 0.5)
+            again = _call_recording(op, iv, 0.5, 0.5, fell, iname)
             assert _equal(ref, again), f"{op.name} is nondeterministic on input '{iname}'"
+    # ★fallback の値は自明に決定的 —— 比べたのが op 本体の出力であることを台帳で確かめる
+    _assert_no_unledgered_fallback(op, fell)
+
+
+def test_fallback_ledgers_name_live_ops_and_real_inputs():
+    """台帳の op 名が実在し、入力名がその op の電池に実在すること(綴り違い・改名の残骸を弾く)。"""
+    requires_full_registry()
+    by = {op.name: op for op in ALL_OPS}
+    stale = sorted(set(KNOWN_FALLS_BACK_ON_EDGE) - set(by))
+    assert not stale, "居ない op が KNOWN_FALLS_BACK_ON_EDGE に残っている: %s" % stale
+    stale = sorted(set(KNOWN_SORT_VIOLATIONS) - set(by))
+    assert not stale, "居ない op が KNOWN_SORT_VIOLATIONS に残っている: %s" % stale
+    for name, (cat, inputs, why) in KNOWN_FALLS_BACK_ON_EDGE.items():
+        assert cat in (BY_DESIGN, BACKEND, SUSPECT) and why, name
+        names = {iname for iname, _ in _probes(by[name])}
+        assert inputs and inputs <= names, (name, sorted(inputs - names))
+    assert len(KNOWN_FALLS_BACK_ON_EDGE) <= 56, (
+        "fallback 台帳が 2026-10-07 の 56 行より増えた —— 台帳は言い訳の置き場ではない")
 
 
 def test_probeless_ops_do_not_grow():
@@ -179,6 +385,25 @@ def test_op_honours_declared_sort(op):
         assert isinstance(out, dict) and "cs" in out and "shape" in out
     elif os_ == "match":
         assert isinstance(out, np.ndarray) and out.ndim == 1
+    else:
+        # ★2026-10-07: ここに else が無く、points/signal/matrix/video/qimage/cimage/counts/
+        #   keypoints/rgbimage/beatcube/lightfield/any の 120 op は**何も検査されずに緑**だった。
+        #   形の契約の正本は backends_typed._sort_ok(進化の橋の出口と同じ表)。複素の sort は
+        #   dtype も見る(backends_bridge._COMPLEX_SORTS)。
+        import backends_typed as _bt
+        from backends_bridge import _COMPLEX_SORTS
+
+        ok = bool(_bt._sort_ok(out, os_))
+        if ok and os_ in _COMPLEX_SORTS:
+            ok = bool(np.iscomplexobj(out))
+        known = KNOWN_SORT_VIOLATIONS.get(op.name)
+        if known is not None:
+            assert not ok, ("%s は out_sort=%s を守るようになった —— KNOWN_SORT_VIOLATIONS から"
+                            "行を消す" % (op.name, os_))
+            pytest.xfail("[%s] %s" % known)
+        assert ok, ("%s: out_sort=%s を宣言したが %s (shape=%s, dtype=%s) が返った"
+                    % (op.name, os_, type(out).__name__, getattr(out, "shape", None),
+                       getattr(out, "dtype", None)))
 
 
 @pytest.mark.parametrize("op", [o for o in ALL_OPS if o.out_sort == "region"],

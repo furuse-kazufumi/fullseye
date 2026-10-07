@@ -39,6 +39,7 @@ ROOT = os.path.dirname(HERE)
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+import backend_safe as _bs                                 # noqa: E402
 import op_probe                                            # noqa: E402
 import ops as _ops                                         # noqa: E402
 
@@ -68,6 +69,19 @@ EMPTY = {
 #: 2026-09-05 に ``xsk_unwrap_phase`` を直して**空になった**。空であること自体を
 #: 主張はしない(次に見つけたらここに書いて、直したら消す)。
 KNOWN_HANGS_ON_NONFINITE: dict = {}
+
+#: ★2026-10-07: 0 サイズ入力で**本体が NaN/Inf を出し、guard が記録して置き換えている** op。
+#: ``test_no_op_returns_a_non_finite_value_for_an_empty_input`` は guard 越しの戻り値だけを
+#: 見ていたので、置き換え後の有限値しか見えず、この 16 op の 0/0 を一度も捕まえていなかった
+#: (docstring の「0 除算の検出器」は空振りしていた)。台帳(source=output)で数える。
+#: いずれも空配列の縮約(平均・比・最大)を素直に書いた形 —— 明示の拒否にするのが筋(bug-suspect)。
+KNOWN_NONFINITE_ON_EMPTY_INPUT = frozenset({
+    "area_frac", "gray_histo_abs", "hx_estimate_sl_al_lr", "hx_estimate_sl_al_zc",
+    "hx_estimate_tilt_lr", "hx_estimate_tilt_zc", "intensity", "sk_blur_effect",
+    "tb_cplx_cr_residual", "tb_dtof_depth", "tb_dynsys_correlation_dimension",
+    "tb_equivalent_level", "tb_estimate_alpha", "tb_get_y_value_funct_1d",
+    "tb_reflection_symmetry_score", "tb_superquadric_residual",
+})
 
 
 def _empty_for(sort):
@@ -108,16 +122,22 @@ def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
     ``nan`` が出ていくのが最悪で、下流はそれを数値として扱ってしまう。
     """
     import ops
-    bad, missing = [], []
+    bad, missing, raised, leaked = [], [], [], set()
+    n_ok = 0
     for op in registry:
         v = _empty_for(op.in_sort)
         if v is None:
             missing.append(op.in_sort)
             continue
+        m = _bs.mark()
         try:
             out = op.fn(v.copy() if hasattr(v, "copy") else v, 0.5, 0.5)
-        except Exception:                                 # noqa: BLE001
+        except Exception as e:                            # noqa: BLE001
+            raised.append("%s: %s" % (op.name, type(e).__name__))
             continue                                      # 例外は台帳に載る(契約内)
+        n_ok += 1                                         # ★実際に戻り値を検査した数
+        if any(ev["source"] == "output" for ev in _bs.events_since(m, this_thread=False)):
+            leaked.add(op.name)                           # 本体の NaN/Inf を guard が置き換えた
         if op.name in _meaningful_nonfinite():
             continue
         if not _finite_and_sort_valid(out, op.out_sort):
@@ -126,6 +146,15 @@ def test_no_op_returns_a_non_finite_value_for_an_empty_input(registry):
     assert not bad, ("0 サイズ入力で非有限値を返す op が %d 本: %s"
                      % (len(bad), bad[:20]))
     assert len(registry) > 800, "レジストリが小さすぎる(検査の前提が違う)"
+    # ★2026-10-07: 例外で抜けた op は戻り値を検査していない —— 母数が黙って縮まないよう下限を置く
+    assert n_ok > 800 and n_ok >= 0.95 * len(registry), (
+        "戻り値を検査できた op が %d / %d 本しか無い。例外: %s" % (n_ok, len(registry), raised[:20]))
+    live = {op.name for op in registry}
+    new = sorted(leaked - KNOWN_NONFINITE_ON_EMPTY_INPUT)
+    fixed = sorted((KNOWN_NONFINITE_ON_EMPTY_INPUT & live) - leaked)
+    assert not new, ("0 サイズ入力で本体が NaN/Inf を出し guard が置き換えた op(新規): %s" % new)
+    assert not fixed, ("KNOWN_NONFINITE_ON_EMPTY_INPUT の op が NaN を出さなくなった —— 行を消す: %s"
+                       % fixed)
 
 
 def test_no_op_crashes_the_process_on_an_empty_input(registry):
@@ -155,7 +184,8 @@ def test_constant_and_single_pixel_inputs_stay_in_contract(registry, fill):
     定数画像は**分散 0** を作るので、正規化・コントラスト・相関の類が
     0 除算になりやすい。1 画素は窓・近傍・勾配の境界条件を突く。
     """
-    bad = []
+    bad, raised = [], []
+    n_tried = n_ok = 0
     for op in registry:
         shp = EMPTY.get(op.in_sort)
         if shp is None:
@@ -164,16 +194,22 @@ def test_constant_and_single_pixel_inputs_stay_in_contract(registry, fill):
         for shape in (tuple(1 if d == 0 else d for d in shp), one):
             v = np.full(shape, fill,
                         dtype=complex if op.in_sort == "cimage" else float)
+            n_tried += 1
             try:
                 out = op.fn(v, 0.5, 0.5)
-            except Exception:                             # noqa: BLE001
+            except Exception as e:                        # noqa: BLE001
+                raised.append("%s%s: %s" % (op.name, shape, type(e).__name__))
                 continue
+            n_ok += 1                                     # ★実際に戻り値を検査した数
             if op.name in _meaningful_nonfinite():
                 continue
             if not _finite_and_sort_valid(out, op.out_sort):
                 bad.append((op.name, shape))
                 break
     assert not bad, "定数/1 画素の入力で契約を破る op: %s" % bad[:20]
+    # ★2026-10-07: 例外で抜けた組は検査していない —— 下限(実測 1738 / 1738)
+    assert n_ok > 1600 and n_ok >= 0.95 * n_tried, (
+        "戻り値を検査できた組が %d / %d しか無い。例外: %s" % (n_ok, n_tried, raised[:20]))
 
 
 def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
@@ -184,7 +220,8 @@ def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
     ここで拾うのは「非有限が外へ出ていく」ものだけ —— 内部で 0 除算しても
     最後に潰しているなら実害は無いので、出力側の検査(上)と役割を分ける。
     """
-    offenders = []
+    offenders, raised = [], []
+    n_eval = 0
     for op in registry:
         v = _empty_for(op.in_sort)
         if v is None:
@@ -197,12 +234,21 @@ def test_zero_division_is_not_hidden_by_numpy_defaults(registry):
             except FloatingPointError:
                 # 計算中に 0 除算はしたが、外に出ていなければ実害は無い。
                 # 出力側の契約は上のテストが見ているので、ここでは数えない。
+                n_eval += 1
                 continue
-            except Exception:                             # noqa: BLE001
+            except Exception as e:                        # noqa: BLE001
+                raised.append("%s: %s" % (op.name, type(e).__name__))
                 continue
+        n_eval += 1
         if not _finite_and_sort_valid(out, op.out_sort):
             offenders.append(op.name)
     assert not offenders, "0 除算の結果が外へ出ている op: %s" % offenders[:20]
+    # ★2026-10-07: 母数の下限。注意 —— guard は FloatingPointError も握って fallback にする
+    #   (実測 36 op)ので、ここの FloatingPointError 枝には guard 越しでは来ない。
+    #   0/0 が外へ出る op は test_no_op_returns_a_non_finite_value_for_an_empty_input の
+    #   KNOWN_NONFINITE_ON_EMPTY_INPUT(台帳の source=output)が捕まえる。
+    assert n_eval > 800 and n_eval >= 0.95 * len(registry), (
+        "検査できた op が %d / %d 本しか無い。例外: %s" % (n_eval, len(registry), raised[:20]))
 
 
 def test_known_hangs_are_still_listed(registry):
@@ -233,7 +279,8 @@ def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind,
     あると pytest ごと死に、赤ではなく「テストが消える」形で現れるので、
     通した本数を併せて主張する。
     """
-    bad, n = [], 0
+    bad, raised = [], []
+    n_tried = n = 0
     for op in registry:
         if op.name in KNOWN_HANGS_ON_NONFINITE:
             continue
@@ -243,20 +290,25 @@ def test_no_op_returns_a_non_finite_value_for_a_non_finite_input(registry, kind,
         base = probes[0]
         if not isinstance(base, np.ndarray) or base.dtype == object:
             continue
-        n += 1
+        n_tried += 1
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             try:
                 with np.errstate(all="ignore"):
                     out = op.fn(_nonfinite_like(base, fill), 0.5, 0.5)
-            except Exception:                             # noqa: BLE001
+            except Exception as e:                        # noqa: BLE001
+                raised.append("%s: %s" % (op.name, type(e).__name__))
                 continue                                  # 例外は契約内(台帳に載る)
+        n += 1                                            # ★戻り値を検査できた数だけを数える
         if op.name in _meaningful_nonfinite():
             continue                                      # 非有限が答えの op
         if not _finite_and_sort_valid(out, op.out_sort):
             bad.append(op.name)
     assert not bad, "%s 入力で非有限を返す op が %d 本: %s" % (kind, len(bad), bad[:20])
-    assert n > 700, "通した op が少なすぎる(%d) —— 検査の前提が違う" % n
+    # ★2026-10-07: 以前は呼ぶ**前**に数えていたので、全 op が例外で抜けても n > 700 で緑だった
+    assert n > 700 and n >= 0.95 * n_tried, (
+        "戻り値を検査できた op が %d / %d 本しか無い —— 検査の前提が違う。例外: %s"
+        % (n, n_tried, raised[:20]))
 
 
 # --------------------------------------------------------------------------- #

@@ -56,7 +56,13 @@ def _degrade_everything():
 
 @pytest.fixture(scope="module")
 def names():
-    return _degrade_everything()
+    got = _degrade_everything()
+    # ★2026-10-07: 台帳は 256 件の環状バッファ。溢れると ``fallbacks()`` は新しい 256 件しか返さず、
+    #   下の「名前が潰れていない」「実在の op 名」は**一部だけ**を見て緑になる(実測 186 件・溢れ 0)。
+    assert bs.fallback_overflow() == 0, (
+        "劣化の記録が環状バッファから %d 件溢れた —— 名前の検査が一部しか見ていない"
+        % bs.fallback_overflow())
+    return got
 
 
 def test_the_registry_was_actually_labelled():

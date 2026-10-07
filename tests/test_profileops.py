@@ -203,7 +203,8 @@ def test_leading_edge_erosion_is_relocated_by_a_chord_alignment():
     assert got["chord"][2] > 2.0 * got["none"][2], got
     # 剛体合わせは場所は正しいが、ずれを散らして半分ほどに見せる
     assert got["rigid"][1] < 0.15, got["rigid"]
-    assert got["none"][2] < got["rigid"][2] < 0.5 * got["none"][2] + 1e-9 or True
+    # ★2026-10-07: ``or True`` を外した。実測 none=-0.003086 < rigid=-0.001662 < 0.5*none=-0.001543
+    assert got["none"][2] < got["rigid"][2] < 0.5 * got["none"][2] + 1e-9, got
     for mode in P.ALIGN_MODES:
         assert abs(got[mode][3]) < 0.0006, (mode, got[mode])   # 局所なので平均は小さい
 

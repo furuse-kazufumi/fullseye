@@ -68,7 +68,9 @@ def test_bridge_registered_and_named():
     assert TYPED, "橋渡し op が 1 つも登録されていない"
     assert all(o.name.startswith("tb_") for o in TYPED)
     names = [o.name for o in ops.REGISTRY]
-    assert len(names) == len(set(names)) or True   # 重複名は既存仕様(最後が正)
+    # ★2026-10-07: ``or True`` で無効化されていた。実測 936 op / 重複 0 —— 主張は成り立つので門に戻す
+    dup = sorted({n for n in names if names.count(n) > 1})
+    assert not dup, "op 名が重複している: %s" % dup
     # 既存の DNA(macro)op は残っている = 追加が既存を押し出していない
     assert any(o.name.startswith("macro_") for o in ops.REGISTRY)
 
